@@ -1,0 +1,16 @@
+{
+  "name": "leav_core",
+  "version": "1.0.0",
+  "description": "Core components of leav engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Jerome_MILLOT@bitbucket.org/leav_ca/leav_core.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/leav_ca/leav_core#readme"
+}
