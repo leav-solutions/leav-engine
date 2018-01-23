@@ -1,16 +1,58 @@
 {
-  "name": "leav_core",
-  "version": "1.0.0",
-  "description": "Core components of leav engine!",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://Jerome_MILLOT@bitbucket.org/leav_ca/leav_core.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/leav_ca/leav_core#readme"
+    "name": "leav_core",
+    "version": "1.0.0",
+    "description": "",
+    "main": "build/index.js",
+    "scripts": {
+        "start:watch": "nodemon -e ts -w ./src -x 'npm run start:dev'",
+        "start:dev": "ts-node --type-check src/",
+        "start:build": "tsc && node .",
+        "test:watch": "jest --watch",
+        "test": "jest",
+        "lint": "tslint --fix -p .",
+        "lint:watch": "watch 'npm run lint' src/",
+        "prettier": "prettier --write 'src/**/*.ts'",
+        "dev": "run-p lint:watch start:watch test:watch",
+        "precommit": "lint-staged && npm test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://Jerome_MILLOT@bitbucket.org/leav_ca/leav_core.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "homepage": "https://bitbucket.org/leav_ca/leav_core#readme",
+    "devDependencies": {
+        "@types/jest": "^22.0.1",
+        "husky": "^0.14.3",
+        "jest": "^22.1.4",
+        "lint-staged": "^6.0.1",
+        "nodemon": "^1.14.11",
+        "npm-run-all": "^4.1.2",
+        "prettier": "^1.10.2",
+        "ts-jest": "^22.0.1",
+        "ts-node": "^4.1.0",
+        "tslint": "^5.9.1",
+        "tslint-eslint-rules": "^4.1.1",
+        "typescript": "^2.6.2",
+        "watch": "^1.0.2"
+    },
+    "dependencies": {
+        "@types/glob": "^5.0.35",
+        "@types/lodash": "^4.14.93",
+        "@types/node": "^9.3.0",
+        "arangojs": "^6.0.1",
+        "awilix": "^3.0.4",
+        "lodash": "^4.17.4"
+    },
+    "jest": {
+        "moduleFileExtensions": ["ts", "js"],
+        "transform": {
+            "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+        },
+        "testRegex": ".spec.(ts|js)$"
+    },
+    "lint-staged": {
+        "*.ts": ["prettier --write", "tslint --fix", "git add"]
+    }
 }
