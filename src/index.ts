@@ -1,5 +1,6 @@
 import {config} from './config';
+import {init as initDI} from './depsManager';
 
 (async function() {
-    const conf: {} = await config;
+    await initDI();
 })();
