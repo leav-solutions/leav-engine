@@ -18,6 +18,9 @@
         "object-curly-spacing": [true, "never"],
         "whitespace": true,
         "quotemark": [true, "single", "avoid-escape"],
-        "only-arrow-functions": false
+        "only-arrow-functions": false,
+        "object-literal-sort-keys": false,
+        "no-implicit-dependencies": false,
+        "no-submodule-imports": false
     }
 }
