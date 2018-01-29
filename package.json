@@ -4,8 +4,8 @@
     "description": "",
     "main": "build/index.js",
     "scripts": {
-        "start:watch": "nodemon -e ts -w ./src -x 'npm run start:dev'",
-        "start:dev": "ts-node --type-check src/",
+        "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
+        "start:dev": "ts-node src/",
         "start:build": "tsc && node .",
         "test:watch": "jest --watch",
         "test": "jest",
@@ -29,6 +29,7 @@
         "lint-staged": "^6.0.1",
         "nodemon": "^1.14.11",
         "npm-run-all": "^4.1.2",
+        "onchange": "^3.3.0",
         "prettier": "^1.10.2",
         "ts-jest": "^22.0.1",
         "ts-node": "^4.1.0",
