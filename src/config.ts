@@ -11,7 +11,6 @@ import {env as appEnv} from './env';
  */
 const _getConfigByEnv = async function(env: string): Promise<{}> {
     const envFile = path.resolve(path.join(__dirname, `../config/${env}.js`));
-    console.log(envFile);
 
     if (env && fs.existsSync(envFile)) {
         const envConf = await import(envFile);
