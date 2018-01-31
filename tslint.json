@@ -8,7 +8,11 @@
         "no-console": false,
         "curly": true,
         "triple-equals": true,
-        "array-bracket-spacing": [true, "always"],
+        "array-bracket-spacing": [
+            true,
+            "never",
+            {"singleValue": false, "objectsInArrays": false, "arraysInArrays": false}
+        ],
         "trailing-comma": [true, "never"],
         "brace-style": [true, "1tbs"],
         "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
@@ -21,6 +25,8 @@
         "only-arrow-functions": false,
         "object-literal-sort-keys": false,
         "no-implicit-dependencies": false,
-        "no-submodule-imports": false
+        "no-submodule-imports": false,
+        "ordered-imports": false,
+        "arrow-parens": [true, "ban-single-arg-parens"]
     }
 }
