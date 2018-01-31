@@ -5,7 +5,7 @@ export interface IGraphqlApp {
     schema: GraphQLSchema;
 }
 
-export default (): IGraphqlApp => {
+export default function(): IGraphqlApp {
     return {
         get schema() {
             // The GraphQL schema in string form
@@ -32,4 +32,4 @@ export default (): IGraphqlApp => {
             return schema;
         }
     };
-};
+}
