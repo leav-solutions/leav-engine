@@ -16,5 +16,10 @@ module.exports = {
     lang: {
         available: ['fr', 'en'],
         default: 'fr'
+    },
+    logs: {
+        level: 'info',
+        transport: ['console', 'file'], // Array containing one or more of : console, file
+        destinationFile: '/var/log/leav.log' // If logging in file
     }
 };

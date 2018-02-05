@@ -1,15 +1,16 @@
 import {graphiqlHapi, graphqlHapi} from 'apollo-server-hapi';
-import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import * as winston from 'winston';
 import * as hapi from 'hapi';
 
 import * as Debugger from 'debug';
+import {IGraphqlApp} from 'app/graphql/graphqlApp';
 const debug = Debugger('core:server');
 
 export interface IServer {
-    init(): Promise<any>;
+    init(): Promise<void>;
 }
 
-export default function(config: any, graphqlApp: IGraphqlApp): IServer {
+export default function(config: any, graphqlApp: IGraphqlApp, logger: winston.Winston): IServer {
     return {
         async init(): Promise<void> {
             const server: hapi.Server = new hapi.Server();
@@ -50,7 +51,7 @@ export default function(config: any, graphqlApp: IGraphqlApp): IServer {
                         throw err;
                     }
 
-                    debug(`Server running at: ${server.info.uri}`);
+                    logger.info(`Server running at: ${server.info.uri}`);
                 });
             } catch (e) {
                 throw new Error('Server init error' + e);
