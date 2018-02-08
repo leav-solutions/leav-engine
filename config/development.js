@@ -1,7 +1,7 @@
 module.exports = {
     db: {
         url: 'http://root:@localhost:8529',
-        name: 'leav'
+        name: 'leav_core'
     },
     auth: {
         scheme: 'none',

@@ -1,7 +1,7 @@
 module.exports = {
     server: {
         host: 'localhost',
-        port: 3001
+        port: 4001
     },
     db: {
         url: process.env.ARANGO_URL,

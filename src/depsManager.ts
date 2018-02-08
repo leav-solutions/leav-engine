@@ -18,7 +18,7 @@ export async function init(): Promise<AwilixContainer> {
 
     container.register('config', asValue(await config));
 
-    const modulesList: ModuleDescriptor[] = listModules(['+(app|domain|infra|interface|utils)/**/!(*.spec).+(js|ts)'], {
+    const modulesList: ModuleDescriptor[] = listModules(['**/!(migrations)/!(*.spec).+(js|ts)'], {
         cwd: __dirname
     });
 

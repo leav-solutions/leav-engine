@@ -13,7 +13,8 @@
         "lint:watch": "watch 'npm run lint' src/",
         "prettier": "prettier --write 'src/**/*.ts'",
         "dev": "run-p lint:watch start:watch test:watch",
-        "precommit": "lint-staged && npm test"
+        "precommit": "lint-staged && npm test",
+        "db:migrate": "tsc && node . --migrate"
     },
     "repository": {
         "type": "git",

@@ -1,10 +1,22 @@
 import {Database} from 'arangojs';
 
-export default function(config: any) {
+export interface IDbService {
+    db: Database;
+    execute(query: string): Promise<any>;
+}
+
+export default function(config: any): IDbService {
     const db = new Database({
         url: config.db.url
     });
     db.useDatabase(config.db.name);
 
-    return db;
+    async function execute(query: string): Promise<any> {
+        return db.query(query);
+    }
+
+    return {
+        db,
+        execute
+    };
 }
