@@ -21,6 +21,8 @@ export default function(config: any, graphqlApp: IGraphqlApp, logger: winston.Wi
                     port: config.server.port
                 });
 
+                await graphqlApp.generateSchema();
+
                 // GraphQL
                 await server.register({
                     register: graphqlHapi,

@@ -31,5 +31,7 @@ export async function init(): Promise<AwilixContainer> {
         }
     }
 
+    container.register('depsManager', asValue(container));
+
     return container;
 }

@@ -68,7 +68,7 @@
         "transform": {
             "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
         },
-        "testRegex": ".spec.(ts|js)$"
+        "testRegex": ".spec.(ts)$"
     },
     "lint-staged": {
         "*.ts": [

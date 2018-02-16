@@ -6,10 +6,9 @@ import {init as initDI} from './depsManager';
     const server = container.cradle.server;
     const dbUtils = container.cradle.dbUtils;
 
-    const opt = process.argv[2];
-
     try {
-        if (opt.indexOf('migrate') !== -1) {
+        const opt = process.argv[2];
+        if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(container);
         } else {
