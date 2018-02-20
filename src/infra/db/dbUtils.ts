@@ -10,6 +10,7 @@ export interface IDbUtils {
     migrate?(depsManager: AwilixContainer): Promise<void>;
     cleanup?(record: {}): any;
     convertToDoc?(obj: {}): any;
+    isCollectionExists?(name: string): Promise<boolean>;
 }
 
 export interface IMigration {
@@ -42,11 +43,10 @@ export default function(dbService: IDbService, logger: winston.Winston): IDbUtil
             await _initMigrationsCollection();
 
             // Load already ran migrations
-            let executedMigrations = await dbService.execute(`
+            const executedMigrations = await dbService.execute(`
                 FOR m IN core_db_migrations
                 RETURN m.file
             `);
-            executedMigrations = await executedMigrations.all();
 
             // Load migrations files
             const migrationsDir = path.resolve(__dirname, 'migrations');

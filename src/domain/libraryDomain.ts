@@ -1,73 +1,57 @@
-import {ILibraryRepository} from 'infra/libraryRepository';
+import {ILibraryRepo, ILibraryFilterOptions} from 'infra/libraryRepo';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {ISystemTranslation} from './coreDomain';
 
 export interface ILibrary {
     id: string;
+    label?: ISystemTranslation;
     system?: boolean;
 }
 
 export interface ILibraryDomain {
-    getLibrary(id: string): Promise<ILibrary>;
-    getLibraries(): Promise<ILibrary[]>;
-    saveLibrary(library: ILibrary): Promise<ILibrary>;
+    getLibraries?(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
+    saveLibrary?(library: ILibrary): Promise<ILibrary>;
+    deleteLibrary?(id: string): Promise<ILibrary>;
 }
 
-export default function(libraryRepository: ILibraryRepository): ILibraryDomain {
-    /**
-     * Get library by ID
-     *
-     * @param id
-     * @return Promise<{}>
-     */
-    const getLibrary = async function(id: string): Promise<ILibrary> {
-        const libs = await libraryRepository.getLibraries({id});
-
-        if (libs.length) {
-            return libs[0];
-        } else {
-            return null;
-        }
-    };
-
-    /**
-     * Get all libraries
-     *
-     * @return Promise<{}>
-     */
-    const getLibraries = async function(): Promise<ILibrary[]> {
-        const libs = await libraryRepository.getLibraries();
-
-        if (libs.length) {
-            return libs;
-        } else {
-            return [];
-        }
-    };
-
-    /**
-     * Save library.
-     * If lib doesn't exist => create a new one, otherwise update existing library
-     *
-     * @param (} libData
-     * @return Promise<{}>  Saved library
-     */
-    const saveLibrary = async function(libData: ILibrary): Promise<ILibrary> {
-        try {
-            const libs = await libraryRepository.getLibraries({id: libData.id});
-
-            const lib = libs.length
-                ? await libraryRepository.updateLibrary(libData)
-                : await libraryRepository.createLibrary(libData);
-
-            return lib;
-        } catch (e) {
-            throw new Error('Save library ' + e);
-        }
-    };
-
+export default function(libraryRepo: ILibraryRepo): ILibraryDomain {
     return {
-        getLibrary,
-        getLibraries,
-        saveLibrary
+        async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
+            const libs = await libraryRepo.getLibraries(filters);
+
+            return libs;
+        },
+        async saveLibrary(libData: ILibrary): Promise<ILibrary> {
+            try {
+                const libs = await libraryRepo.getLibraries({id: libData.id});
+
+                const lib = libs.length
+                    ? await libraryRepo.updateLibrary(libData)
+                    : await libraryRepo.createLibrary(libData);
+
+                return lib;
+            } catch (e) {
+                throw new Error('Save library ' + e);
+            }
+        },
+        async deleteLibrary(id: string): Promise<ILibrary> {
+            try {
+                // Get attribute
+                const attr = await this.getLibraries({id});
+
+                // Check if exists and can delete
+                if (!attr.length) {
+                    throw new Error('Unknown attribute');
+                }
+
+                if (attr.pop().system) {
+                    throw new Error('Cannot delete system attribute');
+                }
+
+                return libraryRepo.deleteLibrary(id);
+            } catch (e) {
+                throw new Error('Delete attribute ' + e);
+            }
+        }
     };
 }

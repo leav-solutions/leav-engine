@@ -1,20 +1,6 @@
 import libraryDomain from './libraryDomain';
 
 describe('LibraryDomain', () => {
-    describe('getLibrary', () => {
-        test('Should call repo', async function() {
-            const mockLibRepo = {getLibraries: jest.fn().mockReturnValue(Promise.resolve([{id: 'test'}]))};
-            const libDomain = libraryDomain(mockLibRepo);
-
-            const lib = await libDomain.getLibrary('test');
-
-            expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraries.mock.calls[0][0]).toMatchObject({id: 'test'});
-
-            expect(lib).toMatchObject({id: 'test'});
-        });
-    });
-
     describe('getLibraries', () => {
         test('Should return a list of libs', async function() {
             const mockLibRepo = {
@@ -66,6 +52,44 @@ describe('LibraryDomain', () => {
             expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
+        });
+    });
+
+    describe('deleteLibrary', () => {
+        const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
+
+        const docLibData = {
+            _key: 'test_lib',
+            _id: 'core_libraries/test_lib',
+            _rev: '_WSgDYea--_',
+            label: {en: 'Test', fr: 'Test'},
+            system: false
+        };
+
+        test('Should delete an library and return deleted library', async function() {
+            const mockLibRepo = {deleteLibrary: jest.fn().mockReturnValue(Promise.resolve(libData))};
+            const libDomain = libraryDomain(mockLibRepo);
+            libDomain.getLibraries = jest.fn().mockReturnValue(Promise.resolve([libData]));
+
+            const deleteRes = await libDomain.deleteLibrary(libData.id);
+
+            expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
+        });
+
+        test('Should throw if unknown attribute', async function() {
+            const mockLibRepo = {deleteLibrary: jest.fn().mockReturnValue(Promise.resolve())};
+            const attrDomain = libraryDomain(mockLibRepo);
+            attrDomain.getLibraries = jest.fn().mockReturnValue(Promise.resolve([]));
+
+            await expect(attrDomain.deleteLibrary(libData.id)).rejects.toThrow();
+        });
+
+        test('Should throw if system attribute', async function() {
+            const mockLibRepo = {deleteLibrary: jest.fn().mockReturnValue(Promise.resolve())};
+            const attrDomain = libraryDomain(mockLibRepo);
+            attrDomain.getLibraries = jest.fn().mockReturnValue(Promise.resolve([{system: true}]));
+
+            await expect(attrDomain.deleteLibrary(libData.id)).rejects.toThrow();
         });
     });
 });

@@ -1,14 +1,14 @@
-import libraryRepository from './libraryRepository';
+import libraryRepo from './libraryRepo';
 import {DocumentCollection} from 'arangojs/lib/esm/collection';
 import {Connection} from 'arangojs/lib/esm/connection';
 import {Database} from 'arangojs';
 
-describe('LibraryRepository', () => {
+describe('LibraryRepo', () => {
     describe('getLibrary', () => {
         test('Should return all libs if no filter', async function() {
             const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve([]))};
             const mockDbUtils = {cleanup: jest.fn()};
-            const libRepo = libraryRepository(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
 
             const lib = await libRepo.getLibraries();
 
@@ -16,6 +16,8 @@ describe('LibraryRepository', () => {
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR l IN core_libraries/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(?!FILTER)/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
         });
 
         test('Should filter', async function() {
@@ -26,11 +28,13 @@ describe('LibraryRepository', () => {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue({_key: 'test', system: false})
             };
-            const libRepo = libraryRepository(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
 
             const lib = await libRepo.getLibraries({id: 'test'});
 
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(FILTER){1}/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
         });
 
         test('Should return an empty array if no results', async function() {
@@ -42,7 +46,7 @@ describe('LibraryRepository', () => {
                 convertToDoc: jest.fn().mockReturnValue({_key: 'test'})
             };
 
-            const libRepo = libraryRepository(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
 
             const libs = await libRepo.getLibraries({id: 'test'});
 
@@ -59,7 +63,7 @@ describe('LibraryRepository', () => {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue({_key: 'test', system: false})
             };
-            const libRepo = libraryRepository(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
 
             const libs = await libRepo.getLibraries({id: 'test'});
 
@@ -85,7 +89,7 @@ describe('LibraryRepository', () => {
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepository(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
 
             const createdLib = await libRepo.createLibrary(libData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -93,6 +97,8 @@ describe('LibraryRepository', () => {
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(createdLib).toMatchObject(libData);
         });
@@ -112,7 +118,7 @@ describe('LibraryRepository', () => {
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepository(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
 
             const updatedLib = await libRepo.updateLibrary(libData);
 
@@ -120,8 +126,48 @@ describe('LibraryRepository', () => {
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(updatedLib).toMatchObject(libData);
+        });
+    });
+
+    describe('deleteLibrary', () => {
+        const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
+
+        const docLibData = {
+            _key: 'test_lib',
+            _id: 'core_libraries/test_lib',
+            _rev: '_WSgDYea--_',
+            label: {en: 'Test', fr: 'Test'},
+            system: false
+        };
+
+        test('Should delete a library and return deleted library', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                dropCollection: jest.fn().mockReturnValue(Promise.resolve()),
+                execute: jest.fn().mockReturnValue(Promise.resolve([docLibData]))
+            };
+
+            const mockCleanupRes = libData;
+            const mockDbUtils = {
+                cleanup: jest.fn().mockReturnValue(libData),
+                convertToDoc: jest.fn().mockReturnValue(docLibData)
+            };
+
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            libRepo.getLibraries = jest.fn().mockReturnValue(Promise.resolve([libData]));
+
+            const deleteRes = await libRepo.deleteLibrary(libData.id);
+
+            expect(mockDbServ.dropCollection.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
         });
     });
 });

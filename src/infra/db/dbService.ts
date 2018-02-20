@@ -18,6 +18,20 @@ export interface IDbService {
      * @throws If collection already exists
      */
     createCollection?(name: string, type?: collectionTypes): Promise<void> | null;
+
+    /**
+     * Delete a collection in database
+     * @param name Collection name
+     * @param type Document or edge collection?
+     * @throws If collection already exists
+     */
+    dropCollection?(name: string, type?: collectionTypes): Promise<void> | null;
+
+    /**
+     * Check if collection already exists
+     * @param name
+     */
+    collectionExists?(name: string): Promise<boolean>;
 }
 
 export enum collectionTypes {
@@ -26,6 +40,12 @@ export enum collectionTypes {
 }
 
 export default function(db: Database): IDbService {
+    const collectionExists = async function(name: string): Promise<boolean> {
+        const collections = await db.listCollections();
+
+        return collections.reduce((exists, c) => exists || c.name === name, false);
+    };
+
     return {
         db,
         async execute(query: string | AqlQuery): Promise<[any]> {
@@ -33,10 +53,7 @@ export default function(db: Database): IDbService {
             return res.all();
         },
         async createCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
-            const collections = await db.listCollections();
-
-            const colExists = collections.reduce((exists, c) => exists || c.name === name, false);
-            if (colExists) {
+            if (await collectionExists(name)) {
                 throw new Error(`Collection ${name} already exists`);
             }
 
@@ -47,6 +64,15 @@ export default function(db: Database): IDbService {
                 const collection = db.collection(name);
                 await collection.create();
             }
-        }
+        },
+        async dropCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
+            if (!await collectionExists(name)) {
+                throw new Error(`Collection ${name} does not exist`);
+            }
+
+            const collection = type === collectionTypes.EDGE ? db.edgeCollection(name) : db.collection(name);
+            await collection.drop();
+        },
+        collectionExists
     };
 }

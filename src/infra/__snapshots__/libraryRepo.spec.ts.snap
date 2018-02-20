@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LibraryRepo createLibrary Should insert a library and create a new collection 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`LibraryRepo createLibrary Should insert a library and create a new collection 2`] = `
+Object {
+  "@value1": "core_libraries",
+  "value0": Object {
+    "_key": "test_library",
+    "label": Object {
+      "en": "",
+      "fr": "",
+    },
+    "system": true,
+  },
+}
+`;
+
+exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 2`] = `
+Object {
+  "@value1": "core_libraries",
+  "value0": Object {
+    "_key": "test_lib",
+  },
+}
+`;
+
+exports[`LibraryRepo getLibrary Should filter 1`] = `"FOR l IN core_libraries FILTER l.@filterKey0 LIKE @filterValue0 FILTER l.@filterKey1 LIKE @filterValue1 RETURN l"`;
+
+exports[`LibraryRepo getLibrary Should filter 2`] = `
+Object {
+  "filterKey0": "_key",
+  "filterKey1": "system",
+  "filterValue0": "%test%",
+  "filterValue1": "%false%",
+}
+`;
+
+exports[`LibraryRepo getLibrary Should return all libs if no filter 1`] = `"FOR l IN core_libraries RETURN l"`;
+
+exports[`LibraryRepo getLibrary Should return all libs if no filter 2`] = `Object {}`;
+
+exports[`LibraryRepo updateLibrary Should update library 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`LibraryRepo updateLibrary Should update library 2`] = `
+Object {
+  "@value1": "core_libraries",
+  "value0": Object {
+    "_key": "test_library",
+    "system": true,
+  },
+}
+`;

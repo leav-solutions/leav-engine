@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributeRepo createAttribute Should create a new attribute 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`AttributeRepo createAttribute Should create a new attribute 2`] = `
+Object {
+  "@value1": "core_attributes",
+  "value0": Object {
+    "_key": "test_attribute",
+    "format": "text",
+    "label": Object {
+      "en": "",
+      "fr": "",
+    },
+    "system": true,
+    "type": "standard",
+  },
+}
+`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 2`] = `
+Object {
+  "@value1": "core_attributes",
+  "value0": Object {
+    "_key": "test_attribute",
+  },
+}
+`;
+
+exports[`AttributeRepo getAttribute Should filter 1`] = `"FOR a IN core_attributes FILTER a.@filterKey0 LIKE @filterValue0 FILTER a.@filterKey1 LIKE @filterValue1 RETURN a"`;
+
+exports[`AttributeRepo getAttribute Should filter 2`] = `
+Object {
+  "filterKey0": "_key",
+  "filterKey1": "system",
+  "filterValue0": "%test%",
+  "filterValue1": "%false%",
+}
+`;
+
+exports[`AttributeRepo getAttribute Should return all libs if no filter 1`] = `"FOR a IN core_attributes RETURN a"`;
+
+exports[`AttributeRepo getAttribute Should return all libs if no filter 2`] = `Object {}`;
+
+exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`AttributeRepo updateAttribute Should update an existing attribute 2`] = `
+Object {
+  "@value1": "core_attributes",
+  "value0": Object {
+    "_key": "test_attribute",
+    "format": "text",
+    "label": Object {
+      "fr": "Test",
+    },
+    "system": true,
+    "type": "standard",
+  },
+}
+`;

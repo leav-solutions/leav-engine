@@ -9,7 +9,7 @@ export interface ILibraryFilterOptions {
     id?: string;
 }
 
-export interface ILibraryRepository {
+export interface ILibraryRepo {
     /**
      * Return libraries
      *
@@ -33,9 +33,16 @@ export interface ILibraryRepository {
      * @return object   Updated library data
      */
     updateLibrary?(libData: ILibrary): Promise<ILibrary>;
+
+    /**
+     * Delete library
+     * @param id
+     * @return {}   Deleted library data
+     */
+    deleteLibrary(id: string): Promise<ILibrary>;
 }
 
-export default function(dbService: IDbService, dbUtils: IDbUtils): ILibraryRepository {
+export default function(dbService: IDbService, dbUtils: IDbUtils): ILibraryRepo {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<[ILibrary]> {
             let query = `FOR l IN ${COLLECTION_NAME}`;
@@ -59,10 +66,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ILibraryRepos
         },
         async createLibrary(libData: ILibrary): Promise<ILibrary> {
             try {
-                const defaultParams = {
-                    _key: '',
-                    system: false
-                };
+                const defaultParams = {_key: '', system: false, label: {fr: '', en: ''}};
                 let docToInsert = dbUtils.convertToDoc(libData);
 
                 docToInsert = {...defaultParams, ...docToInsert};
@@ -90,6 +94,21 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ILibraryRepos
                 return dbUtils.cleanup(res.pop());
             } catch (e) {
                 throw new Error('Update library ' + e);
+            }
+        },
+        async deleteLibrary(id: string): Promise<ILibrary> {
+            try {
+                // Delete library
+                const col = dbService.db.collection(COLLECTION_NAME);
+                const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`);
+
+                // Delete library's collection
+                await dbService.dropCollection(id);
+
+                // Return deleted library
+                return dbUtils.cleanup(res.pop());
+            } catch (e) {
+                throw new Error('Delete library ' + e);
             }
         }
     };
