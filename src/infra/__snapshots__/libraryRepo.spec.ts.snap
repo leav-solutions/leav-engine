@@ -42,6 +42,44 @@ exports[`LibraryRepo getLibrary Should return all libs if no filter 1`] = `"FOR 
 
 exports[`LibraryRepo getLibrary Should return all libs if no filter 2`] = `Object {}`;
 
+exports[`LibraryRepo getLibraryAttributes Should get library attributes through graph query 1`] = `
+"
+                FOR v
+                IN 1 OUTBOUND 'core_libraries/users'
+                core_edge_libraries_attributes
+                RETURN v
+            "
+`;
+
+exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 1`] = `
+"
+                FOR attr IN @value0
+                    LET attrToInsert = {
+                        _from: @value1,
+                        _to: CONCAT('core_attributes/', attr)
+                    }
+                    UPSERT {
+                        _from: @value1,
+                        _to: CONCAT('core_attributes/', attr)
+                    }
+                    INSERT attrToInsert
+                    UPDATE attrToInsert
+                    IN @@value2
+                    RETURN NEW
+            "
+`;
+
+exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 2`] = `
+Object {
+  "@value2": "core_edge_libraries_attributes",
+  "value0": Array [
+    "id",
+    "created_at",
+  ],
+  "value1": "core_libraries/users",
+}
+`;
+
 exports[`LibraryRepo updateLibrary Should update library 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
 exports[`LibraryRepo updateLibrary Should update library 2`] = `

@@ -48,7 +48,7 @@ export default function(db: Database): IDbService {
 
     return {
         db,
-        async execute(query: string | AqlQuery): Promise<[any]> {
+        async execute(query: string | AqlQuery): Promise<any[]> {
             const res = await db.query(query);
             return res.all();
         },

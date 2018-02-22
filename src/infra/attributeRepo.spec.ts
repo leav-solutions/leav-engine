@@ -190,21 +190,5 @@ describe('AttributeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
         });
-
-        // test('Should throw if unknown attribute', async function() {
-        //     const mockDbServ = {
-        //         db: new Database(),
-        //         execute: jest.fn().mockReturnValue(Promise.resolve([]))
-        //     };
-
-        //     const attrRepo = attributeRepo(mockDbServ, null);
-        //     attrRepo.getAttributes = jest.fn().mockReturnValue(Promise.resolve([]));
-
-        //     const deleteAttr = async function() {
-        //         await attrRepo.deleteAttribute(attrData.id);
-        //     };
-
-        //     await expect(deleteAttr()).rejects.toBeInstanceOf(Error);
-        // });
     });
 });

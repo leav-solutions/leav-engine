@@ -4,6 +4,7 @@ import {IAttribute, AttributeTypes, AttributeFormats} from '../domain/attributeD
 import {aql} from 'arangojs';
 
 export interface IAttributeRepo {
+    ATTRIB_COLLECTION_NAME?: string;
     getAttributes?(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
     updateAttribute?(attrData: IAttribute): Promise<IAttribute>;
     createAttribute?(attrData: IAttribute): Promise<IAttribute>;
@@ -14,12 +15,12 @@ export interface IAttributeFilterOptions {
     id?: string;
 }
 
-const COLLECTION_NAME = 'core_attributes';
+export const ATTRIB_COLLECTION_NAME = 'core_attributes';
 
 export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRepo {
     return {
         async getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]> {
-            let query = `FOR a IN ${COLLECTION_NAME}`;
+            let query = `FOR a IN ${ATTRIB_COLLECTION_NAME}`;
             const bindVars = {};
 
             if (typeof filters !== 'undefined') {
@@ -52,7 +53,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRep
                 docToInsert = {...defaultParams, ...docToInsert};
 
                 // Insert in libraries collection
-                const col = dbService.db.collection(COLLECTION_NAME);
+                const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
                 const res = await dbService.execute(aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`);
 
                 return dbUtils.cleanup(res.pop());
@@ -74,7 +75,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRep
                 docToInsert = {...defaultParams, ...docToInsert};
 
                 // Insert in libraries collection
-                const col = dbService.db.collection(COLLECTION_NAME);
+                const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
                 const res = await dbService.execute(aql`INSERT ${docToInsert} IN ${col} RETURN NEW`);
 
                 return dbUtils.cleanup(res.pop());
@@ -85,7 +86,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRep
         async deleteAttribute(id: string): Promise<IAttribute> {
             try {
                 // Delete attribute
-                const col = dbService.db.collection(COLLECTION_NAME);
+                const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
                 const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`);
 
                 // Return deleted attribute

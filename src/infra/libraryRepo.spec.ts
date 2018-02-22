@@ -2,6 +2,7 @@ import libraryRepo from './libraryRepo';
 import {DocumentCollection} from 'arangojs/lib/esm/collection';
 import {Connection} from 'arangojs/lib/esm/connection';
 import {Database} from 'arangojs';
+import {create} from 'domain';
 
 describe('LibraryRepo', () => {
     describe('getLibrary', () => {
@@ -74,8 +75,8 @@ describe('LibraryRepo', () => {
     });
 
     describe('createLibrary', () => {
-        const docLibData = {_key: 'test_library', system: true};
-        const libData = {id: 'test_library', system: true};
+        const docLibData = {_key: 'test_library', system: true, attributes: ['id', 'created_by']};
+        const libData = {id: 'test_library', system: true, attributes: ['id', 'created_by']};
         test('Should insert a library and create a new collection', async function() {
             const mockDbServ = {
                 db: new Database(),
@@ -95,6 +96,7 @@ describe('LibraryRepo', () => {
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(mockDbServ.createCollection.mock.calls.length).toBe(1);
 
+            // First call is to insert library
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^INSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
@@ -168,6 +170,108 @@ describe('LibraryRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+        });
+    });
+
+    describe('saveLibraryAttributes', () => {
+        test('Should link attributes to a library and return linked attributes', async function() {
+            const mockQueryRes = [
+                {
+                    _key: '222400216',
+                    _id: 'core_edge_libraries_attributes/222400216',
+                    _from: 'core_libraries/users',
+                    _to: 'core_attributes/id',
+                    _rev: '_WSse-um--_'
+                },
+                {
+                    _key: '222400220',
+                    _id: 'core_edge_libraries_attributes/222400220',
+                    _from: 'core_libraries/users',
+                    _to: 'core_attributes/created_at',
+                    _rev: '_WSse-um--B'
+                }
+            ];
+            const mockDbServ = {
+                db: new Database(),
+                execute: jest.fn().mockReturnValue(Promise.resolve(mockQueryRes))
+            };
+
+            const libRepo = libraryRepo(mockDbServ, null);
+
+            const createdAttrs = await libRepo.saveLibraryAttributes('users', ['id', 'created_at']);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            // First call is to insert library
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR attr/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(createdAttrs).toEqual(['id', 'created_at']);
+        });
+    });
+
+    describe('getLibraryAttributes', () => {
+        test('Should get library attributes through graph query', async function() {
+            const mockQueryRes = [
+                {
+                    _key: 'modified_by',
+                    _id: 'core_attributes/modified_by',
+                    _rev: '_WSfp4UC--_',
+                    format: 'text',
+                    label: {en: 'Modified by', fr: 'Modifié par'},
+                    system: true,
+                    type: 'link'
+                },
+                {
+                    _key: 'modified_at',
+                    _id: 'core_attributes/modified_at',
+                    _rev: '_WSfp4UG--_',
+                    format: 'numeric',
+                    label: {en: 'Modification date', fr: 'Date de modification'},
+                    system: true,
+                    type: 'index'
+                }
+            ];
+            const mockDbServ = {
+                db: new Database(),
+                execute: jest.fn().mockReturnValue(Promise.resolve(mockQueryRes))
+            };
+
+            const mockCleanupRes = [
+                {
+                    id: 'modified_by',
+                    format: 'text',
+                    label: {en: 'Modified by', fr: 'Modifié par'},
+                    system: true,
+                    type: 'link'
+                },
+                {
+                    id: 'modified_at',
+                    format: 'numeric',
+                    label: {en: 'Modification date', fr: 'Date de modification'},
+                    system: true,
+                    type: 'index'
+                }
+            ];
+            const mockDbUtils = {
+                cleanup: jest
+                    .fn()
+                    .mockReturnValueOnce(mockCleanupRes[0])
+                    .mockReturnValueOnce(mockCleanupRes[1])
+            };
+
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+
+            const libAttrs = await libRepo.getLibraryAttributes('users');
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            // First call is to insert library
+            expect(mockDbServ.execute.mock.calls[0][0]).toMatch(/IN 1 OUTBOUND/);
+            expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
+
+            expect(libAttrs).toEqual(mockCleanupRes);
         });
     });
 });

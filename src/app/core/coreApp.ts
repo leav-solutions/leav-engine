@@ -22,14 +22,15 @@ export default function(libraryDomain: ILibraryDomain, attributeDomain: IAttribu
 
                     # Application Library
                     type Library {
-                        id: String,
+                        id: ID,
                         system: Boolean,
-                        label: SystemTranslation
+                        label: SystemTranslation,
+                        attributes: [Attribute]
                     }
 
                     # Application Attribute
                     type Attribute {
-                        id: String,
+                        id: ID,
                         type: String,
                         format: String,
                         system: Boolean,
@@ -37,27 +38,28 @@ export default function(libraryDomain: ILibraryDomain, attributeDomain: IAttribu
                     }
 
                     input LibraryInput {
-                        id: String!
-                        label: SystemTranslationInput
+                        id: ID!
+                        label: SystemTranslationInput,
+                        attributes: [ID]
                     }
 
                     input AttributeInput {
-                        id: String!
+                        id: ID!
                         type: String!
                         format: String
                         label: SystemTranslationInput
                     }
 
                     type Query {
-                        libraries(id: String): [Library]
-                        attributes(id: String): [Attribute]
+                        libraries(id: ID): [Library]
+                        attributes(id: ID): [Attribute]
                     }
 
                     type Mutation {
                         saveLibrary(library: LibraryInput): Library
-                        deleteLibrary(id: String): Library
+                        deleteLibrary(id: ID): Library
                         saveAttribute(attribute: AttributeInput): Attribute
-                        deleteAttribute(id: String): Attribute
+                        deleteAttribute(id: ID): Attribute
                     }
                 `,
                 resolvers: {

@@ -1,11 +1,17 @@
 import {ILibraryRepo, ILibraryFilterOptions} from 'infra/libraryRepo';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {ISystemTranslation} from './coreDomain';
+import {IAttribute} from './attributeDomain';
 
 export interface ILibrary {
     id: string;
     label?: ISystemTranslation;
     system?: boolean;
+
+    /**
+     * List of attributes usable in this library
+     */
+    attributes?: string[] | IAttribute[];
 }
 
 export interface ILibraryDomain {
@@ -17,7 +23,15 @@ export interface ILibraryDomain {
 export default function(libraryRepo: ILibraryRepo): ILibraryDomain {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
-            const libs = await libraryRepo.getLibraries(filters);
+            let libs = await libraryRepo.getLibraries(filters);
+
+            libs = await Promise.all(
+                libs.map(async lib => {
+                    lib.attributes = await libraryRepo.getLibraryAttributes(lib.id);
+
+                    return lib;
+                })
+            );
 
             return libs;
         },
@@ -28,6 +42,15 @@ export default function(libraryRepo: ILibraryRepo): ILibraryDomain {
                 const lib = libs.length
                     ? await libraryRepo.updateLibrary(libData)
                     : await libraryRepo.createLibrary(libData);
+
+                // New library? Link default attributes. Otherwise, save given attributes
+                const libAttributes = libs.length
+                    ? libData.attributes
+                    : ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
+
+                if (typeof libAttributes !== 'undefined') {
+                    await libraryRepo.saveLibraryAttributes(libData.id, libAttributes);
+                }
 
                 return lib;
             } catch (e) {
