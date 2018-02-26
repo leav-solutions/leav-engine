@@ -2,12 +2,20 @@ import {merge} from 'lodash';
 import {ILibraryDomain, ILibrary} from 'domain/libraryDomain';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IAttributeDomain, IAttribute} from 'domain/attributeDomain';
+import {IRecord, IRecordDomain} from 'domain/recordDomain';
+import {IUtils} from 'utils/utils';
 
 export interface ICoreApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(libraryDomain: ILibraryDomain, attributeDomain: IAttributeDomain, config: any): ICoreApp {
+export default function(
+    libraryDomain: ILibraryDomain,
+    attributeDomain: IAttributeDomain,
+    recordDomain: IRecordDomain,
+    utils: IUtils,
+    config: any
+): ICoreApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -37,6 +45,12 @@ export default function(libraryDomain: ILibraryDomain, attributeDomain: IAttribu
                         label: SystemTranslation
                     }
 
+                    interface Record {
+                        id: ID,
+                        created_at: Int,
+                        modified_at: Int
+                    }
+
                     input LibraryInput {
                         id: ID!
                         label: SystemTranslationInput,
@@ -60,7 +74,9 @@ export default function(libraryDomain: ILibraryDomain, attributeDomain: IAttribu
                         deleteLibrary(id: ID): Library
                         saveAttribute(attribute: AttributeInput): Attribute
                         deleteAttribute(id: ID): Attribute
+                        createRecord(library: String): Record
                     }
+
                 `,
                 resolvers: {
                     Query: {
@@ -83,10 +99,29 @@ export default function(libraryDomain: ILibraryDomain, attributeDomain: IAttribu
                         },
                         async deleteAttribute(parent, {id}): Promise<IAttribute> {
                             return attributeDomain.deleteAttribute(id);
+                        },
+                        async createRecord(parent, {library}): Promise<IRecord> {
+                            return recordDomain.createRecord(library);
                         }
                     }
                 }
             };
+
+            const libraries = await libraryDomain.getLibraries();
+            for (const lib of libraries) {
+                const libQueryName = utils.libNameToQueryName(lib.id);
+                const libTypeName = utils.libNameToTypeName(lib.id);
+
+                baseSchema.typeDefs += `
+                    extend type Query {
+                        ${libQueryName}: [Record]
+                    }
+                `;
+
+                baseSchema.resolvers.Query[libQueryName] = async (): Promise<IRecord[]> => {
+                    return null;
+                };
+            }
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 

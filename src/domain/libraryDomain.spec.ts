@@ -108,7 +108,7 @@ describe('LibraryDomain', () => {
             await expect(attrDomain.deleteLibrary(libData.id)).rejects.toThrow();
         });
 
-        test('Should throw if system attribute', async function() {
+        test('Should throw if system library', async function() {
             const mockLibRepo = {deleteLibrary: jest.fn().mockReturnValue(Promise.resolve())};
             const attrDomain = libraryDomain(mockLibRepo);
             attrDomain.getLibraries = jest.fn().mockReturnValue(Promise.resolve([{system: true}]));

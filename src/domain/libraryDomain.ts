@@ -59,21 +59,21 @@ export default function(libraryRepo: ILibraryRepo): ILibraryDomain {
         },
         async deleteLibrary(id: string): Promise<ILibrary> {
             try {
-                // Get attribute
-                const attr = await this.getLibraries({id});
+                // Get library
+                const lib = await this.getLibraries({id});
 
                 // Check if exists and can delete
-                if (!attr.length) {
-                    throw new Error('Unknown attribute');
+                if (!lib.length) {
+                    throw new Error('Unknown library');
                 }
 
-                if (attr.pop().system) {
-                    throw new Error('Cannot delete system attribute');
+                if (lib.pop().system) {
+                    throw new Error('Cannot delete system library');
                 }
 
                 return libraryRepo.deleteLibrary(id);
             } catch (e) {
-                throw new Error('Delete attribute ' + e);
+                throw new Error('Delete library ' + e);
             }
         }
     };
