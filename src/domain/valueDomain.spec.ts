@@ -6,15 +6,15 @@ describe('ValueDomain', () => {
         test('Should save an indexed value', async function() {
             const savedValueData = {value: 'test val'};
             const mockAttrDomain = {
-                getAttributeProperties: jest.fn().mockReturnValue(Promise.resolve({id: 'test_attr', type: 'index'}))
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: 'index'})
             };
 
             const mockLibDomain = {
-                getLibraries: jest.fn().mockReturnValue(Promise.resolve([{id: 'test_lib'}]))
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
             const mockValueRepo = {
-                saveValue: jest.fn().mockReturnValue(Promise.resolve(savedValueData))
+                saveValue: global.__mockPromise(savedValueData)
             };
 
             const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValueRepo);
@@ -32,11 +32,11 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: jest.fn().mockReturnValue(Promise.resolve([{id: 'test_lib'}]))
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
             const mockValueRepo = {
-                saveValue: jest.fn().mockReturnValue(Promise.resolve())
+                saveValue: global.__mockPromise()
             };
 
             const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValueRepo);
@@ -46,15 +46,15 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockAttrDomain = {
-                getAttributes: jest.fn().mockReturnValue(Promise.resolve([{id: 'test_attr'}]))
+                getAttributes: global.__mockPromise([{id: 'test_attr'}])
             };
 
             const mockLibDomain = {
-                getLibraries: jest.fn().mockReturnValue(Promise.resolve([]))
+                getLibraries: global.__mockPromise([])
             };
 
             const mockValueRepo = {
-                saveValue: jest.fn().mockReturnValue(Promise.resolve())
+                saveValue: global.__mockPromise()
             };
 
             const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValueRepo);

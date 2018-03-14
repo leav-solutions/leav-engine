@@ -7,7 +7,7 @@ import {create} from 'domain';
 describe('LibraryRepo', () => {
     describe('getLibrary', () => {
         test('Should return all libs if no filter', async function() {
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve([]))};
+            const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockDbUtils = {cleanup: jest.fn()};
             const libRepo = libraryRepo(mockDbServ, mockDbUtils);
 
@@ -22,7 +22,7 @@ describe('LibraryRepo', () => {
         });
 
         test('Should filter', async function() {
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve([]))};
+            const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockCleanupRes = {id: 'test_library', system: false};
             const mockConvertRes = {_key: 'test_library', system: false};
             const mockDbUtils = {
@@ -39,7 +39,7 @@ describe('LibraryRepo', () => {
         });
 
         test('Should return an empty array if no results', async function() {
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve([]))};
+            const mockDbServ = {db: null, execute: global.__mockPromise([])};
 
             const mockCleanupRes = {id: 'test_library'};
             const mockDbUtils = {
@@ -57,7 +57,7 @@ describe('LibraryRepo', () => {
 
         test('Should format returned values', async function() {
             const mockLibList = [{_key: 'test', _id: 'core_libraries/test', _rev: '_WR0JkDW--_'}];
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve(mockLibList))};
+            const mockDbServ = {db: null, execute: global.__mockPromise(mockLibList)};
 
             const mockCleanupRes = [{id: 'test', system: false}];
             const mockDbUtils = {
@@ -80,8 +80,8 @@ describe('LibraryRepo', () => {
         test('Should insert a library and create a new collection', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockReturnValue(Promise.resolve([docLibData])),
-                createCollection: jest.fn().mockReturnValue(Promise.resolve())
+                execute: global.__mockPromise([docLibData]),
+                createCollection: global.__mockPromise()
             };
 
             const mockCleanupRes = libData;
@@ -112,7 +112,7 @@ describe('LibraryRepo', () => {
         test('Should update library', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockReturnValue(Promise.resolve([docLibData]))
+                execute: global.__mockPromise([docLibData])
             };
 
             const mockDbUtils = {
@@ -149,8 +149,8 @@ describe('LibraryRepo', () => {
         test('Should delete a library and return deleted library', async function() {
             const mockDbServ = {
                 db: new Database(),
-                dropCollection: jest.fn().mockReturnValue(Promise.resolve()),
-                execute: jest.fn().mockReturnValue(Promise.resolve([docLibData]))
+                dropCollection: global.__mockPromise(),
+                execute: global.__mockPromise([docLibData])
             };
 
             const mockCleanupRes = libData;
@@ -160,7 +160,7 @@ describe('LibraryRepo', () => {
             };
 
             const libRepo = libraryRepo(mockDbServ, mockDbUtils);
-            libRepo.getLibraries = jest.fn().mockReturnValue(Promise.resolve([libData]));
+            libRepo.getLibraries = global.__mockPromise([libData]);
 
             const deleteRes = await libRepo.deleteLibrary(libData.id);
 
@@ -193,7 +193,7 @@ describe('LibraryRepo', () => {
             ];
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockReturnValue(Promise.resolve(mockQueryRes))
+                execute: global.__mockPromise(mockQueryRes)
             };
 
             const libRepo = libraryRepo(mockDbServ, null);
@@ -236,7 +236,7 @@ describe('LibraryRepo', () => {
             ];
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockReturnValue(Promise.resolve(mockQueryRes))
+                execute: global.__mockPromise(mockQueryRes)
             };
 
             const mockCleanupRes = [

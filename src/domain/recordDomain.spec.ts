@@ -6,7 +6,7 @@ describe('RecordDomain', () => {
         test('Should create a new record', async function() {
             const createdRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
             const mockRecordRepo = {
-                createRecord: jest.fn().mockReturnValue(Promise.resolve(createdRecordData))
+                createRecord: global.__mockPromise(createdRecordData)
             };
 
             const recDomain = recordDomain(mockRecordRepo);
@@ -24,7 +24,7 @@ describe('RecordDomain', () => {
         const recordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
         test('Should delete an record and return deleted record', async function() {
-            const mockLibRepo = {deleteRecord: jest.fn().mockReturnValue(Promise.resolve(recordData))};
+            const mockLibRepo = {deleteRecord: global.__mockPromise(recordData)};
             const recDomain = recordDomain(mockLibRepo);
 
             const deleteRes = await recDomain.deleteRecord('test', recordData.id);
@@ -34,7 +34,7 @@ describe('RecordDomain', () => {
 
         // TODO: handle unknown record?
         // test('Should throw if unknown record', async function() {
-        //     const mockLibRepo = {deleteRecord: jest.fn().mockReturnValue(Promise.resolve(recordData))};
+        //     const mockLibRepo = {deleteRecord: global.__mockPromise(recordData)};
         //     const recDomain = recordDomain(mockLibRepo);
 
         //     await expect(recDomain.deleteRecord(recordData.id)).rejects.toThrow();

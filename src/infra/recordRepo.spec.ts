@@ -20,8 +20,8 @@ describe('RecordRepo', () => {
             };
 
             const mockDbCollec = {
-                save: jest.fn().mockReturnValue(Promise.resolve(createdRecordData)),
-                document: jest.fn().mockReturnValue(Promise.resolve(createdRecordData))
+                save: global.__mockPromise(createdRecordData),
+                document: global.__mockPromise(createdRecordData)
             };
 
             const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};
@@ -57,7 +57,7 @@ describe('RecordRepo', () => {
             };
 
             const mockDbCollec = {
-                remove: jest.fn().mockReturnValue(Promise.resolve(deletedRecordData))
+                remove: global.__mockPromise(deletedRecordData)
             };
 
             const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};

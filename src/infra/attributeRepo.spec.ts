@@ -4,7 +4,7 @@ import {AttributeTypes, AttributeFormats} from '../domain/attributeDomain';
 describe('AttributeRepo', () => {
     describe('getAttribute', () => {
         test('Should return all libs if no filter', async function() {
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve([]))};
+            const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockDbUtils = {cleanup: jest.fn()};
             const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
 
@@ -19,7 +19,7 @@ describe('AttributeRepo', () => {
         });
 
         test('Should filter', async function() {
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve([]))};
+            const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockCleanupRes = {id: 'test_attribute', system: false};
             const mockConvertRes = {_key: 'test_attribute', system: false};
             const mockDbUtils = {
@@ -36,7 +36,7 @@ describe('AttributeRepo', () => {
         });
 
         test('Should return an empty array if no results', async function() {
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve([]))};
+            const mockDbServ = {db: null, execute: global.__mockPromise([])};
 
             const mockCleanupRes = {id: 'test_attribute'};
             const mockDbUtils = {
@@ -54,7 +54,7 @@ describe('AttributeRepo', () => {
 
         test('Should format returned values', async function() {
             const mockLibList = [{_key: 'test', _id: 'core_attributes/test', _rev: '_WR0JkDW--_'}];
-            const mockDbServ = {db: null, execute: jest.fn().mockReturnValue(Promise.resolve(mockLibList))};
+            const mockDbServ = {db: null, execute: global.__mockPromise(mockLibList)};
 
             const mockCleanupRes = [{id: 'test', system: false}];
             const mockDbUtils = {
@@ -91,7 +91,7 @@ describe('AttributeRepo', () => {
         test('Should update an existing attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockReturnValue(Promise.resolve([docAttrData]))
+                execute: global.__mockPromise([docAttrData])
             };
 
             const mockCleanupRes = attrData;
@@ -126,7 +126,7 @@ describe('AttributeRepo', () => {
         test('Should create a new attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockReturnValue(Promise.resolve([docAttrData]))
+                execute: global.__mockPromise([docAttrData])
             };
 
             const mockCleanupRes = attrData;
@@ -170,7 +170,7 @@ describe('AttributeRepo', () => {
         test('Should delete an attribute and return deleted attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockReturnValue(Promise.resolve([docAttrData]))
+                execute: global.__mockPromise([docAttrData])
             };
 
             const mockCleanupRes = attrData;
@@ -180,7 +180,7 @@ describe('AttributeRepo', () => {
             };
 
             const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
-            attrRepo.getAttributes = jest.fn().mockReturnValue(Promise.resolve([attrData]));
+            attrRepo.getAttributes = global.__mockPromise([attrData]);
 
             const deleteRes = await attrRepo.deleteAttribute(attrData.id);
 

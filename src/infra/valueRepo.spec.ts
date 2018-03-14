@@ -17,8 +17,8 @@ describe('ValueRepo', () => {
             };
 
             const mockDbCollec = {
-                update: jest.fn().mockReturnValue(Promise.resolve(updatedRecordData)),
-                document: jest.fn().mockReturnValue(Promise.resolve(updatedRecordData))
+                update: global.__mockPromise(updatedRecordData),
+                document: global.__mockPromise(updatedRecordData)
             };
 
             const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};

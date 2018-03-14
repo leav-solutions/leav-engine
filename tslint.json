@@ -27,6 +27,7 @@
         "no-implicit-dependencies": false,
         "no-submodule-imports": false,
         "ordered-imports": false,
-        "arrow-parens": [true, "ban-single-arg-parens"]
+        "arrow-parens": [true, "ban-single-arg-parens"],
+        "no-namespace": [true, "allow-declarations"]
     }
 }
