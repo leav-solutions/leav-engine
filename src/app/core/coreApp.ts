@@ -4,6 +4,7 @@ import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IAttributeDomain, IAttribute} from 'domain/attributeDomain';
 import {IRecord, IRecordDomain} from 'domain/recordDomain';
 import {IUtils} from 'utils/utils';
+import {IValue, IValueDomain} from 'domain/valueDomain';
 
 export interface ICoreApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -13,6 +14,7 @@ export default function(
     libraryDomain: ILibraryDomain,
     attributeDomain: IAttributeDomain,
     recordDomain: IRecordDomain,
+    valueDomain: IValueDomain,
     utils: IUtils,
     config: any
 ): ICoreApp {
@@ -45,10 +47,20 @@ export default function(
                         label: SystemTranslation
                     }
 
-                    interface Record {
+                    type Record {
                         id: ID,
                         created_at: Int,
                         modified_at: Int
+                    }
+
+                    type Value {
+                        id: ID,
+                        value: String
+                    }
+
+                    input ValueInput {
+                        id: ID,
+                        value: String
                     }
 
                     input LibraryInput {
@@ -75,6 +87,8 @@ export default function(
                         saveAttribute(attribute: AttributeInput): Attribute
                         deleteAttribute(id: ID): Attribute
                         createRecord(library: String): Record
+                        deleteRecord(library: String, id: ID): Record
+                        saveValue(library: String, recordId: ID, attribute: String, value: ValueInput): Value
                     }
 
                 `,
@@ -101,7 +115,15 @@ export default function(
                             return attributeDomain.deleteAttribute(id);
                         },
                         async createRecord(parent, {library}): Promise<IRecord> {
-                            return recordDomain.createRecord(library);
+                            const newRec = await recordDomain.createRecord(library);
+
+                            return newRec;
+                        },
+                        async deleteRecord(parent, {library, id}): Promise<IRecord> {
+                            return recordDomain.deleteRecord(library, id);
+                        },
+                        async saveValue(parent, {library, recordId, attribute, value}): Promise<IValue> {
+                            return valueDomain.saveValue(library, recordId, attribute, value);
                         }
                     }
                 }

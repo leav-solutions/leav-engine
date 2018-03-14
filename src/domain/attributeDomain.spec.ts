@@ -1,20 +1,6 @@
 import attributeDomain, {AttributeTypes, AttributeFormats} from './attributeDomain';
 
 describe('attributeDomain', () => {
-    describe('getAttribute', () => {
-        test('Should call repo', async function() {
-            const mockAttrRepo = {getAttributes: jest.fn().mockReturnValue(Promise.resolve([{id: 'test'}]))};
-            const attrDomain = attributeDomain(mockAttrRepo);
-
-            const attr = await attrDomain.getAttributes({id: 'test'});
-
-            expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getAttributes.mock.calls[0][0]).toEqual({id: 'test'});
-
-            expect(attr).toEqual([{id: 'test'}]);
-        });
-    });
-
     describe('getAttributes', () => {
         test('Should return a list of attributes', async function() {
             const mockAttrRepo = {
@@ -26,6 +12,31 @@ describe('attributeDomain', () => {
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
             expect(attr.length).toBe(2);
+        });
+    });
+
+    describe('getAttributeProperties', () => {
+        test('Should return a list of attributes', async function() {
+            const mockAttrRepo = {
+                getAttributes: jest.fn().mockReturnValue(Promise.resolve([{id: 'test'}]))
+            };
+
+            const attrDomain = attributeDomain(mockAttrRepo);
+            const attr = await attrDomain.getAttributeProperties('test');
+
+            expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.getAttributes).toBeCalledWith({id: 'test'});
+            expect(attr).toMatchObject({id: 'test'});
+        });
+
+        test('Should throw if unknown attribute', async function() {
+            const mockAttrRepo = {
+                getAttributes: jest.fn().mockReturnValue(Promise.resolve([]))
+            };
+
+            const attrDomain = attributeDomain(mockAttrRepo);
+
+            await expect(attrDomain.getAttributeProperties('test')).rejects.toThrow();
         });
     });
 

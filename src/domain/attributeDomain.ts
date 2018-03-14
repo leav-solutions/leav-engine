@@ -22,12 +22,20 @@ export enum AttributeFormats {
 
 export interface IAttributeDomain {
     /**
+     * Get attribute properties
+     *
+     * @param id
+     * @returns Promise<{}>
+     */
+    getAttributeProperties?(id: string): Promise<IAttribute>;
+
+    /**
      * Get attributes list, filtered or not
      *
      * @param filters
      * @returns Promise<[{}]>
      */
-    getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
+    getAttributes?(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
 
     /**
      * Save attribute.
@@ -36,18 +44,32 @@ export interface IAttributeDomain {
      * @param {} attrData
      * @return Promise<{}>  Saved attribute
      */
-    saveAttribute(attrData: IAttribute): Promise<IAttribute>;
+    saveAttribute?(attrData: IAttribute): Promise<IAttribute>;
 
     /**
      * Delete an attribute
      *
      * @param id
      */
-    deleteAttribute(id: string): Promise<IAttribute>;
+    deleteAttribute?(id: string): Promise<IAttribute>;
 }
 
 export default function(attributeRepo: IAttributeRepo): IAttributeDomain {
     return {
+        async getAttributeProperties(id: string): Promise<IAttribute> {
+            try {
+                const attrs = await attributeRepo.getAttributes({id});
+
+                if (!attrs.length) {
+                    throw new Error('Unknown attribute ' + id);
+                }
+                const props = attrs.pop();
+
+                return props;
+            } catch (e) {
+                throw new Error('Attribute properties: ' + e);
+            }
+        },
         async getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]> {
             const attrs = await attributeRepo.getAttributes(filters);
 
