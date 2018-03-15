@@ -62,6 +62,14 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                 });
             }
 
+            if (!await dbService.collectionExists('core_values')) {
+                await dbService.createCollection('core_values');
+            }
+
+            if (!await dbService.collectionExists('core_edge_values_links')) {
+                await dbService.createCollection('core_edge_values_links', collectionTypes.EDGE);
+            }
+
             // Save default attributes to users library
             await libraryRepo.saveLibraryAttributes('users', [
                 'id',

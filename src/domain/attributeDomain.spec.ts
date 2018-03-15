@@ -41,7 +41,7 @@ describe('attributeDomain', () => {
     });
 
     describe('saveAttribute', () => {
-        test('Should save a new library', async function() {
+        test('Should save a new attribute', async function() {
             const mockAttrRepo = {
                 getAttributes: global.__mockPromise([]),
                 createAttribute: global.__mockPromise({id: 'test', system: false, type: 'standard', format: 'text'}),
@@ -86,16 +86,6 @@ describe('attributeDomain', () => {
 
     describe('deleteAttribute', () => {
         const attrData = {id: 'test_attribute', system: false, label: {fr: 'Test'}, format: 'text', type: 'index'};
-
-        const docAttrData = {
-            _key: 'test_attribute',
-            _id: 'core_attributes/test_attribute',
-            _rev: '_WSgDYea--_',
-            format: 'numeric',
-            label: {en: 'Test', fr: 'Test'},
-            system: false,
-            type: 'index'
-        };
 
         test('Should delete an attribute and return deleted attribute', async function() {
             const mockAttrRepo = {deleteAttribute: global.__mockPromise(attrData)};

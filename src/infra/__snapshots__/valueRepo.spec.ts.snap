@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ValueRepo getValues Should return values for index attribute 1`] = `
+"
+                    FOR r IN @value0
+                        FILTER r._key == @value1
+                        RETURN r.@value2
+                "
+`;
+
+exports[`ValueRepo getValues Should return values for index attribute 2`] = `
+Object {
+  "value0": "test_lib",
+  "value1": 123456,
+  "value2": "test_attr",
+}
+`;
+
+exports[`ValueRepo getValues Should return values for standard attribute 1`] = `
+"
+                    FOR value, edge
+                        IN 1 OUTBOUND @value0
+                        @value1
+                        FILTER edge.attribute == @value2
+                        RETURN {value, edge}
+                "
+`;
+
+exports[`ValueRepo getValues Should return values for standard attribute 2`] = `
+Object {
+  "value0": "test_lib/123456",
+  "value1": "core_edge_values_links",
+  "value2": "test_attr",
+}
+`;

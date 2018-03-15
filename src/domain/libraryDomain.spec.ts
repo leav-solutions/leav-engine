@@ -82,14 +82,6 @@ describe('LibraryDomain', () => {
     describe('deleteLibrary', () => {
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
-        const docLibData = {
-            _key: 'test_lib',
-            _id: 'core_libraries/test_lib',
-            _rev: '_WSgDYea--_',
-            label: {en: 'Test', fr: 'Test'},
-            system: false
-        };
-
         test('Should delete an library and return deleted library', async function() {
             const mockLibRepo = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain(mockLibRepo);

@@ -55,7 +55,9 @@ export default function(
 
                     type Value {
                         id: ID,
-                        value: String
+                        value: String,
+                        modified_at: Int,
+                        created_at: Int
                     }
 
                     input ValueInput {

@@ -5,7 +5,7 @@ export interface IRecord {
     id?: number;
     library?: string;
     created_at?: number;
-    mdofiier_at?: number;
+    modified_at?: number;
 }
 
 export interface IRecordDomain {

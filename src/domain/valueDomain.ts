@@ -6,9 +6,10 @@ import {ILibraryDomain} from './libraryDomain';
 
 export interface IValue {
     id?: number;
+    attribute?: string;
     value?: any;
     created_at?: number;
-    mdofiier_at?: number;
+    modified_at?: number;
 }
 
 export interface IValueDomain {
@@ -33,7 +34,25 @@ export default function(
 
                 const attr = await attributeDomain.getAttributeProperties(attribute);
 
-                return valueRepo.saveValue(library, recordId, attr, value);
+                // Check if value ID actually exists
+                if (value.id) {
+                    const existingVal = await valueRepo.getValueById(value.id);
+
+                    if (existingVal === null) {
+                        throw new Error('Unknown value');
+                    }
+                }
+
+                const valueToSave = {
+                    ...value,
+                    modified_at: moment().unix()
+                };
+
+                if (!value.id) {
+                    valueToSave.created_at = moment().unix();
+                }
+
+                return valueRepo.saveValue(library, recordId, attr, valueToSave);
             } catch (e) {
                 throw new Error('Save value : ' + e);
             }
