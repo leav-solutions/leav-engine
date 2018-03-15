@@ -1,6 +1,6 @@
 import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
-import {IAttribute, AttributeTypes, AttributeFormats} from '../domain/attributeDomain';
+import {IAttribute, AttributeTypes, AttributeFormats} from '../_types/attribute';
 import {aql} from 'arangojs';
 
 export interface IAttributeRepo {

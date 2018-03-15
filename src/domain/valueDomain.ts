@@ -3,14 +3,7 @@ import * as moment from 'moment';
 import {IAttributeDomain} from './attributeDomain';
 import {IValueRepo} from 'infra/valueRepo';
 import {ILibraryDomain} from './libraryDomain';
-
-export interface IValue {
-    id?: number;
-    attribute?: string;
-    value?: any;
-    created_at?: number;
-    modified_at?: number;
-}
+import {IValue} from '_types/value';
 
 export interface IValueDomain {
     saveValue?(library: string, recordId: string, attribute: string, value: IValue): Promise<IValue>;

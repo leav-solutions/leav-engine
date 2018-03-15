@@ -1,4 +1,5 @@
-import attributeDomain, {AttributeTypes, AttributeFormats} from './attributeDomain';
+import attributeDomain from './attributeDomain';
+import {AttributeTypes, AttributeFormats} from '../_types/attribute';
 
 describe('attributeDomain', () => {
     describe('getAttributes', () => {

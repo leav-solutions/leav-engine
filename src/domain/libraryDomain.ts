@@ -1,18 +1,8 @@
 import {ILibraryRepo, ILibraryFilterOptions} from 'infra/libraryRepo';
 import {IDbUtils} from 'infra/db/dbUtils';
-import {ISystemTranslation} from './coreDomain';
-import {IAttribute} from './attributeDomain';
-
-export interface ILibrary {
-    id: string;
-    label?: ISystemTranslation;
-    system?: boolean;
-
-    /**
-     * List of attributes usable in this library
-     */
-    attributes?: string[] | IAttribute[];
-}
+import {ISystemTranslation} from '_types/systemTranslation';
+import {IAttribute} from '_types/attribute';
+import {ILibrary} from '_types/library';
 
 export interface ILibraryDomain {
     getLibraries?(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;

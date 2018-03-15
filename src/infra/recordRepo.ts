@@ -1,6 +1,6 @@
 import {IDbService} from './db/dbService';
 import {IDbUtils} from './db/dbUtils';
-import {IRecord} from 'domain/recordDomain';
+import {IRecord} from '_types/record';
 
 export interface IRecordRepo {
     /**

@@ -2,7 +2,7 @@ import {IMigration} from 'infra/db/dbUtils';
 import {IDbService, collectionTypes} from '../dbService';
 import {ILibraryRepo} from 'infra/libraryRepo';
 import {IAttributeRepo} from 'infra/attributeRepo';
-import {AttributeTypes, AttributeFormats} from '../../../domain/attributeDomain';
+import {AttributeTypes, AttributeFormats} from '../../../_types/attribute';
 
 export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attributeRepo: IAttributeRepo): IMigration {
     return {

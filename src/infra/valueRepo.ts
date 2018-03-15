@@ -1,5 +1,5 @@
-import {IAttribute, AttributeTypes} from '../domain/attributeDomain';
-import {IValue} from '../domain/valueDomain';
+import {IAttribute, AttributeTypes, AttributeFormats} from '../_types/attribute';
+import {IValue} from '_types/value';
 import {IDbService} from './db/dbService';
 import {aql} from 'arangojs';
 

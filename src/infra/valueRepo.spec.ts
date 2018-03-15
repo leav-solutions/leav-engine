@@ -1,6 +1,6 @@
 import valueRepo from './valueRepo';
 import {Database} from 'arangojs';
-import {AttributeTypes} from '../domain/attributeDomain';
+import {AttributeTypes} from '../_types/attribute';
 
 describe('ValueRepo', () => {
     describe('saveValue', () => {

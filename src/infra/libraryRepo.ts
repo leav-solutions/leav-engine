@@ -1,9 +1,9 @@
 import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {aql} from 'arangojs';
-import {ILibrary} from 'domain/libraryDomain';
 import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from './attributeRepo';
-import {IAttribute} from 'domain/attributeDomain';
+import {IAttribute} from '_types/attribute';
+import {ILibrary} from '_types/library';
 
 const LIB_COLLECTION_NAME = 'core_libraries';
 const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';

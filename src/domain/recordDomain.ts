@@ -1,12 +1,6 @@
 import {IRecordRepo} from 'infra/recordRepo';
 import * as moment from 'moment';
-
-export interface IRecord {
-    id?: number;
-    library?: string;
-    created_at?: number;
-    modified_at?: number;
-}
+import {IRecord} from '_types/record';
 
 export interface IRecordDomain {
     /**

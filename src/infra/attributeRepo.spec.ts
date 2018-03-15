@@ -1,6 +1,7 @@
 import attributeRepo from './attributeRepo';
 import {Database} from 'arangojs';
-import {AttributeTypes, AttributeFormats} from '../domain/attributeDomain';
+import {AttributeTypes, AttributeFormats} from '../_types/attribute';
+
 describe('AttributeRepo', () => {
     describe('getAttribute', () => {
         test('Should return all libs if no filter', async function() {

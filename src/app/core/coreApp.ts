@@ -1,10 +1,14 @@
 import {merge} from 'lodash';
-import {ILibraryDomain, ILibrary} from 'domain/libraryDomain';
+import {ILibraryDomain} from 'domain/libraryDomain';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
-import {IAttributeDomain, IAttribute} from 'domain/attributeDomain';
-import {IRecord, IRecordDomain} from 'domain/recordDomain';
+import {IAttributeDomain} from 'domain/attributeDomain';
+import {IRecordDomain} from 'domain/recordDomain';
 import {IUtils} from 'utils/utils';
-import {IValue, IValueDomain} from 'domain/valueDomain';
+import {IValueDomain} from 'domain/valueDomain';
+import {IAttribute} from '_types/attribute';
+import {ILibrary} from '_types/library';
+import {IRecord} from '_types/record';
+import {IValue} from '_types/value';
 
 export interface ICoreApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
