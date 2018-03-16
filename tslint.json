@@ -2,7 +2,13 @@
     "defaultSeverity": "error",
     "extends": ["tslint:latest", "tslint-eslint-rules"],
     "rules": {
-        "ter-indent": [true, 4],
+        "ter-indent": [
+            true,
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
         "linebreak-style": [true, "LF"],
         "semicolon": [true, "always"],
         "no-console": false,
