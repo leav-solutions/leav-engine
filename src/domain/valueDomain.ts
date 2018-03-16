@@ -1,21 +1,24 @@
 import {IRecordRepo} from 'infra/recordRepo';
 import * as moment from 'moment';
 import {IAttributeDomain} from './attributeDomain';
-import {IValueRepo} from 'infra/valueRepo';
 import {ILibraryDomain} from './libraryDomain';
 import {IValue} from '_types/value';
+import {IAttributeTypeRepo} from 'infra/attributeRepo';
+import {AttributeTypes} from '../_types/attribute';
 
 export interface IValueDomain {
-    saveValue?(library: string, recordId: string, attribute: string, value: IValue): Promise<IValue>;
+    saveValue?(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
 }
 
 export default function(
     attributeDomain: IAttributeDomain,
     libraryDomain: ILibraryDomain,
-    valueRepo: IValueRepo
+    attributeIndexRepo: IAttributeTypeRepo,
+    attributeStandardRepo: IAttributeTypeRepo,
+    attributeLinkRepo: IAttributeTypeRepo
 ): IValueDomain {
     return {
-        async saveValue(library: string, recordId: string, attribute: string, value: IValue): Promise<IValue> {
+        async saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
             try {
                 // Get library
                 const lib = await libraryDomain.getLibraries({id: library});
@@ -27,9 +30,22 @@ export default function(
 
                 const attr = await attributeDomain.getAttributeProperties(attribute);
 
+                let attrTypeRepo: IAttributeTypeRepo;
+                switch (attr.type) {
+                    case AttributeTypes.INDEX:
+                        attrTypeRepo = attributeIndexRepo;
+                        break;
+                    case AttributeTypes.STANDARD:
+                        attrTypeRepo = attributeStandardRepo;
+                        break;
+                    case AttributeTypes.LINK:
+                        attrTypeRepo = attributeLinkRepo;
+                        break;
+                }
+
                 // Check if value ID actually exists
-                if (value.id) {
-                    const existingVal = await valueRepo.getValueById(value.id);
+                if (value.id && attr.type !== AttributeTypes.INDEX) {
+                    const existingVal = await attrTypeRepo.getValueById(library, recordId, attr, value);
 
                     if (existingVal === null) {
                         throw new Error('Unknown value');
@@ -45,7 +61,9 @@ export default function(
                     valueToSave.created_at = moment().unix();
                 }
 
-                return valueRepo.saveValue(library, recordId, attr, valueToSave);
+                return value.id && attr.type !== AttributeTypes.INDEX
+                    ? attrTypeRepo.updateValue(library, recordId, attr, valueToSave)
+                    : attrTypeRepo.createValue(library, recordId, attr, valueToSave);
             } catch (e) {
                 throw new Error('Save value : ' + e);
             }

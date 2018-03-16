@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributeIndexRepo getValues Should return values for index attribute 1`] = `
+"
+                FOR r IN @value0
+                    FILTER r._key == @value1
+                    RETURN r.@value2
+            "
+`;
+
+exports[`AttributeIndexRepo getValues Should return values for index attribute 2`] = `
+Object {
+  "value0": "test_lib",
+  "value1": 123456,
+  "value2": "test_attr",
+}
+`;

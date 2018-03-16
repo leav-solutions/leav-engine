@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributeStandardRepo getValues Should return values for standard attribute 1`] = `
+"
+                FOR value, edge
+                    IN 1 OUTBOUND @value0
+                    @value1
+                    FILTER edge.attribute == @value2
+                    RETURN {value, edge}
+            "
+`;
+
+exports[`AttributeStandardRepo getValues Should return values for standard attribute 2`] = `
+Object {
+  "value0": "test_lib/123456",
+  "value1": "core_edge_values_links",
+  "value2": "test_attr",
+}
+`;
