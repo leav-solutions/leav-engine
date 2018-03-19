@@ -107,7 +107,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRep
                     _key: '',
                     system: false,
                     label: {fr: '', en: ''},
-                    type: AttributeTypes.STANDARD,
+                    type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.TEXT
                 };
                 let docToInsert = dbUtils.convertToDoc(attrData);
@@ -129,7 +129,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRep
                     _key: '',
                     system: false,
                     label: {fr: '', en: ''},
-                    type: AttributeTypes.STANDARD,
+                    type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.TEXT
                 };
                 let docToInsert = dbUtils.convertToDoc(attrData);

@@ -48,7 +48,8 @@ export default function(
                         type: String,
                         format: String,
                         system: Boolean,
-                        label: SystemTranslation
+                        label: SystemTranslation,
+                        linked_library: String
                     }
 
                     type Record {
@@ -79,7 +80,8 @@ export default function(
                         id: ID!
                         type: String!
                         format: String
-                        label: SystemTranslationInput
+                        label: SystemTranslationInput,
+                        linked_library: String
                     }
 
                     type Query {

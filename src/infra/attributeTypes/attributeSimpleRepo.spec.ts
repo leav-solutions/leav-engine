@@ -1,11 +1,11 @@
-import attributeIndexRepo from './attributeIndexRepo';
+import attributeSimpleRepo from './attributeSimpleRepo';
 import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {
         id: 'test_attr',
-        type: AttributeTypes.INDEX
+        type: AttributeTypes.SIMPLE
     };
 
     describe('createValue', () => {
@@ -30,7 +30,7 @@ describe('AttributeIndexRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeIndexRepo(mockDbServ);
+            const attrRepo = attributeSimpleRepo(mockDbServ);
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'test val'
@@ -52,7 +52,7 @@ describe('AttributeIndexRepo', () => {
                 execute: global.__mockPromise(queryRes)
             };
 
-            const attrRepo = attributeIndexRepo(mockDbServ);
+            const attrRepo = attributeSimpleRepo(mockDbServ);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 

@@ -13,9 +13,9 @@ export interface IValueDomain {
 export default function(
     attributeDomain: IAttributeDomain,
     libraryDomain: ILibraryDomain,
-    attributeIndexRepo: IAttributeTypeRepo,
-    attributeStandardRepo: IAttributeTypeRepo,
-    attributeLinkRepo: IAttributeTypeRepo
+    attributeSimpleRepo: IAttributeTypeRepo,
+    attributeAdvancedRepo: IAttributeTypeRepo,
+    attributeAdvancedLinkRepo: IAttributeTypeRepo
 ): IValueDomain {
     return {
         async saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
@@ -32,19 +32,22 @@ export default function(
 
                 let attrTypeRepo: IAttributeTypeRepo;
                 switch (attr.type) {
-                    case AttributeTypes.INDEX:
-                        attrTypeRepo = attributeIndexRepo;
+                    case AttributeTypes.SIMPLE:
+                        attrTypeRepo = attributeSimpleRepo;
                         break;
-                    case AttributeTypes.STANDARD:
-                        attrTypeRepo = attributeStandardRepo;
+                    case AttributeTypes.SIMPLE_LINK:
+                        attrTypeRepo = attributeSimpleRepo;
                         break;
-                    case AttributeTypes.LINK:
-                        attrTypeRepo = attributeLinkRepo;
+                    case AttributeTypes.ADVANCED:
+                        attrTypeRepo = attributeAdvancedRepo;
+                        break;
+                    case AttributeTypes.ADVANCED_LINK:
+                        attrTypeRepo = attributeAdvancedLinkRepo;
                         break;
                 }
 
                 // Check if value ID actually exists
-                if (value.id && attr.type !== AttributeTypes.INDEX) {
+                if (value.id && attr.type !== AttributeTypes.SIMPLE) {
                     const existingVal = await attrTypeRepo.getValueById(library, recordId, attr, value);
 
                     if (existingVal === null) {
@@ -61,7 +64,7 @@ export default function(
                     valueToSave.created_at = moment().unix();
                 }
 
-                return value.id && attr.type !== AttributeTypes.INDEX
+                return value.id && attr.type !== AttributeTypes.SIMPLE
                     ? attrTypeRepo.updateValue(library, recordId, attr, valueToSave)
                     : attrTypeRepo.createValue(library, recordId, attr, valueToSave);
             } catch (e) {

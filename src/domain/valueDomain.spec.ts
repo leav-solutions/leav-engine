@@ -15,7 +15,7 @@ describe('ValueDomain', () => {
         test('Should save an indexed value', async function() {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
             const mockAttrDomain = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.INDEX})
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE})
             };
 
             const mockLibDomain = {
@@ -55,7 +55,7 @@ describe('ValueDomain', () => {
                 created_at: 123456
             };
             const mockAttrDomain = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: 'standard'})
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
             };
 
             const mockLibDomain = {
@@ -100,7 +100,7 @@ describe('ValueDomain', () => {
                 created_at: 123456
             };
             const mockAttrDomain = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: 'standard'})
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
             };
 
             const mockLibDomain = {
@@ -195,7 +195,7 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown value', async function() {
             const mockAttrDomain = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.STANDARD})
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
             };
 
             const mockLibDomain = {

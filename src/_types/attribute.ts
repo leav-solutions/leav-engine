@@ -6,12 +6,15 @@ export interface IAttribute {
     label?: ISystemTranslation;
     type: AttributeTypes;
     format?: AttributeFormats;
+    linked_library?: string;
 }
 
 export enum AttributeTypes {
-    LINK = 'link',
-    INDEX = 'index',
-    STANDARD = 'standard'
+    SIMPLE = 'simple',
+    SIMPLE_LINK = 'simple_link',
+    ADVANCED = 'advanced',
+    ADVANCED_LINK = 'advanced_link',
+    TREE = 'tree'
 }
 
 export enum AttributeFormats {

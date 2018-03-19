@@ -1,11 +1,11 @@
-import attributeStandardRepo from './attributeStandardRepo';
+import attributeAdvancedRepo from './attributeAdvancedRepo';
 import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
 
 describe('AttributeStandardRepo', () => {
     const mockAttribute = {
         id: 'test_attr',
-        type: AttributeTypes.STANDARD
+        type: AttributeTypes.ADVANCED
     };
 
     describe('createValue', () => {
@@ -53,7 +53,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeStandardRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'test val',
@@ -121,7 +121,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeStandardRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id: 987654,
@@ -183,7 +183,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeStandardRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id: 132465,
@@ -217,7 +217,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeStandardRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id: 132465,
@@ -266,7 +266,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeStandardRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 

@@ -86,7 +86,7 @@ describe('AttributeRepo', () => {
             system: true,
             label: {fr: 'Test'},
             format: AttributeFormats.TEXT,
-            type: AttributeTypes.STANDARD
+            type: AttributeTypes.ADVANCED
         };
 
         test('Should update an existing attribute', async function() {
@@ -121,7 +121,7 @@ describe('AttributeRepo', () => {
             system: true,
             label: {fr: 'Test'},
             format: AttributeFormats.TEXT,
-            type: AttributeTypes.STANDARD
+            type: AttributeTypes.ADVANCED
         };
 
         test('Should create a new attribute', async function() {
