@@ -51,7 +51,7 @@ export default function(
                 resolvers: {
                     Query: {
                         async libraries(parent, args) {
-                            return libraryDomain.getLibraries();
+                            return libraryDomain.getLibraries(args);
                         }
                     },
                     Mutation: {
