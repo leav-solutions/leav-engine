@@ -2,11 +2,11 @@ import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IValueDomain} from 'domain/valueDomain';
 import {IValue} from '_types/value';
 
-export interface ICoreLibraryApp {
+export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(valueDomain: IValueDomain): ICoreLibraryApp {
+export default function(valueDomain: IValueDomain): ICoreValueApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -24,7 +24,7 @@ export default function(valueDomain: IValueDomain): ICoreLibraryApp {
                     }
 
                     extend type Mutation {
-                        saveValue(library: String, recordId: ID, attribute: String, value: ValueInput): Value
+                        saveValue(library: LibraryId, recordId: ID, attribute: AttributeId, value: ValueInput): Value
                     }
                 `,
                 resolvers: {

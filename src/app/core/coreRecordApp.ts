@@ -2,24 +2,24 @@ import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IRecord} from '_types/record';
 import {IRecordDomain} from 'domain/recordDomain';
 
-export interface ICoreLibraryApp {
+export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(recordDomain: IRecordDomain): ICoreLibraryApp {
+export default function(recordDomain: IRecordDomain): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
-                    type Record {
+                    interface Record {
                         id: ID,
                         created_at: Int,
                         modified_at: Int
                     }
 
                     extend type Mutation {
-                        createRecord(library: String): Record
-                        deleteRecord(library: String, id: ID): Record
+                        createRecord(library: LibraryId): Record
+                        deleteRecord(library: LibraryId, id: ID): Record
                     }
 
                 `,

@@ -3,37 +3,48 @@ import {ILibraryDomain} from 'domain/libraryDomain';
 import {IUtils} from 'utils/utils';
 import {ILibrary} from '_types/library';
 import {IRecord} from '_types/record';
+import {ICoreAttributeApp} from './coreAttributeApp';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(libraryDomain: ILibraryDomain, utils: IUtils): ICoreLibraryApp {
+export default function(
+    libraryDomain: ILibraryDomain,
+    coreAttributeApp: ICoreAttributeApp,
+    utils: IUtils
+): ICoreLibraryApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
+            const libraries = await libraryDomain.getLibraries();
+
             const baseSchema = {
                 typeDefs: `
+                    enum LibraryId {
+                        ${libraries.map(lib => lib.id).join(' ')}
+                    }
+
                     # Application Library
                     type Library {
-                        id: ID,
+                        id: LibraryId,
                         system: Boolean,
                         label: SystemTranslation,
                         attributes: [Attribute]
                     }
 
                     input LibraryInput {
-                        id: ID!
+                        id: LibraryId!
                         label: SystemTranslationInput,
-                        attributes: [ID]
+                        attributes: [AttributeId]
                     }
 
                     type Query {
-                        libraries(id: ID): [Library]
+                        libraries(id: LibraryId): [Library]
                     }
 
                     type Mutation {
                         saveLibrary(library: LibraryInput): Library
-                        deleteLibrary(id: ID): Library
+                        deleteLibrary(id: LibraryId): Library
                     }
 
                 `,
@@ -45,6 +56,9 @@ export default function(libraryDomain: ILibraryDomain, utils: IUtils): ICoreLibr
                     },
                     Mutation: {
                         async saveLibrary(parent, {library}): Promise<ILibrary> {
+                            library.attributes = library.attributes.map(attrName => ({
+                                id: attrName
+                            }));
                             return libraryDomain.saveLibrary(library);
                         },
                         async deleteLibrary(parent, {id}): Promise<ILibrary> {
@@ -53,15 +67,17 @@ export default function(libraryDomain: ILibraryDomain, utils: IUtils): ICoreLibr
                     }
                 }
             };
-
-            const libraries = await libraryDomain.getLibraries();
             for (const lib of libraries) {
                 const libQueryName = utils.libNameToQueryName(lib.id);
                 const libTypeName = utils.libNameToTypeName(lib.id);
 
                 baseSchema.typeDefs += `
+                    type ${libTypeName} implements Record {
+                        ${lib.attributes.map(attr => `${attr.id}: ${coreAttributeApp.getGraphQLFormat(attr)}`)}
+                    }
+
                     extend type Query {
-                        ${libQueryName}: [Record]
+                        ${libQueryName}: [${libTypeName}]
                     }
                 `;
 

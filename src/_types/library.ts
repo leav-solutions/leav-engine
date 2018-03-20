@@ -9,5 +9,5 @@ export interface ILibrary {
     /**
      * List of attributes usable in this library
      */
-    attributes?: string[] | IAttribute[];
+    attributes?: IAttribute[];
 }

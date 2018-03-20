@@ -1,4 +1,5 @@
 import libraryDomain from './libraryDomain';
+import {AttributeTypes} from '../_types/attribute';
 
 describe('LibraryDomain', () => {
     describe('getLibraries', () => {
@@ -68,7 +69,10 @@ describe('LibraryDomain', () => {
 
             const libDomain = libraryDomain(mockLibRepo);
 
-            const updatedLib = await libDomain.saveLibrary({id: 'test', attributes: ['attr1', 'attr2']});
+            const updatedLib = await libDomain.saveLibrary({
+                id: 'test',
+                attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}, {id: 'attr2', type: AttributeTypes.SIMPLE}]
+            });
 
             expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
             expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);

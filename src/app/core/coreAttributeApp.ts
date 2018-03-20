@@ -1,41 +1,56 @@
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IAttributeDomain} from 'domain/attributeDomain';
-import {IAttribute} from '_types/attribute';
+import {IAttribute, AttributeTypes, AttributeFormats} from '../../_types/attribute';
 
-export interface ICoreLibraryApp {
+export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
+    getGraphQLFormat(attribute: IAttribute): string;
 }
 
-export default function(attributeDomain: IAttributeDomain): ICoreLibraryApp {
+export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
+            const attributes = await attributeDomain.getAttributes();
+
             const baseSchema = {
                 typeDefs: `
+                    enum AttributeId {
+                        ${attributes.map(attr => attr.id).join(' ')}
+                    }
+
+                    enum AttributeType {
+                        ${Object.values(AttributeTypes).join(' ')}
+                    }
+
+                    enum AttributeFormat {
+                        ${Object.values(AttributeFormats).join(' ')}
+                    }
+
                     # Application Attribute
                     type Attribute {
-                        id: ID,
-                        type: String,
-                        format: String,
+                        id: AttributeId,
+                        type: AttributeType,
+                        format: AttributeFormat,
                         system: Boolean,
                         label: SystemTranslation,
                         linked_library: String
                     }
 
                     input AttributeInput {
-                        id: ID!
-                        type: String!
-                        format: String
+                        id: AttributeId!
+                        type: AttributeType!
+                        format: AttributeFormat
                         label: SystemTranslationInput,
                         linked_library: String
                     }
 
                     extend type Query {
-                        attributes(id: ID): [Attribute]
+                        attributes(id: AttributeId): [Attribute]
                     }
 
                     extend type Mutation {
                         saveAttribute(attribute: AttributeInput): Attribute
-                        deleteAttribute(id: ID): Attribute
+                        deleteAttribute(id: AttributeId): Attribute
                     }
 
                 `,
@@ -59,6 +74,13 @@ export default function(attributeDomain: IAttributeDomain): ICoreLibraryApp {
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
+        },
+        getGraphQLFormat(attribute: IAttribute): string {
+            if (attribute.id === 'id') {
+                return 'ID';
+            } else {
+                return attribute.format === AttributeFormats.NUMERIC ? 'Int' : 'String';
+            }
         }
     };
 }

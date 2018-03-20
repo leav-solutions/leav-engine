@@ -33,12 +33,12 @@ export default function(libraryRepo: ILibraryRepo): ILibraryDomain {
                     ? await libraryRepo.updateLibrary(libData)
                     : await libraryRepo.createLibrary(libData);
 
-                // New library? Link default attributes. Otherwise, save given attributes
+                // New library? Link default attributes. Otherwise, save given attributes if any
                 const libAttributes = libs.length
-                    ? libData.attributes
+                    ? typeof libData.attributes !== 'undefined' ? libData.attributes.map(attr => attr.id) : null
                     : ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
 
-                if (typeof libAttributes !== 'undefined') {
+                if (libAttributes !== null) {
                     await libraryRepo.saveLibraryAttributes(libData.id, libAttributes);
                 }
 
