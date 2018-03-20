@@ -76,7 +76,7 @@ describe('AttributeStandardRepo', () => {
             expect(createdVal).toMatchObject(newValueData);
         });
     });
-    describe('createValue', () => {
+    describe('updateValue', () => {
         test('Should update a standard value', async function() {
             const savedValueData = {
                 _id: 'core_values/987654',
