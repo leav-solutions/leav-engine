@@ -17,6 +17,14 @@ describe('dbUtils', () => {
 
             expect(res).toMatchObject({id: 'testKey', normalKey: 'shouldBeKept'});
         });
+
+        test('Should return null if param is null', () => {
+            const testDbUtils = dbUtils(null, null);
+
+            const res = testDbUtils.cleanup(null);
+
+            expect(res).toBeNull();
+        });
     });
 
     describe('convertToDoc', () => {

@@ -91,6 +91,10 @@ export default function(dbService: IDbService, logger: winston.Winston): IDbUtil
          * @return any   Cleaned up object
          */
         cleanup(obj: any): any {
+            if (obj === null) {
+                return null;
+            }
+
             return Object.keys(obj).reduce((newObj: any, key) => {
                 if (key === '_key') {
                     newObj.id = obj[key];
