@@ -9,6 +9,13 @@ export interface IAttribute {
     linked_library?: string;
 }
 
+/**
+ * Accepted fields to filter attributes list
+ */
+export interface IAttributeFilterOptions {
+    id?: string;
+}
+
 export enum AttributeTypes {
     SIMPLE = 'simple',
     SIMPLE_LINK = 'simple_link',

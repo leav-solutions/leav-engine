@@ -11,3 +11,7 @@ export interface ILibrary {
      */
     attributes?: IAttribute[];
 }
+
+export interface ILibraryFilterOptions {
+    id?: string;
+}

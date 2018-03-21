@@ -1,6 +1,6 @@
 import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
-import {IAttribute, AttributeTypes, AttributeFormats} from '../_types/attribute';
+import {IAttribute, AttributeTypes, AttributeFormats, IAttributeFilterOptions} from '../_types/attribute';
 import {aql} from 'arangojs';
 import {IValue} from '_types/value';
 
@@ -68,13 +68,6 @@ export interface IAttributeTypeRepo {
      * @return {}   Return null if no value found
      */
     getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
-}
-
-/**
- * Accepted fields to filter attributes list
- */
-export interface IAttributeFilterOptions {
-    id?: string;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';

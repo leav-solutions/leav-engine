@@ -1,8 +1,8 @@
-import {ILibraryRepo, ILibraryFilterOptions} from 'infra/libraryRepo';
+import {ILibraryRepo} from 'infra/libraryRepo';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IAttribute} from '_types/attribute';
-import {ILibrary} from '_types/library';
+import {ILibrary, ILibraryFilterOptions} from '_types/library';
 
 export interface ILibraryDomain {
     getLibraries?(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;

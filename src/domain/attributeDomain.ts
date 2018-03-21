@@ -1,5 +1,5 @@
-import {IAttributeRepo, IAttributeFilterOptions} from 'infra/attributeRepo';
-import {IAttribute} from '_types/attribute';
+import {IAttributeRepo} from 'infra/attributeRepo';
+import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 
 export interface IAttributeDomain {
     /**
