@@ -29,14 +29,14 @@ Object {
 }
 `;
 
-exports[`AttributeRepo getAttribute Should filter 1`] = `"FOR a IN core_attributes FILTER a.@filterKey0 LIKE @filterValue0 FILTER a.@filterKey1 LIKE @filterValue1 RETURN a"`;
+exports[`AttributeRepo getAttribute Should filter 1`] = `"FOR a IN core_attributes FILTER a.@filterKey0 == @filterValue0 FILTER a.@filterKey1 == @filterValue1 RETURN a"`;
 
 exports[`AttributeRepo getAttribute Should filter 2`] = `
 Object {
   "filterKey0": "_key",
   "filterKey1": "system",
-  "filterValue0": "%test%",
-  "filterValue1": "%false%",
+  "filterValue0": "test",
+  "filterValue1": "false",
 }
 `;
 

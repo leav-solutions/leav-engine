@@ -19,12 +19,15 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             },
             {
                 [attribute.id]: value.value
+            },
+            {
+                keepNull: false
             }
         );
 
         const docData = await collec.document(updatedDoc);
 
-        return {value: docData[attribute.id]};
+        return {value: typeof docData[attribute.id] !== 'undefined' ? docData[attribute.id] : null};
     }
 
     return {
@@ -35,7 +38,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             return _saveValue(library, recordId, attribute, value);
         },
         async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return null;
+            return _saveValue(library, recordId, attribute, {...value, value: null});
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
             const res = await dbService.execute(aql`

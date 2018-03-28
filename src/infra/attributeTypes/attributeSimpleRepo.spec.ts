@@ -37,7 +37,7 @@ describe('AttributeIndexRepo', () => {
             });
 
             expect(mockDbCollec.update.mock.calls.length).toBe(1);
-            expect(mockDbCollec.update).toBeCalledWith({_key: 12345}, {test_attr: 'test val'});
+            expect(mockDbCollec.update).toBeCalledWith({_key: 12345}, {test_attr: 'test val'}, {keepNull: false});
 
             expect(createdVal).toMatchObject(updatedValueData);
         });
@@ -66,6 +66,40 @@ describe('AttributeIndexRepo', () => {
                 value: 'test val',
                 attribute: 'test_attr'
             });
+        });
+    });
+
+    describe('deleteValue', () => {
+        test('Should delete a value', async () => {
+            const updatedRecordData = {
+                _id: 'test_lib/222435651',
+                _rev: '_WSywvyC--_',
+                _key: 222435651
+            };
+
+            const deletedValueData = {
+                value: null
+            };
+
+            const mockDbCollec = {
+                update: global.__mockPromise(updatedRecordData),
+                document: global.__mockPromise(updatedRecordData)
+            };
+
+            const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};
+
+            const mockDbServ = {db: mockDb};
+
+            const attrRepo = attributeSimpleRepo(mockDbServ);
+
+            const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
+                value: 'test val'
+            });
+
+            expect(mockDbCollec.update.mock.calls.length).toBe(1);
+            expect(mockDbCollec.update).toBeCalledWith({_key: 12345}, {test_attr: null}, {keepNull: false});
+
+            expect(deletedVal).toMatchObject(deletedValueData);
         });
     });
 

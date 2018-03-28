@@ -58,13 +58,26 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
             };
         },
         async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return null;
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
+            // Create the link between records and add some metadata on it
+            const edgeData = {
+                _key: value.id
+            };
+
+            let deletedEdge;
+            deletedEdge = await edgeCollec.removeByExample(edgeData);
+
+            return {
+                id: value.id
+            };
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
             const res = await dbService.execute(aql`
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
-                    ${VALUES_LINKS_COLLECTION}
+                    ${edgeCollec}
                     FILTER edge.attribute == ${attribute.id}
                     RETURN {linkedRecord, edge}
             `);
@@ -78,15 +91,19 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
             }));
         },
         async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            const res = await dbService.execute(aql`
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
+            const query = aql`
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
-                    ${VALUES_LINKS_COLLECTION}
+                    ${edgeCollec}
                     FILTER edge._key == ${value.id}
                     FILTER edge.attribute == ${attribute.id}
                     LIMIT 1
                     RETURN {linkedRecord, edge}
-            `);
+            `;
+
+            const res = await dbService.execute(query);
 
             if (!res.length) {
                 return null;

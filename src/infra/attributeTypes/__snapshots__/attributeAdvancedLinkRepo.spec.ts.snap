@@ -4,7 +4,7 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value 1`] = `
 "
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
-                    @value1
+                    @@value1
                     FILTER edge._key == @value2
                     FILTER edge.attribute == @value3
                     LIMIT 1
@@ -14,8 +14,8 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value 1`] = `
 
 exports[`AttributeAdvancedLinkRepo getValueByID Should return value 2`] = `
 Object {
+  "@value1": "core_edge_values_links",
   "value0": "test_lib/987654",
-  "value1": "core_edge_values_links",
   "value2": 112233,
   "value3": "test_adv_link_attr",
 }
@@ -25,7 +25,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced l
 "
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
-                    @value1
+                    @@value1
                     FILTER edge.attribute == @value2
                     RETURN {linkedRecord, edge}
             "
@@ -33,8 +33,8 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced l
 
 exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced link attribute 2`] = `
 Object {
+  "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
-  "value1": "core_edge_values_links",
   "value2": "test_adv_link_attr",
 }
 `;

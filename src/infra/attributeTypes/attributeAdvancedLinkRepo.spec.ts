@@ -105,6 +105,43 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(savedVal).toMatchObject(valueData);
         });
     });
+
+    describe('deleteValue', () => {
+        test('Should delete a value', async function() {
+            const deletedEdgeData = {
+                _id: 'core_edge_values_links/222435651',
+                _rev: '_WSywvyC--_',
+                _from: 'test_lib/12345',
+                _to: 'test_linked_lib/987654',
+                _key: 978654321
+            };
+
+            const mockDbEdgeCollec = {
+                removeByExample: global.__mockPromise(deletedEdgeData)
+            };
+
+            const mockDb = {
+                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
+            };
+
+            const mockDbServ = {db: mockDb};
+
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
+
+            const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
+                id: 445566,
+                value: 987654,
+                modified_at: 400999999,
+                created_at: 400999999
+            });
+
+            expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
+            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: 445566});
+
+            expect(deletedVal).toMatchObject({id: 445566});
+        });
+    });
+
     describe('getValueByID', () => {
         test('Should return value', async function() {
             const traversalRes = [

@@ -32,12 +32,16 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
 
                     extend type Mutation {
                         saveValue(library: LibraryId, recordId: ID, attribute: AttributeId, value: ValueInput): Value
+                        deleteValue(library: LibraryId, recordId: ID, attribute: AttributeId, value: ValueInput): Value
                     }
                 `,
                 resolvers: {
                     Mutation: {
                         async saveValue(parent, {library, recordId, attribute, value}): Promise<IValue> {
                             return valueDomain.saveValue(library, recordId, attribute, value);
+                        },
+                        async deleteValue(parent, {library, recordId, attribute, value}): Promise<IValue> {
+                            return valueDomain.deleteValue(library, recordId, attribute, value);
                         }
                     }
                 }

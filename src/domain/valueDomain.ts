@@ -8,6 +8,7 @@ import {AttributeTypes} from '../_types/attribute';
 
 export interface IValueDomain {
     saveValue?(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
+    deleteValue?(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
 }
 
 export default function(attributeDomain: IAttributeDomain, libraryDomain: ILibraryDomain): IValueDomain {
@@ -48,6 +49,33 @@ export default function(attributeDomain: IAttributeDomain, libraryDomain: ILibra
                     : attrTypeRepo.createValue(library, recordId, attr, valueToSave);
             } catch (e) {
                 throw new Error('Save value : ' + e);
+            }
+        },
+        async deleteValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
+            try {
+                // Get library
+                const lib = await libraryDomain.getLibraries({id: library});
+
+                // Check if exists and can delete
+                if (!lib.length) {
+                    throw new Error('Unknown library');
+                }
+
+                const attr = await attributeDomain.getAttributeProperties(attribute);
+                const attrTypeRepo = attributeDomain.getTypeRepo(attr);
+
+                // Check if value ID actually exists
+                if (value.id && attr.type !== AttributeTypes.SIMPLE) {
+                    const existingVal = await attrTypeRepo.getValueById(library, recordId, attr, value);
+
+                    if (existingVal === null) {
+                        throw new Error('Unknown value');
+                    }
+                }
+
+                return attrTypeRepo.deleteValue(library, recordId, attr, value);
+            } catch (e) {
+                throw new Error('Delete value : ' + e);
             }
         }
     };

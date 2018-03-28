@@ -46,6 +46,32 @@ describe('AttributeIndexRepo', () => {
         });
     });
 
+    describe('deleteValue', () => {
+        test('Should delete a value', async () => {
+            const deletedValueData = {
+                value: null
+            };
+
+            const attrSimpleRepo = {
+                ...mockAttrSimpleRepo,
+                deleteValue: global.__mockPromise(deletedValueData)
+            };
+
+            const attrRepo = attributeSimpleLinkRepo(null, attrSimpleRepo, null);
+
+            const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
+                value: 123456
+            });
+
+            expect(attrSimpleRepo.deleteValue.mock.calls.length).toBe(1);
+            expect(attrSimpleRepo.deleteValue).toBeCalledWith('test_lib', 12345, mockAttribute, {
+                value: 123456
+            });
+
+            expect(deletedVal).toMatchObject(deletedValueData);
+        });
+    });
+
     describe('getValues', () => {
         test('Should return values for simple link attribute', async function() {
             const queryRes = [

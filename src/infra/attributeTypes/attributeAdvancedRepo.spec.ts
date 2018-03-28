@@ -76,6 +76,7 @@ describe('AttributeStandardRepo', () => {
             expect(createdVal).toMatchObject(newValueData);
         });
     });
+
     describe('updateValue', () => {
         test('Should update a standard value', async function() {
             const savedValueData = {
@@ -149,6 +150,71 @@ describe('AttributeStandardRepo', () => {
             expect(savedVal).toMatchObject(valueData);
         });
     });
+
+    describe('deleteValue', () => {
+        test('Should delete a value', async function() {
+            const deletedValueData = {
+                _id: 'core_values/123456789',
+                _rev: '_WSywvyC--_',
+                _key: 123456789,
+                value: 'test_val'
+            };
+
+            const deletedEdgeData = {
+                _id: 'core_edge_values_links/222435651',
+                _rev: '_WSywvyC--_',
+                _from: 'test_lib/12345',
+                _to: 'core_values/987654',
+                _key: 978654321,
+                attribute: 'test_attr',
+                modified_at: 400999999,
+                created_at: 400999999
+            };
+
+            const oldValueData = {
+                id: 123456789,
+                attribute: 'test_attr',
+                modified_at: 400999999,
+                created_at: 400999999
+            };
+
+            const mockDbCollec = {
+                remove: global.__mockPromise(deletedValueData)
+            };
+
+            const mockDbEdgeCollec = {
+                removeByExample: global.__mockPromise(deletedEdgeData)
+            };
+
+            const mockDb = {
+                collection: jest.fn().mockReturnValue(mockDbCollec),
+                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
+            };
+
+            const mockDbServ = {db: mockDb};
+
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
+
+            const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
+                id: 123456789,
+                value: 'test val',
+                modified_at: 400999999,
+                created_at: 400999999
+            });
+
+            expect(mockDbCollec.remove.mock.calls.length).toBe(1);
+            expect(mockDbCollec.remove).toBeCalledWith({_key: 123456789});
+
+            expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
+            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({
+                _from: 'test_lib/12345',
+                _to: 'core_values/123456789'
+            });
+
+            expect(deletedVal).toMatchObject(oldValueData);
+        });
+    });
+
     describe('getValueByID', () => {
         test('Should return value', async function() {
             const lookupValueRes = [

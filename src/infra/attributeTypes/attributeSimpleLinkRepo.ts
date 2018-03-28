@@ -21,7 +21,7 @@ export default function(
             return attributeSimpleRepo.updateValue(library, recordId, attribute, value);
         },
         async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return null;
+            return attributeSimpleRepo.deleteValue(library, recordId, attribute, value);
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
             const libCollec = dbService.db.collection(library);

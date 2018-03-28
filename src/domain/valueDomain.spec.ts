@@ -205,4 +205,98 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
     });
+
+    describe('deleteValue', () => {
+        test('Should delete a value', async function() {
+            const deletedValueData = {value: 'test val', attribute: 'test_attr'};
+
+            const mockAttrIndexRepo = {
+                ...mockAttrTypeRepo,
+                deleteValue: global.__mockPromise(deletedValueData)
+            };
+            const mockAttrStdRepo = {...mockAttrTypeRepo};
+            const mockAttrLinkRepo = {...mockAttrTypeRepo};
+
+            const mockAttrDomain = {
+                ...mockAttributeDomain,
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE}),
+                getTypeRepo: jest.fn().mockReturnValue(mockAttrIndexRepo)
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
+
+            const deletedValue = await valDomain.deleteValue('test_lib', 12345, 'test_attr', {value: 'test val'});
+
+            expect(mockAttrIndexRepo.deleteValue.mock.calls.length).toBe(1);
+            expect(mockAttrStdRepo.deleteValue.mock.calls.length).toBe(0);
+            expect(mockAttrLinkRepo.deleteValue.mock.calls.length).toBe(0);
+            expect(deletedValue).toMatchObject(deletedValueData);
+        });
+
+        test('Should throw if unknown attribute', async function() {
+            const mockAttrDomain = {
+                ...mockAttributeDomain,
+                getAttributeProperties: jest.fn().mockReturnValue(Promise.reject('Unknown attribute'))
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const mockAttrStdRepo = {...mockAttrTypeRepo};
+            const mockAttrIndexRepo = {...mockAttrTypeRepo};
+            const mockAttrLinkRepo = {...mockAttrTypeRepo};
+
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
+
+            await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
+        });
+
+        test('Should throw if unknown library', async function() {
+            const mockAttrDomain = {
+                ...mockAttributeDomain,
+                getAttributes: global.__mockPromise([{id: 'test_attr'}])
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([])
+            };
+
+            const mockAttrStdRepo = {...mockAttrTypeRepo};
+            const mockAttrIndexRepo = {...mockAttrTypeRepo};
+            const mockAttrLinkRepo = {...mockAttrTypeRepo};
+
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
+
+            await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
+        });
+
+        test('Should throw if unknown value', async function() {
+            const mockAttrDomain = {
+                ...mockAttributeDomain,
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const mockAttrStdRepo = {...mockAttrTypeRepo};
+            const mockAttrIndexRepo = {...mockAttrTypeRepo};
+            const mockAttrLinkRepo = {...mockAttrTypeRepo};
+
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
+
+            await expect(
+                valDomain.saveValue('test_lib', 12345, 'test_attr', {
+                    id: 12345,
+                    value: 'test val'
+                })
+            ).rejects.toThrow();
+        });
+    });
 });

@@ -76,7 +76,26 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             };
         },
         async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return null;
+            const valCollec = dbService.db.collection(VALUES_COLLECTION);
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
+            const deletedVal = await valCollec.remove({_key: value.id});
+
+            // Delete the link record<->value and add some metadata on it
+            const edgeData = {
+                _from: library + '/' + recordId,
+                _to: deletedVal._id
+            };
+
+            let deletedEdge;
+            deletedEdge = await edgeCollec.removeByExample(edgeData);
+
+            return {
+                id: deletedVal._key,
+                attribute: deletedEdge.attribute,
+                modified_at: deletedEdge.modified_at,
+                created_at: deletedEdge.created_at
+            };
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
