@@ -4,6 +4,7 @@ import {IValue} from '_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
 import {IDbUtils} from '../db/dbUtils';
+import {AqlQuery} from 'arangojs/lib/esm/aql-query';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -98,6 +99,12 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                 modified_at: res[0].edge.modified_at,
                 created_at: res[0].edge.created_at
             };
+        },
+        filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
+            return null;
+        },
+        valueQueryPart(fieldName: string, index: number): AqlQuery {
+            return null;
         }
     };
 }

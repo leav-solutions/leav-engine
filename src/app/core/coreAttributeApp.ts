@@ -1,13 +1,14 @@
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IAttributeDomain} from 'domain/attributeDomain';
 import {IAttribute, AttributeTypes, AttributeFormats} from '../../_types/attribute';
+import {IUtils} from 'utils/utils';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
     getGraphQLFormat(attribute: IAttribute): string;
 }
 
-export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
+export default function(attributeDomain: IAttributeDomain, utils: IUtils): ICoreAttributeApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const attributes = await attributeDomain.getAttributes();
@@ -37,7 +38,7 @@ export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
                     }
 
                     input AttributeInput {
-                        id: AttributeId!
+                        id: String!
                         type: AttributeType!
                         format: AttributeFormat
                         label: SystemTranslationInput,
@@ -52,7 +53,6 @@ export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
                         saveAttribute(attribute: AttributeInput): Attribute
                         deleteAttribute(id: AttributeId): Attribute
                     }
-
                 `,
                 resolvers: {
                     Query: {
@@ -79,7 +79,17 @@ export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
             if (attribute.id === 'id') {
                 return 'ID';
             } else {
-                return attribute.format === AttributeFormats.NUMERIC ? 'Int' : 'String';
+                if (attribute.system && attribute.type === AttributeTypes.SIMPLE) {
+                    return attribute.format === AttributeFormats.NUMERIC ? 'Int' : 'String';
+                } else if (
+                    (attribute.type === AttributeTypes.SIMPLE_LINK ||
+                        attribute.type === AttributeTypes.ADVANCED_LINK) &&
+                    attribute.linked_library
+                ) {
+                    return 'linkValue';
+                } else {
+                    return 'Value';
+                }
             }
         }
     };

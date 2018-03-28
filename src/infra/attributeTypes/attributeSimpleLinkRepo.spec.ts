@@ -14,11 +14,13 @@ describe('AttributeIndexRepo', () => {
         updateValue: null,
         deleteValue: null,
         getValueById: null,
-        getValues: null
+        getValues: null,
+        filterQueryPart: null,
+        valueQueryPart: null
     };
 
     describe('createValue', () => {
-        test('Should create a new index value', async function() {
+        test('Should create a simple link value', async function() {
             const updatedValueData = {
                 value: 123456
             };
@@ -45,7 +47,7 @@ describe('AttributeIndexRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for index attribute', async function() {
+        test('Should return values for simple link attribute', async function() {
             const queryRes = [
                 {
                     _key: '987654',
@@ -98,15 +100,21 @@ describe('AttributeIndexRepo', () => {
             expect(values.length).toBe(2);
 
             expect(values[0]).toMatchObject({
-                id: 987654,
-                created_at: 1521475225,
-                modified_at: 1521475225
+                id: null,
+                value: {
+                    id: 987654,
+                    created_at: 1521475225,
+                    modified_at: 1521475225
+                }
             });
 
             expect(values[1]).toMatchObject({
-                id: 987655,
-                created_at: 1521475225,
-                modified_at: 1521475225
+                id: null,
+                value: {
+                    id: 987655,
+                    created_at: 1521475225,
+                    modified_at: 1521475225
+                }
             });
         });
     });

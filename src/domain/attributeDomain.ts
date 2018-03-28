@@ -1,5 +1,5 @@
-import {IAttributeRepo} from 'infra/attributeRepo';
-import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
+import {IAttributeRepo, IAttributeTypeRepo} from 'infra/attributeRepo';
+import {IAttribute, IAttributeFilterOptions, AttributeTypes} from '../_types/attribute';
 
 export interface IAttributeDomain {
     /**
@@ -33,9 +33,17 @@ export interface IAttributeDomain {
      * @param id
      */
     deleteAttribute?(id: string): Promise<IAttribute>;
+
+    getTypeRepo(attribute: IAttribute): IAttributeTypeRepo;
 }
 
-export default function(attributeRepo: IAttributeRepo): IAttributeDomain {
+export default function(
+    attributeRepo: IAttributeRepo,
+    attributeSimpleRepo: IAttributeTypeRepo | null = null,
+    attributeSimpleLinkRepo: IAttributeTypeRepo | null = null,
+    attributeAdvancedRepo: IAttributeTypeRepo | null = null,
+    attributeAdvancedLinkRepo: IAttributeTypeRepo | null = null
+): IAttributeDomain {
     return {
         async getAttributeProperties(id: string): Promise<IAttribute> {
             try {
@@ -88,6 +96,25 @@ export default function(attributeRepo: IAttributeRepo): IAttributeDomain {
             } catch (e) {
                 throw new Error('Delete attribute ' + e);
             }
+        },
+        getTypeRepo(attribute) {
+            let attrTypeRepo: IAttributeTypeRepo;
+            switch (attribute.type) {
+                case AttributeTypes.SIMPLE:
+                    attrTypeRepo = attributeSimpleRepo;
+                    break;
+                case AttributeTypes.SIMPLE_LINK:
+                    attrTypeRepo = attributeSimpleLinkRepo;
+                    break;
+                case AttributeTypes.ADVANCED:
+                    attrTypeRepo = attributeAdvancedRepo;
+                    break;
+                case AttributeTypes.ADVANCED_LINK:
+                    attrTypeRepo = attributeAdvancedLinkRepo;
+                    break;
+            }
+
+            return attrTypeRepo;
         }
     };
 }

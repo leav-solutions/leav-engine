@@ -3,6 +3,7 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IAttribute, AttributeTypes, AttributeFormats, IAttributeFilterOptions} from '../_types/attribute';
 import {aql} from 'arangojs';
 import {IValue} from '_types/value';
+import {AqlQuery} from 'arangojs/lib/esm/aql-query';
 
 export interface IAttributeRepo {
     ATTRIB_COLLECTION_NAME?: string;
@@ -68,6 +69,9 @@ export interface IAttributeTypeRepo {
      * @return {}   Return null if no value found
      */
     getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
+
+    filterQueryPart(fieldName: string, index: number, value: string | number): AqlQuery;
+    valueQueryPart(fieldName: string, index: number): AqlQuery;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';

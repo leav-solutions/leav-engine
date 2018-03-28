@@ -1,12 +1,13 @@
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IRecord} from '_types/record';
 import {IRecordDomain} from 'domain/recordDomain';
+import {IUtils} from 'utils/utils';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(recordDomain: IRecordDomain): ICoreRecordApp {
+export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -24,6 +25,11 @@ export default function(recordDomain: IRecordDomain): ICoreRecordApp {
 
                 `,
                 resolvers: {
+                    Record: {
+                        __resolveType(obj) {
+                            return utils.libNameToTypeName(obj.library);
+                        }
+                    },
                     Mutation: {
                         async createRecord(parent, {library}): Promise<IRecord> {
                             const newRec = await recordDomain.createRecord(library);

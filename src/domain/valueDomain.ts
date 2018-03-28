@@ -10,13 +10,7 @@ export interface IValueDomain {
     saveValue?(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
 }
 
-export default function(
-    attributeDomain: IAttributeDomain,
-    libraryDomain: ILibraryDomain,
-    attributeSimpleRepo: IAttributeTypeRepo,
-    attributeAdvancedRepo: IAttributeTypeRepo,
-    attributeAdvancedLinkRepo: IAttributeTypeRepo
-): IValueDomain {
+export default function(attributeDomain: IAttributeDomain, libraryDomain: ILibraryDomain): IValueDomain {
     return {
         async saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
             try {
@@ -29,22 +23,7 @@ export default function(
                 }
 
                 const attr = await attributeDomain.getAttributeProperties(attribute);
-
-                let attrTypeRepo: IAttributeTypeRepo;
-                switch (attr.type) {
-                    case AttributeTypes.SIMPLE:
-                        attrTypeRepo = attributeSimpleRepo;
-                        break;
-                    case AttributeTypes.SIMPLE_LINK:
-                        attrTypeRepo = attributeSimpleRepo;
-                        break;
-                    case AttributeTypes.ADVANCED:
-                        attrTypeRepo = attributeAdvancedRepo;
-                        break;
-                    case AttributeTypes.ADVANCED_LINK:
-                        attrTypeRepo = attributeAdvancedLinkRepo;
-                        break;
-                }
+                const attrTypeRepo = attributeDomain.getTypeRepo(attr);
 
                 // Check if value ID actually exists
                 if (value.id && attr.type !== AttributeTypes.SIMPLE) {

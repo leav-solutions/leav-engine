@@ -18,6 +18,13 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
                         created_at: Int
                     }
 
+                    type linkValue {
+                        id: ID,
+                        value: Record,
+                        modified_at: Int,
+                        created_at: Int
+                    }
+
                     input ValueInput {
                         id: ID,
                         value: String

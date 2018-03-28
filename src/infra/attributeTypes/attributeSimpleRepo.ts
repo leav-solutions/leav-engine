@@ -3,6 +3,7 @@ import {IAttributeTypeRepo} from '../attributeRepo';
 import {IValue} from '_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
+import {AqlQuery} from 'arangojs/lib/esm/aql-query';
 
 export default function(dbService: IDbService | any): IAttributeTypeRepo {
     async function _saveValue(
@@ -51,6 +52,21 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             ];
         },
         async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+            return null;
+        },
+        filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
+            const query = `FILTER r.@filterField${index} == @filterValue${index}`;
+
+            fieldName = fieldName === 'id' ? '_key' : fieldName;
+
+            const bindVars = {
+                ['filterField' + index]: fieldName,
+                ['filterValue' + index]: value
+            };
+
+            return {query, bindVars};
+        },
+        valueQueryPart(fieldName: string, index: number): AqlQuery {
             return null;
         }
     };

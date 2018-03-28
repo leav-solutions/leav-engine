@@ -1,9 +1,10 @@
-import {IAppGraphQLSchema} from '../graphql/graphqlApp';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ILibraryDomain} from 'domain/libraryDomain';
 import {IUtils} from 'utils/utils';
 import {ILibrary} from '_types/library';
 import {IRecord} from '_types/record';
 import {ICoreAttributeApp} from './coreAttributeApp';
+import {IRecordDomain} from 'domain/recordDomain';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -11,7 +12,9 @@ export interface ICoreLibraryApp {
 
 export default function(
     libraryDomain: ILibraryDomain,
+    recordDomain: IRecordDomain,
     coreAttributeApp: ICoreAttributeApp,
+    graphqlApp: IGraphqlApp,
     utils: IUtils
 ): ICoreLibraryApp {
     return {
@@ -76,13 +79,39 @@ export default function(
                         ${lib.attributes.map(attr => `${attr.id}: ${coreAttributeApp.getGraphQLFormat(attr)}`)}
                     }
 
+                    enum ${libTypeName}SearchableFields {
+                        ${lib.attributes.map(attr => attr.id).join(' ')}
+                    }
+
+                    input ${libTypeName}Filter {
+                        field: ${libTypeName}SearchableFields!,
+                        value: String!
+                    }
+
                     extend type Query {
-                        ${libQueryName}: [${libTypeName}]
+                        ${libQueryName}(filters: [${libTypeName}Filter]): [${libTypeName}]
                     }
                 `;
 
-                baseSchema.resolvers.Query[libQueryName] = async (): Promise<IRecord[]> => {
-                    return null;
+                baseSchema.resolvers.Query[libQueryName] = async (
+                    parent,
+                    {filters},
+                    context,
+                    info
+                ): Promise<IRecord[]> => {
+                    const queryFields = graphqlApp.getQueryFields(info);
+
+                    if (typeof filters !== 'undefined') {
+                        filters = filters.reduce((allFilters, filter) => {
+                            allFilters[filter.field] = filter.value;
+
+                            return allFilters;
+                        }, {});
+                    } else {
+                        filters = {};
+                    }
+
+                    return recordDomain.find(lib.id, filters, queryFields);
                 };
             }
 

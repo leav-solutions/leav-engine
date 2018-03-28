@@ -1,6 +1,7 @@
 import attributeDomain from './attributeDomain';
 import valueDomain from './valueDomain';
 import {AttributeTypes} from '../_types/attribute';
+import {IAttributeTypeRepo} from 'infra/attributeRepo';
 
 describe('ValueDomain', () => {
     const mockAttrTypeRepo = {
@@ -8,35 +9,38 @@ describe('ValueDomain', () => {
         updateValue: jest.fn(),
         deleteValue: jest.fn(),
         getValues: jest.fn(),
-        getValueById: global.__mockPromise(null)
+        getValueById: global.__mockPromise(null),
+        filterQueryPart: jest.fn(),
+        valueQueryPart: jest.fn()
+    };
+
+    const mockAttributeDomain = {
+        getAttributeProperties: jest.fn(),
+        getTypeRepo: jest.fn()
     };
 
     describe('saveValue', () => {
         test('Should save an indexed value', async function() {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
+
+            const mockAttrIndexRepo = {
+                ...mockAttrTypeRepo,
+                createValue: global.__mockPromise(savedValueData)
+            };
+            const mockAttrStdRepo = {...mockAttrTypeRepo};
+            const mockAttrLinkRepo = {...mockAttrTypeRepo};
+
             const mockAttrDomain = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE})
+                ...mockAttributeDomain,
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE}),
+                getTypeRepo: jest.fn().mockReturnValue(mockAttrIndexRepo)
             };
 
             const mockLibDomain = {
                 getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
-            const mockAttrIndexRepo = {
-                ...mockAttrTypeRepo,
-                createValue: global.__mockPromise(savedValueData)
-            };
-
-            const mockAttrStdRepo = {...mockAttrTypeRepo};
-            const mockAttrLinkRepo = {...mockAttrTypeRepo};
-
-            const valDomain = valueDomain(
-                mockAttrDomain,
-                mockLibDomain,
-                mockAttrIndexRepo,
-                mockAttrStdRepo,
-                mockAttrLinkRepo
-            );
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
 
@@ -54,25 +58,22 @@ describe('ValueDomain', () => {
                 modified_at: 123456,
                 created_at: 123456
             };
+
+            const mockAttrStdRepo = {...mockAttrTypeRepo, createValue: global.__mockPromise(savedValueData)};
+            const mockAttrIndexRepo = {...mockAttrTypeRepo};
+            const mockAttrLinkRepo = {...mockAttrTypeRepo};
+
             const mockAttrDomain = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
+                ...mockAttributeDomain,
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED}),
+                getTypeRepo: jest.fn().mockReturnValue(mockAttrStdRepo)
             };
 
             const mockLibDomain = {
                 getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
-            const mockAttrStdRepo = {...mockAttrTypeRepo, createValue: global.__mockPromise(savedValueData)};
-            const mockAttrIndexRepo = {...mockAttrTypeRepo};
-            const mockAttrLinkRepo = {...mockAttrTypeRepo};
-
-            const valDomain = valueDomain(
-                mockAttrDomain,
-                mockLibDomain,
-                mockAttrIndexRepo,
-                mockAttrStdRepo,
-                mockAttrLinkRepo
-            );
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
 
@@ -99,13 +100,6 @@ describe('ValueDomain', () => {
                 modified_at: 123456,
                 created_at: 123456
             };
-            const mockAttrDomain = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
-            };
-
-            const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
-            };
 
             const mockAttrStdRepo = {
                 ...mockAttrTypeRepo,
@@ -117,13 +111,17 @@ describe('ValueDomain', () => {
             const mockAttrIndexRepo = {...mockAttrTypeRepo};
             const mockAttrLinkRepo = {...mockAttrTypeRepo};
 
-            const valDomain = valueDomain(
-                mockAttrDomain,
-                mockLibDomain,
-                mockAttrIndexRepo,
-                mockAttrStdRepo,
-                mockAttrLinkRepo
-            );
+            const mockAttrDomain = {
+                ...mockAttributeDomain,
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED}),
+                getTypeRepo: jest.fn().mockReturnValue(mockAttrStdRepo)
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {
                 id: 12345,
@@ -147,6 +145,7 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown attribute', async function() {
             const mockAttrDomain = {
+                ...mockAttributeDomain,
                 getAttributeProperties: jest.fn().mockReturnValue(Promise.reject('Unknown attribute'))
             };
 
@@ -158,19 +157,14 @@ describe('ValueDomain', () => {
             const mockAttrIndexRepo = {...mockAttrTypeRepo};
             const mockAttrLinkRepo = {...mockAttrTypeRepo};
 
-            const valDomain = valueDomain(
-                mockAttrDomain,
-                mockLibDomain,
-                mockAttrIndexRepo,
-                mockAttrStdRepo,
-                mockAttrLinkRepo
-            );
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
 
             await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
         });
 
         test('Should throw if unknown library', async function() {
             const mockAttrDomain = {
+                ...mockAttributeDomain,
                 getAttributes: global.__mockPromise([{id: 'test_attr'}])
             };
 
@@ -182,19 +176,14 @@ describe('ValueDomain', () => {
             const mockAttrIndexRepo = {...mockAttrTypeRepo};
             const mockAttrLinkRepo = {...mockAttrTypeRepo};
 
-            const valDomain = valueDomain(
-                mockAttrDomain,
-                mockLibDomain,
-                mockAttrIndexRepo,
-                mockAttrStdRepo,
-                mockAttrLinkRepo
-            );
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
 
             await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
         });
 
         test('Should throw if unknown value', async function() {
             const mockAttrDomain = {
+                ...mockAttributeDomain,
                 getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
             };
 
@@ -206,13 +195,7 @@ describe('ValueDomain', () => {
             const mockAttrIndexRepo = {...mockAttrTypeRepo};
             const mockAttrLinkRepo = {...mockAttrTypeRepo};
 
-            const valDomain = valueDomain(
-                mockAttrDomain,
-                mockLibDomain,
-                mockAttrIndexRepo,
-                mockAttrStdRepo,
-                mockAttrLinkRepo
-            );
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain);
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {

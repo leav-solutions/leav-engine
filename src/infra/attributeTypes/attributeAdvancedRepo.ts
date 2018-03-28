@@ -3,6 +3,7 @@ import {IAttributeTypeRepo} from '../attributeRepo';
 import {IValue} from '_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
+import {AqlQuery} from 'arangojs/lib/esm/aql-query';
 
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -78,10 +79,12 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             return null;
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
             const res = await dbService.execute(aql`
                 FOR value, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
-                    ${VALUES_LINKS_COLLECTION}
+                    ${edgeCollec}
                     FILTER edge.attribute == ${attribute.id}
                     RETURN {value, edge}
             `);
@@ -113,6 +116,24 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
                 modified_at: valueLinks[0].modified_at,
                 created_at: valueLinks[0].created_at
             };
+        },
+        filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
+            const query = `LET filterField0 = (
+                FOR v, e IN 1 OUTBOUND r._id
+                @@linkCollection
+                FILTER e.attribute == @filterField0 RETURN v.value
+            ) FILTER filterField0 LIKE @filterValue0`;
+
+            const bindVars = {
+                ['@linkCollection']: VALUES_LINKS_COLLECTION,
+                ['filterField' + index]: fieldName,
+                ['filterValue' + index]: '%' + value + '%'
+            };
+
+            return {query, bindVars};
+        },
+        valueQueryPart(fieldName: string, index: number): AqlQuery {
+            return null;
         }
     };
 }

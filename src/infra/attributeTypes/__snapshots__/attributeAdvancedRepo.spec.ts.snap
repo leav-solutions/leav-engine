@@ -1,10 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AttributeStandardRepo filterQueryPart Should return simple filter 1`] = `
+Object {
+  "bindVars": Object {
+    "@linkCollection": "core_edge_values_links",
+    "filterField0": "label",
+    "filterValue0": "%MyLabel%",
+  },
+  "query": "LET filterField0 = (
+                FOR v, e IN 1 OUTBOUND r._id
+                @@linkCollection
+                FILTER e.attribute == @filterField0 RETURN v.value
+            ) FILTER filterField0 LIKE @filterValue0",
+}
+`;
+
 exports[`AttributeStandardRepo getValues Should return values for standard attribute 1`] = `
 "
                 FOR value, edge
                     IN 1 OUTBOUND @value0
-                    @value1
+                    @@value1
                     FILTER edge.attribute == @value2
                     RETURN {value, edge}
             "
@@ -12,8 +27,8 @@ exports[`AttributeStandardRepo getValues Should return values for standard attri
 
 exports[`AttributeStandardRepo getValues Should return values for standard attribute 2`] = `
 Object {
+  "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
-  "value1": "core_edge_values_links",
   "value2": "test_attr",
 }
 `;

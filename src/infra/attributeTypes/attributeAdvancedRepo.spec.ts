@@ -285,4 +285,13 @@ describe('AttributeStandardRepo', () => {
             });
         });
     });
+
+    describe('filterQueryPart', () => {
+        test('Should return simple filter', () => {
+            const attrRepo = attributeAdvancedRepo(null);
+            const filter = attrRepo.filterQueryPart('label', 0, 'MyLabel');
+
+            expect(filter).toMatchSnapshot();
+        });
+    });
 });

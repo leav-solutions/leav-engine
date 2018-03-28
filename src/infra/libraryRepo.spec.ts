@@ -3,6 +3,7 @@ import {DocumentCollection} from 'arangojs/lib/esm/collection';
 import {Connection} from 'arangojs/lib/esm/connection';
 import {Database} from 'arangojs';
 import {create} from 'domain';
+import {AttributeTypes} from '../_types/attribute';
 
 describe('LibraryRepo', () => {
     describe('getLibrary', () => {
@@ -75,8 +76,16 @@ describe('LibraryRepo', () => {
     });
 
     describe('createLibrary', () => {
-        const docLibData = {_key: 'test_library', system: true, attributes: ['id', 'created_by']};
-        const libData = {id: 'test_library', system: true, attributes: ['id', 'created_by']};
+        const docLibData = {
+            _key: 'test_library',
+            system: true,
+            attributes: [{id: 'id', type: AttributeTypes.SIMPLE}, {id: 'created_by', type: AttributeTypes.SIMPLE}]
+        };
+        const libData = {
+            id: 'test_library',
+            system: true,
+            attributes: [{id: 'id', type: AttributeTypes.SIMPLE}, {id: 'created_by', type: AttributeTypes.SIMPLE}]
+        };
         test('Should insert a library and create a new collection', async function() {
             const mockDbServ = {
                 db: new Database(),
