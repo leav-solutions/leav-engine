@@ -14,8 +14,8 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                 typeDefs: `
                     interface Record {
                         id: ID,
-                        created_at: Int,
-                        modified_at: Int
+                        created_at: Value,
+                        modified_at: Value
                     }
 
                     extend type Mutation {
