@@ -78,18 +78,13 @@ export default function(attributeDomain: IAttributeDomain, utils: IUtils): ICore
         getGraphQLFormat(attribute: IAttribute): string {
             if (attribute.id === 'id') {
                 return 'ID';
+            } else if (
+                attribute.type === AttributeTypes.SIMPLE_LINK ||
+                attribute.type === AttributeTypes.ADVANCED_LINK
+            ) {
+                return 'linkValue';
             } else {
-                if (attribute.system && attribute.type === AttributeTypes.SIMPLE) {
-                    return attribute.format === AttributeFormats.NUMERIC ? 'Int' : 'String';
-                } else if (
-                    (attribute.type === AttributeTypes.SIMPLE_LINK ||
-                        attribute.type === AttributeTypes.ADVANCED_LINK) &&
-                    attribute.linked_library
-                ) {
-                    return 'linkValue';
-                } else {
-                    return 'Value';
-                }
+                return 'Value';
             }
         }
     };
