@@ -6,6 +6,9 @@ import {AttributeFormats, IAttribute, AttributeTypes} from '../_types/attribute'
 import valueDomain from './valueDomain';
 import {IAttributeTypeRepo} from 'infra/attributeRepo';
 
+/**
+ * Simple list of filters (fieldName: filterValue) to apply to get records.
+ */
 export interface IRecordFiltersLight {
     [attrId: string]: string;
 }
@@ -28,8 +31,23 @@ export interface IRecordDomain {
      */
     deleteRecord?(library: string, id: number): Promise<IRecord>;
 
+    /**
+     * Search records
+     *
+     * @param library Library Id
+     * @param filters Filters to apply on records selection
+     * @param fields Fields to retrieve on each records
+     */
     find(library: string, filters?: IRecordFiltersLight, fields?: IQueryField[]): Promise<IRecord[]>;
-    populateRecordFields(linbrary: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
+
+    /**
+     * Add values for requested fields on the record. Values can be of any types here.
+     *
+     * @param library
+     * @param record
+     * @param queryFields Fields to retrieve
+     */
+    populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
 }
 
 export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDomain): IRecordDomain {
@@ -62,6 +80,7 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
             try {
                 const fullFilters: IRecordFilterOption[] = [];
 
+                // Hydrate filters with attribute properties and cast filters values if needed
                 if (typeof filters !== 'undefined' && filters) {
                     for (const attrId of Object.keys(filters)) {
                         const attribute = await attributeDomain.getAttributeProperties(attrId);
@@ -78,6 +97,7 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
 
                 let records = await recordRepo.find(library, fullFilters);
 
+                // Populate records with requested fields
                 if (typeof fields !== 'undefined' && fields.length) {
                     records = await Promise.all(
                         records.map(record => this.populateRecordFields(library, record, fields))
@@ -118,10 +138,12 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
                     if (fieldValues.length) {
                         const fieldValue = fieldValues[0];
 
-                        // If value is a linked record, populate fields on this record
+                        // If value is a linked record, recursively populate fields on this record
                         if (field.fields.length && isLinkAttribute) {
                             const linkFields = field.fields;
 
+                            // "value" is the linked record,
+                            // so retrieve fields requested for this record through the "value" field
                             const valueLinkFields = linkFields.reduce((acc, linkField) => {
                                 if (linkField.name === 'value') {
                                     acc = acc.concat(linkField.fields);
@@ -138,6 +160,7 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
                                 valueLinkFields
                             );
 
+                            // Add library on linked record to help determine which type is the record
                             if (isLinkAttribute && fieldsProps[field.name].linked_library) {
                                 fieldValue.value.library = fieldsProps[field.name].linked_library;
                             }
@@ -146,6 +169,7 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
                         record[field.name] = fieldValue;
                     }
                 } else if (field.name !== 'id') {
+                    // Format simple attribute field into standard value
                     record[field.name] = {
                         value: record[field.name]
                     };
