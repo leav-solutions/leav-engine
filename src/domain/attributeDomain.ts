@@ -88,11 +88,15 @@ export default function(
                     throw new Error('Unknown attribute');
                 }
 
-                if (attr.pop().system) {
+                const attrProps = attr.pop();
+
+                if (attrProps.system) {
                     throw new Error('Cannot delete system attribute');
                 }
 
-                return attributeRepo.deleteAttribute(id);
+                const typeRepo = this.getTypeRepo(attrProps);
+
+                return attributeRepo.deleteAttribute(attrProps, typeRepo);
             } catch (e) {
                 throw new Error('Delete attribute ' + e);
             }

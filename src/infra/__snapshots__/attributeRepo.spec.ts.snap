@@ -18,9 +18,24 @@ Object {
 }
 `;
 
-exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 1`] = `
+"
+                    FOR e IN @@value0
+                        FILTER e._to == @value1
+                        REMOVE e IN @@value0
+                    "
+`;
 
 exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 2`] = `
+Object {
+  "@value0": "core_edge_libraries_attributes",
+  "value1": "core_attributes/test_attribute",
+}
+`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 3`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 4`] = `
 Object {
   "@value1": "core_attributes",
   "value0": Object {
@@ -43,6 +58,15 @@ Object {
 exports[`AttributeRepo getAttribute Should return all libs if no filter 1`] = `"FOR a IN core_attributes RETURN a"`;
 
 exports[`AttributeRepo getAttribute Should return all libs if no filter 2`] = `Object {}`;
+
+exports[`AttributeRepo getLibrariesUsingAttribute Should get list of libraries 1`] = `
+"
+                FOR v
+                IN 1 INBOUND 'core_attributes/test_attr'
+                core_edge_libraries_attributes
+                RETURN v
+            "
+`;
 
 exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 

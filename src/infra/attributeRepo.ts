@@ -4,13 +4,22 @@ import {IAttribute, AttributeTypes, AttributeFormats, IAttributeFilterOptions} f
 import {aql} from 'arangojs';
 import {IValue} from '_types/value';
 import {AqlQuery} from 'arangojs/lib/esm/aql-query';
+import {ILibrary} from '_types/library';
+import {ILibraryRepo, LIB_ATTRIB_COLLECTION_NAME} from './libraryRepo';
 
 export interface IAttributeRepo {
     ATTRIB_COLLECTION_NAME?: string;
     getAttributes?(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
     updateAttribute?(attrData: IAttribute): Promise<IAttribute>;
     createAttribute?(attrData: IAttribute): Promise<IAttribute>;
-    deleteAttribute?(id: string): Promise<IAttribute>;
+    deleteAttribute?(attrData: IAttribute, typeRepo: IAttributeTypeRepo): Promise<IAttribute>;
+
+    /**
+     * Get all libraries for which this attribute is enabled
+     *
+     * @param attribute
+     */
+    getLibrariesUsingAttribute?(attribute: IAttribute): Promise<ILibrary[]>;
 }
 
 /**
@@ -70,12 +79,31 @@ export interface IAttributeTypeRepo {
      */
     getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
 
+    /**
+     * Return AQL query part to filter on this attribute. If will be concatenate with other filters and full query
+     *
+     * @param fieldName
+     * @param index Position in full query filters
+     * @param value Filter value
+     */
     filterQueryPart(fieldName: string, index: number, value: string | number): AqlQuery;
+
+    /**
+     * Clear all values of given attribute. Can be used to cleanup values when an attribute is deleted for example.
+     *
+     * @param attribute
+     * @return Promise<number> TRUE if operation succeed
+     */
+    clearAllValues(attribute: IAttribute): Promise<boolean>;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
 
-export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRepo {
+export default function(
+    dbService: IDbService | null = null,
+    dbUtils: IDbUtils | null = null,
+    libraryRepo: ILibraryRepo | null = null
+): IAttributeRepo {
     return {
         async getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]> {
             let query = `FOR a IN ${ATTRIB_COLLECTION_NAME}`;
@@ -141,17 +169,44 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): IAttributeRep
                 throw new Error('Create attribute ' + e);
             }
         },
-        async deleteAttribute(id: string): Promise<IAttribute> {
+        async deleteAttribute(attrData: IAttribute, typeRepo: IAttributeTypeRepo): Promise<IAttribute> {
             try {
+                // Delete links library<->attribute
+                const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+
+                // Delete all values
+                await typeRepo.clearAllValues(attrData);
+
+                const resDelEdges = await dbService.execute(aql`
+                    FOR e IN ${libAttributesCollec}
+                        FILTER e._to == ${'core_attributes/' + attrData.id}
+                        REMOVE e IN ${libAttributesCollec}
+                    `);
+
                 // Delete attribute
                 const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
-                const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`);
+                const res = await dbService.execute(aql`REMOVE ${{_key: attrData.id}} IN ${col} RETURN OLD`);
 
                 // Return deleted attribute
                 return dbUtils.cleanup(res.pop());
             } catch (e) {
                 throw new Error('Delete attribute ' + e);
             }
+        },
+        async getLibrariesUsingAttribute(attribute: IAttribute): Promise<ILibrary[]> {
+            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+
+            // TODO: use aql template tag, and find out why it doesn't work :)
+            const query = `
+                FOR v
+                IN 1 INBOUND '${ATTRIB_COLLECTION_NAME}/${attribute.id}'
+                ${LIB_ATTRIB_COLLECTION_NAME}
+                RETURN v
+            `;
+
+            const res = await dbService.execute(query);
+
+            return res.map(dbUtils.cleanup);
         }
     };
 }

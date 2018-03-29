@@ -117,4 +117,39 @@ describe('AttributeIndexRepo', () => {
             });
         });
     });
+
+    describe('clearAllValues', () => {
+        test('Should delete field of given attribute', async () => {
+            const mockAttrRepo = {
+                getLibrariesUsingAttribute: global.__mockPromise([
+                    {
+                        id: 'users',
+                        label: {en: 'Users', fr: 'Utilisateurs'},
+                        system: true
+                    },
+                    {
+                        id: 'products',
+                        label: {en: 'Products', fr: 'Produits'},
+                        system: false
+                    }
+                ])
+            };
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: jest
+                    .fn()
+                    .mockReturnValueOnce([]) // Number of deleted values
+                    .mockReturnValueOnce([])
+            };
+
+            const attrTypeRepo = attributeSimpleRepo(mockDbServ, mockAttrRepo);
+            const res = await attrTypeRepo.clearAllValues({id: 'test_attr', type: AttributeTypes.SIMPLE});
+
+            expect(mockAttrRepo.getLibrariesUsingAttribute).toBeCalled();
+            expect(res).toEqual(true);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+        });
+    });
 });

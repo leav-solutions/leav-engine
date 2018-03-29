@@ -119,6 +119,9 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
             return null;
+        },
+        async clearAllValues(attribute: IAttribute): Promise<boolean> {
+            return true;
         }
     };
 }

@@ -1,8 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AttributeIndexRepo clearAllValues Should delete field of given attribute 1`] = `
+"
+                    FOR r IN @@value0
+                    FILTER r.@value1 != null
+                    UPDATE r WITH {@value1: null} IN @@value0 OPTIONS {keepNull: false}
+                "
+`;
+
+exports[`AttributeIndexRepo clearAllValues Should delete field of given attribute 2`] = `
+Object {
+  "@value0": "users",
+  "value1": "test_attr",
+}
+`;
+
 exports[`AttributeIndexRepo getValues Should return values for index attribute 1`] = `
 "
-                FOR r IN @value0
+                FOR r IN @@value0
                     FILTER r._key == @value1
                     RETURN r.@value2
             "
@@ -10,7 +25,7 @@ exports[`AttributeIndexRepo getValues Should return values for index attribute 1
 
 exports[`AttributeIndexRepo getValues Should return values for index attribute 2`] = `
 Object {
-  "value0": "test_lib",
+  "@value0": "test_lib",
   "value1": 123456,
   "value2": "test_attr",
 }

@@ -9,7 +9,7 @@ describe('attributeDomain', () => {
         getValues: jest.fn(),
         getValueById: global.__mockPromise(null),
         filterQueryPart: jest.fn(),
-        valueQueryPart: jest.fn()
+        clearAllValues: jest.fn()
     };
 
     describe('getAttributes', () => {

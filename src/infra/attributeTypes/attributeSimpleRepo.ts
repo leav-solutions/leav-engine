@@ -1,11 +1,11 @@
 import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from '../attributeRepo';
+import {IAttributeTypeRepo, IAttributeRepo} from '../attributeRepo';
 import {IValue} from '_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/esm/aql-query';
 
-export default function(dbService: IDbService | any): IAttributeTypeRepo {
+export default function(dbService: IDbService | any, attributeRepo: IAttributeRepo | null = null): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
         recordId: number,
@@ -42,7 +42,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
             const res = await dbService.execute(aql`
-                FOR r IN ${library}
+                FOR r IN ${dbService.db.collection(library)}
                     FILTER r._key == ${recordId}
                     RETURN r.${attribute.id}
             `);
@@ -68,6 +68,20 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             };
 
             return {query, bindVars};
+        },
+        async clearAllValues(attribute: IAttribute): Promise<boolean> {
+            const libraries = await attributeRepo.getLibrariesUsingAttribute(attribute);
+
+            for (const lib of libraries) {
+                const recordsCollec = dbService.db.collection(lib.id);
+                await dbService.execute(aql`
+                    FOR r IN ${recordsCollec}
+                    FILTER r.${attribute.id} != null
+                    UPDATE r WITH {${attribute.id}: null} IN ${recordsCollec} OPTIONS {keepNull: false}
+                `);
+            }
+
+            return true;
         }
     };
 }

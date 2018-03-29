@@ -150,6 +150,9 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             };
 
             return {query, bindVars};
+        },
+        async clearAllValues(attribute: IAttribute): Promise<boolean> {
+            return true;
         }
     };
 }

@@ -42,6 +42,9 @@ export default function(
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
             return null;
+        },
+        async clearAllValues(attribute: IAttribute): Promise<boolean> {
+            return true;
         }
     };
 }

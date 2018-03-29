@@ -1,8 +1,18 @@
-import attributeRepo from './attributeRepo';
+import attributeRepo, {IAttributeTypeRepo} from './attributeRepo';
 import {Database} from 'arangojs';
 import {AttributeTypes, AttributeFormats} from '../_types/attribute';
 
 describe('AttributeRepo', () => {
+    const mockAttrTypeRepo: IAttributeTypeRepo = {
+        createValue: null,
+        updateValue: null,
+        deleteValue: null,
+        getValues: null,
+        getValueById: null,
+        filterQueryPart: null,
+        clearAllValues: null
+    };
+
     describe('getAttribute', () => {
         test('Should return all libs if no filter', async function() {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
@@ -154,8 +164,8 @@ describe('AttributeRepo', () => {
             id: 'test_attribute',
             system: false,
             label: {fr: 'Test'},
-            format: 'text',
-            type: 'index'
+            format: AttributeFormats.TEXT,
+            type: AttributeTypes.SIMPLE
         };
 
         const docAttrData = {
@@ -171,7 +181,10 @@ describe('AttributeRepo', () => {
         test('Should delete an attribute and return deleted attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docAttrData])
+                execute: jest
+                    .fn()
+                    .mockReturnValueOnce([])
+                    .mockReturnValueOnce(Promise.resolve([docAttrData]))
             };
 
             const mockCleanupRes = attrData;
@@ -180,16 +193,81 @@ describe('AttributeRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docAttrData)
             };
 
+            const mockTypeRepo = {
+                ...mockAttrTypeRepo,
+                clearAllValues: global.__mockPromise(true)
+            };
+
             const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
             attrRepo.getAttributes = global.__mockPromise([attrData]);
 
-            const deleteRes = await attrRepo.deleteAttribute(attrData.id);
+            const deleteRes = await attrRepo.deleteAttribute(attrData, mockTypeRepo);
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls.length).toBe(2);
+
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^REMOVE/);
+            expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/^REMOVE/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
+        });
+    });
+
+    describe('getLibrariesUsingAttribute', () => {
+        test('Should get list of libraries', async () => {
+            const mockQueryRes = [
+                {
+                    _key: 'users',
+                    _id: 'core_libraries/users',
+                    _rev: '_WSfp4UC--_',
+                    label: {en: 'Users', fr: 'Utilisateurs'},
+                    system: true
+                },
+                {
+                    _key: 'products',
+                    _id: 'core_libraries/products',
+                    _rev: '_WSfp4UG--_',
+                    label: {en: 'Products', fr: 'Produits'},
+                    system: false
+                }
+            ];
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(mockQueryRes)
+            };
+
+            const mockCleanupRes = [
+                {
+                    id: 'users',
+                    label: {en: 'Users', fr: 'Utilisateurs'},
+                    system: true
+                },
+                {
+                    id: 'products',
+                    label: {en: 'Products', fr: 'Produits'},
+                    system: false
+                }
+            ];
+            const mockDbUtils = {
+                cleanup: jest
+                    .fn()
+                    .mockReturnValueOnce(mockCleanupRes[0])
+                    .mockReturnValueOnce(mockCleanupRes[1])
+            };
+
+            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
+
+            const attrLibs = await attrRepo.getLibrariesUsingAttribute({id: 'test_attr', type: AttributeTypes.SIMPLE});
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            // First call is to insert library
+            expect(mockDbServ.execute.mock.calls[0][0]).toMatch(/IN 1 INBOUND/);
+            expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
+
+            expect(attrLibs).toEqual(mockCleanupRes);
         });
     });
 });

@@ -6,9 +6,10 @@ import {IAttribute} from '_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
 
 const LIB_COLLECTION_NAME = 'core_libraries';
-const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
+export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
 
 export interface ILibraryRepo {
+    LIB_ATTRIB_COLLECTION_NAME?: string;
     /**
      * Return libraries
      *

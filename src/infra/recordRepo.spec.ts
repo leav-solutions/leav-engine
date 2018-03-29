@@ -13,7 +13,7 @@ describe('RecordRepo', () => {
         getValues: null,
         getValueById: null,
         filterQueryPart: null,
-        valueQueryPart: null
+        clearAllValues: null
     };
 
     describe('createRecord', () => {
