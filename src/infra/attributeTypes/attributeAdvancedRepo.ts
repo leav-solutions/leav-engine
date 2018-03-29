@@ -150,9 +150,6 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             };
 
             return {query, bindVars};
-        },
-        valueQueryPart(fieldName: string, index: number): AqlQuery {
-            return null;
         }
     };
 }

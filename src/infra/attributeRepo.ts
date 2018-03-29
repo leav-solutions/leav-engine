@@ -71,7 +71,6 @@ export interface IAttributeTypeRepo {
     getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
 
     filterQueryPart(fieldName: string, index: number, value: string | number): AqlQuery;
-    valueQueryPart(fieldName: string, index: number): AqlQuery;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';

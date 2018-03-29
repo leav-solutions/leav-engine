@@ -119,9 +119,6 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
             return null;
-        },
-        valueQueryPart(fieldName: string, index: number): AqlQuery {
-            return null;
         }
     };
 }

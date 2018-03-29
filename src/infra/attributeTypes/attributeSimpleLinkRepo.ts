@@ -42,9 +42,6 @@ export default function(
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
             return null;
-        },
-        valueQueryPart(fieldName: string, index: number): AqlQuery {
-            return null;
         }
     };
 }
