@@ -1,7 +1,21 @@
 import libraryDomain from './libraryDomain';
 import {AttributeTypes} from '../_types/attribute';
+import ValidationError from '../errors/ValidationError';
 
 describe('LibraryDomain', () => {
+    const mockAttrDomain = {
+        getAttributes: global.__mockPromise([
+            {id: 'id', type: AttributeTypes.SIMPLE},
+            {id: 'created_at', type: AttributeTypes.SIMPLE},
+            {id: 'created_by', type: AttributeTypes.SIMPLE},
+            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+            {id: 'attr1', type: AttributeTypes.SIMPLE},
+            {id: 'attr2', type: AttributeTypes.SIMPLE}
+        ]),
+        getTypeRepo: null
+    };
+
     describe('getLibraries', () => {
         test('Should return a list of libs', async function() {
             const mockLibRepo = {
@@ -29,7 +43,7 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(mockLibRepo);
+            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
 
             const newLib = await libDomain.saveLibrary({id: 'test'});
 
@@ -48,7 +62,7 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(mockLibRepo);
+            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
 
             const updatedLib = await libDomain.saveLibrary({id: 'test'});
 
@@ -67,7 +81,7 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(mockLibRepo);
+            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
 
             const updatedLib = await libDomain.saveLibrary({
                 id: 'test',
@@ -80,6 +94,27 @@ describe('LibraryDomain', () => {
             expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1]).toEqual(['attr1', 'attr2']);
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
+        });
+
+        test('Should throw if unknown attributes', async function() {
+            const mockLibRepo = {
+                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                createLibrary: jest.fn(),
+                updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                saveLibraryAttributes: jest.fn()
+            };
+
+            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
+
+            await expect(
+                libDomain.saveLibrary({
+                    id: 'test',
+                    attributes: [{id: 'attr3', type: AttributeTypes.SIMPLE}, {id: 'attr4', type: AttributeTypes.SIMPLE}]
+                })
+            ).rejects.toThrow(ValidationError);
+
+            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
+            expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
         });
     });
 
@@ -98,10 +133,10 @@ describe('LibraryDomain', () => {
 
         test('Should throw if unknown attribute', async function() {
             const mockLibRepo = {deleteLibrary: global.__mockPromise()};
-            const attrDomain = libraryDomain(mockLibRepo);
-            attrDomain.getLibraries = global.__mockPromise([]);
+            const libDomain = libraryDomain(mockLibRepo);
+            libDomain.getLibraries = global.__mockPromise([]);
 
-            await expect(attrDomain.deleteLibrary(libData.id)).rejects.toThrow();
+            await expect(libDomain.deleteLibrary(libData.id)).rejects.toThrow();
         });
 
         test('Should throw if system library', async function() {

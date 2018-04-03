@@ -4,6 +4,8 @@ import {ISystemTranslation} from '_types/systemTranslation';
 import {IAttribute} from '_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
 import ValidationError from '../errors/ValidationError';
+import {IAttributeDomain} from './attributeDomain';
+import {difference} from 'lodash';
 
 export interface ILibraryDomain {
     getLibraries?(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
@@ -11,7 +13,7 @@ export interface ILibraryDomain {
     deleteLibrary?(id: string): Promise<ILibrary>;
 }
 
-export default function(libraryRepo: ILibraryRepo): ILibraryDomain {
+export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDomain | null = null): ILibraryDomain {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
             let libs = await libraryRepo.getLibraries(filters);
@@ -28,17 +30,23 @@ export default function(libraryRepo: ILibraryRepo): ILibraryDomain {
         },
         async saveLibrary(libData: ILibrary): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({id: libData.id});
+            const newLib = !!libs.length;
 
-            const lib = libs.length
-                ? await libraryRepo.updateLibrary(libData)
-                : await libraryRepo.createLibrary(libData);
+            const lib = newLib ? await libraryRepo.updateLibrary(libData) : await libraryRepo.createLibrary(libData);
 
             // New library? Link default attributes. Otherwise, save given attributes if any
-            const libAttributes = libs.length
+            const libAttributes = newLib
                 ? typeof libData.attributes !== 'undefined' ? libData.attributes.map(attr => attr.id) : null
                 : ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
 
             if (libAttributes !== null) {
+                const availableAttributes = await attributeDomain.getAttributes();
+                const unknownAttrs = difference(libAttributes, availableAttributes.map(attr => attr.id));
+
+                if (unknownAttrs.length) {
+                    throw new ValidationError([{attributes: `Unknown attributes: ${unknownAttrs.join(', ')}`}]);
+                }
+
                 await libraryRepo.saveLibraryAttributes(libData.id, libAttributes);
             }
 
