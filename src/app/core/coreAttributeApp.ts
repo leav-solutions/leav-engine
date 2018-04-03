@@ -1,14 +1,13 @@
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IAttributeDomain} from 'domain/attributeDomain';
 import {IAttribute, AttributeTypes, AttributeFormats} from '../../_types/attribute';
-import {IUtils} from 'utils/utils';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
     getGraphQLFormat(attribute: IAttribute): string;
 }
 
-export default function(attributeDomain: IAttributeDomain, utils: IUtils): ICoreAttributeApp {
+export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const attributes = await attributeDomain.getAttributes();

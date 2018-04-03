@@ -3,6 +3,15 @@ import {camelCase, upperFirst, trimEnd} from 'lodash';
 export interface IUtils {
     libNameToQueryName(name: string): string;
     libNameToTypeName(name: string): string;
+
+    /**
+     * Rethrow an error prefixed by optional message.
+     * The same given error is re-thrown so stacktrace is keeped intact
+     *
+     * @param err
+     * @param message
+     */
+    rethrow(err: Error, message?: string): void;
 }
 
 export default function(): IUtils {
@@ -20,6 +29,13 @@ export default function(): IUtils {
             formattedName = trimEnd(formattedName, 's');
 
             return formattedName;
+        },
+        rethrow(err: Error, message?: string): void {
+            if (message) {
+                err.message = `${message} ${err.message}`;
+            }
+
+            throw err;
         }
     };
 }

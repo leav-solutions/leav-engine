@@ -16,7 +16,7 @@ describe('AttributeIndexRepo', () => {
         getValueById: null,
         getValues: null,
         filterQueryPart: null,
-        valueQueryPart: null
+        clearAllValues: null
     };
 
     describe('createValue', () => {

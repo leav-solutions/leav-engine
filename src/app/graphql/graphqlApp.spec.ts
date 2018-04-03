@@ -13,7 +13,7 @@ import {
 
 describe('GraphqlApp', () => {
     describe('getQueryFields', () => {
-        const gqlApp = graphqlApp(null);
+        const gqlApp = graphqlApp(null, null, null, null);
 
         const mockInfo: GraphQLResolveInfo = {
             fieldName: null,

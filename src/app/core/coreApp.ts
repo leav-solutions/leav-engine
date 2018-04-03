@@ -3,7 +3,6 @@ import {ILibraryDomain} from 'domain/libraryDomain';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IAttributeDomain} from 'domain/attributeDomain';
 import {IRecordDomain} from 'domain/recordDomain';
-import {IUtils} from 'utils/utils';
 import {IValueDomain} from 'domain/valueDomain';
 import {IAttribute} from '_types/attribute';
 import {ILibrary} from '_types/library';
@@ -20,7 +19,6 @@ export default function(
     attributeDomain: IAttributeDomain,
     recordDomain: IRecordDomain,
     valueDomain: IValueDomain,
-    utils: IUtils,
     depsManager: AwilixContainer,
     config: any
 ): ICoreApp {

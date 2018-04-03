@@ -17,4 +17,14 @@ describe('Utils', () => {
             expect(utilsModule.libNameToTypeName('lot       of      space!!!')).toEqual('LotOfSpace');
         });
     });
+    describe('rethrow', () => {
+        test('Should throw error with amend message', async () => {
+            const utilsModule = utils();
+
+            const error = new Error('boom');
+
+            expect(() => utilsModule.rethrow(error)).toThrow('boom');
+            expect(() => utilsModule.rethrow(error, 'Error prefix:')).toThrow('Error prefix: boom');
+        });
+    });
 });

@@ -1,8 +1,14 @@
 import {AwilixContainer} from 'awilix';
 import {GraphQLSchema, Kind, ASTNode, GraphQLResolveInfo} from 'graphql';
+import * as winston from 'winston';
 import {makeExecutableSchema} from 'graphql-tools';
 import {merge} from 'lodash';
+import {maskErrors, UserError} from 'graphql-errors';
+import * as uuid from 'uuid';
+
 import {IQueryField} from '_types/record';
+import {IUtils} from 'utils/utils';
+import ValidationError from '../../errors/ValidationError';
 
 export interface IGraphqlApp {
     schema: GraphQLSchema;
@@ -15,8 +21,32 @@ export interface IAppGraphQLSchema {
     resolvers: any;
 }
 
-export default function(depsManager: AwilixContainer): IGraphqlApp {
+export default function(
+    depsManager: AwilixContainer,
+    logger: winston.Winston,
+    utils: IUtils,
+    config: any
+): IGraphqlApp {
     let _fullSchema: GraphQLSchema;
+
+    function _handleError(err: Error | ValidationError) {
+        if (err instanceof ValidationError) {
+            return err;
+        }
+
+        const errId = uuid.v4();
+
+        // Error is logged with original message
+        logger.error(err.stack);
+
+        if (config.env !== 'development') {
+            err.message = `Internal Error`;
+        }
+
+        err.message = `[${errId}] ${err.message}`;
+
+        return err;
+    }
 
     return {
         get schema(): GraphQLSchema {
@@ -40,10 +70,11 @@ export default function(depsManager: AwilixContainer): IGraphqlApp {
 
                 // Put together a schema
                 const schema = makeExecutableSchema(appSchema);
+                maskErrors(schema, _handleError);
 
                 _fullSchema = schema;
             } catch (e) {
-                throw new Error('Error generating schema: ' + e);
+                utils.rethrow(e, 'Error generating schema:');
             }
         },
         getQueryFields(info: GraphQLResolveInfo): IQueryField[] {

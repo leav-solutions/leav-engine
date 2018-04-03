@@ -2,6 +2,7 @@ import {IDbService} from './db/dbService';
 import {IDbUtils} from './db/dbUtils';
 import {IRecord, IRecordFilterOption} from '_types/record';
 import {aql} from 'arangojs';
+import {UserError} from 'graphql-errors';
 
 export interface IRecordRepo {
     /**

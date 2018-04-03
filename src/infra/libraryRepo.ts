@@ -76,54 +76,42 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ILibraryRepo 
             return res.map(dbUtils.cleanup);
         },
         async createLibrary(libData: ILibrary): Promise<ILibrary> {
-            try {
-                const defaultParams = {_key: '', system: false, label: {fr: '', en: ''}};
-                let docToInsert = dbUtils.convertToDoc(libData);
+            const defaultParams = {_key: '', system: false, label: {fr: '', en: ''}};
+            let docToInsert = dbUtils.convertToDoc(libData);
 
-                docToInsert = {...defaultParams, ...docToInsert};
+            docToInsert = {...defaultParams, ...docToInsert};
 
-                const libAttributes = docToInsert.attributes;
-                delete docToInsert.attributes; // Attributes has to be handled separately
+            const libAttributes = docToInsert.attributes;
+            delete docToInsert.attributes; // Attributes has to be handled separately
 
-                // Create new collection for library
-                await dbService.createCollection(docToInsert._key);
+            // Create new collection for library
+            await dbService.createCollection(docToInsert._key);
 
-                // Insert in libraries collection
-                const libCollc = dbService.db.collection(LIB_COLLECTION_NAME);
-                const libRes = await dbService.execute(aql`INSERT ${docToInsert} IN ${libCollc} RETURN NEW`);
+            // Insert in libraries collection
+            const libCollc = dbService.db.collection(LIB_COLLECTION_NAME);
+            const libRes = await dbService.execute(aql`INSERT ${docToInsert} IN ${libCollc} RETURN NEW`);
 
-                return dbUtils.cleanup(libRes.pop());
-            } catch (e) {
-                throw new Error('Create library ' + e);
-            }
+            return dbUtils.cleanup(libRes.pop());
         },
         async updateLibrary(libData: ILibrary): Promise<ILibrary> {
-            try {
-                const docToInsert = dbUtils.convertToDoc(libData);
+            const docToInsert = dbUtils.convertToDoc(libData);
 
-                // Insert in libraries collection
-                const col = dbService.db.collection(LIB_COLLECTION_NAME);
-                const res = await dbService.execute(aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`);
+            // Insert in libraries collection
+            const col = dbService.db.collection(LIB_COLLECTION_NAME);
+            const res = await dbService.execute(aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`);
 
-                return dbUtils.cleanup(res.pop());
-            } catch (e) {
-                throw new Error('Update library ' + e);
-            }
+            return dbUtils.cleanup(res.pop());
         },
         async deleteLibrary(id: string): Promise<ILibrary> {
-            try {
-                // Delete library
-                const col = dbService.db.collection(LIB_COLLECTION_NAME);
-                const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`);
+            // Delete library
+            const col = dbService.db.collection(LIB_COLLECTION_NAME);
+            const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`);
 
-                // Delete library's collection
-                await dbService.dropCollection(id);
+            // Delete library's collection
+            await dbService.dropCollection(id);
 
-                // Return deleted library
-                return dbUtils.cleanup(res.pop());
-            } catch (e) {
-                throw new Error('Delete library ' + e);
-            }
+            // Return deleted library
+            return dbUtils.cleanup(res.pop());
         },
         async saveLibraryAttributes(libId: string, attributes: string[]): Promise<string[]> {
             // TODO: in CONCAT, query will fail is using constant instead of hard coding 'core_attributes'

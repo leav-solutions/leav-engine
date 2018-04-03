@@ -13,7 +13,7 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                 await attributeRepo.createAttribute({
                     id: 'id',
                     system: true,
-                    type: AttributeTypes.INDEX,
+                    type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
                     label: {fr: 'Identifiant', en: 'Identifier'}
                 });
@@ -21,14 +21,14 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                 await attributeRepo.createAttribute({
                     id: 'created_by',
                     system: true,
-                    type: AttributeTypes.LINK,
+                    type: AttributeTypes.SIMPLE_LINK,
                     label: {fr: 'Créé par', en: 'Created by'}
                 });
 
                 await attributeRepo.createAttribute({
                     id: 'created_at',
                     system: true,
-                    type: AttributeTypes.INDEX,
+                    type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.NUMERIC,
                     label: {fr: 'Date de création', en: 'Creation date'}
                 });
@@ -36,14 +36,14 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                 await attributeRepo.createAttribute({
                     id: 'modified_by',
                     system: true,
-                    type: AttributeTypes.LINK,
+                    type: AttributeTypes.SIMPLE_LINK,
                     label: {fr: 'Modifié par', en: 'Modified by'}
                 });
 
                 await attributeRepo.createAttribute({
                     id: 'modified_at',
                     system: true,
-                    type: AttributeTypes.INDEX,
+                    type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.NUMERIC,
                     label: {fr: 'Date de modification', en: 'Modification date'}
                 });

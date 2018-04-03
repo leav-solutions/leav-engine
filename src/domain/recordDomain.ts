@@ -58,56 +58,46 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
             return recordRepo.createRecord(library, recordData);
         },
         async deleteRecord(library: string, id: number): Promise<IRecord> {
-            try {
-                // Get library
-                // const lib = await this.getLibraries({id});
+            // Get library
+            // const lib = await this.getLibraries({id});
 
-                // // Check if exists and can delete
-                // if (!lib.length) {
-                //     throw new Error('Unknown library');
-                // }
+            // // Check if exists and can delete
+            // if (!lib.length) {
+            //     throw new Error('Unknown library');
+            // }
 
-                // if (lib.pop().system) {
-                //     throw new Error('Cannot delete system library');
-                // }
+            // if (lib.pop().system) {
+            //     throw new Error('Cannot delete system library');
+            // }
 
-                return recordRepo.deleteRecord(library, id);
-            } catch (e) {
-                throw new Error('Delete record ' + e);
-            }
+            return recordRepo.deleteRecord(library, id);
         },
         async find(library: string, filters?: IRecordFiltersLight, fields?: IQueryField[]): Promise<IRecord[]> {
-            try {
-                const fullFilters: IRecordFilterOption[] = [];
+            const fullFilters: IRecordFilterOption[] = [];
 
-                // Hydrate filters with attribute properties and cast filters values if needed
-                if (typeof filters !== 'undefined' && filters) {
-                    for (const attrId of Object.keys(filters)) {
-                        const attribute = await attributeDomain.getAttributeProperties(attrId);
-                        const value =
-                            attribute.format === AttributeFormats.NUMERIC ? Number(filters[attrId]) : filters[attrId];
+            // Hydrate filters with attribute properties and cast filters values if needed
+            if (typeof filters !== 'undefined' && filters) {
+                for (const attrId of Object.keys(filters)) {
+                    const attribute = await attributeDomain.getAttributeProperties(attrId);
+                    const value =
+                        attribute.format === AttributeFormats.NUMERIC ? Number(filters[attrId]) : filters[attrId];
 
-                        fullFilters.push({
-                            attribute,
-                            value,
-                            typeRepo: attributeDomain.getTypeRepo(attribute)
-                        });
-                    }
+                    fullFilters.push({
+                        attribute,
+                        value,
+                        typeRepo: attributeDomain.getTypeRepo(attribute)
+                    });
                 }
-
-                let records = await recordRepo.find(library, fullFilters);
-
-                // Populate records with requested fields
-                if (typeof fields !== 'undefined' && fields.length) {
-                    records = await Promise.all(
-                        records.map(record => this.populateRecordFields(library, record, fields))
-                    );
-                }
-
-                return records;
-            } catch (e) {
-                throw new Error('Find records ' + e);
             }
+
+            let records = await recordRepo.find(library, fullFilters);
+
+            // Populate records with requested fields
+            if (typeof fields !== 'undefined' && fields.length) {
+                records = await Promise.all(records.map(record => this.populateRecordFields(library, record, fields)));
+            }
+
+            return records;
         },
         async populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord> {
             const fieldsProps: {[attrName: string]: IAttribute} = {};

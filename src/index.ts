@@ -15,6 +15,6 @@ import {init as initDI} from './depsManager';
             await server.init();
         }
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 })();
