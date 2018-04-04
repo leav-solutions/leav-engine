@@ -4,7 +4,8 @@ import {IRecord, IRecordFilterOption, IQueryField} from '_types/record';
 import {IAttributeDomain} from './attributeDomain';
 import {AttributeFormats, IAttribute, AttributeTypes} from '../_types/attribute';
 import valueDomain from './valueDomain';
-import {IAttributeTypeRepo} from 'infra/attributeRepo';
+import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
+import {IValueRepo} from 'infra/valueRepo';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -50,7 +51,11 @@ export interface IRecordDomain {
     populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
 }
 
-export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDomain): IRecordDomain {
+export default function(
+    recordRepo: IRecordRepo | null = null,
+    attributeDomain: IAttributeDomain | null = null,
+    valueRepo: IValueRepo | null = null
+): IRecordDomain {
     return {
         async createRecord(library: string): Promise<IRecord> {
             const recordData = {created_at: moment().unix(), modified_at: moment().unix()};
@@ -84,8 +89,7 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
 
                     fullFilters.push({
                         attribute,
-                        value,
-                        typeRepo: attributeDomain.getTypeRepo(attribute)
+                        value
                     });
                 }
             }
@@ -101,13 +105,11 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
         },
         async populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord> {
             const fieldsProps: {[attrName: string]: IAttribute} = {};
-            const fieldsTypeRepo: {[attrName: string]: IAttributeTypeRepo} = {};
 
             for (const field of queryFields) {
                 // Retrieve field properties
                 if (typeof fieldsProps[field.name] === 'undefined') {
                     fieldsProps[field.name] = await attributeDomain.getAttributeProperties(field.name);
-                    fieldsTypeRepo[field.name] = await attributeDomain.getTypeRepo(fieldsProps[field.name]);
                 }
 
                 const isLinkAttribute =
@@ -119,11 +121,7 @@ export default function(recordRepo: IRecordRepo, attributeDomain: IAttributeDoma
                     typeof record[field.name] === 'undefined' ||
                     fieldsProps[field.name].type !== AttributeTypes.SIMPLE
                 ) {
-                    const fieldValues = await fieldsTypeRepo[field.name].getValues(
-                        library,
-                        record.id,
-                        fieldsProps[field.name]
-                    );
+                    const fieldValues = await valueRepo.getValues(library, record.id, fieldsProps[field.name]);
 
                     if (fieldValues.length) {
                         const fieldValue = fieldValues[0];

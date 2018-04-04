@@ -2,8 +2,8 @@ import recordRepo from './recordRepo';
 import {Database} from 'arangojs';
 import {IAttribute, AttributeTypes} from '../_types/attribute';
 import {IRecordFilterOption} from '_types/record';
-import {IAttributeTypeRepo} from './attributeRepo';
 import {cloneDeep} from 'lodash';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 describe('RecordRepo', () => {
     const mockAttrTypeRepo: IAttributeTypeRepo = {
@@ -14,6 +14,15 @@ describe('RecordRepo', () => {
         getValueById: null,
         filterQueryPart: null,
         clearAllValues: null
+    };
+
+    const mockValueRepo = {
+        createValue: jest.fn(),
+        updateValue: jest.fn(),
+        deleteValue: jest.fn(),
+        getValues: jest.fn(),
+        getValueById: global.__mockPromise(null),
+        clearAllValues: jest.fn()
     };
 
     describe('createRecord', () => {
@@ -162,7 +171,6 @@ describe('RecordRepo', () => {
                     id: 'test_attr',
                     type: null
                 },
-                typeRepo: null,
                 value: 'test'
             },
             {
@@ -170,7 +178,6 @@ describe('RecordRepo', () => {
                     id: 'test_attr2',
                     type: null
                 },
-                typeRepo: null,
                 value: 'test2'
             }
         ];
@@ -219,13 +226,15 @@ describe('RecordRepo', () => {
                     })
             };
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils);
+            const mockAttrRepo = {
+                getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo)
+            };
+
+            const recRepo = recordRepo(mockDbServ, mockDbUtils, mockAttrRepo);
 
             const filters = cloneDeep(mockFilters);
             filters[0].attribute.type = AttributeTypes.SIMPLE;
             filters[1].attribute.type = AttributeTypes.SIMPLE;
-            filters[0].typeRepo = mockAttrSimpleRepo;
-            filters[1].typeRepo = mockAttrSimpleRepo;
 
             const records = await recRepo.find('test_lib', filters);
 

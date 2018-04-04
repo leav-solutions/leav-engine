@@ -1,5 +1,5 @@
 import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from '../attributeRepo';
+import {IAttributeTypeRepo} from '../attributeTypesRepo';
 import {IValue} from '_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';

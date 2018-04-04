@@ -124,35 +124,4 @@ describe('attributeDomain', () => {
             await expect(attrDomain.deleteAttribute(attrData.id)).rejects.toThrow();
         });
     });
-
-    describe('getTypeRepo', () => {
-        const mockAttribute = {
-            id: 'test_attr',
-            type: null
-        };
-
-        test('Should return repo by attribute type', () => {
-            const mockAttrSimpleRepo = {...mockAttrTypeRepo};
-            const mockAttrSimpleLinkRepo = {...mockAttrTypeRepo};
-            const mockAttrAdvRepo = {...mockAttrTypeRepo};
-            const mockAttrAdvLinkRepo = {...mockAttrTypeRepo};
-
-            const attrDomain = attributeDomain(
-                null,
-                mockAttrSimpleRepo,
-                mockAttrSimpleLinkRepo,
-                mockAttrAdvRepo,
-                mockAttrAdvLinkRepo
-            );
-
-            expect(attrDomain.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE})).toBe(mockAttrSimpleRepo);
-            expect(attrDomain.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE_LINK})).toBe(
-                mockAttrSimpleLinkRepo
-            );
-            expect(attrDomain.getTypeRepo({...mockAttribute, type: AttributeTypes.ADVANCED})).toBe(mockAttrAdvRepo);
-            expect(attrDomain.getTypeRepo({...mockAttribute, type: AttributeTypes.ADVANCED_LINK})).toBe(
-                mockAttrAdvLinkRepo
-            );
-        });
-    });
 });

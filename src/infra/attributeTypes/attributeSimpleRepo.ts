@@ -1,11 +1,13 @@
 import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo, IAttributeRepo} from '../attributeRepo';
+import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attributeRepo';
+import {IAttributeTypeRepo} from '../attributeTypesRepo';
 import {IValue} from '_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/esm/aql-query';
+import {LIB_ATTRIB_COLLECTION_NAME} from '../libraryRepo';
 
-export default function(dbService: IDbService | any, attributeRepo: IAttributeRepo | null = null): IAttributeTypeRepo {
+export default function(dbService: IDbService | any): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
         recordId: number,
@@ -70,7 +72,17 @@ export default function(dbService: IDbService | any, attributeRepo: IAttributeRe
             return {query, bindVars};
         },
         async clearAllValues(attribute: IAttribute): Promise<boolean> {
-            const libraries = await attributeRepo.getLibrariesUsingAttribute(attribute);
+            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+
+            // TODO: use aql template tag, and find out why it doesn't work :)
+            const query = `
+                FOR v
+                IN 1 INBOUND '${ATTRIB_COLLECTION_NAME}/${attribute.id}'
+                ${LIB_ATTRIB_COLLECTION_NAME}
+                RETURN v
+            `;
+
+            const libraries = await dbService.execute(query);
 
             for (const lib of libraries) {
                 const recordsCollec = dbService.db.collection(lib.id);

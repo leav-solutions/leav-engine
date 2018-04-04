@@ -59,15 +59,6 @@ exports[`AttributeRepo getAttribute Should return all libs if no filter 1`] = `"
 
 exports[`AttributeRepo getAttribute Should return all libs if no filter 2`] = `Object {}`;
 
-exports[`AttributeRepo getLibrariesUsingAttribute Should get list of libraries 1`] = `
-"
-                FOR v
-                IN 1 INBOUND 'core_attributes/test_attr'
-                core_edge_libraries_attributes
-                RETURN v
-            "
-`;
-
 exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
 exports[`AttributeRepo updateAttribute Should update an existing attribute 2`] = `

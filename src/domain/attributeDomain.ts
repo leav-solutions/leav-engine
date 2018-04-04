@@ -1,4 +1,5 @@
-import {IAttributeRepo, IAttributeTypeRepo} from 'infra/attributeRepo';
+import {IAttributeRepo} from 'infra/attributeRepo';
+import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
 import {IAttribute, IAttributeFilterOptions, AttributeTypes} from '../_types/attribute';
 import ValidationError from '../errors/ValidationError';
 
@@ -34,17 +35,9 @@ export interface IAttributeDomain {
      * @param id
      */
     deleteAttribute?(id: string): Promise<IAttribute>;
-
-    getTypeRepo(attribute: IAttribute): IAttributeTypeRepo;
 }
 
-export default function(
-    attributeRepo: IAttributeRepo,
-    attributeSimpleRepo: IAttributeTypeRepo | null = null,
-    attributeSimpleLinkRepo: IAttributeTypeRepo | null = null,
-    attributeAdvancedRepo: IAttributeTypeRepo | null = null,
-    attributeAdvancedLinkRepo: IAttributeTypeRepo | null = null
-): IAttributeDomain {
+export default function(attributeRepo: IAttributeRepo | null = null): IAttributeDomain {
     return {
         async getAttributeProperties(id: string): Promise<IAttribute> {
             const attrs = await attributeRepo.getAttributes({id});
@@ -86,28 +79,7 @@ export default function(
                 throw new ValidationError([{id: 'Cannot delete system attribute'}]);
             }
 
-            const typeRepo = this.getTypeRepo(attrProps);
-
-            return attributeRepo.deleteAttribute(attrProps, typeRepo);
-        },
-        getTypeRepo(attribute) {
-            let attrTypeRepo: IAttributeTypeRepo;
-            switch (attribute.type) {
-                case AttributeTypes.SIMPLE:
-                    attrTypeRepo = attributeSimpleRepo;
-                    break;
-                case AttributeTypes.SIMPLE_LINK:
-                    attrTypeRepo = attributeSimpleLinkRepo;
-                    break;
-                case AttributeTypes.ADVANCED:
-                    attrTypeRepo = attributeAdvancedRepo;
-                    break;
-                case AttributeTypes.ADVANCED_LINK:
-                    attrTypeRepo = attributeAdvancedLinkRepo;
-                    break;
-            }
-
-            return attrTypeRepo;
+            return attributeRepo.deleteAttribute(attrProps);
         }
     };
 }

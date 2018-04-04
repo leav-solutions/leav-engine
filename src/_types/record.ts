@@ -1,5 +1,5 @@
 import {IAttribute} from './attribute';
-import {IAttributeTypeRepo} from 'infra/attributeRepo';
+import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
 
 export interface IRecord {
     id?: number;
@@ -11,7 +11,6 @@ export interface IRecord {
 
 export interface IRecordFilterOption {
     attribute: IAttribute;
-    typeRepo: IAttributeTypeRepo;
     value: string | number;
 }
 

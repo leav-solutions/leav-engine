@@ -3,6 +3,7 @@ import {IDbUtils} from './db/dbUtils';
 import {IRecord, IRecordFilterOption} from '_types/record';
 import {aql} from 'arangojs';
 import {UserError} from 'graphql-errors';
+import {IAttributeTypesRepo} from './attributeTypesRepo';
 
 export interface IRecordRepo {
     /**
@@ -25,7 +26,11 @@ export interface IRecordRepo {
     find(library: string, filters?: IRecordFilterOption[]): Promise<IRecord[]>;
 }
 
-export default function(dbService: IDbService | any, dbUtils: IDbUtils): IRecordRepo {
+export default function(
+    dbService: IDbService | any,
+    dbUtils: IDbUtils,
+    attributeTypesRepo: IAttributeTypesRepo | null = null
+): IRecordRepo {
     return {
         async find(library: string, filters?: IRecordFilterOption[]): Promise<IRecord[]> {
             const queryParts = [];
@@ -37,7 +42,8 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IRecord
             if (typeof filters !== 'undefined' && filters.length) {
                 let i = 0;
                 for (const filter of filters) {
-                    const filterQueryPart = filter.typeRepo.filterQueryPart(filter.attribute.id, i, filter.value);
+                    const typeRepo = attributeTypesRepo.getTypeRepo(filter.attribute);
+                    const filterQueryPart = typeRepo.filterQueryPart(filter.attribute.id, i, filter.value);
                     queryParts.push(filterQueryPart.query);
                     bindVars = {...bindVars, ...filterQueryPart.bindVars};
                     i++;

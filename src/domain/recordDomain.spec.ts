@@ -9,6 +9,15 @@ const mockRecordRepo: IRecordRepo = {
     find: null
 };
 
+const mockValueRepo = {
+    createValue: jest.fn(),
+    updateValue: jest.fn(),
+    deleteValue: jest.fn(),
+    getValues: jest.fn(),
+    getValueById: global.__mockPromise(null),
+    clearAllValues: jest.fn()
+};
+
 describe('RecordDomain', () => {
     describe('createRecord', () => {
         test('Should create a new record', async function() {
@@ -88,15 +97,14 @@ describe('RecordDomain', () => {
 
             const recRepo = {...mockRecordRepo};
 
-            const mockAttrRepo = {
-                getValues: jest.fn().mockReturnValueOnce(
-                    Promise.resolve([
-                        {
-                            id: '222827150',
-                            value: 'MyLabel'
-                        }
-                    ])
-                )
+            const mockValRepo = {
+                ...mockValueRepo,
+                getValues: global.__mockPromise([
+                    {
+                        id: '222827150',
+                        value: 'MyLabel'
+                    }
+                ])
             };
 
             const mockAttributeDomain = {
@@ -112,11 +120,10 @@ describe('RecordDomain', () => {
                     }
 
                     return Promise.resolve({id: attribute, type});
-                }),
-                getTypeRepo: global.__mockPromise(mockAttrRepo)
+                })
             };
 
-            const recDomain = recordDomain(recRepo, mockAttributeDomain);
+            const recDomain = recordDomain(recRepo, mockAttributeDomain, mockValRepo);
 
             const findRes = await recDomain.populateRecordFields('test_lib', record, [
                 {
@@ -126,7 +133,7 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockAttrRepo.getValues).toBeCalledWith('test_lib', 222536283, {
+            expect(mockValRepo.getValues).toBeCalledWith('test_lib', 222536283, {
                 id: 'label',
                 type: AttributeTypes.ADVANCED
             });
@@ -150,7 +157,8 @@ describe('RecordDomain', () => {
 
             const recRepo = {...mockRecordRepo};
 
-            const mockAttrRepo = {
+            const mockValRepo = {
+                ...mockValueRepo,
                 getValues: jest
                     .fn()
                     .mockReturnValueOnce([
@@ -186,11 +194,10 @@ describe('RecordDomain', () => {
                     }
 
                     return Promise.resolve({id: attribute, type});
-                }),
-                getTypeRepo: global.__mockPromise(mockAttrRepo)
+                })
             };
 
-            const recDomain = recordDomain(recRepo, mockAttributeDomain);
+            const recDomain = recordDomain(recRepo, mockAttributeDomain, mockValRepo);
 
             const findRes = await recDomain.populateRecordFields('test_lib', record, [
                 {name: 'id', fields: [], arguments: []},
@@ -218,7 +225,7 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockAttrRepo.getValues).toBeCalledWith('test_lib', 222536283, {
+            expect(mockValRepo.getValues).toBeCalledWith('test_lib', 222536283, {
                 id: 'linkedElem',
                 type: AttributeTypes.SIMPLE_LINK
             });
