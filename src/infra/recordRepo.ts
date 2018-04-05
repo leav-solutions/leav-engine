@@ -5,6 +5,8 @@ import {aql} from 'arangojs';
 import {UserError} from 'graphql-errors';
 import {IAttributeTypesRepo} from './attributeTypesRepo';
 
+const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
+
 export interface IRecordRepo {
     /**
      * Create new record
@@ -67,8 +69,20 @@ export default function(
         },
         async deleteRecord(library: string, id: number): Promise<IRecord> {
             const collection = dbService.db.collection(library);
+            const edgeCollection = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
+            // Delete record values
+            const deleteValuesRes = await dbService.execute(aql`
+                FOR l IN ${edgeCollection}
+                    FILTER l._from == ${library + '/' + id} OR l._to == ${library + '/' + id}
+                    REMOVE {_key: l._key} IN ${edgeCollection}
+                    RETURN OLD
+            `);
+
+            // Delete record
             const deletedRecord = await collection.remove({_key: id});
 
+            deletedRecord.library = deletedRecord._id.split('/')[0];
             return dbUtils.cleanup(deletedRecord);
         }
     };

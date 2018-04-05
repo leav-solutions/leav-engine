@@ -84,15 +84,44 @@ describe('RecordRepo', () => {
                 remove: global.__mockPromise(deletedRecordData)
             };
 
-            const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};
-
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        _key: '222612340',
+                        _id: 'core_edge_values_links/222612340',
+                        _from: 'ubs/222536515',
+                        _to: 'core_values/222612335',
+                        _rev: '_Wf3oPWC--_',
+                        attribute: 'label',
+                        modified_at: 1521047926,
+                        created_at: 1521047926
+                    },
+                    {
+                        _key: '223188816',
+                        _id: 'core_edge_values_links/223188816',
+                        _from: 'products/222763208',
+                        _to: 'ubs/222536515',
+                        _rev: '_WlGSULm--_',
+                        attribute: 'linkedUb',
+                        modified_at: 1522936384,
+                        created_at: 1522936384
+                    }
+                ])
+            };
+            mockDbServ.db.collection = jest.fn().mockReturnValue(mockDbCollec);
 
             const mockDbUtils = {cleanup: jest.fn().mockReturnValue(recordData)};
 
             const recRepo = recordRepo(mockDbServ, mockDbUtils);
 
             const deleteRes = await recRepo.deleteRecord('users', recordData.id);
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
             expect(mockDbCollec.remove).toBeCalledWith({_key: recordData.id});
