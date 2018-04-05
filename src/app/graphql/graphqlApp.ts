@@ -37,13 +37,12 @@ export default function(
         const errId = uuid.v4();
 
         // Error is logged with original message
+        err.message = `[${errId}] ${err.message}`;
         logger.error(err.stack);
 
         if (config.env !== 'development') {
-            err.message = `Internal Error`;
+            err.message = `[${errId}] Internal Error`;
         }
-
-        err.message = `[${errId}] ${err.message}`;
 
         return err;
     }
