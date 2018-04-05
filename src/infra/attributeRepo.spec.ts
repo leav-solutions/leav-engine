@@ -207,7 +207,7 @@ describe('AttributeRepo', () => {
                 ...mockAttrTypeRepo
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils, null, mockValueRepo);
+            const attrRepo = attributeRepo(mockDbServ, mockDbUtils, mockValueRepo);
             attrRepo.getAttributes = global.__mockPromise([attrData]);
 
             const deleteRes = await attrRepo.deleteAttribute(attrData);

@@ -156,10 +156,18 @@ describe('LibraryRepo', () => {
         };
 
         test('Should delete a library and return deleted library', async function() {
+            const mockAttrRepo = {
+                getAttributes: global.__mockPromise([
+                    {id: 'attr1', type: AttributeTypes.SIMPLE},
+                    {id: 'attr2', type: AttributeTypes.SIMPLE}
+                ]),
+                deleteAttribute: global.__mockPromise({})
+            };
+
             const mockDbServ = {
                 db: new Database(),
                 dropCollection: global.__mockPromise(),
-                execute: global.__mockPromise([docLibData])
+                execute: global.__mockPromiseMultiple([[], [docLibData]])
             };
 
             const mockCleanupRes = libData;
@@ -168,10 +176,13 @@ describe('LibraryRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils, mockAttrRepo);
             libRepo.getLibraries = global.__mockPromise([libData]);
 
             const deleteRes = await libRepo.deleteLibrary(libData.id);
+
+            expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(2);
 
             expect(mockDbServ.dropCollection.mock.calls.length).toBe(1);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);

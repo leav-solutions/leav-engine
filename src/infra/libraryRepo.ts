@@ -53,7 +53,11 @@ export interface ILibraryRepo {
     getLibraryAttributes?(libId: string): Promise<IAttribute[]>;
 }
 
-export default function(dbService: IDbService, dbUtils: IDbUtils): ILibraryRepo {
+export default function(
+    dbService: IDbService | null = null,
+    dbUtils: IDbUtils | null = null,
+    attributeRepo: IAttributeRepo | null = null
+): ILibraryRepo {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
             let query = `FOR l IN ${LIB_COLLECTION_NAME}`;
@@ -103,6 +107,12 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ILibraryRepo 
             return dbUtils.cleanup(res.pop());
         },
         async deleteLibrary(id: string): Promise<ILibrary> {
+            // Delete attributes linked to this library
+            const linkedAttributes = await attributeRepo.getAttributes({linked_library: id});
+            for (const linkedAttribute of linkedAttributes) {
+                attributeRepo.deleteAttribute(linkedAttribute);
+            }
+
             // Delete library
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
             const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`);

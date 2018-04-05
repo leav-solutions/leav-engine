@@ -5,7 +5,7 @@ import {aql} from 'arangojs';
 import {IValue} from '_types/value';
 import {AqlQuery} from 'arangojs/lib/esm/aql-query';
 import {ILibrary} from '_types/library';
-import {ILibraryRepo, LIB_ATTRIB_COLLECTION_NAME} from './libraryRepo';
+import {LIB_ATTRIB_COLLECTION_NAME} from './libraryRepo';
 import {IValueRepo} from './valueRepo';
 
 export interface IAttributeRepo {
@@ -28,7 +28,6 @@ export const ATTRIB_COLLECTION_NAME = 'core_attributes';
 export default function(
     dbService: IDbService | null = null,
     dbUtils: IDbUtils | null = null,
-    libraryRepo: ILibraryRepo | null = null,
     valueRepo: IValueRepo | null = null
 ): IAttributeRepo {
     return {

@@ -14,6 +14,7 @@ export interface IAttribute {
  */
 export interface IAttributeFilterOptions {
     id?: string;
+    linked_library?: string;
 }
 
 export enum AttributeTypes {
