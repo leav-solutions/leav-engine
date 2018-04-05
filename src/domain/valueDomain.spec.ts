@@ -2,6 +2,7 @@ import attributeDomain from './attributeDomain';
 import valueDomain from './valueDomain';
 import {AttributeTypes} from '../_types/attribute';
 import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
+import {IRecordRepo} from 'infra/recordRepo';
 
 describe('ValueDomain', () => {
     const mockValueRepo = {
@@ -16,6 +17,13 @@ describe('ValueDomain', () => {
     const mockAttributeDomain = {
         getAttributeProperties: jest.fn(),
         getTypeRepo: jest.fn()
+    };
+
+    const mockRecordRepo: IRecordRepo = {
+        createRecord: jest.fn(),
+        updateRecord: jest.fn(),
+        deleteRecord: jest.fn(),
+        find: jest.fn()
     };
 
     describe('saveValue', () => {
@@ -36,7 +44,7 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
-            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo);
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo, mockRecordRepo);
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
 
@@ -67,7 +75,7 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
-            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo);
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo, mockRecordRepo);
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
 
@@ -108,7 +116,7 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
-            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo);
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo, mockRecordRepo);
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {
                 id: 12345,
@@ -175,6 +183,36 @@ describe('ValueDomain', () => {
                 })
             ).rejects.toThrow();
         });
+
+        test('Should update record modif date', async function() {
+            const savedValueData = {value: 'test val', attribute: 'test_attr'};
+
+            const mockValRepo = {
+                ...mockValueRepo,
+                createValue: global.__mockPromise(savedValueData)
+            };
+
+            const mockAttrDomain = {
+                ...mockAttributeDomain,
+                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const mockRecRepo = {...mockRecordRepo, updateRecord: global.__mockPromise({})};
+
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo, mockRecRepo);
+
+            const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
+
+            expect(mockRecRepo.updateRecord).toBeCalled();
+            expect(mockRecRepo.updateRecord.mock.calls[0][1].modified_at).toBeDefined();
+            expect(Number.isInteger(mockRecRepo.updateRecord.mock.calls[0][1].modified_at)).toBe(true);
+
+            expect(savedValue).toMatchObject(savedValueData);
+        });
     });
 
     describe('deleteValue', () => {
@@ -195,7 +233,7 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
-            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo);
+            const valDomain = valueDomain(mockAttrDomain, mockLibDomain, mockValRepo, mockRecordRepo);
 
             const deletedValue = await valDomain.deleteValue('test_lib', 12345, 'test_attr', {value: 'test val'});
 

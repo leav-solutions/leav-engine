@@ -19,9 +19,17 @@ export interface IRecordDomain {
      * Create new record
      *
      * @param library       Library ID
-     * @param recordData
      */
     createRecord?(library: string): Promise<IRecord>;
+
+    /**
+     * Update record
+     * Must be used to update metadata (modified_at, ...) only
+     *
+     * @param library       Library ID
+     * @param recordData
+     */
+    updateRecord?(library: string, recordData: IRecord): Promise<IRecord>;
 
     /**
      * Delete record
@@ -48,7 +56,7 @@ export interface IRecordDomain {
      * @param record
      * @param queryFields Fields to retrieve
      */
-    populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
+    populateRecordFields?(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
 }
 
 export default function(
@@ -61,6 +69,9 @@ export default function(
             const recordData = {created_at: moment().unix(), modified_at: moment().unix()};
 
             return recordRepo.createRecord(library, recordData);
+        },
+        async updateRecord(library: string, recordData: IRecord): Promise<IRecord> {
+            return recordRepo.updateRecord(library, recordData);
         },
         async deleteRecord(library: string, id: number): Promise<IRecord> {
             // Get library

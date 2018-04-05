@@ -4,6 +4,7 @@ import {IRecord, IRecordFilterOption} from '_types/record';
 import {aql} from 'arangojs';
 import {UserError} from 'graphql-errors';
 import {IAttributeTypesRepo} from './attributeTypesRepo';
+import utils from 'utils/utils';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -15,6 +16,8 @@ export interface IRecordRepo {
      * @param recordData
      */
     createRecord(library: string, recordData: IRecord): Promise<IRecord>;
+
+    updateRecord(library: string, recordData: IRecord): Promise<IRecord>;
 
     /**
      * Delete record
@@ -84,6 +87,18 @@ export default function(
 
             deletedRecord.library = deletedRecord._id.split('/')[0];
             return dbUtils.cleanup(deletedRecord);
+        },
+        async updateRecord(library: string, recordData: IRecord): Promise<IRecord> {
+            const collection = dbService.db.collection(library);
+
+            const updateRes = await dbService.execute(aql`
+                UPDATE {_key: ${recordData.id}} WITH ${recordData} IN ${collection}
+                RETURN NEW
+            `);
+
+            const updatedRecord = dbUtils.cleanup(updateRes[0]);
+
+            return updatedRecord;
         }
     };
 }

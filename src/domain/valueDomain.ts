@@ -15,7 +15,8 @@ export interface IValueDomain {
 export default function(
     attributeDomain: IAttributeDomain | null = null,
     libraryDomain: ILibraryDomain | null = null,
-    valueRepo: IValueRepo | null = null
+    valueRepo: IValueRepo | null = null,
+    recordRepo: IRecordRepo | null = null
 ): IValueDomain {
     return {
         async saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
@@ -47,9 +48,14 @@ export default function(
                 valueToSave.created_at = moment().unix();
             }
 
-            return value.id && attr.type !== AttributeTypes.SIMPLE
-                ? valueRepo.updateValue(library, recordId, attr, valueToSave)
-                : valueRepo.createValue(library, recordId, attr, valueToSave);
+            const savedVal =
+                value.id && attr.type !== AttributeTypes.SIMPLE
+                    ? await valueRepo.updateValue(library, recordId, attr, valueToSave)
+                    : await valueRepo.createValue(library, recordId, attr, valueToSave);
+
+            const updatedRecord = await recordRepo.updateRecord(library, {id: recordId, modified_at: moment().unix()});
+
+            return savedVal;
         },
         async deleteValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
             // Get library

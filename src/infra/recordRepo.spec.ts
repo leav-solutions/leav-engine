@@ -69,6 +69,44 @@ describe('RecordRepo', () => {
         });
     });
 
+    describe('updateRecord', () => {
+        test('Should update a record', async function() {
+            const recordData = {id: 222435651, modified_at: 1519303348};
+            const updatedRecordData = {
+                _id: 'users/222435651',
+                _rev: '_WSywvyC--_',
+                _key: 222435651,
+                created_at: 1519303348,
+                modified_at: 1519303348
+            };
+
+            const cleanUpdatedRecordData = {
+                id: 222435651,
+                library: 'users',
+                created_at: 1519303348,
+                modified_at: 1519303348
+            };
+
+            const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
+
+            const mockDbUtils = {
+                cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData)
+            };
+
+            const recRepo = recordRepo(mockDbServ, mockDbUtils);
+
+            const updatedRecord = await recRepo.updateRecord('test', recordData);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
+
+            expect(updatedRecord).toMatchObject(cleanUpdatedRecordData);
+        });
+    });
+
     describe('deleteRecord', () => {
         test('Should delete a record and return deleted record', async function() {
             const recordData = {id: 222435651, created_at: 1519303348, modified_at: 1519303348};

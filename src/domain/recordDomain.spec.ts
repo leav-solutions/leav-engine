@@ -5,6 +5,7 @@ import {AttributeTypes} from '../_types/attribute';
 
 const mockRecordRepo: IRecordRepo = {
     createRecord: null,
+    updateRecord: null,
     deleteRecord: null,
     find: null
 };
@@ -32,6 +33,22 @@ describe('RecordDomain', () => {
             expect(Number.isInteger(recRepo.createRecord.mock.calls[0][1].modified_at)).toBe(true);
 
             expect(createdRecord).toMatchObject(createdRecordData);
+        });
+    });
+
+    describe('updateRecord', () => {
+        test('Should update a record', async function() {
+            const updatedRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 987654321};
+            const recRepo = {...mockRecordRepo, updateRecord: global.__mockPromise(updatedRecordData)};
+
+            const recDomain = recordDomain(recRepo, null);
+
+            const updatedRecord = await recDomain.updateRecord('test', {id: 222435651, modified_at: 987654321});
+
+            expect(recRepo.updateRecord.mock.calls.length).toBe(1);
+            expect(Number.isInteger(recRepo.updateRecord.mock.calls[0][1].modified_at)).toBe(true);
+
+            expect(updatedRecord).toMatchObject(updatedRecordData);
         });
     });
 
