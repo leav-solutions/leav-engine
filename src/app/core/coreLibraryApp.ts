@@ -36,7 +36,7 @@ export default function(
                     }
 
                     input LibraryInput {
-                        id: LibraryId!
+                        id: String!
                         label: SystemTranslationInput,
                         attributes: [AttributeId]
                     }
@@ -59,9 +59,12 @@ export default function(
                     },
                     Mutation: {
                         async saveLibrary(parent, {library}): Promise<ILibrary> {
-                            library.attributes = library.attributes.map(attrName => ({
-                                id: attrName
-                            }));
+                            if (typeof library.attributes !== 'undefined') {
+                                library.attributes = library.attributes.map(attrName => ({
+                                    id: attrName
+                                }));
+                            }
+
                             return libraryDomain.saveLibrary(library);
                         },
                         async deleteLibrary(parent, {id}): Promise<ILibrary> {
