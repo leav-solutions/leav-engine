@@ -29,14 +29,14 @@ export default function(
 
                     # Application Library
                     type Library {
-                        id: LibraryId,
+                        id: ID,
                         system: Boolean,
                         label: SystemTranslation,
                         attributes: [Attribute]
                     }
 
                     input LibraryInput {
-                        id: String!
+                        id: ID!
                         label: SystemTranslationInput,
                         attributes: [AttributeId]
                     }
@@ -65,10 +65,16 @@ export default function(
                                 }));
                             }
 
-                            return libraryDomain.saveLibrary(library);
+                            const savedLib = libraryDomain.saveLibrary(library);
+                            graphqlApp.generateSchema();
+
+                            return savedLib;
                         },
                         async deleteLibrary(parent, {id}): Promise<ILibrary> {
-                            return libraryDomain.deleteLibrary(id);
+                            const deletedLib = await libraryDomain.deleteLibrary(id);
+                            graphqlApp.generateSchema();
+
+                            return deletedLib;
                         }
                     }
                 }

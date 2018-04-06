@@ -1,4 +1,4 @@
-import {IAppGraphQLSchema} from '../graphql/graphqlApp';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {IAttributeDomain} from 'domain/attributeDomain';
 import {IAttribute, AttributeTypes, AttributeFormats} from '../../_types/attribute';
 
@@ -7,7 +7,7 @@ export interface ICoreAttributeApp {
     getGraphQLFormat(attribute: IAttribute): string;
 }
 
-export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
+export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlApp): ICoreAttributeApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const attributes = await attributeDomain.getAttributes();
@@ -28,7 +28,7 @@ export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
 
                     # Application Attribute
                     type Attribute {
-                        id: AttributeId,
+                        id: ID,
                         type: AttributeType,
                         format: AttributeFormat,
                         system: Boolean,
@@ -37,7 +37,7 @@ export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
                     }
 
                     input AttributeInput {
-                        id: String!
+                        id: ID!
                         type: AttributeType!
                         format: AttributeFormat
                         label: SystemTranslationInput,
@@ -61,10 +61,16 @@ export default function(attributeDomain: IAttributeDomain): ICoreAttributeApp {
                     },
                     Mutation: {
                         async saveAttribute(parent, {attribute}): Promise<IAttribute> {
-                            return attributeDomain.saveAttribute(attribute);
+                            const savedAttr = await attributeDomain.saveAttribute(attribute);
+                            graphqlApp.generateSchema();
+
+                            return savedAttr;
                         },
                         async deleteAttribute(parent, {id}): Promise<IAttribute> {
-                            return attributeDomain.deleteAttribute(id);
+                            const deletedAttr = await attributeDomain.deleteAttribute(id);
+                            graphqlApp.generateSchema();
+
+                            return deletedAttr;
                         }
                     }
                 }

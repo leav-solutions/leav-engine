@@ -32,16 +32,17 @@ export default function(
                     register: graphqlHapi,
                     options: {
                         path: '/graphql',
-                        graphqlOptions: {
-                            debug: false,
+                        // GraphqlOptions must be a function in order to have an up-to-date schema on each request
+                        graphqlOptions: req => ({
+                            schema: graphqlApp.schema,
                             formatError: err => {
                                 const origErr = err.originalError;
 
                                 err.fields = (origErr && origErr.fields) || [];
                                 return err;
                             },
-                            schema: graphqlApp.schema
-                        },
+                            debug: false
+                        }),
                         route: {
                             cors: true
                         }
