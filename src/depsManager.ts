@@ -18,9 +18,11 @@ export async function init(): Promise<AwilixContainer> {
 
     container.register('config', asValue(await config));
 
-    const modulesList: ModuleDescriptor[] = listModules(['**/!(migrations|__tests__)/!(*.spec).+(js|ts)'], {
+    const excludedFolders = ['_types', '__tests__', 'migrations', 'errors'];
+
+    const modulesList: ModuleDescriptor[] = listModules('**/!(*.spec).+(js|ts)', {
         cwd: __dirname
-    });
+    }).filter(mod => mod.path.match(excludedFolders.join('|')) === null);
 
     for (const mod of modulesList) {
         let importedMod = await import(mod.path);
