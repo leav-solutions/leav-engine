@@ -7,8 +7,8 @@
         "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
         "start:dev": "DEBUG=* ts-node --type-check src/",
         "start:build": "tsc && node .",
-        "test:watch": "jest --watch",
-        "test": "jest",
+        "test:watch": "jest -c jest-unit-config.json --watch",
+        "test": "jest -c jest-unit-config.json",
         "lint": "tslint --fix -p .",
         "lint:watch": "watch 'npm run lint' src/",
         "prettier": "prettier --write 'src/**/*.ts'",
@@ -63,19 +63,6 @@
         "moment": "^2.22.0",
         "winston": "^2.4.1",
         "winston-transport": "^3.1.0"
-    },
-    "jest": {
-        "moduleFileExtensions": [
-            "ts",
-            "js"
-        ],
-        "transform": {
-            "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-        },
-        "testRegex": ".spec.(ts)$",
-        "setupFiles": [
-            "<rootDir>/src/__tests__/jestUtils.ts"
-        ]
     },
     "lint-staged": {
         "*.ts": [
