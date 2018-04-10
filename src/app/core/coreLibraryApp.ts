@@ -61,7 +61,8 @@ export default function(
                                 }));
                             }
 
-                            const savedLib = libraryDomain.saveLibrary(library);
+                            const savedLib = await libraryDomain.saveLibrary(library);
+                            graphqlApp.generateSchema();
 
                             return savedLib;
                         },
@@ -74,6 +75,7 @@ export default function(
                     }
                 }
             };
+
             for (const lib of libraries) {
                 const libQueryName = utils.libNameToQueryName(lib.id);
                 const libTypeName = utils.libNameToTypeName(lib.id);
