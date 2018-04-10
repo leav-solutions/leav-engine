@@ -18,7 +18,7 @@ export async function init(): Promise<AwilixContainer> {
 
     container.register('config', asValue(await config));
 
-    const excludedFolders = ['_types', '__tests__', 'migrations', 'errors'];
+    const excludedFolders = ['_types', '__tests__', 'migrations', 'errors', 'index.ts'];
 
     const modulesList: ModuleDescriptor[] = listModules('**/!(*.spec).+(js|ts)', {
         cwd: __dirname
