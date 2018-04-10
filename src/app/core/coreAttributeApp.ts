@@ -14,10 +14,6 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
 
             const baseSchema = {
                 typeDefs: `
-                    enum AttributeId {
-                        ${attributes.map(attr => attr.id).join(' ')}
-                    }
-
                     enum AttributeType {
                         ${Object.values(AttributeTypes).join(' ')}
                     }
@@ -45,12 +41,12 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                     }
 
                     extend type Query {
-                        attributes(id: AttributeId): [Attribute]
+                        attributes(id: ID): [Attribute]
                     }
 
                     extend type Mutation {
                         saveAttribute(attribute: AttributeInput): Attribute
-                        deleteAttribute(id: AttributeId): Attribute
+                        deleteAttribute(id: ID): Attribute
                     }
                 `,
                 resolvers: {

@@ -31,8 +31,8 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
                     }
 
                     extend type Mutation {
-                        saveValue(library: LibraryId, recordId: ID, attribute: AttributeId, value: ValueInput): Value
-                        deleteValue(library: LibraryId, recordId: ID, attribute: AttributeId, value: ValueInput): Value
+                        saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value
+                        deleteValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value
                     }
                 `,
                 resolvers: {

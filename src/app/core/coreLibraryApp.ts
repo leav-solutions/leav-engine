@@ -23,10 +23,6 @@ export default function(
 
             const baseSchema = {
                 typeDefs: `
-                    enum LibraryId {
-                        ${libraries.map(lib => lib.id).join(' ')}
-                    }
-
                     # Application Library
                     type Library {
                         id: ID,
@@ -38,16 +34,16 @@ export default function(
                     input LibraryInput {
                         id: ID!
                         label: SystemTranslationInput,
-                        attributes: [AttributeId]
+                        attributes: [ID]
                     }
 
                     type Query {
-                        libraries(id: LibraryId): [Library]
+                        libraries(id: ID): [Library]
                     }
 
                     type Mutation {
                         saveLibrary(library: LibraryInput): Library
-                        deleteLibrary(id: LibraryId): Library
+                        deleteLibrary(id: ID): Library
                     }
 
                 `,
@@ -66,7 +62,6 @@ export default function(
                             }
 
                             const savedLib = libraryDomain.saveLibrary(library);
-                            graphqlApp.generateSchema();
 
                             return savedLib;
                         },
