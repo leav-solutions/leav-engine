@@ -17,24 +17,25 @@ export default function(
 ): IServer {
     return {
         async init(): Promise<void> {
-            const server: hapi.Server = new hapi.Server();
+            const server: hapi.Server = new hapi.Server({
+                host: config.server.host,
+                port: config.server.port
+            });
 
             try {
-                server.connection({
-                    host: config.server.host,
-                    port: config.server.port
-                });
-
                 await graphqlApp.generateSchema();
 
                 // GraphQL
                 await server.register({
-                    register: graphqlHapi,
+                    plugin: graphqlHapi,
                     options: {
                         path: '/graphql',
                         // GraphqlOptions must be a function in order to have an up-to-date schema on each request
                         graphqlOptions: req => ({
                             schema: graphqlApp.schema,
+                            context: {
+                                auth: req.auth
+                            },
                             formatError: err => {
                                 const origErr = err.originalError;
 
@@ -51,7 +52,7 @@ export default function(
 
                 // GraphiQL
                 await server.register({
-                    register: graphiqlHapi,
+                    plugin: graphiqlHapi,
                     options: {
                         path: '/graphiql',
                         graphiqlOptions: {
@@ -60,13 +61,8 @@ export default function(
                     }
                 });
 
-                await server.start(err => {
-                    if (err) {
-                        throw err;
-                    }
-
-                    logger.info(`Server running at: ${server.info.uri}`);
-                });
+                await server.start();
+                logger.info(`Server running at: ${server.info.uri}`);
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');
             }

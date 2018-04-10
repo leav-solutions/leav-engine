@@ -17,4 +17,4 @@ import {init as initDI} from './depsManager';
     } catch (e) {
         console.error(e);
     }
-})();
+})().catch(e => console.error(e));

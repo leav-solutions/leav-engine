@@ -3,7 +3,6 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IAttribute, AttributeTypes, AttributeFormats, IAttributeFilterOptions} from '../_types/attribute';
 import {aql} from 'arangojs';
 import {IValue} from '_types/value';
-import {AqlQuery} from 'arangojs/lib/esm/aql-query';
 import {ILibrary} from '_types/library';
 import {LIB_ATTRIB_COLLECTION_NAME} from './libraryRepo';
 import {IValueRepo} from './valueRepo';

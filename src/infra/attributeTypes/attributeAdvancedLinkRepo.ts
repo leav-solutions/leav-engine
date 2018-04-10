@@ -4,7 +4,7 @@ import {IValue} from '_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
 import {IDbUtils} from '../db/dbUtils';
-import {AqlQuery} from 'arangojs/lib/esm/aql-query';
+import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 

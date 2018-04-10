@@ -1,6 +1,6 @@
 import {IAttribute, AttributeTypes} from '../_types/attribute';
 import {IValue} from '../_types/value';
-import {AqlQuery} from 'arangojs/lib/esm/aql-query';
+import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
 
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;

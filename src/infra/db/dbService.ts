@@ -1,5 +1,5 @@
 import {Database} from 'arangojs';
-import {AqlQuery} from 'arangojs/lib/esm/aql-query';
+import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
 
 export interface IDbService {
     db?: Database;
