@@ -1,14 +1,9 @@
-import {merge} from 'lodash';
-import {ILibraryDomain} from 'domain/libraryDomain';
-import {IAppGraphQLSchema} from '../graphql/graphqlApp';
+import {AwilixContainer} from 'awilix';
 import {IAttributeDomain} from 'domain/attributeDomain';
+import {ILibraryDomain} from 'domain/libraryDomain';
 import {IRecordDomain} from 'domain/recordDomain';
 import {IValueDomain} from 'domain/valueDomain';
-import {IAttribute} from '_types/attribute';
-import {ILibrary} from '_types/library';
-import {IRecord} from '_types/record';
-import {IValue} from '_types/value';
-import {AwilixContainer} from 'awilix';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -20,6 +15,7 @@ export default function(
     recordDomain: IRecordDomain,
     valueDomain: IValueDomain,
     depsManager: AwilixContainer,
+    graphqlApp: IGraphqlApp,
     config: any
 ): ICoreApp {
     return {
@@ -34,8 +30,23 @@ export default function(
                         ${config.lang.available.map(l => `${l}: String${l === config.lang.default ? '!' : ''}`)}
                     }
                 `,
-                resolvers: {}
+                resolvers: {
+                    Query: {} as any,
+                    Mutation: {} as any
+                }
             };
+
+            if (config.env === 'test') {
+                baseSchema.typeDefs += `
+                    extend type Mutation {
+                        refreshSchema: Boolean
+                    }
+                `;
+
+                baseSchema.resolvers.Mutation.refreshSchema = async () => {
+                    return graphqlApp.generateSchema();
+                };
+            }
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
