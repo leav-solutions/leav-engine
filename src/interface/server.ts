@@ -1,8 +1,10 @@
-import {graphiqlHapi, graphqlHapi} from 'apollo-server-hapi';
+import {graphqlHapi} from 'apollo-server-hapi';
+import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 import * as winston from 'winston';
 import * as hapi from 'hapi';
 
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import {IAuthApp} from 'app/auth/authApp';
 import {IUtils} from 'utils/utils';
 
 export interface IServer {
@@ -12,6 +14,7 @@ export interface IServer {
 export default function(
     config: any,
     graphqlApp: IGraphqlApp,
+    authApp: IAuthApp,
     logger: winston.Winston,
     utils: IUtils | null = null
 ): IServer {
@@ -23,6 +26,17 @@ export default function(
             });
 
             try {
+                // Auth Check
+                await server.register(hapiAuthJwt2);
+                server.auth.strategy('core', config.auth.scheme, {
+                    key: config.auth.key,
+                    validate: async (decode, request) => ({isValid: true}),
+                    verifyOptions: {algorithms: ['HS256']}
+                });
+                server.auth.default('core');
+                // Auth App to login
+                authApp.registerRoute(server);
+
                 await graphqlApp.generateSchema();
 
                 // GraphQL
@@ -34,7 +48,7 @@ export default function(
                         graphqlOptions: req => ({
                             schema: graphqlApp.schema,
                             context: {
-                                auth: req.auth
+                                auth: req.auth.isAuthenticated ? req.auth.credentials : false
                             },
                             formatError: err => {
                                 const origErr = err.originalError;
@@ -46,17 +60,6 @@ export default function(
                         }),
                         route: {
                             cors: true
-                        }
-                    }
-                });
-
-                // GraphiQL
-                await server.register({
-                    plugin: graphiqlHapi,
-                    options: {
-                        path: '/graphiql',
-                        graphiqlOptions: {
-                            endpointURL: '/graphql'
                         }
                     }
                 });

@@ -53,7 +53,7 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async libraries(parent, args) {
+                        async libraries(parent, args, ctx) {
                             return libraryDomain.getLibraries(args);
                         }
                     },

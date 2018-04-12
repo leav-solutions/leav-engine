@@ -10,6 +10,7 @@ module.exports = {
     auth: {
         scheme: 'jwt',
         key: process.env.AUTH_KEY,
+        algorithm: 'HS256',
         tokenExpiration: '7d',
         passwordRegex: /^.{6,20}$/
     },
