@@ -19,8 +19,8 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                     }
 
                     extend type Mutation {
-                        createRecord(library: LibraryId): Record
-                        deleteRecord(library: LibraryId, id: ID): Record
+                        createRecord(library: ID): Record
+                        deleteRecord(library: ID, id: ID): Record
                     }
 
                 `,
