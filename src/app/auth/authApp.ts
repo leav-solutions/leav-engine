@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
-
+import {Server} from 'hapi';
 export interface IAuthApp {
-    registerRoute(server: any): void;
+    registerRoute(server: Server): void;
 }
 
 export default function(config: any): IAuthApp {
