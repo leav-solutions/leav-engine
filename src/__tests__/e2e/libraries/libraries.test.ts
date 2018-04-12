@@ -1,13 +1,8 @@
-import {getGraphQLUrl} from '../e2eUtils';
-import axios from 'axios';
+import {makeGraphQlCall} from '../e2eUtils';
 
 describe('graphql', () => {
     test('Get libraries list', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: '{ libraries { id } }'
-        });
+        const res = await makeGraphQlCall('{ libraries { id } }');
 
         expect(res.status).toBe(200);
         expect(res.data.data.libraries.length).toBeGreaterThanOrEqual(1);
@@ -15,33 +10,23 @@ describe('graphql', () => {
     });
 
     test('Create library', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {
+        const res = await makeGraphQlCall(`mutation {
                 saveLibrary(library: {id: "libraries_test", label: {fr: "Test lib"}}) { id }
-            }`
-        });
+            }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.saveLibrary.id).toBe('libraries_test');
         expect(res.data.errors).toBeUndefined();
 
         // Check if new lib is in libraries list
-        const libsRes = await axios.post(url, {
-            query: `{ libraries { id } }`
-        });
+        const libsRes = await makeGraphQlCall(`{ libraries { id } }`);
 
         expect(libsRes.status).toBe(200);
         expect(libsRes.data.data.libraries.filter(lib => lib.id === 'libraries_test').length).toBe(1);
     });
 
     test('Schema regeneration after library creation', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: '{ __type(name: "Query") { name fields { name } } }'
-        });
+        const res = await makeGraphQlCall('{ __type(name: "Query") { name fields { name } } }');
 
         expect(res.status).toBe(200);
         expect(res.data.data.__type).toBeDefined();
@@ -49,11 +34,7 @@ describe('graphql', () => {
     });
 
     test('Get library by ID', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `{libraries(id: "users") { id }}`
-        });
+        const res = await makeGraphQlCall(`{libraries(id: "users") { id }}`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.libraries.length).toBe(1);
@@ -61,11 +42,7 @@ describe('graphql', () => {
     });
 
     test('Get error if deleting system library', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {deleteLibrary(id: "users") { id }}`
-        });
+        const res = await makeGraphQlCall(`mutation {deleteLibrary(id: "users") { id }}`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.deleteLibrary).toBeNull();
@@ -75,19 +52,11 @@ describe('graphql', () => {
     });
 
     test('Delete a library', async () => {
-        const url = await getGraphQLUrl();
+        const res = await makeGraphQlCall(`mutation {deleteLibrary(id: "libraries_test") { id }}`);
 
-        try {
-            const res = await axios.post(url, {
-                query: `mutation {deleteLibrary(id: "libraries_test") { id }}`
-            });
-
-            expect(res.status).toBe(200);
-            expect(res.data.data.deleteLibrary).toBeDefined();
-            expect(res.data.data.deleteLibrary.id).toBe('libraries_test');
-            expect(res.data.errors).toBeUndefined();
-        } catch (e) {
-            console.log(e);
-        }
+        expect(res.status).toBe(200);
+        expect(res.data.data.deleteLibrary).toBeDefined();
+        expect(res.data.data.deleteLibrary.id).toBe('libraries_test');
+        expect(res.data.errors).toBeUndefined();
     });
 });

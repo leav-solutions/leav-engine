@@ -1,5 +1,4 @@
-import {getGraphQLUrl} from '../e2eUtils';
-import axios from 'axios';
+import {makeGraphQlCall} from '../e2eUtils';
 
 describe('graphql', () => {
     const testLibName = 'values_library_test';
@@ -13,11 +12,8 @@ describe('graphql', () => {
     let advValueId;
 
     beforeAll(async () => {
-        const url = await getGraphQLUrl();
-
         // Create attributes
-        await axios.post(url, {
-            query: `mutation {
+        await makeGraphQlCall(`mutation {
                 saveAttribute(
                     attribute: {
                         id: "${attrSimpleName}",
@@ -28,11 +24,9 @@ describe('graphql', () => {
                 ) {
                     id
                 }
-            }`
-        });
+            }`);
 
-        await axios.post(url, {
-            query: `mutation {
+        await makeGraphQlCall(`mutation {
                 saveAttribute(
                     attribute: {
                         id: "${attrAdvancedName}",
@@ -41,11 +35,9 @@ describe('graphql', () => {
                         label: {fr: "Test attr advanced"}
                     }
                 ) { id }
-            }`
-        });
+            }`);
 
-        await axios.post(url, {
-            query: `mutation {
+        await makeGraphQlCall(`mutation {
                 saveAttribute(
                     attribute: {
                         id: "${attrSimpleLinkName}",
@@ -54,11 +46,9 @@ describe('graphql', () => {
                         label: {fr: "Test attr simple link"}
                     }
                 ) { id }
-            }`
-        });
+            }`);
 
-        await axios.post(url, {
-            query: `mutation {
+        await makeGraphQlCall(`mutation {
                 saveAttribute(
                     attribute: {
                         id: "${attrAdvancedLinkName}",
@@ -67,16 +57,12 @@ describe('graphql', () => {
                         label: {fr: "Test attr advanced link"}
                     }
                 ) { id }
-            }`
-        });
+            }`);
 
-        await axios.post(url, {
-            query: `mutation { refreshSchema }`
-        });
+        await makeGraphQlCall(`mutation { refreshSchema }`);
 
         // Create library
-        await axios.post(url, {
-            query: `mutation {
+        await makeGraphQlCall(`mutation {
                 saveLibrary(library: {
                     id: "${testLibName}",
                     label: {fr: "Test lib"},
@@ -87,39 +73,28 @@ describe('graphql', () => {
                         "${attrAdvancedLinkName}"
                     ]
                 }) { id }
-            }`
-        });
+            }`);
 
-        await axios.post(url, {
-            query: `mutation { refreshSchema }`
-        });
+        await makeGraphQlCall(`mutation { refreshSchema }`);
 
         // Create record
-        const resRecord = await axios.post(url, {
-            query: `mutation { createRecord(library: "${testLibName}") { id } }`
-        });
+        const resRecord = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { id } }`);
 
         recordId = resRecord.data.data.createRecord.id;
 
-        const resRecordLinked = await axios.post(url, {
-            query: `mutation { createRecord(library: "${testLibName}") { id } }`
-        });
+        const resRecordLinked = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { id } }`);
 
         recordIdLinked = resRecordLinked.data.data.createRecord.id;
     });
 
     test('Save value simple', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {
+        const res = await makeGraphQlCall(`mutation {
                 saveValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
                     value: {value: "TEST VAL"}) { id value }
-              }`
-        });
+              }`);
 
         expect(res.status).toBe(200);
 
@@ -129,17 +104,13 @@ describe('graphql', () => {
     });
 
     test('Save value simple link', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {
+        const res = await makeGraphQlCall(`mutation {
                 saveValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleLinkName}",
                     value: {value: "${recordIdLinked}"}) { id value }
-              }`
-        });
+              }`);
 
         expect(res.status).toBe(200);
 
@@ -149,17 +120,13 @@ describe('graphql', () => {
     });
 
     test('Save value advanced', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {
+        const res = await makeGraphQlCall(`mutation {
                 saveValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
                     value: {value: "TEST VAL ADV"}) { id value }
-              }`
-        });
+              }`);
 
         expect(res.status).toBe(200);
 
@@ -171,17 +138,13 @@ describe('graphql', () => {
     });
 
     test('Save value advanced link', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {
+        const res = await makeGraphQlCall(`mutation {
                 saveValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedLinkName}",
                     value: {value: "${recordIdLinked}"}) { id value }
-              }`
-        });
+              }`);
 
         expect(res.status).toBe(200);
 
@@ -191,17 +154,13 @@ describe('graphql', () => {
     });
 
     test('Delete value advanced', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {
+        const res = await makeGraphQlCall(`mutation {
                 deleteValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
                     value: {id: "${advValueId}"}) { id value }
-              }`
-        });
+              }`);
 
         expect(res.status).toBe(200);
 
@@ -210,17 +169,13 @@ describe('graphql', () => {
     });
 
     test('Delete value simple', async () => {
-        const url = await getGraphQLUrl();
-
-        const res = await axios.post(url, {
-            query: `mutation {
+        const res = await makeGraphQlCall(`mutation {
                 deleteValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
                     value: {value: "TEST VAL"}) { id value }
-              }`
-        });
+              }`);
 
         expect(res.status).toBe(200);
 
