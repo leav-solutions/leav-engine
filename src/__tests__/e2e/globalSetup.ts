@@ -4,7 +4,7 @@ import {Database} from 'arangojs';
 
 export async function setup() {
     try {
-        const conf = await config;
+        const conf: any = await config;
 
         // Init DB
         const db = new Database({
