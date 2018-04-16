@@ -67,9 +67,9 @@ export default function(
                 const dbFilters = dbUtils.convertToDoc(filters);
                 const filtersKeys = Object.keys(dbFilters);
                 for (let i = 0; i < filtersKeys.length; i++) {
-                    query += ` FILTER l.@filterKey${i} LIKE @filterValue${i}`;
+                    query += ` FILTER l.@filterKey${i} == @filterValue${i}`;
                     bindVars[`filterKey${i}`] = filtersKeys[i];
-                    bindVars[`filterValue${i}`] = `%${dbFilters[filtersKeys[i]]}%`;
+                    bindVars[`filterValue${i}`] = `${dbFilters[filtersKeys[i]]}`;
                 }
             }
 
