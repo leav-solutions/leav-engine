@@ -131,7 +131,7 @@ describe('LibraryDomain', () => {
             expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
         });
 
-        test('Should throw if unknown attribute', async function() {
+        test('Should throw if unknown library', async function() {
             const mockLibRepo = {deleteLibrary: global.__mockPromise()};
             const libDomain = libraryDomain(mockLibRepo);
             libDomain.getLibraries = global.__mockPromise([]);

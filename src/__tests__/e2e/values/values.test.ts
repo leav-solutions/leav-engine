@@ -1,6 +1,6 @@
 import {makeGraphQlCall} from '../e2eUtils';
 
-describe('graphql', () => {
+describe('Values', () => {
     const testLibName = 'values_library_test';
     const attrSimpleName = 'values_attribute_test_simple';
     const attrSimpleLinkName = 'values_attribute_test_simple_link';

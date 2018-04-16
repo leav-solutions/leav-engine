@@ -1,6 +1,6 @@
 import {makeGraphQlCall} from '../e2eUtils';
 
-describe('graphql', () => {
+describe('GraphQL', () => {
     test('Should return schema', async () => {
         const res = await makeGraphQlCall('{ __schema { queryType { name } } }');
 

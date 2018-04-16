@@ -1,6 +1,6 @@
 import {makeGraphQlCall} from '../e2eUtils';
 
-describe('graphql', () => {
+describe('Attributes', () => {
     const testAttrName = 'test_attribute';
     test('Get attributes list', async () => {
         const res = await makeGraphQlCall('{ attributes { id } }');

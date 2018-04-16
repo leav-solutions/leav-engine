@@ -1,6 +1,6 @@
 import {makeGraphQlCall} from '../e2eUtils';
 
-describe('graphql', () => {
+describe('Libraries', () => {
     test('Get libraries list', async () => {
         const res = await makeGraphQlCall('{ libraries { id } }');
 

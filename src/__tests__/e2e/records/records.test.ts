@@ -1,6 +1,6 @@
 import {makeGraphQlCall} from '../e2eUtils';
 
-describe('records', () => {
+describe('Records', () => {
     const testLibName = 'record_library_test';
     const testLibNameType = 'recordLibraryTest';
     let recordId;
