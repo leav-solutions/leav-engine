@@ -1,15 +1,15 @@
-import graphqlApp from './graphqlApp';
 import {
-    GraphQLResolveInfo,
-    FieldNode,
-    SelectionSetNode,
-    NameNode,
     ArgumentNode,
-    StringValueNode,
-    InlineFragmentNode,
+    FieldNode,
     FragmentDefinitionNode,
-    FragmentSpreadNode
+    FragmentSpreadNode,
+    GraphQLResolveInfo,
+    InlineFragmentNode,
+    NameNode,
+    SelectionSetNode,
+    StringValueNode
 } from 'graphql';
+import graphqlApp from './graphqlApp';
 
 describe('GraphqlApp', () => {
     describe('getQueryFields', () => {
@@ -25,7 +25,8 @@ describe('GraphqlApp', () => {
             fragments: null,
             rootValue: null,
             operation: null,
-            variableValues: null
+            variableValues: null,
+            cacheControl: null
         };
 
         const mockFieldNode: FieldNode = {

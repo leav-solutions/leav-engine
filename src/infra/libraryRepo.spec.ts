@@ -1,9 +1,6 @@
-import libraryRepo from './libraryRepo';
-import {DocumentCollection} from 'arangojs/lib/esm/collection';
-import {Connection} from 'arangojs/lib/esm/connection';
 import {Database} from 'arangojs';
-import {create} from 'domain';
 import {AttributeTypes} from '../_types/attribute';
+import libraryRepo from './libraryRepo';
 
 describe('LibraryRepo', () => {
     describe('getLibrary', () => {

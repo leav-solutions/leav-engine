@@ -1,6 +1,5 @@
-import dbService from './dbService';
 import {Database} from 'arangojs';
-import {DocumentCollection} from 'arangojs/lib/esm/collection';
+import dbService from './dbService';
 describe('dbService', () => {
     describe('collectionExists', () => {
         test('Should check if a collection already exists', async () => {
