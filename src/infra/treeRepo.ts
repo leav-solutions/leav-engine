@@ -1,5 +1,5 @@
 import {ITree, ITreeFilterOptions} from '_types/tree';
-import {IDbService} from './db/dbService';
+import {IDbService, collectionTypes} from './db/dbService';
 import {IDbUtils} from './db/dbUtils';
 import {aql} from 'arangojs';
 
@@ -11,6 +11,7 @@ export interface ITreeRepo {
 }
 
 const TREES_COLLECTION_NAME = 'core_trees';
+const EDGE_COLLEC_PREFIX = 'core_edge_tree_';
 
 export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
     return {
@@ -21,6 +22,8 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             const docToInsert = {...defaultParams, ...dbUtils.convertToDoc(treeData)};
 
             const treeRes = await dbService.execute(aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`);
+
+            const edgeCollec = await dbService.createCollection(EDGE_COLLEC_PREFIX + treeData.id, collectionTypes.EDGE);
 
             return dbUtils.cleanup(treeRes.pop());
         },
@@ -56,6 +59,8 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
         async deleteTree(id: string): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);
             const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${collec} RETURN OLD`);
+
+            const delCollec = await dbService.dropCollection(EDGE_COLLEC_PREFIX + id, collectionTypes.EDGE);
 
             // Return deleted library
             return dbUtils.cleanup(res.pop());

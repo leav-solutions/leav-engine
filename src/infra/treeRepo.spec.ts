@@ -19,7 +19,8 @@ describe('TreeRepo', () => {
         test('Should create a tree', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docTreeData])
+                execute: global.__mockPromise([docTreeData]),
+                createCollection: global.__mockPromise()
             };
 
             const mockDbUtils = {
@@ -41,6 +42,7 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^INSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.createCollection.mock.calls.length).toBe(1);
 
             expect(createdTree).toMatchObject(treeData);
         });
@@ -116,7 +118,8 @@ describe('TreeRepo', () => {
         test('Should delete tree', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docTreeData])
+                execute: global.__mockPromise([docTreeData]),
+                dropCollection: global.__mockPromise()
             };
 
             const mockDbUtils = {
@@ -126,13 +129,14 @@ describe('TreeRepo', () => {
 
             const repo = treeRepo(mockDbServ, mockDbUtils);
 
-            const deletedTree = repo.deleteTree('test_tree');
+            const deletedTree = await repo.deleteTree('test_tree');
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.dropCollection.mock.calls.length).toBe(1);
         });
     });
 });
