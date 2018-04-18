@@ -1,5 +1,115 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`TreeRepo AddElement Should add an element to the root 1`] = `"INSERT {_from: @value0, _to: @value1} IN @@value2 RETURN NEW"`;
+
+exports[`TreeRepo AddElement Should add an element to the root 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": "core_trees/test_tree",
+  "value1": "test_lib/13445",
+}
+`;
+
+exports[`TreeRepo AddElement Should add an element under another 1`] = `"INSERT {_from: @value0, _to: @value1} IN @@value2 RETURN NEW"`;
+
+exports[`TreeRepo AddElement Should add an element under another 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": "test_lib2/6789",
+  "value1": "test_lib/13445",
+}
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and its children 1`] = `
+"
+                    LET edges = (
+                        FOR v, e IN 0..@value0 OUTBOUND @value1
+                        @@value2
+                        RETURN e
+                    )
+                    FOR ed IN edges
+                        FILTER ed != null
+                        REMOVE ed IN @@value2
+                        RETURN OLD
+                "
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and its children 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 1000,
+  "value1": "test_lib/13445",
+}
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and its children 3`] = `
+"
+                FOR e IN @@value0
+                    FILTER e._from == @value1 && e._to == @value2
+                    REMOVE e IN @@value0
+                    RETURN OLD
+            "
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and its children 4`] = `
+Object {
+  "@value0": "core_edge_tree_test_tree",
+  "value1": "core_trees/test_tree",
+  "value2": "test_lib/13445",
+}
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and move its children up 1`] = `
+"
+                    FOR v IN 1 OUTBOUND @value0
+                    @@value1
+                    RETURN v
+                "
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and move its children up 2`] = `
+Object {
+  "@value1": "core_edge_tree_test_tree",
+  "value0": "test_lib/13445",
+}
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and move its children up 3`] = `
+"
+                FOR e IN @@value0
+                    FILTER e._from == @value1 && e._to == @value2
+                    REMOVE e IN @@value0
+                    RETURN OLD
+            "
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and move its children up 4`] = `
+Object {
+  "@value0": "core_edge_tree_test_tree",
+  "value1": "core_trees/test_tree",
+  "value2": "test_lib/13445",
+}
+`;
+
+exports[`TreeRepo MoveElement Should move an element 1`] = `
+"
+                    FOR e IN @@value0
+                        FILTER e._from == @value1 && e._to == @value2
+                        UPDATE e WITH {_from: @value3, _to: @value2}
+                        IN @@value0
+                        RETURN NEW
+                "
+`;
+
+exports[`TreeRepo MoveElement Should move an element 2`] = `
+Object {
+  "@value0": "core_edge_tree_test_tree",
+  "value1": "core_trees/test_tree",
+  "value2": "test_lib/13445",
+  "value3": "users/6789",
+}
+`;
+
 exports[`TreeRepo createTree Should create a tree 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
 exports[`TreeRepo createTree Should create a tree 2`] = `
@@ -45,6 +155,21 @@ Object {
 exports[`TreeRepo getTrees Should return all trees 1`] = `"FOR l IN core_trees RETURN l"`;
 
 exports[`TreeRepo getTrees Should return all trees 2`] = `Object {}`;
+
+exports[`TreeRepo isElementPresent Should check if an element is present in the tree 1`] = `
+"
+                FOR e IN @@value0
+                    FILTER e._to == @value1
+                    RETURN e
+            "
+`;
+
+exports[`TreeRepo isElementPresent Should check if an element is present in the tree 2`] = `
+Object {
+  "@value0": "core_edge_tree_test_tree",
+  "value1": "test_lib/13445",
+}
+`;
 
 exports[`TreeRepo updateTree Should update a tree 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 

@@ -43,11 +43,62 @@ describe('Trees', () => {
     });
 
     test('Delete a tree', async () => {
-        const res = await makeGraphQlCall(`mutation {deleteTree(id: "${testTreeName}") { id }}`);
+        const treeToDelete = testTreeName + '2';
+        const res = await makeGraphQlCall(`mutation {deleteTree(id: "${treeToDelete}") { id }}`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.deleteTree).toBeDefined();
-        expect(res.data.data.deleteTree.id).toBe(testTreeName);
+        expect(res.data.data.deleteTree.id).toBe(treeToDelete);
         expect(res.data.errors).toBeUndefined();
+    });
+
+    test('Manipulate elements in a tree', async () => {
+        const resCreaRecord = await makeGraphQlCall(`
+                mutation {
+                    r1: createRecord(library: "users") {id},
+                    r2: createRecord(library: "users") {id}
+                }
+            `);
+        const recordId1 = resCreaRecord.data.data.r1.id;
+        const recordId2 = resCreaRecord.data.data.r2.id;
+
+        const resAdd = await makeGraphQlCall(`mutation {
+                a1: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId1}", library: "users"}) {id},
+                a2: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId2}", library: "users"}) {id}
+            }`);
+
+        expect(resAdd.status).toBe(200);
+        expect(resAdd.data.data.a1).toBeDefined();
+        expect(resAdd.data.data.a1.id).toBeTruthy();
+        expect(resAdd.data.errors).toBeUndefined();
+
+        const resMove = await makeGraphQlCall(`mutation {
+                treeMoveElement(
+                    treeId: "${testTreeName}",
+                    element: {id: "${recordId1}", library: "users"}
+                    parentTo: {id: "${recordId2}", library: "users"}
+                ) {
+                    id
+                }
+            }`);
+
+        expect(resMove.status).toBe(200);
+        expect(resMove.data.data.treeMoveElement).toBeDefined();
+        expect(resMove.data.data.treeMoveElement.id).toBeTruthy();
+        expect(resMove.data.errors).toBeUndefined();
+
+        const resDel = await makeGraphQlCall(`mutation {
+            treeDeleteElement(
+                treeId: "${testTreeName}",
+                element: {id: "${recordId2}", library: "users"}
+            ) {
+                id
+            }
+        }`);
+
+        expect(resDel.status).toBe(200);
+        expect(resDel.data.data.treeDeleteElement).toBeDefined();
+        expect(resDel.data.data.treeDeleteElement.id).toBeTruthy();
+        expect(resDel.data.errors).toBeUndefined();
     });
 });

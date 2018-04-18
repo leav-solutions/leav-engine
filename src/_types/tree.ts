@@ -10,3 +10,8 @@ export interface ITree {
 export interface ITreeFilterOptions {
     id?: string;
 }
+
+export interface ITreeElement {
+    id: number;
+    library: string;
+}

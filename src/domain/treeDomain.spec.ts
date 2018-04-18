@@ -7,7 +7,11 @@ describe('treeDomain', () => {
         createTree: jest.fn(),
         updateTree: jest.fn(),
         getTrees: jest.fn(),
-        deleteTree: jest.fn()
+        deleteTree: jest.fn(),
+        addElement: jest.fn(),
+        moveElement: jest.fn(),
+        deleteElement: jest.fn(),
+        isElementPresent: global.__mockPromise(false)
     };
 
     const mockTree = {
@@ -124,6 +128,138 @@ describe('treeDomain', () => {
 
             expect(treeRepo.getTrees).toBeCalledWith({id: 'test'});
             expect(trees.length).toBe(2);
+        });
+    });
+
+    describe('addElement', () => {
+        const mockRecordDomain = {
+            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+        };
+
+        test('Should an element to a tree', async () => {
+            const treeRepo = {
+                ...mockTreeRepo,
+                addElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                getTrees: global.__mockPromise([{id: 'test_tree'}])
+            };
+            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+
+            const addedElement = await domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, null);
+
+            expect(treeRepo.addElement).toBeCalled();
+        });
+
+        test('Should throw if unknown tree, element or destination', async () => {
+            const treeRepo = {
+                ...mockTreeRepo,
+                addElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                getTrees: global.__mockPromise([])
+            };
+
+            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+
+            const rej = await expect(
+                domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
+            ).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if element already present in the tree', async () => {
+            const treeRepo = {
+                ...mockTreeRepo,
+                addElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                getTrees: global.__mockPromise([mockTree]),
+                isElementPresent: global.__mockPromise(true)
+            };
+
+            const recordDomain = {
+                ...mockRecordDomain,
+                find: global.__mockPromise([])
+            };
+
+            const domain = treeDomain(treeRepo, null, recordDomain);
+
+            const rej = await expect(
+                domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
+            ).rejects.toThrow(ValidationError);
+        });
+    });
+
+    describe('moveElement', () => {
+        const mockRecordDomain = {
+            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+        };
+
+        test('Should move an element in a tree', async () => {
+            const treeRepo = {
+                ...mockTreeRepo,
+                moveElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                getTrees: global.__mockPromise([{id: 'test_tree'}])
+            };
+            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+
+            const addedElement = await domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, null, {
+                id: 999,
+                library: 'other_lib'
+            });
+
+            expect(treeRepo.moveElement).toBeCalled();
+        });
+
+        test('Should throw if unknown tree, element or destination', async () => {
+            const treeRepo = {
+                ...mockTreeRepo,
+                moveElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                getTrees: global.__mockPromise([])
+            };
+
+            const recordDomain = {
+                ...mockRecordDomain,
+                find: global.__mockPromise([])
+            };
+
+            const domain = treeDomain(treeRepo, null, recordDomain);
+
+            const rej = await expect(
+                domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, null, {id: 999, library: 'other_lib'})
+            ).rejects.toThrow(ValidationError);
+        });
+    });
+
+    describe('deleteElement', () => {
+        const mockRecordDomain = {
+            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+        };
+
+        test('Should move an element in a tree', async () => {
+            const treeRepo = {
+                ...mockTreeRepo,
+                deleteElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                getTrees: global.__mockPromise([{id: 'test_tree'}])
+            };
+            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+
+            const addedElement = await domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, null, true);
+
+            expect(treeRepo.deleteElement).toBeCalled();
+        });
+
+        test('Should throw if unknown tree, element or destination', async () => {
+            const treeRepo = {
+                ...mockTreeRepo,
+                deleteElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                getTrees: global.__mockPromise([])
+            };
+
+            const recordDomain = {
+                ...mockRecordDomain,
+                find: global.__mockPromise([])
+            };
+
+            const domain = treeDomain(treeRepo, null, recordDomain);
+
+            const rej = await expect(
+                domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, null, true)
+            ).rejects.toThrow(ValidationError);
         });
     });
 });

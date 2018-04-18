@@ -1,6 +1,6 @@
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ITreeDomain} from 'domain/treeDomain';
-import {ITree} from '_types/tree';
+import {ITree, ITreeElement} from '_types/tree';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -25,6 +25,16 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                         label: SystemTranslationInput
                     }
 
+                    type TreeElement {
+                        id: ID,
+                        library: String
+                    }
+
+                    input TreeElementInput {
+                        id: ID!,
+                        library: String!
+                    }
+
                     extend type Query {
                         trees(id: ID): [Tree]
                     }
@@ -32,6 +42,19 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                     extend type Mutation {
                         saveTree(tree: TreeInput): Tree
                         deleteTree(id: ID): Tree
+                        treeAddElement(treeId: ID, element: TreeElementInput, parent: TreeElementInput): TreeElement
+                        treeMoveElement(
+                            treeId: ID,
+                            element: TreeElementInput,
+                            parentFrom: TreeElementInput,
+                            parentTo: TreeElementInput
+                        ): TreeElement
+                        treeDeleteElement(
+                            treeId: ID,
+                            element: TreeElementInput,
+                            parent: TreeElementInput,
+                            deleteChildren: Boolean
+                        ): TreeElement
                     }
                 `,
                 resolvers: {
@@ -46,6 +69,20 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                         },
                         async deleteTree(parent, {id}): Promise<ITree> {
                             return treeDomain.deleteTree(id);
+                        },
+                        async treeAddElement(_, {treeId, element, parent}): Promise<ITreeElement> {
+                            parent = parent || null;
+                            return treeDomain.addElement(treeId, element, parent);
+                        },
+                        async treeMoveElement(_, {treeId, element, parentFrom, parentTo}): Promise<ITreeElement> {
+                            parentFrom = parentFrom || null;
+                            parentTo = parentTo || null;
+                            return treeDomain.moveElement(treeId, element, parentFrom, parentTo);
+                        },
+                        async treeDeleteElement(_, {treeId, element, parent, deleteChildren}): Promise<ITreeElement> {
+                            parent = parent || null;
+                            deleteChildren = typeof deleteChildren !== 'undefined' ? deleteChildren : true;
+                            return treeDomain.deleteElement(treeId, element, parent, deleteChildren);
                         }
                     }
                 }
