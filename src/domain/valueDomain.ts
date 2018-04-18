@@ -25,7 +25,7 @@ export default function(
 
             // Check if exists and can delete
             if (!lib.length) {
-                throw new ValidationError([{id: 'Unknown library'}]);
+                throw new ValidationError({id: 'Unknown library'});
             }
 
             const attr = await attributeDomain.getAttributeProperties(attribute);
@@ -35,7 +35,7 @@ export default function(
                 const existingVal = await valueRepo.getValueById(library, recordId, attr, value);
 
                 if (existingVal === null) {
-                    throw new ValidationError([{id: 'Unknown value'}]);
+                    throw new ValidationError({id: 'Unknown value'});
                 }
             }
 
@@ -63,7 +63,7 @@ export default function(
 
             // Check if exists and can delete
             if (!lib.length) {
-                throw new ValidationError([{id: 'Unknown library'}]);
+                throw new ValidationError({id: 'Unknown library'});
             }
 
             const attr = await attributeDomain.getAttributeProperties(attribute);
@@ -72,7 +72,7 @@ export default function(
                 const existingVal = await valueRepo.getValueById(library, recordId, attr, value);
 
                 if (existingVal === null) {
-                    throw new ValidationError([{id: 'Unknown value'}]);
+                    throw new ValidationError({id: 'Unknown value'});
                 }
             }
 

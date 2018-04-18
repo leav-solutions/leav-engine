@@ -44,7 +44,7 @@ export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDo
                 const unknownAttrs = difference(libAttributes, availableAttributes.map(attr => attr.id));
 
                 if (unknownAttrs.length) {
-                    throw new ValidationError([{attributes: `Unknown attributes: ${unknownAttrs.join(', ')}`}]);
+                    throw new ValidationError({attributes: `Unknown attributes: ${unknownAttrs.join(', ')}`});
                 }
 
                 await libraryRepo.saveLibraryAttributes(libData.id, libAttributes);
@@ -58,11 +58,11 @@ export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDo
 
             // Check if exists and can delete
             if (!lib.length) {
-                throw new ValidationError([{id: 'Unknown library'}]);
+                throw new ValidationError({id: 'Unknown library'});
             }
 
             if (lib.pop().system) {
-                throw new ValidationError([{id: 'Cannot delete system library'}]);
+                throw new ValidationError({id: 'Cannot delete system library'});
             }
 
             return libraryRepo.deleteLibrary(id);

@@ -43,7 +43,7 @@ export default function(attributeRepo: IAttributeRepo | null = null): IAttribute
             const attrs = await attributeRepo.getAttributes({id});
 
             if (!attrs.length) {
-                throw new ValidationError([{id: 'Unknown attribute ' + id}]);
+                throw new ValidationError({id: 'Unknown attribute ' + id});
             }
             const props = attrs.pop();
 
@@ -70,13 +70,13 @@ export default function(attributeRepo: IAttributeRepo | null = null): IAttribute
 
             // Check if exists and can delete
             if (!attr.length) {
-                throw new ValidationError([{id: 'Unknown attribute ' + id}]);
+                throw new ValidationError({id: 'Unknown attribute ' + id});
             }
 
             const attrProps = attr.pop();
 
             if (attrProps.system) {
-                throw new ValidationError([{id: 'Cannot delete system attribute'}]);
+                throw new ValidationError({id: 'Cannot delete system attribute'});
             }
 
             return attributeRepo.deleteAttribute(attrProps);

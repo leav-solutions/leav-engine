@@ -53,7 +53,7 @@ export default function(
                             formatError: err => {
                                 const origErr = err.originalError;
 
-                                err.fields = (origErr && origErr.fields) || [];
+                                err.fields = (origErr && origErr.fields) || {};
                                 return err;
                             },
                             debug: false

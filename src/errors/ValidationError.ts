@@ -13,13 +13,13 @@ interface IValidationError {
     /**
      * Details about fields which did not pass validation
      */
-    fields: IValidationErrorFieldDetail[];
+    fields: IValidationErrorFieldDetail;
 }
 
 export default class ValidationError extends Error {
-    public fields: IValidationErrorFieldDetail[];
+    public fields: IValidationErrorFieldDetail;
 
-    constructor(fields: IValidationErrorFieldDetail[], message: string = 'Validation error') {
+    constructor(fields: IValidationErrorFieldDetail, message: string = 'Validation error') {
         super(message);
 
         this.fields = fields;
