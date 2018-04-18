@@ -14,8 +14,14 @@ async function _getGraphQLUrl() {
 }
 
 export async function makeGraphQlCall(query: string): Promise<any> {
-    const url = await _getGraphQLUrl();
-    const token = await _getAuthToken();
+    try {
+        const url = await _getGraphQLUrl();
+        const token = await _getAuthToken();
 
-    return axios.post(url, {query}, {headers: {Authorization: token}});
+        const res = await axios.post(url, {query}, {headers: {Authorization: token}});
+
+        return res;
+    } catch (e) {
+        console.error('GraphQL query error:', e.message, '\n', e.response.data);
+    }
 }
