@@ -1,8 +1,7 @@
-import {ITree, ITreeFilterOptions, ITreeElement} from '_types/tree';
+import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '_types/tree';
+import {aql} from 'arangojs';
 import {IDbService, collectionTypes} from './db/dbService';
 import {IDbUtils} from './db/dbUtils';
-import {aql} from 'arangojs';
-import {IRecord} from '_types/record';
 
 export interface ITreeRepo {
     createTree(treeData: ITree): Promise<ITree>;
@@ -52,6 +51,25 @@ export interface ITreeRepo {
      * @param element
      */
     isElementPresent(treeId: string, element: ITreeElement): Promise<boolean>;
+
+    /**
+     * Return the whole tree in the form:
+     * [
+     *      {
+     *          record: {...},
+     *          children: [
+     *              {
+     *                  record: ...
+     *                  children: ...
+     *              }
+     *          ]
+     *      },
+     *      { ... }
+     * ]
+     *
+     * @param treeId
+     */
+    getTreeContent(treeId: string): Promise<ITreeNode[]>;
 }
 
 const TREES_COLLECTION_NAME = 'core_trees';
@@ -216,6 +234,70 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             `);
 
             return !!res.length;
+        },
+        async getTreeContent(treeId: string): Promise<ITreeNode[]> {
+            const rootId = _getRootId(treeId);
+
+            const treeContent: ITreeNode[] = [];
+
+            const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
+
+            /**
+             * This query return a list of all records present in the tree with their path IDs
+             * from the root. Query is made depth-first
+             */
+            const data = await dbService.execute(aql`
+                FOR v, e, p IN 1..${MAX_TREE_DEPTH} OUTBOUND ${rootId}
+                ${collec}
+                LET path = (FOR pv IN p.vertices RETURN pv._id)
+                RETURN MERGE(v, {path})
+            `);
+
+            /**
+             * Process query result to transform it to a proper tree structure
+             * For each record of the tree, we run through its path to find out where is its parent
+             * in the tree.
+             * Then we can add it to its parent children.
+             */
+            for (const elem of data) {
+                // We don't want the root in the tree, skip it
+                if (elem._id === rootId) {
+                    continue;
+                }
+
+                // Last path part is the element itself, we don't need it
+                elem.path.pop();
+
+                /** Determine where is the parent in the tree */
+                let parentInTree: any = treeContent;
+                for (const pathPart of elem.path) {
+                    // Root's first level children will be directly added to the tree
+                    if (pathPart === rootId) {
+                        parentInTree = treeContent;
+                    } else {
+                        // If previous parent was the tree root, there's no 'children'
+                        const container = parentInTree === treeContent ? parentInTree : parentInTree.children;
+
+                        // Look for the path to follow among all nodes
+                        parentInTree = container.find(el => {
+                            const pathLib = pathPart.split('/')[0];
+                            const pathId = pathPart.split('/')[1];
+                            return el.record.library === pathLib && el.record.id === pathId;
+                        });
+                    }
+                }
+
+                /** Add element to its parent */
+                delete elem.path;
+                elem.library = elem._id.split('/')[0];
+
+                // If destination is the tree root, there's no 'children'
+                const destination = parentInTree === treeContent ? parentInTree : parentInTree.children;
+
+                destination.push({record: dbUtils.cleanup(elem), children: []});
+            }
+
+            return treeContent;
         }
     };
 }

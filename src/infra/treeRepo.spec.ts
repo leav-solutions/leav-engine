@@ -1,4 +1,5 @@
 import treeRepo from './treeRepo';
+import dbUtils from '../infra/db/dbUtils';
 import {Database} from 'arangojs';
 
 describe('TreeRepo', () => {
@@ -230,13 +231,11 @@ describe('TreeRepo', () => {
                         // Getting element's children
                         {
                             _key: '2',
-                            _id: 'A/2',
-                            _rev: '_Wl1NK7u--_'
+                            _id: 'A/2'
                         },
                         {
                             _key: '1',
-                            _id: 'B/1',
-                            _rev: '_Wl1NZGO--_'
+                            _id: 'B/1'
                         }
                     ],
                     [] // Removing element
@@ -272,8 +271,7 @@ describe('TreeRepo', () => {
                         _key: '223539676',
                         _id: 'core_edge_tree_test_tree/223539676',
                         _from: 'users/223552816',
-                        _to: 'users/223536900',
-                        _rev: '_Wl8h5b2--B'
+                        _to: 'users/223536900'
                     }
                 ])
             };
@@ -299,6 +297,137 @@ describe('TreeRepo', () => {
             const isPresent = await repo.isElementPresent('test_tree', {id: 13445, library: 'test_lib'});
 
             expect(isPresent).toBe(false);
+        });
+    });
+
+    describe('getTreeContent', () => {
+        test('Should return full content of a tree', async () => {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        _id: 'core_trees/test_tree',
+                        _key: 'categories',
+                        _rev: '_Wm_Qdtu--_',
+                        label: {
+                            fr: 'Arbre des catégories'
+                        },
+                        libraries: ['categories'],
+                        system: false,
+                        path: ['core_trees/test_tree']
+                    },
+                    {
+                        _id: 'categories/223588194',
+                        _key: '223588194',
+                        _rev: '_Wm_Sdaq--_',
+                        created_at: 1524057050,
+                        id: '223588194',
+                        modified_at: 1524057125,
+                        path: ['core_trees/test_tree', 'categories/223588194']
+                    },
+                    {
+                        _id: 'categories/223588185',
+                        _key: '223588185',
+                        _rev: '_Wm_SdZ2--_',
+                        created_at: 1524057050,
+                        id: '223588185',
+                        modified_at: 1524057125,
+                        path: ['core_trees/test_tree', 'categories/223588185']
+                    },
+                    {
+                        _id: 'categories/223588190',
+                        _key: '223588190',
+                        _rev: '_Wm_SdaS--_',
+                        created_at: 1524057050,
+                        id: '223588190',
+                        modified_at: 1524057125,
+                        path: ['core_trees/test_tree', 'categories/223588185', 'categories/223588190']
+                    },
+                    {
+                        _id: 'categories/223612473',
+                        _key: '223612473',
+                        _rev: '_WmDqKmm--_',
+                        created_at: 1524130036,
+                        modified_at: 1524130036,
+                        path: ['core_trees/test_tree', 'categories/223588185', 'categories/223612473']
+                    },
+                    {
+                        _id: 'categories/223612456',
+                        _key: '223612456',
+                        _rev: '_WmDqGxW--_',
+                        created_at: 1524130032,
+                        modified_at: 1524130032,
+                        path: [
+                            'core_trees/test_tree',
+                            'categories/223588185',
+                            'categories/223612473',
+                            'categories/223612456'
+                        ]
+                    }
+                ])
+            };
+
+            const mockDbUtils = {
+                cleanup: dbUtils(null, null).cleanup
+            };
+
+            const repo = treeRepo(mockDbServ, mockDbUtils);
+
+            const treeContent = await repo.getTreeContent('test_tree');
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(treeContent).toEqual([
+                {
+                    record: {
+                        id: '223588194',
+                        created_at: 1524057050,
+                        modified_at: 1524057125,
+                        library: 'categories'
+                    },
+                    children: []
+                },
+                {
+                    record: {
+                        id: '223588185',
+                        created_at: 1524057050,
+                        modified_at: 1524057125,
+                        library: 'categories'
+                    },
+                    children: [
+                        {
+                            record: {
+                                id: '223588190',
+                                created_at: 1524057050,
+                                modified_at: 1524057125,
+                                library: 'categories'
+                            },
+                            children: []
+                        },
+                        {
+                            record: {
+                                id: '223612473',
+                                created_at: 1524130036,
+                                modified_at: 1524130036,
+                                library: 'categories'
+                            },
+                            children: [
+                                {
+                                    record: {
+                                        id: '223612456',
+                                        created_at: 1524130032,
+                                        modified_at: 1524130032,
+                                        library: 'categories'
+                                    },
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]);
         });
     });
 });

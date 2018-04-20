@@ -11,7 +11,8 @@ describe('treeDomain', () => {
         addElement: jest.fn(),
         moveElement: jest.fn(),
         deleteElement: jest.fn(),
-        isElementPresent: global.__mockPromise(false)
+        isElementPresent: global.__mockPromise(false),
+        getTreeContent: jest.fn()
     };
 
     const mockTree = {
@@ -260,6 +261,125 @@ describe('treeDomain', () => {
             const rej = await expect(
                 domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, null, true)
             ).rejects.toThrow(ValidationError);
+        });
+    });
+
+    describe('geTreeContent', () => {
+        const mockAttributesDomain = {
+            getAttributes: global.__mockPromise([{id: 'modified_at'}, {id: 'created_at'}])
+        };
+
+        test('Should return tree content', async () => {
+            const treeContentData = [
+                {
+                    record: {
+                        id: '223588194',
+                        created_at: 1524057050,
+                        modified_at: 1524057125,
+                        library: 'categories'
+                    },
+                    children: []
+                },
+                {
+                    record: {
+                        id: '223588185',
+                        created_at: 1524057050,
+                        modified_at: 1524057125,
+                        library: 'categories'
+                    },
+                    children: [
+                        {
+                            record: {
+                                id: '223588190',
+                                created_at: 1524057050,
+                                modified_at: 1524057125,
+                                library: 'categories'
+                            },
+                            children: []
+                        },
+                        {
+                            record: {
+                                id: '223612473',
+                                created_at: 1524130036,
+                                modified_at: 1524130036,
+                                library: 'categories'
+                            },
+                            children: [
+                                {
+                                    record: {
+                                        id: '223612456',
+                                        created_at: 1524130032,
+                                        modified_at: 1524130032,
+                                        library: 'categories'
+                                    },
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ];
+
+            const treeRepo = {
+                ...mockTreeRepo,
+                getTreeContent: global.__mockPromise(treeContentData),
+                getTrees: global.__mockPromise([{id: 'test_tree'}])
+            };
+
+            const mockRecordDomain = {
+                find: jest.fn(),
+                populateRecordFields: jest.fn((lib, rec, queryFields) => {
+                    rec.modified_at = {value: rec.modified_at};
+                    rec.created_at = {value: rec.created_at};
+
+                    return rec;
+                })
+            };
+
+            const domain = treeDomain(treeRepo, mockLibDomain, mockRecordDomain, mockAttributesDomain);
+
+            const treeContent = await domain.getTreeContent('test_tree', ['modified_at', 'created_at']);
+
+            expect(treeRepo.getTreeContent.mock.calls.length).toBe(1);
+            expect(treeContent[0].record).toMatchObject({
+                id: '223588194',
+                created_at: {value: 1524057050},
+                modified_at: {value: 1524057125},
+                library: 'categories'
+            });
+        });
+
+        test('Should throw if unknown tree', async () => {
+            const treeContentData = [];
+
+            const treeRepo = {
+                ...mockTreeRepo,
+                getTreeContent: global.__mockPromise(treeContentData),
+                getTrees: global.__mockPromise([])
+            };
+            const domain = treeDomain(treeRepo, mockLibDomain, null, mockAttributesDomain);
+
+            const rej = await expect(domain.getTreeContent('test_tree', ['modified_at', 'created_at'])).rejects.toThrow(
+                ValidationError
+            );
+        });
+
+        test('Should throw if unknown attribute', async () => {
+            const treeContentData = [];
+
+            const treeRepo = {
+                ...mockTreeRepo,
+                getTreeContent: global.__mockPromise(treeContentData),
+                getTrees: global.__mockPromise([{id: 'test_tree'}])
+            };
+
+            const attrDomain = {...mockAttributesDomain, getAttributes: global.__mockPromise(['attr1', 'attr2'])};
+
+            const domain = treeDomain(treeRepo, mockLibDomain, null, attrDomain);
+
+            const rej = await expect(domain.getTreeContent('test_tree', ['attr1', 'attr3', 'attr2'])).rejects.toThrow(
+                ValidationError
+            );
         });
     });
 });

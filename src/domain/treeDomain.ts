@@ -1,11 +1,10 @@
-import {ITree, ITreeElement, ITreeFilterOptions} from '_types/tree';
+import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '_types/tree';
 import {ITreeRepo} from 'infra/treeRepo';
 import {difference} from 'lodash';
 import ValidationError from '../errors/ValidationError';
 import {ILibraryDomain} from './libraryDomain';
-import {IRecordRepo} from 'infra/recordRepo';
-import {AttributeTypes} from '_types/attribute';
 import {IRecordDomain} from './recordDomain';
+import {IAttributeDomain} from './attributeDomain';
 
 export interface ITreeDomain {
     saveTree(tree: ITree): Promise<ITree>;
@@ -46,12 +45,32 @@ export interface ITreeDomain {
         parent: ITreeElement | null,
         deleteChildren: boolean | null
     ): Promise<ITreeElement>;
+
+    /**
+     * Return the whole tree in the form:
+     * [
+     *      {
+     *          record: {...},
+     *          children: [
+     *              {
+     *                  record: ...
+     *                  children: ...
+     *              }
+     *          ]
+     *      },
+     *      { ... }
+     * ]
+     *
+     * @param treeId
+     */
+    getTreeContent(treeId: string, fields: string[]): Promise<ITreeNode[]>;
 }
 
 export default function(
     treeRepo: ITreeRepo | null = null,
     libraryDomain: ILibraryDomain | null = null,
-    recordDomain: IRecordDomain | null = null
+    recordDomain: IRecordDomain | null = null,
+    attributeDomain: IAttributeDomain | null = null
 ): ITreeDomain {
     async function _treeExists(treeId: string): Promise<boolean> {
         const trees = await treeRepo.getTrees({id: treeId});
@@ -186,6 +205,47 @@ export default function(
             }
 
             return treeRepo.deleteElement(treeId, element, parent, deleteChildren);
+        },
+        async getTreeContent(treeId: string, fields: string[]): Promise<ITreeNode[]> {
+            const errors: any = {};
+            if (!await _treeExists(treeId)) {
+                errors.treeId = 'Unknown tree';
+            }
+
+            const attributes = await attributeDomain.getAttributes();
+            const unknownAttributes = difference(fields, attributes.map(attr => attr.id));
+
+            if (unknownAttributes.length) {
+                errors.fields = `Unknown attributes: ${unknownAttributes.join(', ')}`;
+            }
+
+            if (!!Object.keys(errors).length) {
+                throw new ValidationError(errors);
+            }
+
+            const treeContent = await treeRepo.getTreeContent(treeId);
+
+            const fieldsToRetrieve = fields.map(attrName => ({name: attrName, fields: [], arguments: []}));
+
+            for (const rootElem of treeContent) {
+                await _hydrateRecord(rootElem);
+            }
+
+            async function _hydrateRecord(treeNode: ITreeNode) {
+                const record = await recordDomain.populateRecordFields(
+                    treeNode.record.library,
+                    treeNode.record,
+                    fieldsToRetrieve
+                );
+
+                for (let child of treeNode.children) {
+                    child = await _hydrateRecord(child);
+                }
+
+                return treeNode;
+            }
+
+            return treeContent;
         }
     };
 }

@@ -141,6 +141,23 @@ Object {
 }
 `;
 
+exports[`TreeRepo getTreeContent Should return full content of a tree 1`] = `
+"
+                FOR v, e, p IN 1..@value0 OUTBOUND @value1
+                @@value2
+                LET path = (FOR pv IN p.vertices RETURN pv._id)
+                RETURN MERGE(v, {path})
+            "
+`;
+
+exports[`TreeRepo getTreeContent Should return full content of a tree 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 1000,
+  "value1": "core_trees/test_tree",
+}
+`;
+
 exports[`TreeRepo getTrees Should filter trees 1`] = `"FOR l IN core_trees FILTER l.@filterKey0 == @filterValue0 FILTER l.@filterKey1 == @filterValue1 RETURN l"`;
 
 exports[`TreeRepo getTrees Should filter trees 2`] = `

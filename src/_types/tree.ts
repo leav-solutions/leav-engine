@@ -1,4 +1,5 @@
 import {ISystemTranslation} from './systemTranslation';
+import {IRecord} from './record';
 
 export interface ITree {
     id: string;
@@ -14,4 +15,9 @@ export interface ITreeFilterOptions {
 export interface ITreeElement {
     id: number;
     library: string;
+}
+
+export interface ITreeNode {
+    record?: IRecord;
+    children?: ITreeNode[];
 }

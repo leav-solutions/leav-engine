@@ -1,6 +1,7 @@
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ITreeDomain} from 'domain/treeDomain';
 import {ITree, ITreeElement} from '_types/tree';
+import {GraphQLScalarType} from 'graphql';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -30,13 +31,25 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                         library: String
                     }
 
+                    type TreeNode {
+                        record: Record,
+                        children: [TreeNode]
+                    }
+
                     input TreeElementInput {
                         id: ID!,
                         library: String!
                     }
 
+                    scalar TreeContent
+
                     extend type Query {
                         trees(id: ID): [Tree]
+
+                        # Retrieve a full tree content.
+                        # Fields must be an array of attribute IDs which will be
+                        # retrieved on each records found in the tree.
+                        treeContent(treeId: ID, fields: [ID]): TreeContent
                     }
 
                     extend type Mutation {
@@ -61,6 +74,9 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                     Query: {
                         async trees(parent, args) {
                             return treeDomain.getTrees(args);
+                        },
+                        async treeContent(_, {treeId, fields}, ctx, info) {
+                            return treeDomain.getTreeContent(treeId, fields);
                         }
                     },
                     Mutation: {
@@ -84,7 +100,14 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                             deleteChildren = typeof deleteChildren !== 'undefined' ? deleteChildren : true;
                             return treeDomain.deleteElement(treeId, element, parent, deleteChildren);
                         }
-                    }
+                    },
+                    TreeContent: new GraphQLScalarType({
+                        name: 'TreeContent',
+                        description: `Content of a tree,
+                            represented by a hierarchical object
+                            with record and children for each tree node`,
+                        serialize: val => val
+                    })
                 }
             };
 

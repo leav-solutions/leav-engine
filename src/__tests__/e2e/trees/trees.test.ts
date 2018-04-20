@@ -87,6 +87,17 @@ describe('Trees', () => {
         expect(resMove.data.data.treeMoveElement.id).toBeTruthy();
         expect(resMove.data.errors).toBeUndefined();
 
+        const restreeContent = await makeGraphQlCall(`
+        {
+            treeContent(treeId: "${testTreeName}", fields: ["id", "modified_at", "created_at"])
+        }
+        `);
+
+        expect(restreeContent.status).toBe(200);
+        expect(restreeContent.data.data.treeContent).toBeDefined();
+        expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
+        expect(restreeContent.data.errors).toBeUndefined();
+
         const resDel = await makeGraphQlCall(`mutation {
             treeDeleteElement(
                 treeId: "${testTreeName}",
