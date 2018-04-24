@@ -87,7 +87,8 @@ export default function(
     attributeSimpleRepo: IAttributeTypeRepo | null = null,
     attributeSimpleLinkRepo: IAttributeTypeRepo | null = null,
     attributeAdvancedRepo: IAttributeTypeRepo | null = null,
-    attributeAdvancedLinkRepo: IAttributeTypeRepo | null = null
+    attributeAdvancedLinkRepo: IAttributeTypeRepo | null = null,
+    attributeTreeRepo: IAttributeTypeRepo | null = null
 ): IAttributeTypesRepo {
     return {
         getTypeRepo(attribute) {
@@ -104,6 +105,9 @@ export default function(
                     break;
                 case AttributeTypes.ADVANCED_LINK:
                     attrTypeRepo = attributeAdvancedLinkRepo;
+                    break;
+                case AttributeTypes.TREE:
+                    attrTypeRepo = attributeTreeRepo;
                     break;
             }
 

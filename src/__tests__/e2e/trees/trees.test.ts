@@ -2,6 +2,9 @@ import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Trees', () => {
     const testTreeName = 'test_tree';
+    const testLibName = 'trees_library_test';
+    const attrTreeName = 'values_attribute_test_tree';
+
     test('Create Tree', async () => {
         const res = await makeGraphQlCall(`mutation {
             saveTree(
@@ -57,14 +60,17 @@ describe('Trees', () => {
                 mutation {
                     r1: createRecord(library: "users") {id},
                     r2: createRecord(library: "users") {id}
+                    r3: createRecord(library: "users") {id}
                 }
             `);
         const recordId1 = resCreaRecord.data.data.r1.id;
         const recordId2 = resCreaRecord.data.data.r2.id;
+        const recordId3 = resCreaRecord.data.data.r3.id;
 
         const resAdd = await makeGraphQlCall(`mutation {
                 a1: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId1}", library: "users"}) {id},
-                a2: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId2}", library: "users"}) {id}
+                a2: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId2}", library: "users"}) {id},
+                a3: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId3}", library: "users"}) {id}
             }`);
 
         expect(resAdd.status).toBe(200);
@@ -111,5 +117,50 @@ describe('Trees', () => {
         expect(resDel.data.data.treeDeleteElement).toBeDefined();
         expect(resDel.data.data.treeDeleteElement.id).toBeTruthy();
         expect(resDel.data.errors).toBeUndefined();
+
+        await makeGraphQlCall(`mutation {
+            saveAttribute(
+                attribute: {
+                    id: "${attrTreeName}",
+                    type: tree,
+                    format: text,
+                    label: {fr: "Test attr tree"}
+                }
+            ) { id }
+        }`);
+
+        // Create library for tests
+        await makeGraphQlCall(`mutation {
+            saveLibrary(library: {
+                id: "${testLibName}",
+                label: {fr: "Test lib"},
+                attributes: [
+                    "${attrTreeName}"
+                ]
+            }) { id }
+        }`);
+
+        await makeGraphQlCall(`mutation { refreshSchema }`);
+
+        const resCreaTestRecord = await makeGraphQlCall(`
+                mutation {
+                    r1: createRecord(library: "${testLibName}") {id}
+                }
+            `);
+        const testRecordId = resCreaTestRecord.data.data.r1.id;
+
+        const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${testRecordId}",
+                    attribute: "${attrTreeName}",
+                    value: {value: "users/${recordId3}"}) { id value }
+                }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.saveValue.id).toBeTruthy();
+        expect(res.data.data.saveValue.value).toBe(`users/${recordId3}`);
     });
 });
