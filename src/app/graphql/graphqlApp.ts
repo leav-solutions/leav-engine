@@ -40,7 +40,7 @@ export default function(
         err.message = `[${errId}] ${err.message}`;
         logger.error(err.stack);
 
-        if (config.env !== 'development') {
+        if (config.env !== 'development' && config.env !== 'test') {
             err.message = `[${errId}] Internal Error`;
         }
 
