@@ -29,7 +29,8 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         format: AttributeFormat,
                         system: Boolean,
                         label: SystemTranslation,
-                        linked_library: String
+                        linked_library: String,
+                        linked_tree: String
                     }
 
                     input AttributeInput {
@@ -37,7 +38,8 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         type: AttributeType!
                         format: AttributeFormat
                         label: SystemTranslationInput,
-                        linked_library: String
+                        linked_library: String,
+                        linked_tree: String
                     }
 
                     extend type Query {

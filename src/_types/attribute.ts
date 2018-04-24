@@ -7,6 +7,7 @@ export interface IAttribute {
     type: AttributeTypes;
     format?: AttributeFormats;
     linked_library?: string;
+    linked_tree?: string;
 }
 
 /**

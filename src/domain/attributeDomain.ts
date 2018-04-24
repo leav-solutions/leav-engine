@@ -55,7 +55,8 @@ export default function(attributeRepo: IAttributeRepo | null = null): IAttribute
             return attrs;
         },
         async saveAttribute(attrData: IAttribute): Promise<IAttribute> {
-            // TODO: use internal getAttributes, and find a way to mock it in unit tests
+            // TODO: Validate attribute data (linked library, linked tree...)
+
             const attrs = await attributeRepo.getAttributes({id: attrData.id});
 
             const attr = attrs.length
