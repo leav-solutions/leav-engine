@@ -50,7 +50,7 @@ export interface IAttributeTypeRepo {
      * @param attribute
      * @return Array<{}>    Return an empty array if no value found
      */
-    getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]>;
+    getValues(library: string, recordId: number, attribute: IAttribute, options?: any): Promise<IValue[]>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value

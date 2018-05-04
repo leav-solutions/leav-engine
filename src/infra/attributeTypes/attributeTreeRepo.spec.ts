@@ -1,6 +1,22 @@
 import attributeTreeRepo from './attributeTreeRepo';
 import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
+import {TreeValueTypes} from '../../_types/value';
+import {IAttributeTypeRepo} from '../attributeTypesRepo';
+import {ITreeRepo} from '../treeRepo';
+
+const mockAttrTreeRepo = {
+    createTree: null,
+    updateTree: null,
+    getTrees: null,
+    deleteTree: null,
+    addElement: null,
+    moveElement: null,
+    deleteElement: null,
+    isElementPresent: null,
+    getTreeContent: null,
+    getElementParents: null
+};
 
 describe('AttributeTreeRepo', () => {
     const mockAttribute = {
@@ -224,104 +240,157 @@ describe('AttributeTreeRepo', () => {
         });
     });
 
-    // describe('getValues', () => {
-    //     test('Should return values for advanced link attribute', async function() {
-    //         const traversalRes = [
-    //             {
-    //                 linkedRecord: {
-    //                     _key: '123456',
-    //                     _id: 'images/123456',
-    //                     _rev: '_WgJhrXO--_',
-    //                     created_at: 88888,
-    //                     modified_at: 88888
-    //                 },
-    //                 edge: {
-    //                     _key: '112233',
-    //                     _id: 'core_edge_values_links/112233',
-    //                     _from: 'ubs/222536283',
-    //                     _to: 'images/123456',
-    //                     _rev: '_WgJilsW--_',
-    //                     attribute: 'test_tree_attr',
-    //                     modified_at: 99999,
-    //                     created_at: 99999
-    //                 }
-    //             },
-    //             {
-    //                 linkedRecord: {
-    //                     _key: '123457',
-    //                     _id: 'images/123457',
-    //                     _rev: '_WgJhrXO--_',
-    //                     created_at: 77777,
-    //                     modified_at: 77777
-    //                 },
-    //                 edge: {
-    //                     _key: '112234',
-    //                     _id: 'core_edge_values_links/112234',
-    //                     _from: 'ubs/222536283',
-    //                     _to: 'images/123457',
-    //                     _rev: '_WgJilsW--_',
-    //                     attribute: 'test_tree_attr',
-    //                     modified_at: 66666,
-    //                     created_at: 66666
-    //                 }
-    //             }
-    //         ];
+    describe('getValues', () => {
+        test('Should return linked tree element', async function() {
+            const traversalRes = [
+                {
+                    linkedRecord: {
+                        _key: '123456',
+                        _id: 'images/123456',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 88888,
+                        modified_at: 88888
+                    },
+                    edge: {
+                        _key: '112233',
+                        _id: 'core_edge_values_links/112233',
+                        _from: 'ubs/222536283',
+                        _to: 'images/123456',
+                        _rev: '_WgJilsW--_',
+                        attribute: 'test_tree_attr',
+                        modified_at: 99999,
+                        created_at: 99999
+                    }
+                }
+            ];
 
-    //         const mockDbServ = {
-    //             db: new Database(),
-    //             execute: global.__mockPromise(traversalRes)
-    //         };
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
 
-    //         const mockCleanupRes = jest
-    //             .fn()
-    //             .mockReturnValueOnce({
-    //                 id: 123456,
-    //                 created_at: 88888,
-    //                 modified_at: 88888
-    //             })
-    //             .mockReturnValueOnce({
-    //                 id: 123457,
-    //                 created_at: 77777,
-    //                 modified_at: 77777
-    //             });
+            const mockCleanupRes = jest.fn().mockReturnValueOnce({
+                id: 123456,
+                created_at: 88888,
+                modified_at: 88888
+            });
 
-    //         const mockDbUtils = {
-    //             cleanup: mockCleanupRes
-    //         };
+            const mockDbUtils = {
+                cleanup: mockCleanupRes
+            };
 
-    //         const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
 
-    //         const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, {
+                valueType: TreeValueTypes.ELEMENT
+            });
 
-    //         expect(mockDbServ.execute.mock.calls.length).toBe(1);
-    //         expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-    //         expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-    //         expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
-    //         expect(values.length).toBe(2);
-    //         expect(values[0]).toMatchObject({
-    //             id: 112233,
-    //             value: {
-    //                 id: 123456,
-    //                 created_at: 88888,
-    //                 modified_at: 88888
-    //             },
-    //             attribute: 'test_tree_attr',
-    //             modified_at: 99999,
-    //             created_at: 99999
-    //         });
+            expect(values.length).toBe(1);
+            expect(values[0]).toMatchObject({
+                id: 112233,
+                value: [
+                    {
+                        id: 123456,
+                        created_at: 88888,
+                        modified_at: 88888
+                    }
+                ],
+                attribute: 'test_tree_attr',
+                modified_at: 99999,
+                created_at: 99999
+            });
+        });
 
-    //         expect(values[1]).toMatchObject({
-    //             id: 112234,
-    //             value: {
-    //                 id: 123457,
-    //                 created_at: 77777,
-    //                 modified_at: 77777
-    //             },
-    //             attribute: 'test_tree_attr',
-    //             modified_at: 66666,
-    //             created_at: 66666
-    //         });
-    //     });
-    // });
+        test('Should return element parents', async function() {
+            const traversalRes = [
+                {
+                    linkedRecord: {
+                        _key: '123456',
+                        _id: 'images/123456',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 88888,
+                        modified_at: 88888
+                    },
+                    edge: {
+                        _key: '112233',
+                        _id: 'core_edge_values_links/112233',
+                        _from: 'ubs/222536283',
+                        _to: 'images/123456',
+                        _rev: '_WgJilsW--_',
+                        attribute: 'test_tree_attr',
+                        modified_at: 99999,
+                        created_at: 99999
+                    }
+                }
+            ];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const treeRepo = {
+                ...mockAttrTreeRepo,
+                getElementParents: global.__mockPromise([
+                    {
+                        id: 123456,
+                        created_at: 77777,
+                        modified_at: 77777
+                    },
+                    {
+                        id: 123457,
+                        created_at: 88888,
+                        modified_at: 88888
+                    },
+                    {
+                        id: 123458,
+                        created_at: 99999,
+                        modified_at: 99999
+                    }
+                ])
+            };
+
+            const attrRepo = attributeTreeRepo(mockDbServ, null, treeRepo);
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, {
+                valueType: TreeValueTypes.PARENTS
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(treeRepo.getElementParents.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(values.length).toBe(1);
+            expect(values[0]).toMatchObject({
+                id: 112233,
+                value: [
+                    {
+                        id: 123456,
+                        created_at: 77777,
+                        modified_at: 77777
+                    },
+                    {
+                        id: 123457,
+                        created_at: 88888,
+                        modified_at: 88888
+                    },
+                    {
+                        id: 123458,
+                        created_at: 99999,
+                        modified_at: 99999
+                    }
+                ],
+                attribute: 'test_tree_attr',
+                modified_at: 99999,
+                created_at: 99999
+            });
+        });
+    });
 });

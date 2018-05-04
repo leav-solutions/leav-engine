@@ -12,7 +12,8 @@ describe('treeDomain', () => {
         moveElement: jest.fn(),
         deleteElement: jest.fn(),
         isElementPresent: global.__mockPromise(false),
-        getTreeContent: jest.fn()
+        getTreeContent: jest.fn(),
+        getElementParents: jest.fn()
     };
 
     const mockTree = {

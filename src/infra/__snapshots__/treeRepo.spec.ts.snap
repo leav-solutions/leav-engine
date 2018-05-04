@@ -141,6 +141,43 @@ Object {
 }
 `;
 
+exports[`TreeRepo getElementParents Should return element parents 1`] = `
+"
+                FOR v,e,p
+                    IN 0..@value0 INBOUND @value1
+                    @@value2
+                    SORT COUNT(p.edges) DESC
+                    FILTER v._id != @value3
+                    RETURN v
+            "
+`;
+
+exports[`TreeRepo getElementParents Should return element parents 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 1000,
+  "value1": "images/123458",
+  "value3": "core_trees/test_tree",
+}
+`;
+
+exports[`TreeRepo getTreeContent Should return content of a tree starting from a given node 1`] = `
+"
+                FOR v, e, p IN 1..@value0 OUTBOUND @value1
+                @@value2
+                LET path = (FOR pv IN p.vertices RETURN pv._id)
+                RETURN MERGE(v, {path})
+            "
+`;
+
+exports[`TreeRepo getTreeContent Should return content of a tree starting from a given node 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 1000,
+  "value1": "categories/223588185",
+}
+`;
+
 exports[`TreeRepo getTreeContent Should return full content of a tree 1`] = `
 "
                 FOR v, e, p IN 1..@value0 OUTBOUND @value1

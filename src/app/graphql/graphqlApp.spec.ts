@@ -222,7 +222,7 @@ describe('GraphqlApp', () => {
                                     name: {...mockNameNode, value: 'id'}
                                 },
                                 {
-                                    ...mockInlineFragment,
+                                    ...mockFieldNode,
                                     name: {...mockNameNode, value: 'upsell'},
                                     selectionSet: {
                                         ...mockSelectionSet,
@@ -236,7 +236,7 @@ describe('GraphqlApp', () => {
                                                 name: {...mockNameNode, value: 'price'}
                                             },
                                             {
-                                                ...mockInlineFragment,
+                                                ...mockFieldNode,
                                                 name: {...mockNameNode, value: 'crosssell'},
                                                 selectionSet: {
                                                     ...mockSelectionSet,

@@ -51,15 +51,11 @@ describe('Attributes', () => {
     });
 
     test('Delete an attribute', async () => {
-        try {
-            const res = await makeGraphQlCall(`mutation {deleteAttribute(id: "${testAttrName}") { id }}`);
+        const res = await makeGraphQlCall(`mutation {deleteAttribute(id: "${testAttrName}") { id }}`);
 
-            expect(res.status).toBe(200);
-            expect(res.data.data.deleteAttribute).toBeDefined();
-            expect(res.data.data.deleteAttribute.id).toBe(testAttrName);
-            expect(res.data.errors).toBeUndefined();
-        } catch (e) {
-            console.log(e);
-        }
+        expect(res.status).toBe(200);
+        expect(res.data.data.deleteAttribute).toBeDefined();
+        expect(res.data.data.deleteAttribute.id).toBe(testAttrName);
+        expect(res.data.errors).toBeUndefined();
     });
 });

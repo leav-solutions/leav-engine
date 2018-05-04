@@ -82,7 +82,11 @@ export default function(
 
                 baseSchema.typeDefs += `
                     type ${libTypeName} implements Record {
-                        ${lib.attributes.map(attr => `${attr.id}: ${coreAttributeApp.getGraphQLFormat(attr)}`)}
+                        ${lib.attributes.map(
+                            attr =>
+                                `${attr.id}${coreAttributeApp.getGraphQLValueOptions(attr)}:
+                                ${coreAttributeApp.getGraphQLFormat(attr)}`
+                        )}
                     }
 
                     enum ${libTypeName}SearchableFields {

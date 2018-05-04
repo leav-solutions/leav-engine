@@ -2,6 +2,7 @@ import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '_types/tree';
 import {aql} from 'arangojs';
 import {IDbService, collectionTypes} from './db/dbService';
 import {IDbUtils} from './db/dbUtils';
+import {IRecord} from '_types/record';
 
 export interface ITreeRepo {
     createTree(treeData: ITree): Promise<ITree>;
@@ -68,8 +69,17 @@ export interface ITreeRepo {
      * ]
      *
      * @param treeId
+     * @param startingNode  Return the tree starting from this node. If not specified, start from root
      */
-    getTreeContent(treeId: string): Promise<ITreeNode[]>;
+    getTreeContent(treeId: string, startingNode?: ITreeElement): Promise<ITreeNode[]>;
+
+    /**
+     * Return all ancestors of an element, including element itself, but excluding tree root
+     *
+     * @param treeId
+     * @param element
+     */
+    getElementParents(treeId: string, element: ITreeElement): Promise<IRecord>;
 }
 
 const TREES_COLLECTION_NAME = 'core_trees';
@@ -235,19 +245,21 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
 
             return !!res.length;
         },
-        async getTreeContent(treeId: string): Promise<ITreeNode[]> {
+        async getTreeContent(treeId: string, startingNode?: ITreeElement): Promise<ITreeNode[]> {
             const rootId = _getRootId(treeId);
 
             const treeContent: ITreeNode[] = [];
 
             const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
 
+            const nodeFrom = !!startingNode ? `${startingNode.library}/${startingNode.id}` : rootId;
+
             /**
              * This query return a list of all records present in the tree with their path IDs
              * from the root. Query is made depth-first
              */
             const data = await dbService.execute(aql`
-                FOR v, e, p IN 1..${MAX_TREE_DEPTH} OUTBOUND ${rootId}
+                FOR v, e, p IN 1..${MAX_TREE_DEPTH} OUTBOUND ${nodeFrom}
                 ${collec}
                 LET path = (FOR pv IN p.vertices RETURN pv._id)
                 RETURN MERGE(v, {path})
@@ -272,7 +284,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                 let parentInTree: any = treeContent;
                 for (const pathPart of elem.path) {
                     // Root's first level children will be directly added to the tree
-                    if (pathPart === rootId) {
+                    if (pathPart === nodeFrom) {
                         parentInTree = treeContent;
                     } else {
                         // If previous parent was the tree root, there's no 'children'
@@ -298,6 +310,26 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             }
 
             return treeContent;
+        },
+        async getElementParents(treeId: string, element: ITreeElement): Promise<IRecord> {
+            const treeEdgeCollec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
+
+            const query = aql`
+                FOR v,e,p
+                    IN 0..${MAX_TREE_DEPTH} INBOUND ${element.library + '/' + element.id}
+                    ${treeEdgeCollec}
+                    SORT COUNT(p.edges) DESC
+                    FILTER v._id != ${_getRootId(treeId)}
+                    RETURN v
+            `;
+
+            const res = await dbService.execute(query);
+
+            return res.map(elem => {
+                elem.library = elem._id.split('/')[0];
+
+                return dbUtils.cleanup(elem);
+            });
         }
     };
 }

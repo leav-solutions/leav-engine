@@ -1,14 +1,19 @@
 import {IDbService} from '../db/dbService';
 import {IAttributeTypeRepo} from '../attributeTypesRepo';
-import {IValue} from '_types/value';
+import {IValue, IValueOptions, TreeValueTypes} from '../../_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
 import {IDbUtils} from '../db/dbUtils';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {ITreeRepo} from '../treeRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
-export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttributeTypeRepo {
+export default function(
+    dbService: IDbService | any,
+    dbUtils: IDbUtils | null = null,
+    treeRepo: ITreeRepo | null = null
+): IAttributeTypeRepo {
     return {
         async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -72,9 +77,15 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                 id: value.id
             };
         },
-        async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+        async getValues(
+            library: string,
+            recordId: number,
+            attribute: IAttribute,
+            options?: IValueOptions
+        ): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-            const res = await dbService.execute(aql`
+
+            const treeElements = await dbService.execute(aql`
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
@@ -82,13 +93,44 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                     RETURN {linkedRecord, edge}
             `);
 
-            return res.map(r => ({
-                id: Number(r.edge._key),
-                value: dbUtils.cleanup(r.linkedRecord),
-                attribute: r.edge.attribute,
-                modified_at: r.edge.modified_at,
-                created_at: r.edge.created_at
-            }));
+            if (options.valueType === TreeValueTypes.ELEMENT) {
+                return treeElements.map(r => {
+                    r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
+
+                    return {
+                        id: Number(r.edge._key),
+                        value: [dbUtils.cleanup(r.linkedRecord)],
+                        attribute: r.edge.attribute,
+                        modified_at: r.edge.modified_at,
+                        created_at: r.edge.created_at
+                    };
+                });
+            } else if (options.valueType === TreeValueTypes.PARENTS) {
+                // For each elements, get its parents
+                return treeElements.length
+                    ? Promise.all(
+                          treeElements.map(async el => {
+                              const elLib = el.linkedRecord._id.split('/')[0];
+                              const elId = el.linkedRecord._id.split('/')[1];
+
+                              const parents = await treeRepo.getElementParents(attribute.linked_tree, {
+                                  id: elId,
+                                  library: elLib
+                              });
+
+                              return {
+                                  id: Number(el.edge._key),
+                                  value: parents,
+                                  attribute: el.edge.attribute,
+                                  modified_at: el.edge.modified_at,
+                                  created_at: el.edge.created_at
+                              };
+                          })
+                      )
+                    : null;
+            } else {
+                return null;
+            }
         },
         async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);

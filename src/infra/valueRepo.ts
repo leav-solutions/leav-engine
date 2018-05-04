@@ -49,7 +49,7 @@ export interface IValueRepo {
      * @param attribute
      * @return Array<{}>    Return an empty array if no value found
      */
-    getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]>;
+    getValues(library: string, recordId: number, attribute: IAttribute, options?: any): Promise<IValue[]>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value
@@ -78,9 +78,9 @@ export default function(attributeTypesRepo: IAttributeTypesRepo | null = null): 
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.deleteValue(library, recordId, attribute, value);
         },
-        getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+        getValues(library: string, recordId: number, attribute: IAttribute, options?: any): Promise<IValue[]> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValues(library, recordId, attribute);
+            return typeRepo.getValues(library, recordId, attribute, options);
         },
         getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

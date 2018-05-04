@@ -92,6 +92,11 @@ export default function(
                     for (const fragSelection of info.fragments[selection.name.value].selectionSet.selections) {
                         extractFields(fragSelection, container);
                     }
+                } else if (selection.kind === Kind.INLINE_FRAGMENT) {
+                    // Field refers to an inline fragment, let's fetch sub fields
+                    for (const fragSelection of selection.selectionSet.selections) {
+                        extractFields(fragSelection, container);
+                    }
                 } else {
                     if (selection.name.value === '__typename') {
                         return;

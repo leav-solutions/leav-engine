@@ -125,20 +125,32 @@ export default function(
 
                 const isLinkAttribute =
                     fieldsProps[field.name].type === AttributeTypes.SIMPLE_LINK ||
-                    fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK;
+                    fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK ||
+                    fieldsProps[field.name].type === AttributeTypes.TREE;
 
                 // Get field value
                 if (
                     typeof record[field.name] === 'undefined' ||
                     fieldsProps[field.name].type !== AttributeTypes.SIMPLE
                 ) {
-                    const fieldValues = await valueRepo.getValues(library, record.id, fieldsProps[field.name]);
+                    const fieldValues = await valueRepo.getValues(
+                        library,
+                        record.id,
+                        fieldsProps[field.name],
+                        field.arguments
+                    );
 
-                    if (fieldValues.length) {
+                    if (fieldValues !== null && fieldValues.length) {
                         const fieldValue = fieldValues[0];
 
                         // If value is a linked record, recursively populate fields on this record
                         if (field.fields.length && isLinkAttribute) {
+                            const _processFieldValue = (value, valueFields): Promise<any> => {
+                                const linkedLibrary = fieldsProps[field.name].linked_library || value.library;
+
+                                return this.populateRecordFields(linkedLibrary, value, valueFields);
+                            };
+
                             const linkFields = field.fields;
 
                             // "value" is the linked record,
@@ -153,11 +165,14 @@ export default function(
                                 return acc;
                             }, []);
 
-                            fieldValue.value = await this.populateRecordFields(
-                                fieldsProps[field.name].linked_library,
-                                fieldValue.value,
-                                valueLinkFields
-                            );
+                            // If value is an array (like in tree values), populate recursively all elements
+                            if (Array.isArray(fieldValue.value)) {
+                                fieldValue.value = await Promise.all(
+                                    fieldValue.value.map(val => _processFieldValue(val, valueLinkFields))
+                                );
+                            } else {
+                                fieldValue.value = await _processFieldValue(fieldValue.value, valueLinkFields);
+                            }
 
                             // Add library on linked record to help determine which type is the record
                             if (isLinkAttribute && fieldsProps[field.name].linked_library) {

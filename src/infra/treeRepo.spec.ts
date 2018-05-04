@@ -378,6 +378,7 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1).toBe('core_trees/test_tree');
 
             expect(treeContent).toEqual([
                 {
@@ -426,6 +427,106 @@ describe('TreeRepo', () => {
                             ]
                         }
                     ]
+                }
+            ]);
+        });
+
+        test('Should return content of a tree starting from a given node', async () => {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([])
+            };
+
+            const mockDbUtils = {
+                cleanup: jest.fn()
+            };
+
+            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const treeContent = await repo.getTreeContent('test_tree', {id: 223588185, library: 'categories'});
+
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1).toBe('categories/223588185');
+        });
+    });
+
+    describe('getElementParents', () => {
+        test('Should return element parents', async () => {
+            const traversalRes = [
+                {
+                    _key: '123456',
+                    _id: 'images/123456',
+                    _rev: '_WgJhrXO--_',
+                    created_at: 77777,
+                    modified_at: 77777
+                },
+                {
+                    _key: '123457',
+                    _id: 'images/123457',
+                    _rev: '_WgJhrXO--_',
+                    created_at: 88888,
+                    modified_at: 88888
+                },
+                {
+                    _key: '123458',
+                    _id: 'images/123458',
+                    _rev: '_WgJhrXO--_',
+                    created_at: 99999,
+                    modified_at: 99999
+                }
+            ];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const mockCleanupRes = jest
+                .fn()
+                .mockReturnValueOnce({
+                    id: 123456,
+                    created_at: 77777,
+                    modified_at: 77777
+                })
+                .mockReturnValueOnce({
+                    id: 123457,
+                    created_at: 88888,
+                    modified_at: 88888
+                })
+                .mockReturnValueOnce({
+                    id: 123458,
+                    created_at: 99999,
+                    modified_at: 99999
+                });
+
+            const mockDbUtils = {
+                cleanup: mockCleanupRes
+            };
+
+            const repo = treeRepo(mockDbServ, mockDbUtils);
+
+            const values = await repo.getElementParents('test_tree', {id: 123458, library: 'images'});
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(values).toEqual([
+                {
+                    id: 123456,
+                    created_at: 77777,
+                    modified_at: 77777
+                },
+                {
+                    id: 123457,
+                    created_at: 88888,
+                    modified_at: 88888
+                },
+                {
+                    id: 123458,
+                    created_at: 99999,
+                    modified_at: 99999
                 }
             ]);
         });

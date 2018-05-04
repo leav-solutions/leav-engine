@@ -150,10 +150,15 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockValRepo.getValues).toBeCalledWith('test_lib', 222536283, {
-                id: 'label',
-                type: AttributeTypes.ADVANCED
-            });
+            expect(mockValRepo.getValues).toBeCalledWith(
+                'test_lib',
+                222536283,
+                {
+                    id: 'label',
+                    type: AttributeTypes.ADVANCED
+                },
+                []
+            );
             expect(findRes).toEqual({
                 ...record,
                 label: {
@@ -242,10 +247,15 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockValRepo.getValues).toBeCalledWith('test_lib', 222536283, {
-                id: 'linkedElem',
-                type: AttributeTypes.SIMPLE_LINK
-            });
+            expect(mockValRepo.getValues).toBeCalledWith(
+                'test_lib',
+                222536283,
+                {
+                    id: 'linkedElem',
+                    type: AttributeTypes.SIMPLE_LINK
+                },
+                []
+            );
             expect(findRes).toEqual({
                 ...record,
                 linkedElem: {
