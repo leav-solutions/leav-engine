@@ -20,7 +20,7 @@ export interface IRecordDomain {
      *
      * @param library       Library ID
      */
-    createRecord?(library: string): Promise<IRecord>;
+    createRecord(library: string): Promise<IRecord>;
 
     /**
      * Update record
@@ -29,7 +29,7 @@ export interface IRecordDomain {
      * @param library       Library ID
      * @param recordData
      */
-    updateRecord?(library: string, recordData: IRecord): Promise<IRecord>;
+    updateRecord(library: string, recordData: IRecord): Promise<IRecord>;
 
     /**
      * Delete record
@@ -38,7 +38,7 @@ export interface IRecordDomain {
      * @param id         Record ID
      * @param recordData
      */
-    deleteRecord?(library: string, id: number): Promise<IRecord>;
+    deleteRecord(library: string, id: number): Promise<IRecord>;
 
     /**
      * Search records
@@ -56,7 +56,7 @@ export interface IRecordDomain {
      * @param record
      * @param queryFields Fields to retrieve
      */
-    populateRecordFields?(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
+    populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
 }
 
 export default function(

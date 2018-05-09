@@ -8,11 +8,10 @@ import {LIB_ATTRIB_COLLECTION_NAME} from './libraryRepo';
 import {IValueRepo} from './valueRepo';
 
 export interface IAttributeRepo {
-    ATTRIB_COLLECTION_NAME?: string;
-    getAttributes?(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
-    updateAttribute?(attrData: IAttribute): Promise<IAttribute>;
-    createAttribute?(attrData: IAttribute): Promise<IAttribute>;
-    deleteAttribute?(attrData: IAttribute): Promise<IAttribute>;
+    getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
+    updateAttribute(attrData: IAttribute): Promise<IAttribute>;
+    createAttribute(attrData: IAttribute): Promise<IAttribute>;
+    deleteAttribute(attrData: IAttribute): Promise<IAttribute>;
 
     /**
      * Get all libraries for which this attribute is enabled

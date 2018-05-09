@@ -1,24 +1,15 @@
+import {IAttributeRepo} from 'infra/attributeRepo';
+import {AttributeFormats, AttributeTypes} from '../_types/attribute';
 import attributeDomain from './attributeDomain';
-import {AttributeTypes, AttributeFormats} from '../_types/attribute';
 
 describe('attributeDomain', () => {
-    const mockAttrTypeRepo = {
-        createValue: jest.fn(),
-        updateValue: jest.fn(),
-        deleteValue: jest.fn(),
-        getValues: jest.fn(),
-        getValueById: global.__mockPromise(null),
-        filterQueryPart: jest.fn(),
-        clearAllValues: jest.fn()
-    };
-
     describe('getAttributes', () => {
         test('Should return a list of attributes', async function() {
-            const mockAttrRepo = {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([{id: 'test'}, {id: 'test2'}])
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
             const attr = await attrDomain.getAttributes();
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
@@ -28,11 +19,11 @@ describe('attributeDomain', () => {
 
     describe('getAttributeProperties', () => {
         test('Should return a list of attributes', async function() {
-            const mockAttrRepo = {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([{id: 'test'}])
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
             const attr = await attrDomain.getAttributeProperties('test');
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
@@ -41,11 +32,11 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if unknown attribute', async function() {
-            const mockAttrRepo = {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([])
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
 
             await expect(attrDomain.getAttributeProperties('test')).rejects.toThrow();
         });
@@ -53,13 +44,13 @@ describe('attributeDomain', () => {
 
     describe('saveAttribute', () => {
         test('Should save a new attribute', async function() {
-            const mockAttrRepo = {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([]),
                 createAttribute: global.__mockPromise({id: 'test', system: false, type: 'standard', format: 'text'}),
                 updateAttribute: jest.fn()
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
@@ -76,13 +67,13 @@ describe('attributeDomain', () => {
         });
 
         test('Should update an attribute', async function() {
-            const mockAttrRepo = {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([{id: 'test', system: false}]),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
@@ -99,8 +90,8 @@ describe('attributeDomain', () => {
         const attrData = {id: 'test_attribute', system: false, label: {fr: 'Test'}, format: 'text', type: 'index'};
 
         test('Should delete an attribute and return deleted attribute', async function() {
-            const mockAttrRepo = {deleteAttribute: global.__mockPromise(attrData)};
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise(attrData)};
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
             attrDomain.getAttributes = global.__mockPromise([attrData]);
 
             const deleteRes = await attrDomain.deleteAttribute(attrData.id);
@@ -109,16 +100,16 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if unknown attribute', async function() {
-            const mockAttrRepo = {deleteAttribute: global.__mockPromise()};
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
             attrDomain.getAttributes = global.__mockPromise([]);
 
             await expect(attrDomain.deleteAttribute(attrData.id)).rejects.toThrow();
         });
 
         test('Should throw if system attribute', async function() {
-            const mockAttrRepo = {deleteAttribute: global.__mockPromise()};
-            const attrDomain = attributeDomain(mockAttrRepo);
+            const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
             attrDomain.getAttributes = global.__mockPromise([{system: true}]);
 
             await expect(attrDomain.deleteAttribute(attrData.id)).rejects.toThrow();

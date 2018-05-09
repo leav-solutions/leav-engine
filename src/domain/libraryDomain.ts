@@ -8,9 +8,9 @@ import {IAttributeDomain} from './attributeDomain';
 import {difference} from 'lodash';
 
 export interface ILibraryDomain {
-    getLibraries?(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
-    saveLibrary?(library: ILibrary): Promise<ILibrary>;
-    deleteLibrary?(id: string): Promise<ILibrary>;
+    getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
+    saveLibrary(library: ILibrary): Promise<ILibrary>;
+    deleteLibrary(id: string): Promise<ILibrary>;
 }
 
 export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDomain | null = null): ILibraryDomain {

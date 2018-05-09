@@ -8,8 +8,8 @@ import ValidationError from '../errors/ValidationError';
 import {IValueRepo} from 'infra/valueRepo';
 
 export interface IValueDomain {
-    saveValue?(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
-    deleteValue?(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
+    saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
+    deleteValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
 }
 
 export default function(

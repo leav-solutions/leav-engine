@@ -2,27 +2,9 @@ import attributeRepo from './attributeRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 import {Database} from 'arangojs';
 import {AttributeTypes, AttributeFormats} from '../_types/attribute';
+import {IValueRepo} from './valueRepo';
 
 describe('AttributeRepo', () => {
-    const mockAttrTypeRepo: IAttributeTypeRepo = {
-        createValue: null,
-        updateValue: null,
-        deleteValue: null,
-        getValues: null,
-        getValueById: null,
-        filterQueryPart: null,
-        clearAllValues: null
-    };
-
-    const mockValueRepo = {
-        createValue: jest.fn(),
-        updateValue: jest.fn(),
-        deleteValue: jest.fn(),
-        getValues: jest.fn(),
-        getValueById: global.__mockPromise(null),
-        clearAllValues: jest.fn()
-    };
-
     describe('getAttribute', () => {
         test('Should return all libs if no filter', async function() {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
@@ -203,11 +185,11 @@ describe('AttributeRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docAttrData)
             };
 
-            const mockTypeRepo = {
-                ...mockAttrTypeRepo
+            const mockValueRepo: Mockify<IValueRepo> = {
+                clearAllValues: jest.fn()
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils, mockValueRepo);
+            const attrRepo = attributeRepo(mockDbServ, mockDbUtils, mockValueRepo as IValueRepo);
             attrRepo.getAttributes = global.__mockPromise([attrData]);
 
             const deleteRes = await attrRepo.deleteAttribute(attrData);

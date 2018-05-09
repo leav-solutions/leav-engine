@@ -1,21 +1,11 @@
 import treeDomain from './treeDomain';
 import {ITreeRepo} from 'infra/treeRepo';
 import ValidationError from '../errors/ValidationError';
+import {ILibraryDomain} from './libraryDomain';
+import {IRecordDomain} from './recordDomain';
+import {IAttributeDomain} from './attributeDomain';
 
 describe('treeDomain', () => {
-    const mockTreeRepo = {
-        createTree: jest.fn(),
-        updateTree: jest.fn(),
-        getTrees: jest.fn(),
-        deleteTree: jest.fn(),
-        addElement: jest.fn(),
-        moveElement: jest.fn(),
-        deleteElement: jest.fn(),
-        isElementPresent: global.__mockPromise(false),
-        getTreeContent: jest.fn(),
-        getElementParents: jest.fn()
-    };
-
     const mockTree = {
         id: 'test',
         system: false,
@@ -23,18 +13,18 @@ describe('treeDomain', () => {
         label: {fr: 'Test'}
     };
 
-    const mockLibDomain = {
+    const mockLibDomain: Mockify<ILibraryDomain> = {
         getLibraries: global.__mockPromise([{id: 'test_lib'}, {id: 'test_lib2'}])
     };
 
     describe('saveTree', () => {
         test('Should create new tree', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 createTree: global.__mockPromise(mockTree),
+                updateTree: jest.fn(),
                 getTrees: global.__mockPromise([])
             };
-            const domain = treeDomain(treeRepo, mockLibDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, mockLibDomain as ILibraryDomain);
 
             const newTree = await domain.saveTree(mockTree);
 
@@ -45,12 +35,12 @@ describe('treeDomain', () => {
         });
 
         test('Should update existing tree', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
+                createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise([mockTree])
             };
-            const domain = treeDomain(treeRepo, mockLibDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, mockLibDomain as ILibraryDomain);
 
             const newTree = await domain.saveTree(mockTree);
 
@@ -61,8 +51,7 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if unknown libraries', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 createTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise([])
             };
@@ -72,7 +61,7 @@ describe('treeDomain', () => {
                 libraries: ['test_lib', 'unexisting_lib']
             };
 
-            const domain = treeDomain(treeRepo, mockLibDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, mockLibDomain as ILibraryDomain);
 
             await expect(domain.saveTree(treeData)).rejects.toThrow(ValidationError);
         });
@@ -80,12 +69,11 @@ describe('treeDomain', () => {
 
     describe('deleteTree', () => {
         test('Should delete a tree and return deleted tree', async function() {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
-            const domain = treeDomain(treeRepo);
+            const domain = treeDomain(treeRepo as ITreeRepo);
             domain.getTrees = global.__mockPromise([mockTree]);
 
             const deleteRes = await domain.deleteTree(mockTree.id);
@@ -94,12 +82,11 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if unknown tree', async function() {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
-            const domain = treeDomain(treeRepo);
+            const domain = treeDomain(treeRepo as ITreeRepo);
             domain.getTrees = global.__mockPromise([]);
             await expect(domain.deleteTree(mockTree.id)).rejects.toThrow(ValidationError);
         });
@@ -107,12 +94,11 @@ describe('treeDomain', () => {
         test('Should throw if system tree', async function() {
             const treeData = {...mockTree, system: true};
 
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(treeData)
             };
 
-            const domain = treeDomain(treeRepo);
+            const domain = treeDomain(treeRepo as ITreeRepo);
             domain.getTrees = global.__mockPromise([treeData]);
             await expect(domain.deleteTree(mockTree.id)).rejects.toThrow(ValidationError);
         });
@@ -120,11 +106,10 @@ describe('treeDomain', () => {
 
     describe('getTrees', () => {
         test('Should return a list of trees', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise([mockTree, mockTree])
             };
-            const domain = treeDomain(treeRepo);
+            const domain = treeDomain(treeRepo as ITreeRepo);
 
             const trees = await domain.getTrees({id: 'test'});
 
@@ -134,17 +119,17 @@ describe('treeDomain', () => {
     });
 
     describe('addElement', () => {
-        const mockRecordDomain = {
+        const mockRecordDomain: Mockify<IRecordDomain> = {
             find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
         };
 
         test('Should an element to a tree', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 addElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                isElementPresent: global.__mockPromise(false),
                 getTrees: global.__mockPromise([{id: 'test_tree'}])
             };
-            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
 
             const addedElement = await domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, null);
 
@@ -152,13 +137,13 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if unknown tree, element or destination', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 addElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
+                isElementPresent: global.__mockPromise(false),
                 getTrees: global.__mockPromise([])
             };
 
-            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
 
             const rej = await expect(
                 domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
@@ -166,19 +151,17 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if element already present in the tree', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 addElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
                 getTrees: global.__mockPromise([mockTree]),
                 isElementPresent: global.__mockPromise(true)
             };
 
-            const recordDomain = {
-                ...mockRecordDomain,
+            const recordDomain: Mockify<IRecordDomain> = {
                 find: global.__mockPromise([])
             };
 
-            const domain = treeDomain(treeRepo, null, recordDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
 
             const rej = await expect(
                 domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
@@ -192,12 +175,11 @@ describe('treeDomain', () => {
         };
 
         test('Should move an element in a tree', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 moveElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
                 getTrees: global.__mockPromise([{id: 'test_tree'}])
             };
-            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
 
             const addedElement = await domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, null, {
                 id: 999,
@@ -208,18 +190,16 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if unknown tree, element or destination', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 moveElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
                 getTrees: global.__mockPromise([])
             };
 
             const recordDomain = {
-                ...mockRecordDomain,
                 find: global.__mockPromise([])
             };
 
-            const domain = treeDomain(treeRepo, null, recordDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
 
             const rej = await expect(
                 domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, null, {id: 999, library: 'other_lib'})
@@ -233,12 +213,12 @@ describe('treeDomain', () => {
         };
 
         test('Should move an element in a tree', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 deleteElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
                 getTrees: global.__mockPromise([{id: 'test_tree'}])
             };
-            const domain = treeDomain(treeRepo, null, mockRecordDomain);
+
+            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
 
             const addedElement = await domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, null, true);
 
@@ -246,18 +226,16 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if unknown tree, element or destination', async () => {
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 deleteElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
                 getTrees: global.__mockPromise([])
             };
 
             const recordDomain = {
-                ...mockRecordDomain,
                 find: global.__mockPromise([])
             };
 
-            const domain = treeDomain(treeRepo, null, recordDomain);
+            const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
 
             const rej = await expect(
                 domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, null, true)
@@ -266,7 +244,7 @@ describe('treeDomain', () => {
     });
 
     describe('geTreeContent', () => {
-        const mockAttributesDomain = {
+        const mockAttributesDomain: Mockify<IAttributeDomain> = {
             getAttributes: global.__mockPromise([{id: 'modified_at'}, {id: 'created_at'}])
         };
 
@@ -321,13 +299,12 @@ describe('treeDomain', () => {
                 }
             ];
 
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 getTreeContent: global.__mockPromise(treeContentData),
                 getTrees: global.__mockPromise([{id: 'test_tree'}])
             };
 
-            const mockRecordDomain = {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: jest.fn(),
                 populateRecordFields: jest.fn((lib, rec, queryFields) => {
                     rec.modified_at = {value: rec.modified_at};
@@ -337,7 +314,12 @@ describe('treeDomain', () => {
                 })
             };
 
-            const domain = treeDomain(treeRepo, mockLibDomain, mockRecordDomain, mockAttributesDomain);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                mockRecordDomain as IRecordDomain,
+                mockAttributesDomain as IAttributeDomain
+            );
 
             const treeContent = await domain.getTreeContent('test_tree', ['modified_at', 'created_at']);
 
@@ -353,12 +335,17 @@ describe('treeDomain', () => {
         test('Should throw if unknown tree', async () => {
             const treeContentData = [];
 
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 getTreeContent: global.__mockPromise(treeContentData),
                 getTrees: global.__mockPromise([])
             };
-            const domain = treeDomain(treeRepo, mockLibDomain, null, mockAttributesDomain);
+
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                null,
+                mockAttributesDomain as IAttributeDomain
+            );
 
             const rej = await expect(domain.getTreeContent('test_tree', ['modified_at', 'created_at'])).rejects.toThrow(
                 ValidationError
@@ -368,15 +355,19 @@ describe('treeDomain', () => {
         test('Should throw if unknown attribute', async () => {
             const treeContentData = [];
 
-            const treeRepo = {
-                ...mockTreeRepo,
+            const treeRepo: Mockify<ITreeRepo> = {
                 getTreeContent: global.__mockPromise(treeContentData),
                 getTrees: global.__mockPromise([{id: 'test_tree'}])
             };
 
-            const attrDomain = {...mockAttributesDomain, getAttributes: global.__mockPromise(['attr1', 'attr2'])};
+            const attrDomain: Mockify<IAttributeDomain> = {getAttributes: global.__mockPromise(['attr1', 'attr2'])};
 
-            const domain = treeDomain(treeRepo, mockLibDomain, null, attrDomain);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                null,
+                attrDomain as IAttributeDomain
+            );
 
             const rej = await expect(domain.getTreeContent('test_tree', ['attr1', 'attr3', 'attr2'])).rejects.toThrow(
                 ValidationError

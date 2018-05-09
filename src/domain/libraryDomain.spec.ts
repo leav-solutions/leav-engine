@@ -1,9 +1,11 @@
-import libraryDomain from './libraryDomain';
 import {AttributeTypes} from '../_types/attribute';
 import ValidationError from '../errors/ValidationError';
+import {IAttributeDomain} from './attributeDomain';
+import libraryDomain from './libraryDomain';
+import {ILibraryRepo} from 'infra/libraryRepo';
 
 describe('LibraryDomain', () => {
-    const mockAttrDomain = {
+    const mockAttrDomain: Mockify<IAttributeDomain> = {
         getAttributes: global.__mockPromise([
             {id: 'id', type: AttributeTypes.SIMPLE},
             {id: 'created_at', type: AttributeTypes.SIMPLE},
@@ -12,18 +14,17 @@ describe('LibraryDomain', () => {
             {id: 'modified_by', type: AttributeTypes.SIMPLE},
             {id: 'attr1', type: AttributeTypes.SIMPLE},
             {id: 'attr2', type: AttributeTypes.SIMPLE}
-        ]),
-        getTypeRepo: null
+        ])
     };
 
     describe('getLibraries', () => {
         test('Should return a list of libs', async function() {
-            const mockLibRepo = {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([{id: 'test'}, {id: 'test2'}]),
                 getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}]))
             };
 
-            const libDomain = libraryDomain(mockLibRepo);
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
             const lib = await libDomain.getLibraries();
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
@@ -36,14 +37,14 @@ describe('LibraryDomain', () => {
 
     describe('saveLibrary', () => {
         test('Should save a new library', async function() {
-            const mockLibRepo = {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([]),
                 createLibrary: global.__mockPromise({id: 'test', system: false}),
                 updateLibrary: jest.fn(),
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo, mockAttrDomain as IAttributeDomain);
 
             const newLib = await libDomain.saveLibrary({id: 'test'});
 
@@ -55,14 +56,14 @@ describe('LibraryDomain', () => {
         });
 
         test('Should update a library', async function() {
-            const mockLibRepo = {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([{id: 'test', system: false}]),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo, mockAttrDomain as IAttributeDomain);
 
             const updatedLib = await libDomain.saveLibrary({id: 'test'});
 
@@ -74,14 +75,14 @@ describe('LibraryDomain', () => {
         });
 
         test('Should update library attributes', async function() {
-            const mockLibRepo = {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([{id: 'test', system: false}]),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo, mockAttrDomain as IAttributeDomain);
 
             const updatedLib = await libDomain.saveLibrary({
                 id: 'test',
@@ -97,14 +98,14 @@ describe('LibraryDomain', () => {
         });
 
         test('Should throw if unknown attributes', async function() {
-            const mockLibRepo = {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([{id: 'test', system: false}]),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(mockLibRepo, mockAttrDomain);
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo, mockAttrDomain as IAttributeDomain);
 
             await expect(
                 libDomain.saveLibrary({
@@ -122,8 +123,8 @@ describe('LibraryDomain', () => {
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
         test('Should delete an library and return deleted library', async function() {
-            const mockLibRepo = {deleteLibrary: global.__mockPromise(libData)};
-            const libDomain = libraryDomain(mockLibRepo);
+            const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
             libDomain.getLibraries = global.__mockPromise([libData]);
 
             const deleteRes = await libDomain.deleteLibrary(libData.id);
@@ -132,16 +133,16 @@ describe('LibraryDomain', () => {
         });
 
         test('Should throw if unknown library', async function() {
-            const mockLibRepo = {deleteLibrary: global.__mockPromise()};
-            const libDomain = libraryDomain(mockLibRepo);
+            const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
             libDomain.getLibraries = global.__mockPromise([]);
 
             await expect(libDomain.deleteLibrary(libData.id)).rejects.toThrow();
         });
 
         test('Should throw if system library', async function() {
-            const mockLibRepo = {deleteLibrary: global.__mockPromise()};
-            const libDomain = libraryDomain(mockLibRepo);
+            const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
             libDomain.getLibraries = global.__mockPromise([{system: true}]);
 
             await expect(libDomain.deleteLibrary(libData.id)).rejects.toThrow();

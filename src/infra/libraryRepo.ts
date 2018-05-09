@@ -9,14 +9,13 @@ const LIB_COLLECTION_NAME = 'core_libraries';
 export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
 
 export interface ILibraryRepo {
-    LIB_ATTRIB_COLLECTION_NAME?: string;
     /**
      * Return libraries
      *
      * @param filters                   Filters libraries returned
      * @return Promise<Array<object>>   All libraries data
      */
-    getLibraries?(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
+    getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
 
     /**
      * Create new library
@@ -24,7 +23,7 @@ export interface ILibraryRepo {
      * @param libData
      * @return Promise<object>  New library data
      */
-    createLibrary?(libData: ILibrary): Promise<ILibrary>;
+    createLibrary(libData: ILibrary): Promise<ILibrary>;
 
     /**
      * Update existing library
@@ -32,14 +31,14 @@ export interface ILibraryRepo {
      * @param libData   Must contain "id" key to identify library to update
      * @return object   Updated library data
      */
-    updateLibrary?(libData: ILibrary): Promise<ILibrary>;
+    updateLibrary(libData: ILibrary): Promise<ILibrary>;
 
     /**
      * Delete library
      * @param id
      * @return {}   Deleted library data
      */
-    deleteLibrary?(id: string): Promise<ILibrary>;
+    deleteLibrary(id: string): Promise<ILibrary>;
 
     /**
      * Link attributes to library
@@ -48,9 +47,9 @@ export interface ILibraryRepo {
      * @param attributes Array of attributes IDs
      * @return array     List of linked attributes
      */
-    saveLibraryAttributes?(libId: string, attributes: string[] | IAttribute[]): Promise<string[]>;
+    saveLibraryAttributes(libId: string, attributes: string[] | IAttribute[]): Promise<string[]>;
 
-    getLibraryAttributes?(libId: string): Promise<IAttribute[]>;
+    getLibraryAttributes(libId: string): Promise<IAttribute[]>;
 }
 
 export default function(

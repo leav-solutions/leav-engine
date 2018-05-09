@@ -3,15 +3,7 @@ import {Database} from 'arangojs';
 import {AttributeTypes, AttributeFormats} from '../_types/attribute';
 
 describe('AttributeTypesRepo', () => {
-    const mockAttrTypeRepo: IAttributeTypeRepo = {
-        createValue: null,
-        updateValue: null,
-        deleteValue: null,
-        getValues: null,
-        getValueById: null,
-        filterQueryPart: null,
-        clearAllValues: null
-    };
+    const mockAttrTypeRepo: Mockify<IAttributeTypeRepo> = {};
 
     describe('getTypeRepo', () => {
         const mockAttribute = {
@@ -26,10 +18,10 @@ describe('AttributeTypesRepo', () => {
             const mockAttrAdvLinkRepo = {...mockAttrTypeRepo};
 
             const attrRepo = attributeTypesRepo(
-                mockAttrSimpleRepo,
-                mockAttrSimpleLinkRepo,
-                mockAttrAdvRepo,
-                mockAttrAdvLinkRepo
+                mockAttrSimpleRepo as IAttributeTypeRepo,
+                mockAttrSimpleLinkRepo as IAttributeTypeRepo,
+                mockAttrAdvRepo as IAttributeTypeRepo,
+                mockAttrAdvLinkRepo as IAttributeTypeRepo
             );
 
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE})).toBe(mockAttrSimpleRepo);

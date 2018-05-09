@@ -1,5 +1,5 @@
 import treeRepo from './treeRepo';
-import dbUtils from '../infra/db/dbUtils';
+import dbUtils, {IDbUtils} from '../infra/db/dbUtils';
 import {Database} from 'arangojs';
 
 describe('TreeRepo', () => {
@@ -24,12 +24,12 @@ describe('TreeRepo', () => {
                 createCollection: global.__mockPromise()
             };
 
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(treeData),
                 convertToDoc: jest.fn().mockReturnValue(docTreeData)
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const createdTree = await repo.createTree({
                 id: 'test_tree',
@@ -56,12 +56,12 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([docTreeData])
             };
 
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(treeData),
                 convertToDoc: jest.fn().mockReturnValue(docTreeData)
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const updatedTree = await repo.updateTree({
                 id: 'test_tree',
@@ -83,9 +83,11 @@ describe('TreeRepo', () => {
     describe('getTrees', () => {
         test('Should return all trees', async () => {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils = {cleanup: jest.fn()};
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn()
+            };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const trees = await repo.getTrees();
 
@@ -97,12 +99,12 @@ describe('TreeRepo', () => {
         });
         test('Should filter trees', async () => {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn(),
                 convertToDoc: jest.fn().mockReturnValue({_key: 'test', system: false})
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const trees = await repo.getTrees({id: 'test'});
 
@@ -123,12 +125,12 @@ describe('TreeRepo', () => {
                 dropCollection: global.__mockPromise()
             };
 
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(treeData),
                 convertToDoc: jest.fn().mockReturnValue(docTreeData)
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const deletedTree = await repo.deleteTree('test_tree');
 
@@ -371,7 +373,7 @@ describe('TreeRepo', () => {
                 cleanup: dbUtils(null, null).cleanup
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const treeContent = await repo.getTreeContent('test_tree');
 
@@ -437,11 +439,11 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn()
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
             const treeContent = await repo.getTreeContent('test_tree', {id: 223588185, library: 'categories'});
 
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
@@ -499,11 +501,11 @@ describe('TreeRepo', () => {
                     modified_at: 99999
                 });
 
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils);
+            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const values = await repo.getElementParents('test_tree', {id: 123458, library: 'images'});
 

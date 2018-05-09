@@ -1,31 +1,16 @@
-import recordRepo, {IRecordRepo} from 'infra/recordRepo';
-import recordDomain from './recordDomain';
-import {label} from 'joi';
+import {IRecordRepo} from 'infra/recordRepo';
 import {AttributeTypes} from '../_types/attribute';
-
-const mockRecordRepo: IRecordRepo = {
-    createRecord: null,
-    updateRecord: null,
-    deleteRecord: null,
-    find: null
-};
-
-const mockValueRepo = {
-    createValue: jest.fn(),
-    updateValue: jest.fn(),
-    deleteValue: jest.fn(),
-    getValues: jest.fn(),
-    getValueById: global.__mockPromise(null),
-    clearAllValues: jest.fn()
-};
+import recordDomain from './recordDomain';
+import {IValueRepo} from 'infra/valueRepo';
+import {IAttributeDomain} from './attributeDomain';
 
 describe('RecordDomain', () => {
     describe('createRecord', () => {
         test('Should create a new record', async function() {
             const createdRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
-            const recRepo = {...mockRecordRepo, createRecord: global.__mockPromise(createdRecordData)};
+            const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
 
-            const recDomain = recordDomain(recRepo, null);
+            const recDomain = recordDomain(recRepo as IRecordRepo, null);
 
             const createdRecord = await recDomain.createRecord('test');
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
@@ -39,9 +24,9 @@ describe('RecordDomain', () => {
     describe('updateRecord', () => {
         test('Should update a record', async function() {
             const updatedRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 987654321};
-            const recRepo = {...mockRecordRepo, updateRecord: global.__mockPromise(updatedRecordData)};
+            const recRepo: Mockify<IRecordRepo> = {updateRecord: global.__mockPromise(updatedRecordData)};
 
-            const recDomain = recordDomain(recRepo, null);
+            const recDomain = recordDomain(recRepo as IRecordRepo, null);
 
             const updatedRecord = await recDomain.updateRecord('test', {id: 222435651, modified_at: 987654321});
 
@@ -56,8 +41,8 @@ describe('RecordDomain', () => {
         const recordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
         test('Should delete an record and return deleted record', async function() {
-            const recRepo = {...mockRecordRepo, deleteRecord: global.__mockPromise(recordData)};
-            const recDomain = recordDomain(recRepo, null);
+            const recRepo: Mockify<IRecordRepo> = {deleteRecord: global.__mockPromise(recordData)};
+            const recDomain = recordDomain(recRepo as IRecordRepo, null);
 
             const deleteRes = await recDomain.deleteRecord('test', recordData.id);
 
@@ -84,9 +69,9 @@ describe('RecordDomain', () => {
                 }
             ];
 
-            const recRepo = {...mockRecordRepo, find: global.__mockPromise(mockRes)};
+            const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
-            const recDomain = recordDomain(recRepo, null);
+            const recDomain = recordDomain(recRepo as IRecordRepo, null);
 
             const findRes = await recDomain.find('test_lib');
 
@@ -112,10 +97,9 @@ describe('RecordDomain', () => {
                 visual_simple: '222713677'
             };
 
-            const recRepo = {...mockRecordRepo};
+            const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo = {
-                ...mockValueRepo,
+            const mockValRepo: Mockify<IValueRepo> = {
                 getValues: global.__mockPromise([
                     {
                         id: '222827150',
@@ -124,7 +108,7 @@ describe('RecordDomain', () => {
                 ])
             };
 
-            const mockAttributeDomain = {
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementation(attribute => {
                     let type;
                     switch (attribute) {
@@ -140,7 +124,11 @@ describe('RecordDomain', () => {
                 })
             };
 
-            const recDomain = recordDomain(recRepo, mockAttributeDomain, mockValRepo);
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                mockAttributeDomain as IAttributeDomain,
+                mockValRepo as IValueRepo
+            );
 
             const findRes = await recDomain.populateRecordFields('test_lib', record, [
                 {
@@ -177,10 +165,9 @@ describe('RecordDomain', () => {
                 visual_simple: '222713677'
             };
 
-            const recRepo = {...mockRecordRepo};
+            const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo = {
-                ...mockValueRepo,
+            const mockValRepo: Mockify<IValueRepo> = {
                 getValues: jest
                     .fn()
                     .mockReturnValueOnce([
@@ -200,7 +187,7 @@ describe('RecordDomain', () => {
                     ])
             };
 
-            const mockAttributeDomain = {
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementation(attribute => {
                     let type;
                     switch (attribute) {
@@ -219,7 +206,11 @@ describe('RecordDomain', () => {
                 })
             };
 
-            const recDomain = recordDomain(recRepo, mockAttributeDomain, mockValRepo);
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                mockAttributeDomain as IAttributeDomain,
+                mockValRepo as IValueRepo
+            );
 
             const findRes = await recDomain.populateRecordFields('test_lib', record, [
                 {name: 'id', fields: [], arguments: []},

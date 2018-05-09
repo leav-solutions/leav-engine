@@ -1,13 +1,15 @@
 import {Database} from 'arangojs';
 import {AttributeTypes} from '../_types/attribute';
 import libraryRepo from './libraryRepo';
+import {IDbUtils} from './db/dbUtils';
+import {IAttributeRepo} from './attributeRepo';
 
 describe('LibraryRepo', () => {
     describe('getLibrary', () => {
         test('Should return all libs if no filter', async function() {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils = {cleanup: jest.fn()};
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const mockDbUtils: Mockify<IDbUtils> = {cleanup: jest.fn()};
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const lib = await libRepo.getLibraries();
 
@@ -23,11 +25,11 @@ describe('LibraryRepo', () => {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockCleanupRes = {id: 'test_library', system: false};
             const mockConvertRes = {_key: 'test_library', system: false};
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue({_key: 'test', system: false})
             };
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const lib = await libRepo.getLibraries({id: 'test'});
 
@@ -40,12 +42,12 @@ describe('LibraryRepo', () => {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
 
             const mockCleanupRes = {id: 'test_library'};
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue({_key: 'test'})
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const libs = await libRepo.getLibraries({id: 'test'});
 
@@ -58,11 +60,11 @@ describe('LibraryRepo', () => {
             const mockDbServ = {db: null, execute: global.__mockPromise(mockLibList)};
 
             const mockCleanupRes = [{id: 'test', system: false}];
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue({_key: 'test', system: false})
             };
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const libs = await libRepo.getLibraries({id: 'test'});
 
@@ -91,12 +93,12 @@ describe('LibraryRepo', () => {
             };
 
             const mockCleanupRes = libData;
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const createdLib = await libRepo.createLibrary(libData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -121,12 +123,12 @@ describe('LibraryRepo', () => {
                 execute: global.__mockPromise([docLibData])
             };
 
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(libData),
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const updatedLib = await libRepo.updateLibrary(libData);
 
@@ -153,7 +155,7 @@ describe('LibraryRepo', () => {
         };
 
         test('Should delete a library and return deleted library', async function() {
-            const mockAttrRepo = {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([
                     {id: 'attr1', type: AttributeTypes.SIMPLE},
                     {id: 'attr2', type: AttributeTypes.SIMPLE}
@@ -168,12 +170,12 @@ describe('LibraryRepo', () => {
             };
 
             const mockCleanupRes = libData;
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(libData),
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils, mockAttrRepo);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils, mockAttrRepo as IAttributeRepo);
             libRepo.getLibraries = global.__mockPromise([libData]);
 
             const deleteRes = await libRepo.deleteLibrary(libData.id);
@@ -272,14 +274,14 @@ describe('LibraryRepo', () => {
                     type: 'index'
                 }
             ];
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest
                     .fn()
                     .mockReturnValueOnce(mockCleanupRes[0])
                     .mockReturnValueOnce(mockCleanupRes[1])
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils);
+            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const libAttrs = await libRepo.getLibraryAttributes('users');
             expect(mockDbServ.execute.mock.calls.length).toBe(1);

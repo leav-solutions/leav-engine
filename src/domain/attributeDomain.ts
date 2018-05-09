@@ -10,7 +10,7 @@ export interface IAttributeDomain {
      * @param id
      * @returns Promise<{}>
      */
-    getAttributeProperties?(id: string): Promise<IAttribute>;
+    getAttributeProperties(id: string): Promise<IAttribute>;
 
     /**
      * Get attributes list, filtered or not
@@ -18,7 +18,7 @@ export interface IAttributeDomain {
      * @param filters
      * @returns Promise<[{}]>
      */
-    getAttributes?(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
+    getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
 
     /**
      * Save attribute.
@@ -27,14 +27,14 @@ export interface IAttributeDomain {
      * @param {} attrData
      * @return Promise<{}>  Saved attribute
      */
-    saveAttribute?(attrData: IAttribute): Promise<IAttribute>;
+    saveAttribute(attrData: IAttribute): Promise<IAttribute>;
 
     /**
      * Delete an attribute
      *
      * @param id
      */
-    deleteAttribute?(id: string): Promise<IAttribute>;
+    deleteAttribute(id: string): Promise<IAttribute>;
 }
 
 export default function(attributeRepo: IAttributeRepo | null = null): IAttributeDomain {
