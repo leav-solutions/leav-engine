@@ -31,7 +31,7 @@ export default function(
             const attr = await attributeDomain.getAttributeProperties(attribute);
 
             // Check if value ID actually exists
-            if (value.id && attr.type !== AttributeTypes.SIMPLE) {
+            if (value.id_value && attr.type !== AttributeTypes.SIMPLE) {
                 const existingVal = await valueRepo.getValueById(library, recordId, attr, value);
 
                 if (existingVal === null) {
@@ -44,12 +44,12 @@ export default function(
                 modified_at: moment().unix()
             };
 
-            if (!value.id) {
+            if (!value.id_value) {
                 valueToSave.created_at = moment().unix();
             }
 
             const savedVal =
-                value.id && attr.type !== AttributeTypes.SIMPLE
+                value.id_value && attr.type !== AttributeTypes.SIMPLE
                     ? await valueRepo.updateValue(library, recordId, attr, valueToSave)
                     : await valueRepo.createValue(library, recordId, attr, valueToSave);
 
@@ -68,7 +68,7 @@ export default function(
 
             const attr = await attributeDomain.getAttributeProperties(attribute);
             // Check if value ID actually exists
-            if (value.id && attr.type !== AttributeTypes.SIMPLE) {
+            if (value.id_value && attr.type !== AttributeTypes.SIMPLE) {
                 const existingVal = await valueRepo.getValueById(library, recordId, attr, value);
 
                 if (existingVal === null) {

@@ -126,7 +126,7 @@ describe('AttributeIndexRepo', () => {
             expect(values.length).toBe(2);
 
             expect(values[0]).toMatchObject({
-                id: null,
+                id_value: null,
                 value: {
                     id: 987654,
                     created_at: 1521475225,
@@ -135,7 +135,7 @@ describe('AttributeIndexRepo', () => {
             });
 
             expect(values[1]).toMatchObject({
-                id: null,
+                id_value: null,
                 value: {
                     id: 987655,
                     created_at: 1521475225,

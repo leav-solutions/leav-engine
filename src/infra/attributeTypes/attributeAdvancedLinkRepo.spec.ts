@@ -1,6 +1,7 @@
-import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
-import {AttributeTypes} from '../../_types/attribute';
+import {IValue} from '_types/value';
 import {Database} from 'arangojs';
+import {AttributeTypes} from '../../_types/attribute';
+import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
 
 describe('AttributeAdvancedLinkRepo', () => {
     const mockAttribute = {
@@ -20,8 +21,8 @@ describe('AttributeAdvancedLinkRepo', () => {
         created_at: 400999999
     };
 
-    const valueData = {
-        id: 978654321,
+    const valueData: IValue = {
+        id_value: 978654321,
         value: 987654,
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
@@ -59,7 +60,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
 
             expect(createdVal).toMatchObject({
-                id: 978654321,
+                id_value: 978654321,
                 value: 987654,
                 attribute: 'test_adv_link_attr',
                 modified_at: 400999999,
@@ -84,7 +85,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
-                id: 987654,
+                id_value: 987654,
                 value: 987654,
                 modified_at: 400999999
             });
@@ -129,7 +130,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
-                id: 445566,
+                id_value: 445566,
                 value: 987654,
                 modified_at: 400999999,
                 created_at: 400999999
@@ -138,7 +139,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
             expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: 445566});
 
-            expect(deletedVal).toMatchObject({id: 445566});
+            expect(deletedVal).toMatchObject({id_value: 445566});
         });
     });
 
@@ -184,7 +185,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id: 112233,
+                id_value: 112233,
                 value: 123456
             });
 
@@ -193,7 +194,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
             expect(value).toMatchObject({
-                id: 112233,
+                id_value: 112233,
                 value: {
                     id: 123456,
                     created_at: 88888,
@@ -216,7 +217,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id: 112233,
+                id_value: 112233,
                 value: 123456
             });
 
@@ -299,7 +300,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
-                id: 112233,
+                id_value: 112233,
                 value: {
                     id: 123456,
                     created_at: 88888,
@@ -311,7 +312,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
 
             expect(values[1]).toMatchObject({
-                id: 112234,
+                id_value: 112234,
                 value: {
                     id: 123457,
                     created_at: 77777,

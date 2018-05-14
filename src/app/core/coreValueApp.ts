@@ -18,28 +18,28 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
                     }
 
                     type Value {
-                        id: ID,
+                        id_value: ID,
                         value: String,
                         modified_at: Int,
                         created_at: Int
                     }
 
                     type linkValue {
-                        id: ID,
+                        id_value: ID,
                         value: Record,
                         modified_at: Int,
                         created_at: Int
                     }
 
                     type treeValue {
-                        id: ID,
+                        id_value: ID,
                         modified_at: Int,
                         created_at: Int
                         value: [Record]
                     }
 
                     input ValueInput {
-                        id: ID,
+                        id_value: ID,
                         value: String
                     }
 

@@ -29,7 +29,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const newValueData = {
-                id: 987654,
+                id_value: 987654,
                 value: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
@@ -98,7 +98,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const valueData = {
-                id: 987654,
+                id_value: 987654,
                 value: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
@@ -125,7 +125,7 @@ describe('AttributeStandardRepo', () => {
             const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
-                id: 987654,
+                id_value: 987654,
                 value: 'test val',
                 modified_at: 500999999
             });
@@ -172,7 +172,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const oldValueData = {
-                id: 123456789,
+                id_value: 123456789,
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999
@@ -196,7 +196,7 @@ describe('AttributeStandardRepo', () => {
             const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
-                id: 123456789,
+                id_value: 123456789,
                 value: 'test val',
                 modified_at: 400999999,
                 created_at: 400999999
@@ -252,14 +252,14 @@ describe('AttributeStandardRepo', () => {
             const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id: 132465,
+                id_value: 132465,
                 value: 'test val'
             });
 
             expect(mockDbCollec.lookupByKeys.mock.calls.length).toBe(1);
             expect(mockDbEdgeCollec.inEdges.mock.calls.length).toBe(1);
             expect(value).toMatchObject({
-                id: 987654,
+                id_value: 987654,
                 value: 'test val',
                 modified_at: 99999,
                 created_at: 99999,
@@ -286,7 +286,7 @@ describe('AttributeStandardRepo', () => {
             const attrRepo = attributeAdvancedRepo(mockDbServ);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id: 132465,
+                id_value: 132465,
                 value: 'test val'
             });
 
@@ -343,7 +343,7 @@ describe('AttributeStandardRepo', () => {
 
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
-                id: 987654,
+                id_value: 987654,
                 value: 'test val',
                 attribute: 'test_attr',
                 modified_at: 99999,

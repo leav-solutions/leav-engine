@@ -32,7 +32,7 @@ export default function(
             savedEdge = await edgeCollec.firstExample(savedEdge);
 
             return {
-                id: savedEdge._key,
+                id_value: savedEdge._key,
                 value: savedEdge._to,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
@@ -51,11 +51,11 @@ export default function(
             };
 
             let savedEdge;
-            await edgeCollec.updateByExample({_key: value.id}, edgeData);
-            savedEdge = await edgeCollec.firstExample({_key: value.id});
+            await edgeCollec.updateByExample({_key: value.id_value}, edgeData);
+            savedEdge = await edgeCollec.firstExample({_key: value.id_value});
 
             return {
-                id: savedEdge._key,
+                id_value: savedEdge._key,
                 value: savedEdge._to,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
@@ -67,14 +67,14 @@ export default function(
 
             // Create the link between records and add some metadata on it
             const edgeData = {
-                _key: value.id
+                _key: value.id_value
             };
 
             let deletedEdge;
             deletedEdge = await edgeCollec.removeByExample(edgeData);
 
             return {
-                id: value.id
+                id_value: value.id_value
             };
         },
         async getValues(
@@ -98,7 +98,7 @@ export default function(
                     r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
 
                     return {
-                        id: Number(r.edge._key),
+                        id_value: Number(r.edge._key),
                         value: [dbUtils.cleanup(r.linkedRecord)],
                         attribute: r.edge.attribute,
                         modified_at: r.edge.modified_at,
@@ -119,7 +119,7 @@ export default function(
                               });
 
                               return {
-                                  id: Number(el.edge._key),
+                                  id_value: Number(el.edge._key),
                                   value: parents,
                                   attribute: el.edge.attribute,
                                   modified_at: el.edge.modified_at,
@@ -139,7 +139,7 @@ export default function(
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
-                    FILTER edge._key == ${value.id}
+                    FILTER edge._key == ${value.id_value}
                     FILTER edge.attribute == ${attribute.id}
                     LIMIT 1
                     RETURN {linkedRecord, edge}
@@ -152,7 +152,7 @@ export default function(
             }
 
             return {
-                id: Number(res[0].edge._key),
+                id_value: Number(res[0].edge._key),
                 value: dbUtils.cleanup(res[0].linkedRecord),
                 attribute: res[0].edge.attribute,
                 modified_at: res[0].edge.modified_at,

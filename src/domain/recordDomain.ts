@@ -158,7 +158,7 @@ export default function(
                             const valueLinkFields = linkFields.reduce((acc, linkField) => {
                                 if (linkField.name === 'value') {
                                     acc = acc.concat(linkField.fields);
-                                } else {
+                                } else if (linkField.name !== 'id_value') {
                                     acc.push(linkField);
                                 }
 

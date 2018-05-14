@@ -185,12 +185,12 @@ describe('Trees', () => {
                     library: "${testLibName}",
                     recordId: "${testRecordId}",
                     attribute: "${attrTreeName}",
-                    value: {value: "users/${recordId1}"}) { id value }
+                    value: {value: "users/${recordId1}"}) { id_value value }
                 }`);
 
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id).toBeTruthy();
+        expect(res.data.data.saveValue.id_value).toBeTruthy();
         expect(res.data.data.saveValue.value).toBe(`users/${recordId1}`);
 
         // Get values of this attribute
@@ -198,7 +198,7 @@ describe('Trees', () => {
             valElement: ${testLibTypeName} {
                 id
                 ${attrTreeName}(valueType: element) {
-                    id
+                    id_value
                     value {
                         ... on User {
                             id
@@ -209,7 +209,7 @@ describe('Trees', () => {
             valParents: ${testLibTypeName} {
                 id
                 ${attrTreeName}(valueType: parents) {
-                    id
+                    id_value
                     value {
                         ... on User {
                             id
@@ -222,6 +222,7 @@ describe('Trees', () => {
         expect(resGetValues.status).toBe(200);
         expect(resGetValues.data.errors).toBeUndefined();
 
+        expect(resGetValues.data.data.valElement[0][attrTreeName].id_value).toBeTruthy();
         expect(resGetValues.data.data.valElement[0][attrTreeName].value).toBeInstanceOf(Array);
         expect(resGetValues.data.data.valElement[0][attrTreeName].value.length).toBe(1);
         expect(resGetValues.data.data.valElement[0][attrTreeName].value[0].id).toBeTruthy();

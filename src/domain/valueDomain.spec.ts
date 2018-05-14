@@ -42,7 +42,7 @@ describe('ValueDomain', () => {
 
         test('Should save a new standard value', async function() {
             const savedValueData = {
-                id: '1337',
+                id_value: '1337',
                 value: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
@@ -75,7 +75,7 @@ describe('ValueDomain', () => {
             expect(mockValRepo.createValue.mock.calls[0][3].created_at).toBeDefined();
 
             expect(savedValue).toMatchObject(savedValueData);
-            expect(savedValue.id).toBeTruthy();
+            expect(savedValue.id_value).toBeTruthy();
             expect(savedValue.attribute).toBeTruthy();
             expect(savedValue.modified_at).toBeTruthy();
             expect(savedValue.created_at).toBeTruthy();
@@ -83,7 +83,7 @@ describe('ValueDomain', () => {
 
         test('Should update a standard value', async function() {
             const savedValueData = {
-                id: '1337',
+                id_value: '1337',
                 value: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
@@ -93,7 +93,7 @@ describe('ValueDomain', () => {
             const mockValRepo = {
                 updateValue: global.__mockPromise(savedValueData),
                 getValueById: global.__mockPromise({
-                    id: 12345
+                    id_value: 12345
                 })
             };
 
@@ -113,7 +113,7 @@ describe('ValueDomain', () => {
             );
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {
-                id: 12345,
+                id_value: 12345,
                 value: 'test val'
             });
 
@@ -122,7 +122,7 @@ describe('ValueDomain', () => {
             expect(mockValRepo.updateValue.mock.calls[0][3].created_at).toBeUndefined();
 
             expect(savedValue).toMatchObject(savedValueData);
-            expect(savedValue.id).toBeTruthy();
+            expect(savedValue.id_value).toBeTruthy();
             expect(savedValue.attribute).toBeTruthy();
             expect(savedValue.modified_at).toBeTruthy();
             expect(savedValue.created_at).toBeTruthy();
@@ -187,7 +187,7 @@ describe('ValueDomain', () => {
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {
-                    id: 12345,
+                    id_value: 12345,
                     value: 'test val'
                 })
             ).rejects.toThrow();
@@ -297,7 +297,7 @@ describe('ValueDomain', () => {
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {
-                    id: 12345,
+                    id_value: 12345,
                     value: 'test val'
                 })
             ).rejects.toThrow();

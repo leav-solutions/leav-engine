@@ -34,7 +34,7 @@ export default function(
                         RETURN l
             `);
 
-            return res.map(r => ({id: null, value: dbUtils.cleanup(r)}));
+            return res.map(r => ({id_value: null, value: dbUtils.cleanup(r)}));
         },
         async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             return null;

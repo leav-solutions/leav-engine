@@ -27,7 +27,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
             savedEdge = await edgeCollec.firstExample(savedEdge);
 
             return {
-                id: savedEdge._key,
+                id_value: savedEdge._key,
                 value: Number(savedEdge._to.split('/')[1]),
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
@@ -46,11 +46,11 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
             };
 
             let savedEdge;
-            await edgeCollec.updateByExample({_key: value.id}, edgeData);
-            savedEdge = await edgeCollec.firstExample({_key: value.id});
+            await edgeCollec.updateByExample({_key: value.id_value}, edgeData);
+            savedEdge = await edgeCollec.firstExample({_key: value.id_value});
 
             return {
-                id: savedEdge._key,
+                id_value: savedEdge._key,
                 value: Number(savedEdge._to.split('/')[1]),
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
@@ -62,14 +62,14 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
 
             // Create the link between records and add some metadata on it
             const edgeData = {
-                _key: value.id
+                _key: value.id_value
             };
 
             let deletedEdge;
             deletedEdge = await edgeCollec.removeByExample(edgeData);
 
             return {
-                id: value.id
+                id_value: value.id_value
             };
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
@@ -83,7 +83,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
             `);
 
             return res.map(r => ({
-                id: Number(r.edge._key),
+                id_value: Number(r.edge._key),
                 value: dbUtils.cleanup(r.linkedRecord),
                 attribute: r.edge.attribute,
                 modified_at: r.edge.modified_at,
@@ -97,7 +97,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
-                    FILTER edge._key == ${value.id}
+                    FILTER edge._key == ${value.id_value}
                     FILTER edge.attribute == ${attribute.id}
                     LIMIT 1
                     RETURN {linkedRecord, edge}
@@ -110,7 +110,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
             }
 
             return {
-                id: Number(res[0].edge._key),
+                id_value: Number(res[0].edge._key),
                 value: dbUtils.cleanup(res[0].linkedRecord),
                 attribute: res[0].edge.attribute,
                 modified_at: res[0].edge.modified_at,

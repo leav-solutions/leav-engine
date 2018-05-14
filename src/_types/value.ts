@@ -1,5 +1,5 @@
 export interface IValue {
-    id?: number;
+    id_value?: number;
     attribute?: string;
     value?: any;
     created_at?: number;

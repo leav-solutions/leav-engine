@@ -93,13 +93,13 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
-                    value: {value: "TEST VAL"}) { id value }
+                    value: {value: "TEST VAL"}) { id_value value }
               }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id).toBeNull();
+        expect(res.data.data.saveValue.id_value).toBeNull();
         expect(res.data.data.saveValue.value).toBe('TEST VAL');
     });
 
@@ -109,13 +109,13 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleLinkName}",
-                    value: {value: "${recordIdLinked}"}) { id value }
+                    value: {value: "${recordIdLinked}"}) { id_value value }
               }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id).toBeNull();
+        expect(res.data.data.saveValue.id_value).toBeNull();
         expect(res.data.data.saveValue.value).toBe(recordIdLinked);
     });
 
@@ -125,16 +125,16 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
-                    value: {value: "TEST VAL ADV"}) { id value }
+                    value: {value: "TEST VAL ADV"}) { id_value value }
               }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id).toBeTruthy();
+        expect(res.data.data.saveValue.id_value).toBeTruthy();
         expect(res.data.data.saveValue.value).toBe('TEST VAL ADV');
 
-        advValueId = res.data.data.saveValue.id;
+        advValueId = res.data.data.saveValue.id_value;
     });
 
     test('Save value advanced link', async () => {
@@ -143,13 +143,13 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedLinkName}",
-                    value: {value: "${recordIdLinked}"}) { id value }
+                    value: {value: "${recordIdLinked}"}) { id_value value }
               }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id).toBeTruthy();
+        expect(res.data.data.saveValue.id_value).toBeTruthy();
         expect(res.data.data.saveValue.value).toBe(recordIdLinked);
     });
 
@@ -159,13 +159,13 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
-                    value: {id: "${advValueId}"}) { id value }
+                    value: {id_value: "${advValueId}"}) { id_value value }
               }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.deleteValue.id).toBeTruthy();
+        expect(res.data.data.deleteValue.id_value).toBeTruthy();
     });
 
     test('Delete value simple', async () => {
@@ -174,7 +174,7 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
-                    value: {value: "TEST VAL"}) { id value }
+                    value: {value: "TEST VAL"}) { id_value value }
               }`);
 
         expect(res.status).toBe(200);

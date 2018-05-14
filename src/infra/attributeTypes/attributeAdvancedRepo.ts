@@ -36,7 +36,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             savedEdge = await edgeCollec.firstExample(savedEdge);
 
             return {
-                id: savedValDoc._key,
+                id_value: savedValDoc._key,
                 value: savedValDoc.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
@@ -51,7 +51,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             const valueData = {
                 value: value.value
             };
-            const savedVal = await valCollec.update({_key: value.id}, valueData);
+            const savedVal = await valCollec.update({_key: value.id_value}, valueData);
             const savedValDoc = await valCollec.document(savedVal);
 
             // Update value's metadata on record<->value link
@@ -68,7 +68,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             savedEdge = await edgeCollec.firstExample({_from: edgeData._from, _to: edgeData._to});
 
             return {
-                id: savedValDoc._key,
+                id_value: savedValDoc._key,
                 value: savedValDoc.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
@@ -79,7 +79,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const deletedVal = await valCollec.remove({_key: value.id});
+            const deletedVal = await valCollec.remove({_key: value.id_value});
 
             // Delete the link record<->value and add some metadata on it
             const edgeData = {
@@ -91,7 +91,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             deletedEdge = await edgeCollec.removeByExample(edgeData);
 
             return {
-                id: deletedVal._key,
+                id_value: deletedVal._key,
                 attribute: deletedEdge.attribute,
                 modified_at: deletedEdge.modified_at,
                 created_at: deletedEdge.created_at
@@ -109,7 +109,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             `);
 
             return res.map(r => ({
-                id: r.value._key,
+                id_value: r.value._key,
                 value: r.value.value,
                 attribute: r.edge.attribute,
                 modified_at: r.edge.modified_at,
@@ -120,7 +120,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const values = await valCollec.lookupByKeys([value.id]);
+            const values = await valCollec.lookupByKeys([value.id_value]);
 
             if (!values.length) {
                 return null;
@@ -129,7 +129,7 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             const valueLinks = await edgeCollec.inEdges(values[0]);
 
             return {
-                id: values[0]._key,
+                id_value: values[0]._key,
                 value: values[0].value,
                 attribute: valueLinks[0].attribute,
                 modified_at: valueLinks[0].modified_at,

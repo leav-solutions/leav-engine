@@ -1,7 +1,7 @@
 import attributeTreeRepo from './attributeTreeRepo';
 import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
-import {TreeValueTypes} from '../../_types/value';
+import {TreeValueTypes, IValue} from '../../_types/value';
 import {IAttributeTypeRepo} from '../attributeTypesRepo';
 import {ITreeRepo} from '../treeRepo';
 
@@ -36,8 +36,8 @@ describe('AttributeTreeRepo', () => {
         created_at: 400999999
     };
 
-    const valueData = {
-        id: 978654321,
+    const valueData: IValue = {
+        id_value: 978654321,
         value: 'categories/123456',
         attribute: 'test_tree_attr',
         modified_at: 400999999,
@@ -75,7 +75,7 @@ describe('AttributeTreeRepo', () => {
             });
 
             expect(createdVal).toMatchObject({
-                id: 978654321,
+                id_value: 978654321,
                 value: 'categories/123456',
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
@@ -100,7 +100,7 @@ describe('AttributeTreeRepo', () => {
             const attrRepo = attributeTreeRepo(mockDbServ, null);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
-                id: 987654,
+                id_value: 987654,
                 value: 'categories/123456',
                 modified_at: 400999999
             });
@@ -145,7 +145,7 @@ describe('AttributeTreeRepo', () => {
             const attrRepo = attributeTreeRepo(mockDbServ, null);
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
-                id: 445566,
+                id_value: 445566,
                 value: 'categories/123456',
                 modified_at: 400999999,
                 created_at: 400999999
@@ -154,7 +154,7 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
             expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: 445566});
 
-            expect(deletedVal).toMatchObject({id: 445566});
+            expect(deletedVal).toMatchObject({id_value: 445566});
         });
     });
 
@@ -200,7 +200,7 @@ describe('AttributeTreeRepo', () => {
             const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id: 112233,
+                id_value: 112233,
                 value: 'categories/123456'
             });
 
@@ -209,7 +209,7 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
             expect(value).toMatchObject({
-                id: 112233,
+                id_value: 112233,
                 value: {
                     id: 123456,
                     created_at: 88888,
@@ -232,7 +232,7 @@ describe('AttributeTreeRepo', () => {
             const attrRepo = attributeTreeRepo(mockDbServ, null);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id: 112233,
+                id_value: 112233,
                 value: 'categories/123456'
             });
 
@@ -292,7 +292,7 @@ describe('AttributeTreeRepo', () => {
 
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
-                id: 112233,
+                id_value: 112233,
                 value: [
                     {
                         id: 123456,
@@ -369,7 +369,7 @@ describe('AttributeTreeRepo', () => {
 
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
-                id: 112233,
+                id_value: 112233,
                 value: [
                     {
                         id: 123456,
