@@ -6,7 +6,7 @@ import {UserError} from 'graphql-errors';
 import {IAttributeTypesRepo} from './attributeTypesRepo';
 import utils from 'utils/utils';
 
-const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
+export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
 export interface IRecordRepo {
     /**

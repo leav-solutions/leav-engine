@@ -84,7 +84,7 @@ export default function(
                     type ${libTypeName} implements Record {
                         ${lib.attributes.map(
                             attr =>
-                                `${attr.id}${coreAttributeApp.getGraphQLValueOptions(attr)}:
+                                `${attr.id}:
                                 ${coreAttributeApp.getGraphQLFormat(attr)}`
                         )}
                     }

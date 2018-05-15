@@ -19,5 +19,8 @@ export interface ITreeElement {
 
 export interface ITreeNode {
     record?: IRecord;
+    parent?: ITreeNode[];
+    ancestors?: ITreeNode[];
     children?: ITreeNode[];
+    linkedRecords?: IRecord[];
 }

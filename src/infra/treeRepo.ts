@@ -3,6 +3,7 @@ import {aql} from 'arangojs';
 import {IDbService, collectionTypes} from './db/dbService';
 import {IDbUtils} from './db/dbUtils';
 import {IRecord} from '_types/record';
+import {VALUES_LINKS_COLLECTION} from './recordRepo';
 
 export interface ITreeRepo {
     createTree(treeData: ITree): Promise<ITree>;
@@ -64,12 +65,22 @@ export interface ITreeRepo {
     getTreeContent(treeId: string, startingNode?: ITreeElement): Promise<ITreeNode[]>;
 
     /**
+     * Return all first level children of an element
+     *
+     * @param treeId
+     * @param element
+     */
+    getElementChildren(treeId: string, element: ITreeElement): Promise<ITreeNode[]>;
+
+    /**
      * Return all ancestors of an element, including element itself, but excluding tree root
      *
      * @param treeId
      * @param element
      */
-    getElementParents(treeId: string, element: ITreeElement): Promise<IRecord>;
+    getElementAncestors(treeId: string, element: ITreeElement): Promise<ITreeNode[]>;
+
+    getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]>;
 }
 
 const TREES_COLLECTION_NAME = 'core_trees';
@@ -304,7 +315,22 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
 
             return treeContent;
         },
-        async getElementParents(treeId: string, element: ITreeElement): Promise<IRecord> {
+        async getElementChildren(treeId: string, element: ITreeElement): Promise<ITreeNode[]> {
+            const treeEdgeCollec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
+            const query = aql`
+                FOR v
+                    IN 1 OUTBOUND ${element.library + '/' + element.id}
+                    ${treeEdgeCollec}
+                    RETURN v
+            `;
+
+            const res = await dbService.execute(query);
+            return res.map(elem => {
+                elem.library = elem._id.split('/')[0];
+                return {record: dbUtils.cleanup(elem)};
+            });
+        },
+        async getElementAncestors(treeId: string, element: ITreeElement): Promise<ITreeNode[]> {
             const treeEdgeCollec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
 
             const query = aql`
@@ -313,6 +339,25 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                     ${treeEdgeCollec}
                     SORT COUNT(p.edges) DESC
                     FILTER v._id != ${_getRootId(treeId)}
+                    RETURN v
+            `;
+
+            const res = await dbService.execute(query);
+
+            return res.map(elem => {
+                elem.library = elem._id.split('/')[0];
+
+                return {record: dbUtils.cleanup(elem)};
+            });
+        },
+        async getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]> {
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
+            const query = aql`
+                FOR v,e,p
+                    IN 1 INBOUND ${element.library + '/' + element.id}
+                    ${edgeCollec}
+                    FILTER e.attribute == ${attribute}
                     RETURN v
             `;
 

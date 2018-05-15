@@ -2,12 +2,19 @@ import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ITreeDomain} from 'domain/treeDomain';
 import {ITree, ITreeElement} from '_types/tree';
 import {GraphQLScalarType} from 'graphql';
+import {IAttributeDomain} from 'domain/attributeDomain';
+import {IRecordDomain} from 'domain/recordDomain';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITreeAttributeApp {
+export default function(
+    treeDomain: ITreeDomain,
+    attributeDomain: IAttributeDomain,
+    recordDomain: IRecordDomain,
+    graphqlApp: IGraphqlApp
+): ITreeAttributeApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -33,7 +40,9 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
 
                     type TreeNode {
                         record: Record,
-                        children: [TreeNode]
+                        ancestors: [TreeNode],
+                        children: [TreeNode],
+                        linkedRecords(attribute: ID): [Record]
                     }
 
                     input TreeElementInput {
@@ -41,15 +50,11 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                         library: String!
                     }
 
-                    scalar TreeContent
-
                     extend type Query {
                         trees(id: ID): [Tree]
 
                         # Retrieve a full tree content.
-                        # Fields must be an array of attribute IDs which will be
-                        # retrieved on each records found in the tree.
-                        treeContent(treeId: ID, fields: [ID]): TreeContent
+                        treeContent(treeId: ID): [TreeNode]
                     }
 
                     extend type Mutation {
@@ -98,13 +103,58 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                             return treeDomain.deleteElement(treeId, element, deleteChildren);
                         }
                     },
-                    TreeContent: new GraphQLScalarType({
-                        name: 'TreeContent',
-                        description: `Content of a tree,
-                            represented by a hierarchical object
-                            with record and children for each tree node`,
-                        serialize: val => val
-                    })
+                    TreeNode: {
+                        record: async (parent, args, ctx, info) => {
+                            const queryFields = graphqlApp.getQueryFields(info);
+
+                            return recordDomain.populateRecordFields(parent.record.library, parent.record, queryFields);
+                        },
+                        children: async (parent, args, ctx, info) => {
+                            if (typeof parent.children !== 'undefined') {
+                                return parent.children;
+                            }
+
+                            const element = {
+                                id: parent.record.id,
+                                library: parent.record.library
+                            };
+
+                            const attribute = info.path.prev.prev.prev.key;
+                            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+
+                            return treeDomain.getElementChildren(attributeProps.linked_tree, element);
+                        },
+                        ancestors: async (parent, args, ctx, info) => {
+                            const element = {
+                                id: parent.record.id,
+                                library: parent.record.library
+                            };
+
+                            const attribute = info.path.prev.prev.prev.key;
+                            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+
+                            return treeDomain.getElementAncestors(attributeProps.linked_tree, element);
+                        },
+                        linkedRecords: async (parent, {attribute}, ctx, info) => {
+                            const queryFields = graphqlApp.getQueryFields(info);
+                            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+                            const element = {
+                                id: parent.record.id,
+                                library: parent.record.library
+                            };
+                            const records = await treeDomain.getLinkedRecords(
+                                attributeProps.linked_tree,
+                                attribute,
+                                element
+                            );
+
+                            return Promise.all(
+                                records.map(record =>
+                                    recordDomain.populateRecordFields(record.library, record, queryFields)
+                                )
+                            );
+                        }
+                    }
                 }
             };
 

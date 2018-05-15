@@ -113,7 +113,16 @@ describe('Trees', () => {
         // Get tree content
         const restreeContent = await makeGraphQlCall(`
         {
-            treeContent(treeId: "${testTreeName}", fields: ["id", "modified_at", "created_at"])
+            treeContent(treeId: "${testTreeName}") {
+                record {
+                    id
+                }
+                children {
+                    record {
+                        id
+                    }
+                }
+            }
         }
         `);
 
@@ -197,21 +206,62 @@ describe('Trees', () => {
         const resGetValues = await makeGraphQlCall(`{
             valElement: ${testLibTypeName} {
                 id
-                ${attrTreeName}(valueType: element) {
+                ${attrTreeName} {
                     id_value
                     value {
-                        ... on User {
-                            id
+                        record {
+                            ... on User {
+                                id
+                            }
                         }
                     }
                 }
             },
             valParents: ${testLibTypeName} {
                 id
-                ${attrTreeName}(valueType: parents) {
+                ${attrTreeName} {
                     id_value
                     value {
-                        ... on User {
+                        record {
+                            id
+                        },
+                        ancestors {
+                            record {
+                                ... on User {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            valChildren: ${testLibTypeName} {
+                id
+                ${attrTreeName} {
+                    id_value
+                    value {
+                        record {
+                            id
+                        },
+                        children {
+                            record {
+                                ... on User {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            valLinkedRecords: ${testLibTypeName} {
+                id
+                ${attrTreeName} {
+                    id_value
+                    value {
+                        record {
+                            id
+                        },
+                        linkedRecords(attribute: "${attrTreeName}") {
                             id
                         }
                     }
@@ -225,9 +275,15 @@ describe('Trees', () => {
         expect(resGetValues.data.data.valElement[0][attrTreeName].id_value).toBeTruthy();
         expect(resGetValues.data.data.valElement[0][attrTreeName].value).toBeInstanceOf(Array);
         expect(resGetValues.data.data.valElement[0][attrTreeName].value.length).toBe(1);
-        expect(resGetValues.data.data.valElement[0][attrTreeName].value[0].id).toBeTruthy();
+        expect(resGetValues.data.data.valElement[0][attrTreeName].value[0].record.id).toBeTruthy();
 
-        expect(resGetValues.data.data.valParents[0][attrTreeName].value).toBeInstanceOf(Array);
-        expect(resGetValues.data.data.valParents[0][attrTreeName].value.length).toBe(2);
+        expect(resGetValues.data.data.valParents[0][attrTreeName].value[0].ancestors).toBeInstanceOf(Array);
+        expect(resGetValues.data.data.valParents[0][attrTreeName].value[0].ancestors.length).toBe(2);
+
+        expect(resGetValues.data.data.valChildren[0][attrTreeName].value[0].children).toBeInstanceOf(Array);
+        expect(resGetValues.data.data.valChildren[0][attrTreeName].value[0].children.length).toBe(1);
+
+        expect(resGetValues.data.data.valLinkedRecords[0][attrTreeName].value[0].linkedRecords).toBeInstanceOf(Array);
+        expect(resGetValues.data.data.valLinkedRecords[0][attrTreeName].value[0].linkedRecords.length).toBe(1);
     });
 });

@@ -125,8 +125,7 @@ export default function(
 
                 const isLinkAttribute =
                     fieldsProps[field.name].type === AttributeTypes.SIMPLE_LINK ||
-                    fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK ||
-                    fieldsProps[field.name].type === AttributeTypes.TREE;
+                    fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK;
 
                 // Get field value
                 if (

@@ -78,9 +78,9 @@ export default function(attributeTypesRepo: IAttributeTypesRepo | null = null): 
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.deleteValue(library, recordId, attribute, value);
         },
-        getValues(library: string, recordId: number, attribute: IAttribute, options?: any): Promise<IValue[]> {
+        getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValues(library, recordId, attribute, options);
+            return typeRepo.getValues(library, recordId, attribute);
         },
         getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

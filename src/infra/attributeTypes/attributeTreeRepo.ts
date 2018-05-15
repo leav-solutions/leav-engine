@@ -1,6 +1,6 @@
 import {IDbService} from '../db/dbService';
 import {IAttributeTypeRepo} from '../attributeTypesRepo';
-import {IValue, IValueOptions, TreeValueTypes} from '../../_types/value';
+import {IValue} from '../../_types/value';
 import {IAttribute} from '_types/attribute';
 import {aql} from 'arangojs';
 import {IDbUtils} from '../db/dbUtils';
@@ -77,12 +77,7 @@ export default function(
                 id_value: value.id_value
             };
         },
-        async getValues(
-            library: string,
-            recordId: number,
-            attribute: IAttribute,
-            options?: IValueOptions
-        ): Promise<IValue[]> {
+        async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const treeElements = await dbService.execute(aql`
@@ -93,44 +88,17 @@ export default function(
                     RETURN {linkedRecord, edge}
             `);
 
-            if (options.valueType === TreeValueTypes.ELEMENT) {
-                return treeElements.map(r => {
-                    r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
+            return treeElements.map(r => {
+                r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
 
-                    return {
-                        id_value: Number(r.edge._key),
-                        value: [dbUtils.cleanup(r.linkedRecord)],
-                        attribute: r.edge.attribute,
-                        modified_at: r.edge.modified_at,
-                        created_at: r.edge.created_at
-                    };
-                });
-            } else if (options.valueType === TreeValueTypes.PARENTS) {
-                // For each elements, get its parents
-                return treeElements.length
-                    ? Promise.all(
-                          treeElements.map(async el => {
-                              const elLib = el.linkedRecord._id.split('/')[0];
-                              const elId = el.linkedRecord._id.split('/')[1];
-
-                              const parents = await treeRepo.getElementParents(attribute.linked_tree, {
-                                  id: elId,
-                                  library: elLib
-                              });
-
-                              return {
-                                  id_value: Number(el.edge._key),
-                                  value: parents,
-                                  attribute: el.edge.attribute,
-                                  modified_at: el.edge.modified_at,
-                                  created_at: el.edge.created_at
-                              };
-                          })
-                      )
-                    : null;
-            } else {
-                return null;
-            }
+                return {
+                    id_value: Number(r.edge._key),
+                    value: [{record: dbUtils.cleanup(r.linkedRecord)}],
+                    attribute: r.edge.attribute,
+                    modified_at: r.edge.modified_at,
+                    created_at: r.edge.created_at
+                };
+            });
         },
         async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);

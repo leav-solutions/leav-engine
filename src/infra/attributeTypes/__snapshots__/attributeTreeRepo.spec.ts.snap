@@ -21,24 +21,6 @@ Object {
 }
 `;
 
-exports[`AttributeTreeRepo getValues Should return element parents 1`] = `
-"
-                FOR linkedRecord, edge
-                    IN 1 OUTBOUND @value0
-                    @@value1
-                    FILTER edge.attribute == @value2
-                    RETURN {linkedRecord, edge}
-            "
-`;
-
-exports[`AttributeTreeRepo getValues Should return element parents 2`] = `
-Object {
-  "@value1": "core_edge_values_links",
-  "value0": "test_lib/123456",
-  "value2": "test_tree_attr",
-}
-`;
-
 exports[`AttributeTreeRepo getValues Should return linked tree element 1`] = `
 "
                 FOR linkedRecord, edge

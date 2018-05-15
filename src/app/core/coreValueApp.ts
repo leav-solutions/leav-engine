@@ -11,12 +11,6 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
-                    enum treeValueType {
-                        element
-                        parents
-                        children
-                    }
-
                     type Value {
                         id_value: ID,
                         value: String,
@@ -35,7 +29,7 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
                         id_value: ID,
                         modified_at: Int,
                         created_at: Int
-                        value: [Record]
+                        value: [TreeNode]
                     }
 
                     input ValueInput {

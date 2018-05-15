@@ -5,7 +5,6 @@ import {IAttribute, AttributeTypes, AttributeFormats} from '../../_types/attribu
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
     getGraphQLFormat(attribute: IAttribute): string;
-    getGraphQLValueOptions(attribute: IAttribute): string;
 }
 
 export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlApp): ICoreAttributeApp {
@@ -91,13 +90,6 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                 return 'treeValue';
             } else {
                 return 'Value';
-            }
-        },
-        getGraphQLValueOptions(attribute: IAttribute): string {
-            if (attribute.type === AttributeTypes.TREE) {
-                return `(valueType: treeValueType)`;
-            } else {
-                return '';
             }
         }
     };

@@ -138,6 +138,22 @@ Object {
 }
 `;
 
+exports[`TreeRepo getElementChildren Should return element children 1`] = `
+"
+                FOR v
+                    IN 1 OUTBOUND @value0
+                    @@value1
+                    RETURN v
+            "
+`;
+
+exports[`TreeRepo getElementChildren Should return element children 2`] = `
+Object {
+  "@value1": "core_edge_tree_test_tree",
+  "value0": "images/123458",
+}
+`;
+
 exports[`TreeRepo getElementParents Should return element parents 1`] = `
 "
                 FOR v,e,p
@@ -155,6 +171,24 @@ Object {
   "value0": 1000,
   "value1": "images/123458",
   "value3": "core_trees/test_tree",
+}
+`;
+
+exports[`TreeRepo getLinkedRecords Should return linked records 1`] = `
+"
+                FOR v,e,p
+                    IN 1 INBOUND @value0
+                    @@value1
+                    FILTER e.attribute == @value2
+                    RETURN v
+            "
+`;
+
+exports[`TreeRepo getLinkedRecords Should return linked records 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": "images/123458",
+  "value2": "test_attr",
 }
 `;
 
