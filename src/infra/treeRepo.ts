@@ -25,12 +25,7 @@ export interface ITreeRepo {
      * @param parentFrom A record or null to move from root
      * @param parentTo A record or null to move to root
      */
-    moveElement(
-        treeId: string,
-        element: ITreeElement,
-        parentFrom: ITreeElement | null,
-        parentTo: ITreeElement | null
-    ): Promise<ITreeElement>;
+    moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement>;
 
     /**
      * Delete an element from the tree
@@ -38,12 +33,7 @@ export interface ITreeRepo {
      * @param element
      * @param parent A record or null to delete from root
      */
-    deleteElement(
-        treeId: string,
-        element: ITreeElement,
-        parent: ITreeElement | null,
-        deleteChildren: boolean | null
-    ): Promise<ITreeElement>;
+    deleteElement(treeId: string, element: ITreeElement, deleteChildren: boolean | null): Promise<ITreeElement>;
 
     /**
      * Return whether an element is present in given tree
@@ -158,13 +148,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
 
             return element;
         },
-        async moveElement(
-            treeId: string,
-            element: ITreeElement,
-            parentFrom: ITreeElement | null,
-            parentTo: ITreeElement | null
-        ): Promise<ITreeElement> {
-            const origin = parentFrom !== null ? `${parentFrom.library}/${parentFrom.id}` : _getRootId(treeId);
+        async moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement> {
             const destination = parentTo !== null ? `${parentTo.library}/${parentTo.id}` : _getRootId(treeId);
             const elemId = `${element.library}/${element.id}`;
 
@@ -173,7 +157,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             const res = await dbService.execute(
                 aql`
                     FOR e IN ${collec}
-                        FILTER e._from == ${origin} && e._to == ${elemId}
+                        FILTER e._to == ${elemId}
                         UPDATE e WITH {_from: ${destination}, _to: ${elemId}}
                         IN ${collec}
                         RETURN NEW
@@ -185,11 +169,9 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
         async deleteElement(
             treeId: string,
             element: ITreeElement,
-            parent: ITreeElement | null,
             deleteChildren: boolean | null = true
         ): Promise<ITreeElement> {
             const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
-            const origin = parent !== null ? `${parent.library}/${parent.id}` : _getRootId(treeId);
             const elemId = `${element.library}/${element.id}`;
 
             if (deleteChildren) {
@@ -206,6 +188,17 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                         RETURN OLD
                 `);
             } else {
+                const parentId = await dbService.execute(aql`
+                    FOR v IN 1 INBOUND ${elemId}
+                    ${collec}
+                    RETURN v._id
+                `);
+
+                const parent = {
+                    library: parentId[0].split('/')[0],
+                    id: parentId[0].split('/')[1]
+                };
+
                 const children = await dbService.execute(aql`
                     FOR v IN 1 OUTBOUND ${elemId}
                     ${collec}
@@ -218,7 +211,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                         const childLib = child._id.split('/')[0];
                         const childId = child._id.split('/')[1];
 
-                        return this.moveElement(treeId, {id: childId, library: childLib}, element, parent);
+                        return this.moveElement(treeId, {id: childId, library: childLib}, parent);
                     })
                 );
             }
@@ -226,7 +219,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             // Remove element from its parent
             const resRemElem = await dbService.execute(aql`
                 FOR e IN ${collec}
-                    FILTER e._from == ${origin} && e._to == ${elemId}
+                    FILTER e._to == ${elemId}
                     REMOVE e IN ${collec}
                     RETURN OLD
             `);

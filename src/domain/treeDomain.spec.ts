@@ -181,10 +181,14 @@ describe('treeDomain', () => {
             };
             const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
 
-            const addedElement = await domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, null, {
-                id: 999,
-                library: 'other_lib'
-            });
+            const addedElement = await domain.moveElement(
+                'test_tree',
+                {id: 1345, library: 'test_lib'},
+                {
+                    id: 999,
+                    library: 'other_lib'
+                }
+            );
 
             expect(treeRepo.moveElement).toBeCalled();
         });
@@ -202,7 +206,7 @@ describe('treeDomain', () => {
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
 
             const rej = await expect(
-                domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, null, {id: 999, library: 'other_lib'})
+                domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
             ).rejects.toThrow(ValidationError);
         });
     });
@@ -220,7 +224,7 @@ describe('treeDomain', () => {
 
             const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
 
-            const addedElement = await domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, null, true);
+            const addedElement = await domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, true);
 
             expect(treeRepo.deleteElement).toBeCalled();
         });
@@ -238,7 +242,7 @@ describe('treeDomain', () => {
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
 
             const rej = await expect(
-                domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, null, true)
+                domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, true)
             ).rejects.toThrow(ValidationError);
         });
     });

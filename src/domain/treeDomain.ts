@@ -26,12 +26,7 @@ export interface ITreeDomain {
      * @param parentFrom A record or null to move from root
      * @param parentTo A record or null to move to root
      */
-    moveElement(
-        treeId: string,
-        element: ITreeElement,
-        parentFrom: ITreeElement | null,
-        parentTo: ITreeElement | null
-    ): Promise<ITreeElement>;
+    moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement>;
 
     /**
      * Delete an element from the tree
@@ -39,12 +34,7 @@ export interface ITreeDomain {
      * @param element
      * @param parent A record or null to delete from root
      */
-    deleteElement(
-        treeId: string,
-        element: ITreeElement,
-        parent: ITreeElement | null,
-        deleteChildren: boolean | null
-    ): Promise<ITreeElement>;
+    deleteElement(treeId: string, element: ITreeElement, deleteChildren: boolean | null): Promise<ITreeElement>;
 
     /**
      * Return the whole tree in the form:
@@ -150,12 +140,7 @@ export default function(
 
             return treeRepo.addElement(treeId, element, parent);
         },
-        async moveElement(
-            treeId: string,
-            element: ITreeElement,
-            parentFrom: ITreeElement | null,
-            parentTo: ITreeElement | null
-        ): Promise<ITreeElement> {
+        async moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement> {
             const errors: any = {};
 
             if (!await _treeExists(treeId)) {
@@ -166,10 +151,6 @@ export default function(
                 errors.element = 'Unknown element';
             }
 
-            if (parentFrom !== null && !await _treeElementExists(parentFrom)) {
-                errors.parentFrom = 'Unknown parent';
-            }
-
             if (parentTo !== null && !await _treeElementExists(parentTo)) {
                 errors.parentTo = 'Unknown parent';
             }
@@ -178,12 +159,11 @@ export default function(
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.moveElement(treeId, element, parentFrom, parentTo);
+            return treeRepo.moveElement(treeId, element, parentTo);
         },
         async deleteElement(
             treeId: string,
             element: ITreeElement,
-            parent: ITreeElement | null,
             deleteChildren: boolean | null = true
         ): Promise<ITreeElement> {
             const errors: any = {};
@@ -196,15 +176,11 @@ export default function(
                 errors.element = 'Unknown element';
             }
 
-            if (parent !== null && !await _treeElementExists(parent)) {
-                errors.parent = 'Unknown parent';
-            }
-
             if (!!Object.keys(errors).length) {
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.deleteElement(treeId, element, parent, deleteChildren);
+            return treeRepo.deleteElement(treeId, element, deleteChildren);
         },
         async getTreeContent(treeId: string, fields: string[]): Promise<ITreeNode[]> {
             const errors: any = {};

@@ -59,13 +59,11 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                         treeMoveElement(
                             treeId: ID,
                             element: TreeElementInput,
-                            parentFrom: TreeElementInput,
                             parentTo: TreeElementInput
                         ): TreeElement
                         treeDeleteElement(
                             treeId: ID,
                             element: TreeElementInput,
-                            parent: TreeElementInput,
                             deleteChildren: Boolean
                         ): TreeElement
                     }
@@ -90,15 +88,14 @@ export default function(treeDomain: ITreeDomain, graphqlApp: IGraphqlApp): ITree
                             parent = parent || null;
                             return treeDomain.addElement(treeId, element, parent);
                         },
-                        async treeMoveElement(_, {treeId, element, parentFrom, parentTo}): Promise<ITreeElement> {
-                            parentFrom = parentFrom || null;
+                        async treeMoveElement(_, {treeId, element, parentTo}): Promise<ITreeElement> {
                             parentTo = parentTo || null;
-                            return treeDomain.moveElement(treeId, element, parentFrom, parentTo);
+                            return treeDomain.moveElement(treeId, element, parentTo);
                         },
                         async treeDeleteElement(_, {treeId, element, parent, deleteChildren}): Promise<ITreeElement> {
                             parent = parent || null;
                             deleteChildren = typeof deleteChildren !== 'undefined' ? deleteChildren : true;
-                            return treeDomain.deleteElement(treeId, element, parent, deleteChildren);
+                            return treeDomain.deleteElement(treeId, element, deleteChildren);
                         }
                     },
                     TreeContent: new GraphQLScalarType({

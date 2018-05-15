@@ -190,10 +190,14 @@ describe('TreeRepo', () => {
             };
 
             const repo = treeRepo(mockDbServ, null);
-            const addedElement = await repo.moveElement('test_tree', {id: 13445, library: 'test_lib'}, null, {
-                id: 6789,
-                library: 'users'
-            });
+            const addedElement = await repo.moveElement(
+                'test_tree',
+                {id: 13445, library: 'test_lib'},
+                {
+                    id: 6789,
+                    library: 'users'
+                }
+            );
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
@@ -211,7 +215,7 @@ describe('TreeRepo', () => {
             };
 
             const repo = treeRepo(mockDbServ, null);
-            const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, null, true);
+            const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, true);
 
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/OUTBOUND/);
@@ -229,6 +233,7 @@ describe('TreeRepo', () => {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromiseMultiple([
+                    ['core_trees/test_tree'], // Get element's parent
                     [
                         // Getting element's children
                         {
@@ -247,20 +252,20 @@ describe('TreeRepo', () => {
             const repo = treeRepo(mockDbServ, null) as any;
             repo.moveElement = global.__mockPromise([]);
 
-            const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, null, false);
+            const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, false);
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(2);
+            expect(mockDbServ.execute.mock.calls.length).toBe(3);
             expect(repo.moveElement.mock.calls.length).toBe(2);
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(?!REMOVE)/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/OUTBOUND/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-
-            expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/(?!REMOVE)/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/OUTBOUND/);
             expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
+
+            expect(typeof mockDbServ.execute.mock.calls[2][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[2][0].query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[2][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[2][0].bindVars).toMatchSnapshot();
         });
     });
 
