@@ -27,4 +27,30 @@ describe('Utils', () => {
             expect(() => utilsModule.rethrow(error, 'Error prefix:')).toThrow('Error prefix: boom');
         });
     });
+    describe('pipe', () => {
+        test('Shoud pipe simple functions', async () => {
+            const utilsModule = utils();
+
+            const add = (a, b) => a + b;
+            const square = n => n * n;
+
+            const addSquare = utilsModule.pipe(add, square);
+
+            expect(await addSquare(1, 2)).toBe(9);
+        });
+        test('Shoud pipe async functions', async () => {
+            const utilsModule = utils();
+
+            const multiply = factor => async n => {
+                return new Promise((resolve, reject) => {
+                    resolve(n * factor);
+                });
+            };
+
+            const triple = multiply(3);
+            const triples = utilsModule.pipe(triple, triple);
+
+            expect(await triples(3)).toBe(27);
+        });
+    });
 });

@@ -1,4 +1,4 @@
-import {camelCase, upperFirst, trimEnd} from 'lodash';
+import {camelCase, upperFirst, trimEnd, flow, partialRight} from 'lodash';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -12,23 +12,17 @@ export interface IUtils {
      * @param message
      */
     rethrow(err: Error, message?: string): void;
+
+    pipe(...fns: any[]): any;
 }
 
 export default function(): IUtils {
     return {
         libNameToQueryName(name: string): string {
-            let formattedName = camelCase(name);
-            formattedName = trimEnd(formattedName);
-
-            return formattedName;
+            return flow([camelCase, trimEnd])(name);
         },
         libNameToTypeName(name: string): string {
-            let formattedName = camelCase(name);
-            formattedName = upperFirst(formattedName);
-            formattedName = trimEnd(formattedName);
-            formattedName = trimEnd(formattedName, 's');
-
-            return formattedName;
+            return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(name);
         },
         rethrow(err: Error, message?: string): void {
             if (message) {
@@ -36,6 +30,10 @@ export default function(): IUtils {
             }
 
             throw err;
+        },
+        pipe(...fns: any[]): any {
+            const _pipe = (f, g) => async (...args) => g(await f(...args));
+            return fns.reduce(_pipe);
         }
     };
 }
