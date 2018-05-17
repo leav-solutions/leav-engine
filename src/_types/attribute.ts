@@ -8,6 +8,15 @@ export interface IAttribute {
     format?: AttributeFormats;
     linked_library?: string;
     linked_tree?: string;
+    embedded_fields?: IEmbeddedAttribute[];
+}
+
+export interface IEmbeddedAttribute {
+    id: string;
+    label?: ISystemTranslation;
+    format?: AttributeFormats;
+    validation_regex?: string;
+    embedded_fields?: IEmbeddedAttribute[];
 }
 
 /**
@@ -28,5 +37,9 @@ export enum AttributeTypes {
 
 export enum AttributeFormats {
     TEXT = 'text',
-    NUMERIC = 'numeric'
+    NUMERIC = 'numeric',
+    DATE = 'date',
+    ENCRYPTED = 'encrypted',
+    BOOLEAN = 'boolean',
+    EXTENDED = 'extended'
 }

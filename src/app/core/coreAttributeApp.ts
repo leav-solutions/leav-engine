@@ -30,7 +30,8 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         system: Boolean,
                         label: SystemTranslation,
                         linked_library: String,
-                        linked_tree: String
+                        linked_tree: String,
+                        embedded_fields: [EmbeddedAttribute]
                     }
 
                     input AttributeInput {
@@ -39,7 +40,24 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         format: AttributeFormat
                         label: SystemTranslationInput,
                         linked_library: String,
-                        linked_tree: String
+                        linked_tree: String,
+                        embedded_fields: [EmbeddedAttributeInput]
+                    }
+
+                    type EmbeddedAttribute {
+                        id: ID,
+                        format: AttributeFormat,
+                        label: SystemTranslation,
+                        validation_regex: String,
+                        embedded_fields: [EmbeddedAttribute]
+                    }
+
+                    input EmbeddedAttributeInput {
+                        id: ID!
+                        format: AttributeFormat
+                        label: SystemTranslationInput,
+                        validation_regex: String,
+                        embedded_fields: [EmbeddedAttributeInput]
                     }
 
                     extend type Query {
