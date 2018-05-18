@@ -1,4 +1,4 @@
-import {ActionsListIOTypes} from '../../_types/actionsList';
+import {ActionsListIOTypes, ActionsListEvents} from '../../_types/actionsList';
 import {IActionsListDomain} from 'domain/actionsListDomain';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 
@@ -18,6 +18,13 @@ export default function(actionsListDomain: IActionsListDomain): ICoreAttributeAp
                         ${ActionsListIOTypes.OBJECT}
                     }
 
+                    enum AvailableActionsName {
+                        ${actionsListDomain
+                            .getAvailableActions()
+                            .map(a => a.name)
+                            .join(' ')}
+                    }
+
                     type ActionParam {
                         name: String,
                         type: String,
@@ -25,11 +32,44 @@ export default function(actionsListDomain: IActionsListDomain): ICoreAttributeAp
                     }
 
                     type Action {
-                        name: String,
+                        name: AvailableActionsName,
                         description: String,
                         inputTypes: [ActionIOTypes],
                         outputTypes: [ActionIOTypes],
                         params: [ActionParam]
+                    }
+
+                    type ActionConfiguration {
+                        name: String,
+                        isSystem: Boolean,
+                        params: [ActionConfigurationParam]
+                    }
+
+                    type ActionsListConfiguration {
+                        ${ActionsListEvents.SAVE_VALUE}: [ActionConfiguration]
+                        ${ActionsListEvents.GET_VALUE}: [ActionConfiguration]
+                        ${ActionsListEvents.DELETE_VALUE}: [ActionConfiguration]
+                    }
+
+                    input ActionsListConfigurationInput {
+                        ${ActionsListEvents.SAVE_VALUE}: [ActionConfigurationInput]
+                        ${ActionsListEvents.GET_VALUE}: [ActionConfigurationInput]
+                        ${ActionsListEvents.DELETE_VALUE}: [ActionConfigurationInput]
+                    }
+
+                    input ActionConfigurationInput {
+                        name: AvailableActionsName!,
+                        params: [ActionConfigurationParamInput]
+                    }
+
+                    type ActionConfigurationParam {
+                        name: String,
+                        value: String
+                    }
+
+                    input ActionConfigurationParamInput {
+                        name: String!,
+                        value: String!
                     }
 
                     extend type Query {

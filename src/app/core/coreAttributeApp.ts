@@ -31,7 +31,8 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         label: SystemTranslation,
                         linked_library: String,
                         linked_tree: String,
-                        embedded_fields: [EmbeddedAttribute]
+                        embedded_fields: [EmbeddedAttribute],
+                        actions_list: ActionsListConfiguration
                     }
 
                     input AttributeInput {
@@ -41,7 +42,8 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         label: SystemTranslationInput,
                         linked_library: String,
                         linked_tree: String,
-                        embedded_fields: [EmbeddedAttributeInput]
+                        embedded_fields: [EmbeddedAttributeInput],
+                        actions_list: ActionsListConfigurationInput
                     }
 
                     type EmbeddedAttribute {

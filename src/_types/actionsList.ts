@@ -19,9 +19,9 @@ export type ActionsListValueType = string | number | boolean | {};
 
 // TODO: should be able to use [event: ActionsListEvents] as from TS v2.9
 export interface IActionsListConfig {
-    [ActionsListEvents.SAVE_VALUE]?: [IActionsListFunction];
-    [ActionsListEvents.DELETE_VALUE]?: [IActionsListFunction];
-    [ActionsListEvents.GET_VALUE]?: [IActionsListFunction];
+    [ActionsListEvents.SAVE_VALUE]?: [IActionsListSavedAction];
+    [ActionsListEvents.DELETE_VALUE]?: [IActionsListSavedAction];
+    [ActionsListEvents.GET_VALUE]?: [IActionsListSavedAction];
 }
 
 export interface IActionsListContext {
@@ -37,4 +37,9 @@ export interface IActionsListFunction {
     outputTypes: ActionsListIOTypes[];
     params?: [{name: string; type: string; description: string}];
     action: (value: ActionsListValueType, params: any, ctx: IActionsListContext) => ActionsListValueType;
+}
+export interface IActionsListSavedAction {
+    name: string;
+    isSystem: boolean;
+    params?: [{name: string; value: string}];
 }

@@ -1,4 +1,5 @@
 import {ISystemTranslation} from './systemTranslation';
+import {IActionsListConfig} from './actionsList';
 
 export interface IAttribute {
     id: string;
@@ -9,6 +10,7 @@ export interface IAttribute {
     linked_library?: string;
     linked_tree?: string;
     embedded_fields?: IEmbeddedAttribute[];
+    actions_list?: IActionsListConfig;
 }
 
 export interface IEmbeddedAttribute {
