@@ -39,7 +39,7 @@ export interface IActionsListFunction {
     description: string;
     inputTypes: ActionsListIOTypes[];
     outputTypes: ActionsListIOTypes[];
-    params?: [{name: string; type: string; description: string}];
+    params?: Array<{name: string; type: string; description: string}>;
     action: (value: ActionsListValueType, params: IActionsListParams, ctx: IActionsListContext) => ActionsListValueType;
 }
 
