@@ -1,11 +1,12 @@
-import {IRecordRepo} from 'infra/recordRepo';
-import * as moment from 'moment';
-import {IAttributeDomain} from './attributeDomain';
-import {ILibraryDomain} from './libraryDomain';
 import {IValue} from '_types/value';
+import {IRecordRepo} from 'infra/recordRepo';
+import {IValueRepo} from 'infra/valueRepo';
+import * as moment from 'moment';
 import {AttributeTypes} from '../_types/attribute';
 import ValidationError from '../errors/ValidationError';
-import {IValueRepo} from 'infra/valueRepo';
+import {IActionsListDomain} from './actionsListDomain';
+import {IAttributeDomain} from './attributeDomain';
+import {ILibraryDomain} from './libraryDomain';
 
 export interface IValueDomain {
     saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
@@ -13,10 +14,11 @@ export interface IValueDomain {
 }
 
 export default function(
-    attributeDomain: IAttributeDomain | null = null,
-    libraryDomain: ILibraryDomain | null = null,
-    valueRepo: IValueRepo | null = null,
-    recordRepo: IRecordRepo | null = null
+    attributeDomain: IAttributeDomain = null,
+    libraryDomain: ILibraryDomain = null,
+    valueRepo: IValueRepo = null,
+    recordRepo: IRecordRepo = null,
+    actionsListDomain: IActionsListDomain = null
 ): IValueDomain {
     return {
         async saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
@@ -39,8 +41,20 @@ export default function(
                 }
             }
 
+            // Execute actions list. Output value might be different from input value
+            /* tslint:disable:ter-indent */
+            const actionsListRes =
+                !!attr.actions_list && !!attr.actions_list.saveValue
+                    ? await actionsListDomain.runActionsList(attr.actions_list.saveValue, value, {
+                          attribute: attr,
+                          recordId,
+                          library
+                      })
+                    : value;
+            /* tslint:enable:ter-indent */
+
             const valueToSave = {
-                ...value,
+                ...actionsListRes,
                 modified_at: moment().unix()
             };
 

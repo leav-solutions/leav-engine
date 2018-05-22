@@ -5,10 +5,23 @@ import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
 import {IRecordRepo} from 'infra/recordRepo';
 import {IValueRepo} from 'infra/valueRepo';
 import {ILibraryDomain} from './libraryDomain';
+import {IActionsListDomain} from './actionsListDomain';
 
 describe('ValueDomain', () => {
     const mockRecordRepo: Mockify<IRecordRepo> = {
         updateRecord: jest.fn()
+    };
+
+    const mockActionsListDomain: Mockify<IActionsListDomain> = {
+        runActionsList: global.__mockPromise({value: 'test val'})
+    };
+
+    const mockAttribute = {
+        id: 'test_attr',
+        actions_list: {
+            saveValue: [{name: 'validate'}]
+        },
+        type: AttributeTypes.SIMPLE
     };
 
     describe('saveValue', () => {
@@ -20,7 +33,7 @@ describe('ValueDomain', () => {
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
             };
 
             const mockLibDomain = {
@@ -31,12 +44,14 @@ describe('ValueDomain', () => {
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain
             );
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
+            expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(1);
             expect(savedValue).toMatchObject(savedValueData);
         });
 
@@ -54,7 +69,7 @@ describe('ValueDomain', () => {
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED})
             };
 
             const mockLibDomain = {
@@ -65,7 +80,8 @@ describe('ValueDomain', () => {
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain
             );
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
@@ -98,7 +114,7 @@ describe('ValueDomain', () => {
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED})
             };
 
             const mockLibDomain = {
@@ -109,7 +125,8 @@ describe('ValueDomain', () => {
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain
             );
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {
@@ -170,7 +187,7 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown value', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED})
             };
 
             const mockLibDomain = {
@@ -201,7 +218,7 @@ describe('ValueDomain', () => {
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
             };
 
             const mockLibDomain = {
@@ -214,7 +231,8 @@ describe('ValueDomain', () => {
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
-                mockRecRepo as IRecordRepo
+                mockRecRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain
             );
 
             const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
@@ -236,7 +254,7 @@ describe('ValueDomain', () => {
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.SIMPLE})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
             };
 
             const mockLibDomain = {
@@ -286,7 +304,7 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown value', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({id: 'test_attr', type: AttributeTypes.ADVANCED})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED})
             };
 
             const mockLibDomain = {

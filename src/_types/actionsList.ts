@@ -30,14 +30,19 @@ export interface IActionsListContext {
     recordId?: number;
 }
 
+export interface IActionsListParams {
+    [name: string]: any;
+}
+
 export interface IActionsListFunction {
     name: string;
     description: string;
     inputTypes: ActionsListIOTypes[];
     outputTypes: ActionsListIOTypes[];
     params?: [{name: string; type: string; description: string}];
-    action: (value: ActionsListValueType, params: any, ctx: IActionsListContext) => ActionsListValueType;
+    action: (value: ActionsListValueType, params: IActionsListParams, ctx: IActionsListContext) => ActionsListValueType;
 }
+
 export interface IActionsListSavedAction {
     name: string;
     isSystem: boolean;
