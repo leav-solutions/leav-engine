@@ -14,6 +14,7 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
                     type Value {
                         id_value: ID,
                         value: String,
+                        raw_value: String,
                         modified_at: Int,
                         created_at: Int
                     }

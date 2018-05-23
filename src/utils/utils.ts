@@ -33,7 +33,7 @@ export default function(): IUtils {
         },
         pipe(...fns: any[]): any {
             const _pipe = (f, g) => async (...args) => g(await f(...args));
-            return fns.reduce(_pipe);
+            return fns.length ? fns.reduce(_pipe) : () => null;
         }
     };
 }

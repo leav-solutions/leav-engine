@@ -3,6 +3,7 @@ import {AttributeTypes} from '../_types/attribute';
 import recordDomain from './recordDomain';
 import {IValueRepo} from 'infra/valueRepo';
 import {IAttributeDomain} from './attributeDomain';
+import {IActionsListDomain} from './actionsListDomain';
 
 describe('RecordDomain', () => {
     describe('createRecord', () => {
@@ -120,14 +121,22 @@ describe('RecordDomain', () => {
                             break;
                     }
 
-                    return Promise.resolve({id: attribute, type});
+                    return Promise.resolve({id: attribute, type, actions_list: {getValue: [{name: 'formatAttr'}]}});
+                })
+            };
+
+            const mockALDomain: Mockify<IActionsListDomain> = {
+                runActionsList: global.__mockPromise({
+                    id: '222827150',
+                    value: 'MyLabelProcessed'
                 })
             };
 
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo
+                mockValRepo as IValueRepo,
+                mockALDomain as IActionsListDomain
             );
 
             const findRes = await recDomain.populateRecordFields('test_lib', record, [
@@ -143,7 +152,8 @@ describe('RecordDomain', () => {
                 222536283,
                 {
                     id: 'label',
-                    type: AttributeTypes.ADVANCED
+                    type: AttributeTypes.ADVANCED,
+                    actions_list: {getValue: [{name: 'formatAttr'}]}
                 },
                 []
             );
@@ -151,7 +161,8 @@ describe('RecordDomain', () => {
                 ...record,
                 label: {
                     id: '222827150',
-                    value: 'MyLabel'
+                    value: 'MyLabelProcessed',
+                    raw_value: 'MyLabel'
                 }
             });
         });
@@ -202,7 +213,10 @@ describe('RecordDomain', () => {
                             break;
                     }
 
-                    return Promise.resolve({id: attribute, type});
+                    return Promise.resolve({
+                        id: attribute,
+                        type
+                    });
                 })
             };
 
@@ -256,7 +270,8 @@ describe('RecordDomain', () => {
                         library: 'linked_library',
                         label: {
                             id: '222827150',
-                            value: 'MyLabel'
+                            value: 'MyLabel',
+                            raw_value: 'MyLabel'
                         }
                     }
                 }

@@ -72,7 +72,7 @@ export default function(depsManager: AwilixContainer = null, utils: IUtils = nul
             });
 
             // Execute functions
-            const pipeRes = await utils.pipe(...actionsToExec)(value.value);
+            const pipeRes = actionsToExec.length ? await utils.pipe(...actionsToExec)(value.value) : value.value;
 
             return {...value, value: pipeRes};
         }

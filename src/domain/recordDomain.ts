@@ -6,6 +6,8 @@ import {AttributeFormats, IAttribute, AttributeTypes} from '../_types/attribute'
 import valueDomain from './valueDomain';
 import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
 import {IValueRepo} from 'infra/valueRepo';
+import {IValue} from '_types/value';
+import {IActionsListDomain} from './actionsListDomain';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -62,7 +64,8 @@ export interface IRecordDomain {
 export default function(
     recordRepo: IRecordRepo | null = null,
     attributeDomain: IAttributeDomain | null = null,
-    valueRepo: IValueRepo | null = null
+    valueRepo: IValueRepo | null = null,
+    actionsListDomain: IActionsListDomain = null
 ): IRecordDomain {
     return {
         async createRecord(library: string): Promise<IRecord> {
@@ -128,6 +131,7 @@ export default function(
                     fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK;
 
                 // Get field value
+                let value: IValue;
                 if (
                     typeof record[field.name] === 'undefined' ||
                     fieldsProps[field.name].type !== AttributeTypes.SIMPLE
@@ -144,10 +148,10 @@ export default function(
 
                         // If value is a linked record, recursively populate fields on this record
                         if (field.fields.length && isLinkAttribute) {
-                            const _processFieldValue = (value, valueFields): Promise<any> => {
-                                const linkedLibrary = fieldsProps[field.name].linked_library || value.library;
+                            const _processFieldValue = (fieldVal, valueFields): Promise<any> => {
+                                const linkedLibrary = fieldsProps[field.name].linked_library || fieldVal.library;
 
-                                return this.populateRecordFields(linkedLibrary, value, valueFields);
+                                return this.populateRecordFields(linkedLibrary, fieldVal, valueFields);
                             };
 
                             const linkFields = field.fields;
@@ -179,13 +183,40 @@ export default function(
                             }
                         }
 
-                        record[field.name] = fieldValue;
+                        value = fieldValue;
                     }
                 } else if (field.name !== 'id') {
-                    // Format simple attribute field into standard value
-                    record[field.name] = {
+                    // Format attribute field into simple value
+                    value = {
                         value: record[field.name]
                     };
+                }
+
+                // Run actions list, if any
+                if (field.name !== 'id') {
+                    let processedValue;
+
+                    if (!isLinkAttribute) {
+                        processedValue =
+                            !!fieldsProps[field.name].actions_list && !!fieldsProps[field.name].actions_list.getValue
+                                ? await actionsListDomain.runActionsList(
+                                      fieldsProps[field.name].actions_list.getValue,
+                                      value,
+                                      {
+                                          attribute: fieldsProps[field.name],
+                                          recordId: record.id,
+                                          library,
+                                          value
+                                      }
+                                  )
+                                : value;
+
+                        processedValue.raw_value = value.value;
+                    } else {
+                        processedValue = value;
+                    }
+
+                    record[field.name] = processedValue;
                 }
             }
 
