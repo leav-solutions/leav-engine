@@ -3,11 +3,7 @@
     "extends": ["tslint:latest", "tslint-eslint-rules"],
     "rules": {
         "ter-indent": [
-            true,
-            4,
-            {
-                "SwitchCase": 1
-            }
+            false
         ],
         "linebreak-style": [true, "LF"],
         "semicolon": [true, "always"],

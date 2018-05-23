@@ -54,7 +54,6 @@ export default function(depsManager: AwilixContainer = null, utils: IUtils = nul
             const actionsToExec = actions.map(action => {
                 const actionFunc = availActions.find(a => a.name === action.name).action;
 
-                /* tslint:disable:ter-indent */
                 // Convert params from an array of object with name and value properties
                 // to an object {name: value}
                 const params: IActionsListParams =
@@ -64,7 +63,6 @@ export default function(depsManager: AwilixContainer = null, utils: IUtils = nul
                               return all;
                           }, {})
                         : {};
-                /* tslint:enable:ter-indent */
 
                 // Create a new function with params and ctx applied to it
                 // This new function only takes value has an argument

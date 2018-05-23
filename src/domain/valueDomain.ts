@@ -42,7 +42,6 @@ export default function(
             }
 
             // Execute actions list. Output value might be different from input value
-            /* tslint:disable:ter-indent */
             const actionsListRes =
                 !!attr.actions_list && !!attr.actions_list.saveValue
                     ? await actionsListDomain.runActionsList(attr.actions_list.saveValue, value, {
@@ -51,7 +50,6 @@ export default function(
                           library
                       })
                     : value;
-            /* tslint:enable:ter-indent */
 
             const valueToSave = {
                 ...actionsListRes,
