@@ -131,7 +131,7 @@ export default function(
                     fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK;
 
                 // Get field value
-                let value: IValue;
+                let value: IValue = null;
                 if (
                     typeof record[field.name] === 'undefined' ||
                     fieldsProps[field.name].type !== AttributeTypes.SIMPLE
@@ -196,7 +196,7 @@ export default function(
                 if (field.name !== 'id') {
                     let processedValue;
 
-                    if (!isLinkAttribute) {
+                    if (!isLinkAttribute && value !== null) {
                         processedValue =
                             !!fieldsProps[field.name].actions_list && !!fieldsProps[field.name].actions_list.getValue
                                 ? await actionsListDomain.runActionsList(

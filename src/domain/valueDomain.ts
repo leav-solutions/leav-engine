@@ -88,7 +88,17 @@ export default function(
                 }
             }
 
-            return valueRepo.deleteValue(library, recordId, attr, value);
+            const actionsListRes =
+                !!attr.actions_list && !!attr.actions_list.deleteValue
+                    ? await actionsListDomain.runActionsList(attr.actions_list.deleteValue, value, {
+                          attribute: attr,
+                          recordId,
+                          library,
+                          value
+                      })
+                    : value;
+
+            return valueRepo.deleteValue(library, recordId, attr, actionsListRes);
         }
     };
 }
