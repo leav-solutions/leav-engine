@@ -1,7 +1,8 @@
 import {IAttributeRepo} from 'infra/attributeRepo';
-import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
-import {IAttribute, IAttributeFilterOptions, AttributeTypes} from '../_types/attribute';
+import attributeTypesRepo, {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
+import {IAttribute, IAttributeFilterOptions, AttributeTypes, AttributeFormats} from '../_types/attribute';
 import ValidationError from '../errors/ValidationError';
+import {IActionsListConfig, ActionsListEvents, ActionsListIOTypes} from '../_types/actionsList';
 
 export interface IAttributeDomain {
     /**
@@ -38,6 +39,71 @@ export interface IAttributeDomain {
 }
 
 export default function(attributeRepo: IAttributeRepo | null = null): IAttributeDomain {
+    function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
+        // TODO: save defaults action on attribute creation
+
+        switch (attribute.format) {
+            case AttributeFormats.DATE:
+                return {
+                    [ActionsListEvents.SAVE_VALUE]: [
+                        {
+                            name: 'toNumber',
+                            isSystem: true
+                        },
+                        {
+                            name: 'validateFormat',
+                            isSystem: true
+                        }
+                    ]
+                };
+            case AttributeFormats.ENCRYPTED:
+                return {
+                    [ActionsListEvents.SAVE_VALUE]: [
+                        {
+                            name: 'validateFormat',
+                            isSystem: true
+                        },
+                        {
+                            name: 'encrypt',
+                            isSystem: true
+                        }
+                    ],
+                    [ActionsListEvents.GET_VALUE]: [
+                        {
+                            name: 'toBoolean',
+                            isSystem: true
+                        }
+                    ]
+                };
+            case AttributeFormats.EXTENDED:
+                return {
+                    [ActionsListEvents.SAVE_VALUE]: [
+                        {
+                            name: 'parseJSON',
+                            isSystem: true
+                        },
+                        {
+                            name: 'validateFormat',
+                            isSystem: true
+                        },
+                        {
+                            name: 'toJSON',
+                            isSystem: true
+                        }
+                    ]
+                };
+            default:
+                return {
+                    [ActionsListEvents.SAVE_VALUE]: [
+                        {
+                            name: 'validateFormat',
+                            isSystem: true
+                        }
+                    ]
+                };
+        }
+    }
+
     return {
         async getAttributeProperties(id: string): Promise<IAttribute> {
             const attrs = await attributeRepo.getAttributes({id});
@@ -58,10 +124,17 @@ export default function(attributeRepo: IAttributeRepo | null = null): IAttribute
             // TODO: Validate attribute data (linked library, linked tree...)
 
             const attrs = await attributeRepo.getAttributes({id: attrData.id});
+            const isExistingAttr = !!attrs.length;
 
-            const attr = attrs.length
-                ? await attributeRepo.updateAttribute(attrData)
-                : await attributeRepo.createAttribute(attrData);
+            const attrToSave = {...attrData};
+            attrToSave.actions_list =
+                !isExistingAttr && typeof attrToSave.actions_list === 'undefined'
+                    ? _getDefaultActionsList(attrData)
+                    : attrToSave.actions_list;
+
+            const attr = isExistingAttr
+                ? await attributeRepo.updateAttribute(attrToSave)
+                : await attributeRepo.createAttribute(attrToSave);
 
             return attr;
         },

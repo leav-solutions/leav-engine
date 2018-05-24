@@ -46,7 +46,7 @@ describe('attributeDomain', () => {
         test('Should save a new attribute', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([]),
-                createAttribute: global.__mockPromise({id: 'test', system: false, type: 'standard', format: 'text'}),
+                createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
                 updateAttribute: jest.fn()
             };
 
@@ -54,7 +54,7 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
-            const newLib = await attrDomain.saveAttribute({
+            const newAttr = await attrDomain.saveAttribute({
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
                 format: AttributeFormats.TEXT
@@ -63,7 +63,12 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
 
-            expect(newLib).toMatchObject({id: 'test', system: false});
+            expect(newAttr).toMatchObject({
+                actions_list: {saveValue: [{isSystem: true, name: 'validateFormat'}]},
+                format: 'text',
+                id: 'test',
+                type: 'advanced'
+            });
         });
 
         test('Should update an attribute', async function() {
