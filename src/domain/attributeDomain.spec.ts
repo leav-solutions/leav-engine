@@ -1,6 +1,8 @@
 import {IAttributeRepo} from 'infra/attributeRepo';
 import {AttributeFormats, AttributeTypes} from '../_types/attribute';
 import attributeDomain from './attributeDomain';
+import {IActionsListDomain} from './actionsListDomain';
+import ValidationError from '../errors/ValidationError';
 
 describe('attributeDomain', () => {
     describe('getAttributes', () => {
@@ -43,6 +45,23 @@ describe('attributeDomain', () => {
     });
 
     describe('saveAttribute', () => {
+        const mockALDomain: Mockify<IActionsListDomain> = {
+            getAvailableActions: jest.fn().mockReturnValue([
+                {
+                    name: 'validateFormat',
+                    outputTypes: ['string']
+                },
+                {
+                    name: 'toNumber',
+                    outputTypes: ['number']
+                },
+                {
+                    name: 'toJSON',
+                    outputTypes: ['string']
+                }
+            ])
+        };
+
         test('Should save a new attribute', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise([]),
@@ -50,7 +69,7 @@ describe('attributeDomain', () => {
                 updateAttribute: jest.fn()
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, mockALDomain as IActionsListDomain);
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
@@ -78,16 +97,62 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, mockALDomain as IActionsListDomain);
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
-            const updatedLib = await attrDomain.saveAttribute({id: 'test', type: AttributeTypes.ADVANCED});
+            const updatedLib = await attrDomain.saveAttribute({
+                id: 'test',
+                type: AttributeTypes.ADVANCED,
+                actions_list: {saveValue: [{isSystem: true, name: 'validateFormat'}]}
+            });
 
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
+        });
+
+        test('Should throw if actions list type is invalid', async function() {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                createAttribute: jest.fn(),
+                updateAttribute: global.__mockPromise({id: 'test', system: false})
+            };
+
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, mockALDomain as IActionsListDomain);
+
+            attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
+
+            const attrToSave = {
+                id: 'test',
+                type: AttributeTypes.ADVANCED,
+                actions_list: {
+                    saveValue: [{isSystem: true, name: 'validateFormat'}, {isSystem: false, name: 'toNumber'}]
+                }
+            };
+
+            await expect(attrDomain.saveAttribute(attrToSave)).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if system action list is missing', async function() {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                createAttribute: jest.fn(),
+                updateAttribute: global.__mockPromise({id: 'test', system: false})
+            };
+
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, mockALDomain as IActionsListDomain);
+
+            attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
+
+            const attrToSave = {
+                id: 'test',
+                type: AttributeTypes.ADVANCED,
+                actions_list: {saveValue: [{isSystem: true, name: 'toJSON'}]}
+            };
+
+            await expect(attrDomain.saveAttribute(attrToSave)).rejects.toThrow(ValidationError);
         });
     });
 
