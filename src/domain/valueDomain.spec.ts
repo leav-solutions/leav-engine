@@ -321,4 +321,75 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
     });
+
+    describe('getValues', () => {
+        test('Should return values', async function() {
+            const valueData = {value: 'test val', attribute: 'test_attr'};
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain
+            );
+
+            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr');
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+            expect(resValue).toMatchObject(valueData);
+        });
+
+        test('Should throw if unknown attribute', async function() {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: jest.fn().mockReturnValue(Promise.reject('Unknown attribute'))
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const mockValRepo = {};
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo
+            );
+
+            await expect(valDomain.getValues('test_lib', 12345, 'test_attr')).rejects.toThrow();
+        });
+
+        test('Should throw if unknown library', async function() {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise([{id: 'test_attr'}])
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([])
+            };
+
+            const mockValRepo = {};
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo
+            );
+
+            await expect(valDomain.getValues('test_lib', 12345, 'test_attr')).rejects.toThrow();
+        });
+    });
 });

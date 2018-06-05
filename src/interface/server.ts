@@ -30,12 +30,21 @@ export default function(
                 await server.register(hapiAuthJwt2);
                 server.auth.strategy('core', config.auth.scheme, {
                     key: config.auth.key,
-                    validate: async (decode, request) => ({isValid: true}),
+                    validate: async (decode, request) => {
+                        try {
+                            const isValid = await authApp.validateToken(decode);
+                            return {isValid};
+                        } catch (e) {
+                            logger.error(e);
+                            throw e;
+                        }
+                    },
                     verifyOptions: {algorithms: ['HS256']}
                 });
-                server.auth.default('core');
+
                 // Auth App to login
                 authApp.registerRoute(server);
+                server.auth.default('core');
 
                 await graphqlApp.generateSchema();
 

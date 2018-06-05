@@ -2,13 +2,14 @@ import {IValue} from '_types/value';
 import {IRecordRepo} from 'infra/recordRepo';
 import {IValueRepo} from 'infra/valueRepo';
 import * as moment from 'moment';
-import {AttributeTypes} from '../_types/attribute';
+import {AttributeTypes, IAttribute} from '../_types/attribute';
 import ValidationError from '../errors/ValidationError';
 import {IActionsListDomain} from './actionsListDomain';
 import {IAttributeDomain} from './attributeDomain';
 import {ILibraryDomain} from './libraryDomain';
 
 export interface IValueDomain {
+    getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]>;
     saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
     deleteValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue>;
 }
@@ -21,6 +22,19 @@ export default function(
     actionsListDomain: IActionsListDomain = null
 ): IValueDomain {
     return {
+        async getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]> {
+            // Get library
+            const lib = await libraryDomain.getLibraries({id: library});
+
+            // Check if exists and can delete
+            if (!lib.length) {
+                throw new ValidationError({id: 'Unknown library'});
+            }
+
+            const attr = await attributeDomain.getAttributeProperties(attribute);
+
+            return valueRepo.getValues(library, recordId, attr);
+        },
         async saveValue(library: string, recordId: number, attribute: string, value: IValue): Promise<IValue> {
             // Get library
             const lib = await libraryDomain.getLibraries({id: library});

@@ -55,6 +55,7 @@
         "arangojs": "^6.2.3",
         "awilix": "^3.0.7",
         "bcrypt": "^2.0.1",
+        "boom": "^7.2.0",
         "graphql": "^0.13.2",
         "graphql-errors": "^2.1.0",
         "graphql-extensions": "0.0.10",

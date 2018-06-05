@@ -8,6 +8,7 @@ module.exports = {
     },
     auth: {
         token:
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdHVzZXIiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1MjM1NDM1MzB9.EBiiA2KV8HhnoeJ8f_x-rA6VizVQqMDD-fwOS_u1L_0'
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTI4MTkwOTk0LCJleHAiOjQ2NTIzOTMzOTR9.Fa-3gGM1UDtHOnshcqRj97hfwd2VFe-NZzeRTDQ4aFk',
+        tokenExpiration: '99y'
     }
 };

@@ -11,8 +11,7 @@ module.exports = {
         scheme: 'jwt',
         key: process.env.AUTH_KEY,
         algorithm: 'HS256',
-        tokenExpiration: '7d',
-        passwordRegex: /^.{6,20}$/
+        tokenExpiration: '7d'
     },
     lang: {
         available: ['fr', 'en'],
