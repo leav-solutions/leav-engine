@@ -6,6 +6,7 @@ import {IRecordRepo} from 'infra/recordRepo';
 import {IValueRepo} from 'infra/valueRepo';
 import {ILibraryDomain} from './libraryDomain';
 import {IActionsListDomain} from './actionsListDomain';
+import ValidationError from '../errors/ValidationError';
 
 describe('ValueDomain', () => {
     const mockRecordRepo: Mockify<IRecordRepo> = {
@@ -147,7 +148,9 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockReturnValue(Promise.reject('Unknown attribute'))
+                getAttributeProperties: jest.fn().mockImplementationOnce(id => {
+                    throw new ValidationError({id: 'Unknown attribute ' + id});
+                })
             };
 
             const mockLibDomain = {
@@ -276,7 +279,9 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockReturnValue(Promise.reject('Unknown attribute'))
+                getAttributeProperties: jest.fn().mockImplementationOnce(id => {
+                    throw new ValidationError({id: 'Unknown attribute ' + id});
+                })
             };
 
             const mockLibDomain = {
@@ -354,7 +359,9 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockReturnValue(Promise.reject('Unknown attribute'))
+                getAttributeProperties: jest.fn().mockImplementationOnce(id => {
+                    throw new ValidationError({id: 'Unknown attribute ' + id});
+                })
             };
 
             const mockLibDomain = {
