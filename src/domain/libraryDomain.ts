@@ -1,11 +1,9 @@
 import {ILibraryRepo} from 'infra/libraryRepo';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {ISystemTranslation} from '_types/systemTranslation';
-import {IAttribute} from '_types/attribute';
+import {ITreeRepo} from 'infra/treeRepo';
+import {difference} from 'lodash';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
 import ValidationError from '../errors/ValidationError';
 import {IAttributeDomain} from './attributeDomain';
-import {difference} from 'lodash';
 
 export interface ILibraryDomain {
     getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
@@ -13,7 +11,11 @@ export interface ILibraryDomain {
     deleteLibrary(id: string): Promise<ILibrary>;
 }
 
-export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDomain | null = null): ILibraryDomain {
+export default function(
+    libraryRepo: ILibraryRepo,
+    attributeDomain: IAttributeDomain | null = null,
+    treeRepo: ITreeRepo | null = null
+): ILibraryDomain {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
             let libs = await libraryRepo.getLibraries(filters);
@@ -31,12 +33,23 @@ export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDo
         async saveLibrary(libData: ILibrary): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({id: libData.id});
             const newLib = !!libs.length;
+            const errors = {} as any;
+            const canSave = true;
 
-            const lib = newLib ? await libraryRepo.updateLibrary(libData) : await libraryRepo.createLibrary(libData);
+            if (libData.permissionsConf) {
+                const availableTrees = await treeRepo.getTrees();
+                const unknownTrees = difference(libData.permissionsConf.trees, availableTrees.map(tree => tree.id));
+
+                if (unknownTrees.length) {
+                    errors.permissionsConf = `Unknown trees: ${unknownTrees.join(', ')}`;
+                }
+            }
 
             // New library? Link default attributes. Otherwise, save given attributes if any
             const libAttributes = newLib
-                ? typeof libData.attributes !== 'undefined' ? libData.attributes.map(attr => attr.id) : null
+                ? typeof libData.attributes !== 'undefined'
+                    ? libData.attributes.map(attr => attr.id)
+                    : null
                 : ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
 
             if (libAttributes !== null) {
@@ -44,11 +57,17 @@ export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDo
                 const unknownAttrs = difference(libAttributes, availableAttributes.map(attr => attr.id));
 
                 if (unknownAttrs.length) {
-                    throw new ValidationError({attributes: `Unknown attributes: ${unknownAttrs.join(', ')}`});
+                    errors.attributes = `Unknown attributes: ${unknownAttrs.join(', ')}`;
+                } else {
+                    await libraryRepo.saveLibraryAttributes(libData.id, libAttributes);
                 }
-
-                await libraryRepo.saveLibraryAttributes(libData.id, libAttributes);
             }
+
+            if (Object.keys(errors).length) {
+                throw new ValidationError(errors);
+            }
+
+            const lib = newLib ? await libraryRepo.updateLibrary(libData) : await libraryRepo.createLibrary(libData);
 
             return lib;
         },

@@ -3,6 +3,8 @@ import ValidationError from '../errors/ValidationError';
 import {IAttributeDomain} from './attributeDomain';
 import libraryDomain from './libraryDomain';
 import {ILibraryRepo} from 'infra/libraryRepo';
+import {ITreeRepo} from 'infra/treeRepo';
+import {PermissionsRelations} from '../_types/permissions';
 
 describe('LibraryDomain', () => {
     const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -114,8 +116,37 @@ describe('LibraryDomain', () => {
                 })
             ).rejects.toThrow(ValidationError);
 
-            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
+            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
             expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
+        });
+
+        test('Should throw if unknown trees in permissions conf', async function() {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                createLibrary: jest.fn(),
+                updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                saveLibraryAttributes: jest.fn()
+            };
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise([])
+            };
+
+            const libDomain = libraryDomain(
+                mockLibRepo as ILibraryRepo,
+                mockAttrDomain as IAttributeDomain,
+                mockTreeRepo as ITreeRepo
+            );
+
+            await expect(
+                libDomain.saveLibrary({
+                    id: 'test',
+                    attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}],
+                    permissionsConf: {trees: ['unknownTree'], relation: PermissionsRelations.AND}
+                })
+            ).rejects.toThrow(ValidationError);
+
+            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
         });
     });
 
