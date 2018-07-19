@@ -50,7 +50,7 @@ export default function(dbService: IDbService, logger: winston.Winston): IDbUtil
 
             // Load migrations files
             const migrationsDir = path.resolve(__dirname, 'migrations');
-            const migrationFiles = fs.readdirSync(migrationsDir);
+            const migrationFiles = fs.readdirSync(migrationsDir).filter(file => file.indexOf('.map') === -1);
 
             for (const file of migrationFiles) {
                 // Check if it's been run before
