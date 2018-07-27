@@ -79,6 +79,7 @@ export default function(
                             return treeDomain.getTrees(args);
                         },
                         async treeContent(_, {treeId, fields}, ctx, info) {
+                            ctx.treeId = treeId;
                             return treeDomain.getTreeContent(treeId, fields);
                         }
                     },
@@ -119,10 +120,18 @@ export default function(
                                 library: parent.record.library
                             };
 
-                            const attribute = info.path.prev.prev.prev.key;
-                            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+                            // When coming from 'treeContent' call, treeId is set on context. Otherwise,
+                            // we have to retrieve parent tree attributes to find out which tree we must use
+                            let treeId;
+                            if (typeof ctx.treeId === 'undefined') {
+                                const attribute = info.path.prev.prev.prev.key;
+                                const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+                                treeId = attributeProps.linked_tree;
+                            } else {
+                                treeId = ctx.treeId;
+                            }
 
-                            return treeDomain.getElementChildren(attributeProps.linked_tree, element);
+                            return treeDomain.getElementChildren(treeId, element);
                         },
                         ancestors: async (parent, args, ctx, info) => {
                             const element = {
@@ -130,10 +139,18 @@ export default function(
                                 library: parent.record.library
                             };
 
-                            const attribute = info.path.prev.prev.prev.key;
-                            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+                            // When coming from 'treeContent' call, treeId is set on context. Otherwise,
+                            // we have to retrieve parent tree attributes to find out which tree we must use
+                            let treeId;
+                            if (typeof ctx.treeId === 'undefined') {
+                                const attribute = info.path.prev.prev.prev.key;
+                                const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+                                treeId = attributeProps.linked_tree;
+                            } else {
+                                treeId = ctx.treeId;
+                            }
 
-                            return treeDomain.getElementAncestors(attributeProps.linked_tree, element);
+                            return treeDomain.getElementAncestors(treeId, element);
                         },
                         linkedRecords: async (parent, {attribute}, ctx, info) => {
                             const queryFields = graphqlApp.getQueryFields(info);
