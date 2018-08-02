@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PermissionRepo GetPermissions Should return a permission 1`] = `
+"
+                FOR p IN @@value0
+                FILTER p.type == @value1
+                    AND p.usersGroup == @value2
+                    AND p.target == @value3
+                RETURN p
+            "
+`;
+
+exports[`PermissionRepo GetPermissions Should return a permission 2`] = `
+Object {
+  "@value0": "core_permissions",
+  "value1": "record",
+  "value2": "12345",
+  "value3": Object {
+    "id": "123",
+    "library": "category",
+    "tree": "categories",
+  },
+}
+`;
+
+exports[`PermissionRepo SavePermission Should save permission 1`] = `
+"
+                UPSERT @value0
+                INSERT @value1
+                UPDATE @value1
+                IN @@value2
+                RETURN NEW
+            "
+`;
+
+exports[`PermissionRepo SavePermission Should save permission 2`] = `
+Object {
+  "@value2": "core_permissions",
+  "value0": Object {
+    "target": "test_lib/12345",
+    "type": "record",
+    "usersGroup": "users/12345",
+  },
+  "value1": Object {
+    "actions": Object {
+      "access": true,
+      "delete": false,
+      "edit": false,
+    },
+    "target": "test_lib/12345",
+    "type": "record",
+    "usersGroup": "users/12345",
+  },
+}
+`;

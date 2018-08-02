@@ -18,9 +18,15 @@ export interface ITreePermissionsConf {
     relation: PermissionsRelations;
 }
 
+export interface IPermissionsTreeTarget {
+    tree: string;
+    library: string;
+    id: string;
+}
+
 export interface IPermission {
     type: PermissionTypes;
-    userGroup: string;
+    usersGroup: string;
     actions: {[name: string]: boolean | null};
-    target: string;
+    target?: IPermissionsTreeTarget | string;
 }
