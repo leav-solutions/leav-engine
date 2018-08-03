@@ -9,6 +9,7 @@ export interface ILibraryDomain {
     getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
     saveLibrary(library: ILibrary): Promise<ILibrary>;
     deleteLibrary(id: string): Promise<ILibrary>;
+    getLibraryProperties(id: string): Promise<ILibrary>;
 }
 
 export default function(
@@ -29,6 +30,16 @@ export default function(
             );
 
             return libs;
+        },
+        async getLibraryProperties(id: string): Promise<ILibrary> {
+            const libs = await libraryRepo.getLibraries({id});
+
+            if (!libs.length) {
+                throw new ValidationError({id: 'Unknown library ' + id});
+            }
+            const props = libs.pop();
+
+            return props;
         },
         async saveLibrary(libData: ILibrary): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({id: libData.id});

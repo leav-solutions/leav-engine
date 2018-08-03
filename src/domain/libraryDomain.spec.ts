@@ -37,6 +37,31 @@ describe('LibraryDomain', () => {
         });
     });
 
+    describe('getLibraryProperties', () => {
+        test('Should return library properties', async function() {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise([{id: 'test', system: true}])
+            };
+
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const lib = await libDomain.getLibraryProperties('test');
+
+            expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
+            expect(mockLibRepo.getLibraries).toBeCalledWith({id: 'test'});
+            expect(lib).toMatchObject({id: 'test', system: true});
+        });
+
+        test('Should throw if unknown library', async function() {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise([])
+            };
+
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+
+            await expect(libDomain.getLibraryProperties('test')).rejects.toThrow();
+        });
+    });
+
     describe('saveLibrary', () => {
         test('Should save a new library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
