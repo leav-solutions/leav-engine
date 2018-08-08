@@ -144,15 +144,15 @@ export default function(
         ): Promise<ITreeElement> {
             const errors: any = {};
 
-            if (!await _treeExists(treeId)) {
+            if (!(await _treeExists(treeId))) {
                 errors.treeId = 'Unknown tree';
             }
 
-            if (!await _treeElementExists(element)) {
+            if (!(await _treeElementExists(element))) {
                 errors.element = 'Unknown element';
             }
 
-            if (parent !== null && !await _treeElementExists(parent)) {
+            if (parent !== null && !(await _treeElementExists(parent))) {
                 errors.parent = 'Unknown parent';
             }
 
@@ -169,15 +169,15 @@ export default function(
         async moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement> {
             const errors: any = {};
 
-            if (!await _treeExists(treeId)) {
+            if (!(await _treeExists(treeId))) {
                 errors.treeId = 'Unknown tree';
             }
 
-            if (!await _treeElementExists(element)) {
+            if (!(await _treeElementExists(element))) {
                 errors.element = 'Unknown element';
             }
 
-            if (parentTo !== null && !await _treeElementExists(parentTo)) {
+            if (parentTo !== null && !(await _treeElementExists(parentTo))) {
                 errors.parentTo = 'Unknown parent';
             }
 
@@ -194,11 +194,11 @@ export default function(
         ): Promise<ITreeElement> {
             const errors: any = {};
 
-            if (!await _treeExists(treeId)) {
+            if (!(await _treeExists(treeId))) {
                 errors.treeId = 'Unknown tree';
             }
 
-            if (!await _treeElementExists(element)) {
+            if (!(await _treeElementExists(element))) {
                 errors.element = 'Unknown element';
             }
 
@@ -210,7 +210,7 @@ export default function(
         },
         async getTreeContent(treeId: string, fields: string[]): Promise<ITreeNode[]> {
             const errors: any = {};
-            if (!await _treeExists(treeId)) {
+            if (!(await _treeExists(treeId))) {
                 errors.treeId = 'Unknown tree';
             }
 
