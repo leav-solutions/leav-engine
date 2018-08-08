@@ -21,7 +21,7 @@ export interface ITreePermissionsConf {
 export interface IPermissionsTreeTarget {
     tree: string;
     library: string;
-    id: string;
+    id: string | number;
 }
 
 export interface IPermission {

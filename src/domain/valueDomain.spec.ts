@@ -7,6 +7,7 @@ import {IValueRepo} from 'infra/valueRepo';
 import {ILibraryDomain} from './libraryDomain';
 import {IActionsListDomain} from './actionsListDomain';
 import ValidationError from '../errors/ValidationError';
+import {IRecordPermissionDomain} from './permission/recordPermissionDomain';
 
 describe('ValueDomain', () => {
     const mockRecordRepo: Mockify<IRecordRepo> = {
@@ -15,6 +16,10 @@ describe('ValueDomain', () => {
 
     const mockActionsListDomain: Mockify<IActionsListDomain> = {
         runActionsList: global.__mockPromise({value: 'test val'})
+    };
+
+    const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
+        getRecordPermission: global.__mockPromise(true)
     };
 
     const mockAttribute = {
@@ -46,10 +51,17 @@ describe('ValueDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
                 mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
+            const savedValue = await valDomain.saveValue(
+                'test_lib',
+                12345,
+                'test_attr',
+                {value: 'test val'},
+                {userId: 1}
+            );
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
             expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(1);
@@ -82,10 +94,17 @@ describe('ValueDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
                 mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
+            const savedValue = await valDomain.saveValue(
+                'test_lib',
+                12345,
+                'test_attr',
+                {value: 'test val'},
+                {userId: 1}
+            );
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
             expect(mockValRepo.createValue.mock.calls[0][3].modified_at).toBeDefined();
@@ -127,13 +146,20 @@ describe('ValueDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
                 mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {
-                id_value: 12345,
-                value: 'test val'
-            });
+            const savedValue = await valDomain.saveValue(
+                'test_lib',
+                12345,
+                'test_attr',
+                {
+                    id_value: 12345,
+                    value: 'test val'
+                },
+                {userId: 1}
+            );
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
             expect(mockValRepo.updateValue.mock.calls[0][3].modified_at).toBeDefined();
@@ -162,10 +188,15 @@ describe('ValueDomain', () => {
             const valDomain = valueDomain(
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo
+                mockValRepo as IValueRepo,
+                null,
+                null,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
+            await expect(
+                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+            ).rejects.toThrow();
         });
 
         test('Should throw if unknown library', async function() {
@@ -182,10 +213,15 @@ describe('ValueDomain', () => {
             const valDomain = valueDomain(
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo
+                mockValRepo as IValueRepo,
+                null,
+                null,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
+            await expect(
+                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+            ).rejects.toThrow();
         });
 
         test('Should throw if unknown value', async function() {
@@ -202,14 +238,23 @@ describe('ValueDomain', () => {
             const valDomain = valueDomain(
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo
+                mockValRepo as IValueRepo,
+                null,
+                null,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {
-                    id_value: 12345,
-                    value: 'test val'
-                })
+                valDomain.saveValue(
+                    'test_lib',
+                    12345,
+                    'test_attr',
+                    {
+                        id_value: 12345,
+                        value: 'test val'
+                    },
+                    {userId: 1}
+                )
             ).rejects.toThrow();
         });
 
@@ -235,10 +280,17 @@ describe('ValueDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
                 mockRecRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            const savedValue = await valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'});
+            const savedValue = await valDomain.saveValue(
+                'test_lib',
+                12345,
+                'test_attr',
+                {value: 'test val'},
+                {userId: 1}
+            );
 
             expect(mockRecRepo.updateRecord).toBeCalled();
             expect(mockRecRepo.updateRecord.mock.calls[0][1].modified_at).toBeDefined();
@@ -268,10 +320,18 @@ describe('ValueDomain', () => {
                 mockAttrDomain as IAttributeDomain,
                 mockLibDomain as ILibraryDomain,
                 mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo
+                mockRecordRepo as IRecordRepo,
+                null,
+                mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            const deletedValue = await valDomain.deleteValue('test_lib', 12345, 'test_attr', {value: 'test val'});
+            const deletedValue = await valDomain.deleteValue(
+                'test_lib',
+                12345,
+                'test_attr',
+                {value: 'test val'},
+                {userId: 1}
+            );
 
             expect(mockValRepo.deleteValue.mock.calls.length).toBe(1);
             expect(deletedValue).toMatchObject(deletedValueData);
@@ -290,7 +350,9 @@ describe('ValueDomain', () => {
 
             const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
 
-            await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
+            await expect(
+                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+            ).rejects.toThrow();
         });
 
         test('Should throw if unknown library', async function() {
@@ -304,7 +366,9 @@ describe('ValueDomain', () => {
 
             const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
 
-            await expect(valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'})).rejects.toThrow();
+            await expect(
+                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+            ).rejects.toThrow();
         });
 
         test('Should throw if unknown value', async function() {
@@ -319,10 +383,16 @@ describe('ValueDomain', () => {
             const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {
-                    id_value: 12345,
-                    value: 'test val'
-                })
+                valDomain.saveValue(
+                    'test_lib',
+                    12345,
+                    'test_attr',
+                    {
+                        id_value: 12345,
+                        value: 'test val'
+                    },
+                    {userId: 1}
+                )
             ).rejects.toThrow();
         });
     });

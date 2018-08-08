@@ -36,8 +36,8 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
 
                             return newRec;
                         },
-                        async deleteRecord(parent, {library, id}): Promise<IRecord> {
-                            return recordDomain.deleteRecord(library, id);
+                        async deleteRecord(parent, {library, id}, ctx): Promise<IRecord> {
+                            return recordDomain.deleteRecord(library, id, {userId: ctx.auth.userId});
                         }
                     }
                 }

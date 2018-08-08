@@ -6,12 +6,13 @@ export interface IPermissionDomain {
     getSimplePermission(
         type: PermissionTypes,
         action: string,
-        usersGroup: string,
+        usersGroupId: number,
         target?: IPermissionsTreeTarget
     ): Promise<boolean | null>;
+    getDefaultPermission(): boolean;
 }
 
-export default function(permissionRepo: IPermissionRepo): IPermissionDomain {
+export default function(permissionRepo: IPermissionRepo, config: any = null): IPermissionDomain {
     return {
         async savePermission(permData: IPermission): Promise<IPermission> {
             return permissionRepo.savePermission(permData);
@@ -19,16 +20,24 @@ export default function(permissionRepo: IPermissionRepo): IPermissionDomain {
         async getSimplePermission(
             type: PermissionTypes,
             action: string,
-            usersGroup: string,
+            usersGroupId: number,
             target: IPermissionsTreeTarget = null
         ): Promise<boolean | null> {
-            const perms = await permissionRepo.getPermissions(type, usersGroup, target);
+            const perms = await permissionRepo.getPermissions(type, usersGroupId, target);
 
             if (perms === null) {
                 return null;
             }
 
             return typeof perms.actions[action] !== 'undefined' ? perms.actions[action] : null;
+        },
+        getDefaultPermission(): boolean {
+            const defaultPerm =
+                config.permissions && typeof config.permissions.default !== 'undefined'
+                    ? config.permissions.default
+                    : true;
+
+            return defaultPerm;
         }
     };
 }

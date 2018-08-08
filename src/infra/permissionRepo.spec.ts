@@ -60,7 +60,7 @@ describe('PermissionRepo', () => {
             };
             const permRepo = permissionRepo(mockDbServ);
 
-            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, '12345', {
+            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 12345, {
                 id: '123',
                 library: 'category',
                 tree: 'categories'
@@ -77,7 +77,7 @@ describe('PermissionRepo', () => {
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             const permRepo = permissionRepo(mockDbServ);
 
-            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, '12345', {
+            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 12345, {
                 id: '123',
                 library: 'category',
                 tree: 'categories'

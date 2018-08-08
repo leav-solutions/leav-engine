@@ -14,7 +14,7 @@ exports[`PermissionRepo GetPermissions Should return a permission 2`] = `
 Object {
   "@value0": "core_permissions",
   "value1": "record",
-  "value2": "12345",
+  "value2": 12345,
   "value3": Object {
     "id": "123",
     "library": "category",

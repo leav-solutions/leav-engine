@@ -1,13 +1,15 @@
 import {IRecordRepo} from 'infra/recordRepo';
-import * as moment from 'moment';
-import {IRecord, IRecordFilterOption, IQueryField} from '_types/record';
-import {IAttributeDomain} from './attributeDomain';
-import {AttributeFormats, IAttribute, AttributeTypes} from '../_types/attribute';
-import valueDomain from './valueDomain';
-import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
 import {IValueRepo} from 'infra/valueRepo';
+import * as moment from 'moment';
+import {IQueryInfos} from '_types/queryInfos';
+import {IQueryField, IRecord, IRecordFilterOption} from '_types/record';
 import {IValue} from '_types/value';
+import PermissionError from '../errors/PermissionError';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
+import {RecordPermissions} from '../_types/permissions';
 import {IActionsListDomain} from './actionsListDomain';
+import {IAttributeDomain} from './attributeDomain';
+import {IRecordPermissionDomain} from './permission/recordPermissionDomain';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -29,18 +31,20 @@ export interface IRecordDomain {
      * Must be used to update metadata (modified_at, ...) only
      *
      * @param library       Library ID
+     * @param infos      Query context (userId...)
      * @param recordData
      */
-    updateRecord(library: string, recordData: IRecord): Promise<IRecord>;
+    updateRecord(library: string, recordData: IRecord, infos: IQueryInfos): Promise<IRecord>;
 
     /**
      * Delete record
      *
      * @param library    Library ID
      * @param id         Record ID
+     * @param infos      Query context (userId...)
      * @param recordData
      */
-    deleteRecord(library: string, id: number): Promise<IRecord>;
+    deleteRecord(library: string, id: number, infos: IQueryInfos): Promise<IRecord>;
 
     /**
      * Search records
@@ -65,7 +69,8 @@ export default function(
     recordRepo: IRecordRepo | null = null,
     attributeDomain: IAttributeDomain | null = null,
     valueRepo: IValueRepo | null = null,
-    actionsListDomain: IActionsListDomain = null
+    actionsListDomain: IActionsListDomain = null,
+    recordPermissionDomain: IRecordPermissionDomain = null
 ): IRecordDomain {
     return {
         async createRecord(library: string): Promise<IRecord> {
@@ -73,10 +78,22 @@ export default function(
 
             return recordRepo.createRecord(library, recordData);
         },
-        async updateRecord(library: string, recordData: IRecord): Promise<IRecord> {
+        async updateRecord(library: string, recordData: IRecord, infos: IQueryInfos): Promise<IRecord> {
+            // Check permission
+            const canUpdate = await recordPermissionDomain.getRecordPermission(
+                RecordPermissions.DELETE,
+                infos.userId,
+                recordData.library,
+                recordData.id
+            );
+
+            if (!canUpdate) {
+                throw new PermissionError(RecordPermissions.DELETE);
+            }
+
             return recordRepo.updateRecord(library, recordData);
         },
-        async deleteRecord(library: string, id: number): Promise<IRecord> {
+        async deleteRecord(library: string, id: number, infos: IQueryInfos): Promise<IRecord> {
             // Get library
             // const lib = await this.getLibraries({id});
 
@@ -88,6 +105,18 @@ export default function(
             // if (lib.pop().system) {
             //     throw new Error('Cannot delete system library');
             // }
+
+            // Check permission
+            const canDelete = await recordPermissionDomain.getRecordPermission(
+                RecordPermissions.DELETE,
+                infos.userId,
+                library,
+                id
+            );
+
+            if (!canDelete) {
+                throw new PermissionError(RecordPermissions.DELETE);
+            }
 
             return recordRepo.deleteRecord(library, id);
         },

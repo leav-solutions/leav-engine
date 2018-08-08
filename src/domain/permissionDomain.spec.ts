@@ -58,7 +58,7 @@ describe('PermissionDomain', () => {
             const permAccess = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 RecordPermissions.ACCESS,
-                '12345',
+                12345,
                 {
                     id: '123',
                     library: 'category',
@@ -69,7 +69,7 @@ describe('PermissionDomain', () => {
             const permEdit = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 RecordPermissions.EDIT,
-                '12345',
+                12345,
                 {
                     id: '123',
                     library: 'category',
@@ -80,7 +80,7 @@ describe('PermissionDomain', () => {
             const permDelete = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 RecordPermissions.DELETE,
-                '12345',
+                12345,
                 {
                     id: '123',
                     library: 'category',
@@ -110,7 +110,7 @@ describe('PermissionDomain', () => {
             const permEdit = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 RecordPermissions.EDIT,
-                '12345',
+                12345,
                 {
                     id: '123',
                     library: 'category',
@@ -119,6 +119,23 @@ describe('PermissionDomain', () => {
             );
 
             expect(permEdit).toBe(null);
+        });
+    });
+
+    describe('getDefaultPermission', () => {
+        test('Return default permissions', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const config = {
+                permissions: {
+                    default: false
+                }
+            };
+
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, config);
+
+            const perm = permDomain.getDefaultPermission();
+
+            expect(perm).toBe(config.permissions.default);
         });
     });
 });

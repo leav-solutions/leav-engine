@@ -1,4 +1,4 @@
-import {IAppGraphQLSchema} from '../graphql/graphqlApp';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {IValueDomain} from 'domain/valueDomain';
 import {IValue} from '_types/value';
 
@@ -6,7 +6,7 @@ export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(valueDomain: IValueDomain): ICoreValueApp {
+export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICoreValueApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -30,7 +30,7 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
                         id_value: ID,
                         modified_at: Int,
                         created_at: Int
-                        value: [TreeNode]
+                        value: TreeNode
                     }
 
                     input ValueInput {
@@ -45,11 +45,23 @@ export default function(valueDomain: IValueDomain): ICoreValueApp {
                 `,
                 resolvers: {
                     Mutation: {
-                        async saveValue(parent, {library, recordId, attribute, value}): Promise<IValue> {
-                            return valueDomain.saveValue(library, recordId, attribute, value);
+                        async saveValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
+                            return valueDomain.saveValue(
+                                library,
+                                recordId,
+                                attribute,
+                                value,
+                                graphqlApp.ctxToQueryInfos(ctx)
+                            );
                         },
-                        async deleteValue(parent, {library, recordId, attribute, value}): Promise<IValue> {
-                            return valueDomain.deleteValue(library, recordId, attribute, value);
+                        async deleteValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
+                            return valueDomain.deleteValue(
+                                library,
+                                recordId,
+                                attribute,
+                                value,
+                                graphqlApp.ctxToQueryInfos(ctx)
+                            );
                         }
                     }
                 }

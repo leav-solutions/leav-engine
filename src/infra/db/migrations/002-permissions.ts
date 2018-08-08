@@ -1,7 +1,8 @@
-import {IDbService, collectionTypes} from '../dbService';
-import {IMigration} from '../dbUtils';
-import {aql} from '../../../../node_modules/arangojs';
 import * as moment from 'moment';
+import {aql} from '../../../../node_modules/arangojs';
+import {AttributeTypes} from '../../../_types/attribute';
+import {collectionTypes, IDbService} from '../dbService';
+import {IMigration} from '../dbUtils';
 
 export default function(dbService: IDbService): IMigration {
     return {
@@ -11,6 +12,7 @@ export default function(dbService: IDbService): IMigration {
             }
             const userGroupsLibKey = 'users_groups';
             const userGroupsTreeKey = 'users_groups';
+            const userGroupsAttrKey = 'user_groups';
 
             // Create user groups library, required for permissions
             const checkLibExists = await dbService.execute(aql`
@@ -104,6 +106,47 @@ export default function(dbService: IDbService): IMigration {
                         _to: ${'users_groups/' + rootElem[0]._key}
                     } IN ${usersGroupsEdgeCollec}`
                 );
+            }
+
+            // Create "users group" tree attribute and add it to users library
+            const checkAttributexists = await dbService.execute(aql`
+                FOR t IN core_attributes
+                    FILTER t._key == ${userGroupsAttrKey}
+                RETURN t._key
+            `);
+            if (!checkAttributexists.length) {
+                const attrParams = {
+                    _key: userGroupsAttrKey,
+                    system: true,
+                    label: {fr: "Groupes de l'utilisateur", en: 'User groups'},
+                    type: AttributeTypes.TREE
+                };
+
+                // Insert in libraries collection
+                const col = dbService.db.collection('core_attributes');
+                const res = await dbService.execute(aql`INSERT ${attrParams} IN ${col} RETURN NEW`);
+
+                await dbService.execute(aql`
+                    FOR l IN core_libraries
+                        FILTER l._key == 'users'
+                        UPDATE l WITH {attributes: UNIQUE(APPEND(l.attributes, [{id: ${userGroupsAttrKey}}]))}
+                        IN core_libraries
+                `);
+
+                await dbService.execute(aql`
+                    LET attrToInsert = {
+                        _from: 'core_libraries/users',
+                        _to: ${'core_attributes/' + userGroupsAttrKey}
+                    }
+                    UPSERT {
+                        _from: 'core_libraries/users',
+                        _to: ${'core_attributes/' + userGroupsAttrKey}
+                    }
+                    INSERT attrToInsert
+                    UPDATE attrToInsert
+                    IN 'core_edge_libraries_attributes'
+                    RETURN NEW
+                `);
             }
         }
     };

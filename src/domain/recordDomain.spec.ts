@@ -1,17 +1,28 @@
 import {IRecordRepo} from 'infra/recordRepo';
-import {AttributeTypes} from '../_types/attribute';
-import recordDomain from './recordDomain';
 import {IValueRepo} from 'infra/valueRepo';
-import {IAttributeDomain} from './attributeDomain';
+import {AttributeTypes} from '../_types/attribute';
 import {IActionsListDomain} from './actionsListDomain';
+import {IAttributeDomain} from './attributeDomain';
+import {IRecordPermissionDomain} from './permission/recordPermissionDomain';
+import recordDomain from './recordDomain';
 
 describe('RecordDomain', () => {
+    const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
+        getRecordPermission: global.__mockPromise(true)
+    };
+
     describe('createRecord', () => {
         test('Should create a new record', async function() {
             const createdRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
             const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
 
-            const recDomain = recordDomain(recRepo as IRecordRepo, null);
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                null,
+                null,
+                null,
+                mockRecordPermDomain as IRecordPermissionDomain
+            );
 
             const createdRecord = await recDomain.createRecord('test');
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
@@ -27,9 +38,19 @@ describe('RecordDomain', () => {
             const updatedRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 987654321};
             const recRepo: Mockify<IRecordRepo> = {updateRecord: global.__mockPromise(updatedRecordData)};
 
-            const recDomain = recordDomain(recRepo as IRecordRepo, null);
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                null,
+                null,
+                null,
+                mockRecordPermDomain as IRecordPermissionDomain
+            );
 
-            const updatedRecord = await recDomain.updateRecord('test', {id: 222435651, modified_at: 987654321});
+            const updatedRecord = await recDomain.updateRecord(
+                'test',
+                {id: 222435651, modified_at: 987654321},
+                {userId: 1}
+            );
 
             expect(recRepo.updateRecord.mock.calls.length).toBe(1);
             expect(Number.isInteger(recRepo.updateRecord.mock.calls[0][1].modified_at)).toBe(true);
@@ -43,9 +64,18 @@ describe('RecordDomain', () => {
 
         test('Should delete an record and return deleted record', async function() {
             const recRepo: Mockify<IRecordRepo> = {deleteRecord: global.__mockPromise(recordData)};
-            const recDomain = recordDomain(recRepo as IRecordRepo, null);
+            const recordPermDomain: Mockify<IRecordPermissionDomain> = {
+                getRecordPermission: global.__mockPromise(true)
+            };
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                null,
+                null,
+                null,
+                recordPermDomain as IRecordPermissionDomain
+            );
 
-            const deleteRes = await recDomain.deleteRecord('test', recordData.id);
+            const deleteRes = await recDomain.deleteRecord('test', recordData.id, {userId: 1});
 
             expect(recRepo.deleteRecord.mock.calls.length).toBe(1);
         });
