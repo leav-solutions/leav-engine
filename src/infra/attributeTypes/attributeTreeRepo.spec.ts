@@ -290,15 +290,13 @@ describe('AttributeTreeRepo', () => {
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
                 id_value: 112233,
-                value: [
-                    {
-                        record: {
-                            id: 123456,
-                            created_at: 88888,
-                            modified_at: 88888
-                        }
+                value: {
+                    record: {
+                        id: 123456,
+                        created_at: 88888,
+                        modified_at: 88888
                     }
-                ],
+                },
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
                 created_at: 99999

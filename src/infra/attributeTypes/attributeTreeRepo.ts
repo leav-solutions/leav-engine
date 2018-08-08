@@ -93,7 +93,7 @@ export default function(
 
                 return {
                     id_value: Number(r.edge._key),
-                    value: [{record: dbUtils.cleanup(r.linkedRecord)}],
+                    value: {record: dbUtils.cleanup(r.linkedRecord)},
                     attribute: r.edge.attribute,
                     modified_at: r.edge.modified_at,
                     created_at: r.edge.created_at
