@@ -1,19 +1,21 @@
 import {AwilixContainer} from 'awilix';
-import {GraphQLSchema, Kind, ASTNode, GraphQLResolveInfo} from 'graphql';
-import * as winston from 'winston';
+import {GraphQLResolveInfo, GraphQLSchema, Kind} from 'graphql';
+import {maskErrors} from 'graphql-errors';
 import {makeExecutableSchema} from 'graphql-tools';
 import {merge} from 'lodash';
-import {maskErrors, UserError} from 'graphql-errors';
-import * as uuid from 'uuid';
-
-import {IQueryField} from '_types/record';
 import {IUtils} from 'utils/utils';
+import * as uuid from 'uuid';
+import * as winston from 'winston';
+import {IQueryInfos} from '_types/queryInfos';
+import {IQueryField} from '_types/record';
+import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 
 export interface IGraphqlApp {
     schema: GraphQLSchema;
     generateSchema(): Promise<void>;
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
+    ctxToQueryInfos(ctx: any): IQueryInfos;
 }
 
 export interface IAppGraphQLSchema {
@@ -30,7 +32,7 @@ export default function(
     let _fullSchema: GraphQLSchema;
 
     function _handleError(err: Error | ValidationError) {
-        if (err instanceof ValidationError) {
+        if (err instanceof ValidationError || err instanceof PermissionError) {
             return err;
         }
 
@@ -133,6 +135,13 @@ export default function(
             }
 
             return extractedFields;
+        },
+        ctxToQueryInfos(ctx: any): IQueryInfos {
+            const infos: IQueryInfos = {};
+
+            infos.userId = !!ctx.auth && ctx.auth.userId ? ctx.auth.userId : null;
+
+            return infos;
         }
     };
 }

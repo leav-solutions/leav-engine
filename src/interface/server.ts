@@ -63,6 +63,7 @@ export default function(
                                 const origErr = err.originalError;
 
                                 err.fields = (origErr && origErr.fields) || {};
+                                err.action = (origErr && origErr.action) || null;
                                 return err;
                             },
                             debug: false
