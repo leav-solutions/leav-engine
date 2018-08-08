@@ -124,7 +124,7 @@ export default function(
                             // we have to retrieve parent tree attributes to find out which tree we must use
                             let treeId;
                             if (typeof ctx.treeId === 'undefined') {
-                                const attribute = info.path.prev.prev.prev.key;
+                                const attribute = info.path.prev.prev.key;
                                 const attributeProps = await attributeDomain.getAttributeProperties(attribute);
                                 treeId = attributeProps.linked_tree;
                             } else {
@@ -143,7 +143,7 @@ export default function(
                             // we have to retrieve parent tree attributes to find out which tree we must use
                             let treeId;
                             if (typeof ctx.treeId === 'undefined') {
-                                const attribute = info.path.prev.prev.prev.key;
+                                const attribute = info.path.prev.prev.key;
                                 const attributeProps = await attributeDomain.getAttributeProperties(attribute);
                                 treeId = attributeProps.linked_tree;
                             } else {
