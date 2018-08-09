@@ -1,8 +1,8 @@
 import {AwilixContainer} from 'awilix';
-import {IAttributeDomain} from 'domain/attributeDomain';
-import {ILibraryDomain} from 'domain/libraryDomain';
-import {IRecordDomain} from 'domain/recordDomain';
-import {IValueDomain} from 'domain/valueDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreApp {

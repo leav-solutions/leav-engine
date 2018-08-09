@@ -1,5 +1,5 @@
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
-import {IAttributeDomain} from 'domain/attributeDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IAttribute, AttributeTypes, AttributeFormats} from '../../_types/attribute';
 
 export interface ICoreAttributeApp {

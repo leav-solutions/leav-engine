@@ -1,11 +1,11 @@
 import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from '../attributeTypesRepo';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 import {IValue} from '../../_types/value';
-import {IAttribute} from '_types/attribute';
+import {IAttribute} from '../../_types/attribute';
 import {aql} from 'arangojs';
 import {IDbUtils} from '../db/dbUtils';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {ITreeRepo} from '../treeRepo';
+import {ITreeRepo} from '../tree/treeRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 

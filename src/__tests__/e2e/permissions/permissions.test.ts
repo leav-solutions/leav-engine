@@ -1,5 +1,5 @@
 import {makeGraphQlCall} from '../e2eUtils';
-import {responsePathAsArray} from '../../../../node_modules/@types/graphql';
+import {responsePathAsArray} from 'graphql';
 
 describe('Permissions', () => {
     const permTreeName = 'perm_tree';

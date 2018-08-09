@@ -1,11 +1,11 @@
 import {IDbService} from '../db/dbService';
-import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attributeRepo';
-import {IAttributeTypeRepo} from '../attributeTypesRepo';
-import {IValue} from '_types/value';
-import {IAttribute} from '_types/attribute';
+import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IValue} from '../../_types/value';
+import {IAttribute} from '../../_types/attribute';
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {LIB_ATTRIB_COLLECTION_NAME} from '../libraryRepo';
+import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 
 export default function(dbService: IDbService | any): IAttributeTypeRepo {
     async function _saveValue(

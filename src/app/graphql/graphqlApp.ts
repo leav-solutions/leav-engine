@@ -6,8 +6,8 @@ import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
 import * as uuid from 'uuid';
 import * as winston from 'winston';
-import {IQueryInfos} from '_types/queryInfos';
-import {IQueryField} from '_types/record';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {IQueryField} from '../../_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 

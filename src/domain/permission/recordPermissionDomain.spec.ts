@@ -1,9 +1,9 @@
-import {ITreeRepo} from 'infra/treeRepo';
-import {IValueRepo} from 'infra/valueRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
 import {RecordPermissions} from '../../_types/permissions';
-import {IAttributeDomain} from '../attributeDomain';
-import {ILibraryDomain} from '../libraryDomain';
-import {IPermissionDomain} from '../permissionDomain';
+import {IAttributeDomain} from '../attribute/attributeDomain';
+import {ILibraryDomain} from '../library/libraryDomain';
+import {IPermissionDomain} from './permissionDomain';
 import recordPermissionDomain from './recordPermissionDomain';
 
 describe('recordPermissionDomain', () => {

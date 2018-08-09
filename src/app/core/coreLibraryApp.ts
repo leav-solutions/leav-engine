@@ -1,10 +1,10 @@
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
-import {ILibraryDomain} from 'domain/libraryDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
-import {ILibrary} from '_types/library';
-import {IRecord} from '_types/record';
+import {ILibrary} from '../../_types/library';
+import {IRecord} from '../../_types/record';
 import {ICoreAttributeApp} from './coreAttributeApp';
-import {IRecordDomain} from 'domain/recordDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;

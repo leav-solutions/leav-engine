@@ -1,6 +1,6 @@
 import {description} from 'joi';
 import {IAttribute} from './attribute';
-import libraryDomain from 'domain/libraryDomain';
+import libraryDomain from 'domain/library/libraryDomain';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',

@@ -1,4 +1,4 @@
-import {RecordPermissions} from '../_types/permissions';
+import {RecordPermissions} from '_types/permissions';
 
 export default class PermissionError extends Error {
     public action: RecordPermissions;

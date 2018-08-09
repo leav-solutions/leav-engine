@@ -1,4 +1,4 @@
-import {IValue} from '_types/value';
+import {IValue} from '../../_types/value';
 import {Database} from 'arangojs';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';

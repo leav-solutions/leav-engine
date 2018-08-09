@@ -1,6 +1,6 @@
-import {IPermissionDomain} from 'domain/permissionDomain';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IUtils} from 'utils/utils';
-import {IPermission} from '_types/permissions';
+import {IPermission} from '../../_types/permissions';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICorePermissionApp {

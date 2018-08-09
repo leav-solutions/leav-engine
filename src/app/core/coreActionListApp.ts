@@ -1,5 +1,5 @@
-import {ActionsListIOTypes, ActionsListEvents} from '../../_types/actionsList';
-import {IActionsListDomain} from 'domain/actionsListDomain';
+import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 
 export interface ICoreAttributeApp {

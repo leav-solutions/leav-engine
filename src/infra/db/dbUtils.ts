@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import {IDbService} from 'infra/db/dbService';
+import {IDbService} from './dbService';
 import * as winston from 'winston';
 import {AwilixContainer, asFunction} from 'awilix';
 

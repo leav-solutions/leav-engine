@@ -1,7 +1,7 @@
 import {Database} from 'arangojs';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
-import {ITreeRepo} from '../treeRepo';
+import {ITreeRepo} from '../tree/treeRepo';
 import attributeTreeRepo from './attributeTreeRepo';
 
 const mockAttrTreeRepo: Mockify<ITreeRepo> = {

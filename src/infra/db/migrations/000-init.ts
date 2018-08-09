@@ -1,6 +1,6 @@
-import {IAttributeRepo} from 'infra/attributeRepo';
-import {IMigration} from 'infra/db/dbUtils';
-import {ILibraryRepo} from 'infra/libraryRepo';
+import {IAttributeRepo} from '../../attribute/attributeRepo';
+import {IMigration} from '../dbUtils';
+import {ILibraryRepo} from '../../library/libraryRepo';
 import * as moment from 'moment';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {IDbService, collectionTypes} from '../dbService';
@@ -8,7 +8,7 @@ import {IDbService, collectionTypes} from '../dbService';
 export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attributeRepo: IAttributeRepo): IMigration {
     return {
         async run() {
-            if (!await dbService.collectionExists('core_attributes')) {
+            if (!(await dbService.collectionExists('core_attributes'))) {
                 await dbService.createCollection('core_attributes');
 
                 await attributeRepo.createAttribute({
@@ -66,11 +66,11 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                 });
             }
 
-            if (!await dbService.collectionExists('core_edge_libraries_attributes')) {
+            if (!(await dbService.collectionExists('core_edge_libraries_attributes'))) {
                 await dbService.createCollection('core_edge_libraries_attributes', collectionTypes.EDGE);
             }
 
-            if (!await dbService.collectionExists('core_libraries')) {
+            if (!(await dbService.collectionExists('core_libraries'))) {
                 await dbService.createCollection('core_libraries');
 
                 await libraryRepo.createLibrary({
@@ -90,11 +90,11 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                 );
             }
 
-            if (!await dbService.collectionExists('core_values')) {
+            if (!(await dbService.collectionExists('core_values'))) {
                 await dbService.createCollection('core_values');
             }
 
-            if (!await dbService.collectionExists('core_edge_values_links')) {
+            if (!(await dbService.collectionExists('core_edge_values_links'))) {
                 await dbService.createCollection('core_edge_values_links', collectionTypes.EDGE);
             }
 

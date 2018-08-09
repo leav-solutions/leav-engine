@@ -1,5 +1,5 @@
 import {IAttribute} from './attribute';
-import {IAttributeTypeRepo} from 'infra/attributeTypesRepo';
+import {IAttributeTypeRepo} from 'infra/attributeTypes/attributeTypesRepo';
 
 export interface IRecord {
     id?: number;

@@ -1,7 +1,7 @@
 import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from '../attributeTypesRepo';
-import {IValue} from '_types/value';
-import {IAttribute} from '_types/attribute';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IValue} from '../../_types/value';
+import {IAttribute} from '../../_types/attribute';
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
 

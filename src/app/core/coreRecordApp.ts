@@ -1,6 +1,6 @@
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
-import {IRecord} from '_types/record';
-import {IRecordDomain} from 'domain/recordDomain';
+import {IRecord} from '../../_types/record';
+import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 
 export interface ICoreRecordApp {

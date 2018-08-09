@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import {aql} from '../../../../node_modules/arangojs';
+import {aql} from 'arangojs';
 import {AttributeTypes} from '../../../_types/attribute';
 import {collectionTypes, IDbService} from '../dbService';
 import {IMigration} from '../dbUtils';

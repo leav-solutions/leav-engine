@@ -1,5 +1,5 @@
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
-import {IValueDomain} from 'domain/valueDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {IValue} from '_types/value';
 
 export interface ICoreValueApp {

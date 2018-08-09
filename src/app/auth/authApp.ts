@@ -1,8 +1,8 @@
 import {IRecord} from '_types/record';
 import * as bcrypt from 'bcrypt';
 import {badData, unauthorized} from 'boom';
-import {IRecordDomain} from 'domain/recordDomain';
-import {IValueDomain} from 'domain/valueDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {Server} from 'hapi';
 import * as jwt from 'jsonwebtoken';
 import * as winston from 'winston';

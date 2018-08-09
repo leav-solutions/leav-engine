@@ -1,7 +1,7 @@
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
-import {IAttributeTypeRepo} from '../attributeTypesRepo';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {

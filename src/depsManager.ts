@@ -4,11 +4,9 @@ import {
     AwilixContainer,
     createContainer,
     InjectionMode,
-    ModuleDescriptor,
-    Lifetime,
-    listModules
+    listModules,
+    ModuleDescriptor
 } from 'awilix';
-import * as path from 'path';
 import {config} from './config';
 
 export async function init(): Promise<AwilixContainer> {

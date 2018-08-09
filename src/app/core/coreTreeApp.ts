@@ -1,9 +1,8 @@
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
-import {ITreeDomain} from 'domain/treeDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {ITree, ITreeElement} from '_types/tree';
-import {GraphQLScalarType} from 'graphql';
-import {IAttributeDomain} from 'domain/attributeDomain';
-import {IRecordDomain} from 'domain/recordDomain';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;

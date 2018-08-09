@@ -1,10 +1,10 @@
-import {ITreeRepo} from 'infra/treeRepo';
-import {IValueRepo} from 'infra/valueRepo';
-import {ITreeNode} from '_types/tree';
+import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
+import {ITreeNode} from '../../_types/tree';
 import {PermissionsRelations, PermissionTypes} from '../../_types/permissions';
-import {IAttributeDomain} from '../attributeDomain';
-import {ILibraryDomain} from '../libraryDomain';
-import {IPermissionDomain} from '../permissionDomain';
+import {IAttributeDomain} from '../attribute/attributeDomain';
+import {ILibraryDomain} from '../library/libraryDomain';
+import {IPermissionDomain} from './permissionDomain';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(action: string, userId: number, recordLibrary: string, recordId: number): Promise<boolean>;
