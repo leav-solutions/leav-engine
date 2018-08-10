@@ -1,6 +1,6 @@
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IUtils} from 'utils/utils';
-import {IPermission} from '../../_types/permissions';
+import {IPermission, RecordPermissions, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICorePermissionApp {
@@ -29,18 +29,15 @@ export default function(
             const baseSchema = {
                 typeDefs: `
                     enum PermissionsRelation {
-                        AND
-                        OR
+                        ${Object.keys(PermissionsRelations).join(' ')}
                     }
 
                     enum PermissionTypes {
-                        RECORD
+                        ${Object.keys(PermissionTypes).join(' ')}
                     }
 
                     enum RecordPermisisons {
-                        ACCESS
-                        EDIT
-                        DELETE
+                        ${Object.keys(RecordPermissions).join(' ')}
                     }
 
                     type PermissionAction {
