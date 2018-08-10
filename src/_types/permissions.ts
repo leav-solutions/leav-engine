@@ -68,5 +68,5 @@ export interface IPermission {
     /**
      * What element on permissions tree is concerned by this permission
      */
-    permissionTreeTarget?: IPermissionsTreeTarget | string;
+    permissionTreeTarget?: IPermissionsTreeTarget;
 }

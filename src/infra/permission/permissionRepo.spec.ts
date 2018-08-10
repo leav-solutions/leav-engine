@@ -9,7 +9,7 @@ describe('PermissionRepo', () => {
             const permData: IPermission = {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                usersGroup: 'users/12345',
+                usersGroup: '12345',
                 actions: {
                     [RecordPermissions.ACCESS]: true,
                     [RecordPermissions.EDIT]: false,

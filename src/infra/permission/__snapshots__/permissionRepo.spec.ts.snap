@@ -16,10 +16,9 @@ Object {
   "@value0": "core_permissions",
   "value1": "record",
   "value2": "test_lib",
-  "value3": 12345,
+  "value3": "users_groups/12345",
   "value4": Object {
-    "id": "123",
-    "library": "category",
+    "id": "category/123",
     "tree": "categories",
   },
 }
@@ -41,12 +40,11 @@ Object {
   "value0": Object {
     "applyTo": "test_lib",
     "permissionTreeTarget": Object {
-      "id": 123445,
-      "library": "test_lib",
+      "id": "test_lib/123445",
       "tree": "test_tree",
     },
     "type": "record",
-    "usersGroup": "users/12345",
+    "usersGroup": "users_groups/12345",
   },
   "value1": Object {
     "actions": Object {
@@ -56,12 +54,11 @@ Object {
     },
     "applyTo": "test_lib",
     "permissionTreeTarget": Object {
-      "id": 123445,
-      "library": "test_lib",
+      "id": "test_lib/123445",
       "tree": "test_tree",
     },
     "type": "record",
-    "usersGroup": "users/12345",
+    "usersGroup": "users_groups/12345",
   },
 }
 `;
