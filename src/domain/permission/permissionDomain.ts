@@ -5,6 +5,7 @@ export interface IPermissionDomain {
     savePermission(permData: IPermission): Promise<IPermission>;
     getSimplePermission(
         type: PermissionTypes,
+        applyTo: string,
         action: string,
         usersGroupId: number,
         permissionTreeTarget?: IPermissionsTreeTarget
@@ -19,11 +20,12 @@ export default function(permissionRepo: IPermissionRepo, config: any = null): IP
         },
         async getSimplePermission(
             type: PermissionTypes,
+            applyTo: string,
             action: string,
             usersGroupId: number,
             permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<boolean | null> {
-            const perms = await permissionRepo.getPermissions(type, usersGroupId, permissionTreeTarget);
+            const perms = await permissionRepo.getPermissions(type, applyTo, usersGroupId, permissionTreeTarget);
 
             if (perms === null) {
                 return null;

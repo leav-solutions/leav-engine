@@ -74,6 +74,7 @@ export default function(
 
                     type Permission {
                         type: PermissionTypes,
+                        applyTo: ID,
                         usersGroup: ID,
                         actions: [PermissionAction],
                         permissionTreeTarget: PermissionsTreeTarget
@@ -81,6 +82,7 @@ export default function(
 
                     input PermissionInput {
                         type: PermissionTypes!,
+                        applyTo: ID,
                         usersGroup: ID!,
                         actions: [PermissionActionInput]!,
                         permissionTreeTarget: PermissionsTreeTargetInput
@@ -89,6 +91,7 @@ export default function(
                     extend type Query {
                         permission(
                             type: PermissionTypes!,
+                            applyTo: ID,
                             action: RecordPermisisons!,
                             usersGroup: ID!,
                             permissionTreeTarget: PermissionsTreeTargetInput
@@ -101,8 +104,14 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async permission(_, {type, action, usersGroup, permissionTreeTarget}) {
-                            return permissionDomain.getSimplePermission(type, action, usersGroup, permissionTreeTarget);
+                        async permission(_, {type, applyTo, action, usersGroup, permissionTreeTarget}) {
+                            return permissionDomain.getSimplePermission(
+                                type,
+                                applyTo,
+                                action,
+                                usersGroup,
+                                permissionTreeTarget
+                            );
                         }
                     },
                     Mutation: {

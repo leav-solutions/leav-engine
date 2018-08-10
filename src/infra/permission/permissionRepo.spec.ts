@@ -8,6 +8,7 @@ describe('PermissionRepo', () => {
         test('Should save permission', async () => {
             const permData: IPermission = {
                 type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
                 usersGroup: 'users/12345',
                 actions: {
                     [RecordPermissions.ACCESS]: true,
@@ -58,13 +59,14 @@ describe('PermissionRepo', () => {
                             tree: 'categories'
                         },
                         type: 'RECORD',
+                        applyTo: 'test_lib',
                         usersGroup: '12345'
                     }
                 ])
             };
             const permRepo = permissionRepo(mockDbServ);
 
-            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 12345, {
+            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 'test_lib', 12345, {
                 id: '123',
                 library: 'category',
                 tree: 'categories'
@@ -81,7 +83,7 @@ describe('PermissionRepo', () => {
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             const permRepo = permissionRepo(mockDbServ);
 
-            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 12345, {
+            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 'test_lib', 12345, {
                 id: '123',
                 library: 'category',
                 tree: 'categories'

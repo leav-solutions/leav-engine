@@ -45,7 +45,7 @@ export default function(
             });
 
             for (const treeElem of permTreePath.slice().reverse()) {
-                const perm = await _getTreeElemPermission(action, treeElem, permTreeId, userGroupsPaths);
+                const perm = await _getTreeElemPermission(action, recordLibrary, treeElem, permTreeId, userGroupsPaths);
                 if (perm !== null) {
                     return perm;
                 }
@@ -68,6 +68,7 @@ export default function(
      */
     async function _getTreeElemPermission(
         action: string,
+        applyTo: string,
         treeElem: ITreeNode,
         permTreeId: string,
         userGroupsPaths: ITreeNode[][]
@@ -77,6 +78,7 @@ export default function(
                 for (const group of groupPath.slice().reverse()) {
                     const perm = await permissionDomain.getSimplePermission(
                         PermissionTypes.RECORD,
+                        applyTo,
                         action,
                         group.record.id,
                         {

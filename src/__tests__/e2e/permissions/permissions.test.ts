@@ -129,6 +129,7 @@ describe('Permissions', () => {
             savePermission(
                 permission: {
                     type: RECORD,
+                    applyTo: "${testLibId}",
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
@@ -139,6 +140,7 @@ describe('Permissions', () => {
                 }
             ) {
                 type
+                applyTo
                 usersGroup
                 permissionTreeTarget {
                     tree
@@ -157,6 +159,7 @@ describe('Permissions', () => {
         const res = await makeGraphQlCall(`{
             permission(
                 type: RECORD,
+                applyTo: "${testLibId}",
                 usersGroup: "${allUsersTreeElemId}",
                 permissionTreeTarget: {tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"},
                 action: ACCESS

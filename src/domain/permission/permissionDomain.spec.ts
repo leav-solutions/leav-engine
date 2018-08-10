@@ -47,6 +47,7 @@ describe('PermissionDomain', () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {
                 getPermissions: global.__mockPromise({
                     type: PermissionTypes.RECORD,
+                    applyTo: 'test_lib',
                     usersGroup: '12345',
                     actions: {
                         [RecordPermissions.ACCESS]: true,
@@ -61,6 +62,7 @@ describe('PermissionDomain', () => {
 
             const permAccess = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
+                'test_lib',
                 RecordPermissions.ACCESS,
                 12345,
                 {
@@ -72,6 +74,7 @@ describe('PermissionDomain', () => {
 
             const permEdit = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
+                'test_lib',
                 RecordPermissions.EDIT,
                 12345,
                 {
@@ -83,6 +86,7 @@ describe('PermissionDomain', () => {
 
             const permDelete = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
+                'test_lib',
                 RecordPermissions.DELETE,
                 12345,
                 {
@@ -113,6 +117,7 @@ describe('PermissionDomain', () => {
 
             const permEdit = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
+                'test_lib',
                 RecordPermissions.EDIT,
                 12345,
                 {
