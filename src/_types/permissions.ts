@@ -4,6 +4,7 @@ export enum PermissionTypes {
 
 export enum RecordPermissions {
     ACCESS = 'access',
+    CREATE = 'create',
     EDIT = 'edit',
     DELETE = 'delete'
 }
