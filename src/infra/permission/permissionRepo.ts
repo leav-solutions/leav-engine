@@ -8,7 +8,7 @@ export interface IPermissionRepo {
     getPermissions(
         type: PermissionTypes,
         usersGroupId: number,
-        target?: IPermissionsTreeTarget
+        permissionTreeTarget?: IPermissionsTreeTarget
     ): Promise<IPermission | null>;
 }
 
@@ -22,7 +22,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
             const searchObj = {
                 type: permData.type,
                 usersGroup: permData.usersGroup,
-                target: permData.target
+                permissionTreeTarget: permData.permissionTreeTarget
             };
 
             const res = await dbService.execute(aql`
@@ -38,14 +38,14 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
         async getPermissions(
             type: PermissionTypes,
             usersGroupId: number,
-            target: IPermissionsTreeTarget = null
+            permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<IPermission | null> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
             const query = aql`
                 FOR p IN ${col}
                 FILTER p.type == ${type}
                     AND p.usersGroup == ${usersGroupId}
-                    AND p.target == ${target}
+                    AND p.permissionTreeTarget == ${permissionTreeTarget}
                 RETURN p
             `;
 

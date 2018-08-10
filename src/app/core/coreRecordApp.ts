@@ -22,7 +22,6 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                         createRecord(library: ID): Record
                         deleteRecord(library: ID, id: ID): Record
                     }
-
                 `,
                 resolvers: {
                     Record: {

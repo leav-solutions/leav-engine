@@ -14,7 +14,7 @@ export enum PermissionsRelations {
 }
 
 export interface ITreePermissionsConf {
-    trees: [string];
+    permissionTreeAttributes: [string];
     relation: PermissionsRelations;
 }
 
@@ -28,5 +28,5 @@ export interface IPermission {
     type: PermissionTypes;
     usersGroup: string;
     actions: {[name: string]: boolean | null};
-    target?: IPermissionsTreeTarget | string;
+    permissionTreeTarget?: IPermissionsTreeTarget | string;
 }

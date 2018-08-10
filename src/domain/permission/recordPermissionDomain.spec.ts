@@ -12,7 +12,7 @@ describe('recordPermissionDomain', () => {
             system: false,
             permissionsConf: {
                 relation: 'AND',
-                trees: ['category']
+                permissionTreeAttributes: ['category']
             }
         };
 
@@ -125,8 +125,8 @@ describe('recordPermissionDomain', () => {
 
         const defaultPerm = false;
         const mockPermDomain: Mockify<IPermissionDomain> = {
-            getSimplePermission: jest.fn().mockImplementation((type, action, usersGroup, target) => {
-                if (usersGroup === 1 && target.id === 'A') {
+            getSimplePermission: jest.fn().mockImplementation((type, action, usersGroup, permissionTreeTarget) => {
+                if (usersGroup === 1 && permissionTreeTarget.id === 'A') {
                     return Promise.resolve(true);
                 } else {
                     return Promise.resolve(null);
@@ -138,7 +138,7 @@ describe('recordPermissionDomain', () => {
             system: false,
             permissionsConf: {
                 relation: 'and',
-                trees: ['category', 'status']
+                permissionTreeAttributes: ['category', 'status']
             }
         };
         const mockLibMultipleDomain: Mockify<ILibraryDomain> = {
@@ -266,10 +266,18 @@ describe('recordPermissionDomain', () => {
         };
 
         const mockPermMultipleDomain: Mockify<IPermissionDomain> = {
-            getSimplePermission: jest.fn().mockImplementation((type, action, usersGroup, target) => {
-                if (usersGroup === 1 && target.library === 'category' && target.id === 'A') {
+            getSimplePermission: jest.fn().mockImplementation((type, action, usersGroup, permissionTreeTarget) => {
+                if (
+                    usersGroup === 1 &&
+                    permissionTreeTarget.library === 'category' &&
+                    permissionTreeTarget.id === 'A'
+                ) {
                     return Promise.resolve(true);
-                } else if (usersGroup === 1 && target.library === 'status' && target.id === 'AA') {
+                } else if (
+                    usersGroup === 1 &&
+                    permissionTreeTarget.library === 'status' &&
+                    permissionTreeTarget.id === 'AA'
+                ) {
                     return Promise.resolve(false);
                 } else {
                     return Promise.resolve(null);
@@ -390,7 +398,7 @@ describe('recordPermissionDomain', () => {
                 system: false,
                 permissionsConf: {
                     relation: 'or',
-                    trees: ['category', 'status']
+                    permissionTreeAttributes: ['category', 'status']
                 }
             };
             const mockLibMultipleOrDomain = {
@@ -535,10 +543,18 @@ describe('recordPermissionDomain', () => {
 
             const mockPermMultiGroupDomain: Mockify<IPermissionDomain> = {
                 ...mockPermDomain,
-                getSimplePermission: jest.fn().mockImplementation((type, action, usersGroup, target) => {
-                    if (usersGroup === 1 && target.library === 'category' && target.id === 'A') {
+                getSimplePermission: jest.fn().mockImplementation((type, action, usersGroup, permissionTreeTarget) => {
+                    if (
+                        usersGroup === 1 &&
+                        permissionTreeTarget.library === 'category' &&
+                        permissionTreeTarget.id === 'A'
+                    ) {
                         return Promise.resolve(true);
-                    } else if (usersGroup === 5 && target.library === 'category' && target.id === 'B') {
+                    } else if (
+                        usersGroup === 5 &&
+                        permissionTreeTarget.library === 'category' &&
+                        permissionTreeTarget.id === 'B'
+                    ) {
                         return Promise.resolve(false);
                     } else {
                         return Promise.resolve(null);

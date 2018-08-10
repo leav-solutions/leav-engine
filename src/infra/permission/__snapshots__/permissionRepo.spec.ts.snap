@@ -5,7 +5,7 @@ exports[`PermissionRepo GetPermissions Should return a permission 1`] = `
                 FOR p IN @@value0
                 FILTER p.type == @value1
                     AND p.usersGroup == @value2
-                    AND p.target == @value3
+                    AND p.permissionTreeTarget == @value3
                 RETURN p
             "
 `;
@@ -37,7 +37,11 @@ exports[`PermissionRepo SavePermission Should save permission 2`] = `
 Object {
   "@value2": "core_permissions",
   "value0": Object {
-    "target": "test_lib/12345",
+    "permissionTreeTarget": Object {
+      "id": 123445,
+      "library": "test_lib",
+      "tree": "test_tree",
+    },
     "type": "record",
     "usersGroup": "users/12345",
   },
@@ -47,7 +51,11 @@ Object {
       "delete": false,
       "edit": false,
     },
-    "target": "test_lib/12345",
+    "permissionTreeTarget": Object {
+      "id": 123445,
+      "library": "test_lib",
+      "tree": "test_tree",
+    },
     "type": "record",
     "usersGroup": "users/12345",
   },

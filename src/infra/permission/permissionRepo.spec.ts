@@ -1,4 +1,4 @@
-import {RecordPermissions, PermissionTypes} from '../../_types/permissions';
+import {RecordPermissions, PermissionTypes, IPermission} from '../../_types/permissions';
 import permissionRepo from './permissionRepo';
 import {IDbUtils} from '../db/dbUtils';
 import {Database} from 'arangojs';
@@ -6,7 +6,7 @@ import {Database} from 'arangojs';
 describe('PermissionRepo', () => {
     describe('SavePermission', () => {
         test('Should save permission', async () => {
-            const permData = {
+            const permData: IPermission = {
                 type: PermissionTypes.RECORD,
                 usersGroup: 'users/12345',
                 actions: {
@@ -14,7 +14,11 @@ describe('PermissionRepo', () => {
                     [RecordPermissions.EDIT]: false,
                     [RecordPermissions.DELETE]: false
                 },
-                target: 'test_lib/12345'
+                permissionTreeTarget: {
+                    id: 123445,
+                    library: 'test_lib',
+                    tree: 'test_tree'
+                }
             };
 
             const mockDbServ = {
@@ -48,7 +52,7 @@ describe('PermissionRepo', () => {
                             ACCESS: true,
                             EDIT: true
                         },
-                        target: {
+                        permissionTreeTarget: {
                             id: '123',
                             library: 'category',
                             tree: 'categories'

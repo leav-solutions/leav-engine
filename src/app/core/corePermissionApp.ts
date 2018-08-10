@@ -54,12 +54,12 @@ export default function(
                     }
 
                     type TreePermissionsConf {
-                        trees: [ID],
+                        permissionTreeAttributes: [ID],
                         relation: PermissionsRelation
                     }
 
                     input TreePermissionsConfInput {
-                        trees: [ID]!,
+                        permissionTreeAttributes: [ID]!,
                         relation: PermissionsRelation!
                     }
 
@@ -79,14 +79,14 @@ export default function(
                         type: PermissionTypes,
                         usersGroup: ID,
                         actions: [PermissionAction],
-                        target: PermissionsTreeTarget
+                        permissionTreeTarget: PermissionsTreeTarget
                     }
 
                     input PermissionInput {
                         type: PermissionTypes!,
                         usersGroup: ID!,
                         actions: [PermissionActionInput]!,
-                        target: PermissionsTreeTargetInput
+                        permissionTreeTarget: PermissionsTreeTargetInput
                     }
 
                     extend type Query {
@@ -94,7 +94,7 @@ export default function(
                             type: PermissionTypes!,
                             action: RecordPermisisons!,
                             usersGroup: ID!,
-                            target: PermissionsTreeTargetInput
+                            permissionTreeTarget: PermissionsTreeTargetInput
                         ): Boolean
                     }
 
@@ -104,8 +104,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async permission(_, {type, action, usersGroup, target}) {
-                            return permissionDomain.getSimplePermission(type, action, usersGroup, target);
+                        async permission(_, {type, action, usersGroup, permissionTreeTarget}) {
+                            return permissionDomain.getSimplePermission(type, action, usersGroup, permissionTreeTarget);
                         }
                     },
                     Mutation: {

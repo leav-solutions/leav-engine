@@ -141,7 +141,7 @@ export default function(
             );
 
             const treePerms = await Promise.all(
-                lib.permissionsConf.trees.map(permTreeAttr =>
+                lib.permissionsConf.permissionTreeAttributes.map(permTreeAttr =>
                     _getPermTreePermission(action, recordLibrary, recordId, permTreeAttr, userGroupsPaths)
                 )
             );

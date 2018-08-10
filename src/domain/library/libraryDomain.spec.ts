@@ -167,7 +167,7 @@ describe('LibraryDomain', () => {
                 libDomain.saveLibrary({
                     id: 'test',
                     attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}],
-                    permissionsConf: {trees: ['unknownTree'], relation: PermissionsRelations.AND}
+                    permissionsConf: {permissionTreeAttributes: ['unknownTree'], relation: PermissionsRelations.AND}
                 })
             ).rejects.toThrow(ValidationError);
 

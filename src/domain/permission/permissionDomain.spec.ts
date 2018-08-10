@@ -13,7 +13,7 @@ describe('PermissionDomain', () => {
                     [RecordPermissions.EDIT]: false,
                     [RecordPermissions.DELETE]: false
                 },
-                target: 'test_lib/12345'
+                permissionTreeTarget: 'test_lib/12345'
             };
 
             const mockPermRepo: Mockify<IPermissionRepo> = {
@@ -30,7 +30,11 @@ describe('PermissionDomain', () => {
                     [RecordPermissions.EDIT]: false,
                     [RecordPermissions.DELETE]: false
                 },
-                target: 'test_lib/12345'
+                permissionTreeTarget: {
+                    library: 'test_lib',
+                    id: 12345,
+                    tree: 'test_tree'
+                }
             });
 
             expect(mockPermRepo.savePermission.mock.calls.length).toBe(1);
@@ -49,7 +53,7 @@ describe('PermissionDomain', () => {
                         [RecordPermissions.EDIT]: false,
                         [RecordPermissions.DELETE]: null
                     },
-                    target: 'test_lib/12345'
+                    permissionTreeTarget: 'test_lib/12345'
                 })
             };
 
@@ -101,7 +105,7 @@ describe('PermissionDomain', () => {
                     actions: {
                         [RecordPermissions.ACCESS]: true
                     },
-                    target: 'test_lib/12345'
+                    permissionTreeTarget: 'test_lib/12345'
                 })
             };
 

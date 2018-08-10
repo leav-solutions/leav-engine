@@ -49,7 +49,10 @@ export default function(
 
             if (libData.permissionsConf) {
                 const availableTrees = await treeRepo.getTrees();
-                const unknownTrees = difference(libData.permissionsConf.trees, availableTrees.map(tree => tree.id));
+                const unknownTrees = difference(
+                    libData.permissionsConf.permissionTreeAttributes,
+                    availableTrees.map(tree => tree.id)
+                );
 
                 if (unknownTrees.length) {
                     errors.permissionsConf = `Unknown trees: ${unknownTrees.join(', ')}`;

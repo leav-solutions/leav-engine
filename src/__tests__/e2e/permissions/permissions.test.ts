@@ -80,7 +80,7 @@ describe('Permissions', () => {
             saveLibrary(library: {
                 id: "${testLibId}",
                 attributes: ["${testLibAttrId}"],
-                permissionsConf: {trees: ["${testLibAttrId}"], relation: AND}
+                permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: AND}
             }) {
                 id
             }
@@ -110,10 +110,10 @@ describe('Permissions', () => {
             saveLibrary(library: {
                 id: "${permLibName}",
                 label: {fr: "Permissions Test lib"},
-                permissionsConf: {trees: ["${permTreeName}"], relation: AND}
+                permissionsConf: {permissionTreeAttributes: ["${permTreeName}"], relation: AND}
             }) {
                 permissionsConf {
-                    trees
+                    permissionTreeAttributes
                     relation
                 }
             }
@@ -130,7 +130,9 @@ describe('Permissions', () => {
                 permission: {
                     type: RECORD,
                     usersGroup: "${allUsersTreeElemId}",
-                    target: {tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"},
+                    permissionTreeTarget: {
+                        tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
+                    },
                     actions: [
                         {name: ACCESS, allowed: true}, {name: EDIT, allowed: true}, {name: DELETE, allowed: false}
                     ]
@@ -138,7 +140,7 @@ describe('Permissions', () => {
             ) {
                 type
                 usersGroup
-                target {
+                permissionTreeTarget {
                     tree
                     library
                     id
@@ -156,7 +158,7 @@ describe('Permissions', () => {
             permission(
                 type: RECORD,
                 usersGroup: "${allUsersTreeElemId}",
-                target: {tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"},
+                permissionTreeTarget: {tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"},
                 action: ACCESS
             )
         }`);
@@ -170,10 +172,10 @@ describe('Permissions', () => {
         await makeGraphQlCall(`mutation {
             saveLibrary(library: {
                 id: "${testLibId}",
-                permissionsConf: {trees: ["${permTreeName}"], relation: AND}
+                permissionsConf: {permissionTreeAttributes: ["${permTreeName}"], relation: AND}
             }) {
                 permissionsConf {
-                    trees
+                    permissionTreeAttributes
                     relation
                 }
             }

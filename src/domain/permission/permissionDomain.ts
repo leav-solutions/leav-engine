@@ -7,7 +7,7 @@ export interface IPermissionDomain {
         type: PermissionTypes,
         action: string,
         usersGroupId: number,
-        target?: IPermissionsTreeTarget
+        permissionTreeTarget?: IPermissionsTreeTarget
     ): Promise<boolean | null>;
     getDefaultPermission(): boolean;
 }
@@ -21,9 +21,9 @@ export default function(permissionRepo: IPermissionRepo, config: any = null): IP
             type: PermissionTypes,
             action: string,
             usersGroupId: number,
-            target: IPermissionsTreeTarget = null
+            permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<boolean | null> {
-            const perms = await permissionRepo.getPermissions(type, usersGroupId, target);
+            const perms = await permissionRepo.getPermissions(type, usersGroupId, permissionTreeTarget);
 
             if (perms === null) {
                 return null;
