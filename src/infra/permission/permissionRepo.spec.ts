@@ -1,4 +1,4 @@
-import {RecordPermissions, PermissionTypes, IPermission} from '../../_types/permissions';
+import {RecordPermissionsActions, PermissionTypes, IPermission} from '../../_types/permissions';
 import permissionRepo from './permissionRepo';
 import {IDbUtils} from '../db/dbUtils';
 import {Database} from 'arangojs';
@@ -11,9 +11,9 @@ describe('PermissionRepo', () => {
                 applyTo: 'test_lib',
                 usersGroup: '12345',
                 actions: {
-                    [RecordPermissions.ACCESS]: true,
-                    [RecordPermissions.EDIT]: false,
-                    [RecordPermissions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS]: true,
+                    [RecordPermissionsActions.EDIT]: false,
+                    [RecordPermissionsActions.DELETE]: false
                 },
                 permissionTreeTarget: {
                     id: 123445,

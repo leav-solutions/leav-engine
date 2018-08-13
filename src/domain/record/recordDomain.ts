@@ -6,7 +6,7 @@ import {IQueryField, IRecord, IRecordFilterOption} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {RecordPermissions} from '../../_types/permissions';
+import {RecordPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -81,14 +81,14 @@ export default function(
         async updateRecord(library: string, recordData: IRecord, infos: IQueryInfos): Promise<IRecord> {
             // Check permission
             const canUpdate = await recordPermissionDomain.getRecordPermission(
-                RecordPermissions.DELETE,
+                RecordPermissionsActions.DELETE,
                 infos.userId,
                 recordData.library,
                 recordData.id
             );
 
             if (!canUpdate) {
-                throw new PermissionError(RecordPermissions.DELETE);
+                throw new PermissionError(RecordPermissionsActions.DELETE);
             }
 
             return recordRepo.updateRecord(library, recordData);
@@ -108,14 +108,14 @@ export default function(
 
             // Check permission
             const canDelete = await recordPermissionDomain.getRecordPermission(
-                RecordPermissions.DELETE,
+                RecordPermissionsActions.DELETE,
                 infos.userId,
                 library,
                 id
             );
 
             if (!canDelete) {
-                throw new PermissionError(RecordPermissions.DELETE);
+                throw new PermissionError(RecordPermissionsActions.DELETE);
             }
 
             return recordRepo.deleteRecord(library, id);

@@ -1,5 +1,5 @@
 import permissionDomain from './permissionDomain';
-import {PermissionTypes, RecordPermissions} from '../../_types/permissions';
+import {PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 
 describe('PermissionDomain', () => {
@@ -9,9 +9,9 @@ describe('PermissionDomain', () => {
                 type: PermissionTypes.RECORD,
                 userGroup: 'users/12345',
                 actions: {
-                    [RecordPermissions.ACCESS]: true,
-                    [RecordPermissions.EDIT]: false,
-                    [RecordPermissions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS]: true,
+                    [RecordPermissionsActions.EDIT]: false,
+                    [RecordPermissionsActions.DELETE]: false
                 },
                 permissionTreeTarget: 'test_lib/12345'
             };
@@ -26,9 +26,9 @@ describe('PermissionDomain', () => {
                 type: PermissionTypes.RECORD,
                 usersGroup: 'users/12345',
                 actions: {
-                    [RecordPermissions.ACCESS]: true,
-                    [RecordPermissions.EDIT]: false,
-                    [RecordPermissions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS]: true,
+                    [RecordPermissionsActions.EDIT]: false,
+                    [RecordPermissionsActions.DELETE]: false
                 },
                 permissionTreeTarget: {
                     library: 'test_lib',
@@ -50,9 +50,9 @@ describe('PermissionDomain', () => {
                     applyTo: 'test_lib',
                     usersGroup: '12345',
                     actions: {
-                        [RecordPermissions.ACCESS]: true,
-                        [RecordPermissions.EDIT]: false,
-                        [RecordPermissions.DELETE]: null
+                        [RecordPermissionsActions.ACCESS]: true,
+                        [RecordPermissionsActions.EDIT]: false,
+                        [RecordPermissionsActions.DELETE]: null
                     },
                     permissionTreeTarget: 'test_lib/12345'
                 })
@@ -63,7 +63,7 @@ describe('PermissionDomain', () => {
             const permAccess = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 'test_lib',
-                RecordPermissions.ACCESS,
+                RecordPermissionsActions.ACCESS,
                 12345,
                 {
                     id: '123',
@@ -75,7 +75,7 @@ describe('PermissionDomain', () => {
             const permEdit = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 'test_lib',
-                RecordPermissions.EDIT,
+                RecordPermissionsActions.EDIT,
                 12345,
                 {
                     id: '123',
@@ -87,7 +87,7 @@ describe('PermissionDomain', () => {
             const permDelete = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 'test_lib',
-                RecordPermissions.DELETE,
+                RecordPermissionsActions.DELETE,
                 12345,
                 {
                     id: '123',
@@ -107,7 +107,7 @@ describe('PermissionDomain', () => {
                     type: PermissionTypes.RECORD,
                     usersGroup: '12345',
                     actions: {
-                        [RecordPermissions.ACCESS]: true
+                        [RecordPermissionsActions.ACCESS]: true
                     },
                     permissionTreeTarget: 'test_lib/12345'
                 })
@@ -118,7 +118,7 @@ describe('PermissionDomain', () => {
             const permEdit = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
                 'test_lib',
-                RecordPermissions.EDIT,
+                RecordPermissionsActions.EDIT,
                 12345,
                 {
                     id: '123',

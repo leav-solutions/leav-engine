@@ -6,7 +6,7 @@ import {IValue} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
-import {RecordPermissions} from '../../_types/permissions';
+import {RecordPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
@@ -63,14 +63,14 @@ export default function(
 
             // Check permission
             const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
-                RecordPermissions.EDIT,
+                RecordPermissionsActions.EDIT,
                 infos.userId,
                 library,
                 recordId
             );
 
             if (!canUpdateRecord) {
-                throw new PermissionError(RecordPermissions.EDIT);
+                throw new PermissionError(RecordPermissionsActions.EDIT);
             }
 
             const attr = await attributeDomain.getAttributeProperties(attribute);
@@ -129,14 +129,14 @@ export default function(
 
             // Check permission
             const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
-                RecordPermissions.EDIT,
+                RecordPermissionsActions.EDIT,
                 infos.userId,
                 library,
                 recordId
             );
 
             if (!canUpdateRecord) {
-                throw new PermissionError(RecordPermissions.EDIT);
+                throw new PermissionError(RecordPermissionsActions.EDIT);
             }
 
             const attr = await attributeDomain.getAttributeProperties(attribute);

@@ -1,12 +1,12 @@
-import {IPermission, IPermissionsTreeTarget, PermissionTypes} from '../../_types/permissions';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IPermission, IPermissionsTreeTarget, PermissionsActions, PermissionTypes} from '../../_types/permissions';
 
 export interface IPermissionDomain {
     savePermission(permData: IPermission): Promise<IPermission>;
     getSimplePermission(
         type: PermissionTypes,
         applyTo: string,
-        action: string,
+        action: PermissionsActions,
         usersGroupId: number,
         permissionTreeTarget?: IPermissionsTreeTarget
     ): Promise<boolean | null>;
@@ -21,7 +21,7 @@ export default function(permissionRepo: IPermissionRepo, config: any = null): IP
         async getSimplePermission(
             type: PermissionTypes,
             applyTo: string,
-            action: string,
+            action: PermissionsActions,
             usersGroupId: number,
             permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<boolean | null> {

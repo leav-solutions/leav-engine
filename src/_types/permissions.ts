@@ -2,12 +2,21 @@ export enum PermissionTypes {
     RECORD = 'record'
 }
 
-export enum RecordPermissions {
+export enum RecordPermissionsActions {
     ACCESS = 'access',
     CREATE = 'create',
     EDIT = 'edit',
     DELETE = 'delete'
 }
+
+export enum AttributePermissionsActions {
+    ACCESS = 'access',
+    CREATE_VALUE = 'create_value',
+    EDIT_VALUE = 'edit_value',
+    DELETE_VALUE = 'delete_value'
+}
+
+export type PermissionsActions = RecordPermissionsActions | AttributePermissionsActions;
 
 export enum PermissionsRelations {
     AND = 'and',
@@ -18,7 +27,7 @@ export interface ITreePermissionsConf {
     /**
      * IDs of attributes used for permissions
      */
-    permissionTreeAttributes: [string];
+    permissionTreeAttributes: string[];
 
     /**
      * Relation between those trees when retrieving permission
