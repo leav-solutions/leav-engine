@@ -1,9 +1,9 @@
 import formatDateAction from './formatDateAction';
-import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 
 describe('formatDateAction', () => {
     const action = formatDateAction().action;
-    const attrText = {id: 'test_attr', format: AttributeFormats.DATE, type: AttributeTypes.SIMPLE};
+    const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('formatDate', async () => {
         expect(action(2119477320, {format: 'D/M/YY HH:mm'}, ctx)).toBe('1/3/37 00:42');

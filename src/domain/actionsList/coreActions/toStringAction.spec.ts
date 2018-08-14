@@ -1,9 +1,9 @@
 import toStringAction from './toStringAction';
-import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 
 describe('toStringAction', () => {
     const action = toStringAction().action;
-    const attrText = {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE};
+    const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('toString', async () => {
         expect(action('test', {}, ctx)).toBe('test');

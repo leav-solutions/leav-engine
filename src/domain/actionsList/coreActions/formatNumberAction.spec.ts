@@ -1,9 +1,9 @@
 import formatNumberAction from './formatNumberAction';
-import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 
 describe('formatNumberAction', () => {
     const action = formatNumberAction().action;
-    const attrText = {id: 'test_attr', format: AttributeFormats.DATE, type: AttributeTypes.SIMPLE};
+    const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('formatNumber', async () => {
         expect(

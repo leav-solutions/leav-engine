@@ -1,9 +1,9 @@
 import encryptAction from './encryptAction';
-import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 
 describe('encryptAction', () => {
     const action = encryptAction().action;
-    const attrText = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
+    const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('encrypt', async () => {
         const res = await action('MyPAssWd', {}, ctx);
