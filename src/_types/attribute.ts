@@ -1,5 +1,6 @@
 import {ISystemTranslation} from './systemTranslation';
 import {IActionsListConfig} from './actionsList';
+import {ITreePermissionsConf} from './permissions';
 
 export interface IAttribute {
     id: string;
@@ -11,6 +12,7 @@ export interface IAttribute {
     linked_tree?: string;
     embedded_fields?: IEmbeddedAttribute[];
     actions_list?: IActionsListConfig;
+    permissionsConf?: ITreePermissionsConf;
 }
 
 export interface IEmbeddedAttribute {
