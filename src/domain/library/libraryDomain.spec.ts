@@ -145,7 +145,7 @@ describe('LibraryDomain', () => {
             expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
         });
 
-        test('Should throw if unknown trees in permissions conf', async function() {
+        test('Should throw if unknown trees attributes in permissions conf', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([{id: 'test', system: false}]),
                 createLibrary: jest.fn(),
@@ -153,15 +153,7 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const mockTreeRepo: Mockify<ITreeRepo> = {
-                getTrees: global.__mockPromise([])
-            };
-
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo, mockAttrDomain as IAttributeDomain);
 
             await expect(
                 libDomain.saveLibrary({

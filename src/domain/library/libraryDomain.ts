@@ -1,8 +1,7 @@
 import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference} from 'lodash';
-import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
 import ValidationError from '../../errors/ValidationError';
+import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 
 export interface ILibraryDomain {
@@ -12,11 +11,7 @@ export interface ILibraryDomain {
     getLibraryProperties(id: string): Promise<ILibrary>;
 }
 
-export default function(
-    libraryRepo: ILibraryRepo,
-    attributeDomain: IAttributeDomain | null = null,
-    treeRepo: ITreeRepo | null = null
-): ILibraryDomain {
+export default function(libraryRepo: ILibraryRepo, attributeDomain: IAttributeDomain | null = null): ILibraryDomain {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
             let libs = await libraryRepo.getLibraries(filters);
@@ -48,14 +43,14 @@ export default function(
             const canSave = true;
 
             if (libData.permissionsConf) {
-                const availableTrees = await treeRepo.getTrees();
-                const unknownTrees = difference(
+                const availableTreeAttributes = await attributeDomain.getAttributes();
+                const unknownTreeAttributes = difference(
                     libData.permissionsConf.permissionTreeAttributes,
-                    availableTrees.map(tree => tree.id)
+                    availableTreeAttributes.map(treeAttr => treeAttr.id)
                 );
 
-                if (unknownTrees.length) {
-                    errors.permissionsConf = `Unknown trees: ${unknownTrees.join(', ')}`;
+                if (unknownTreeAttributes.length) {
+                    errors.permissionsConf = `Unknown tree attributes: ${unknownTreeAttributes.join(', ')}`;
                 }
             }
 
