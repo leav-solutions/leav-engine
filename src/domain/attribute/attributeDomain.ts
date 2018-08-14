@@ -127,6 +127,10 @@ export default function(
      * @param attrData
      */
     function _validateInputType(attrData: IAttribute): void {
+        if (!attrData.actions_list) {
+            return;
+        }
+
         const availableActions = actionsListDomain.getAvailableActions();
         const saveValueActions = attrData.actions_list[ActionsListEvents.SAVE_VALUE];
         const lastAction = saveValueActions.slice(-1)[0];
@@ -148,6 +152,10 @@ export default function(
      * @param attrData
      */
     function _validateRequiredActions(attrData: IAttribute): void {
+        if (!attrData.actions_list) {
+            return;
+        }
+
         const defaultActions = _getDefaultActionsList(attrData);
         const missingActions = [];
         for (const event of Object.keys(defaultActions)) {
@@ -189,7 +197,9 @@ export default function(
             attrToSave.actions_list =
                 !isExistingAttr && typeof attrToSave.actions_list === 'undefined'
                     ? _getDefaultActionsList(attrData)
-                    : attrToSave.actions_list;
+                    : typeof attrToSave.actions_list !== 'undefined'
+                        ? attrToSave.actions_list
+                        : null;
 
             // Check output type of last action
             _validateInputType(attrToSave);
