@@ -6,11 +6,12 @@ import {IValue} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
-import {RecordPermissionsActions} from '../../_types/permissions';
+import {RecordPermissionsActions, AttributePermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
+import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 
 export interface IValueDomain {
     getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]>;
@@ -30,7 +31,8 @@ export default function(
     valueRepo: IValueRepo = null,
     recordRepo: IRecordRepo = null,
     actionsListDomain: IActionsListDomain = null,
-    recordPermissionDomain: IRecordPermissionDomain = null
+    recordPermissionDomain: IRecordPermissionDomain = null,
+    attributePermissionDomain: IAttributePermissionDomain = null
 ): IValueDomain {
     return {
         async getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]> {
@@ -55,6 +57,8 @@ export default function(
         ): Promise<IValue> {
             // Get library
             const lib = await libraryDomain.getLibraries({id: library});
+            const attrData = await attributeDomain.getAttributeProperties(attribute);
+            const valueExists = value.id_value && attrData.type !== AttributeTypes.SIMPLE;
 
             // Check if exists and can delete
             if (!lib.length) {
@@ -73,11 +77,25 @@ export default function(
                 throw new PermissionError(RecordPermissionsActions.EDIT);
             }
 
-            const attr = await attributeDomain.getAttributeProperties(attribute);
+            const permToCheck = valueExists
+                ? AttributePermissionsActions.EDIT_VALUE
+                : AttributePermissionsActions.CREATE_VALUE;
+
+            const canSaveValue = await attributePermissionDomain.getAttributePermission(
+                permToCheck,
+                infos.userId,
+                attribute,
+                library,
+                recordId
+            );
+
+            if (!canSaveValue) {
+                throw new PermissionError(permToCheck);
+            }
 
             // Check if value ID actually exists
-            if (value.id_value && attr.type !== AttributeTypes.SIMPLE) {
-                const existingVal = await valueRepo.getValueById(library, recordId, attr, value);
+            if (valueExists) {
+                const existingVal = await valueRepo.getValueById(library, recordId, attrData, value);
 
                 if (existingVal === null) {
                     throw new ValidationError({id: 'Unknown value'});
@@ -86,9 +104,9 @@ export default function(
 
             // Execute actions list. Output value might be different from input value
             const actionsListRes =
-                !!attr.actions_list && !!attr.actions_list.saveValue
-                    ? await actionsListDomain.runActionsList(attr.actions_list.saveValue, value, {
-                          attribute: attr,
+                !!attrData.actions_list && !!attrData.actions_list.saveValue
+                    ? await actionsListDomain.runActionsList(attrData.actions_list.saveValue, value, {
+                          attribute: attrData,
                           recordId,
                           library
                       })
@@ -103,10 +121,9 @@ export default function(
                 valueToSave.created_at = moment().unix();
             }
 
-            const savedVal =
-                value.id_value && attr.type !== AttributeTypes.SIMPLE
-                    ? await valueRepo.updateValue(library, recordId, attr, valueToSave)
-                    : await valueRepo.createValue(library, recordId, attr, valueToSave);
+            const savedVal = valueExists
+                ? await valueRepo.updateValue(library, recordId, attrData, valueToSave)
+                : await valueRepo.createValue(library, recordId, attrData, valueToSave);
 
             const updatedRecord = await recordRepo.updateRecord(library, {id: recordId, modified_at: moment().unix()});
 
@@ -137,6 +154,18 @@ export default function(
 
             if (!canUpdateRecord) {
                 throw new PermissionError(RecordPermissionsActions.EDIT);
+            }
+
+            const canSaveValue = await attributePermissionDomain.getAttributePermission(
+                AttributePermissionsActions.DELETE_VALUE,
+                infos.userId,
+                attribute,
+                library,
+                recordId
+            );
+
+            if (!canSaveValue) {
+                throw new PermissionError(AttributePermissionsActions.DELETE_VALUE);
             }
 
             const attr = await attributeDomain.getAttributeProperties(attribute);

@@ -7,6 +7,7 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain from './valueDomain';
+import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 
 describe('ValueDomain', () => {
     const mockRecordRepo: Mockify<IRecordRepo> = {
@@ -19,6 +20,10 @@ describe('ValueDomain', () => {
 
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
         getRecordPermission: global.__mockPromise(true)
+    };
+
+    const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
+        getAttributePermission: global.__mockPromise(true)
     };
 
     const mockAttribute = {
@@ -51,7 +56,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 mockRecordRepo as IRecordRepo,
                 mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             const savedValue = await valDomain.saveValue(
@@ -94,7 +100,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 mockRecordRepo as IRecordRepo,
                 mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             const savedValue = await valDomain.saveValue(
@@ -146,7 +153,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 mockRecordRepo as IRecordRepo,
                 mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             const savedValue = await valDomain.saveValue(
@@ -190,7 +198,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 null,
                 null,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             await expect(
@@ -215,7 +224,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 null,
                 null,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             await expect(
@@ -240,7 +250,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 null,
                 null,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             await expect(
@@ -280,7 +291,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 mockRecRepo as IRecordRepo,
                 mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             const savedValue = await valDomain.saveValue(
@@ -321,7 +333,8 @@ describe('ValueDomain', () => {
                 mockValRepo as IValueRepo,
                 mockRecordRepo as IRecordRepo,
                 null,
-                mockRecordPermDomain as IRecordPermissionDomain
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain
             );
 
             const deletedValue = await valDomain.deleteValue(

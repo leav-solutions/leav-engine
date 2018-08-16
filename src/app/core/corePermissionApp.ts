@@ -1,6 +1,12 @@
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IUtils} from 'utils/utils';
-import {IPermission, RecordPermissionsActions, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
+import {
+    IPermission,
+    RecordPermissionsActions,
+    PermissionsRelations,
+    PermissionTypes,
+    AttributePermissionsActions
+} from '../../_types/permissions';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICorePermissionApp {
@@ -29,24 +35,25 @@ export default function(
             const baseSchema = {
                 typeDefs: `
                     enum PermissionsRelation {
-                        ${Object.keys(PermissionsRelations).join(' ')}
+                        ${Object.values(PermissionsRelations).join(' ')}
                     }
 
                     enum PermissionTypes {
-                        ${Object.keys(PermissionTypes).join(' ')}
+                        ${Object.values(PermissionTypes).join(' ')}
                     }
 
-                    enum RecordPermisisons {
-                        ${Object.keys(RecordPermissionsActions).join(' ')}
+                    enum PermissionsActions {
+                        ${Object.values(RecordPermissionsActions).join(' ')}
+                        ${Object.values(AttributePermissionsActions).join(' ')}
                     }
 
                     type PermissionAction {
-                        name: RecordPermisisons
+                        name: PermissionsActions
                         allowed: Boolean
                     }
 
                     input PermissionActionInput {
-                        name: RecordPermisisons!,
+                        name: PermissionsActions!,
                         allowed: Boolean!
                     }
 
@@ -92,7 +99,7 @@ export default function(
                         permission(
                             type: PermissionTypes!,
                             applyTo: ID,
-                            action: RecordPermisisons!,
+                            action: PermissionsActions!,
                             usersGroup: ID!,
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): Boolean
@@ -127,6 +134,16 @@ export default function(
                             const savedPerm = await permissionDomain.savePermission(formattedPerm);
 
                             return _formatPerm(savedPerm);
+                        }
+                    },
+                    PermissionsActions: {
+                        __resolveType(obj: IPermission) {
+                            const typesMapping = {
+                                [PermissionTypes.RECORD]: 'RecordPermisisons',
+                                [PermissionTypes.ATTRIBUTE]: 'AttributePermissions'
+                            };
+
+                            return typesMapping[obj.type];
                         }
                     }
                 }

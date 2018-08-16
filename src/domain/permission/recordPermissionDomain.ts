@@ -1,5 +1,5 @@
 import {IValueRepo} from 'infra/value/valueRepo';
-import {RecordPermissionsActions} from '../../_types/permissions';
+import {RecordPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from './permissionDomain';
@@ -36,12 +36,13 @@ export default function(
             );
 
             const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-                allVal[lib.permissionsConf.permissionTreeAttributes[i]] = treeVal;
+                allVal[lib.permissionsConf.permissionTreeAttributes[i]] = treeVal.map(v => v.value);
 
                 return allVal;
             }, {});
 
             const perm = await treePermissionDomain.getTreePermission(
+                PermissionTypes.RECORD,
                 action,
                 userId,
                 recordLibrary,

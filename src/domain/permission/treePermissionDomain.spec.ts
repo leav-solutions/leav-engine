@@ -1,4 +1,4 @@
-import {RecordPermissionsActions, PermissionsRelations} from '../../_types/permissions';
+import {RecordPermissionsActions, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
 import treePermissionDomain from './treePermissionDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -264,6 +264,7 @@ describe('TreePermissionDomain', () => {
             );
 
             const perm = await treePermDomain.getTreePermission(
+                PermissionTypes.ATTRIBUTE,
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',
@@ -299,6 +300,7 @@ describe('TreePermissionDomain', () => {
             );
 
             const perm = await treePermDomain.getTreePermission(
+                PermissionTypes.ATTRIBUTE,
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',
@@ -349,6 +351,7 @@ describe('TreePermissionDomain', () => {
             );
 
             const perm = await treePermDomain.getTreePermission(
+                PermissionTypes.ATTRIBUTE,
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',
@@ -370,6 +373,7 @@ describe('TreePermissionDomain', () => {
             );
 
             const perm = await treePermDomain.getTreePermission(
+                PermissionTypes.ATTRIBUTE,
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',
@@ -410,6 +414,7 @@ describe('TreePermissionDomain', () => {
             );
 
             const perm = await treePermDomain.getTreePermission(
+                PermissionTypes.ATTRIBUTE,
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',
@@ -588,6 +593,7 @@ describe('TreePermissionDomain', () => {
             );
 
             const perm = await treePermDomain.getTreePermission(
+                PermissionTypes.ATTRIBUTE,
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',

@@ -1,9 +1,9 @@
-import {RecordPermissionsActions} from '_types/permissions';
+import {PermissionsActions} from '_types/permissions';
 
 export default class PermissionError extends Error {
-    public action: RecordPermissionsActions;
+    public action: PermissionsActions;
 
-    constructor(action: RecordPermissionsActions, message: string = 'Action forbidden') {
+    constructor(action: PermissionsActions, message: string = 'Action forbidden') {
         super(message);
 
         this.action = action;

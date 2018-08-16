@@ -1,5 +1,6 @@
 export enum PermissionTypes {
-    RECORD = 'record'
+    RECORD = 'record',
+    ATTRIBUTE = 'attribute'
 }
 
 export enum RecordPermissionsActions {
@@ -10,7 +11,7 @@ export enum RecordPermissionsActions {
 }
 
 export enum AttributePermissionsActions {
-    ACCESS = 'access',
+    ACCESS_ATTRIBUTE = 'access_attribute',
     CREATE_VALUE = 'create_value',
     EDIT_VALUE = 'edit_value',
     DELETE_VALUE = 'delete_value'

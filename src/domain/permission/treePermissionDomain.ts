@@ -12,6 +12,7 @@ import {IPermissionDomain} from './permissionDomain';
 
 export interface ITreePermissionDomain {
     getTreePermission(
+        type: PermissionTypes,
         action: PermissionsActions,
         userGroupId: number,
         applyTo: string,
@@ -37,6 +38,7 @@ export default function(
      * @param userGroupsPaths
      */
     async function _getPermTreePermission(
+        type: PermissionTypes,
         action: PermissionsActions,
         applyTo: string,
         userGroupsPaths: ITreeNode[][],
@@ -50,7 +52,7 @@ export default function(
             });
 
             for (const treeElem of permTreePath.slice().reverse()) {
-                const perm = await _getTreeElemPermission(action, applyTo, treeElem, permTreeId, userGroupsPaths);
+                const perm = await _getTreeElemPermission(type, action, applyTo, treeElem, permTreeId, userGroupsPaths);
                 if (perm !== null) {
                     return perm;
                 }
@@ -72,6 +74,7 @@ export default function(
      * @param userGroupsPaths
      */
     async function _getTreeElemPermission(
+        type: PermissionTypes,
         action: PermissionsActions,
         applyTo: string,
         treeElem: ITreeNode,
@@ -81,17 +84,11 @@ export default function(
         const userPerms = await Promise.all(
             userGroupsPaths.map(async groupPath => {
                 for (const group of groupPath.slice().reverse()) {
-                    const perm = await permissionDomain.getSimplePermission(
-                        PermissionTypes.RECORD,
-                        applyTo,
-                        action,
-                        group.record.id,
-                        {
-                            id: treeElem.record.id,
-                            library: treeElem.record.library,
-                            tree: permTreeId
-                        }
-                    );
+                    const perm = await permissionDomain.getSimplePermission(type, applyTo, action, group.record.id, {
+                        id: treeElem.record.id,
+                        library: treeElem.record.library,
+                        tree: permTreeId
+                    });
 
                     if (perm !== null) {
                         return perm;
@@ -123,6 +120,7 @@ export default function(
 
     return {
         async getTreePermission(
+            type: PermissionTypes,
             action: PermissionsActions,
             userGroupId: number,
             applyTo: string,
@@ -150,6 +148,7 @@ export default function(
                 permissionsConf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties(permTreeAttr);
                     return _getPermTreePermission(
+                        type,
                         action,
                         applyTo,
                         userGroupsPaths,

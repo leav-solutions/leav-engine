@@ -1,5 +1,4 @@
 import {makeGraphQlCall} from '../e2eUtils';
-import {responsePathAsArray} from 'graphql';
 
 describe('Permissions', () => {
     const permTreeName = 'perm_tree';
@@ -8,16 +7,19 @@ describe('Permissions', () => {
     const userGroupAttrId = 'user_groups';
     const testLibId = 'test_lib_permission';
     const testLibAttrId = 'test_attr_permission';
+    const testPermAttrId = 'attr_perm_test';
 
     let permTreeElemId;
     let allUsersTreeElemId;
     let testLibRecordId;
 
     beforeAll(async () => {
+        // Create library to use in permissions tree
         await makeGraphQlCall(`mutation {
             saveLibrary(library: {id: "${permTreeLibName}", label: {fr: "Test lib"}}) { id }
         }`);
 
+        // Create permissions tree
         await makeGraphQlCall(`mutation {
             saveTree(
                 tree: {id: "${permTreeName}", label: {fr: "Permissions Test tree"}, libraries: ["${permTreeLibName}"]}
@@ -35,7 +37,7 @@ describe('Permissions', () => {
         permTreeElemId = res.data.data.createRecord.id;
 
         // Add element to permission tree
-        const resAddTree = await makeGraphQlCall(`mutation {
+        await makeGraphQlCall(`mutation {
             treeAddElement(
                 treeId: "${permTreeName}",
                 element: {id: "${permTreeElemId}", library: "${permTreeLibName}"}
@@ -69,6 +71,8 @@ describe('Permissions', () => {
             saveLibrary(library: {id: "${testLibId}", label: {fr: "Test lib"}}) { id }
         }`);
 
+        // Create tree attribute linking to perm tree
+        // Link this attribute to library
         await makeGraphQlCall(`mutation {
             saveAttribute(attribute: {
                 id: "${testLibAttrId}",
@@ -80,7 +84,7 @@ describe('Permissions', () => {
             saveLibrary(library: {
                 id: "${testLibId}",
                 attributes: ["${testLibAttrId}"],
-                permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: AND}
+                permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
             }) {
                 id
             }
@@ -97,7 +101,7 @@ describe('Permissions', () => {
         // Link this record to perm tree
         await makeGraphQlCall(`mutation {
             saveValue(library: "${testLibId}", recordId: "${testLibRecordId}", attribute: "${testLibAttrId}", value: {
-                value: "${permLibName}/${permTreeElemId}"
+                value: "${permTreeLibName}/${permTreeElemId}"
             }) {
                 id_value
                 value
@@ -105,94 +109,236 @@ describe('Permissions', () => {
         }`);
     });
 
-    test('Save library permissions config', async () => {
-        const res = await makeGraphQlCall(`mutation {
-            saveLibrary(library: {
-                id: "${permLibName}",
-                label: {fr: "Permissions Test lib"},
-                permissionsConf: {permissionTreeAttributes: ["${permTreeName}"], relation: AND}
-            }) {
-                permissionsConf {
-                    permissionTreeAttributes
-                    relation
+    describe('Records permissions', () => {
+        test('Save and apply permissions', async () => {
+            // Save Permission
+            const resSavePerm = await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: record,
+                        applyTo: "${testLibId}",
+                        usersGroup: "${allUsersTreeElemId}",
+                        permissionTreeTarget: {
+                            tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
+                        },
+                        actions: [
+                            {name: access, allowed: true}, {name: edit, allowed: true}, {name: delete, allowed: false}
+                        ]
+                    }
+                ) {
+                    type
+                    applyTo
+                    usersGroup
+                    permissionTreeTarget {
+                        tree
+                        library
+                        id
+                    }
                 }
-            }
-        }`);
+            }`);
 
-        expect(res.status).toBe(200);
-        expect(res.data.data.saveLibrary.permissionsConf).toBeDefined();
-        expect(res.data.errors).toBeUndefined();
-    });
+            expect(resSavePerm.status).toBe(200);
+            expect(resSavePerm.data.data.savePermission.type).toBeDefined();
+            expect(resSavePerm.data.errors).toBeUndefined();
 
-    test('Save a permission', async () => {
-        const res = await makeGraphQlCall(`mutation {
-            savePermission(
-                permission: {
-                    type: RECORD,
+            const resGetPerm = await makeGraphQlCall(`{
+                permission(
+                    type: record,
                     applyTo: "${testLibId}",
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
                     },
-                    actions: [
-                        {name: ACCESS, allowed: true}, {name: EDIT, allowed: true}, {name: DELETE, allowed: false}
-                    ]
+                    action: access
+                )
+            }`);
+
+            expect(resGetPerm.status).toBe(200);
+            expect(resGetPerm.data.data.permission).toBe(true);
+            expect(resGetPerm.data.errors).toBeUndefined();
+
+            // Save library's permissions config
+            const resSaveLib = await makeGraphQlCall(`mutation {
+                saveLibrary(library: {
+                    id: "${testLibId}",
+                    permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
+                }) {
+                    permissionsConf {
+                        permissionTreeAttributes
+                        relation
+                    }
                 }
-            ) {
-                type
-                applyTo
-                usersGroup
-                permissionTreeTarget {
-                    tree
-                    library
+            }`);
+
+            expect(resSaveLib.status).toBe(200);
+            expect(resSaveLib.data.data.saveLibrary.permissionsConf).toBeDefined();
+            expect(resSaveLib.data.errors).toBeUndefined();
+
+            const resDelRecord = await makeGraphQlCall(`mutation {
+                deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {
                     id
                 }
-            }
-        }`);
+            }`);
 
-        expect(res.status).toBe(200);
-        expect(res.data.data.savePermission.type).toBeDefined();
-        expect(res.data.errors).toBeUndefined();
+            expect(resDelRecord.status).toBe(200);
+            expect(resDelRecord.data.data.deleteRecord).toBe(null);
+            expect(resDelRecord.data.errors).toBeDefined();
+            expect(resDelRecord.data.errors.length).toBeGreaterThanOrEqual(1);
+        });
     });
 
-    test('Get a permission', async () => {
-        const res = await makeGraphQlCall(`{
-            permission(
-                type: RECORD,
-                applyTo: "${testLibId}",
-                usersGroup: "${allUsersTreeElemId}",
-                permissionTreeTarget: {tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"},
-                action: ACCESS
-            )
-        }`);
-
-        expect(res.status).toBe(200);
-        expect(res.data.data.permission).toBe(true);
-        expect(res.data.errors).toBeUndefined();
-    });
-
-    test('Apply permission', async () => {
-        await makeGraphQlCall(`mutation {
-            saveLibrary(library: {
-                id: "${testLibId}",
-                permissionsConf: {permissionTreeAttributes: ["${permTreeName}"], relation: AND}
-            }) {
-                permissionsConf {
-                    permissionTreeAttributes
-                    relation
+    describe('AttributesPermissions', () => {
+        test('Save and apply permissions', async () => {
+            // Create attribute with permissions conf
+            const resSaveAttr = await makeGraphQlCall(`mutation {
+                saveAttribute(attribute: {
+                    id: "${testPermAttrId}",
+                    type: simple,
+                    label: {fr: "Permissions Test Attribute"},
+                    permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
+                }) {
+                    permissionsConf {
+                        permissionTreeAttributes
+                        relation
+                    }
                 }
-            }
-        }`);
+            }`);
 
-        const res = await makeGraphQlCall(`mutation {
-            deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {
-                id
-            }
-        }`);
+            expect(resSaveAttr.status).toBe(200);
+            expect(resSaveAttr.data.data.saveAttribute.permissionsConf).toBeDefined();
+            expect(resSaveAttr.data.errors).toBeUndefined();
 
-        expect(res.status).toBe(200);
-        expect(res.data.data.deleteRecord).toBe(null);
-        expect(res.data.errors).toBeDefined();
-        expect(res.data.errors.length).toBeGreaterThanOrEqual(1);
+            // Save permission on attribute
+            const resSavePerm = await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: attribute,
+                        applyTo: "${testPermAttrId}",
+                        usersGroup: "${allUsersTreeElemId}",
+                        permissionTreeTarget: {
+                            tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
+                        },
+                        actions: [
+                            {name: access_attribute, allowed: true},
+                            {name: create_value, allowed: false},
+                            {name: edit_value, allowed: false},
+                            {name: delete_value, allowed: false}
+                        ]
+                    }
+                ) {
+                    type
+                    applyTo
+                    usersGroup
+                    permissionTreeTarget {
+                        tree
+                        library
+                        id
+                    }
+                }
+            }`);
+
+            expect(resSavePerm.status).toBe(200);
+            expect(resSavePerm.data.data.savePermission.type).toBeDefined();
+            expect(resSavePerm.data.errors).toBeUndefined();
+
+            // Link attribute to library
+            await makeGraphQlCall(`mutation {
+                saveLibrary(library: {
+                    id: "${permTreeLibName}",
+                    attributes: ["${testLibAttrId}", "${testPermAttrId}"]
+                }) {
+                    id
+                }
+            }`);
+
+            // Apply permission
+            const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibId}",
+                    recordId: "${testLibRecordId}",
+                    attribute: "${testPermAttrId}",
+                    value: {value: "TEST VAL"}
+                ) {
+                    id_value
+                }
+            }`);
+
+            expect(res.status).toBe(200);
+            expect(res.data.data.saveValue).toBe(null);
+            expect(res.data.errors).toBeDefined();
+            expect(res.data.errors.length).toBeGreaterThanOrEqual(1);
+        });
+
+        // test('Save attribute permissions config', async () => {
+        //     const res = await makeGraphQlCall(`mutation {
+        //         saveAttribute(attribute: {
+        //             id: "${testPermAttrId}",
+        //             type: simple,
+        //             label: {fr: "Permissions Test Attribute"},
+        //             permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: AND}
+        //         }) {
+        //             permissionsConf {
+        //                 permissionTreeAttributes
+        //                 relation
+        //             }
+        //         }
+        //     }`);
+
+        //     expect(res.status).toBe(200);
+        //     expect(res.data.data.saveAttribute.permissionsConf).toBeDefined();
+        //     expect(res.data.errors).toBeUndefined();
+        // });
+
+        // test('Save permission', async () => {
+        //     const res = await makeGraphQlCall(`mutation {
+        //         savePermission(
+        //             permission: {
+        //                 type: ATTRIBUTE,
+        //                 applyTo: "${testPermAttrId}",
+        //                 usersGroup: "${allUsersTreeElemId}",
+        //                 permissionTreeTarget: {
+        //                     tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
+        //                 },
+        //                 actions: [
+        //                     {name: ACCESS_ATTRIBUTE, allowed: true},
+        //                     {name: CREATE_VALUE, allowed: false},
+        //                     {name: EDIT_VALUE, allowed: false},
+        //                     {name: DELETE_VALUE, allowed: false}
+        //                 ]
+        //             }
+        //         ) {
+        //             type
+        //             applyTo
+        //             usersGroup
+        //             permissionTreeTarget {
+        //                 tree
+        //                 library
+        //                 id
+        //             }
+        //         }
+        //     }`);
+
+        //     expect(res.status).toBe(200);
+        //     expect(res.data.data.savePermission).toBeDefined();
+        //     expect(res.data.errors).toBeUndefined();
+        // });
+
+        // test('Apply permission', async () => {
+        //     const res = await makeGraphQlCall(`mutation {
+        //         saveValue(
+        //             library: "${testLibId}",
+        //             recordId: "${testLibRecordId}",
+        //             attribute: "${testPermAttrId}",
+        //             value: {value: "TEST VAL"}
+        //         ) {
+        //             id_value
+        //         }
+        //     }`);
+
+        //     expect(res.status).toBe(200);
+        //     expect(res.data.data.saveValue).toBe(null);
+        //     expect(res.data.errors).toBeDefined();
+        //     expect(res.data.errors.length).toBeGreaterThanOrEqual(1);
+        // });
     });
 });
