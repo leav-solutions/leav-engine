@@ -1,5 +1,5 @@
 import permissionDomain from './permissionDomain';
-import {PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import {PermissionTypes, RecordPermissionsActions, AdminPermisisonsActions} from '../../_types/permissions';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 
 describe('PermissionDomain', () => {
@@ -22,20 +22,23 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
 
-            const newPerm = await permDomain.savePermission({
-                type: PermissionTypes.RECORD,
-                usersGroup: 'users/12345',
-                actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+            const newPerm = await permDomain.savePermission(
+                {
+                    type: PermissionTypes.RECORD,
+                    usersGroup: 'users/12345',
+                    actions: {
+                        [RecordPermissionsActions.ACCESS]: true,
+                        [RecordPermissionsActions.EDIT]: false,
+                        [RecordPermissionsActions.DELETE]: false
+                    },
+                    permissionTreeTarget: {
+                        library: 'test_lib',
+                        id: 12345,
+                        tree: 'test_tree'
+                    }
                 },
-                permissionTreeTarget: {
-                    library: 'test_lib',
-                    id: 12345,
-                    tree: 'test_tree'
-                }
-            });
+                {userId: 1}
+            );
 
             expect(mockPermRepo.savePermission.mock.calls.length).toBe(1);
 
@@ -145,6 +148,100 @@ describe('PermissionDomain', () => {
             const perm = permDomain.getDefaultPermission();
 
             expect(perm).toBe(config.permissions.default);
+        });
+    });
+
+    describe('getPermissionByUserGroups', () => {
+        const mockUserGroups = [
+            [
+                {
+                    record: {
+                        id: 9
+                    }
+                },
+                {
+                    record: {
+                        id: 1
+                    }
+                }
+            ],
+            [
+                {
+                    record: {
+                        id: 8
+                    }
+                },
+                {
+                    record: {
+                        id: 0
+                    }
+                }
+            ]
+        ];
+
+        test('Retrieve first "allowed" permission', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, {});
+
+            permDomain.getSimplePermission = jest.fn().mockImplementation((type, applyTo, action, grpId, targ) => {
+                if (grpId === 1) {
+                    return true;
+                } else if (grpId === 0) {
+                    return false;
+                } else {
+                    return null;
+                }
+            });
+
+            const perm = await permDomain.getPermissionByUserGroups(
+                PermissionTypes.ADMIN,
+                AdminPermisisonsActions.CREATE_ATTRIBUTE,
+                mockUserGroups,
+                null,
+                null
+            );
+
+            expect(perm).toBe(true);
+        });
+
+        test('Return "forbidden" if no "allowed" found', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, {});
+
+            permDomain.getSimplePermission = jest.fn().mockImplementation((type, applyTo, action, grpId, targ) => {
+                if (grpId === 0) {
+                    return false;
+                } else {
+                    return null;
+                }
+            });
+
+            const perm = await permDomain.getPermissionByUserGroups(
+                PermissionTypes.ADMIN,
+                AdminPermisisonsActions.CREATE_ATTRIBUTE,
+                mockUserGroups,
+                null,
+                null
+            );
+
+            expect(perm).toBe(false);
+        });
+
+        test('Return null if no permission found', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, {});
+
+            permDomain.getSimplePermission = global.__mockPromise(null);
+
+            const perm = await permDomain.getPermissionByUserGroups(
+                PermissionTypes.ADMIN,
+                AdminPermisisonsActions.CREATE_ATTRIBUTE,
+                mockUserGroups,
+                null,
+                null
+            );
+
+            expect(perm).toBe(null);
         });
     });
 });

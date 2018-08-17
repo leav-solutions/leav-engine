@@ -6,10 +6,14 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IQueryField, IRecord} from '../../_types/record';
+import {IQueryInfos} from '_types/queryInfos';
+import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {AdminPermisisonsActions} from '../../_types/permissions';
+import PermissionError from '../../errors/PermissionError';
 
 export interface ITreeDomain {
-    saveTree(tree: ITree): Promise<ITree>;
-    deleteTree(id: string): Promise<ITree>;
+    saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree>;
+    deleteTree(id: string, infos: IQueryInfos): Promise<ITree>;
     getTrees(filters?: ITreeFilterOptions): Promise<ITree[]>;
 
     /**
@@ -83,10 +87,11 @@ export interface ITreeDomain {
 }
 
 export default function(
-    treeRepo: ITreeRepo | null = null,
-    libraryDomain: ILibraryDomain | null = null,
-    recordDomain: IRecordDomain | null = null,
-    attributeDomain: IAttributeDomain | null = null
+    treeRepo: ITreeRepo = null,
+    libraryDomain: ILibraryDomain = null,
+    recordDomain: IRecordDomain = null,
+    attributeDomain: IAttributeDomain = null,
+    adminPermissionDomain: IAdminPermissionDomain = null
 ): ITreeDomain {
     async function _treeExists(treeId: string): Promise<boolean> {
         const trees = await treeRepo.getTrees({id: treeId});
@@ -103,9 +108,17 @@ export default function(
     }
 
     return {
-        async saveTree(tree: ITree): Promise<ITree> {
+        async saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree> {
             const trees = await treeRepo.getTrees({id: tree.id});
             const newTree = !!trees.length;
+
+            // Check permissions
+            const action = newTree ? AdminPermisisonsActions.EDIT_TREE : AdminPermisisonsActions.CREATE_TREE;
+            const canSaveTree = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+
+            if (!canSaveTree) {
+                throw new PermissionError(action);
+            }
 
             // Check if all libraries exists
             const libs = await libraryDomain.getLibraries();
@@ -121,7 +134,15 @@ export default function(
 
             return savedTree;
         },
-        async deleteTree(id: string): Promise<ITree> {
+        async deleteTree(id: string, infos: IQueryInfos): Promise<ITree> {
+            // Check permissions
+            const action = AdminPermisisonsActions.DELETE_TREE;
+            const canSaveTree = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+
+            if (!canSaveTree) {
+                throw new PermissionError(action);
+            }
+
             const trees = await this.getTrees({id});
 
             if (!trees.length) {

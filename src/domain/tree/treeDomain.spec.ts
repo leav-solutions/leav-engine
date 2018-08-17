@@ -4,8 +4,12 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import treeDomain from './treeDomain';
+import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {AdminPermisisonsActions} from '../../_types/permissions';
+import PermissionError from '../../errors/PermissionError';
 
 describe('treeDomain', () => {
+    const queryInfos = {userId: 1};
     const mockTree = {
         id: 'test',
         system: false,
@@ -19,38 +23,68 @@ describe('treeDomain', () => {
 
     describe('saveTree', () => {
         test('Should create new tree', async () => {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: global.__mockPromise(mockTree),
                 updateTree: jest.fn(),
                 getTrees: global.__mockPromise([])
             };
-            const domain = treeDomain(treeRepo as ITreeRepo, mockLibDomain as ILibraryDomain);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
 
-            const newTree = await domain.saveTree(mockTree);
+            const newTree = await domain.saveTree(mockTree, queryInfos);
 
             expect(treeRepo.createTree.mock.calls.length).toBe(1);
             expect(treeRepo.updateTree.mock.calls.length).toBe(0);
 
             expect(newTree).toMatchObject(mockTree);
+
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.CREATE_TREE);
         });
 
         test('Should update existing tree', async () => {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise([mockTree])
             };
-            const domain = treeDomain(treeRepo as ITreeRepo, mockLibDomain as ILibraryDomain);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
 
-            const newTree = await domain.saveTree(mockTree);
+            const newTree = await domain.saveTree(mockTree, queryInfos);
 
             expect(treeRepo.createTree.mock.calls.length).toBe(0);
             expect(treeRepo.updateTree.mock.calls.length).toBe(1);
 
             expect(newTree).toMatchObject(mockTree);
+
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.EDIT_TREE);
         });
 
         test('Should throw if unknown libraries', async () => {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise([])
@@ -61,46 +95,128 @@ describe('treeDomain', () => {
                 libraries: ['test_lib', 'unexisting_lib']
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, mockLibDomain as ILibraryDomain);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
 
-            await expect(domain.saveTree(treeData)).rejects.toThrow(ValidationError);
+            await expect(domain.saveTree(treeData, queryInfos)).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if forbidden action', async () => {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(false)
+            };
+
+            const treeRepo: Mockify<ITreeRepo> = {
+                createTree: jest.fn(),
+                updateTree: global.__mockPromise(mockTree),
+                getTrees: global.__mockPromise([mockTree])
+            };
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
+
+            await expect(domain.saveTree(mockTree, queryInfos)).rejects.toThrow(PermissionError);
         });
     });
 
     describe('deleteTree', () => {
         test('Should delete a tree and return deleted tree', async function() {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
             const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                null,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
             domain.getTrees = global.__mockPromise([mockTree]);
 
-            const deleteRes = await domain.deleteTree(mockTree.id);
+            const deleteRes = await domain.deleteTree(mockTree.id, queryInfos);
 
             expect(treeRepo.deleteTree.mock.calls.length).toBe(1);
+
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.DELETE_TREE);
         });
 
         test('Should throw if unknown tree', async function() {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
             const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                null,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
             domain.getTrees = global.__mockPromise([]);
-            await expect(domain.deleteTree(mockTree.id)).rejects.toThrow(ValidationError);
+            await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if system tree', async function() {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(treeData)
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo);
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                null,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
             domain.getTrees = global.__mockPromise([treeData]);
-            await expect(domain.deleteTree(mockTree.id)).rejects.toThrow(ValidationError);
+            await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if action forbidden', async function() {
+            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(false)
+            };
+
+            const treeData = {...mockTree, system: true};
+
+            const treeRepo: Mockify<ITreeRepo> = {
+                deleteTree: global.__mockPromise(treeData)
+            };
+
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                null,
+                null,
+                null,
+                mockAdminPermDomain as IAdminPermissionDomain
+            );
+            domain.getTrees = global.__mockPromise([treeData]);
+            await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(PermissionError);
         });
     });
 

@@ -80,14 +80,20 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         }
                     },
                     Mutation: {
-                        async saveAttribute(parent, {attribute}): Promise<IAttribute> {
-                            const savedAttr = await attributeDomain.saveAttribute(attribute);
+                        async saveAttribute(parent, {attribute}, ctx): Promise<IAttribute> {
+                            const savedAttr = await attributeDomain.saveAttribute(
+                                attribute,
+                                graphqlApp.ctxToQueryInfos(ctx)
+                            );
                             graphqlApp.generateSchema();
 
                             return savedAttr;
                         },
-                        async deleteAttribute(parent, {id}): Promise<IAttribute> {
-                            const deletedAttr = await attributeDomain.deleteAttribute(id);
+                        async deleteAttribute(parent, {id}, ctx): Promise<IAttribute> {
+                            const deletedAttr = await attributeDomain.deleteAttribute(
+                                id,
+                                graphqlApp.ctxToQueryInfos(ctx)
+                            );
                             graphqlApp.generateSchema();
 
                             return deletedAttr;

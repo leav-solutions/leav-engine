@@ -23,6 +23,10 @@ const USERS_GROUP_LIB_NAME = 'users_groups';
 
 export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermissionRepo {
     function _toDbTreeTarget(treeTarget: IPermissionsTreeTarget): IDbPermissionsTreeTarget {
+        if (treeTarget === null) {
+            return null;
+        }
+
         return {
             id: treeTarget.library + '/' + treeTarget.id,
             tree: treeTarget.tree
@@ -30,6 +34,10 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
     }
 
     function _toCoreTreeTarget(treeTarget: IDbPermissionsTreeTarget): IPermissionsTreeTarget {
+        if (treeTarget === null) {
+            return null;
+        }
+
         const [library, id] = treeTarget.id.split('/');
 
         return {
@@ -46,7 +54,9 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
             const dbPermData = {
                 ...permData,
                 usersGroup: USERS_GROUP_LIB_NAME + '/' + permData.usersGroup,
-                permissionTreeTarget: _toDbTreeTarget(permData.permissionTreeTarget)
+                permissionTreeTarget: permData.permissionTreeTarget
+                    ? _toDbTreeTarget(permData.permissionTreeTarget)
+                    : null
             };
 
             const searchObj = {
@@ -68,13 +78,13 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
         },
         async getPermissions(
             type: PermissionTypes,
-            applyTo: string,
+            applyTo: string = null,
             usersGroupId: number,
             permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<IPermission | null> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
 
-            const dbTarget = _toDbTreeTarget(permissionTreeTarget);
+            const dbTarget = permissionTreeTarget ? _toDbTreeTarget(permissionTreeTarget) : null;
 
             const query = aql`
                 FOR p IN ${col}

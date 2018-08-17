@@ -83,11 +83,11 @@ export default function(
                         }
                     },
                     Mutation: {
-                        async saveTree(parent, {tree}): Promise<ITree> {
-                            return treeDomain.saveTree(tree);
+                        async saveTree(parent, {tree}, ctx): Promise<ITree> {
+                            return treeDomain.saveTree(tree, graphqlApp.ctxToQueryInfos(ctx));
                         },
-                        async deleteTree(parent, {id}): Promise<ITree> {
-                            return treeDomain.deleteTree(id);
+                        async deleteTree(parent, {id}, ctx): Promise<ITree> {
+                            return treeDomain.deleteTree(id, graphqlApp.ctxToQueryInfos(ctx));
                         },
                         async treeAddElement(_, {treeId, element, parent}): Promise<ITreeElement> {
                             parent = parent || null;

@@ -268,77 +268,55 @@ describe('Permissions', () => {
             expect(res.data.errors).toBeDefined();
             expect(res.data.errors.length).toBeGreaterThanOrEqual(1);
         });
+    });
 
-        // test('Save attribute permissions config', async () => {
-        //     const res = await makeGraphQlCall(`mutation {
-        //         saveAttribute(attribute: {
-        //             id: "${testPermAttrId}",
-        //             type: simple,
-        //             label: {fr: "Permissions Test Attribute"},
-        //             permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: AND}
-        //         }) {
-        //             permissionsConf {
-        //                 permissionTreeAttributes
-        //                 relation
-        //             }
-        //         }
-        //     }`);
+    describe('AdminPermissions', () => {
+        test('Save and get admin permissions', async () => {
+            // Save admin permissions
+            const resSaveAdminPerm = await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: admin,
+                        usersGroup: "${allUsersTreeElemId}",
+                        actions: [
+                            {name: create_library, allowed: true},
+                            {name: edit_library, allowed: true},
+                            {name: delete_library, allowed: true},
+                            {name: create_attribute, allowed: true},
+                            {name: edit_attribute, allowed: true},
+                            {name: delete_attribute, allowed: true},
+                            {name: create_tree, allowed: true},
+                            {name: edit_tree, allowed: true},
+                            {name: delete_tree, allowed: true},
+                            {name: edit_permission allowed: true}
+                        ]
+                    }
+                ) {
+                    type
+                    usersGroup
+                    actions {
+                        name
+                        allowed
+                    }
+                }
+            }`);
 
-        //     expect(res.status).toBe(200);
-        //     expect(res.data.data.saveAttribute.permissionsConf).toBeDefined();
-        //     expect(res.data.errors).toBeUndefined();
-        // });
+            expect(resSaveAdminPerm.status).toBe(200);
+            expect(resSaveAdminPerm.data.data.savePermission.type).toBeDefined();
+            expect(resSaveAdminPerm.data.errors).toBeUndefined();
 
-        // test('Save permission', async () => {
-        //     const res = await makeGraphQlCall(`mutation {
-        //         savePermission(
-        //             permission: {
-        //                 type: ATTRIBUTE,
-        //                 applyTo: "${testPermAttrId}",
-        //                 usersGroup: "${allUsersTreeElemId}",
-        //                 permissionTreeTarget: {
-        //                     tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
-        //                 },
-        //                 actions: [
-        //                     {name: ACCESS_ATTRIBUTE, allowed: true},
-        //                     {name: CREATE_VALUE, allowed: false},
-        //                     {name: EDIT_VALUE, allowed: false},
-        //                     {name: DELETE_VALUE, allowed: false}
-        //                 ]
-        //             }
-        //         ) {
-        //             type
-        //             applyTo
-        //             usersGroup
-        //             permissionTreeTarget {
-        //                 tree
-        //                 library
-        //                 id
-        //             }
-        //         }
-        //     }`);
+            // Get admin permissions
+            const resGetAdminPerm = await makeGraphQlCall(`{
+                permission(
+                    type: admin,
+                    usersGroup: "${allUsersTreeElemId}",
+                    action: create_library
+                )
+            }`);
 
-        //     expect(res.status).toBe(200);
-        //     expect(res.data.data.savePermission).toBeDefined();
-        //     expect(res.data.errors).toBeUndefined();
-        // });
-
-        // test('Apply permission', async () => {
-        //     const res = await makeGraphQlCall(`mutation {
-        //         saveValue(
-        //             library: "${testLibId}",
-        //             recordId: "${testLibRecordId}",
-        //             attribute: "${testPermAttrId}",
-        //             value: {value: "TEST VAL"}
-        //         ) {
-        //             id_value
-        //         }
-        //     }`);
-
-        //     expect(res.status).toBe(200);
-        //     expect(res.data.data.saveValue).toBe(null);
-        //     expect(res.data.errors).toBeDefined();
-        //     expect(res.data.errors.length).toBeGreaterThanOrEqual(1);
-        // });
+            expect(resGetAdminPerm.status).toBe(200);
+            expect(resGetAdminPerm.data.data.permission).toBe(true);
+            expect(resGetAdminPerm.data.errors).toBeUndefined();
+        });
     });
 });

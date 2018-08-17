@@ -5,7 +5,8 @@ import {
     RecordPermissionsActions,
     PermissionsRelations,
     PermissionTypes,
-    AttributePermissionsActions
+    AttributePermissionsActions,
+    AdminPermisisonsActions
 } from '../../_types/permissions';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
@@ -45,6 +46,7 @@ export default function(
                     enum PermissionsActions {
                         ${Object.values(RecordPermissionsActions).join(' ')}
                         ${Object.values(AttributePermissionsActions).join(' ')}
+                        ${Object.values(AdminPermisisonsActions).join(' ')}
                     }
 
                     type PermissionAction {
@@ -122,7 +124,7 @@ export default function(
                         }
                     },
                     Mutation: {
-                        async savePermission(parent, {permission}): Promise<IPermission> {
+                        async savePermission(parent, {permission}, ctx): Promise<IPermission> {
                             const formattedPerm = {
                                 ...permission,
                                 actions: permission.actions.reduce((permActions, action) => {
@@ -131,7 +133,10 @@ export default function(
                                 }, {})
                             };
 
-                            const savedPerm = await permissionDomain.savePermission(formattedPerm);
+                            const savedPerm = await permissionDomain.savePermission(
+                                formattedPerm,
+                                graphqlApp.ctxToQueryInfos(ctx)
+                            );
 
                             return _formatPerm(savedPerm);
                         }

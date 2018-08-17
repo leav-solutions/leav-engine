@@ -56,20 +56,20 @@ export default function(
                         }
                     },
                     Mutation: {
-                        async saveLibrary(parent, {library}): Promise<ILibrary> {
+                        async saveLibrary(parent, {library}, ctx): Promise<ILibrary> {
                             if (typeof library.attributes !== 'undefined') {
                                 library.attributes = library.attributes.map(attrName => ({
                                     id: attrName
                                 }));
                             }
 
-                            const savedLib = await libraryDomain.saveLibrary(library);
+                            const savedLib = await libraryDomain.saveLibrary(library, graphqlApp.ctxToQueryInfos(ctx));
                             graphqlApp.generateSchema();
 
                             return savedLib;
                         },
-                        async deleteLibrary(parent, {id}): Promise<ILibrary> {
-                            const deletedLib = await libraryDomain.deleteLibrary(id);
+                        async deleteLibrary(parent, {id}, ctx): Promise<ILibrary> {
+                            const deletedLib = await libraryDomain.deleteLibrary(id, graphqlApp.ctxToQueryInfos(ctx));
                             graphqlApp.generateSchema();
 
                             return deletedLib;

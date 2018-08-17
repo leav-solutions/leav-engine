@@ -3,6 +3,10 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
 import {AttributeFormats, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
+import {IQueryInfos} from '_types/queryInfos';
+import {AdminPermisisonsActions} from '../../_types/permissions';
+import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import PermissionError from '../../errors/PermissionError';
 
 export interface IAttributeDomain {
     /**
@@ -28,19 +32,20 @@ export interface IAttributeDomain {
      * @param {} attrData
      * @return Promise<{}>  Saved attribute
      */
-    saveAttribute(attrData: IAttribute): Promise<IAttribute>;
+    saveAttribute(attrData: IAttribute, infos: IQueryInfos): Promise<IAttribute>;
 
     /**
      * Delete an attribute
      *
      * @param id
      */
-    deleteAttribute(id: string): Promise<IAttribute>;
+    deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute>;
 }
 
 export default function(
     attributeRepo: IAttributeRepo = null,
-    actionsListDomain: IActionsListDomain = null
+    actionsListDomain: IActionsListDomain = null,
+    adminPermissionDomain: IAdminPermissionDomain = null
 ): IAttributeDomain {
     function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
         // TODO: save defaults action on attribute creation
@@ -187,11 +192,21 @@ export default function(
 
             return attrs;
         },
-        async saveAttribute(attrData: IAttribute): Promise<IAttribute> {
+        async saveAttribute(attrData: IAttribute, infos: IQueryInfos): Promise<IAttribute> {
             // TODO: Validate attribute data (linked library, linked tree...)
 
             const attrs = await attributeRepo.getAttributes({id: attrData.id});
             const isExistingAttr = !!attrs.length;
+
+            // Check permissions
+            const action = isExistingAttr
+                ? AdminPermisisonsActions.EDIT_ATTRIBUTE
+                : AdminPermisisonsActions.CREATE_ATTRIBUTE;
+            const canSavePermission = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+
+            if (!canSavePermission) {
+                throw new PermissionError(action);
+            }
 
             const attrToSave = {...attrData};
             attrToSave.actions_list =
@@ -213,7 +228,15 @@ export default function(
 
             return attr;
         },
-        async deleteAttribute(id: string): Promise<IAttribute> {
+        async deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute> {
+            // Check permissions
+            const action = AdminPermisisonsActions.DELETE_ATTRIBUTE;
+            const canSavePermission = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+
+            if (!canSavePermission) {
+                throw new PermissionError(action);
+            }
+
             // Get attribute
             const attr = await this.getAttributes({id});
 
