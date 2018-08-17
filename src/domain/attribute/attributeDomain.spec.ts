@@ -3,7 +3,7 @@ import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import attributeDomain from './attributeDomain';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import ValidationError from '../../errors/ValidationError';
-import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
 import {AdminPermisisonsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
 
@@ -68,7 +68,7 @@ describe('attributeDomain', () => {
         };
 
         test('Should save a new attribute', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -81,7 +81,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockPermDomain as IPermissionDomain
             );
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
@@ -97,10 +97,8 @@ describe('attributeDomain', () => {
 
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
-                AdminPermisisonsActions.CREATE_ATTRIBUTE
-            );
+            expect(mockPermDomain.getAdminPermission).toBeCalled();
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.CREATE_ATTRIBUTE);
 
             expect(newAttr).toMatchObject({
                 actions_list: {saveValue: [{isSystem: true, name: 'validateFormat'}]},
@@ -111,7 +109,7 @@ describe('attributeDomain', () => {
         });
 
         test('Should update an attribute', async function() {
-            const mockAdminPermDomain = {
+            const mockPermDomain = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -124,7 +122,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockPermDomain as IPermissionDomain
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -140,16 +138,14 @@ describe('attributeDomain', () => {
 
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
-                AdminPermisisonsActions.EDIT_ATTRIBUTE
-            );
+            expect(mockPermDomain.getAdminPermission).toBeCalled();
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.EDIT_ATTRIBUTE);
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
         });
 
         test('Should throw if actions list type is invalid', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -162,7 +158,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockPermDomain as IPermissionDomain
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -179,7 +175,7 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if system action list is missing', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -192,7 +188,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockPermDomain as IPermissionDomain
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -207,7 +203,7 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if forbidden action', async function() {
-            const mockAdminPermDomain = {
+            const mockPermDomain = {
                 getAdminPermission: global.__mockPromise(false)
             };
 
@@ -220,7 +216,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockPermDomain as IPermissionDomain
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -238,7 +234,7 @@ describe('attributeDomain', () => {
         const attrData = {id: 'test_attribute', system: false, label: {fr: 'Test'}, format: 'text', type: 'index'};
 
         test('Should delete an attribute and return deleted attribute', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -246,17 +242,15 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 null,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockPermDomain as IPermissionDomain
             );
             attrDomain.getAttributes = global.__mockPromise([attrData]);
 
             const deleteRes = await attrDomain.deleteAttribute(attrData.id, queryInfos);
 
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
-                AdminPermisisonsActions.DELETE_ATTRIBUTE
-            );
+            expect(mockPermDomain.getAdminPermission).toBeCalled();
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.DELETE_ATTRIBUTE);
         });
 
         test('Should throw if unknown attribute', async function() {
@@ -276,7 +270,7 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if forbidden action', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(false)
             };
 
@@ -284,7 +278,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 null,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockPermDomain as IPermissionDomain
             );
             attrDomain.getAttributes = global.__mockPromise([]);
 

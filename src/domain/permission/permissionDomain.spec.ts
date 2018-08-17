@@ -1,6 +1,9 @@
 import permissionDomain from './permissionDomain';
 import {PermissionTypes, RecordPermissionsActions, AdminPermisisonsActions} from '../../_types/permissions';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 
 describe('PermissionDomain', () => {
     describe('savePermission', () => {
@@ -21,6 +24,7 @@ describe('PermissionDomain', () => {
             };
 
             const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
+            permDomain.getAdminPermission = global.__mockPromise(true);
 
             const newPerm = await permDomain.savePermission(
                 {
@@ -143,7 +147,7 @@ describe('PermissionDomain', () => {
                 }
             };
 
-            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, config);
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, null, null, null, config);
 
             const perm = permDomain.getDefaultPermission();
 
@@ -181,7 +185,7 @@ describe('PermissionDomain', () => {
 
         test('Retrieve first "allowed" permission', async () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {};
-            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, {});
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
 
             permDomain.getSimplePermission = jest.fn().mockImplementation((type, applyTo, action, grpId, targ) => {
                 if (grpId === 1) {
@@ -206,7 +210,7 @@ describe('PermissionDomain', () => {
 
         test('Return "forbidden" if no "allowed" found', async () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {};
-            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, {});
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
 
             permDomain.getSimplePermission = jest.fn().mockImplementation((type, applyTo, action, grpId, targ) => {
                 if (grpId === 0) {
@@ -229,7 +233,7 @@ describe('PermissionDomain', () => {
 
         test('Return null if no permission found', async () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {};
-            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo, {});
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
 
             permDomain.getSimplePermission = global.__mockPromise(null);
 
@@ -242,6 +246,85 @@ describe('PermissionDomain', () => {
             );
 
             expect(perm).toBe(null);
+        });
+    });
+
+    describe('getAdminPermission', () => {
+        const defaultPerm = false;
+        const mockAttrRepo: Mockify<IAttributeRepo> = {
+            getAttributes: global.__mockPromise([
+                {
+                    id: 'user_groups',
+                    linked_tree: 'users_groups'
+                }
+            ])
+        };
+        const mockValRepo: Mockify<IValueRepo> = {
+            getValues: global.__mockPromise([
+                {
+                    id_value: 54321,
+                    value: {
+                        record: {
+                            id: 1,
+                            library: 'users_groups'
+                        }
+                    }
+                }
+            ])
+        };
+        const mockTreeRepo: Mockify<ITreeRepo> = {
+            getElementAncestors: global.__mockPromise([
+                {
+                    record: {
+                        id: 1,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 2,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 3,
+                        library: 'users_groups'
+                    }
+                }
+            ])
+        };
+
+        test('Return admin permission', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(
+                mockPermRepo as IPermissionRepo,
+                mockAttrRepo as IAttributeRepo,
+                mockValRepo as IValueRepo,
+                mockTreeRepo as ITreeRepo
+            );
+            permDomain.getPermissionByUserGroups = global.__mockPromise(true);
+            permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
+
+            const perm = await permDomain.getAdminPermission(AdminPermisisonsActions.CREATE_ATTRIBUTE, 12345);
+
+            expect(perm).toBe(true);
+        });
+
+        test('Return default permission if nothing defined', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(
+                mockPermRepo as IPermissionRepo,
+                mockAttrRepo as IAttributeRepo,
+                mockValRepo as IValueRepo,
+                mockTreeRepo as ITreeRepo
+            );
+            permDomain.getPermissionByUserGroups = global.__mockPromise(null);
+            permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
+
+            const perm = await permDomain.getAdminPermission(AdminPermisisonsActions.CREATE_ATTRIBUTE, 12345);
+
+            expect(perm).toBe(defaultPerm);
         });
     });
 });

@@ -4,7 +4,7 @@ import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {AdminPermisisonsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
 import libraryDomain from './libraryDomain';
 
 describe('LibraryDomain', () => {
@@ -66,7 +66,7 @@ describe('LibraryDomain', () => {
 
     describe('saveLibrary', () => {
         test('Should save a new library', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -80,7 +80,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
 
             const newLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
@@ -98,7 +98,7 @@ describe('LibraryDomain', () => {
         });
 
         test('Should update a library', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -112,7 +112,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
 
             const updatedLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
@@ -128,7 +128,7 @@ describe('LibraryDomain', () => {
         });
 
         test('Should update library attributes', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -142,7 +142,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
 
             const updatedLib = await libDomain.saveLibrary(
@@ -165,7 +165,7 @@ describe('LibraryDomain', () => {
         });
 
         test('Should throw if unknown attributes', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -179,7 +179,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
 
             await expect(
@@ -200,7 +200,7 @@ describe('LibraryDomain', () => {
         });
 
         test('Should throw if unknown trees attributes in permissions conf', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -214,7 +214,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
 
             await expect(
@@ -232,7 +232,7 @@ describe('LibraryDomain', () => {
         });
 
         test('Should throw if forbidden action', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(false)
             };
 
@@ -246,7 +246,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
 
             await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(PermissionError);
@@ -257,7 +257,7 @@ describe('LibraryDomain', () => {
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
         test('Should delete an library and return deleted library', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
 
@@ -265,7 +265,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 null,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
             libDomain.getLibraries = global.__mockPromise([libData]);
 
@@ -296,7 +296,7 @@ describe('LibraryDomain', () => {
         });
 
         test('Should throw if forbidden action', async function() {
-            const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(false)
             };
 
@@ -304,7 +304,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 null,
-                mockAdminPermDomain as IAdminPermissionDomain
+                mockAdminPermDomain as IPermissionDomain
             );
             libDomain.getLibraries = global.__mockPromise([libData]);
 

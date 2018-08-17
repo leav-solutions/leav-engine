@@ -3,7 +3,7 @@ import {difference} from 'lodash';
 import ValidationError from '../../errors/ValidationError';
 import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
 import {AdminPermisisonsActions} from '../../_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
@@ -18,7 +18,7 @@ export interface ILibraryDomain {
 export default function(
     libraryRepo: ILibraryRepo,
     attributeDomain: IAttributeDomain = null,
-    adminPermissionDomain: IAdminPermissionDomain = null
+    permissionDomain: IPermissionDomain = null
 ): ILibraryDomain {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
@@ -51,7 +51,7 @@ export default function(
 
             // Check permissions
             const action = newLib ? AdminPermisisonsActions.EDIT_LIBRARY : AdminPermisisonsActions.CREATE_LIBRARY;
-            const canSaveLibrary = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+            const canSaveLibrary = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveLibrary) {
                 throw new PermissionError(action);
@@ -98,7 +98,7 @@ export default function(
         async deleteLibrary(id: string, infos: IQueryInfos): Promise<ILibrary> {
             // Check permissions
             const action = AdminPermisisonsActions.DELETE_LIBRARY;
-            const canSaveLibrary = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+            const canSaveLibrary = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveLibrary) {
                 throw new PermissionError(action);

@@ -7,7 +7,7 @@ import {IRecordDomain} from '../record/recordDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IQueryField, IRecord} from '../../_types/record';
 import {IQueryInfos} from '_types/queryInfos';
-import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
 import {AdminPermisisonsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
 
@@ -91,7 +91,7 @@ export default function(
     libraryDomain: ILibraryDomain = null,
     recordDomain: IRecordDomain = null,
     attributeDomain: IAttributeDomain = null,
-    adminPermissionDomain: IAdminPermissionDomain = null
+    permissionDomain: IPermissionDomain = null
 ): ITreeDomain {
     async function _treeExists(treeId: string): Promise<boolean> {
         const trees = await treeRepo.getTrees({id: treeId});
@@ -114,7 +114,7 @@ export default function(
 
             // Check permissions
             const action = newTree ? AdminPermisisonsActions.EDIT_TREE : AdminPermisisonsActions.CREATE_TREE;
-            const canSaveTree = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+            const canSaveTree = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
@@ -137,7 +137,7 @@ export default function(
         async deleteTree(id: string, infos: IQueryInfos): Promise<ITree> {
             // Check permissions
             const action = AdminPermisisonsActions.DELETE_TREE;
-            const canSaveTree = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+            const canSaveTree = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveTree) {
                 throw new PermissionError(action);

@@ -5,7 +5,7 @@ import {AttributeFormats, IAttribute, IAttributeFilterOptions} from '../../_type
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IQueryInfos} from '_types/queryInfos';
 import {AdminPermisisonsActions} from '../../_types/permissions';
-import {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
 import PermissionError from '../../errors/PermissionError';
 
 export interface IAttributeDomain {
@@ -45,7 +45,7 @@ export interface IAttributeDomain {
 export default function(
     attributeRepo: IAttributeRepo = null,
     actionsListDomain: IActionsListDomain = null,
-    adminPermissionDomain: IAdminPermissionDomain = null
+    permissionDomain: IPermissionDomain = null
 ): IAttributeDomain {
     function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
         // TODO: save defaults action on attribute creation
@@ -202,7 +202,7 @@ export default function(
             const action = isExistingAttr
                 ? AdminPermisisonsActions.EDIT_ATTRIBUTE
                 : AdminPermisisonsActions.CREATE_ATTRIBUTE;
-            const canSavePermission = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+            const canSavePermission = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
@@ -231,7 +231,7 @@ export default function(
         async deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute> {
             // Check permissions
             const action = AdminPermisisonsActions.DELETE_ATTRIBUTE;
-            const canSavePermission = await adminPermissionDomain.getAdminPermission(action, infos.userId);
+            const canSavePermission = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
