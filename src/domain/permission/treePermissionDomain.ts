@@ -52,7 +52,12 @@ export default function(
             });
 
             for (const treeElem of permTreePath.slice().reverse()) {
-                const perm = await _getTreeElemPermission(type, action, applyTo, treeElem, permTreeId, userGroupsPaths);
+                const perm = await permissionDomain.getPermissionByUserGroups(type, action, userGroupsPaths, applyTo, {
+                    id: treeElem.record.id,
+                    library: treeElem.record.library,
+                    tree: permTreeId
+                });
+
                 if (perm !== null) {
                     return perm;
                 }
@@ -61,61 +66,6 @@ export default function(
 
         // No permission found, return default permission
         return permissionDomain.getDefaultPermission();
-    }
-
-    /**
-     * Return permission defined for given node on perm tree.
-     * Get user's group, then run through its ancestors to look for any permission defined.
-     * If nothing defined, return null
-     *
-     * @param action
-     * @param treeElem
-     * @param permTreeId
-     * @param userGroupsPaths
-     */
-    async function _getTreeElemPermission(
-        type: PermissionTypes,
-        action: PermissionsActions,
-        applyTo: string,
-        treeElem: ITreeNode,
-        permTreeId: string,
-        userGroupsPaths: ITreeNode[][]
-    ) {
-        const userPerms = await Promise.all(
-            userGroupsPaths.map(async groupPath => {
-                for (const group of groupPath.slice().reverse()) {
-                    const perm = await permissionDomain.getSimplePermission(type, applyTo, action, group.record.id, {
-                        id: treeElem.record.id,
-                        library: treeElem.record.library,
-                        tree: permTreeId
-                    });
-
-                    if (perm !== null) {
-                        return perm;
-                    }
-                }
-
-                return null;
-            })
-        );
-
-        // If user is allowed at least once among all his groups (whether a defined permission or default config)
-        //    => return true
-        // Otherwise, if user is forbidden at least once
-        //    => return false
-        // If no permission defined for all groups
-        //    => return null
-        const userPerm = userPerms.reduce((globalPerm, groupPerm) => {
-            if (globalPerm || groupPerm) {
-                return true;
-            } else if (globalPerm === groupPerm || (globalPerm === null && !groupPerm)) {
-                return groupPerm;
-            } else {
-                return globalPerm;
-            }
-        }, null);
-
-        return userPerm;
     }
 
     return {
