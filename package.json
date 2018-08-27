@@ -20,7 +20,7 @@
         "test": "react-scripts-ts test --env=jsdom",
         "eject": "react-scripts-ts eject",
         "precommit": "lint-staged && CI=true npm test",
-        "gen_types": "apollo codegen:generate --target=typescript _types"
+        "gen_types": "apollo codegen:generate --target=typescript --outputFlat src/_types"
     },
     "devDependencies": {
         "@types/enzyme": "3.1.13",
