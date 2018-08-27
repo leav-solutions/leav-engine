@@ -1,12 +1,12 @@
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IUtils} from 'utils/utils';
 import {
+    AdminPermisisonsActions,
+    AttributePermissionsActions,
     IPermission,
-    RecordPermissionsActions,
     PermissionsRelations,
     PermissionTypes,
-    AttributePermissionsActions,
-    AdminPermisisonsActions
+    RecordPermissionsActions
 } from '../../_types/permissions';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
@@ -50,8 +50,8 @@ export default function(
                     }
 
                     type PermissionAction {
-                        name: PermissionsActions
-                        allowed: Boolean
+                        name: PermissionsActions!
+                        allowed: Boolean!
                     }
 
                     input PermissionActionInput {
@@ -60,8 +60,8 @@ export default function(
                     }
 
                     type TreePermissionsConf {
-                        permissionTreeAttributes: [ID],
-                        relation: PermissionsRelation
+                        permissionTreeAttributes: [ID]!,
+                        relation: PermissionsRelation!
                     }
 
                     input TreePermissionsConfInput {
@@ -70,9 +70,9 @@ export default function(
                     }
 
                     type PermissionsTreeTarget {
-                        tree: ID,
-                        library: ID,
-                        id: ID
+                        tree: ID!,
+                        library: ID!,
+                        id: ID!
                     }
 
                     input PermissionsTreeTargetInput {
@@ -82,10 +82,10 @@ export default function(
                     }
 
                     type Permission {
-                        type: PermissionTypes,
+                        type: PermissionTypes!,
                         applyTo: ID,
-                        usersGroup: ID,
-                        actions: [PermissionAction],
+                        usersGroup: ID!,
+                        actions: [PermissionAction]!,
                         permissionTreeTarget: PermissionsTreeTarget
                     }
 
@@ -104,11 +104,11 @@ export default function(
                             action: PermissionsActions!,
                             usersGroup: ID!,
                             permissionTreeTarget: PermissionsTreeTargetInput
-                        ): Boolean
+                        ): Boolean!
                     }
 
                     extend type Mutation {
-                        savePermission(permission: PermissionInput): Permission
+                        savePermission(permission: PermissionInput): Permission!
                     }
                 `,
                 resolvers: {

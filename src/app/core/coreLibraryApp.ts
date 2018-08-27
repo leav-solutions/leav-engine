@@ -1,10 +1,10 @@
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {ILibrary} from '../../_types/library';
 import {IRecord} from '../../_types/record';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './coreAttributeApp';
-import {IRecordDomain} from 'domain/record/recordDomain';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -25,10 +25,10 @@ export default function(
                 typeDefs: `
                     # Application Library
                     type Library {
-                        id: ID,
-                        system: Boolean,
+                        id: ID!,
+                        system: Boolean!,
                         label: SystemTranslation,
-                        attributes: [Attribute],
+                        attributes: [Attribute]!,
                         permissionsConf: TreePermissionsConf
                     }
 
@@ -40,12 +40,12 @@ export default function(
                     }
 
                     type Query {
-                        libraries(id: ID): [Library]
+                        libraries(id: ID): [Library!]
                     }
 
                     type Mutation {
-                        saveLibrary(library: LibraryInput): Library
-                        deleteLibrary(id: ID): Library
+                        saveLibrary(library: LibraryInput): Library!
+                        deleteLibrary(id: ID): Library!
                     }
 
                 `,
@@ -101,7 +101,7 @@ export default function(
                     }
 
                     extend type Query {
-                        ${libQueryName}(filters: [${libTypeName}Filter]): [${libTypeName}]
+                        ${libQueryName}(filters: [${libTypeName}Filter]): [${libTypeName}!]
                     }
                 `;
 

@@ -26,22 +26,22 @@ export default function(actionsListDomain: IActionsListDomain): ICoreAttributeAp
                     }
 
                     type ActionParam {
-                        name: String,
-                        type: String,
+                        name: String!,
+                        type: String!,
                         description: String
                     }
 
                     type Action {
-                        name: AvailableActionsName,
+                        name: AvailableActionsName!,
                         description: String,
-                        inputTypes: [ActionIOTypes],
-                        outputTypes: [ActionIOTypes],
+                        inputTypes: [ActionIOTypes]!,
+                        outputTypes: [ActionIOTypes]!,
                         params: [ActionParam]
                     }
 
                     type ActionConfiguration {
-                        name: String,
-                        isSystem: Boolean,
+                        name: String!,
+                        isSystem: Boolean!,
                         params: [ActionConfigurationParam]
                     }
 
@@ -63,8 +63,8 @@ export default function(actionsListDomain: IActionsListDomain): ICoreAttributeAp
                     }
 
                     type ActionConfigurationParam {
-                        name: String,
-                        value: String
+                        name: String!,
+                        value: String!
                     }
 
                     input ActionConfigurationParamInput {
@@ -73,7 +73,7 @@ export default function(actionsListDomain: IActionsListDomain): ICoreAttributeAp
                     }
 
                     extend type Query {
-                        availableActions: [Action]
+                        availableActions: [Action!]
                     }
                 `,
                 resolvers: {

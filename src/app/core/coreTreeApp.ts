@@ -20,9 +20,9 @@ export default function(
                 typeDefs: `
                     # Application TRee
                     type Tree {
-                        id: ID,
-                        system: Boolean,
-                        libraries: [String],
+                        id: ID!,
+                        system: Boolean!,
+                        libraries: [String]!,
                         label: SystemTranslation
                     }
 
@@ -38,7 +38,7 @@ export default function(
                     }
 
                     type TreeNode {
-                        record: Record,
+                        record: Record!,
                         ancestors: [TreeNode],
                         children: [TreeNode],
                         linkedRecords(attribute: ID): [Record]
@@ -53,23 +53,23 @@ export default function(
                         trees(id: ID): [Tree]
 
                         # Retrieve a full tree content.
-                        treeContent(treeId: ID): [TreeNode]
+                        treeContent(treeId: ID): [TreeNode!]
                     }
 
                     extend type Mutation {
-                        saveTree(tree: TreeInput): Tree
-                        deleteTree(id: ID): Tree
-                        treeAddElement(treeId: ID, element: TreeElementInput, parent: TreeElementInput): TreeElement
+                        saveTree(tree: TreeInput): Tree!
+                        deleteTree(id: ID): Tree!
+                        treeAddElement(treeId: ID, element: TreeElementInput, parent: TreeElementInput): TreeElement!
                         treeMoveElement(
                             treeId: ID,
                             element: TreeElementInput,
                             parentTo: TreeElementInput
-                        ): TreeElement
+                        ): TreeElement!
                         treeDeleteElement(
                             treeId: ID,
                             element: TreeElementInput,
                             deleteChildren: Boolean
-                        ): TreeElement
+                        ): TreeElement!
                     }
                 `,
                 resolvers: {

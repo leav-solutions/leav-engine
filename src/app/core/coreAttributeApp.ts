@@ -1,6 +1,6 @@
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IAttribute, AttributeTypes, AttributeFormats} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -24,10 +24,10 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
 
                     # Application Attribute
                     type Attribute {
-                        id: ID,
-                        type: AttributeType,
+                        id: ID!,
+                        type: AttributeType!,
                         format: AttributeFormat,
-                        system: Boolean,
+                        system: Boolean!,
                         label: SystemTranslation,
                         linked_library: String,
                         linked_tree: String,
@@ -49,7 +49,7 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                     }
 
                     type EmbeddedAttribute {
-                        id: ID,
+                        id: ID!,
                         format: AttributeFormat,
                         label: SystemTranslation,
                         validation_regex: String,
@@ -65,12 +65,12 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                     }
 
                     extend type Query {
-                        attributes(id: ID): [Attribute]
+                        attributes(id: ID): [Attribute!]
                     }
 
                     extend type Mutation {
-                        saveAttribute(attribute: AttributeInput): Attribute
-                        deleteAttribute(id: ID): Attribute
+                        saveAttribute(attribute: AttributeInput): Attribute!
+                        deleteAttribute(id: ID): Attribute!
                     }
                 `,
                 resolvers: {
@@ -108,7 +108,7 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
         },
         getGraphQLFormat(attribute: IAttribute): string {
             if (attribute.id === 'id') {
-                return 'ID';
+                return 'ID!';
             } else if (
                 attribute.type === AttributeTypes.SIMPLE_LINK ||
                 attribute.type === AttributeTypes.ADVANCED_LINK
