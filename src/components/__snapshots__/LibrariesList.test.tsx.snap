@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LibrariesList Render list 1`] = `
+<div
+  className="ui divided relaxed list"
+  role="list"
+>
+  <a
+    className="item"
+    data-value={undefined}
+    href="/libraries"
+    onClick={[Function]}
+    role="listitem"
+  >
+    <i
+      aria-hidden="true"
+      className="book large icon"
+    />
+    <div
+      className="content"
+    >
+      <div
+        className="header"
+        size="huge"
+      >
+        Test
+      </div>
+      <div
+        className="description"
+      >
+        test
+      </div>
+    </div>
+  </a>
+  <a
+    className="item"
+    data-value={undefined}
+    href="/libraries"
+    onClick={[Function]}
+    role="listitem"
+  >
+    <i
+      aria-hidden="true"
+      className="book large icon"
+    />
+    <div
+      className="content"
+    >
+      <div
+        className="header"
+        size="huge"
+      >
+        Test 2
+      </div>
+      <div
+        className="description"
+      >
+        test2
+      </div>
+    </div>
+  </a>
+  <a
+    className="item"
+    data-value={undefined}
+    href="/libraries"
+    onClick={[Function]}
+    role="listitem"
+  >
+    <i
+      aria-hidden="true"
+      className="book large icon"
+    />
+    <div
+      className="content"
+    >
+      <div
+        className="header"
+        size="huge"
+      >
+        test3
+      </div>
+      <div
+        className="description"
+      >
+        test3
+      </div>
+    </div>
+  </a>
+</div>
+`;
