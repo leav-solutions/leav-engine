@@ -4,7 +4,7 @@ import {List} from 'semantic-ui-react';
 import {GET_LIBRARIES_libraries} from '../_types/GET_LIBRARIES';
 
 interface ILibrariesListProps {
-    libraries: Array<GET_LIBRARIES_libraries | null> | null;
+    libraries: GET_LIBRARIES_libraries[] | null;
 }
 
 function LibrariesList({libraries}: ILibrariesListProps): JSX.Element {

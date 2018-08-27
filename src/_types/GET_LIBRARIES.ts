@@ -16,5 +16,5 @@ export interface GET_LIBRARIES_libraries {
 }
 
 export interface GET_LIBRARIES {
-    libraries: (GET_LIBRARIES_libraries | null)[] | null;
+    libraries: GET_LIBRARIES_libraries[] | null;
 }
