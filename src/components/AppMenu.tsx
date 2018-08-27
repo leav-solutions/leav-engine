@@ -23,6 +23,7 @@ function AppMenu({activeItem, items, onItemClick}: IAppMenuProps): JSX.Element {
             <Menu.Menu>
                 {items.map((item: IAppMenuItem) => (
                     <Menu.Item
+                        className="menu_item"
                         key={item.id}
                         as={Link}
                         to={'/' + item.id}
