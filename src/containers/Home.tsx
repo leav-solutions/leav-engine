@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Attributes from './Attributes';
+import EditLibrary from './EditLibrary';
 import Libraries from './Libraries';
 import MainMenu from './MainMenu';
 import Trees from './Trees';
@@ -19,6 +20,7 @@ function Home(): JSX.Element {
                     <Route path="/libraries" component={Libraries} />
                     <Route path="/attributes" component={Attributes} />
                     <Route path="/trees" component={Trees} />
+                    <Route path="/edit-library/:id" component={EditLibrary} />
                 </div>
             </div>
         </Router>

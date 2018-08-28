@@ -8,7 +8,7 @@ exports[`LibrariesList Render list 1`] = `
   <a
     className="item"
     data-value={undefined}
-    href="/libraries"
+    href="/edit-library/test"
     onClick={[Function]}
     role="listitem"
   >
@@ -35,7 +35,7 @@ exports[`LibrariesList Render list 1`] = `
   <a
     className="item"
     data-value={undefined}
-    href="/libraries"
+    href="/edit-library/test2"
     onClick={[Function]}
     role="listitem"
   >
@@ -62,7 +62,7 @@ exports[`LibrariesList Render list 1`] = `
   <a
     className="item"
     data-value={undefined}
-    href="/libraries"
+    href="/edit-library/test3"
     onClick={[Function]}
     role="listitem"
   >

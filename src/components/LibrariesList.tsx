@@ -16,7 +16,7 @@ function LibrariesList({libraries}: ILibrariesListProps): JSX.Element {
                 libraries.map((l: GET_LIBRARIES_libraries) => {
                     const label = l.label !== null ? l.label.fr || l.label.en : l.id;
                     return (
-                        <List.Item as={Link} to="/libraries" key={l.id}>
+                        <List.Item as={Link} to={'/edit-library/' + l.id} key={l.id}>
                             <List.Icon name="book" size="large" />
                             <List.Content>
                                 <List.Header size="huge">{label}</List.Header>

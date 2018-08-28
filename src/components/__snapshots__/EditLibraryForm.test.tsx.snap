@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditLibraryForm Render form 1`] = `
+<div>
+  <div
+    className="ui header"
+  >
+    Test
+  </div>
+  <form
+    action={undefined}
+    className="ui form"
+    onSubmit={[Function]}
+  >
+    <div
+      className="grouped fields"
+    >
+      <label>
+        Label
+      </label>
+      <div
+        className="field"
+      >
+        <label>
+          fr
+        </label>
+        <div
+          className="field"
+        >
+          <div
+            className="ui input"
+            content={undefined}
+          >
+            <input
+              disabled={undefined}
+              name="label/fr"
+              onChange={[Function]}
+              required={undefined}
+              tabIndex={undefined}
+              type="text"
+              value="Test"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        className="field"
+      >
+        <label>
+          en
+        </label>
+        <div
+          className="field"
+        >
+          <div
+            className="ui input"
+            content={undefined}
+          >
+            <input
+              disabled={undefined}
+              name="label/en"
+              onChange={[Function]}
+              required={undefined}
+              tabIndex={undefined}
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="field"
+    >
+      <label>
+        ID
+      </label>
+      <div
+        className="disabled field"
+      >
+        <div
+          className="ui disabled input"
+          content={undefined}
+        >
+          <input
+            disabled={true}
+            name="id"
+            onChange={[Function]}
+            required={undefined}
+            tabIndex={-1}
+            type="text"
+            value="test"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="field"
+    >
+      <div
+        className="disabled field"
+      >
+        <div
+          className="ui disabled checkbox"
+          content={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={true}
+            id={undefined}
+            name="system"
+            onClick={[Function]}
+            readOnly={true}
+            required={undefined}
+            tabIndex={-1}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          >
+            System library
+          </label>
+        </div>
+      </div>
+    </div>
+    <div
+      className="inline fields"
+    >
+      <div
+        className="field"
+      >
+        <button
+          className="ui button"
+          disabled={undefined}
+          onClick={[Function]}
+          required={undefined}
+          role="button"
+          tabIndex={undefined}
+          type={undefined}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;
