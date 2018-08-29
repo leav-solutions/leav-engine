@@ -1,78 +1,77 @@
-import gql from 'graphql-tag';
+import {History} from 'history';
 import * as React from 'react';
-import {Query} from 'react-apollo';
 import EditLibraryForm from '../components/EditLibraryForm';
+import {getLibsQuery} from '../queries/getLibrariesQuery';
+import {getLibQuery, LibraryQuery} from '../queries/getLibraryQuery';
 import {SaveLibMutation, saveLibQuery} from '../queries/saveLibMutation';
-import {GET_LIBRARY, GET_LIBRARYVariables} from '../_types/GET_LIBRARY';
+import {GET_LIBRARY_libraries} from '../_types/GET_LIBRARY';
 
 interface IEditLibraryProps {
     match: any;
+    history: History;
 }
 
-const libQuery = gql`
-    query GET_LIBRARY($id: ID!) {
-        libraries(id: $id) {
-            id
-            system
-            label {
-                fr
-                en
-            }
-        }
+class EditLibrary extends React.Component<IEditLibraryProps> {
+    constructor(props: IEditLibraryProps) {
+        super(props);
     }
-`;
 
-class LibraryQuery extends Query<GET_LIBRARY, GET_LIBRARYVariables> {}
+    public render() {
+        const {match} = this.props;
 
-const updateFunc = (cache, {data: {saveLibrary}}) => {
-    const {libraries} = cache.readQuery({query: libQuery, variables: {id: saveLibrary.id}});
-    cache.writeQuery({
-        query: libQuery,
-        data: {libraries: libraries.concat([saveLibrary])}
-    });
-};
+        const libraryId = match.params.id;
+        return libraryId ? (
+            <LibraryQuery query={getLibQuery} variables={{id: libraryId}}>
+                {({loading, error, data}) => {
+                    if (loading) {
+                        return <p>Loading...</p>;
+                    }
+                    if (typeof error !== 'undefined') {
+                        return <p>Error: {error.message}</p>;
+                    }
 
-function EditLibrary({match}: IEditLibraryProps): JSX.Element {
-    const libraryId = match.params.id;
-    return (
-        <LibraryQuery query={libQuery} variables={{id: libraryId}}>
-            {({loading, error, data}) => {
-                if (loading || !data) {
-                    return <p>Loading</p>;
-                }
-                if (typeof error !== 'undefined') {
-                    return <p>Error: {error.message}</p>;
-                }
+                    if (libraryId && !data) {
+                        return 'Unknown library';
+                    }
 
-                return data.libraries !== null && data.libraries.length ? (
-                    <SaveLibMutation mutation={saveLibQuery} update={updateFunc}>
-                        {saveLibrary => {
-                            const onFormSubmit = libData =>
-                                saveLibrary({
-                                    variables: {
-                                        libData: {
-                                            id: libData.id,
-                                            label: {
-                                                fr: libData.label.fr,
-                                                en: libData.label.en
-                                            }
-                                        }
-                                    }
-                                });
-                            return (
-                                <EditLibraryForm
-                                    library={data.libraries ? data.libraries[0] : null}
-                                    onSubmit={onFormSubmit}
-                                />
-                            );
-                        }}
-                    </SaveLibMutation>
-                ) : (
-                    'Unknown library'
-                );
+                    const libToEdit = data!.libraries !== null && data!.libraries!.length ? data!.libraries![0] : null;
+
+                    return this._getEditLibraryForm(libToEdit);
+                }}
+            </LibraryQuery>
+        ) : (
+            this._getEditLibraryForm(null)
+        );
+    }
+
+    /**
+     * Retrieve EditLibraryForm, wrapped by mutation component
+     * @param libToEdit
+     * @param history
+     */
+    private _getEditLibraryForm = (libToEdit: GET_LIBRARY_libraries | null) => (
+        <SaveLibMutation mutation={saveLibQuery}>
+            {saveLibrary => {
+                const onFormSubmit = async libData => {
+                    await saveLibrary({
+                        variables: {
+                            libData: {
+                                id: libData.id,
+                                label: {
+                                    fr: libData.label.fr,
+                                    en: libData.label.en
+                                }
+                            }
+                        },
+                        refetchQueries: [{query: getLibQuery, variables: {id: libData.id}}, {query: getLibsQuery}]
+                    });
+
+                    this.props.history.replace({pathname: '/edit-library/' + libData.id});
+                };
+                return <EditLibraryForm library={libToEdit} onSubmit={onFormSubmit} />;
             }}
-        </LibraryQuery>
-    );
+        </SaveLibMutation>
+    )
 }
 
 export default EditLibrary;

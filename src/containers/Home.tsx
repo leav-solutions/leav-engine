@@ -20,7 +20,7 @@ function Home(): JSX.Element {
                     <Route path="/libraries" component={Libraries} />
                     <Route path="/attributes" component={Attributes} />
                     <Route path="/trees" component={Trees} />
-                    <Route path="/edit-library/:id" component={EditLibrary} />
+                    <Route path="/edit-library/:id?" component={EditLibrary} />
                 </div>
             </div>
         </Router>

@@ -22,7 +22,6 @@ class MainMenu extends React.Component {
     ];
 
     public handleItemClick = (e, {name}) => {
-        console.log(name);
         this.setState({
             ...this.state,
             activeMenu: name
