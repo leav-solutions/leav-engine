@@ -1,0 +1,19 @@
+{
+    "admin": {
+        "title": "Administration",
+        "submit": "Submit"
+    },
+    "libraries": {
+        "title": "Libraries",
+        "new": "New library",
+        "label": "Label",
+        "ID": "ID",
+        "isSystem": "System"
+    },
+    "attributes": {
+        "title": "Attributes"
+    },
+    "trees": {
+        "title": "Trees"
+    }
+}

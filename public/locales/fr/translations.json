@@ -1,0 +1,19 @@
+{
+    "admin": {
+        "title": "Administration",
+        "submit": "Valider"
+    },
+    "libraries": {
+        "title": "Bibliothèques",
+        "new": "Nouvelle bibliothèque",
+        "label": "Libellé",
+        "ID": "Identifiant",
+        "isSystem": "Système"
+    },
+    "attributes": {
+        "title": "Attributs"
+    },
+    "trees": {
+        "title": "Arbres"
+    }
+}

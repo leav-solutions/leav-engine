@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {translate, TranslationFunction} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';
 
@@ -11,14 +12,15 @@ export interface IAppMenuProps {
     activeItem: string;
     items: IAppMenuItem[];
     onItemClick: (ev, elem) => void;
+    t: TranslationFunction;
 }
 
-function AppMenu({activeItem, items, onItemClick}: IAppMenuProps): JSX.Element {
+function AppMenu({activeItem, items, onItemClick, t}: IAppMenuProps): JSX.Element {
     return (
         <Menu vertical fluid inverted>
             <Menu.Item header position="left">
                 <Icon name="cogs" />
-                <strong>Admin</strong>
+                <strong>{t('admin.title')}</strong>
             </Menu.Item>
             <Menu.Menu>
                 {items.map((item: IAppMenuItem) => (
@@ -40,4 +42,4 @@ function AppMenu({activeItem, items, onItemClick}: IAppMenuProps): JSX.Element {
     );
 }
 
-export default AppMenu;
+export default translate()(AppMenu);

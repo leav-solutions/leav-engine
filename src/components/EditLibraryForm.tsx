@@ -1,10 +1,12 @@
 import * as React from 'react';
+import {translate, TranslationFunction} from 'react-i18next';
 import {Form, Header} from 'semantic-ui-react';
 import {GET_LIBRARY_libraries} from '../_types/GET_LIBRARY';
 
 interface IEditLibraryFormProps {
     library: GET_LIBRARY_libraries | null;
     onSubmit: (formData: any) => void;
+    t: TranslationFunction;
 }
 
 class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
@@ -18,6 +20,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
 
     public render() {
         let {library} = this.props;
+        const {t} = this.props;
 
         const newLib = library === null;
 
@@ -34,7 +37,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
 
         const existingLib = !!library.id;
         const label = newLib
-            ? 'New library'
+            ? t('libraries.new')
             : library.label !== null
                 ? library.label.fr || library.label.en
                 : library.id;
@@ -45,7 +48,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                 <Header>{label}</Header>
                 <Form onSubmit={this._handleSubmit}>
                     <Form.Group grouped>
-                        <label>Label</label>
+                        <label>{t('libraries.label')}</label>
                         {langs.map(lang => (
                             <Form.Field key={lang}>
                                 <label>{lang}</label>
@@ -58,7 +61,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                         ))}
                     </Form.Group>
                     <Form.Field>
-                        <label>ID</label>
+                        <label>{t('libraries.ID')}</label>
                         <Form.Input
                             disabled={existingLib}
                             name="id"
@@ -67,10 +70,15 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <Form.Checkbox label="System library" disabled checked={library.system} name="system" />
+                        <Form.Checkbox
+                            label={t('libraries.isSystem')}
+                            disabled
+                            checked={library.system}
+                            name="system"
+                        />
                     </Form.Field>
                     <Form.Group inline>
-                        <Form.Button>Submit</Form.Button>
+                        <Form.Button>{t('admin.submit')}</Form.Button>
                     </Form.Group>
                 </Form>
             </div>
@@ -99,4 +107,4 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
     }
 }
 
-export default EditLibraryForm;
+export default translate()(EditLibraryForm);

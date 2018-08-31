@@ -1,13 +1,18 @@
 import * as React from 'react';
+import {translate, TranslationFunction} from 'react-i18next';
 import {Header, Icon} from 'semantic-ui-react';
 
-function Attributes() {
+interface IAttributesProps {
+    t: TranslationFunction;
+}
+
+function Attributes({t}: IAttributesProps) {
     return (
         <Header size="large">
             <Icon name="edit outline" />
-            Attributes
+            {t('attributes.title')}
         </Header>
     );
 }
 
-export default Attributes;
+export default translate()(Attributes);

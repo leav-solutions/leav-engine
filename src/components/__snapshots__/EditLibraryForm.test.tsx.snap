@@ -16,7 +16,7 @@ exports[`EditLibraryForm Render form 1`] = `
       className="grouped fields"
     >
       <label>
-        Label
+        
       </label>
       <div
         className="field"
@@ -73,7 +73,7 @@ exports[`EditLibraryForm Render form 1`] = `
       className="field"
     >
       <label>
-        ID
+        
       </label>
       <div
         className="disabled field"
@@ -123,7 +123,7 @@ exports[`EditLibraryForm Render form 1`] = `
           <label
             htmlFor={undefined}
           >
-            System library
+            
           </label>
         </div>
       </div>
@@ -143,7 +143,7 @@ exports[`EditLibraryForm Render form 1`] = `
           tabIndex={undefined}
           type={undefined}
         >
-          Submit
+          
         </button>
       </div>
     </div>

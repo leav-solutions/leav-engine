@@ -1,7 +1,12 @@
 import * as React from 'react';
+import {translate, TranslationFunction} from 'react-i18next';
 import AppMenu from '../components/AppMenu';
 
-class MainMenu extends React.Component {
+interface IMainMenuProps {
+    t: TranslationFunction;
+}
+
+class MainMenu extends React.Component<IMainMenuProps, any> {
     public state = {
         activeMenu: 'libraries'
     };
@@ -9,15 +14,15 @@ class MainMenu extends React.Component {
     public menuItems = [
         {
             id: 'libraries',
-            label: 'Libraries'
+            label: this.props.t('libraries.title')
         },
         {
             id: 'attributes',
-            label: 'Attributes'
+            label: this.props.t('attributes.title')
         },
         {
             id: 'trees',
-            label: 'Trees'
+            label: this.props.t('trees.title')
         }
     ];
 
@@ -33,4 +38,4 @@ class MainMenu extends React.Component {
     }
 }
 
-export default MainMenu;
+export default translate()(MainMenu);

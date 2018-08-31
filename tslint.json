@@ -33,5 +33,8 @@
         "no-namespace": [true, "allow-declarations"],
         "jsx-quotes": [2, "prefer-double"],
         "jsx-boolean-value": [true, "never"]
+    },
+    "jsRules": {
+        "object-literal-sort-keys": false
     }
 }

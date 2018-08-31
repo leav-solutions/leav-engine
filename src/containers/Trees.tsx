@@ -1,13 +1,18 @@
 import * as React from 'react';
+import {translate, TranslationFunction} from 'react-i18next';
 import {Header, Icon} from 'semantic-ui-react';
 
-function Trees() {
+interface ITreesProps {
+    t: TranslationFunction;
+}
+
+function Trees({t}: ITreesProps) {
     return (
         <Header size="large">
             <Icon name="share alternate" />
-            Trees
+            {t('trees.title')}
         </Header>
     );
 }
 
-export default Trees;
+export default translate()(Trees);
