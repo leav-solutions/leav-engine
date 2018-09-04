@@ -2,14 +2,18 @@ import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import LibrariesList from '../components/LibrariesList';
-import {getLibsQuery, LibrariesQuery} from '../queries/getLibrariesQuery';
+import LibrariesList from '../../components/LibrariesList';
+import {getLibsQuery, LibrariesQuery} from '../../queries/getLibrariesQuery';
 
 interface ILibrariesProps {
     t: TranslationFunction;
 }
 
 function Libraries({t}: ILibrariesProps) {
+    const deleteLibrary = (libraryId: string) => {
+        return;
+    };
+
     return (
         <div>
             <Grid>
@@ -35,7 +39,7 @@ function Libraries({t}: ILibrariesProps) {
                         return <p>Error: {error.message}</p>;
                     }
 
-                    return <LibrariesList libraries={data.libraries} />;
+                    return <LibrariesList libraries={data.libraries} onDeleteLibrary={deleteLibrary} />;
                 }}
             </LibrariesQuery>
         </div>

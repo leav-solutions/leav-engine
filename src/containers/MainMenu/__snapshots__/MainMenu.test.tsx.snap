@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MainMenu Snapshot test 1`] = `
+<div
+  className="ui fluid inverted vertical menu"
+>
+  <div
+    className="left header item"
+    onClick={[Function]}
+  >
+    <i
+      aria-hidden="true"
+      className="cogs icon"
+    />
+    <strong>
+      
+    </strong>
+  </div>
+  <div
+    className="menu"
+  >
+    <a
+      className="active item menu_item"
+      href="/libraries"
+      onClick={[Function]}
+    >
+      <i
+        aria-hidden="true"
+        className="angle right icon"
+      />
+      
+    </a>
+    <a
+      className="item menu_item"
+      href="/attributes"
+      onClick={[Function]}
+    >
+      <i
+        aria-hidden="true"
+        className="angle right icon"
+      />
+      
+    </a>
+    <a
+      className="item menu_item"
+      href="/trees"
+      onClick={[Function]}
+    >
+      <i
+        aria-hidden="true"
+        className="angle right icon"
+      />
+      
+    </a>
+  </div>
+</div>
+`;

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Attributes Snapshot test 1`] = `
+<div
+  className="ui large header"
+>
+  <i
+    aria-hidden="true"
+    className="edit outline icon"
+  />
+  
+</div>
+`;

@@ -24,7 +24,7 @@
         "test": "react-scripts-ts test --env=jsdom",
         "eject": "react-scripts-ts eject",
         "precommit": "lint-staged && CI=true npm test",
-        "gen_types": "apollo codegen:generate --target=typescript --outputFlat src/_types",
+        "gen_types": "apollo codegen:generate --target=typescript --outputFlat src/_gqlTypes",
         "create_comp:component": "scripts/createComponent.js -m",
         "create_comp:container": "scripts/createComponent.js -n"
     },

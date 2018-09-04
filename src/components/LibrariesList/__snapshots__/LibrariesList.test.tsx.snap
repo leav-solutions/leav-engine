@@ -12,6 +12,22 @@ exports[`LibrariesList Render list 1`] = `
     onClick={[Function]}
     role="listitem"
   >
+    <div
+      className="right floated content"
+    >
+      <button
+        className="ui circular icon button delete"
+        disabled={undefined}
+        onClick={[Function]}
+        role="button"
+        tabIndex={undefined}
+      >
+        <i
+          aria-hidden="true"
+          className="trash icon"
+        />
+      </button>
+    </div>
     <i
       aria-hidden="true"
       className="book large icon"
@@ -39,6 +55,22 @@ exports[`LibrariesList Render list 1`] = `
     onClick={[Function]}
     role="listitem"
   >
+    <div
+      className="right floated content"
+    >
+      <button
+        className="ui circular icon button delete"
+        disabled={undefined}
+        onClick={[Function]}
+        role="button"
+        tabIndex={undefined}
+      >
+        <i
+          aria-hidden="true"
+          className="trash icon"
+        />
+      </button>
+    </div>
     <i
       aria-hidden="true"
       className="book large icon"
@@ -66,6 +98,22 @@ exports[`LibrariesList Render list 1`] = `
     onClick={[Function]}
     role="listitem"
   >
+    <div
+      className="right floated content"
+    >
+      <button
+        className="ui circular icon button delete"
+        disabled={undefined}
+        onClick={[Function]}
+        role="button"
+        tabIndex={undefined}
+      >
+        <i
+          aria-hidden="true"
+          className="trash icon"
+        />
+      </button>
+    </div>
     <i
       aria-hidden="true"
       className="book large icon"

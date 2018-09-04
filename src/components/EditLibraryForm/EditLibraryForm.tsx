@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Form, Header} from 'semantic-ui-react';
-import {GET_LIBRARY_libraries} from '../_types/GET_LIBRARY';
+import {GET_LIBRARY_libraries} from '../../_gqlTypes/GET_LIBRARY';
 
 interface IEditLibraryFormProps {
     library: GET_LIBRARY_libraries | null;

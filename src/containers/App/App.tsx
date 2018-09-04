@@ -1,7 +1,7 @@
 import ApolloClient from 'apollo-boost';
 import * as React from 'react';
 import {ApolloProvider} from 'react-apollo';
-import Home from './Home';
+import Home from '../Home';
 
 function App(): JSX.Element {
     // TODO: handle auth token properly

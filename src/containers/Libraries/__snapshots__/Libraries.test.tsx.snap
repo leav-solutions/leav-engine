@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Libraries Snapshot test 1`] = `
+<div>
+  <div
+    className="ui grid"
+  >
+    <div
+      className="left aligned left floated middle aligned eight wide column"
+    >
+      <div
+        className="ui large header"
+      >
+        <i
+          aria-hidden="true"
+          className="folder outline icon"
+        />
+        
+      </div>
+    </div>
+    <div
+      className="right aligned right floated middle aligned three wide column"
+    >
+      <a
+        className="ui medium icon left labeled button"
+        disabled={undefined}
+        href="/edit-library"
+        onClick={[Function]}
+        role="button"
+        tabIndex={undefined}
+      >
+        <i
+          aria-hidden="true"
+          className="plus icon"
+        />
+        
+      </a>
+    </div>
+  </div>
+  <p>
+    Loading
+  </p>
+</div>
+`;

@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home Snapshot test 1`] = `
+<div
+  className="wrapper"
+>
+  <div
+    className="left"
+    style={
+      Object {
+        "backgroundColor": "#1b1c1d",
+        "height": "100%",
+        "position": "fixed",
+        "width": "250px",
+      }
+    }
+  >
+    <div
+      className="ui fluid inverted vertical menu"
+    >
+      <div
+        className="left header item"
+        onClick={[Function]}
+      >
+        <i
+          aria-hidden="true"
+          className="cogs icon"
+        />
+        <strong>
+          
+        </strong>
+      </div>
+      <div
+        className="menu"
+      >
+        <a
+          className="active item menu_item"
+          href="/libraries"
+          onClick={[Function]}
+        >
+          <i
+            aria-hidden="true"
+            className="angle right icon"
+          />
+          
+        </a>
+        <a
+          className="item menu_item"
+          href="/attributes"
+          onClick={[Function]}
+        >
+          <i
+            aria-hidden="true"
+            className="angle right icon"
+          />
+          
+        </a>
+        <a
+          className="item menu_item"
+          href="/trees"
+          onClick={[Function]}
+        >
+          <i
+            aria-hidden="true"
+            className="angle right icon"
+          />
+          
+        </a>
+      </div>
+    </div>
+  </div>
+  <div
+    className="content"
+    style={
+      Object {
+        "marginLeft": 250,
+        "padding": 20,
+      }
+    }
+  />
+</div>
+`;

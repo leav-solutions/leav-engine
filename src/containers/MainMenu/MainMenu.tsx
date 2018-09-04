@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
-import AppMenu from '../components/AppMenu';
+import AppMenu from '../../components/AppMenu';
 
 interface IMainMenuProps {
     t: TranslationFunction;

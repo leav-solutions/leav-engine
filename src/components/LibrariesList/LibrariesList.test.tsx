@@ -8,12 +8,14 @@ import LibrariesList from './LibrariesList';
 describe('LibrariesList', () => {
     test('Render list', async () => {
         const libraries = [
-            {id: 'test', label: {fr: 'Test', en: null}},
-            {id: 'test2', label: {fr: null, en: 'Test 2'}},
-            {id: 'test3', label: null}
+            {id: 'test', system: false, label: {fr: 'Test', en: null}},
+            {id: 'test2', system: false, label: {fr: null, en: 'Test 2'}},
+            {id: 'test3', system: false, label: null}
         ];
 
-        const comp = <LibrariesList libraries={libraries} />;
+        const deleteLib = jest.fn();
+
+        const comp = <LibrariesList libraries={libraries} onDeleteLibrary={deleteLib} />;
         const shallowComp = shallow(comp);
 
         const listItems = shallowComp.find(List.Item);

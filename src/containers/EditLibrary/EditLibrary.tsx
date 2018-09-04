@@ -1,10 +1,10 @@
 import {History} from 'history';
 import * as React from 'react';
-import EditLibraryForm from '../components/EditLibraryForm';
-import {getLibsQuery} from '../queries/getLibrariesQuery';
-import {getLibQuery, LibraryQuery} from '../queries/getLibraryQuery';
-import {SaveLibMutation, saveLibQuery} from '../queries/saveLibMutation';
-import {GET_LIBRARY_libraries} from '../_types/GET_LIBRARY';
+import EditLibraryForm from '../../components/EditLibraryForm';
+import {getLibsQuery} from '../../queries/getLibrariesQuery';
+import {getLibQuery, LibraryQuery} from '../../queries/getLibraryQuery';
+import {SaveLibMutation, saveLibQuery} from '../../queries/saveLibMutation';
+import {GET_LIBRARY_libraries} from '../../_gqlTypes/GET_LIBRARY';
 
 interface IEditLibraryProps {
     match: any;
