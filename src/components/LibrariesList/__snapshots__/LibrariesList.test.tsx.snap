@@ -10,24 +10,15 @@ exports[`LibrariesList Render list 1`] = `
     data-value={undefined}
     href="/edit-library/test"
     onClick={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
     role="listitem"
+    style={
+      Object {
+        "minHeight": 50,
+      }
+    }
   >
-    <div
-      className="right floated content"
-    >
-      <button
-        className="ui circular icon button delete"
-        disabled={undefined}
-        onClick={[Function]}
-        role="button"
-        tabIndex={undefined}
-      >
-        <i
-          aria-hidden="true"
-          className="trash icon"
-        />
-      </button>
-    </div>
     <i
       aria-hidden="true"
       className="book large icon"
@@ -53,24 +44,15 @@ exports[`LibrariesList Render list 1`] = `
     data-value={undefined}
     href="/edit-library/test2"
     onClick={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
     role="listitem"
+    style={
+      Object {
+        "minHeight": 50,
+      }
+    }
   >
-    <div
-      className="right floated content"
-    >
-      <button
-        className="ui circular icon button delete"
-        disabled={undefined}
-        onClick={[Function]}
-        role="button"
-        tabIndex={undefined}
-      >
-        <i
-          aria-hidden="true"
-          className="trash icon"
-        />
-      </button>
-    </div>
     <i
       aria-hidden="true"
       className="book large icon"
@@ -96,24 +78,15 @@ exports[`LibrariesList Render list 1`] = `
     data-value={undefined}
     href="/edit-library/test3"
     onClick={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
     role="listitem"
+    style={
+      Object {
+        "minHeight": 50,
+      }
+    }
   >
-    <div
-      className="right floated content"
-    >
-      <button
-        className="ui circular icon button delete"
-        disabled={undefined}
-        onClick={[Function]}
-        role="button"
-        tabIndex={undefined}
-      >
-        <i
-          aria-hidden="true"
-          className="trash icon"
-        />
-      </button>
-    </div>
     <i
       aria-hidden="true"
       className="book large icon"

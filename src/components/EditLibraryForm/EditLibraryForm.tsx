@@ -39,7 +39,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
         const label = newLib
             ? t('libraries.new')
             : library.label !== null
-                ? library.label.fr || library.label.en
+                ? library.label.fr || library.label.en || library.id
                 : library.id;
         const langs = ['fr', 'en'];
 

@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LibrariesListElem Snapshot test 1`] = `
+<a
+  className="item"
+  data-value={undefined}
+  href="/edit-library/test_lib"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="listitem"
+  style={
+    Object {
+      "minHeight": 50,
+    }
+  }
+>
+  <i
+    aria-hidden="true"
+    className="book large icon"
+  />
+  <div
+    className="content"
+  >
+    <div
+      className="header"
+      size="huge"
+    >
+      TEST
+    </div>
+    <div
+      className="description"
+    >
+      test_lib
+    </div>
+  </div>
+</a>
+`;

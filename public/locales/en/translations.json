@@ -1,14 +1,16 @@
 {
     "admin": {
         "title": "Administration",
-        "submit": "Submit"
+        "submit": "Submit",
+        "cancel": "Cancel"
     },
     "libraries": {
         "title": "Libraries",
         "new": "New library",
         "label": "Label",
         "ID": "ID",
-        "isSystem": "System"
+        "isSystem": "System",
+        "confirm_delete": "Do you really want to delete library {{libLabel}}?"
     },
     "attributes": {
         "title": "Attributes"

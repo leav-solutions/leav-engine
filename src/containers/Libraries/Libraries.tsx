@@ -10,10 +10,6 @@ interface ILibrariesProps {
 }
 
 function Libraries({t}: ILibrariesProps) {
-    const deleteLibrary = (libraryId: string) => {
-        return;
-    };
-
     return (
         <div>
             <Grid>
@@ -39,7 +35,7 @@ function Libraries({t}: ILibrariesProps) {
                         return <p>Error: {error.message}</p>;
                     }
 
-                    return <LibrariesList libraries={data.libraries} onDeleteLibrary={deleteLibrary} />;
+                    return <LibrariesList libraries={data.libraries} />;
                 }}
             </LibrariesQuery>
         </div>
