@@ -76,7 +76,7 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                 resolvers: {
                     Query: {
                         async attributes(parent, args) {
-                            return attributeDomain.getAttributes();
+                            return attributeDomain.getAttributes(args);
                         }
                     },
                     Mutation: {

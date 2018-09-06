@@ -30,21 +30,19 @@ describe('Attributes', () => {
         expect(libsRes.data.data.attributes.filter(lib => lib.id === testAttrName).length).toBe(1);
     });
 
-    // test('Get Attribute by ID', async () => {
+    test('Get Attribute by ID', async () => {
+        const res = await makeGraphQlCall(`{attributes(id: "modified_at") { id }}`);
 
-    //     const res = await makeGraohQlCall( `{attributes(id: modified_at) { id }}`
-    //     });
-
-    //     expect(res.status).toBe(200);
-    //     expect(res.data.data.attributes.length).toBe(1);
-    //     expect(res.data.errors).toBeUndefined();
-    // });
+        expect(res.status).toBe(200);
+        expect(res.data.data.attributes.length).toBe(1);
+        expect(res.data.errors).toBeUndefined();
+    });
 
     test('Get error if deleting system attribute', async () => {
         const res = await makeGraphQlCall(`mutation {deleteAttribute(id: "modified_by") { id }}`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.deleteAttribute).toBeNull();
+        expect(res.data.data).toBeNull();
         expect(res.data.errors).toBeDefined();
         expect(res.data.errors[0].message).toBeDefined();
         expect(res.data.errors[0].fields).toBeDefined();
