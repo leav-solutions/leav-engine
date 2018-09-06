@@ -26,9 +26,9 @@ export default function(
                     # Application Library
                     type Library {
                         id: ID!,
-                        system: Boolean!,
+                        system: Boolean,
                         label: SystemTranslation,
-                        attributes: [Attribute]!,
+                        attributes: [Attribute],
                         permissionsConf: TreePermissionsConf
                     }
 

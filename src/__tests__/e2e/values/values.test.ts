@@ -147,7 +147,11 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
-                    value: {value: "TEST VAL"}) { id_value value }
+                    value: {value: "TEST VAL"}
+                ) {
+                    id_value
+                    value
+                }
               }`);
 
         expect(res.status).toBe(200);

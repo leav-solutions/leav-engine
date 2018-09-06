@@ -181,7 +181,7 @@ describe('Permissions', () => {
             }`);
 
             expect(resDelRecord.status).toBe(200);
-            expect(resDelRecord.data.data.deleteRecord).toBe(null);
+            expect(resDelRecord.data.data).toBe(null);
             expect(resDelRecord.data.errors).toBeDefined();
             expect(resDelRecord.data.errors.length).toBeGreaterThanOrEqual(1);
         });
@@ -264,7 +264,7 @@ describe('Permissions', () => {
             }`);
 
             expect(res.status).toBe(200);
-            expect(res.data.data.saveValue).toBe(null);
+            expect(res.data.data).toBe(null);
             expect(res.data.errors).toBeDefined();
             expect(res.data.errors.length).toBeGreaterThanOrEqual(1);
         });

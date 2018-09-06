@@ -12,18 +12,18 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
             const baseSchema = {
                 typeDefs: `
                     type Value {
-                        id_value: ID!,
-                        value: String!,
-                        raw_value: String!,
-                        modified_at: Int!,
-                        created_at: Int!
+                        id_value: ID,
+                        value: String,
+                        raw_value: String,
+                        modified_at: Int,
+                        created_at: Int
                     }
 
                     type linkValue {
-                        id_value: ID!,
+                        id_value: ID,
                         value: Record!,
-                        modified_at: Int!,
-                        created_at: Int!
+                        modified_at: Int,
+                        created_at: Int
                     }
 
                     type treeValue {
@@ -35,7 +35,7 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
 
                     input ValueInput {
                         id_value: ID,
-                        value: String!
+                        value: String
                     }
 
                     extend type Mutation {
