@@ -1,12 +1,27 @@
-import {RecordPermissionsActions, PermissionTypes, IPermission} from '../../_types/permissions';
-import permissionRepo from './permissionRepo';
-import {IDbUtils} from '../db/dbUtils';
 import {Database} from 'arangojs';
+import {IPermission, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import {IDbUtils} from '../db/dbUtils';
+import permissionRepo from './permissionRepo';
 
 describe('PermissionRepo', () => {
     describe('SavePermission', () => {
         test('Should save permission', async () => {
-            const permData: IPermission = {
+            const permData = {
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                usersGroup: '12345',
+                actions: {
+                    [RecordPermissionsActions.ACCESS]: true,
+                    [RecordPermissionsActions.EDIT]: false,
+                    [RecordPermissionsActions.DELETE]: false
+                },
+                permissionTreeTarget: {
+                    id: 'test_lib/123445',
+                    tree: 'test_tree'
+                }
+            };
+
+            const permDataClean: IPermission = {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 usersGroup: '12345',
@@ -28,19 +43,19 @@ describe('PermissionRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(permData)
+                cleanup: jest.fn().mockReturnValue(permDataClean)
             };
 
             const permRepo = permissionRepo(mockDbServ, mockDbUtils as IDbUtils);
 
-            const savedPerm = await permRepo.savePermission(permData);
+            const savedPerm = await permRepo.savePermission(permDataClean);
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
-            expect(savedPerm).toMatchObject(permData);
+            expect(savedPerm).toMatchObject(permDataClean);
         });
     });
     describe('GetPermissions', () => {

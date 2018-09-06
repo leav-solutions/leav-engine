@@ -1,5 +1,5 @@
 import {aql} from 'arangojs';
-import {IPermission, PermissionTypes, IPermissionsTreeTarget} from '../../_types/permissions';
+import {IPermission, IPermissionsTreeTarget, PermissionTypes} from '../../_types/permissions';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 
@@ -74,7 +74,12 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
                 RETURN NEW
             `);
 
-            return dbUtils.cleanup(res.pop());
+            const savedPerm = {
+                ...res[0],
+                permissionTreeTarget: _toCoreTreeTarget(res[0].permissionTreeTarget)
+            };
+
+            return dbUtils.cleanup(savedPerm);
         },
         async getPermissions(
             type: PermissionTypes,
