@@ -14,7 +14,28 @@
         "confirm_delete": "Do you really want to delete library {{libLabel}}?"
     },
     "attributes": {
-        "title": "Attributes"
+        "title": "Attributes",
+        "new": "New attribut",
+        "label": "Label",
+        "ID": "ID",
+        "type": "Type",
+        "format": "Format",
+        "confirm_delete": "Do you really want to delete attribute {{attrLabel}}?",
+        "types": {
+            "tree": "Tree",
+            "advanced": "Advanced",
+            "simple": "Simple",
+            "advanced_link": "Advanced link",
+            "simple_link": "Simple link"
+        },
+        "formats": {
+            "text": "Text",
+            "boolean": "Boolean",
+            "extended": "Extended",
+            "date": "Date",
+            "encrypted": "Encrypted",
+            "numeric": "Numeric"
+        }
     },
     "trees": {
         "title": "Trees"

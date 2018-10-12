@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DeleteLibraryButton Snapshot test 1`] = `
+exports[`DeleteButton Snapshot test 1`] = `
 <button
   className="ui circular icon button delete"
   disabled={undefined}

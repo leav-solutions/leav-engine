@@ -63,8 +63,25 @@ exports[`AttributesList Snapshot test 1`] = `
         
       </td>
       <td
-        className=""
-      />
+        className="right aligned one wide"
+      >
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="ui circular icon button delete"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            <i
+              aria-hidden="true"
+              className="trash icon"
+            />
+          </button>
+        </div>
+      </td>
     </tr>
     <tr
       className=""
@@ -91,8 +108,25 @@ exports[`AttributesList Snapshot test 1`] = `
         
       </td>
       <td
-        className=""
-      />
+        className="right aligned one wide"
+      >
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="ui circular icon button delete"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            <i
+              aria-hidden="true"
+              className="trash icon"
+            />
+          </button>
+        </div>
+      </td>
     </tr>
     <tr
       className=""
@@ -119,8 +153,25 @@ exports[`AttributesList Snapshot test 1`] = `
         
       </td>
       <td
-        className=""
-      />
+        className="right aligned one wide"
+      >
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="ui circular icon button delete"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            <i
+              aria-hidden="true"
+              className="trash icon"
+            />
+          </button>
+        </div>
+      </td>
     </tr>
   </tbody>
 </table>

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {Button} from 'semantic-ui-react';
 
-interface IDeleteLibraryButtonProps {
+interface IDeleteButtonProps {
     onDelete: (event: any) => void;
 }
 
-function DeleteLibraryButton({onDelete}: IDeleteLibraryButtonProps): JSX.Element {
+function DeleteButton({onDelete}: IDeleteButtonProps): JSX.Element {
     return <Button className="delete" circular icon="trash" onClick={onDelete} />;
 }
 
-export default DeleteLibraryButton;
+export default DeleteButton;

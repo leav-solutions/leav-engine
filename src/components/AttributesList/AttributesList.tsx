@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Table} from 'semantic-ui-react';
+import DeleteAttribute from '../../containers/DeleteAttribute';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 
 interface IAttributesListProps {
@@ -31,7 +32,9 @@ function AttributesList({attributes, t, onRowClick}: IAttributesListProps): JSX.
                             <Table.Cell>{a.id}</Table.Cell>
                             <Table.Cell>{t('attributes.types.' + a.type)}</Table.Cell>
                             <Table.Cell>{a.format ? t('attributes.formats.' + a.format) : ''}</Table.Cell>
-                            <Table.Cell />
+                            <Table.Cell textAlign="right" width={1}>
+                                {!a.system ? <DeleteAttribute attribute={a} /> : ''}
+                            </Table.Cell>
                         </Table.Row>
                     );
                 })}

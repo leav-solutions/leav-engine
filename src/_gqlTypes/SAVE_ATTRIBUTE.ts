@@ -1,7 +1,7 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import {AttributeInput} from './globalTypes';
+import {AttributeInput, AttributeFormat, AttributeType} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_ATTRIBUTE
@@ -15,6 +15,9 @@ export interface SAVE_ATTRIBUTE_saveAttribute_label {
 export interface SAVE_ATTRIBUTE_saveAttribute {
     id: string;
     label: SAVE_ATTRIBUTE_saveAttribute_label | null;
+    format: AttributeFormat | null;
+    type: AttributeType;
+    system: boolean;
 }
 
 export interface SAVE_ATTRIBUTE {

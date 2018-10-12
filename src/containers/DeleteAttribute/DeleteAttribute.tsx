@@ -1,23 +1,24 @@
 import {DataProxy} from 'apollo-cache';
+import {TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {translate} from 'react-i18next';
 import {Confirm} from 'semantic-ui-react';
 import DeleteButton from '../../components/DeleteButton';
-import {DeleteLibMutation, deleteLibQuery} from '../../queries/deleteLibMutation';
-import {getLibsQuery} from '../../queries/getLibrariesQuery';
-import {GET_LIBRARIES_libraries} from '../../_gqlTypes/GET_LIBRARIES';
+import {DeleteAttributeMutation, deleteAttrQuery} from '../../queries/deleteAttributeMutation';
+import {getAttributesQuery} from '../../queries/getAttributesQuery';
+import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 
-interface IDeleteLibraryProps {
-    library: GET_LIBRARIES_libraries;
+interface IDeleteAttributeProps {
+    attribute: GET_ATTRIBUTES_attributes;
     t: TranslationFunction;
 }
 
-interface IDeleteLibraryState {
+interface IDeleteAttributeState {
     showConfirm: boolean;
 }
 
-class DeleteLibrary extends React.Component<IDeleteLibraryProps, IDeleteLibraryState> {
-    constructor(props: IDeleteLibraryProps) {
+class DeleteAttribute extends React.Component<IDeleteAttributeProps, IDeleteAttributeState> {
+    constructor(props: IDeleteAttributeProps) {
         super(props);
 
         this.state = {
@@ -26,35 +27,40 @@ class DeleteLibrary extends React.Component<IDeleteLibraryProps, IDeleteLibraryS
     }
 
     public render() {
-        const {library, t} = this.props;
+        const {attribute, t} = this.props;
         const {showConfirm} = this.state;
 
         return (
-            <DeleteLibMutation mutation={deleteLibQuery} update={this._updateCache}>
-                {deleteLib => {
+            <DeleteAttributeMutation mutation={deleteAttrQuery} update={this._updateCache}>
+                {deleteAttr => {
                     const onDelete = async (e: React.SyntheticEvent) => {
                         this._closeConfirm(e);
-                        await deleteLib({
-                            variables: {libID: library.id}
+                        await deleteAttr({
+                            variables: {attrId: attribute.id}
                         });
                     };
 
-                    const libLabel =
-                        library.label !== null ? library.label.fr || library.label.en || library.id : library.id;
+                    const attrLabel =
+                        attribute.label !== null
+                            ? attribute.label.fr || attribute.label.en || attribute.id
+                            : attribute.id;
 
                     /**
                      * Prevent click on confirm modal from propagating to its parents
                      *
                      * @param e
                      */
-                    const disableClick = (e: React.SyntheticEvent) => e.preventDefault();
+                    const disableClick = (e: React.SyntheticEvent) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    };
 
                     return (
                         <div onClick={disableClick}>
                             <DeleteButton onDelete={this._openConfirm} />
                             <Confirm
                                 open={showConfirm}
-                                content={t('libraries.confirm_delete', {libLabel})}
+                                content={t('attributes.confirm_delete', {attrLabel})}
                                 onCancel={this._closeConfirm}
                                 onConfirm={onDelete}
                                 cancelButton={t('admin.cancel')}
@@ -64,26 +70,28 @@ class DeleteLibrary extends React.Component<IDeleteLibraryProps, IDeleteLibraryS
                         </div>
                     );
                 }}
-            </DeleteLibMutation>
+            </DeleteAttributeMutation>
         );
     }
 
     private _openConfirm = (e: React.SyntheticEvent) => {
         e.preventDefault();
+        e.stopPropagation();
         this.setState({showConfirm: true});
     }
     private _closeConfirm = (e: React.SyntheticEvent) => {
         e.preventDefault();
+        e.stopPropagation();
         this.setState({showConfirm: false});
     }
 
-    private _updateCache = (cache: DataProxy, {data: {deleteLibrary}}) => {
-        const cacheData: any = cache.readQuery({query: getLibsQuery});
+    private _updateCache(cache: DataProxy, {data: {deleteAttribute}}) {
+        const cacheData: any = cache.readQuery({query: getAttributesQuery});
         cache.writeQuery({
-            query: getLibsQuery,
-            data: {libraries: cacheData.libraries.filter(l => l.id !== deleteLibrary.id)}
+            query: getAttributesQuery,
+            data: {attributes: cacheData.attributes.filter(a => a.id !== deleteAttribute.id)}
         });
     }
 }
 
-export default translate()(DeleteLibrary);
+export default translate()(DeleteAttribute);
