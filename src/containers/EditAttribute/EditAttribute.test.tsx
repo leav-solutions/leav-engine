@@ -1,20 +1,19 @@
-import {History} from 'history';
 import * as React from 'react';
 import {ApolloProvider} from 'react-apollo';
-import {BrowserRouter as Router} from 'react-router-dom';
+import {match} from 'react-router';
 import {create} from 'react-test-renderer';
 import {Mockify} from '../../_types/Mockify';
 import gqlClient from '../../__mocks__/gqlClient';
-import Attributes from './Attributes';
+import EditAttribute, {IEditAttributeMatchParams} from './EditAttribute';
 
-describe('Attributes', () => {
+describe('EditAttribute', () => {
     test('Snapshot test', async () => {
+        const mockMatch: Mockify<match<IEditAttributeMatchParams>> = {params: {id: 'test_attr'}};
         const mockHistory: Mockify<History> = {};
+
         const comp = create(
             <ApolloProvider client={gqlClient}>
-                <Router>
-                    <Attributes history={mockHistory as History} />
-                </Router>
+                <EditAttribute match={mockMatch as match<IEditAttributeMatchParams>} history={mockHistory as History} />
             </ApolloProvider>
         );
 

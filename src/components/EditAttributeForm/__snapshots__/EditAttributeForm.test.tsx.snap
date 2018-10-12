@@ -1,0 +1,427 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditAttributeForm Snapshot test 1`] = `
+<div>
+  <div
+    className="ui header"
+  >
+    Test 1
+  </div>
+  <form
+    action={undefined}
+    className="ui form"
+    onSubmit={[Function]}
+  >
+    <div
+      className="field"
+    >
+      <label>
+        
+      </label>
+      <div
+        className="disabled four wide field"
+      >
+        <div
+          className="ui disabled input"
+          content={undefined}
+        >
+          <input
+            disabled={true}
+            name="id"
+            onChange={[Function]}
+            required={undefined}
+            tabIndex={-1}
+            type="text"
+            value="attr1"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="grouped fields"
+    >
+      <label>
+        
+      </label>
+      <div
+        className="field"
+      >
+        <div
+          className="four wide field"
+        >
+          <label
+            htmlFor={undefined}
+          >
+            fr
+          </label>
+          <div
+            className="ui input"
+            content={undefined}
+          >
+            <input
+              disabled={undefined}
+              name="label/fr"
+              onChange={[Function]}
+              required={undefined}
+              tabIndex={undefined}
+              type="text"
+              value="Test 1"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        className="field"
+      >
+        <div
+          className="four wide field"
+        >
+          <label
+            htmlFor={undefined}
+          >
+            en
+          </label>
+          <div
+            className="ui input"
+            content={undefined}
+          >
+            <input
+              disabled={undefined}
+              name="label/en"
+              onChange={[Function]}
+              required={undefined}
+              tabIndex={undefined}
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="field"
+    >
+      <div
+        className="four wide field"
+      >
+        <label
+          htmlFor={undefined}
+        >
+          
+        </label>
+        <div
+          aria-busy={undefined}
+          aria-disabled={false}
+          aria-expanded={false}
+          aria-multiselectable={undefined}
+          className="ui selection dropdown"
+          content={undefined}
+          name="type"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onMouseDown={[Function]}
+          required={undefined}
+          role="listbox"
+          tabIndex={0}
+          type={undefined}
+        >
+          <div
+            aria-live="polite"
+            className="text"
+            role="alert"
+          >
+            
+          </div>
+          <i
+            aria-hidden="true"
+            className="dropdown icon"
+            onClick={[Function]}
+          />
+          <div
+            className="menu transition"
+          >
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={true}
+              aria-disabled={undefined}
+              aria-selected={true}
+              className="active selected item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="field"
+    >
+      <div
+        className="four wide field"
+      >
+        <label
+          htmlFor={undefined}
+        >
+          
+        </label>
+        <div
+          aria-busy={undefined}
+          aria-disabled={false}
+          aria-expanded={false}
+          aria-multiselectable={undefined}
+          className="ui selection dropdown"
+          content={undefined}
+          name="format"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onMouseDown={[Function]}
+          required={undefined}
+          role="listbox"
+          tabIndex={0}
+          type={undefined}
+        >
+          <div
+            aria-live="polite"
+            className="text"
+            role="alert"
+          >
+            
+          </div>
+          <i
+            aria-hidden="true"
+            className="dropdown icon"
+            onClick={[Function]}
+          />
+          <div
+            className="menu transition"
+          >
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={true}
+              aria-disabled={undefined}
+              aria-selected={true}
+              className="active selected item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="inline fields"
+    >
+      <div
+        className="field"
+      >
+        <button
+          className="ui button"
+          disabled={undefined}
+          onClick={[Function]}
+          required={undefined}
+          role="button"
+          tabIndex={undefined}
+          type={undefined}
+        >
+          
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;

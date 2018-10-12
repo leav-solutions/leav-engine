@@ -14,7 +14,7 @@ export interface SAVE_LIBRARY_saveLibrary_label {
 
 export interface SAVE_LIBRARY_saveLibrary {
     id: string;
-    system: boolean;
+    system: boolean | null;
     label: SAVE_LIBRARY_saveLibrary_label | null;
 }
 

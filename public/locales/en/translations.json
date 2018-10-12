@@ -2,7 +2,8 @@
     "admin": {
         "title": "Administration",
         "submit": "Submit",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "loading": "Loading..."
     },
     "libraries": {
         "title": "Libraries",

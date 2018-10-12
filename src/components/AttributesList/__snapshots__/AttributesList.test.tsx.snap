@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributesList Snapshot test 1`] = `
+<table
+  className="ui selectable striped table"
+>
+  <thead
+    className=""
+  >
+    <tr
+      className=""
+    >
+      <th
+        className=""
+      >
+        
+      </th>
+      <th
+        className=""
+      >
+        
+      </th>
+      <th
+        className=""
+      >
+        
+      </th>
+      <th
+        className=""
+      >
+        
+      </th>
+      <th
+        className=""
+      />
+    </tr>
+  </thead>
+  <tbody
+    className=""
+  >
+    <tr
+      className=""
+      onClick={[Function]}
+    >
+      <td
+        className=""
+      >
+        Test 1
+      </td>
+      <td
+        className=""
+      >
+        attr1
+      </td>
+      <td
+        className=""
+      >
+        
+      </td>
+      <td
+        className=""
+      >
+        
+      </td>
+      <td
+        className=""
+      />
+    </tr>
+    <tr
+      className=""
+      onClick={[Function]}
+    >
+      <td
+        className=""
+      >
+        Test 2
+      </td>
+      <td
+        className=""
+      >
+        attr2
+      </td>
+      <td
+        className=""
+      >
+        
+      </td>
+      <td
+        className=""
+      >
+        
+      </td>
+      <td
+        className=""
+      />
+    </tr>
+    <tr
+      className=""
+      onClick={[Function]}
+    >
+      <td
+        className=""
+      >
+        Test 3
+      </td>
+      <td
+        className=""
+      >
+        attr3
+      </td>
+      <td
+        className=""
+      >
+        
+      </td>
+      <td
+        className=""
+      >
+        
+      </td>
+      <td
+        className=""
+      />
+    </tr>
+  </tbody>
+</table>
+`;

@@ -12,7 +12,7 @@ export interface GET_LIBRARY_libraries_label {
 
 export interface GET_LIBRARY_libraries {
     id: string;
-    system: boolean;
+    system: boolean | null;
     label: GET_LIBRARY_libraries_label | null;
 }
 

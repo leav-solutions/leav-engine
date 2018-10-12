@@ -73,7 +73,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                         <Form.Checkbox
                             label={t('libraries.isSystem')}
                             disabled
-                            checked={library.system}
+                            checked={!!library.system}
                             name="system"
                         />
                     </Form.Field>

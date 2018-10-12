@@ -2,7 +2,8 @@
     "admin": {
         "title": "Administration",
         "submit": "Valider",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "loading": "Chargement..."
     },
     "libraries": {
         "title": "Bibliothèques",
@@ -13,7 +14,27 @@
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer la bibliothèque {{libLabel}}?"
     },
     "attributes": {
-        "title": "Attributs"
+        "title": "Attributs",
+        "new": "Nouvel attribut",
+        "label": "Libellé",
+        "ID": "Identifiant",
+        "type": "Type",
+        "format": "Format",
+        "types": {
+            "tree": "Arbre",
+            "advanced": "Avancé",
+            "simple": "Simple",
+            "advanced_link": "Lien avancé",
+            "simple_link": "Lien simple"
+        },
+        "formats": {
+            "text": "Texte",
+            "boolean": "Booléen",
+            "extended": "Étendu",
+            "date": "Date",
+            "encrypted": "Crypté",
+            "numeric": "Numérique"
+        }
     },
     "trees": {
         "title": "Arbres"

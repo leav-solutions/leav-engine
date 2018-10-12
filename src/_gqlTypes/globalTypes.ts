@@ -5,9 +5,75 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum AttributeFormat {
+    boolean = 'boolean',
+    date = 'date',
+    encrypted = 'encrypted',
+    extended = 'extended',
+    numeric = 'numeric',
+    text = 'text'
+}
+
+export enum AttributeType {
+    advanced = 'advanced',
+    advanced_link = 'advanced_link',
+    simple = 'simple',
+    simple_link = 'simple_link',
+    tree = 'tree'
+}
+
+export enum AvailableActionsName {
+    encrypt = 'encrypt',
+    formatDate = 'formatDate',
+    formatNumber = 'formatNumber',
+    parseJSON = 'parseJSON',
+    toBoolean = 'toBoolean',
+    toJSON = 'toJSON',
+    toNumber = 'toNumber',
+    toString = 'toString',
+    validateFormat = 'validateFormat',
+    validateRegex = 'validateRegex'
+}
+
 export enum PermissionsRelation {
     and = 'and',
     or = 'or'
+}
+
+export interface ActionConfigurationInput {
+    name: AvailableActionsName;
+    params?: (ActionConfigurationParamInput | null)[] | null;
+}
+
+export interface ActionConfigurationParamInput {
+    name: string;
+    value: string;
+}
+
+export interface ActionsListConfigurationInput {
+    saveValue?: (ActionConfigurationInput | null)[] | null;
+    getValue?: (ActionConfigurationInput | null)[] | null;
+    deleteValue?: (ActionConfigurationInput | null)[] | null;
+}
+
+export interface AttributeInput {
+    id: string;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+    label?: SystemTranslationInput | null;
+    linked_library?: string | null;
+    linked_tree?: string | null;
+    embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
+    actions_list?: ActionsListConfigurationInput | null;
+    permissionsConf?: TreePermissionsConfInput | null;
+}
+
+export interface EmbeddedAttributeInput {
+    id: string;
+    format?: AttributeFormat | null;
+    label?: SystemTranslationInput | null;
+    validation_regex?: string | null;
+    embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
 }
 
 export interface LibraryInput {
