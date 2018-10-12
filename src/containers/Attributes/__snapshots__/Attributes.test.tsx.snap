@@ -24,7 +24,7 @@ exports[`Attributes Snapshot test 1`] = `
       <a
         className="ui medium icon left labeled button"
         disabled={undefined}
-        href="/edit-attribute"
+        href="/attributes/edit/"
         onClick={[Function]}
         role="button"
         tabIndex={undefined}

@@ -20,7 +20,7 @@ function Libraries({t}: ILibrariesProps) {
                     </Header>
                 </Grid.Column>
                 <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
-                    <Button icon labelPosition="left" size="medium" as={Link} to={'/edit-library'}>
+                    <Button icon labelPosition="left" size="medium" as={Link} to={'/libraries/edit'}>
                         <Icon name="plus" />
                         {t('libraries.new')}
                     </Button>

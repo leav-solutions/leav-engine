@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
-import {Link} from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';
 
 export interface IAppMenuItem {
@@ -9,13 +9,11 @@ export interface IAppMenuItem {
 }
 
 export interface IAppMenuProps {
-    activeItem: string;
     items: IAppMenuItem[];
-    onItemClick: (ev, elem) => void;
     t: TranslationFunction;
 }
 
-function AppMenu({activeItem, items, onItemClick, t}: IAppMenuProps): JSX.Element {
+function AppMenu({items, t}: IAppMenuProps): JSX.Element {
     return (
         <Menu vertical fluid inverted>
             <Menu.Item header position="left">
@@ -24,15 +22,7 @@ function AppMenu({activeItem, items, onItemClick, t}: IAppMenuProps): JSX.Elemen
             </Menu.Item>
             <Menu.Menu>
                 {items.map((item: IAppMenuItem) => (
-                    <Menu.Item
-                        className="menu_item"
-                        key={item.id}
-                        as={Link}
-                        to={'/' + item.id}
-                        name={item.id}
-                        active={activeItem === item.id}
-                        onClick={onItemClick}
-                    >
+                    <Menu.Item className="menu_item" key={item.id} as={NavLink} to={'/' + item.id} name={item.id}>
                         <Icon name="angle right" />
                         {item.label}
                     </Menu.Item>

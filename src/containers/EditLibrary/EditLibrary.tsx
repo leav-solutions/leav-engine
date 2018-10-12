@@ -66,7 +66,7 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
                         refetchQueries: [{query: getLibQuery, variables: {id: libData.id}}, {query: getLibsQuery}]
                     });
 
-                    this.props.history.replace({pathname: '/edit-library/' + libData.id});
+                    this.props.history.replace({pathname: '/libraries/edit/' + libData.id});
                 };
                 return <EditLibraryForm library={libToEdit} onSubmit={onFormSubmit} />;
             }}

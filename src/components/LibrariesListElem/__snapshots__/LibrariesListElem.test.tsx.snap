@@ -4,7 +4,7 @@ exports[`LibrariesListElem Snapshot test 1`] = `
 <a
   className="item"
   data-value={undefined}
-  href="/edit-library/test_lib"
+  href="/libraries/edit/test_lib"
   onClick={[Function]}
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}

@@ -26,15 +26,8 @@ class MainMenu extends React.Component<IMainMenuProps, any> {
         }
     ];
 
-    public handleItemClick = (e, {name}) => {
-        this.setState({
-            ...this.state,
-            activeMenu: name
-        });
-    }
-
     public render() {
-        return <AppMenu activeItem={this.state.activeMenu} items={this.menuItems} onItemClick={this.handleItemClick} />;
+        return <AppMenu items={this.menuItems} />;
     }
 }
 

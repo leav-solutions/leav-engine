@@ -18,11 +18,11 @@ function Home(): JSX.Element {
                     <MainMenu />
                 </div>
                 <div className="content" style={{marginLeft: 250, padding: 20}}>
-                    <Route path="/libraries" component={Libraries} />
-                    <Route path="/attributes" component={Attributes} />
-                    <Route path="/trees" component={Trees} />
-                    <Route path="/edit-library/:id?" component={EditLibrary} />
-                    <Route path="/edit-attribute/:id?" component={EditAttribute} />
+                    <Route path="/libraries" component={Libraries} exact />
+                    <Route path="/libraries/edit/:id?" component={EditLibrary} exact />
+                    <Route path="/attributes" component={Attributes} exact />
+                    <Route path="/attributes/edit/:id?" component={EditAttribute} exact />
+                    <Route path="/trees" component={Trees} exact />
                 </div>
             </div>
         </Router>

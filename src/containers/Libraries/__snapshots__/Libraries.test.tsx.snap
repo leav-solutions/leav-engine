@@ -24,7 +24,7 @@ exports[`Libraries Snapshot test 1`] = `
       <a
         className="ui medium icon left labeled button"
         disabled={undefined}
-        href="/edit-library"
+        href="/libraries/edit"
         onClick={[Function]}
         role="button"
         tabIndex={undefined}

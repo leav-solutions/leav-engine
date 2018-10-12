@@ -68,7 +68,7 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
                         ]
                     });
 
-                    this.props.history.replace({pathname: '/edit-attribute/' + attrData.id});
+                    this.props.history.replace({pathname: '/attributes/edit/' + attrData.id});
                 };
 
                 return <EditAttributeForm attribute={attrToEdit} onSubmit={onFormSubmit} />;

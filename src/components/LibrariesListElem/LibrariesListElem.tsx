@@ -27,7 +27,7 @@ class LibrariesListElem extends React.Component<ILibrariesListElemProps, ILibrar
         return (
             <List.Item
                 as={Link}
-                to={'/edit-library/' + library.id}
+                to={'/libraries/edit/' + library.id}
                 onMouseEnter={this._onMouseHover}
                 onMouseLeave={this._onMouseLeave}
                 style={{minHeight: 50}}

@@ -23,7 +23,7 @@ function Attributes({t, history}: IAttributesProps) {
                     </Header>
                 </Grid.Column>
                 <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
-                    <Button icon labelPosition="left" size="medium" as={Link} to={'/edit-attribute'}>
+                    <Button icon labelPosition="left" size="medium" as={Link} to={'/attributes/edit/'}>
                         <Icon name="plus" />
                         {t('attributes.new')}
                     </Button>
@@ -38,7 +38,7 @@ function Attributes({t, history}: IAttributesProps) {
                         return <p>Error: {error.message}</p>;
                     }
 
-                    const onRowClick = attribute => history.push('edit-attribute/' + attribute.id);
+                    const onRowClick = attribute => history.push('/attributes/edit/' + attribute.id);
 
                     return <AttributesList attributes={data.attributes} onRowClick={onRowClick} />;
                 }}

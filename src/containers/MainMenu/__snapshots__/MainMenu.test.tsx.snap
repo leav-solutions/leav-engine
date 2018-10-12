@@ -20,9 +20,11 @@ exports[`MainMenu Snapshot test 1`] = `
     className="menu"
   >
     <a
-      className="active item menu_item"
+      aria-current={null}
+      className="item menu_item"
       href="/libraries"
       onClick={[Function]}
+      style={undefined}
     >
       <i
         aria-hidden="true"
@@ -31,9 +33,11 @@ exports[`MainMenu Snapshot test 1`] = `
       
     </a>
     <a
+      aria-current={null}
       className="item menu_item"
       href="/attributes"
       onClick={[Function]}
+      style={undefined}
     >
       <i
         aria-hidden="true"
@@ -42,9 +46,11 @@ exports[`MainMenu Snapshot test 1`] = `
       
     </a>
     <a
+      aria-current={null}
       className="item menu_item"
       href="/trees"
       onClick={[Function]}
+      style={undefined}
     >
       <i
         aria-hidden="true"
