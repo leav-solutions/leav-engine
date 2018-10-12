@@ -1,9 +1,8 @@
 import {History} from 'history';
 import * as React from 'react';
-import {ApolloProvider} from 'react-apollo';
+import {MockedProvider} from 'react-apollo/test-utils';
 import {create} from 'react-test-renderer';
 import {Mockify} from '../../_types/Mockify';
-import gqlClient from '../../__mocks__/gqlClient';
 import EditLibrary from './EditLibrary';
 
 describe('EditLibrary', () => {
@@ -12,9 +11,9 @@ describe('EditLibrary', () => {
         const mockHistory: Mockify<History> = {};
 
         const comp = create(
-            <ApolloProvider client={gqlClient}>
+            <MockedProvider>
                 <EditLibrary match={mockMatch} history={mockHistory as History} />
-            </ApolloProvider>
+            </MockedProvider>
         );
 
         expect(comp).toMatchSnapshot();

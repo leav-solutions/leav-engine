@@ -1,9 +1,8 @@
 import * as React from 'react';
-import {ApolloProvider} from 'react-apollo';
+import {MockedProvider} from 'react-apollo/test-utils';
 import {create} from 'react-test-renderer';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
-import gqlClient from '../../__mocks__/gqlClient';
 import AttributesList from './AttributesList';
 
 describe('AttributesList', () => {
@@ -35,9 +34,9 @@ describe('AttributesList', () => {
         const onRowClick = jest.fn();
 
         const comp = create(
-            <ApolloProvider client={gqlClient}>
+            <MockedProvider>
                 <AttributesList attributes={attributes} onRowClick={onRowClick} />
-            </ApolloProvider>
+            </MockedProvider>
         );
 
         expect(comp).toMatchSnapshot();

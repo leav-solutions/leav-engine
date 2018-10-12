@@ -1,9 +1,8 @@
 import * as React from 'react';
-import {ApolloProvider} from 'react-apollo';
+import {MockedProvider} from 'react-apollo/test-utils';
 import {create} from 'react-test-renderer';
 import {GET_LIBRARIES_libraries} from '../../_gqlTypes/GET_LIBRARIES';
 import {Mockify} from '../../_types/Mockify';
-import gqlClient from '../../__mocks__/gqlClient';
 import DeleteLibrary from './DeleteLibrary';
 
 describe('DeleteLibrary', () => {
@@ -13,9 +12,9 @@ describe('DeleteLibrary', () => {
         };
 
         const comp = create(
-            <ApolloProvider client={gqlClient}>
+            <MockedProvider>
                 <DeleteLibrary library={lib as GET_LIBRARIES_libraries} />
-            </ApolloProvider>
+            </MockedProvider>
         );
 
         expect(comp).toMatchSnapshot();
