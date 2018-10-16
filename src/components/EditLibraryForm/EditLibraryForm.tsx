@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Form, Header} from 'semantic-ui-react';
-import {GET_LIBRARY_libraries} from '../../_gqlTypes/GET_LIBRARY';
+import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 
 interface IEditLibraryFormProps {
-    library: GET_LIBRARY_libraries | null;
+    library: GET_LIBRARIES_libraries | null;
     onSubmit: (formData: any) => void;
     t: TranslationFunction;
 }
@@ -31,7 +31,8 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                 label: {
                     fr: '',
                     en: ''
-                }
+                },
+                attributes: []
             };
         }
 

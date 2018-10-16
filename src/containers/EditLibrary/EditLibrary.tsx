@@ -1,10 +1,8 @@
 import {History} from 'history';
 import * as React from 'react';
 import EditLibraryForm from '../../components/EditLibraryForm';
-import {getLibsQuery} from '../../queries/getLibrariesQuery';
-import {getLibQuery, LibraryQuery} from '../../queries/getLibraryQuery';
+import {getLibsQuery, LibrariesQuery} from '../../queries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from '../../queries/saveLibMutation';
-import {GET_LIBRARY_libraries} from '../../_gqlTypes/GET_LIBRARY';
 
 interface IEditLibraryProps {
     match: any;
@@ -21,7 +19,7 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
 
         const libraryId = match.params.id;
         return libraryId ? (
-            <LibraryQuery query={getLibQuery} variables={{id: libraryId}}>
+            <LibrariesQuery query={getLibsQuery} variables={{id: libraryId}}>
                 {({loading, error, data}) => {
                     if (loading) {
                         return <p>Loading...</p>;
@@ -38,7 +36,7 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
 
                     return this._getEditLibraryForm(libToEdit);
                 }}
-            </LibraryQuery>
+            </LibrariesQuery>
         ) : (
             this._getEditLibraryForm(null)
         );
@@ -49,7 +47,7 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
      * @param libToEdit
      * @param history
      */
-    private _getEditLibraryForm = (libToEdit: GET_LIBRARY_libraries | null) => (
+    private _getEditLibraryForm = (libToEdit: GET_LIBRARIES_libraries | null) => (
         <SaveLibMutation mutation={saveLibQuery}>
             {saveLibrary => {
                 const onFormSubmit = async libData => {
@@ -63,7 +61,7 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
                                 }
                             }
                         },
-                        refetchQueries: [{query: getLibQuery, variables: {id: libData.id}}, {query: getLibsQuery}]
+                        refetchQueries: [{query: getLibsQuery, variables: {id: libData.id}}, {query: getLibsQuery}]
                     });
 
                     this.props.history.replace({pathname: '/libraries/edit/' + libData.id});
