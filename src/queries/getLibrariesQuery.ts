@@ -11,6 +11,13 @@ export const getLibsQuery = gql`
                 fr
                 en
             }
+            attributes {
+                id
+                label {
+                    fr
+                    en
+                }
+            }
         }
     }
 `;

@@ -4,7 +4,7 @@ import EditLibraryForm from './EditLibraryForm';
 
 describe('EditLibraryForm', () => {
     test('Render form', async () => {
-        const library = {id: 'test', label: {fr: 'Test', en: null}, system: false};
+        const library = {id: 'test', label: {fr: 'Test', en: null}, system: false, attributes: []};
         const onSubmit = () => null;
 
         const comp = create(<EditLibraryForm library={library} onSubmit={onSubmit} />);

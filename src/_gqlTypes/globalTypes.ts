@@ -79,7 +79,7 @@ export interface EmbeddedAttributeInput {
 export interface LibraryInput {
     id: string;
     label?: SystemTranslationInput | null;
-    attributes?: (string | null)[] | null;
+    attributes?: string[] | null;
     permissionsConf?: TreePermissionsConfInput | null;
 }
 
