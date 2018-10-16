@@ -3,6 +3,7 @@ import {translate, TranslationFunction} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import LibrariesList from '../../components/LibrariesList';
+import Loading from '../../components/Loading';
 import {getLibsQuery, LibrariesQuery} from '../../queries/getLibrariesQuery';
 
 interface ILibrariesProps {
@@ -29,7 +30,7 @@ function Libraries({t}: ILibrariesProps) {
             <LibrariesQuery query={getLibsQuery}>
                 {({loading, error, data}) => {
                     if (loading || !data) {
-                        return <p>Loading</p>;
+                        return <Loading />;
                     }
                     if (typeof error !== 'undefined') {
                         return <p>Error: {error.message}</p>;

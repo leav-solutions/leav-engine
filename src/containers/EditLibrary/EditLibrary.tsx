@@ -1,6 +1,7 @@
 import {History} from 'history';
 import * as React from 'react';
-import EditLibraryForm from '../../components/EditLibraryForm';
+import EditLibraryForm from 'src/components/EditLibraryForm';
+import Loading from 'src/components/Loading';
 import {getLibsQuery, LibrariesQuery} from '../../queries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from '../../queries/saveLibMutation';
 
@@ -22,7 +23,7 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
             <LibrariesQuery query={getLibsQuery} variables={{id: libraryId}}>
                 {({loading, error, data}) => {
                     if (loading) {
-                        return <p>Loading...</p>;
+                        return <Loading />;
                     }
                     if (typeof error !== 'undefined') {
                         return <p>Error: {error.message}</p>;

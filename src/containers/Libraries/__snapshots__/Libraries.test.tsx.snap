@@ -37,8 +37,10 @@ exports[`Libraries Snapshot test 1`] = `
       </a>
     </div>
   </div>
-  <p>
-    Loading
-  </p>
+  <div
+    className="ui active centered inline loader"
+  >
+    
+  </div>
 </div>
 `;
