@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmedButton Snapshot test 1`] = `
+<div
+  onClick={[Function]}
+>
+  <div
+    onClick={[Function]}
+  />
+</div>
+`;
