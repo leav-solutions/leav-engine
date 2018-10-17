@@ -4,8 +4,8 @@ import DeleteButton from './DeleteButton';
 
 describe('DeleteButton', () => {
     test('Snapshot test', async () => {
-        const onDelete = jest.fn();
-        const comp = create(<DeleteButton onDelete={onDelete} />);
+        // const onDelete = jest.fn();
+        const comp = create(<DeleteButton disabled={false} />);
 
         expect(comp).toMatchSnapshot();
     });
