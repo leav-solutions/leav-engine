@@ -1,7 +1,7 @@
 import {DataProxy} from 'apollo-cache';
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
-import {Confirm} from 'semantic-ui-react';
+import ConfirmedButton from 'src/components/ConfirmedButton';
 import DeleteButton from '../../components/DeleteButton';
 import {DeleteLibMutation, deleteLibQuery} from '../../queries/deleteLibMutation';
 import {getLibsQuery} from '../../queries/getLibrariesQuery';
@@ -12,69 +12,33 @@ interface IDeleteLibraryProps {
     t: TranslationFunction;
 }
 
-interface IDeleteLibraryState {
-    showConfirm: boolean;
-}
-
-class DeleteLibrary extends React.Component<IDeleteLibraryProps, IDeleteLibraryState> {
+class DeleteLibrary extends React.Component<IDeleteLibraryProps> {
     constructor(props: IDeleteLibraryProps) {
         super(props);
-
-        this.state = {
-            showConfirm: false
-        };
     }
 
     public render() {
         const {library, t} = this.props;
-        const {showConfirm} = this.state;
 
         return (
             <DeleteLibMutation mutation={deleteLibQuery} update={this._updateCache}>
                 {deleteLib => {
-                    const onDelete = async (e: React.SyntheticEvent) => {
-                        this._closeConfirm(e);
-                        await deleteLib({
+                    const onDelete = async () =>
+                        deleteLib({
                             variables: {libID: library.id}
                         });
-                    };
 
                     const libLabel =
                         library.label !== null ? library.label.fr || library.label.en || library.id : library.id;
 
-                    /**
-                     * Prevent click on confirm modal from propagating to its parents
-                     *
-                     * @param e
-                     */
-                    const disableClick = (e: React.SyntheticEvent) => e.preventDefault();
-
                     return (
-                        <div onClick={disableClick}>
-                            <DeleteButton onDelete={this._openConfirm} />
-                            <Confirm
-                                open={showConfirm}
-                                content={t('libraries.confirm_delete', {libLabel})}
-                                onCancel={this._closeConfirm}
-                                onConfirm={onDelete}
-                                cancelButton={t('admin.cancel')}
-                                closeOnDocumentClick={false}
-                                closeOnDimmerClick={false}
-                            />
-                        </div>
+                        <ConfirmedButton action={onDelete} confirmMessage={t('libraries.confirm_delete', {libLabel})}>
+                            <DeleteButton disabled={!!library.system} />
+                        </ConfirmedButton>
                     );
                 }}
             </DeleteLibMutation>
         );
-    }
-
-    private _openConfirm = (e: React.SyntheticEvent) => {
-        e.preventDefault();
-        this.setState({showConfirm: true});
-    }
-    private _closeConfirm = (e: React.SyntheticEvent) => {
-        e.preventDefault();
-        this.setState({showConfirm: false});
     }
 
     private _updateCache = (cache: DataProxy, {data: {deleteLibrary}}) => {
