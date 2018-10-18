@@ -1,9 +1,10 @@
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
 import {aql} from 'arangojs';
-import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
+import {difference} from 'lodash';
 import {IAttribute} from '../../_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
+import {IAttributeRepo} from '../attribute/attributeRepo';
+import {IDbService} from '../db/dbService';
+import {IDbUtils} from '../db/dbUtils';
 
 const LIB_COLLECTION_NAME = 'core_libraries';
 export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
@@ -125,6 +126,26 @@ export default function(
         async saveLibraryAttributes(libId: string, attributes: string[]): Promise<string[]> {
             // TODO: in CONCAT, query will fail is using constant instead of hard coding 'core_attributes'
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+
+            // Get current library attributes
+            const currentAttrs = await this.getLibraryAttributes(libId);
+            const deletedAttrs = difference(currentAttrs.map(a => a.id), attributes);
+
+            // Unlink attributes not used anymore
+            if (deletedAttrs.length) {
+                const delLibAttribRes = await dbService.execute(aql`
+                    FOR attr IN ${deletedAttrs}
+                        FOR l in ${libAttribCollec}
+                            FILTER
+                                l._from == ${LIB_COLLECTION_NAME + '/' + libId}
+                                AND l._to == CONCAT('core_attributes/', attr)
+                            REMOVE l
+                            IN ${libAttribCollec}
+                            RETURN OLD
+                `);
+            }
+
+            // Save new ones
             const libAttribRes = await dbService.execute(aql`
                 FOR attr IN ${attributes}
                     LET attrToInsert = {

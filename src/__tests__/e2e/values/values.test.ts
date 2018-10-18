@@ -121,6 +121,11 @@ describe('Values', () => {
                     id: "${testLibName}",
                     label: {fr: "Test lib"},
                     attributes: [
+                        "id",
+                        "modified_by",
+                        "modified_at",
+                        "created_by",
+                        "created_at",
                         "${attrSimpleName}",
                         "${attrAdvancedName}",
                         "${attrSimpleLinkName}",

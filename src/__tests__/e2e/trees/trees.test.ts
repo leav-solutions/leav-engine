@@ -174,6 +174,11 @@ describe('Trees', () => {
             saveLibrary(library: {
                 id: "${testLibName}",
                 attributes: [
+                    "id",
+                    "modified_by",
+                    "modified_at",
+                    "created_by",
+                    "created_at",
                     "${attrTreeName}"
                 ]
             }) { id }

@@ -83,7 +83,14 @@ describe('Permissions', () => {
             },
             saveLibrary(library: {
                 id: "${testLibId}",
-                attributes: ["${testLibAttrId}"],
+                attributes: [
+                    "id",
+                    "modified_by",
+                    "modified_at",
+                    "created_by",
+                    "created_at",
+                    "${testLibAttrId}"
+                ],
                 permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
             }) {
                 id
@@ -245,7 +252,15 @@ describe('Permissions', () => {
             await makeGraphQlCall(`mutation {
                 saveLibrary(library: {
                     id: "${permTreeLibName}",
-                    attributes: ["${testLibAttrId}", "${testPermAttrId}"]
+                    attributes: [
+                        "id",
+                        "modified_by",
+                        "modified_at",
+                        "created_by",
+                        "created_at",
+                        "${testLibAttrId}",
+                        "${testPermAttrId}"
+                    ]
                 }) {
                     id
                 }

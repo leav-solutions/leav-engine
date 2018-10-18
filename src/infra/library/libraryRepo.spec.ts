@@ -1,8 +1,8 @@
 import {Database} from 'arangojs';
 import {AttributeTypes} from '../../_types/attribute';
-import libraryRepo from './libraryRepo';
-import {IDbUtils} from '../db/dbUtils';
 import {IAttributeRepo} from '../attribute/attributeRepo';
+import {IDbUtils} from '../db/dbUtils';
+import libraryRepo from './libraryRepo';
 
 describe('LibraryRepo', () => {
     describe('getLibrary', () => {
@@ -216,16 +216,46 @@ describe('LibraryRepo', () => {
             };
 
             const libRepo = libraryRepo(mockDbServ, null);
+            libRepo.getLibraryAttributes = global.__mockPromise([
+                {
+                    id: 'id',
+                    format: 'text',
+                    label: {en: 'ID'},
+                    system: true,
+                    type: 'link'
+                },
+                {
+                    id: 'created_at',
+                    format: 'numeric',
+                    label: {en: 'Creation date'},
+                    system: true,
+                    type: 'index'
+                },
+                {
+                    id: 'modified_at',
+                    format: 'numeric',
+                    label: {en: 'Modification date'},
+                    system: true,
+                    type: 'index'
+                }
+            ]);
 
             const createdAttrs = await libRepo.saveLibraryAttributes('users', ['id', 'created_at']);
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls.length).toBe(2);
 
-            // First call is to insert library
+            // First call is to delete unused attributes
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR attr/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            // Second call is to save new attributes
+            expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/FOR attr/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/UPSERT/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
 
             expect(createdAttrs).toEqual(['id', 'created_at']);
         });
