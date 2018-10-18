@@ -28,14 +28,14 @@ export default function(
                         id: ID!,
                         system: Boolean,
                         label: SystemTranslation,
-                        attributes: [Attribute],
+                        attributes: [Attribute!],
                         permissionsConf: TreePermissionsConf
                     }
 
                     input LibraryInput {
                         id: ID!
                         label: SystemTranslationInput,
-                        attributes: [ID],
+                        attributes: [ID!],
                         permissionsConf: TreePermissionsConfInput
                     }
 
