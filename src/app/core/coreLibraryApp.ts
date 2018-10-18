@@ -74,6 +74,11 @@ export default function(
 
                             return deletedLib;
                         }
+                    },
+                    Library: {
+                        attributes: async (parent, args, ctx, info) => {
+                            return libraryDomain.getLibraryAttributes(parent.id);
+                        }
                     }
                 }
             };

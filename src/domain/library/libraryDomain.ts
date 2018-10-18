@@ -1,18 +1,20 @@
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {difference} from 'lodash';
-import ValidationError from '../../errors/ValidationError';
-import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IPermissionDomain} from '../permission/permissionDomain';
-import {AdminPermisisonsActions} from '../../_types/permissions';
+import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
+import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
+import {AdminPermisisonsActions} from '../../_types/permissions';
+import {IAttributeDomain} from '../attribute/attributeDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
 
 export interface ILibraryDomain {
     getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
     saveLibrary(library: ILibrary, infos: IQueryInfos): Promise<ILibrary>;
     deleteLibrary(id: string, infos: IQueryInfos): Promise<ILibrary>;
     getLibraryProperties(id: string): Promise<ILibrary>;
+    getLibraryAttributes(id: string): Promise<IAttribute[]>;
 }
 
 export default function(
@@ -43,6 +45,15 @@ export default function(
             const props = libs.pop();
 
             return props;
+        },
+        async getLibraryAttributes(id: string): Promise<IAttribute[]> {
+            const libs = await libraryRepo.getLibraries({id});
+
+            if (!libs.length) {
+                throw new ValidationError({id: 'Unknown library ' + id});
+            }
+
+            return libraryRepo.getLibraryAttributes(id);
         },
         async saveLibrary(libData: ILibrary, infos: IQueryInfos): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({id: libData.id});

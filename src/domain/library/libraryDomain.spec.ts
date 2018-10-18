@@ -64,6 +64,56 @@ describe('LibraryDomain', () => {
         });
     });
 
+    describe('getLibraryAttributes', () => {
+        test('Should return library attributes with all details', async () => {
+            const attrs = [
+                {
+                    id: 'id',
+                    format: 'text',
+                    label: {en: 'ID'},
+                    system: true,
+                    type: 'link'
+                },
+                {
+                    id: 'created_at',
+                    format: 'numeric',
+                    label: {en: 'Creation date'},
+                    system: true,
+                    type: 'index'
+                },
+                {
+                    id: 'modified_at',
+                    format: 'numeric',
+                    label: {en: 'Modification date'},
+                    system: true,
+                    type: 'index'
+                }
+            ];
+
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraryAttributes: global.__mockPromise(attrs),
+                getLibraries: global.__mockPromise([{id: 'test', system: true}])
+            };
+
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libAttrs = await libDomain.getLibraryAttributes('test');
+
+            expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(1);
+            expect(mockLibRepo.getLibraryAttributes).toBeCalledWith('test');
+            expect(libAttrs).toEqual(attrs);
+        });
+
+        test('Should throw if unknown library', async function() {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise([])
+            };
+
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+
+            await expect(libDomain.getLibraryAttributes('test')).rejects.toThrow();
+        });
+    });
+
     describe('saveLibrary', () => {
         test('Should save a new library', async function() {
             const mockAdminPermDomain: Mockify<IPermissionDomain> = {

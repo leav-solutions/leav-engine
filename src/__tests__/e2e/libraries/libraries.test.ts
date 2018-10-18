@@ -11,11 +11,13 @@ describe('Libraries', () => {
 
     test('Create library', async () => {
         const res = await makeGraphQlCall(`mutation {
-                saveLibrary(library: {id: "libraries_test", label: {fr: "Test lib"}}) { id }
+                saveLibrary(library: {id: "libraries_test", label: {fr: "Test lib"}}) { id attributes {id type}}
             }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.saveLibrary.id).toBe('libraries_test');
+        expect(res.data.data.saveLibrary.attributes.length).toBeGreaterThanOrEqual(1);
+        expect(res.data.data.saveLibrary.attributes[0].type).toBeDefined();
         expect(res.data.errors).toBeUndefined();
 
         // Check if new lib is in libraries list
