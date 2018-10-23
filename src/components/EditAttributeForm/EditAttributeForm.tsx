@@ -12,6 +12,8 @@ interface IEditAttributeFormProps {
 }
 
 class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATTRIBUTES_attributes> {
+    public submitBtn: React.RefObject<any>;
+
     constructor(props: IEditAttributeFormProps) {
         super(props);
 
@@ -27,6 +29,8 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
         };
 
         this.state = !!props.attribute ? {...props.attribute} : {...defaultAttribute};
+
+        this.submitBtn = React.createRef();
     }
 
     public render() {
@@ -99,7 +103,9 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
                         />
                     </Form.Field>
                     <Form.Group inline>
+                        {/* <Ref innerRef={this.submitBtn}> */}
                         <Form.Button>{t('admin.submit')}</Form.Button>
+                        {/* </Ref> */}
                     </Form.Group>
                 </Form>
             </div>

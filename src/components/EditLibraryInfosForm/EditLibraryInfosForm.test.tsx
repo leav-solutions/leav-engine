@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {create} from 'react-test-renderer';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
-import EditLibraryForm from './EditLibraryForm';
+import EditLibraryInfosForm from './EditLibraryInfosForm';
 
-describe('EditLibraryForm', () => {
-    test('Render form', async () => {
+describe('EditLibraryInfosForm', () => {
+    test('Snapshot test', async () => {
         const library = {
             id: 'test',
             label: {fr: 'Test', en: null},
@@ -19,9 +19,8 @@ describe('EditLibraryForm', () => {
                 }
             ]
         };
-        const onSubmit = () => null;
-
-        const comp = create(<EditLibraryForm library={library} onSubmit={onSubmit} />);
+        const onSubmit = jest.fn();
+        const comp = create(<EditLibraryInfosForm onSubmit={onSubmit} library={library} />);
 
         expect(comp).toMatchSnapshot();
     });

@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditLibraryAttributes Snapshot test 1`] = `
+<div>
+  <button
+    className="ui medium icon left labeled button"
+    disabled={undefined}
+    onClick={[Function]}
+    role="button"
+    tabIndex={undefined}
+  >
+    <i
+      aria-hidden="true"
+      className="plus icon"
+    />
+    
+  </button>
+  <button
+    className="ui medium icon left labeled button"
+    disabled={undefined}
+    onClick={[Function]}
+    role="button"
+    tabIndex={undefined}
+  >
+    <i
+      aria-hidden="true"
+      className="plus icon"
+    />
+    
+  </button>
+  <p>
+    No attributes
+  </p>
+</div>
+`;

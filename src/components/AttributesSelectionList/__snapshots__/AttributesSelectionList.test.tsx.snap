@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributesSelectionList Snapshot test 1`] = `
+<table
+  className="ui selectable striped table"
+>
+  <thead
+    className=""
+  >
+    <tr
+      className=""
+    >
+      <th
+        className=""
+      />
+      <th
+        className=""
+      >
+        
+      </th>
+      <th
+        className=""
+      >
+        
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className=""
+  >
+    <tr
+      className=""
+      onClick={[Function]}
+    >
+      <td
+        className=""
+      >
+        <div
+          className="ui fitted read-only checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name={undefined}
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
+      </td>
+      <td
+        className=""
+      >
+        Test
+      </td>
+      <td
+        className=""
+      >
+        test_attr
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;

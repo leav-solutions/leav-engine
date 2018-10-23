@@ -66,21 +66,19 @@ exports[`AttributesList Snapshot test 1`] = `
         className="right aligned one wide"
       >
         <div
-          onClick={[Function]}
-        >
-          <button
-            className="ui circular icon button delete"
-            disabled={undefined}
-            onClick={[Function]}
-            role="button"
-            tabIndex={undefined}
-          >
-            <i
-              aria-hidden="true"
-              className="trash icon"
-            />
-          </button>
-        </div>
+          attribute={
+            Object {
+              "format": "text",
+              "id": "attr1",
+              "label": Object {
+                "en": null,
+                "fr": "Test 1",
+              },
+              "system": false,
+              "type": "simple",
+            }
+          }
+        />
       </td>
     </tr>
     <tr
@@ -111,21 +109,19 @@ exports[`AttributesList Snapshot test 1`] = `
         className="right aligned one wide"
       >
         <div
-          onClick={[Function]}
-        >
-          <button
-            className="ui circular icon button delete"
-            disabled={undefined}
-            onClick={[Function]}
-            role="button"
-            tabIndex={undefined}
-          >
-            <i
-              aria-hidden="true"
-              className="trash icon"
-            />
-          </button>
-        </div>
+          attribute={
+            Object {
+              "format": "text",
+              "id": "attr2",
+              "label": Object {
+                "en": null,
+                "fr": "Test 2",
+              },
+              "system": false,
+              "type": "simple",
+            }
+          }
+        />
       </td>
     </tr>
     <tr
@@ -156,21 +152,19 @@ exports[`AttributesList Snapshot test 1`] = `
         className="right aligned one wide"
       >
         <div
-          onClick={[Function]}
-        >
-          <button
-            className="ui circular icon button delete"
-            disabled={undefined}
-            onClick={[Function]}
-            role="button"
-            tabIndex={undefined}
-          >
-            <i
-              aria-hidden="true"
-              className="trash icon"
-            />
-          </button>
-        </div>
+          attribute={
+            Object {
+              "format": "text",
+              "id": "attr3",
+              "label": Object {
+                "en": null,
+                "fr": "Test 3",
+              },
+              "system": false,
+              "type": "simple",
+            }
+          }
+        />
       </td>
     </tr>
   </tbody>

@@ -6,6 +6,7 @@ import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import AttributesList from '../../components/AttributesList';
 import Loading from '../../components/Loading';
 import {AttributesQuery, getAttributesQuery} from '../../queries/getAttributesQuery';
+import DeleteAttribute from '../DeleteAttribute';
 
 interface IAttributesProps {
     t: TranslationFunction;
@@ -40,7 +41,11 @@ function Attributes({t, history}: IAttributesProps) {
 
                     const onRowClick = attribute => history.push('/attributes/edit/' + attribute.id);
 
-                    return <AttributesList attributes={data.attributes} onRowClick={onRowClick} />;
+                    return (
+                        <AttributesList attributes={data.attributes} onRowClick={onRowClick}>
+                            <DeleteAttribute key="delete_attr" />
+                        </AttributesList>
+                    );
                 }}
             </AttributesQuery>
         </div>

@@ -7,146 +7,139 @@ exports[`EditLibraryForm Render form 1`] = `
   >
     Test
   </div>
-  <form
-    action={undefined}
-    className="ui form"
-    onSubmit={[Function]}
-  >
+  <div>
     <div
-      className="grouped fields"
+      className="ui pointing secondary menu"
     >
-      <label>
-        
-      </label>
-      <div
-        className="field"
+      <a
+        className="active item"
+        onClick={[Function]}
       >
-        <label>
-          fr
-        </label>
+        
+      </a>
+      <a
+        className="item"
+        onClick={[Function]}
+      >
+        
+      </a>
+    </div>
+    <div
+      className="ui bottom attached segment active tab"
+    >
+      <form
+        action={undefined}
+        className="ui form"
+        onSubmit={[Function]}
+      >
         <div
           className="field"
         >
-          <div
-            className="ui input"
-            content={undefined}
-          >
-            <input
-              disabled={undefined}
-              name="label/fr"
-              onChange={[Function]}
-              required={undefined}
-              tabIndex={undefined}
-              type="text"
-              value="Test"
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        className="field"
-      >
-        <label>
-          en
-        </label>
-        <div
-          className="field"
-        >
-          <div
-            className="ui input"
-            content={undefined}
-          >
-            <input
-              disabled={undefined}
-              name="label/en"
-              onChange={[Function]}
-              required={undefined}
-              tabIndex={undefined}
-              type="text"
-              value=""
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      className="field"
-    >
-      <label>
-        
-      </label>
-      <div
-        className="disabled field"
-      >
-        <div
-          className="ui disabled input"
-          content={undefined}
-        >
-          <input
-            disabled={true}
-            name="id"
-            onChange={[Function]}
-            required={undefined}
-            tabIndex={-1}
-            type="text"
-            value="test"
-          />
-        </div>
-      </div>
-    </div>
-    <div
-      className="field"
-    >
-      <div
-        className="disabled field"
-      >
-        <div
-          className="ui disabled checkbox"
-          content={undefined}
-          onChange={[Function]}
-          onClick={[Function]}
-          onMouseDown={[Function]}
-        >
-          <input
-            checked={false}
-            className="hidden"
-            disabled={true}
-            id={undefined}
-            name="system"
-            onClick={[Function]}
-            readOnly={true}
-            required={undefined}
-            tabIndex={-1}
-            type="checkbox"
-            value={undefined}
-          />
-          <label
-            htmlFor={undefined}
-          >
+          <label>
             
           </label>
+          <div
+            className="disabled field"
+          >
+            <div
+              className="ui disabled input"
+              content={undefined}
+            >
+              <input
+                disabled={true}
+                name="id"
+                onChange={[Function]}
+                required={undefined}
+                tabIndex={-1}
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div
-      className="inline fields"
-    >
-      <div
-        className="field"
-      >
-        <button
-          className="ui button"
-          disabled={undefined}
-          onClick={[Function]}
-          required={undefined}
-          role="button"
-          tabIndex={undefined}
-          type={undefined}
+        <div
+          className="grouped fields"
         >
-          
-        </button>
-      </div>
+          <label>
+            
+          </label>
+          <div
+            className="field"
+          >
+            <label>
+              fr
+            </label>
+            <div
+              className="field"
+            >
+              <div
+                className="ui input"
+                content={undefined}
+              >
+                <input
+                  disabled={undefined}
+                  name="label/fr"
+                  onChange={[Function]}
+                  required={undefined}
+                  tabIndex={undefined}
+                  type="text"
+                  value="Test"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            className="field"
+          >
+            <label>
+              en
+            </label>
+            <div
+              className="field"
+            >
+              <div
+                className="ui input"
+                content={undefined}
+              >
+                <input
+                  disabled={undefined}
+                  name="label/en"
+                  onChange={[Function]}
+                  required={undefined}
+                  tabIndex={undefined}
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="fields"
+          style={
+            Object {
+              "marginTop": 10,
+            }
+          }
+        >
+          <div
+            className="field"
+          >
+            <button
+              className="ui button"
+              disabled={undefined}
+              onClick={[Function]}
+              required={undefined}
+              role="button"
+              tabIndex={undefined}
+              type={undefined}
+            >
+              
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
 </div>
 `;

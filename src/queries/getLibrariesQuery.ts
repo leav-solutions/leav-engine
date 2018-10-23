@@ -1,8 +1,10 @@
 import gql from 'graphql-tag';
 import {Query} from 'react-apollo';
 import {GET_LIBRARIES} from '../_gqlTypes/GET_LIBRARIES';
+import {attributeDetailsFragment} from './attributeFragments';
 
 export const getLibsQuery = gql`
+    ${attributeDetailsFragment}
     query GET_LIBRARIES($id: ID) {
         libraries(id: $id) {
             id
@@ -12,11 +14,7 @@ export const getLibsQuery = gql`
                 en
             }
             attributes {
-                id
-                label {
-                    fr
-                    en
-                }
+                ...AttributeDetails
             }
         }
     }

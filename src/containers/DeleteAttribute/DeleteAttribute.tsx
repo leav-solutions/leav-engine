@@ -9,7 +9,7 @@ import {getAttributesQuery} from '../../queries/getAttributesQuery';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 
 interface IDeleteAttributeProps {
-    attribute: GET_ATTRIBUTES_attributes;
+    attribute?: GET_ATTRIBUTES_attributes;
     t: TranslationFunction;
 }
 
@@ -21,7 +21,7 @@ class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
     public render() {
         const {attribute, t} = this.props;
 
-        return (
+        return !!attribute ? (
             <DeleteAttributeMutation mutation={deleteAttrQuery} update={this._updateCache}>
                 {deleteAttr => {
                     const onDelete = async () =>
@@ -41,6 +41,8 @@ class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
                     );
                 }}
             </DeleteAttributeMutation>
+        ) : (
+            ''
         );
     }
 

@@ -1,6 +1,8 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
+import {AttributeType, AttributeFormat} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES
 // ====================================================
@@ -17,6 +19,9 @@ export interface GET_LIBRARIES_libraries_attributes_label {
 
 export interface GET_LIBRARIES_libraries_attributes {
     id: string;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
     label: GET_LIBRARIES_libraries_attributes_label | null;
 }
 

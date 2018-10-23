@@ -35,7 +35,9 @@ describe('AttributesList', () => {
 
         const comp = create(
             <MockedProvider>
-                <AttributesList attributes={attributes} onRowClick={onRowClick} />
+                <AttributesList attributes={attributes} onRowClick={onRowClick}>
+                    <div key="attr_lib_test" />
+                </AttributesList>
             </MockedProvider>
         );
 

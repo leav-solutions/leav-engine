@@ -2,6 +2,7 @@ import {History} from 'history';
 import * as React from 'react';
 import EditLibraryForm from 'src/components/EditLibraryForm';
 import Loading from 'src/components/Loading';
+import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import {getLibsQuery, LibrariesQuery} from '../../queries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from '../../queries/saveLibMutation';
 

@@ -12,8 +12,10 @@ export interface IEditAttributeMatchParams {
 }
 
 interface IEditAttributeProps {
-    match: match<IEditAttributeMatchParams>;
-    history: History;
+    match?: match<IEditAttributeMatchParams>;
+    history?: History;
+    attributeId?: number | null;
+    afterSubmit?: (attrData: GET_ATTRIBUTES_attributes) => void;
 }
 
 class EditAttribute extends React.Component<IEditAttributeProps> {
@@ -21,8 +23,9 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
         super(props);
     }
     public render() {
-        // ({match: routeMatch}: IEditAttributeProps): JSX.Element {
-        const attrId = this.props.match.params.id;
+        const {match: routeMatch, attributeId} = this.props;
+
+        const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch.params.id;
 
         return attrId ? (
             <AttributesQuery query={getAttributesQuery} variables={{id: attrId}}>
@@ -68,7 +71,13 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
                         ]
                     });
 
-                    this.props.history.replace({pathname: '/attributes/edit/' + attrData.id});
+                    if (this.props.afterSubmit) {
+                        this.props.afterSubmit(attrData);
+                    }
+
+                    if (this.props.history) {
+                        this.props.history.replace({pathname: '/attributes/edit/' + attrData.id});
+                    }
                 };
 
                 return <EditAttributeForm attribute={attrToEdit} onSubmit={onFormSubmit} />;

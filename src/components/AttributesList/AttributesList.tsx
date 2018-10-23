@@ -2,17 +2,19 @@ import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Table} from 'semantic-ui-react';
 import {AttributeDetails} from 'src/_gqlTypes/AttributeDetails';
-import DeleteAttribute from '../../containers/DeleteAttribute';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 
 interface IAttributesListProps {
     attributes: AttributeDetails[] | null;
     t: TranslationFunction;
     onRowClick: (attribute: GET_ATTRIBUTES_attributes) => void;
+    children: JSX.Element[] | JSX.Element | null;
 }
 
-function AttributesList({attributes, t, onRowClick}: IAttributesListProps): JSX.Element {
-    return attributes !== null ? (
+function AttributesList({attributes, t, onRowClick, children}: IAttributesListProps): JSX.Element {
+    const childrenList: JSX.Element[] = children !== null ? (!Array.isArray(children) ? [children] : children) : [];
+
+    return !!attributes ? (
         <Table selectable striped>
             <Table.Header>
                 <Table.Row>
@@ -34,7 +36,7 @@ function AttributesList({attributes, t, onRowClick}: IAttributesListProps): JSX.
                             <Table.Cell>{t('attributes.types.' + a.type)}</Table.Cell>
                             <Table.Cell>{a.format ? t('attributes.formats.' + a.format) : ''}</Table.Cell>
                             <Table.Cell textAlign="right" width={1}>
-                                <DeleteAttribute attribute={a} />
+                                {childrenList.map(child => React.cloneElement(child, {attribute: a}))}
                             </Table.Cell>
                         </Table.Row>
                     );

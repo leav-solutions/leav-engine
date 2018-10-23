@@ -11,7 +11,11 @@
         "label": "Libellé",
         "ID": "Identifiant",
         "isSystem": "Système",
-        "confirm_delete": "Êtes-vous sûr de vouloir supprimer la bibliothèque {{libLabel}}?"
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer la bibliothèque {{libLabel}}?",
+        "informations": "Informations",
+        "attributes": "Attributs",
+        "confirm_unlink_attr": "Êtes-vous sûr de vouloir détacher cet attribut de la bibliothèque {{libLabel}}?",
+        "link_existing_attribute": "Ajout attribut existant"
     },
     "attributes": {
         "title": "Attributs",
