@@ -1,12 +1,12 @@
-import ValidationError from '../../errors/ValidationError';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IQueryInfos} from '_types/queryInfos';
+import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
 import {AttributeFormats, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import {IQueryInfos} from '_types/queryInfos';
 import {AdminPermisisonsActions} from '../../_types/permissions';
+import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
-import PermissionError from '../../errors/PermissionError';
 
 export interface IAttributeDomain {
     /**
@@ -178,7 +178,7 @@ export default function(
 
     return {
         async getAttributeProperties(id: string): Promise<IAttribute> {
-            const attrs = await attributeRepo.getAttributes({id});
+            const attrs = await attributeRepo.getAttributes({id}, true);
 
             if (!attrs.length) {
                 throw new ValidationError({id: 'Unknown attribute ' + id});

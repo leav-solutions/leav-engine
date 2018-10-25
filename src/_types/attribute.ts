@@ -1,6 +1,6 @@
-import {ISystemTranslation} from './systemTranslation';
 import {IActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
+import {ISystemTranslation} from './systemTranslation';
 
 export interface IAttribute {
     id: string;
@@ -28,6 +28,10 @@ export interface IEmbeddedAttribute {
  */
 export interface IAttributeFilterOptions {
     id?: string;
+    type?: AttributeTypes;
+    format?: AttributeFormats;
+    system?: boolean;
+    label?: string;
     linked_library?: string;
 }
 

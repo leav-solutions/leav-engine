@@ -65,7 +65,13 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                     }
 
                     extend type Query {
-                        attributes(id: ID): [Attribute!]
+                        attributes(
+                            id: ID,
+                            type: AttributeType,
+                            format: AttributeFormat,
+                            label: String,
+                            system: Boolean
+                        ): [Attribute!]
                     }
 
                     extend type Mutation {

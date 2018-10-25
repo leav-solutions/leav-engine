@@ -1,11 +1,11 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
-import attributeDomain from './attributeDomain';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import ValidationError from '../../errors/ValidationError';
-import {IPermissionDomain} from '../permission/permissionDomain';
-import {AdminPermisisonsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
+import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
+import {AdminPermisisonsActions} from '../../_types/permissions';
+import {IActionsListDomain} from '../actionsList/actionsListDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
+import attributeDomain from './attributeDomain';
 
 describe('attributeDomain', () => {
     const queryInfos = {userId: 1};
@@ -34,7 +34,7 @@ describe('attributeDomain', () => {
             const attr = await attrDomain.getAttributeProperties('test');
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getAttributes).toBeCalledWith({id: 'test'});
+            expect(mockAttrRepo.getAttributes).toBeCalledWith({id: 'test'}, true);
             expect(attr).toMatchObject({id: 'test'});
         });
 
