@@ -28,8 +28,8 @@ export interface IEmbeddedAttribute {
  */
 export interface IAttributeFilterOptions {
     id?: string;
-    type?: AttributeTypes;
-    format?: AttributeFormats;
+    type?: AttributeTypes[];
+    format?: AttributeFormats[];
     system?: boolean;
     label?: string;
     linked_library?: string;

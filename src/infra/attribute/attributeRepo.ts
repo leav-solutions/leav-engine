@@ -28,39 +28,83 @@ export default function(
     valueRepo: IValueRepo | null = null,
     config = null
 ): IAttributeRepo {
+    /**
+     * Return the filter's conditions based on key and val supplied.
+     *
+     * @param filterKey
+     * @param filterVal
+     * @param bindVars
+     * @param index
+     * @param strictFilters
+     */
+    function _getFilterCondition(
+        filterKey: string,
+        filterVal: string | boolean | string[],
+        bindVars: any,
+        index: number | string,
+        strictFilters: boolean
+    ): any {
+        const newBindVars = {...bindVars};
+        let query;
+        // If value is an array (types or formats for example),
+        // we call this function recursively on array and join filters with an OR
+        if (Array.isArray(filterVal)) {
+            if (filterVal.length) {
+                const filters = filterVal.map((val, i) =>
+                    // We add a prefix to the index to avoid crashing with other filters
+                    _getFilterCondition(filterKey, val, newBindVars, index + '0' + i, strictFilters)
+                );
+                query = filters.map(f => f.query).join(' OR ');
+                Object.assign(newBindVars, ...filters.map(f => f.bindVars));
+            }
+        } else {
+            if (filterKey === 'label') {
+                // Search for label in any language
+                query = `${config.lang.available
+                    .map(l => `LIKE(a.label.${l}, @filterValue${index}, true)`)
+                    .join(' OR ')}`;
+
+                bindVars[`filterValue${index}`] = `%${filterVal}%`;
+            } else {
+                // Filter with a "like" on ID or exact value in other fields
+                query =
+                    filterKey === '_key' && !strictFilters
+                        ? `LIKE(a.@filterKey${index}, @filterValue${index}, true)`
+                        : `a.@filterKey${index} == @filterValue${index}`;
+
+                newBindVars[`filterKey${index}`] = filterKey;
+                newBindVars[`filterValue${index}`] =
+                    filterKey === 'system'
+                        ? filterVal // Boolean must not be converted to string
+                        : filterKey === '_key' && !strictFilters
+                            ? `%${filterVal}%`
+                            : `${filterVal}`;
+            }
+        }
+
+        return {query, bindVars: newBindVars};
+    }
+
     return {
         async getAttributes(filters?: IAttributeFilterOptions, strictFilters: boolean = false): Promise<IAttribute[]> {
             let query = `FOR a IN ${ATTRIB_COLLECTION_NAME}`;
-            const bindVars = {};
+            let bindVars = {};
 
             if (typeof filters !== 'undefined') {
                 const dbFilters = dbUtils.convertToDoc(filters);
                 const filtersKeys = Object.keys(dbFilters);
 
                 for (let i = 0; i < filtersKeys.length; i++) {
-                    query += ' FILTER ';
-                    if (filtersKeys[i] === 'label') {
-                        // Search for label in any language
-                        query += `${config.lang.available
-                            .map(l => `LIKE(a.label.${l}, @filterValue${i}, true)`)
-                            .join(' OR ')}`;
+                    const queryFilter = _getFilterCondition(
+                        filtersKeys[i],
+                        dbFilters[filtersKeys[i]],
+                        bindVars,
+                        i,
+                        strictFilters
+                    );
 
-                        bindVars[`filterValue${i}`] = `%${dbFilters[filtersKeys[i]]}%`;
-                    } else {
-                        // Filter with a "like" on ID or exact value in other fields
-                        query +=
-                            filtersKeys[i] === '_key' && !strictFilters
-                                ? `LIKE(a.@filterKey${i}, @filterValue${i}, true)`
-                                : `a.@filterKey${i} == @filterValue${i}`;
-
-                        bindVars[`filterKey${i}`] = filtersKeys[i];
-                        bindVars[`filterValue${i}`] =
-                            filtersKeys[i] === 'system'
-                                ? dbFilters[filtersKeys[i]] // Boolean must not be converted to string
-                                : filtersKeys[i] === '_key' && !strictFilters
-                                    ? `%${dbFilters[filtersKeys[i]]}%`
-                                    : `${dbFilters[filtersKeys[i]]}`;
-                    }
+                    query += queryFilter.query ? ' FILTER ' + queryFilter.query : '';
+                    bindVars = {...bindVars, ...queryFilter.bindVars};
                 }
             }
 

@@ -67,8 +67,8 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                     extend type Query {
                         attributes(
                             id: ID,
-                            type: AttributeType,
-                            format: AttributeFormat,
+                            type: [AttributeType],
+                            format: [AttributeFormat],
                             label: String,
                             system: Boolean
                         ): [Attribute!]
