@@ -28,8 +28,48 @@ exports[`EditLibraryAttributes Snapshot test 1`] = `
     />
     
   </button>
-  <p>
-    No attributes
-  </p>
+  <table
+    className="ui selectable striped table"
+  >
+    <thead
+      className=""
+    >
+      <tr
+        className=""
+      >
+        <th
+          className="four wide"
+        >
+          
+        </th>
+        <th
+          className="four wide"
+        >
+          
+        </th>
+        <th
+          className="three wide"
+        >
+          
+        </th>
+        <th
+          className="three wide"
+        >
+          
+        </th>
+        <th
+          className="one wide"
+        >
+          
+        </th>
+        <th
+          className="one wide"
+        />
+      </tr>
+    </thead>
+    <tbody
+      className=""
+    />
+  </table>
 </div>
 `;

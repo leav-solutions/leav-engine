@@ -32,10 +32,16 @@ describe('AttributesList', () => {
         ];
 
         const onRowClick = jest.fn();
+        const onFiltersUpdate = jest.fn();
 
         const comp = create(
             <MockedProvider>
-                <AttributesList attributes={attributes} onRowClick={onRowClick}>
+                <AttributesList
+                    loading={false}
+                    attributes={attributes}
+                    onRowClick={onRowClick}
+                    onFiltersUpdate={onFiltersUpdate}
+                >
                     <div key="attr_lib_test" />
                 </AttributesList>
             </MockedProvider>

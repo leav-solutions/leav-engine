@@ -89,8 +89,10 @@ class EditLibraryAttributes extends React.Component<IEditLibraryAttributesProps,
                                     </Button>
 
                                     <AttributesList
+                                        loading={false}
                                         attributes={library ? library.attributes : []}
                                         onRowClick={onRowClick}
+                                        withFilters={false}
                                     >
                                         <UnlinkLibAttribute
                                             library={library}

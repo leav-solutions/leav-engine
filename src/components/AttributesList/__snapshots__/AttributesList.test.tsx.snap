@@ -11,24 +11,413 @@ exports[`AttributesList Snapshot test 1`] = `
       className=""
     >
       <th
-        className=""
+        className="four wide"
       >
         
       </th>
       <th
-        className=""
+        className="four wide"
       >
         
       </th>
       <th
-        className=""
+        className="three wide"
       >
         
       </th>
       <th
-        className=""
+        className="three wide"
       >
         
+      </th>
+      <th
+        className="one wide"
+      >
+        
+      </th>
+      <th
+        className="one wide"
+      />
+    </tr>
+    <tr
+      className="filters"
+    >
+      <th
+        className=""
+      >
+        <div
+          className="ui small fluid input"
+        >
+          <input
+            disabled={undefined}
+            name="label"
+            onChange={[Function]}
+            placeholder="..."
+            tabIndex={undefined}
+            type="text"
+            value=""
+          />
+        </div>
+      </th>
+      <th
+        className=""
+      >
+        <div
+          className="ui small fluid input"
+        >
+          <input
+            disabled={undefined}
+            name="id"
+            onChange={[Function]}
+            placeholder="..."
+            tabIndex={undefined}
+            type="text"
+            value=""
+          />
+        </div>
+      </th>
+      <th
+        className=""
+      >
+        <div
+          aria-busy={undefined}
+          aria-disabled={undefined}
+          aria-expanded={false}
+          className="ui fluid multiple search selection dropdown"
+          name="type"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onMouseDown={[Function]}
+          role="combobox"
+          tabIndex={undefined}
+        >
+          <input
+            aria-autocomplete="list"
+            autoComplete="off"
+            className="search"
+            onChange={[Function]}
+            style={
+              Object {
+                "width": undefined,
+              }
+            }
+            tabIndex={0}
+            type="text"
+            value=""
+          />
+          <span
+            className="sizer"
+          />
+          <div
+            aria-live="polite"
+            className="default text"
+            role="alert"
+          >
+            ...
+          </div>
+          <i
+            aria-hidden="true"
+            className="dropdown icon"
+            onClick={[Function]}
+          />
+          <div
+            aria-multiselectable={true}
+            className="menu transition"
+            role="listbox"
+          >
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={true}
+              className="selected item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+          </div>
+        </div>
+      </th>
+      <th
+        className=""
+      >
+        <div
+          aria-busy={undefined}
+          aria-disabled={undefined}
+          aria-expanded={false}
+          className="ui fluid multiple search selection dropdown"
+          name="format"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onMouseDown={[Function]}
+          role="combobox"
+          tabIndex={undefined}
+        >
+          <input
+            aria-autocomplete="list"
+            autoComplete="off"
+            className="search"
+            onChange={[Function]}
+            style={
+              Object {
+                "width": undefined,
+              }
+            }
+            tabIndex={0}
+            type="text"
+            value=""
+          />
+          <span
+            className="sizer"
+          />
+          <div
+            aria-live="polite"
+            className="default text"
+            role="alert"
+          >
+            ...
+          </div>
+          <i
+            aria-hidden="true"
+            className="dropdown icon"
+            onClick={[Function]}
+          />
+          <div
+            aria-multiselectable={true}
+            className="menu transition"
+            role="listbox"
+          >
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={true}
+              className="selected item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+            <div
+              aria-checked={false}
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="item"
+              onClick={[Function]}
+              role="option"
+              style={
+                Object {
+                  "pointerEvents": "all",
+                }
+              }
+            >
+              <span
+                className="text"
+              >
+                
+              </span>
+            </div>
+          </div>
+        </div>
+      </th>
+      <th
+        className=""
+      >
+        <div
+          className="ui indeterminate fitted toggle checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name="system"
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
       </th>
       <th
         className=""
@@ -61,6 +450,32 @@ exports[`AttributesList Snapshot test 1`] = `
         className=""
       >
         
+      </td>
+      <td
+        className="one wide"
+      >
+        <div
+          className="ui fitted read-only toggle checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name={undefined}
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
       </td>
       <td
         className="right aligned one wide"
@@ -106,6 +521,32 @@ exports[`AttributesList Snapshot test 1`] = `
         
       </td>
       <td
+        className="one wide"
+      >
+        <div
+          className="ui fitted read-only toggle checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name={undefined}
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
+      </td>
+      <td
         className="right aligned one wide"
       >
         <div
@@ -147,6 +588,32 @@ exports[`AttributesList Snapshot test 1`] = `
         className=""
       >
         
+      </td>
+      <td
+        className="one wide"
+      >
+        <div
+          className="ui fitted read-only toggle checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name={undefined}
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
       </td>
       <td
         className="right aligned one wide"

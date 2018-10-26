@@ -5,8 +5,14 @@ import {attributeDetailsFragment} from './attributeFragments';
 
 export const getAttributesQuery = gql`
     ${attributeDetailsFragment}
-    query GET_ATTRIBUTES($id: ID) {
-        attributes(id: $id) {
+    query GET_ATTRIBUTES(
+        $id: ID
+        $label: String
+        $type: [AttributeType]
+        $format: [AttributeFormat]
+        $system: Boolean
+    ) {
+        attributes(id: $id, label: $label, type: $type, format: $format, system: $system) {
             ...AttributeDetails
         }
     }

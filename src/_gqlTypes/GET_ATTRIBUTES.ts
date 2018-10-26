@@ -26,4 +26,8 @@ export interface GET_ATTRIBUTES {
 
 export interface GET_ATTRIBUTESVariables {
     id?: string | null;
+    label?: string | null;
+    type?: AttributeType | null;
+    format?: AttributeFormat | null;
+    system?: boolean | null;
 }

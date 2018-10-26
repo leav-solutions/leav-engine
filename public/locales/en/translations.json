@@ -24,6 +24,7 @@
         "ID": "ID",
         "type": "Type",
         "format": "Format",
+        "isSystem": "System",
         "confirm_delete": "Do you really want to delete attribute {{attrLabel}}?",
         "types": {
             "tree": "Tree",
