@@ -43,6 +43,16 @@ describe('Libraries', () => {
         expect(res.data.errors).toBeUndefined();
     });
 
+    test('Return only request language on label', async () => {
+        const res = await makeGraphQlCall(`{libraries(id: "users") { id label(lang: [fr]) }}`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.libraries.length).toBe(1);
+        expect(res.data.data.libraries[0].label.fr).toBeTruthy();
+        expect(res.data.data.libraries[0].label.en).toBeUndefined();
+        expect(res.data.errors).toBeUndefined();
+    });
+
     test('Get error if deleting system library', async () => {
         const res = await makeGraphQlCall(`mutation {deleteLibrary(id: "users") { id }}`);
 

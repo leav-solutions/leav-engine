@@ -4,6 +4,7 @@ import {IUtils} from 'utils/utils';
 import {ILibrary} from '../../_types/library';
 import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {ICoreApp} from './coreApp';
 import {ICoreAttributeApp} from './coreAttributeApp';
 
 export interface ICoreLibraryApp {
@@ -15,7 +16,8 @@ export default function(
     recordDomain: IRecordDomain,
     coreAttributeApp: ICoreAttributeApp,
     graphqlApp: IGraphqlApp,
-    utils: IUtils
+    utils: IUtils,
+    coreApp: ICoreApp
 ): ICoreLibraryApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -27,7 +29,7 @@ export default function(
                     type Library {
                         id: ID!,
                         system: Boolean,
-                        label: SystemTranslation,
+                        label(lang: [AvailableLanguage!]): SystemTranslation,
                         attributes: [Attribute!],
                         permissionsConf: TreePermissionsConf
                     }
@@ -78,6 +80,12 @@ export default function(
                     Library: {
                         attributes: async (parent, args, ctx, info) => {
                             return libraryDomain.getLibraryAttributes(parent.id);
+                        },
+                        /**
+                         * Return library label, potentially filtered by requested language
+                         */
+                        label: async (libData, args) => {
+                            return coreApp.filterSysTranslationField(libData.label, args.lang || []);
                         }
                     }
                 }

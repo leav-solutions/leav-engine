@@ -65,14 +65,20 @@ export default function(
             return fullSchema;
         },
         filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[] = []): ISystemTranslation {
-            return requestedLangs.length
-                ? Object.keys(fieldData)
-                      .filter(labelLang => requestedLangs.includes(labelLang))
-                      .reduce((allLabel: ISystemTranslation, labelLang: string) => {
-                          allLabel[labelLang] = fieldData[labelLang];
-                          return allLabel;
-                      }, {})
-                : fieldData;
+            if (!fieldData) {
+                return null;
+            }
+
+            if (!requestedLangs.length) {
+                return fieldData;
+            }
+
+            return Object.keys(fieldData)
+                .filter(labelLang => requestedLangs.includes(labelLang))
+                .reduce((allLabel: ISystemTranslation, labelLang: string) => {
+                    allLabel[labelLang] = fieldData[labelLang];
+                    return allLabel;
+                }, {});
         }
     };
 }
