@@ -13,7 +13,12 @@ describe('Attributes', () => {
     test('Create Attribute', async () => {
         const res = await makeGraphQlCall(`mutation {
             saveAttribute(
-                attribute: {id: "${testAttrName}", type: simple, format: text, label: {fr: "Test attr"}}
+                attribute: {
+                    id: "${testAttrName}",
+                    type: simple,
+                    format: text,
+                    label: {fr: "Test attr", en: "Test attr en"}
+                }
             ) {
                 id
             }
@@ -35,6 +40,16 @@ describe('Attributes', () => {
 
         expect(res.status).toBe(200);
         expect(res.data.data.attributes.length).toBe(1);
+        expect(res.data.errors).toBeUndefined();
+    });
+
+    test('Return only request language on label', async () => {
+        const res = await makeGraphQlCall(`{attributes(id: "modified_at") { id label(lang: [fr]) }}`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.attributes.length).toBe(1);
+        expect(res.data.data.attributes[0].label.fr).toBeTruthy();
+        expect(res.data.data.attributes[0].label.en).toBeUndefined();
         expect(res.data.errors).toBeUndefined();
     });
 

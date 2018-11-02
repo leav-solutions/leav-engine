@@ -1,13 +1,18 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {ICoreApp} from './coreApp';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
     getGraphQLFormat(attribute: IAttribute): string;
 }
 
-export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlApp): ICoreAttributeApp {
+export default function(
+    attributeDomain: IAttributeDomain,
+    graphqlApp: IGraphqlApp,
+    coreApp: ICoreApp
+): ICoreAttributeApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const attributes = await attributeDomain.getAttributes();
@@ -28,7 +33,7 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                         type: AttributeType!,
                         format: AttributeFormat,
                         system: Boolean!,
-                        label: SystemTranslation,
+                        label(lang: [AvailableLanguage!]): SystemTranslation,
                         linked_library: String,
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttribute],
@@ -103,6 +108,14 @@ export default function(attributeDomain: IAttributeDomain, graphqlApp: IGraphqlA
                             graphqlApp.generateSchema();
 
                             return deletedAttr;
+                        }
+                    },
+                    Attribute: {
+                        /**
+                         * Return attribute label, potentially filtered by requested language
+                         */
+                        label: async (attributeData, args) => {
+                            return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
                         }
                     }
                 }
