@@ -47,7 +47,7 @@ exports[`EditAttributeForm Snapshot test 1`] = `
         className="field"
       >
         <div
-          className="four wide field"
+          className="required four wide field"
         >
           <label
             htmlFor={undefined}
@@ -62,7 +62,7 @@ exports[`EditAttributeForm Snapshot test 1`] = `
               disabled={undefined}
               name="label/fr"
               onChange={[Function]}
-              required={undefined}
+              required={true}
               tabIndex={undefined}
               type="text"
               value="Test 1"
@@ -89,7 +89,7 @@ exports[`EditAttributeForm Snapshot test 1`] = `
               disabled={undefined}
               name="label/en"
               onChange={[Function]}
-              required={undefined}
+              required={false}
               tabIndex={undefined}
               type="text"
               value=""

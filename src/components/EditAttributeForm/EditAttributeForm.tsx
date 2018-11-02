@@ -42,7 +42,8 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
 
         const label =
             existingAttr && !!attribute.label ? localizedLabel(attribute.label, i18next) : t('attributes.new');
-        const langs = ['fr', 'en'];
+        const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
+        const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
         return (
             <div>
@@ -66,6 +67,7 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
                                     label={lang}
                                     width="4"
                                     name={'label/' + lang}
+                                    required={lang === defaultLang}
                                     value={attribute.label && attribute.label[lang] ? attribute.label[lang] : ''}
                                     onChange={this._handleChange}
                                 />
