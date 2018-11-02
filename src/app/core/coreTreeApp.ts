@@ -3,6 +3,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {ITree, ITreeElement} from '_types/tree';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {ICoreApp} from './coreApp';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -12,7 +13,8 @@ export default function(
     treeDomain: ITreeDomain,
     attributeDomain: IAttributeDomain,
     recordDomain: IRecordDomain,
-    graphqlApp: IGraphqlApp
+    graphqlApp: IGraphqlApp,
+    coreApp: ICoreApp
 ): ITreeAttributeApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -23,7 +25,7 @@ export default function(
                         id: ID!,
                         system: Boolean!,
                         libraries: [String]!,
-                        label: SystemTranslation
+                        label(lang: [AvailableLanguage!]): SystemTranslation
                     }
 
                     input TreeInput {
@@ -101,6 +103,14 @@ export default function(
                             parent = parent || null;
                             deleteChildren = typeof deleteChildren !== 'undefined' ? deleteChildren : true;
                             return treeDomain.deleteElement(treeId, element, deleteChildren);
+                        }
+                    },
+                    Tree: {
+                        /**
+                         * Return tree label, potentially filtered by requested language
+                         */
+                        label: async (treeData, args) => {
+                            return coreApp.filterSysTranslationField(treeData.label, args.lang || []);
                         }
                     },
                     TreeNode: {
