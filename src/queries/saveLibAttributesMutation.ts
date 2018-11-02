@@ -5,7 +5,7 @@ import {attributeDetailsFragment} from './attributeFragments';
 
 export const saveLibAttributesMutation = gql`
     ${attributeDetailsFragment}
-    mutation SAVE_LIBRARY_ATTRIBUTES($libId: ID!, $attributes: [ID!]!) {
+    mutation SAVE_LIBRARY_ATTRIBUTES($libId: ID!, $attributes: [ID!]!, $lang: [AvailableLanguage!]) {
         saveLibrary(library: {id: $libId, attributes: $attributes}) {
             id
             attributes {

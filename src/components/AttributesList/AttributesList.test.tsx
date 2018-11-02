@@ -1,12 +1,20 @@
+import {i18n} from 'i18next';
 import * as React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {create} from 'react-test-renderer';
+import {Mockify} from 'src/_types/Mockify';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 import AttributesList from './AttributesList';
 
 describe('AttributesList', () => {
     test('Snapshot test', async () => {
+        const mockI18n: Mockify<i18n> = {
+            language: 'fr',
+            options: {
+                fallbackLng: ['en']
+            }
+        };
         const attributes: GET_ATTRIBUTES_attributes[] = [
             {
                 id: 'attr1',
@@ -41,6 +49,7 @@ describe('AttributesList', () => {
                     attributes={attributes}
                     onRowClick={onRowClick}
                     onFiltersUpdate={onFiltersUpdate}
+                    i18n={mockI18n as i18n}
                 >
                     <div key="attr_lib_test" />
                 </AttributesList>

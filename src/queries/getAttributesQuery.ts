@@ -6,6 +6,7 @@ import {attributeDetailsFragment} from './attributeFragments';
 export const getAttributesQuery = gql`
     ${attributeDetailsFragment}
     query GET_ATTRIBUTES(
+        $lang: [AvailableLanguage!]
         $id: ID
         $label: String
         $type: [AttributeType]

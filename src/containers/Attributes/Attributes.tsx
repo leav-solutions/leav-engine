@@ -1,14 +1,17 @@
 import {History} from 'history';
+import {i18n} from 'i18next';
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import {getSysTranslationQueryLanguage} from 'src/utils/utils';
 import AttributesList from '../../components/AttributesList';
 import {AttributesQuery, getAttributesQuery} from '../../queries/getAttributesQuery';
 import DeleteAttribute from '../DeleteAttribute';
 
 interface IAttributesProps {
     t: TranslationFunction;
+    i18n: i18n;
     history: History;
 }
 
@@ -26,8 +29,10 @@ class Attributes extends React.Component<IAttributesProps, IAttributesState> {
     }
 
     public render = () => {
-        const {t, history} = this.props;
+        const {t, history, i18n: i18next} = this.props;
         const {filters} = this.state;
+
+        const lang = getSysTranslationQueryLanguage(i18next);
 
         return (
             <div>
@@ -45,7 +50,7 @@ class Attributes extends React.Component<IAttributesProps, IAttributesState> {
                         </Button>
                     </Grid.Column>
                 </Grid>
-                <AttributesQuery query={getAttributesQuery} variables={this.state.filters}>
+                <AttributesQuery query={getAttributesQuery} variables={{...this.state.filters, lang}}>
                     {({loading, error, data}) => {
                         if (typeof error !== 'undefined') {
                             return <p>Error: {error.message}</p>;

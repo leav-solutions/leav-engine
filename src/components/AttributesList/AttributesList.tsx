@@ -1,6 +1,8 @@
+import {i18n} from 'i18next';
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Checkbox, Dropdown, Input, Table} from 'semantic-ui-react';
+import {localizedLabel} from 'src/utils/utils';
 import {AttributeDetails} from 'src/_gqlTypes/AttributeDetails';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
@@ -9,6 +11,7 @@ import Loading from '../Loading';
 interface IAttributesListProps {
     attributes: AttributeDetails[] | null;
     t: TranslationFunction;
+    i18n: i18n;
     onRowClick: (attribute: GET_ATTRIBUTES_attributes) => void;
     onFiltersUpdate?: (filters: any) => void;
     loading: boolean;
@@ -29,9 +32,8 @@ class AttributesList extends React.Component<IAttributesListProps> {
     }
 
     public render = () => {
-        const {attributes, t, onRowClick, children, loading, filters, withFilters} = this.props;
+        const {attributes, t, onRowClick, children, loading, filters, withFilters, i18n: i18next} = this.props;
         const childrenList: React.ReactNode[] = children ? (!Array.isArray(children) ? [children] : children) : [];
-
         const types = Object.keys(AttributeType).map(type => ({
             key: type,
             value: type,
@@ -126,7 +128,7 @@ class AttributesList extends React.Component<IAttributesListProps> {
                     ) : (
                         !!attributes &&
                         attributes.map(a => {
-                            const attrLabel = a.label !== null ? a.label.fr || a.label.en || a.id : a.id;
+                            const attrLabel = localizedLabel(a.label, i18next);
                             const onClick = () => onRowClick(a);
                             return (
                                 <Table.Row key={a.id} onClick={onClick}>
@@ -152,10 +154,6 @@ class AttributesList extends React.Component<IAttributesListProps> {
     }
 
     private _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
-        // TODO : manage filters state/props
-
-        // this.setState({filters: {...this.state.filters, [d.name]: d.type === 'checkbox' ? d.checked : d.value}});
-
         if (this.props.onFiltersUpdate) {
             this.props.onFiltersUpdate(d);
         }

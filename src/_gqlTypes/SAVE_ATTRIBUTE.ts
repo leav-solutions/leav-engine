@@ -7,14 +7,9 @@ import {AttributeInput, AttributeFormat, AttributeType} from './globalTypes';
 // GraphQL mutation operation: SAVE_ATTRIBUTE
 // ====================================================
 
-export interface SAVE_ATTRIBUTE_saveAttribute_label {
-    fr: string | null;
-    en: string | null;
-}
-
 export interface SAVE_ATTRIBUTE_saveAttribute {
     id: string;
-    label: SAVE_ATTRIBUTE_saveAttribute_label | null;
+    label: any | null;
     format: AttributeFormat | null;
     type: AttributeType;
     system: boolean;

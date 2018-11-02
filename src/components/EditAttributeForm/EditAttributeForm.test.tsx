@@ -1,11 +1,20 @@
+import {i18n} from 'i18next';
 import * as React from 'react';
 import {create} from 'react-test-renderer';
+import {Mockify} from 'src/_types/Mockify';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 import EditAttributeForm from './EditAttributeForm';
 
 describe('EditAttributeForm', () => {
     test('Snapshot test', async () => {
+        const mockI18n: Mockify<i18n> = {
+            language: 'fr',
+            options: {
+                fallbackLng: ['en']
+            }
+        };
+
         const attribute: GET_ATTRIBUTES_attributes = {
             id: 'attr1',
             type: AttributeType.simple,
@@ -16,7 +25,7 @@ describe('EditAttributeForm', () => {
 
         const onSubmit = jest.fn();
 
-        const comp = create(<EditAttributeForm attribute={attribute} onSubmit={onSubmit} />);
+        const comp = create(<EditAttributeForm attribute={attribute} onSubmit={onSubmit} i18n={mockI18n as i18n} />);
 
         expect(comp).toMatchSnapshot();
     });

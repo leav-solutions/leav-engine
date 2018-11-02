@@ -1,7 +1,8 @@
-import {TranslationFunction} from 'i18next';
+import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
 import {translate} from 'react-i18next';
 import {Form, Header} from 'semantic-ui-react';
+import {localizedLabel} from 'src/utils/utils';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 
@@ -9,6 +10,7 @@ interface IEditAttributeFormProps {
     attribute: GET_ATTRIBUTES_attributes | null;
     onSubmit: (formData: any) => void;
     t: TranslationFunction;
+    i18n: i18n;
 }
 
 class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATTRIBUTES_attributes> {
@@ -34,14 +36,12 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
     }
 
     public render() {
-        const {t} = this.props;
+        const {t, i18n: i18next} = this.props;
         const attribute = this.state;
         const existingAttr = this.props.attribute !== null;
 
         const label =
-            existingAttr && !!attribute.label
-                ? attribute.label.fr || attribute.label.en || attribute.id
-                : t('attributes.new');
+            existingAttr && !!attribute.label ? localizedLabel(attribute.label, i18next) : t('attributes.new');
         const langs = ['fr', 'en'];
 
         return (

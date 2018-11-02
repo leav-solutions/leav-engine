@@ -7,7 +7,7 @@ i18n.use(reactI18nextModule)
     .use(Backend)
     .use(LanguageDetector)
     .init({
-        fallbackLng: 'en',
+        fallbackLng: process.env.REACT_APP_DEFAULT_LANG,
         ns: ['translations'],
         defaultNS: 'translations',
         react: {

@@ -1,18 +1,15 @@
 import gql from 'graphql-tag';
 import {Query} from 'react-apollo';
-import {GET_LIBRARIES} from '../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../_gqlTypes/GET_LIBRARIES';
 import {attributeDetailsFragment} from './attributeFragments';
 
 export const getLibsQuery = gql`
     ${attributeDetailsFragment}
-    query GET_LIBRARIES($id: ID) {
+    query GET_LIBRARIES($id: ID, $lang: [AvailableLanguage!]) {
         libraries(id: $id) {
             id
             system
-            label {
-                fr
-                en
-            }
+            label
             attributes {
                 ...AttributeDetails
             }
@@ -20,4 +17,4 @@ export const getLibsQuery = gql`
     }
 `;
 
-export class LibrariesQuery extends Query<GET_LIBRARIES> {}
+export class LibrariesQuery extends Query<GET_LIBRARIES, GET_LIBRARIESVariables> {}

@@ -1,7 +1,10 @@
 import {History} from 'history';
+import {i18n} from 'i18next';
 import * as React from 'react';
+import {translate} from 'react-i18next';
 import EditLibraryForm from 'src/components/EditLibraryForm';
 import Loading from 'src/components/Loading';
+import {getSysTranslationQueryLanguage} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import {getLibsQuery, LibrariesQuery} from '../../queries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from '../../queries/saveLibMutation';
@@ -9,6 +12,7 @@ import {SaveLibMutation, saveLibQuery} from '../../queries/saveLibMutation';
 interface IEditLibraryProps {
     match: any;
     history: History;
+    i18n: i18n;
 }
 
 class EditLibrary extends React.Component<IEditLibraryProps> {
@@ -17,11 +21,13 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
     }
 
     public render() {
-        const {match} = this.props;
+        const {match, i18n: i18next} = this.props;
 
         const libraryId = match.params.id;
+        const lang = getSysTranslationQueryLanguage(i18next);
+
         return libraryId ? (
-            <LibrariesQuery query={getLibsQuery} variables={{id: libraryId}}>
+            <LibrariesQuery query={getLibsQuery} variables={{id: libraryId, lang}}>
                 {({loading, error, data}) => {
                     if (loading) {
                         return <Loading />;
@@ -74,4 +80,4 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
     )
 }
 
-export default EditLibrary;
+export default translate()(EditLibrary);

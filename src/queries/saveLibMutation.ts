@@ -9,10 +9,7 @@ export const saveLibQuery = gql`
         saveLibrary(library: $libData) {
             id
             system
-            label {
-                fr
-                en
-            }
+            label
         }
     }
 `;

@@ -1,23 +1,18 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import {AttributeType, AttributeFormat} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_LIBRARY_ATTRIBUTES
 // ====================================================
-
-export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_label {
-    fr: string | null;
-    en: string | null;
-}
 
 export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes {
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_label | null;
+    label: any | null;
 }
 
 export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary {
@@ -32,4 +27,5 @@ export interface SAVE_LIBRARY_ATTRIBUTES {
 export interface SAVE_LIBRARY_ATTRIBUTESVariables {
     libId: string;
     attributes: string[];
+    lang?: AvailableLanguage[] | null;
 }

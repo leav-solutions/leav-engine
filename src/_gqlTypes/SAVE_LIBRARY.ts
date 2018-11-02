@@ -7,15 +7,10 @@ import {LibraryInput} from './globalTypes';
 // GraphQL mutation operation: SAVE_LIBRARY
 // ====================================================
 
-export interface SAVE_LIBRARY_saveLibrary_label {
-    fr: string | null;
-    en: string | null;
-}
-
 export interface SAVE_LIBRARY_saveLibrary {
     id: string;
     system: boolean | null;
-    label: SAVE_LIBRARY_saveLibrary_label | null;
+    label: any | null;
 }
 
 export interface SAVE_LIBRARY {

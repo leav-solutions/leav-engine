@@ -35,6 +35,11 @@ export enum AvailableActionsName {
     validateRegex = 'validateRegex'
 }
 
+export enum AvailableLanguage {
+    en = 'en',
+    fr = 'fr'
+}
+
 export enum PermissionsRelation {
     and = 'and',
     or = 'or'
