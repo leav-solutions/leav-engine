@@ -397,7 +397,7 @@ exports[`AttributesList Snapshot test 1`] = `
         className=""
       >
         <div
-          className="ui indeterminate fitted toggle checkbox"
+          className="ui indeterminate fitted checkbox"
           onChange={[Function]}
           onClick={[Function]}
           onMouseDown={[Function]}
@@ -455,7 +455,7 @@ exports[`AttributesList Snapshot test 1`] = `
         className="one wide"
       >
         <div
-          className="ui fitted read-only toggle checkbox"
+          className="ui fitted read-only checkbox"
           onChange={[Function]}
           onClick={[Function]}
           onMouseDown={[Function]}
@@ -524,7 +524,7 @@ exports[`AttributesList Snapshot test 1`] = `
         className="one wide"
       >
         <div
-          className="ui fitted read-only toggle checkbox"
+          className="ui fitted read-only checkbox"
           onChange={[Function]}
           onClick={[Function]}
           onMouseDown={[Function]}
@@ -593,7 +593,7 @@ exports[`AttributesList Snapshot test 1`] = `
         className="one wide"
       >
         <div
-          className="ui fitted read-only toggle checkbox"
+          className="ui fitted read-only checkbox"
           onChange={[Function]}
           onClick={[Function]}
           onMouseDown={[Function]}

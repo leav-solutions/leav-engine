@@ -107,10 +107,9 @@ class AttributesList extends React.Component<IAttributesListProps> {
                             </Table.HeaderCell>
                             <Table.HeaderCell>
                                 <Checkbox
-                                    toggle
-                                    defaultIndeterminate
+                                    indeterminate={typeof filters.system === 'undefined'}
                                     name="system"
-                                    defaultChecked={filters.system}
+                                    checked={filters.system}
                                     onChange={this._handleFilterChange}
                                 />
                             </Table.HeaderCell>
@@ -137,7 +136,7 @@ class AttributesList extends React.Component<IAttributesListProps> {
                                     <Table.Cell>{t('attributes.types.' + a.type)}</Table.Cell>
                                     <Table.Cell>{a.format ? t('attributes.formats.' + a.format) : ''}</Table.Cell>
                                     <Table.Cell width={1}>
-                                        <Checkbox readOnly toggle checked={a.system} />
+                                        <Checkbox readOnly checked={a.system} />
                                     </Table.Cell>
                                     <Table.Cell textAlign="right" width={1}>
                                         {childrenList.map(child =>
@@ -154,6 +153,12 @@ class AttributesList extends React.Component<IAttributesListProps> {
     }
 
     private _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
+        // If a checkbox was not checked and is clicked, go back to indeterminate state
+        if (d.type === 'checkbox' && this.props.filters.system === false && d.checked) {
+            d.indeterminate = true;
+            d.checked = false;
+        }
+
         if (this.props.onFiltersUpdate) {
             this.props.onFiltersUpdate(d);
         }

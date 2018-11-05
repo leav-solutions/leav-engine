@@ -76,10 +76,17 @@ class Attributes extends React.Component<IAttributesProps, IAttributesState> {
     }
 
     private _onFiltersUpdate = (filterElem: any) => {
+        const newElemState =
+            filterElem.type === 'checkbox'
+                ? filterElem.indeterminate
+                    ? undefined
+                    : filterElem.checked
+                : filterElem.value;
+
         this.setState({
             filters: {
                 ...this.state.filters,
-                [filterElem.name]: filterElem.type === 'checkbox' ? filterElem.checked : filterElem.value
+                [filterElem.name]: newElemState
             }
         });
     }

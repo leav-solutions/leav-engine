@@ -433,7 +433,7 @@ exports[`Attributes Snapshot test 1`] = `
           className=""
         >
           <div
-            className="ui indeterminate fitted toggle checkbox"
+            className="ui indeterminate fitted checkbox"
             onChange={[Function]}
             onClick={[Function]}
             onMouseDown={[Function]}
