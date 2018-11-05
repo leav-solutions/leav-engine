@@ -16,7 +16,7 @@ export interface ILibraryRepo {
      * @param filters                   Filters libraries returned
      * @return Promise<Array<object>>   All libraries data
      */
-    getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
+    getLibraries(filters?: ILibraryFilterOptions, strictFilters?: boolean): Promise<ILibrary[]>;
 
     /**
      * Create new library
@@ -56,20 +56,86 @@ export interface ILibraryRepo {
 export default function(
     dbService: IDbService | null = null,
     dbUtils: IDbUtils | null = null,
-    attributeRepo: IAttributeRepo | null = null
+    attributeRepo: IAttributeRepo | null = null,
+    config = null
 ): ILibraryRepo {
+    /**
+     * Return the filter's conditions based on key and val supplied.
+     *
+     * @param filterKey
+     * @param filterVal
+     * @param bindVars
+     * @param index
+     * @param strictFilters
+     */
+    function _getFilterCondition(
+        filterKey: string,
+        filterVal: string | boolean | string[],
+        bindVars: any,
+        index: number | string,
+        strictFilters: boolean
+    ): any {
+        const newBindVars = {...bindVars};
+        let query;
+        // If value is an array (types or formats for example),
+        // we call this function recursively on array and join filters with an OR
+        if (Array.isArray(filterVal)) {
+            if (filterVal.length) {
+                const filters = filterVal.map((val, i) =>
+                    // We add a prefix to the index to avoid crashing with other filters
+                    _getFilterCondition(filterKey, val, newBindVars, index + '0' + i, strictFilters)
+                );
+                query = filters.map(f => f.query).join(' OR ');
+                Object.assign(newBindVars, ...filters.map(f => f.bindVars));
+            }
+        } else {
+            if (filterKey === 'label') {
+                // Search for label in any language
+                query = `${config.lang.available
+                    .map(l => `LIKE(l.label.${l}, @filterValue${index}, true)`)
+                    .join(' OR ')}`;
+
+                bindVars[`filterValue${index}`] = `%${filterVal}%`;
+            } else {
+                // Filter with a "like" on ID or exact value in other fields
+                query =
+                    filterKey === '_key' && !strictFilters
+                        ? `LIKE(l.@filterKey${index}, @filterValue${index}, true)`
+                        : `l.@filterKey${index} == @filterValue${index}`;
+
+                newBindVars[`filterKey${index}`] = filterKey;
+                newBindVars[`filterValue${index}`] =
+                    filterKey === 'system'
+                        ? filterVal // Boolean must not be converted to string
+                        : filterKey === '_key' && !strictFilters
+                            ? `%${filterVal}%`
+                            : `${filterVal}`;
+            }
+        }
+
+        return {query, bindVars: newBindVars};
+    }
+
     return {
-        async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
+        async getLibraries(filters?: ILibraryFilterOptions, strictFilters: boolean = false): Promise<ILibrary[]> {
             let query = `FOR l IN ${LIB_COLLECTION_NAME}`;
-            const bindVars = {};
+            let bindVars = {};
 
             if (typeof filters !== 'undefined') {
                 const dbFilters = dbUtils.convertToDoc(filters);
                 const filtersKeys = Object.keys(dbFilters);
+
                 for (let i = 0; i < filtersKeys.length; i++) {
-                    query += ` FILTER l.@filterKey${i} == @filterValue${i}`;
-                    bindVars[`filterKey${i}`] = filtersKeys[i];
-                    bindVars[`filterValue${i}`] = `${dbFilters[filtersKeys[i]]}`;
+                    const queryFilter = _getFilterCondition(
+                        filtersKeys[i],
+                        dbFilters[filtersKeys[i]],
+                        bindVars,
+                        i,
+                        strictFilters
+                    );
+
+                    query += queryFilter.query ? ' FILTER ' + queryFilter.query : '';
+                    bindVars = {...bindVars, ...queryFilter.bindVars};
                 }
             }
 

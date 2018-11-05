@@ -42,7 +42,7 @@ export default function(
                     }
 
                     type Query {
-                        libraries(id: ID): [Library!]
+                        libraries(id: ID, label: String, system: Boolean): [Library!]
                     }
 
                     type Mutation {

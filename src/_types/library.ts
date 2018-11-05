@@ -20,4 +20,6 @@ export interface ILibrary {
 
 export interface ILibraryFilterOptions {
     id?: string;
+    label?: string;
+    system?: boolean;
 }
