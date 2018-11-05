@@ -5,8 +5,8 @@ import {attributeDetailsFragment} from './attributeFragments';
 
 export const getLibsQuery = gql`
     ${attributeDetailsFragment}
-    query GET_LIBRARIES($id: ID, $lang: [AvailableLanguage!]) {
-        libraries(id: $id) {
+    query GET_LIBRARIES($id: ID, $label: String, $system: Boolean, $lang: [AvailableLanguage!]) {
+        libraries(id: $id, label: $label, system: $system) {
             id
             system
             label

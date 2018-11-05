@@ -37,10 +37,126 @@ exports[`Libraries Snapshot test 1`] = `
       </a>
     </div>
   </div>
-  <div
-    className="ui active centered inline loader"
+  <table
+    className="ui selectable striped table"
   >
-    
-  </div>
+    <thead
+      className=""
+    >
+      <tr
+        className=""
+      >
+        <th
+          className="one wide"
+        />
+        <th
+          className="seven wide"
+        >
+          
+        </th>
+        <th
+          className="six wide"
+        >
+          
+        </th>
+        <th
+          className="one wide"
+        >
+          
+        </th>
+        <th
+          className="one wide"
+        />
+      </tr>
+      <tr
+        className="filters"
+      >
+        <th
+          className=""
+        />
+        <th
+          className=""
+        >
+          <div
+            className="ui small fluid input"
+          >
+            <input
+              disabled={undefined}
+              name="label"
+              onChange={[Function]}
+              placeholder="..."
+              tabIndex={undefined}
+              type="text"
+              value=""
+            />
+          </div>
+        </th>
+        <th
+          className=""
+        >
+          <div
+            className="ui small fluid input"
+          >
+            <input
+              disabled={undefined}
+              name="id"
+              onChange={[Function]}
+              placeholder="..."
+              tabIndex={undefined}
+              type="text"
+              value=""
+            />
+          </div>
+        </th>
+        <th
+          className=""
+        >
+          <div
+            className="ui indeterminate fitted checkbox"
+            onChange={[Function]}
+            onClick={[Function]}
+            onMouseDown={[Function]}
+          >
+            <input
+              checked={false}
+              className="hidden"
+              disabled={undefined}
+              id={undefined}
+              name="system"
+              onClick={[Function]}
+              readOnly={true}
+              tabIndex={0}
+              type="checkbox"
+              value={undefined}
+            />
+            <label
+              htmlFor={undefined}
+            />
+          </div>
+        </th>
+        <th
+          className=""
+        />
+      </tr>
+    </thead>
+    <tbody
+      className=""
+    >
+      <tr
+        className=""
+      >
+        <td
+          className=""
+          colSpan={6}
+        >
+          <div
+            className="ui active centered inline loader"
+          >
+            
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 `;

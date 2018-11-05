@@ -32,6 +32,76 @@ exports[`LibrariesList Render list 1`] = `
         className="one wide"
       />
     </tr>
+    <tr
+      className="filters"
+    >
+      <th
+        className=""
+      />
+      <th
+        className=""
+      >
+        <div
+          className="ui small fluid input"
+        >
+          <input
+            disabled={undefined}
+            name="label"
+            onChange={[Function]}
+            placeholder="..."
+            tabIndex={undefined}
+            type="text"
+            value=""
+          />
+        </div>
+      </th>
+      <th
+        className=""
+      >
+        <div
+          className="ui small fluid input"
+        >
+          <input
+            disabled={undefined}
+            name="id"
+            onChange={[Function]}
+            placeholder="..."
+            tabIndex={undefined}
+            type="text"
+            value=""
+          />
+        </div>
+      </th>
+      <th
+        className=""
+      >
+        <div
+          className="ui indeterminate fitted checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name="system"
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
+      </th>
+      <th
+        className=""
+      />
+    </tr>
   </thead>
   <tbody
     className=""
