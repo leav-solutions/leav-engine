@@ -1,6 +1,9 @@
+import {i18n} from 'i18next';
 import * as React from 'react';
+import {MockedProvider} from 'react-apollo/test-utils';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {create} from 'react-test-renderer';
+import {Mockify} from 'src/_types/Mockify';
 import LibrariesList from './LibrariesList';
 
 describe('LibrariesList', () => {
@@ -11,8 +14,20 @@ describe('LibrariesList', () => {
             {id: 'test3', system: false, label: null, attributes: []}
         ];
 
-        const comp = <LibrariesList libraries={libraries} />;
-        const renderedComp = create(<Router>{comp}</Router>).toJSON();
+        const onRowClick = jest.fn();
+        const mockI18n: Mockify<i18n> = {
+            language: 'fr',
+            options: {
+                fallbackLng: ['en']
+            }
+        };
+
+        const comp = <LibrariesList libraries={libraries} onRowClick={onRowClick} i18n={mockI18n as i18n} />;
+        const renderedComp = create(
+            <Router>
+                <MockedProvider>{comp}</MockedProvider>
+            </Router>
+        ).toJSON();
         expect(renderedComp).toMatchSnapshot();
     });
 });

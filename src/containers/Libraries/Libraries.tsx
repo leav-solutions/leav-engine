@@ -1,3 +1,4 @@
+import {History} from 'history';
 import * as React from 'react';
 import {translate, TranslationFunction} from 'react-i18next';
 import {Link} from 'react-router-dom';
@@ -8,9 +9,10 @@ import {getLibsQuery, LibrariesQuery} from '../../queries/getLibrariesQuery';
 
 interface ILibrariesProps {
     t: TranslationFunction;
+    history: History;
 }
 
-function Libraries({t}: ILibrariesProps) {
+function Libraries({t, history}: ILibrariesProps) {
     return (
         <div>
             <Grid>
@@ -36,7 +38,9 @@ function Libraries({t}: ILibrariesProps) {
                         return <p>Error: {error.message}</p>;
                     }
 
-                    return <LibrariesList libraries={data.libraries} />;
+                    const onRowClick = library => history.push('/libraries/edit/' + library.id);
+
+                    return <LibrariesList libraries={data.libraries} onRowClick={onRowClick} />;
                 }}
             </LibrariesQuery>
         </div>

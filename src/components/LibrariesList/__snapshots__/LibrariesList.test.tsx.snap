@@ -1,111 +1,248 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LibrariesList Render list 1`] = `
-<div
-  className="ui divided relaxed list"
-  role="list"
+<table
+  className="ui selectable striped table"
 >
-  <a
-    className="item"
-    data-value={undefined}
-    href="/libraries/edit/test"
-    onClick={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="listitem"
-    style={
-      Object {
-        "minHeight": 50,
-      }
-    }
+  <thead
+    className=""
   >
-    <i
-      aria-hidden="true"
-      className="book large icon"
-    />
-    <div
-      className="content"
+    <tr
+      className=""
     >
-      <div
-        className="header"
-        size="huge"
+      <th
+        className="one wide"
+      />
+      <th
+        className="seven wide"
+      >
+        
+      </th>
+      <th
+        className="six wide"
+      >
+        
+      </th>
+      <th
+        className="one wide"
+      >
+        
+      </th>
+      <th
+        className="one wide"
+      />
+    </tr>
+  </thead>
+  <tbody
+    className=""
+  >
+    <tr
+      className=""
+      onClick={[Function]}
+    >
+      <td
+        className=""
+      >
+        <i
+          aria-hidden="true"
+          className="book large icon"
+        />
+      </td>
+      <td
+        className=""
       >
         Test
-      </div>
-      <div
-        className="description"
+      </td>
+      <td
+        className=""
       >
         test
-      </div>
-    </div>
-  </a>
-  <a
-    className="item"
-    data-value={undefined}
-    href="/libraries/edit/test2"
-    onClick={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="listitem"
-    style={
-      Object {
-        "minHeight": 50,
-      }
-    }
-  >
-    <i
-      aria-hidden="true"
-      className="book large icon"
-    />
-    <div
-      className="content"
+      </td>
+      <td
+        className=""
+      >
+        <div
+          className="ui fitted read-only checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name={undefined}
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
+      </td>
+      <td
+        className=""
+      >
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="ui circular icon button delete"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            <i
+              aria-hidden="true"
+              className="trash icon"
+            />
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr
+      className=""
+      onClick={[Function]}
     >
-      <div
-        className="header"
-        size="huge"
+      <td
+        className=""
+      >
+        <i
+          aria-hidden="true"
+          className="book large icon"
+        />
+      </td>
+      <td
+        className=""
       >
         Test 2
-      </div>
-      <div
-        className="description"
+      </td>
+      <td
+        className=""
       >
         test2
-      </div>
-    </div>
-  </a>
-  <a
-    className="item"
-    data-value={undefined}
-    href="/libraries/edit/test3"
-    onClick={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="listitem"
-    style={
-      Object {
-        "minHeight": 50,
-      }
-    }
-  >
-    <i
-      aria-hidden="true"
-      className="book large icon"
-    />
-    <div
-      className="content"
+      </td>
+      <td
+        className=""
+      >
+        <div
+          className="ui fitted read-only checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name={undefined}
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
+      </td>
+      <td
+        className=""
+      >
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="ui circular icon button delete"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            <i
+              aria-hidden="true"
+              className="trash icon"
+            />
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr
+      className=""
+      onClick={[Function]}
     >
-      <div
-        className="header"
-        size="huge"
+      <td
+        className=""
+      >
+        <i
+          aria-hidden="true"
+          className="book large icon"
+        />
+      </td>
+      <td
+        className=""
+      >
+        
+      </td>
+      <td
+        className=""
       >
         test3
-      </div>
-      <div
-        className="description"
+      </td>
+      <td
+        className=""
       >
-        test3
-      </div>
-    </div>
-  </a>
-</div>
+        <div
+          className="ui fitted read-only checkbox"
+          onChange={[Function]}
+          onClick={[Function]}
+          onMouseDown={[Function]}
+        >
+          <input
+            checked={false}
+            className="hidden"
+            disabled={undefined}
+            id={undefined}
+            name={undefined}
+            onClick={[Function]}
+            readOnly={true}
+            tabIndex={0}
+            type="checkbox"
+            value={undefined}
+          />
+          <label
+            htmlFor={undefined}
+          />
+        </div>
+      </td>
+      <td
+        className=""
+      >
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="ui circular icon button delete"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            <i
+              aria-hidden="true"
+              className="trash icon"
+            />
+          </button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
 `;
