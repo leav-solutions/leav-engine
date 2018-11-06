@@ -25,7 +25,7 @@ class ConfirmedButton extends React.Component<IConfirmedButtonProps, IConfirmedB
     }
 
     public render() {
-        const {t, confirmMessage, action, children} = this.props;
+        const {t, confirmMessage, children} = this.props;
         const {showConfirm} = this.state;
 
         const clickableButton = React.cloneElement(children, {onClick: this._openConfirm});
@@ -37,7 +37,7 @@ class ConfirmedButton extends React.Component<IConfirmedButtonProps, IConfirmedB
                     open={showConfirm}
                     content={confirmMessage}
                     onCancel={this._closeConfirm}
-                    onConfirm={action}
+                    onConfirm={this._runAction}
                     cancelButton={t('admin.cancel')}
                     closeOnDocumentClick={false}
                     closeOnDimmerClick={false}
@@ -61,6 +61,11 @@ class ConfirmedButton extends React.Component<IConfirmedButtonProps, IConfirmedB
         e.preventDefault();
         e.stopPropagation();
         this.setState({showConfirm: false});
+    }
+
+    private _runAction = (e: React.SyntheticEvent) => {
+        this._closeConfirm(e);
+        this.props.action();
     }
 }
 

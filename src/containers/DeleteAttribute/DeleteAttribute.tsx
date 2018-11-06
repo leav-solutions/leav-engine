@@ -1,16 +1,16 @@
-import {DataProxy} from 'apollo-cache';
-import {TranslationFunction} from 'i18next';
+import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
 import {translate} from 'react-i18next';
 import ConfirmedButton from 'src/components/ConfirmedButton';
 import DeleteButton from 'src/components/DeleteButton';
+import {getAttributesQueryName} from 'src/queries/getAttributesQuery';
 import {DeleteAttributeMutation, deleteAttrQuery} from '../../queries/deleteAttributeMutation';
-import {getAttributesQuery} from '../../queries/getAttributesQuery';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 
 interface IDeleteAttributeProps {
     attribute?: GET_ATTRIBUTES_attributes;
     t: TranslationFunction;
+    i18n: i18n;
 }
 
 class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
@@ -22,7 +22,7 @@ class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
         const {attribute, t} = this.props;
 
         return !!attribute ? (
-            <DeleteAttributeMutation mutation={deleteAttrQuery} update={this._updateCache}>
+            <DeleteAttributeMutation mutation={deleteAttrQuery} refetchQueries={[getAttributesQueryName]}>
                 {deleteAttr => {
                     const onDelete = async () =>
                         deleteAttr({
@@ -44,14 +44,6 @@ class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
         ) : (
             ''
         );
-    }
-
-    private _updateCache(cache: DataProxy, {data: {deleteAttribute}}) {
-        const cacheData: any = cache.readQuery({query: getAttributesQuery});
-        cache.writeQuery({
-            query: getAttributesQuery,
-            data: {attributes: cacheData.attributes.filter(a => a.id !== deleteAttribute.id)}
-        });
     }
 }
 
