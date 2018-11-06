@@ -19,7 +19,7 @@ export const localizedLabel = (labels: any, i18next: i18n): string => {
 };
 
 export const getSysTranslationQueryLanguage = (i18next: i18n) => {
-    const userLang = i18next.language;
+    const userLang = i18next.language.split('-')[0];
     const fallbackLang = i18next.options.fallbackLng ? i18next.options.fallbackLng[0] : '';
 
     return [userLang, fallbackLang];
