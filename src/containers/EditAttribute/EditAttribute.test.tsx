@@ -1,3 +1,4 @@
+import {History} from 'history';
 import * as React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {match} from 'react-router';

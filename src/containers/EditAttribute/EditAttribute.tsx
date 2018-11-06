@@ -25,10 +25,10 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
     public render() {
         const {match: routeMatch, attributeId} = this.props;
 
-        const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch.params.id;
+        const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
         return attrId ? (
-            <AttributesQuery query={getAttributesQuery} variables={{id: attrId}}>
+            <AttributesQuery query={getAttributesQuery} variables={{id: '' + attrId}}>
                 {({loading, error, data}) => {
                     if (loading || !data) {
                         return <Loading />;
