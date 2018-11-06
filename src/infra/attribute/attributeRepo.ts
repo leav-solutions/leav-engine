@@ -165,6 +165,7 @@ export default function(
 
             // Delete attribute
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
+
             const res = await dbService.execute(aql`REMOVE ${{_key: attrData.id}} IN ${col} RETURN OLD`);
 
             // Return deleted attribute

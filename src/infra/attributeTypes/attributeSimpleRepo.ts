@@ -1,11 +1,11 @@
-import {IDbService} from '../db/dbService';
-import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IValue} from '../../_types/value';
-import {IAttribute} from '../../_types/attribute';
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IAttribute} from '../../_types/attribute';
+import {IValue} from '../../_types/value';
+import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
+import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 export default function(dbService: IDbService | any): IAttributeTypeRepo {
     async function _saveValue(
@@ -85,12 +85,14 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             const libraries = await dbService.execute(query);
 
             for (const lib of libraries) {
-                const recordsCollec = dbService.db.collection(lib.id);
-                await dbService.execute(aql`
+                const recordsCollec = dbService.db.collection(lib._key);
+                const clearQuery = aql`
                     FOR r IN ${recordsCollec}
                     FILTER r.${attribute.id} != null
                     UPDATE r WITH {${attribute.id}: null} IN ${recordsCollec} OPTIONS {keepNull: false}
-                `);
+                `;
+
+                await dbService.execute(clearQuery);
             }
 
             return true;
