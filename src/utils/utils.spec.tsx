@@ -1,6 +1,6 @@
 import {i18n} from 'i18next';
 import {Mockify} from 'src/_types/Mockify';
-import {localizedLabel} from './utils';
+import {formatIDString, localizedLabel} from './utils';
 
 describe('utils', () => {
     describe('localizedLabel', () => {
@@ -34,6 +34,26 @@ describe('utils', () => {
         test('Return empty string if no labels', async () => {
             const label = localizedLabel(null, mockI18n as i18n);
             expect(label).toEqual('');
+        });
+    });
+
+    describe('formatIDString', () => {
+        test('Replace spaces and all ponctuation with underscores', async () => {
+            const s = ' my string-not"  ok\'!  ';
+
+            expect(formatIDString(s)).toEqual('my_string_not_ok');
+        });
+
+        test('Convert to lower case', async () => {
+            const s = 'MyStrinG';
+
+            expect(formatIDString(s)).toEqual('mystring');
+        });
+
+        test('Remove accents and all special chars', async () => {
+            const s = 'machaïneaccentuée';
+
+            expect(formatIDString(s)).toEqual('machaineaccentuee');
         });
     });
 });

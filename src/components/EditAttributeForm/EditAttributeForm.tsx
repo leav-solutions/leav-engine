@@ -2,7 +2,7 @@ import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
 import {translate} from 'react-i18next';
 import {Form, Header} from 'semantic-ui-react';
-import {localizedLabel} from 'src/utils/utils';
+import {formatIDString, localizedLabel} from 'src/utils/utils';
 import {GET_ATTRIBUTES_attributes} from '../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 
@@ -13,7 +13,11 @@ interface IEditAttributeFormProps {
     i18n: i18n;
 }
 
-class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATTRIBUTES_attributes> {
+interface IEditAttributeFormState extends GET_ATTRIBUTES_attributes {
+    existingAttr?: boolean;
+}
+
+class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAttributeFormState> {
     public submitBtn: React.RefObject<any>;
 
     constructor(props: IEditAttributeFormProps) {
@@ -30,7 +34,12 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
             format: AttributeFormat.text
         };
 
-        this.state = !!props.attribute ? {...props.attribute} : {...defaultAttribute};
+        const editedAttr = !!props.attribute ? {...props.attribute} : {...defaultAttribute};
+
+        this.state = {
+            ...editedAttr,
+            existingAttr: this.props.attribute !== null
+        };
 
         this.submitBtn = React.createRef();
     }
@@ -38,10 +47,11 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
     public render() {
         const {t, i18n: i18next} = this.props;
         const attribute = this.state;
-        const existingAttr = this.props.attribute !== null;
 
         const label =
-            existingAttr && !!attribute.label ? localizedLabel(attribute.label, i18next) : t('attributes.new');
+            attribute.existingAttr && !!attribute.label
+                ? localizedLabel(attribute.label, i18next)
+                : t('attributes.new');
         const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
         const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
@@ -49,16 +59,6 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
             <div>
                 <Header>{label}</Header>
                 <Form onSubmit={this._handleSubmit}>
-                    <Form.Field>
-                        <label>{t('attributes.ID')}</label>
-                        <Form.Input
-                            width="4"
-                            disabled={existingAttr}
-                            name="id"
-                            onChange={this._handleChange}
-                            value={attribute.id}
-                        />
-                    </Form.Field>
                     <Form.Group grouped>
                         <label>{t('attributes.label')}</label>
                         {langs.map(lang => (
@@ -74,6 +74,16 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
                             </Form.Field>
                         ))}
                     </Form.Group>
+                    <Form.Field>
+                        <label>{t('attributes.ID')}</label>
+                        <Form.Input
+                            width="4"
+                            disabled={attribute.existingAttr}
+                            name="id"
+                            onChange={this._handleChange}
+                            value={attribute.id}
+                        />
+                    </Form.Field>
                     <Form.Field>
                         <Form.Select
                             label={t('attributes.type')}
@@ -105,9 +115,7 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
                         />
                     </Form.Field>
                     <Form.Group inline>
-                        {/* <Ref innerRef={this.submitBtn}> */}
                         <Form.Button>{t('admin.submit')}</Form.Button>
-                        {/* </Ref> */}
                     </Form.Group>
                 </Form>
             </div>
@@ -117,17 +125,22 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, GET_ATT
     private _handleChange = (event, data) => {
         const value = data.type === 'checkbox' ? data.checked : data.value;
         const name: string = data.name;
-        const stateUpdate = {};
+        const stateUpdate: Partial<IEditAttributeFormState> = {};
 
         if (name.indexOf('/') !== -1) {
             const [field, lang] = name.split('/');
             stateUpdate[field] = {...this.state[field]};
             stateUpdate[field][lang] = value;
+
+            // On new attribute, automatically generate an ID based on label
+            if (!this.state.existingAttr && field === 'label' && lang === process.env.REACT_APP_DEFAULT_LANG) {
+                stateUpdate.id = formatIDString(value);
+            }
         } else {
             stateUpdate[name] = value;
         }
 
-        this.setState(stateUpdate);
+        this.setState(stateUpdate as IEditAttributeFormState);
     }
 
     private _handleSubmit = e => {

@@ -13,31 +13,6 @@ exports[`EditAttributeForm Snapshot test 1`] = `
     onSubmit={[Function]}
   >
     <div
-      className="field"
-    >
-      <label>
-        
-      </label>
-      <div
-        className="disabled four wide field"
-      >
-        <div
-          className="ui disabled input"
-          content={undefined}
-        >
-          <input
-            disabled={true}
-            name="id"
-            onChange={[Function]}
-            required={undefined}
-            tabIndex={-1}
-            type="text"
-            value="attr1"
-          />
-        </div>
-      </div>
-    </div>
-    <div
       className="grouped fields"
     >
       <label>
@@ -95,6 +70,31 @@ exports[`EditAttributeForm Snapshot test 1`] = `
               value=""
             />
           </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="field"
+    >
+      <label>
+        
+      </label>
+      <div
+        className="disabled four wide field"
+      >
+        <div
+          className="ui disabled input"
+          content={undefined}
+        >
+          <input
+            disabled={true}
+            name="id"
+            onChange={[Function]}
+            required={undefined}
+            tabIndex={-1}
+            type="text"
+            value="attr1"
+          />
         </div>
       </div>
     </div>
