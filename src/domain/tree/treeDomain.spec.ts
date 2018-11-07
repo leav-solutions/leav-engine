@@ -1,12 +1,13 @@
-import ValidationError from '../../errors/ValidationError';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IUtils} from 'utils/utils';
+import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
+import {AdminPermisisonsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import treeDomain from './treeDomain';
-import {IPermissionDomain} from '../permission/permissionDomain';
-import {AdminPermisisonsActions} from '../../_types/permissions';
-import PermissionError from '../../errors/PermissionError';
 
 describe('treeDomain', () => {
     const queryInfos = {userId: 1};
@@ -22,6 +23,9 @@ describe('treeDomain', () => {
     };
 
     describe('saveTree', () => {
+        const mockUtils: Mockify<IUtils> = {
+            validateID: jest.fn().mockReturnValue(true)
+        };
         test('Should create new tree', async () => {
             const mockPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
@@ -37,7 +41,8 @@ describe('treeDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 null,
                 null,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             const newTree = await domain.saveTree(mockTree, queryInfos);
@@ -66,7 +71,8 @@ describe('treeDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 null,
                 null,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             const newTree = await domain.saveTree(mockTree, queryInfos);
@@ -100,7 +106,8 @@ describe('treeDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 null,
                 null,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             await expect(domain.saveTree(treeData, queryInfos)).rejects.toThrow(ValidationError);
@@ -121,10 +128,37 @@ describe('treeDomain', () => {
                 mockLibDomain as ILibraryDomain,
                 null,
                 null,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             await expect(domain.saveTree(mockTree, queryInfos)).rejects.toThrow(PermissionError);
+        });
+
+        test('Should throw if invalid ID', async function() {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockUtilsInvalidID: Mockify<IUtils> = {
+                validateID: jest.fn().mockReturnValue(false)
+            };
+
+            const treeRepo: Mockify<ITreeRepo> = {
+                createTree: jest.fn(),
+                updateTree: global.__mockPromise(mockTree),
+                getTrees: global.__mockPromise([mockTree])
+            };
+            const domain = treeDomain(
+                treeRepo as ITreeRepo,
+                mockLibDomain as ILibraryDomain,
+                null,
+                null,
+                mockPermDomain as IPermissionDomain,
+                mockUtilsInvalidID as IUtils
+            );
+
+            await expect(domain.saveTree(mockTree, queryInfos)).rejects.toThrow(ValidationError);
         });
     });
 

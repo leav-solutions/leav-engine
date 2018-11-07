@@ -1,4 +1,5 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
@@ -67,6 +68,10 @@ describe('attributeDomain', () => {
             ])
         };
 
+        const mockUtils: Mockify<IUtils> = {
+            validateID: jest.fn().mockReturnValue(true)
+        };
+
         test('Should save a new attribute', async function() {
             const mockPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
@@ -81,7 +86,8 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
@@ -122,7 +128,8 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -158,7 +165,8 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -169,6 +177,39 @@ describe('attributeDomain', () => {
                 actions_list: {
                     saveValue: [{isSystem: true, name: 'validateFormat'}, {isSystem: false, name: 'toNumber'}]
                 }
+            };
+
+            await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if invalid ID', async function() {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockUtilsInvalidID: Mockify<IUtils> = {
+                validateID: jest.fn().mockReturnValue(false)
+            };
+
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                createAttribute: jest.fn(),
+                updateAttribute: global.__mockPromise({id: 'test', system: false})
+            };
+
+            const attrDomain = attributeDomain(
+                mockAttrRepo as IAttributeRepo,
+                mockALDomain as IActionsListDomain,
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
+            );
+
+            attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
+
+            const attrToSave = {
+                id: 'test',
+                type: AttributeTypes.ADVANCED,
+                actions_list: {saveValue: [{isSystem: true, name: 'toJSON'}]}
             };
 
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
@@ -188,7 +229,8 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -216,7 +258,8 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain(
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);

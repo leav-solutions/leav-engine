@@ -1,8 +1,15 @@
-import {camelCase, upperFirst, trimEnd, flow, partialRight} from 'lodash';
+import {camelCase, flow, partialRight, trimEnd, upperFirst} from 'lodash';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
     libNameToTypeName(name: string): string;
+
+    /**
+     * Validate ID format: must be only alphanum characters and underscores
+     *
+     * @param id
+     */
+    validateID(id: string): boolean;
 
     /**
      * Rethrow an error prefixed by optional message.
@@ -23,6 +30,13 @@ export default function(): IUtils {
         },
         libNameToTypeName(name: string): string {
             return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(name);
+        },
+        validateID(id: string): boolean {
+            if (!id) {
+                return false;
+            }
+
+            return /^[a-z0-9_]+$/.test(id);
         },
         rethrow(err: Error, message?: string): void {
             if (message) {

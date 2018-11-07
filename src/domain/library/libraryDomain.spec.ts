@@ -1,4 +1,5 @@
 import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
@@ -115,6 +116,10 @@ describe('LibraryDomain', () => {
     });
 
     describe('saveLibrary', () => {
+        const mockUtils: Mockify<IUtils> = {
+            validateID: jest.fn().mockReturnValue(true)
+        };
+
         test('Should save a new library', async function() {
             const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
@@ -130,7 +135,8 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             const newLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
@@ -162,7 +168,8 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             const updatedLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
@@ -192,7 +199,8 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             const updatedLib = await libDomain.saveLibrary(
@@ -229,7 +237,8 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             await expect(
@@ -264,7 +273,8 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             await expect(
@@ -296,10 +306,37 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain(
                 mockLibRepo as ILibraryRepo,
                 mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtils as IUtils
             );
 
             await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(PermissionError);
+        });
+
+        test('Should throw if invalid ID', async function() {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockUtilsInvalidID: Mockify<IUtils> = {
+                validateID: jest.fn().mockReturnValue(false)
+            };
+
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                createLibrary: jest.fn(),
+                updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                saveLibraryAttributes: jest.fn()
+            };
+
+            const libDomain = libraryDomain(
+                mockLibRepo as ILibraryRepo,
+                mockAttrDomain as IAttributeDomain,
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtilsInvalidID as IUtils
+            );
+
+            await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(ValidationError);
         });
     });
 

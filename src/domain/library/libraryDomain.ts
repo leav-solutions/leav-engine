@@ -1,5 +1,6 @@
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {difference} from 'lodash';
+import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
@@ -20,7 +21,8 @@ export interface ILibraryDomain {
 export default function(
     libraryRepo: ILibraryRepo,
     attributeDomain: IAttributeDomain = null,
-    permissionDomain: IPermissionDomain = null
+    permissionDomain: IPermissionDomain = null,
+    utils: IUtils = null
 ): ILibraryDomain {
     return {
         async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
@@ -66,6 +68,10 @@ export default function(
 
             if (!canSaveLibrary) {
                 throw new PermissionError(action);
+            }
+
+            if (!utils.validateID(libData.id)) {
+                throw new ValidationError({id: 'Invalid ID format: ' + libData.id});
             }
 
             if (libData.permissionsConf) {

@@ -34,7 +34,10 @@ describe('Utils', () => {
             const add = (a, b) => a + b;
             const square = n => n * n;
 
-            const addSquare = utilsModule.pipe(add, square);
+            const addSquare = utilsModule.pipe(
+                add,
+                square
+            );
 
             expect(await addSquare(1, 2)).toBe(9);
         });
@@ -48,9 +51,26 @@ describe('Utils', () => {
             };
 
             const triple = multiply(3);
-            const triples = utilsModule.pipe(triple, triple);
+            const triples = utilsModule.pipe(
+                triple,
+                triple
+            );
 
             expect(await triples(3)).toBe(27);
+        });
+    });
+    describe('validateID', () => {
+        test('Check ID format is correct', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.validateID('correct_id')).toEqual(true);
+            expect(utilsModule.validateID('correct_id42')).toEqual(true);
+            expect(utilsModule.validateID('invalid id')).toEqual(false);
+            expect(utilsModule.validateID('invalid id')).toEqual(false);
+            expect(utilsModule.validateID('Invalid_id')).toEqual(false);
+            expect(utilsModule.validateID('')).toEqual(false);
+            expect(utilsModule.validateID(null)).toEqual(false);
+            expect(utilsModule.validateID(undefined)).toEqual(false);
         });
     });
 });

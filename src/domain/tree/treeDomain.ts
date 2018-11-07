@@ -1,15 +1,16 @@
-import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '../../_types/tree';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference} from 'lodash';
-import ValidationError from '../../errors/ValidationError';
-import {ILibraryDomain} from '../library/libraryDomain';
-import {IRecordDomain} from '../record/recordDomain';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IQueryField, IRecord} from '../../_types/record';
+import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
-import {IPermissionDomain} from '../permission/permissionDomain';
-import {AdminPermisisonsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
+import {AdminPermisisonsActions} from '../../_types/permissions';
+import {IRecord} from '../../_types/record';
+import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '../../_types/tree';
+import {IAttributeDomain} from '../attribute/attributeDomain';
+import {ILibraryDomain} from '../library/libraryDomain';
+import {IPermissionDomain} from '../permission/permissionDomain';
+import {IRecordDomain} from '../record/recordDomain';
 
 export interface ITreeDomain {
     saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree>;
@@ -91,7 +92,8 @@ export default function(
     libraryDomain: ILibraryDomain = null,
     recordDomain: IRecordDomain = null,
     attributeDomain: IAttributeDomain = null,
-    permissionDomain: IPermissionDomain = null
+    permissionDomain: IPermissionDomain = null,
+    utils: IUtils = null
 ): ITreeDomain {
     async function _treeExists(treeId: string): Promise<boolean> {
         const trees = await treeRepo.getTrees({id: treeId});
@@ -118,6 +120,10 @@ export default function(
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
+            }
+
+            if (!utils.validateID(tree.id)) {
+                throw new ValidationError({id: 'Invalid ID format: ' + tree.id});
             }
 
             // Check if all libraries exists

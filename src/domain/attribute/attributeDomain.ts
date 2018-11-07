@@ -1,4 +1,5 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -45,7 +46,8 @@ export interface IAttributeDomain {
 export default function(
     attributeRepo: IAttributeRepo = null,
     actionsListDomain: IActionsListDomain = null,
-    permissionDomain: IPermissionDomain = null
+    permissionDomain: IPermissionDomain = null,
+    utils: IUtils = null
 ): IAttributeDomain {
     function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
         // TODO: save defaults action on attribute creation
@@ -206,6 +208,10 @@ export default function(
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
+            }
+
+            if (!utils.validateID(attrData.id)) {
+                throw new ValidationError({id: 'Invalid ID format: ' + attrData.id});
             }
 
             const attrToSave = {...attrData};
