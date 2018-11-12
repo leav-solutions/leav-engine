@@ -1,19 +1,19 @@
 import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
 import {translate} from 'react-i18next';
-import {Form, Header} from 'semantic-ui-react';
+import {Form, Header, Icon, Message} from 'semantic-ui-react';
 import FormFieldWrapper from 'src/components/shared/FormFieldWrapper';
 import {formatIDString, localizedLabel} from 'src/utils/utils';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
-import {IErrorByField} from 'src/_types/errors';
+import {ErrorTypes, IFormError} from 'src/_types/errors';
 
 interface IEditAttributeFormProps {
     attribute: GET_ATTRIBUTES_attributes | null;
     onSubmit: (formData: any) => void;
     t: TranslationFunction;
     i18n: i18n;
-    errors?: IErrorByField;
+    errors?: IFormError;
 }
 
 interface IEditAttributeFormState extends GET_ATTRIBUTES_attributes {
@@ -21,10 +21,6 @@ interface IEditAttributeFormState extends GET_ATTRIBUTES_attributes {
 }
 
 class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAttributeFormState> {
-    public static defaultProps = {
-        errors: {}
-    };
-
     public submitBtn: React.RefObject<any>;
 
     constructor(props: IEditAttributeFormProps) {
@@ -62,14 +58,27 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
         const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
         const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
+        const fieldsErrors = errors && errors.type === ErrorTypes.VALIDATION_ERROR ? errors.fields : {};
+
         return (
             <div>
                 <Header>{label}</Header>
+                {errors &&
+                    errors.type === ErrorTypes.PERMISSION_ERROR && (
+                        <Message negative>
+                            <Message.Header>
+                                <Icon name="ban" /> {errors.message}
+                            </Message.Header>
+                        </Message>
+                    )}
                 <Form onSubmit={this._handleSubmit}>
                     <Form.Group grouped>
                         <label>{t('attributes.label')}</label>
                         {langs.map(lang => (
-                            <FormFieldWrapper key={lang} error={errors && errors.label ? errors.label[lang] : ''}>
+                            <FormFieldWrapper
+                                key={lang}
+                                error={fieldsErrors && fieldsErrors.label ? fieldsErrors.label[lang] : ''}
+                            >
                                 <Form.Input
                                     label={lang}
                                     width="4"
@@ -81,10 +90,9 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
                             </FormFieldWrapper>
                         ))}
                     </Form.Group>
-                    <FormFieldWrapper error={!!errors ? errors.id : ''}>
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.id : ''}>
                         <Form.Input
                             label={t('attributes.ID')}
-                            error={errors && errors.hasOwnProperty('id')}
                             width="4"
                             disabled={attribute.existingAttr}
                             name="id"
@@ -92,7 +100,7 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
                             value={attribute.id}
                         />
                     </FormFieldWrapper>
-                    <FormFieldWrapper error={!!errors ? errors.type : ''}>
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.type : ''}>
                         <Form.Select
                             label={t('attributes.type')}
                             width="4"
@@ -108,7 +116,7 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
                             })}
                         />
                     </FormFieldWrapper>
-                    <FormFieldWrapper error={!!errors ? errors.format : ''}>
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.format : ''}>
                         <Form.Select
                             label={t('attributes.format')}
                             disabled={attribute.system}

@@ -81,12 +81,12 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
                     }
                 };
 
-                const fieldsErrors = error && error.graphQLErrors.length ? error.graphQLErrors[0].fields : {};
+                const formErrors = error && error.graphQLErrors.length ? error.graphQLErrors[0] : null;
 
                 return (
                     <Dimmer.Dimmable>
                         {loading && <Loading withDimmer />}
-                        <EditAttributeForm attribute={attrToEdit} onSubmit={onFormSubmit} errors={fieldsErrors} />
+                        <EditAttributeForm attribute={attrToEdit} onSubmit={onFormSubmit} errors={formErrors} />
                     </Dimmer.Dimmable>
                 );
             }}
