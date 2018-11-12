@@ -1,5 +1,4 @@
-import {UserError} from 'graphql-errors';
-import {GraphQLError} from 'graphql';
+import {ErrorTypes} from '../_types/errors';
 
 /**
  * Field error details
@@ -9,19 +8,18 @@ export interface IValidationErrorFieldDetail {
     [fieldName: string]: string;
 }
 
-interface IValidationError {
+export default class ValidationError extends Error {
     /**
      * Details about fields which did not pass validation
      */
-    fields: IValidationErrorFieldDetail;
-}
-
-export default class ValidationError extends Error {
     public fields: IValidationErrorFieldDetail;
+
+    public type: ErrorTypes;
 
     constructor(fields: IValidationErrorFieldDetail, message: string = 'Validation error') {
         super(message);
 
+        this.type = ErrorTypes.VALIDATION_ERROR;
         this.fields = fields;
     }
 }

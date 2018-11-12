@@ -1,11 +1,11 @@
 import {graphqlHapi} from 'apollo-server-hapi';
-import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
-import * as winston from 'winston';
-import * as hapi from 'hapi';
-
-import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {IAuthApp} from 'app/auth/authApp';
+import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import * as hapi from 'hapi';
+import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 import {IUtils} from 'utils/utils';
+import * as winston from 'winston';
+import {ErrorTypes} from '../_types/errors';
 
 export interface IServer {
     init(): Promise<void>;
@@ -62,6 +62,7 @@ export default function(
                             formatError: err => {
                                 const origErr = err.originalError;
 
+                                err.type = (origErr && origErr.type) || ErrorTypes.INTERNAL_ERROR;
                                 err.fields = (origErr && origErr.fields) || {};
                                 err.action = (origErr && origErr.action) || null;
                                 return err;
