@@ -76,12 +76,14 @@ exports[`EditAttributeForm Snapshot test 1`] = `
     <div
       className="field"
     >
-      <label>
-        
-      </label>
       <div
         className="disabled four wide field"
       >
+        <label
+          htmlFor={undefined}
+        >
+          
+        </label>
         <div
           className="ui disabled input"
           content={undefined}

@@ -2,15 +2,18 @@ import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
 import {translate} from 'react-i18next';
 import {Form, Header} from 'semantic-ui-react';
+import FormFieldWrapper from 'src/components/shared/FormFieldWrapper';
 import {formatIDString, localizedLabel} from 'src/utils/utils';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
+import {IErrorByField} from 'src/_types/errors';
 
 interface IEditAttributeFormProps {
     attribute: GET_ATTRIBUTES_attributes | null;
     onSubmit: (formData: any) => void;
     t: TranslationFunction;
     i18n: i18n;
+    errors?: IErrorByField;
 }
 
 interface IEditAttributeFormState extends GET_ATTRIBUTES_attributes {
@@ -18,6 +21,10 @@ interface IEditAttributeFormState extends GET_ATTRIBUTES_attributes {
 }
 
 class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAttributeFormState> {
+    public static defaultProps = {
+        errors: {}
+    };
+
     public submitBtn: React.RefObject<any>;
 
     constructor(props: IEditAttributeFormProps) {
@@ -45,7 +52,7 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
     }
 
     public render() {
-        const {t, i18n: i18next} = this.props;
+        const {t, i18n: i18next, errors} = this.props;
         const attribute = this.state;
 
         const label =
@@ -62,7 +69,7 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
                     <Form.Group grouped>
                         <label>{t('attributes.label')}</label>
                         {langs.map(lang => (
-                            <Form.Field key={lang}>
+                            <FormFieldWrapper key={lang} error={errors && errors.label ? errors.label[lang] : ''}>
                                 <Form.Input
                                     label={lang}
                                     width="4"
@@ -71,20 +78,21 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
                                     value={attribute.label && attribute.label[lang] ? attribute.label[lang] : ''}
                                     onChange={this._handleChange}
                                 />
-                            </Form.Field>
+                            </FormFieldWrapper>
                         ))}
                     </Form.Group>
-                    <Form.Field>
-                        <label>{t('attributes.ID')}</label>
+                    <FormFieldWrapper error={!!errors ? errors.id : ''}>
                         <Form.Input
+                            label={t('attributes.ID')}
+                            error={errors && errors.hasOwnProperty('id')}
                             width="4"
                             disabled={attribute.existingAttr}
                             name="id"
                             onChange={this._handleChange}
                             value={attribute.id}
                         />
-                    </Form.Field>
-                    <Form.Field>
+                    </FormFieldWrapper>
+                    <FormFieldWrapper error={!!errors ? errors.type : ''}>
                         <Form.Select
                             label={t('attributes.type')}
                             width="4"
@@ -99,8 +107,8 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
                                 };
                             })}
                         />
-                    </Form.Field>
-                    <Form.Field>
+                    </FormFieldWrapper>
+                    <FormFieldWrapper error={!!errors ? errors.format : ''}>
                         <Form.Select
                             label={t('attributes.format')}
                             disabled={attribute.system}
@@ -113,7 +121,7 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
                                 value: f
                             }))}
                         />
-                    </Form.Field>
+                    </FormFieldWrapper>
                     <Form.Group inline>
                         <Form.Button>{t('admin.submit')}</Form.Button>
                     </Form.Group>

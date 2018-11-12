@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormFieldWrapper Snapshot test 1`] = `
+<div
+  className="field"
+>
+  <div
+    className="field"
+  >
+    <div
+      className="ui input"
+      content={undefined}
+    >
+      <input
+        disabled={undefined}
+        onChange={[Function]}
+        required={undefined}
+        tabIndex={undefined}
+        type="text"
+      />
+    </div>
+  </div>
+</div>
+`;

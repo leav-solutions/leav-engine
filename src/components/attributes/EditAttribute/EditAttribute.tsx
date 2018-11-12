@@ -1,6 +1,7 @@
 import {History} from 'history';
 import * as React from 'react';
 import {match} from 'react-router';
+import {Dimmer} from 'semantic-ui-react';
 import Loading from 'src/components/shared/Loading';
 import {AttributesQuery, getAttributesQuery} from 'src/queries/getAttributesQuery';
 import {SaveAttributeMutation, saveAttributeQuery} from 'src/queries/saveAttributeMutation';
@@ -51,7 +52,7 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
 
     private _getEditAttributeForm = (attrToEdit: GET_ATTRIBUTES_attributes | null): JSX.Element => (
         <SaveAttributeMutation mutation={saveAttributeQuery}>
-            {saveAttribute => {
+            {(saveAttribute, {loading, error}) => {
                 const onFormSubmit = async attrData => {
                     await saveAttribute({
                         variables: {
@@ -80,7 +81,14 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
                     }
                 };
 
-                return <EditAttributeForm attribute={attrToEdit} onSubmit={onFormSubmit} />;
+                const fieldsErrors = error && error.graphQLErrors.length ? error.graphQLErrors[0].fields : {};
+
+                return (
+                    <Dimmer.Dimmable>
+                        {loading && <Loading withDimmer />}
+                        <EditAttributeForm attribute={attrToEdit} onSubmit={onFormSubmit} errors={fieldsErrors} />
+                    </Dimmer.Dimmable>
+                );
             }}
         </SaveAttributeMutation>
     )
