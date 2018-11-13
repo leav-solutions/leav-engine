@@ -33,7 +33,7 @@ exports[`LibraryRepo getLibrary Should filter 2`] = `
 Object {
   "filterKey0": "_key",
   "filterKey1": "system",
-  "filterValue0": "%test%",
+  "filterValue0": "test",
   "filterValue1": false,
 }
 `;
@@ -42,7 +42,7 @@ exports[`LibraryRepo getLibrary Should filter label on any language 1`] = `"FOR 
 
 exports[`LibraryRepo getLibrary Should filter label on any language 2`] = `
 Object {
-  "filterValue0": "%test%",
+  "filterValue0": "test",
 }
 `;
 
@@ -51,7 +51,7 @@ exports[`LibraryRepo getLibrary Should filter with a LIKE on ID 1`] = `"FOR l IN
 exports[`LibraryRepo getLibrary Should filter with a LIKE on ID 2`] = `
 Object {
   "filterKey0": "_key",
-  "filterValue0": "%test%",
+  "filterValue0": "test",
 }
 `;
 

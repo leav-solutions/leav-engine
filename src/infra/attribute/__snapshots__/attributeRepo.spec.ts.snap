@@ -50,7 +50,7 @@ exports[`AttributeRepo getAttribute Should filter 2`] = `
 Object {
   "filterKey0": "_key",
   "filterKey100": "type",
-  "filterValue0": "%test%",
+  "filterValue0": "test",
   "filterValue100": "advanced",
 }
 `;
@@ -59,7 +59,7 @@ exports[`AttributeRepo getAttribute Should filter label on any language 1`] = `"
 
 exports[`AttributeRepo getAttribute Should filter label on any language 2`] = `
 Object {
-  "filterValue0": "%test%",
+  "filterValue0": "test",
 }
 `;
 
@@ -68,7 +68,7 @@ exports[`AttributeRepo getAttribute Should filter with a LIKE on ID 1`] = `"FOR 
 exports[`AttributeRepo getAttribute Should filter with a LIKE on ID 2`] = `
 Object {
   "filterKey0": "_key",
-  "filterValue0": "%test%",
+  "filterValue0": "test",
 }
 `;
 
@@ -81,7 +81,7 @@ Object {
   "filterKey1": "_key",
   "filterValue000": "simple",
   "filterValue001": "simple_link",
-  "filterValue1": "%test%",
+  "filterValue1": "test",
 }
 `;
 

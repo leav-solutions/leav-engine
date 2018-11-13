@@ -95,7 +95,7 @@ export default function(
                     .map(l => `LIKE(l.label.${l}, @filterValue${index}, true)`)
                     .join(' OR ')}`;
 
-                bindVars[`filterValue${index}`] = `%${filterVal}%`;
+                bindVars[`filterValue${index}`] = `${filterVal}`;
             } else {
                 // Filter with a "like" on ID or exact value in other fields
                 query =
@@ -107,9 +107,7 @@ export default function(
                 newBindVars[`filterValue${index}`] =
                     filterKey === 'system'
                         ? filterVal // Boolean must not be converted to string
-                        : filterKey === '_key' && !strictFilters
-                            ? `%${filterVal}%`
-                            : `${filterVal}`;
+                        : `${filterVal}`;
             }
         }
 
