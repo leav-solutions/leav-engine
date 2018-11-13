@@ -5,7 +5,7 @@ import {translate, TranslationFunction} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import {getLibsQuery, LibrariesQuery} from 'src/queries/getLibrariesQuery';
-import {getSysTranslationQueryLanguage} from 'src/utils/utils';
+import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
 import LibrariesList from '../LibrariesList';
 
 interface ILibrariesProps {
@@ -49,7 +49,7 @@ class Libraries extends React.Component<ILibrariesProps, ILibrariesState> {
                         </Button>
                     </Grid.Column>
                 </Grid>
-                <LibrariesQuery query={getLibsQuery} variables={{...filters, lang}}>
+                <LibrariesQuery query={getLibsQuery} variables={{...addWildcardToFilters(filters), lang}}>
                     {({loading, error, data}) => {
                         if (typeof error !== 'undefined') {
                             return <p>Error: {error.message}</p>;

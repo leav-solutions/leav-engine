@@ -33,3 +33,16 @@ export const formatIDString = (s: string): string => {
         .replace(/ /g, '_') // Convert spaces to _
         .replace(/(_){2,}/g, '_'); // Remove any __, ___, ....
 };
+
+/**
+ * Add wildcards (%) around filter values. By default process only label and id
+ */
+export const addWildcardToFilters = (filters, keysToProcess = ['label', 'id']) => {
+    return Object.keys(filters).reduce((allFilters, k) => {
+        const val = keysToProcess.indexOf(k) !== -1 ? '%' + filters[k] + '%' : filters[k];
+
+        allFilters[k] = val;
+
+        return allFilters;
+    }, {});
+};

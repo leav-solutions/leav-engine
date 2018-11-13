@@ -1,6 +1,6 @@
 import {i18n} from 'i18next';
 import {Mockify} from 'src/_types/Mockify';
-import {formatIDString, localizedLabel} from './utils';
+import {addWildcardToFilters, formatIDString, localizedLabel} from './utils';
 
 describe('utils', () => {
     describe('localizedLabel', () => {
@@ -54,6 +54,30 @@ describe('utils', () => {
             const s = 'machaïneaccentuée';
 
             expect(formatIDString(s)).toEqual('machaineaccentuee');
+        });
+    });
+
+    describe('addWildcardToFilters', () => {
+        const filters = {
+            label: 'test',
+            id: 'test',
+            otherKey: 'otherTest'
+        };
+
+        test('Add wildcards to defaults keys', async () => {
+            const wildcardedFilters: any = addWildcardToFilters(filters);
+
+            expect(wildcardedFilters.label).toEqual('%test%');
+            expect(wildcardedFilters.id).toEqual('%test%');
+            expect(wildcardedFilters.otherKey).toEqual('otherTest');
+        });
+
+        test('Add wildcards to defined keys', async () => {
+            const wildcardedFilters: any = addWildcardToFilters(filters, ['id', 'otherKey']);
+
+            expect(wildcardedFilters.label).toEqual('test');
+            expect(wildcardedFilters.id).toEqual('%test%');
+            expect(wildcardedFilters.otherKey).toEqual('%otherTest%');
         });
     });
 });

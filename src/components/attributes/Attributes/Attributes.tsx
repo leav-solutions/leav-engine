@@ -5,7 +5,7 @@ import {translate, TranslationFunction} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import {AttributesQuery, getAttributesQuery} from 'src/queries/getAttributesQuery';
-import {getSysTranslationQueryLanguage} from 'src/utils/utils';
+import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
 
@@ -50,7 +50,10 @@ class Attributes extends React.Component<IAttributesProps, IAttributesState> {
                         </Button>
                     </Grid.Column>
                 </Grid>
-                <AttributesQuery query={getAttributesQuery} variables={{...this.state.filters, lang}}>
+                <AttributesQuery
+                    query={getAttributesQuery}
+                    variables={{...addWildcardToFilters(this.state.filters), lang}}
+                >
                     {({loading, error, data}) => {
                         if (typeof error !== 'undefined') {
                             return <p>Error: {error.message}</p>;
