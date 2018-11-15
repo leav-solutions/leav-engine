@@ -1,12 +1,17 @@
+import {shallow} from 'enzyme';
 import * as React from 'react';
-import {create} from 'react-test-renderer';
 import DeleteButton from './DeleteButton';
 
 describe('DeleteButton', () => {
     test('Snapshot test', async () => {
-        // const onDelete = jest.fn();
-        const comp = create(<DeleteButton disabled={false} />);
+        const comp = shallow(<DeleteButton disabled={false} />);
 
         expect(comp).toMatchSnapshot();
+    });
+
+    test('Disable button', async () => {
+        const comp = shallow(<DeleteButton disabled />);
+
+        expect(comp.find('Button').props().disabled).toBe(true);
     });
 });

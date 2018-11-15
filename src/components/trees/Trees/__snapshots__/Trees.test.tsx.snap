@@ -8,6 +8,6 @@ exports[`Trees Snapshot test 1`] = `
     aria-hidden="true"
     className="share alternate icon"
   />
-  
+  trees.title
 </div>
 `;

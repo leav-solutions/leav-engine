@@ -2,6 +2,7 @@ import {TranslationFunction} from 'i18next';
 import * as React from 'react';
 import {translate} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
+import {formatIDString} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 
 interface IEditLibraryInfosFormProps {
@@ -41,15 +42,6 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
 
         return (
             <Form onSubmit={this._handleSubmit}>
-                <Form.Field>
-                    <label>{t('libraries.ID')}</label>
-                    <Form.Input
-                        disabled={existingLib}
-                        name="id"
-                        onChange={this._handleChange}
-                        value={this.state.id || ''}
-                    />
-                </Form.Field>
                 <Form.Group grouped>
                     <label>{t('libraries.label')}</label>
                     {langs.map(lang => (
@@ -63,6 +55,15 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
                         </Form.Field>
                     ))}
                 </Form.Group>
+                <Form.Field>
+                    <label>{t('libraries.ID')}</label>
+                    <Form.Input
+                        disabled={existingLib}
+                        name="id"
+                        onChange={this._handleChange}
+                        value={this.state.id || ''}
+                    />
+                </Form.Field>
                 <Form.Group style={{marginTop: 10}}>
                     <Form.Button>{t('admin.submit')}</Form.Button>
                 </Form.Group>
@@ -70,16 +71,20 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
         );
     }
 
-    private _handleChange = event => {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name: string = target.name;
-        const stateUpdate = {};
+    private _handleChange = (event, data) => {
+        const value = data.type === 'checkbox' ? data.checked : data.value;
+        const name: string = data.name;
+        const stateUpdate: Partial<GET_LIBRARIES_libraries> = {};
 
         if (name.indexOf('/') !== -1) {
             const [field, lang] = name.split('/');
             stateUpdate[field] = {...this.state[field]};
             stateUpdate[field][lang] = value;
+
+            // On new library, automatically generate an ID based on label
+            if (!this.state.existingAttr && field === 'label' && lang === process.env.REACT_APP_DEFAULT_LANG) {
+                stateUpdate.id = formatIDString(value);
+            }
         } else {
             stateUpdate[name] = value;
         }

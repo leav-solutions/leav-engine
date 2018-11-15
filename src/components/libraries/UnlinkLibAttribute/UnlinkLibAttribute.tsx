@@ -40,34 +40,6 @@ class UnlinkLibAttribute extends React.Component<IUnlinkLibAttributeProps> {
                 <Button className="unlink" circular icon="cancel" disabled={attribute.system} />
             </ConfirmedButton>
         );
-
-        // return (
-        //     !!library &&
-        //     !!attribute && (
-        //         <SaveLibAttributesMutation mutation={saveLibAttributesMutation}>
-        //             {saveLibAttr => {
-        //                 const attributesToSave = !library.attributes
-        //                     ? []
-        //                     : library.attributes.filter(a => a.id !== attribute.id).map(a => a.id);
-
-        //                 const action = async () =>
-        //                     saveLibAttr({variables: {libId: library.id, attributes: attributesToSave}});
-
-        //                 const label =
-        //                     library.label !== null ? library.label.fr || library.label.en || library.id : library.id;
-
-        //                 return (
-        //                     <ConfirmedButton
-        //                         action={action}
-        //                         confirmMessage={t('libraries.confirm_unlink_attr', {libLabel: label})}
-        //                     >
-        //                         <Button className="unlink" circular icon="cancel" disabled={attribute.system} />
-        //                     </ConfirmedButton>
-        //                 );
-        //             }}
-        //         </SaveLibAttributesMutation>
-        //     )
-        // );
     }
 }
 

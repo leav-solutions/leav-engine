@@ -16,12 +16,12 @@ exports[`AttributesSelectionList Snapshot test 1`] = `
       <th
         className=""
       >
-        
+        attributes.label
       </th>
       <th
         className=""
       >
-        
+        attributes.ID
       </th>
     </tr>
   </thead>

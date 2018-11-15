@@ -63,14 +63,13 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
         return (
             <div>
                 <Header>{label}</Header>
-                {errors &&
-                    errors.type === ErrorTypes.PERMISSION_ERROR && (
-                        <Message negative>
-                            <Message.Header>
-                                <Icon name="ban" /> {errors.message}
-                            </Message.Header>
-                        </Message>
-                    )}
+                {errors && errors.type === ErrorTypes.PERMISSION_ERROR && (
+                    <Message negative>
+                        <Message.Header>
+                            <Icon name="ban" /> {errors.message}
+                        </Message.Header>
+                    </Message>
+                )}
                 <Form onSubmit={this._handleSubmit}>
                     <Form.Group grouped>
                         <label>{t('attributes.label')}</label>

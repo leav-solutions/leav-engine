@@ -30,7 +30,7 @@ const renderNodes = reactNodes => {
 module.exports = {
     // this mock makes sure any components using the translate HoC receive the t function as a prop
     translate: () => Component => {
-        Component.defaultProps = {...Component.defaultProps, t: () => ''};
+        Component.defaultProps = {...Component.defaultProps, t: arg => arg};
         return Component;
     },
     Trans: ({children}) => renderNodes(children),

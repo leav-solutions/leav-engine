@@ -13,7 +13,7 @@ exports[`EditLibraryAttributes Snapshot test 1`] = `
       aria-hidden="true"
       className="plus icon"
     />
-    
+    attributes.new
   </button>
   <button
     className="ui medium icon left labeled button"
@@ -26,7 +26,7 @@ exports[`EditLibraryAttributes Snapshot test 1`] = `
       aria-hidden="true"
       className="plus icon"
     />
-    
+    libraries.link_existing_attribute
   </button>
   <table
     className="ui selectable striped table"
@@ -40,27 +40,27 @@ exports[`EditLibraryAttributes Snapshot test 1`] = `
         <th
           className="four wide"
         >
-          
+          attributes.label
         </th>
         <th
           className="four wide"
         >
-          
+          attributes.ID
         </th>
         <th
           className="three wide"
         >
-          
+          attributes.type
         </th>
         <th
           className="three wide"
         >
-          
+          attributes.format
         </th>
         <th
           className="one wide"
         >
-          
+          attributes.isSystem
         </th>
         <th
           className="one wide"

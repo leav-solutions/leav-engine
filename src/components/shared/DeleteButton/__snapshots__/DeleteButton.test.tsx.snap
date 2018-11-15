@@ -1,16 +1,71 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DeleteButton Snapshot test 1`] = `
-<button
-  className="ui circular icon button delete"
-  disabled={undefined}
-  onClick={[Function]}
-  role="button"
-  tabIndex={undefined}
->
-  <i
-    aria-hidden="true"
-    className="trash icon"
-  />
-</button>
+ShallowWrapper {
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <DeleteButton
+    disabled={false}
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateError": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "as": "button",
+      "circular": true,
+      "className": "delete",
+      "disabled": false,
+      "icon": "trash",
+      "onClick": undefined,
+      "role": "button",
+    },
+    "ref": null,
+    "rendered": null,
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "as": "button",
+        "circular": true,
+        "className": "delete",
+        "disabled": false,
+        "icon": "trash",
+        "onClick": undefined,
+        "role": "button",
+      },
+      "ref": null,
+      "rendered": null,
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getDerivedStateFromProps": true,
+          "getSnapshotBeforeUpdate": true,
+          "setState": Object {
+            "skipsComponentDidUpdateOnNullish": true,
+          },
+        },
+      },
+    },
+  },
+}
 `;

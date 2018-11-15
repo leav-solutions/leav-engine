@@ -138,7 +138,7 @@ class AttributesList extends React.Component<IAttributesListProps> {
                                     <Table.Cell width={1}>
                                         <Checkbox readOnly checked={a.system} />
                                     </Table.Cell>
-                                    <Table.Cell textAlign="right" width={1}>
+                                    <Table.Cell textAlign="right" width={1} className="actions">
                                         {childrenList.map(child =>
                                             React.cloneElement(child as React.ReactElement<any>, {attribute: a})
                                         )}

@@ -2,8 +2,8 @@
 
 exports[`AttributesSelection Snapshot test 1`] = `
 <div
-  className="ui active centered inline loader"
+  className="ui active text centered inline loader"
 >
-  
+  admin.loading
 </div>
 `;
