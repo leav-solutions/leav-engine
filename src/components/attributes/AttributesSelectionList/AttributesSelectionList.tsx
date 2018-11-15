@@ -1,13 +1,12 @@
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Table} from 'semantic-ui-react';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 
-interface IAttributesSelectionListProps {
+interface IAttributesSelectionListProps extends WithNamespaces {
     attributes: GET_ATTRIBUTES_attributes[];
     selection: string[];
     toggleSelection: (attribute: GET_ATTRIBUTES_attributes) => void;
-    t: TranslationFunction;
 }
 
 class AttributesSelectionList extends React.Component<IAttributesSelectionListProps> {
@@ -48,4 +47,4 @@ class AttributesSelectionList extends React.Component<IAttributesSelectionListPr
     }
 }
 
-export default translate()(AttributesSelectionList);
+export default withNamespaces()(AttributesSelectionList);

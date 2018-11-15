@@ -1,10 +1,8 @@
-import {TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Dimmer, Loader} from 'semantic-ui-react';
 
-interface ILoadingProps {
-    t: TranslationFunction;
+interface ILoadingProps extends WithNamespaces {
     withDimmer?: boolean;
 }
 
@@ -28,4 +26,4 @@ Loading.defaultProps = {
     withDimmer: false
 };
 
-export default translate()(Loading);
+export default withNamespaces()(Loading);

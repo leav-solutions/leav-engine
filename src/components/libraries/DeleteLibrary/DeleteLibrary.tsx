@@ -1,15 +1,14 @@
 import {DataProxy} from 'apollo-cache';
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import DeleteButton from 'src/components/shared/DeleteButton';
 import {DeleteLibMutation, deleteLibQuery} from 'src/queries/deleteLibMutation';
 import {getLibsQuery} from 'src/queries/getLibrariesQuery';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 
-interface IDeleteLibraryProps {
+interface IDeleteLibraryProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;
-    t: TranslationFunction;
 }
 
 class DeleteLibrary extends React.Component<IDeleteLibraryProps> {
@@ -50,4 +49,4 @@ class DeleteLibrary extends React.Component<IDeleteLibraryProps> {
     }
 }
 
-export default translate()(DeleteLibrary);
+export default withNamespaces()(DeleteLibrary);

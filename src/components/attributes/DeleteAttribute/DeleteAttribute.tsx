@@ -1,16 +1,13 @@
-import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import DeleteButton from 'src/components/shared/DeleteButton';
 import {DeleteAttributeMutation, deleteAttrQuery} from 'src/queries/deleteAttributeMutation';
 import {getAttributesQueryName} from 'src/queries/getAttributesQuery';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 
-interface IDeleteAttributeProps {
+interface IDeleteAttributeProps extends WithNamespaces {
     attribute?: GET_ATTRIBUTES_attributes;
-    t: TranslationFunction;
-    i18n: i18n;
 }
 
 class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
@@ -47,4 +44,4 @@ class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
     }
 }
 
-export default translate()(DeleteAttribute);
+export default withNamespaces()(DeleteAttribute);

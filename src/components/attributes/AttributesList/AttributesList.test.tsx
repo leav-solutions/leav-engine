@@ -1,19 +1,11 @@
 import {mount, shallow} from 'enzyme';
-import {i18n} from 'i18next';
 import * as React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
-import {Mockify} from 'src/_types/Mockify';
 import AttributesList from './AttributesList';
 
 describe('AttributesList', () => {
-    const mockI18n: Mockify<i18n> = {
-        language: 'fr',
-        options: {
-            fallbackLng: ['en']
-        }
-    };
     const attributes: GET_ATTRIBUTES_attributes[] = [
         {
             id: 'attr1',
@@ -48,7 +40,6 @@ describe('AttributesList', () => {
                     attributes={attributes}
                     onRowClick={onRowClick}
                     onFiltersUpdate={onFiltersUpdate}
-                    i18n={mockI18n as i18n}
                 />
             </MockedProvider>
         );
@@ -67,7 +58,6 @@ describe('AttributesList', () => {
                     attributes={attributes}
                     onRowClick={onRowClick}
                     onFiltersUpdate={onFiltersUpdate}
-                    i18n={mockI18n as i18n}
                     withFilters={false}
                 />
             </MockedProvider>
@@ -84,7 +74,6 @@ describe('AttributesList', () => {
                     attributes={attributes}
                     onRowClick={onRowClick}
                     onFiltersUpdate={onFiltersUpdate}
-                    i18n={mockI18n as i18n}
                     withFilters={false}
                 >
                     <div key="attr_lib_test" className="children_to_render" />
@@ -103,7 +92,6 @@ describe('AttributesList', () => {
                     attributes={attributes}
                     onRowClick={onRowClick}
                     onFiltersUpdate={onFiltersUpdate}
-                    i18n={mockI18n as i18n}
                     withFilters={false}
                 />
             </MockedProvider>
@@ -121,7 +109,6 @@ describe('AttributesList', () => {
                     attributes={attributes}
                     onRowClick={onRowClick}
                     onFiltersUpdate={changeFilter}
-                    i18n={mockI18n as i18n}
                 />
             </MockedProvider>
         );

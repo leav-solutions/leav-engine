@@ -6,6 +6,16 @@ ShallowWrapper {
   Symbol(enzyme.__unrendered__): <ConfirmedButton
     action={[Function]}
     confirmMessage="Test"
+    i18n={
+        Object {
+            "language": "fr",
+            "options": Object {
+              "fallbackLng": Array [
+                "en",
+              ],
+            },
+          }
+    }
     t={[Function]}
 >
     <div />

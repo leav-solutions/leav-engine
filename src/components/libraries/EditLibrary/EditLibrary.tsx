@@ -1,7 +1,7 @@
 import {History} from 'history';
 import {i18n} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import Loading from 'src/components/shared/Loading';
 import {getLibsQuery, LibrariesQuery} from 'src/queries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from 'src/queries/saveLibMutation';
@@ -9,7 +9,7 @@ import {getSysTranslationQueryLanguage} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import EditLibraryForm from '../EditLibraryForm';
 
-interface IEditLibraryProps {
+interface IEditLibraryProps extends WithNamespaces {
     match: any;
     history: History;
     i18n: i18n;
@@ -80,4 +80,4 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
     )
 }
 
-export default translate()(EditLibrary);
+export default withNamespaces()(EditLibrary);

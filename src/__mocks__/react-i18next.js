@@ -27,14 +27,28 @@ const renderNodes = reactNodes => {
     });
 };
 
+const mockI18n = {
+    language: 'fr',
+    options: {
+        fallbackLng: ['en']
+    }
+};
+
 module.exports = {
     // this mock makes sure any components using the translate HoC receive the t function as a prop
-    translate: () => Component => {
-        Component.defaultProps = {...Component.defaultProps, t: arg => arg};
+    withNamespaces: () => Component => {
+        Component.defaultProps = {
+            ...Component.defaultProps,
+            t: arg => arg,
+            i18n: mockI18n
+        };
         return Component;
     },
     Trans: ({children}) => renderNodes(children),
-    I18n: ({children}) => children(k => k, {i18n: {}}),
+    I18n: ({children}) =>
+        children(k => k, {
+            i18n: mockI18n
+        }),
 
     // mock if needed
     Interpolate: reactI18next.Interpolate,

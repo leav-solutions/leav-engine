@@ -1,9 +1,9 @@
 import {TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Confirm} from 'semantic-ui-react';
 
-interface IConfirmedButtonProps {
+interface IConfirmedButtonProps extends WithNamespaces {
     actionButton?: React.ReactElement<any>;
     action: () => void;
     confirmMessage: string;
@@ -69,4 +69,4 @@ class ConfirmedButton extends React.Component<IConfirmedButtonProps, IConfirmedB
     }
 }
 
-export default translate()(ConfirmedButton);
+export default withNamespaces()(ConfirmedButton);

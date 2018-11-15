@@ -1,6 +1,5 @@
-import {TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
 import AttributesList from 'src/components/attributes/AttributesList';
 import AttributesSelectionModal from 'src/components/attributes/AttributesSelectionModal';
@@ -10,9 +9,8 @@ import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import UnlinkLibAttribute from '../UnlinkLibAttribute';
 
-interface IEditLibraryAttributesProps {
+interface IEditLibraryAttributesProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries | null;
-    t: TranslationFunction;
 }
 
 interface IEditLibraryAttributesState {
@@ -147,4 +145,4 @@ class EditLibraryAttributes extends React.Component<IEditLibraryAttributesProps,
     }
 }
 
-export default translate()(EditLibraryAttributes);
+export default withNamespaces()(EditLibraryAttributes);

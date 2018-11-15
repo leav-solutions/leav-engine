@@ -1,16 +1,13 @@
-import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Icon, Input, Table} from 'semantic-ui-react';
 import Loading from 'src/components/shared/Loading';
 import {localizedLabel} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import DeleteLibrary from '../DeleteLibrary';
 
-interface ILibrariesListProps {
+interface ILibrariesListProps extends WithNamespaces {
     libraries: GET_LIBRARIES_libraries[] | null;
-    t: TranslationFunction;
-    i18n: i18n;
     onRowClick: (library: GET_LIBRARIES_libraries) => void;
     onFiltersUpdate?: (filters: any) => void;
     loading?: boolean;
@@ -122,4 +119,4 @@ LibrariesList.defaultProps = {
     filters: {}
 };
 
-export default translate()(LibrariesList);
+export default withNamespaces()(LibrariesList);

@@ -1,6 +1,5 @@
-import {i18n, TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form, Header, Icon, Message} from 'semantic-ui-react';
 import FormFieldWrapper from 'src/components/shared/FormFieldWrapper';
 import {formatIDString, localizedLabel} from 'src/utils/utils';
@@ -8,11 +7,9 @@ import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from 'src/_types/errors';
 
-interface IEditAttributeFormProps {
+interface IEditAttributeFormProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes | null;
     onSubmit: (formData: any) => void;
-    t: TranslationFunction;
-    i18n: i18n;
     errors?: IFormError;
 }
 
@@ -163,4 +160,4 @@ class EditAttributeForm extends React.Component<IEditAttributeFormProps, IEditAt
     }
 }
 
-export default translate()(EditAttributeForm);
+export default withNamespaces()(EditAttributeForm);

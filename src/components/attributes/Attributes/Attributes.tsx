@@ -1,7 +1,6 @@
 import {History} from 'history';
-import {i18n} from 'i18next';
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import {AttributesQuery, getAttributesQuery} from 'src/queries/getAttributesQuery';
@@ -9,9 +8,7 @@ import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/ut
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
 
-interface IAttributesProps {
-    t: TranslationFunction;
-    i18n: i18n;
+interface IAttributesProps extends WithNamespaces {
     history: History;
 }
 
@@ -95,4 +92,4 @@ class Attributes extends React.Component<IAttributesProps, IAttributesState> {
     }
 }
 
-export default translate()(Attributes);
+export default withNamespaces()(Attributes);

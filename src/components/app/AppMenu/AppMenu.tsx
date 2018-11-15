@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';
 
@@ -8,9 +8,8 @@ export interface IAppMenuItem {
     label: string;
 }
 
-export interface IAppMenuProps {
+export interface IAppMenuProps extends WithNamespaces {
     items: IAppMenuItem[];
-    t: TranslationFunction;
 }
 
 function AppMenu({items, t}: IAppMenuProps): JSX.Element {
@@ -32,4 +31,4 @@ function AppMenu({items, t}: IAppMenuProps): JSX.Element {
     );
 }
 
-export default translate()(AppMenu);
+export default withNamespaces()(AppMenu);

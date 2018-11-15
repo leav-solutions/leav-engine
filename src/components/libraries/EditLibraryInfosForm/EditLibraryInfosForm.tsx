@@ -1,14 +1,12 @@
-import {TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import {formatIDString} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 
-interface IEditLibraryInfosFormProps {
+interface IEditLibraryInfosFormProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries | null;
     onLibUpdate?: (lib: GET_LIBRARIES_libraries) => void;
-    t: TranslationFunction;
     onSubmit: (formData: any) => void;
 }
 
@@ -97,4 +95,4 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
     }
 }
 
-export default translate()(EditLibraryInfosForm);
+export default withNamespaces()(EditLibraryInfosForm);

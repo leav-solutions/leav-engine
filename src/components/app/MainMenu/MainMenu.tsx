@@ -1,12 +1,8 @@
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import AppMenu from '../AppMenu';
 
-interface IMainMenuProps {
-    t: TranslationFunction;
-}
-
-class MainMenu extends React.Component<IMainMenuProps, any> {
+class MainMenu extends React.Component<WithNamespaces> {
     public state = {
         activeMenu: 'libraries'
     };
@@ -31,4 +27,4 @@ class MainMenu extends React.Component<IMainMenuProps, any> {
     }
 }
 
-export default translate()(MainMenu);
+export default withNamespaces()(MainMenu);

@@ -1,15 +1,13 @@
-import {TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import {AttributeDetails} from 'src/_gqlTypes/AttributeDetails';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 
-interface IUnlinkLibAttributeProps {
+interface IUnlinkLibAttributeProps extends WithNamespaces {
     attribute?: AttributeDetails;
     library: GET_LIBRARIES_libraries | null;
-    t: TranslationFunction;
     onUnlink: (attributesList: string[]) => void;
 }
 
@@ -43,4 +41,4 @@ class UnlinkLibAttribute extends React.Component<IUnlinkLibAttributeProps> {
     }
 }
 
-export default translate()(UnlinkLibAttribute);
+export default withNamespaces()(UnlinkLibAttribute);

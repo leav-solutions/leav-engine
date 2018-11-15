@@ -1,6 +1,5 @@
-import {i18n} from 'i18next';
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Dropdown, Input, Table} from 'semantic-ui-react';
 import Loading from 'src/components/shared/Loading';
 import {localizedLabel} from 'src/utils/utils';
@@ -8,10 +7,8 @@ import {AttributeDetails} from 'src/_gqlTypes/AttributeDetails';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
 
-interface IAttributesListProps {
+interface IAttributesListProps extends WithNamespaces {
     attributes: AttributeDetails[] | null;
-    t: TranslationFunction;
-    i18n: i18n;
     onRowClick: (attribute: GET_ATTRIBUTES_attributes) => void;
     onFiltersUpdate?: (filters: any) => void;
     loading: boolean;
@@ -165,4 +162,4 @@ class AttributesList extends React.Component<IAttributesListProps> {
     }
 }
 
-export default translate()(AttributesList);
+export default withNamespaces()(AttributesList);

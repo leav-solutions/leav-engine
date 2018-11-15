@@ -1,15 +1,14 @@
 import {History} from 'history';
 import {i18n} from 'i18next';
 import * as React from 'react';
-import {translate, TranslationFunction} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import {getLibsQuery, LibrariesQuery} from 'src/queries/getLibrariesQuery';
 import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
 import LibrariesList from '../LibrariesList';
 
-interface ILibrariesProps {
-    t: TranslationFunction;
+interface ILibrariesProps extends WithNamespaces {
     i18n: i18n;
     history: History;
 }
@@ -89,4 +88,4 @@ class Libraries extends React.Component<ILibrariesProps, ILibrariesState> {
     }
 }
 
-export default translate()(Libraries);
+export default withNamespaces()(Libraries);

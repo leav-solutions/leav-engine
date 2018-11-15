@@ -1,9 +1,7 @@
 import {mount, shallow} from 'enzyme';
-import {i18n} from 'i18next';
 import * as React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {Mockify} from 'src/_types/Mockify';
 import LibrariesList from './LibrariesList';
 
 describe('LibrariesList', () => {
@@ -14,23 +12,13 @@ describe('LibrariesList', () => {
     ];
 
     const onRowClick = jest.fn();
-    const mockI18n: Mockify<i18n> = {
-        language: 'fr',
-        options: {
-            fallbackLng: ['en']
-        }
-    };
+
     const onFiltersUpdate = jest.fn();
     test('Render libraries list with filters', async () => {
         const comp = shallow(
             <Router>
                 <MockedProvider>
-                    <LibrariesList
-                        libraries={libraries}
-                        onRowClick={onRowClick}
-                        i18n={mockI18n as i18n}
-                        onFiltersUpdate={onFiltersUpdate}
-                    />
+                    <LibrariesList libraries={libraries} onRowClick={onRowClick} onFiltersUpdate={onFiltersUpdate} />
                 </MockedProvider>
             </Router>
         );
@@ -44,12 +32,7 @@ describe('LibrariesList', () => {
         const changeFilter = jest.fn();
         const comp = mount(
             <MockedProvider>
-                <LibrariesList
-                    libraries={libraries}
-                    onRowClick={onRowClick}
-                    i18n={mockI18n as i18n}
-                    onFiltersUpdate={changeFilter}
-                />
+                <LibrariesList libraries={libraries} onRowClick={onRowClick} onFiltersUpdate={changeFilter} />
             </MockedProvider>
         );
 

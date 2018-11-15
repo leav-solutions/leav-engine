@@ -1,15 +1,13 @@
-import {TranslationFunction} from 'i18next';
 import * as React from 'react';
-import {translate} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import Loading from 'src/components/shared/Loading';
 import {AttributesQuery, getAttributesQuery} from 'src/queries/getAttributesQuery';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import AttributesSelectionList from '../AttributesSelectionList';
 
-interface IAttributesSelectionProps {
+interface IAttributesSelectionProps extends WithNamespaces {
     onSubmit: (selectedAttributes: string[]) => void;
-    t: TranslationFunction;
     openModal: boolean;
     onClose: () => void;
     selection: string[];
@@ -92,4 +90,4 @@ class AttributesSelectionModal extends React.Component<IAttributesSelectionProps
     }
 }
 
-export default translate()(AttributesSelectionModal);
+export default withNamespaces()(AttributesSelectionModal);
