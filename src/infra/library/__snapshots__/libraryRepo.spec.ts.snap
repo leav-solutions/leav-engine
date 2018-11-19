@@ -27,38 +27,6 @@ Object {
 }
 `;
 
-exports[`LibraryRepo getLibrary Should filter 1`] = `"FOR l IN core_libraries FILTER LIKE(l.@filterKey0, @filterValue0, true) FILTER l.@filterKey1 == @filterValue1 RETURN l"`;
-
-exports[`LibraryRepo getLibrary Should filter 2`] = `
-Object {
-  "filterKey0": "_key",
-  "filterKey1": "system",
-  "filterValue0": "test",
-  "filterValue1": false,
-}
-`;
-
-exports[`LibraryRepo getLibrary Should filter label on any language 1`] = `"FOR l IN core_libraries FILTER LIKE(l.label.fr, @filterValue0, true) OR LIKE(l.label.en, @filterValue0, true) RETURN l"`;
-
-exports[`LibraryRepo getLibrary Should filter label on any language 2`] = `
-Object {
-  "filterValue0": "test",
-}
-`;
-
-exports[`LibraryRepo getLibrary Should filter with a LIKE on ID 1`] = `"FOR l IN core_libraries FILTER LIKE(l.@filterKey0, @filterValue0, true) RETURN l"`;
-
-exports[`LibraryRepo getLibrary Should filter with a LIKE on ID 2`] = `
-Object {
-  "filterKey0": "_key",
-  "filterValue0": "test",
-}
-`;
-
-exports[`LibraryRepo getLibrary Should return all libs if no filter 1`] = `"FOR l IN core_libraries RETURN l"`;
-
-exports[`LibraryRepo getLibrary Should return all libs if no filter 2`] = `Object {}`;
-
 exports[`LibraryRepo getLibraryAttributes Should get library attributes through graph query 1`] = `
 "
                 FOR v
