@@ -1,130 +1,39 @@
 import {Database} from 'arangojs';
+import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import attributeRepo from '../attribute/attributeRepo';
 import {IValueRepo} from '../value/valueRepo';
 
 describe('AttributeRepo', () => {
     describe('getAttribute', () => {
-        test('Should return all libs if no filter', async function() {
+        test('Get all attributes', async function() {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils = {cleanup: jest.fn()};
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
-
-            const lib = await attrRepo.getAttributes();
-
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR a IN core_attributes/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(?!FILTER)/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-        });
-
-        test('Should filter', async function() {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockCleanupRes = {id: 'test_attribute', system: false};
-            const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue({_key: 'test', type: [AttributeTypes.ADVANCED]})
+            const mockDbUtils: Mockify<IDbUtils> = {
+                findCoreEntity: global.__mockPromise([
+                    {
+                        id: 'label',
+                        system: false,
+                        label: {
+                            fr: 'label'
+                        }
+                    }
+                ])
             };
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
 
-            const lib = await attrRepo.getAttributes({id: 'test', type: [AttributeTypes.ADVANCED]});
+            const repo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(FILTER(.*)FILTER)/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-        });
+            const trees = await repo.getAttributes();
 
-        test('Should filter with a LIKE on ID', async function() {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockCleanupRes = {id: 'test_attribute', system: false};
-            const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue({_key: 'test'})
-            };
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
-
-            const lib = await attrRepo.getAttributes({id: 'test'});
-
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(FILTER LIKE){1}/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-        });
-
-        test('Should filter with an array of types', async function() {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockCleanupRes = {id: 'test_attribute', system: false};
-            const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue({type: ['simple', 'simple_link'], _key: 'test'})
-            };
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
-
-            const lib = await attrRepo.getAttributes({
-                type: [AttributeTypes.SIMPLE, AttributeTypes.SIMPLE_LINK],
-                id: 'test'
-            });
-
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(FILTER(.*)OR(.*))/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-        });
-
-        test('Should filter label on any language', async function() {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockCleanupRes = {id: 'test_attribute', system: false};
-            const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue({label: 'test'})
-            };
-            const mockConfig = {
-                lang: {
-                    available: ['fr', 'en']
+            expect(mockDbUtils.findCoreEntity.mock.calls.length).toBe(1);
+            expect(trees).toEqual([
+                {
+                    id: 'label',
+                    system: false,
+                    label: {
+                        fr: 'label'
+                    }
                 }
-            };
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils, null, mockConfig);
-
-            const lib = await attrRepo.getAttributes({label: 'test'});
-
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(LIKE(.*)label\.fr(.*)OR LIKE(.*)label\.en)/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-        });
-
-        test('Should return an empty array if no results', async function() {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-
-            const mockCleanupRes = {id: 'test_attribute'};
-            const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue({_key: 'test'})
-            };
-
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
-
-            const libs = await attrRepo.getAttributes({id: 'test'});
-
-            expect(libs).toBeInstanceOf(Array);
-            expect(libs.length).toBe(0);
-        });
-
-        test('Should format returned values', async function() {
-            const mockLibList = [{_key: 'test', _id: 'core_attributes/test', _rev: '_WR0JkDW--_'}];
-            const mockDbServ = {db: null, execute: global.__mockPromise(mockLibList)};
-
-            const mockCleanupRes = [{id: 'test', system: false}];
-            const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue({_key: 'test', system: false})
-            };
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
-
-            const libs = await attrRepo.getAttributes({id: 'test'});
-
-            expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
-            expect(libs.length).toEqual(1);
-            expect(libs[0]).toMatchObject([{id: 'test', system: false}]);
+            ]);
         });
     });
 

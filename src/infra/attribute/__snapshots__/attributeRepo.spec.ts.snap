@@ -44,51 +44,6 @@ Object {
 }
 `;
 
-exports[`AttributeRepo getAttribute Should filter 1`] = `"FOR a IN core_attributes FILTER LIKE(a.@filterKey0, @filterValue0, true) FILTER a.@filterKey100 == @filterValue100 RETURN a"`;
-
-exports[`AttributeRepo getAttribute Should filter 2`] = `
-Object {
-  "filterKey0": "_key",
-  "filterKey100": "type",
-  "filterValue0": "test",
-  "filterValue100": "advanced",
-}
-`;
-
-exports[`AttributeRepo getAttribute Should filter label on any language 1`] = `"FOR a IN core_attributes FILTER LIKE(a.label.fr, @filterValue0, true) OR LIKE(a.label.en, @filterValue0, true) RETURN a"`;
-
-exports[`AttributeRepo getAttribute Should filter label on any language 2`] = `
-Object {
-  "filterValue0": "test",
-}
-`;
-
-exports[`AttributeRepo getAttribute Should filter with a LIKE on ID 1`] = `"FOR a IN core_attributes FILTER LIKE(a.@filterKey0, @filterValue0, true) RETURN a"`;
-
-exports[`AttributeRepo getAttribute Should filter with a LIKE on ID 2`] = `
-Object {
-  "filterKey0": "_key",
-  "filterValue0": "test",
-}
-`;
-
-exports[`AttributeRepo getAttribute Should filter with an array of types 1`] = `"FOR a IN core_attributes FILTER a.@filterKey000 == @filterValue000 OR a.@filterKey001 == @filterValue001 FILTER LIKE(a.@filterKey1, @filterValue1, true) RETURN a"`;
-
-exports[`AttributeRepo getAttribute Should filter with an array of types 2`] = `
-Object {
-  "filterKey000": "type",
-  "filterKey001": "type",
-  "filterKey1": "_key",
-  "filterValue000": "simple",
-  "filterValue001": "simple_link",
-  "filterValue1": "test",
-}
-`;
-
-exports[`AttributeRepo getAttribute Should return all libs if no filter 1`] = `"FOR a IN core_attributes RETURN a"`;
-
-exports[`AttributeRepo getAttribute Should return all libs if no filter 2`] = `Object {}`;
-
 exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
 exports[`AttributeRepo updateAttribute Should update an existing attribute 2`] = `
