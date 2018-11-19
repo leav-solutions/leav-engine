@@ -1,6 +1,6 @@
-import treeRepo from './treeRepo';
-import dbUtils, {IDbUtils} from '../db/dbUtils';
 import {Database} from 'arangojs';
+import dbUtils, {IDbUtils} from '../db/dbUtils';
+import treeRepo from './treeRepo';
 
 describe('TreeRepo', () => {
     const docTreeData = {
@@ -84,36 +84,31 @@ describe('TreeRepo', () => {
         test('Should return all trees', async () => {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn()
+                findCoreEntity: global.__mockPromise([
+                    {
+                        id: 'categories',
+                        system: false,
+                        label: {
+                            fr: 'Arbre des catégories'
+                        }
+                    }
+                ])
             };
 
             const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const trees = await repo.getTrees();
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR l IN core_trees/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-        });
-        test('Should filter trees', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn(),
-                convertToDoc: jest.fn().mockReturnValue({_key: 'test', system: false})
-            };
-
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
-
-            const trees = await repo.getTrees({id: 'test'});
-
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR l IN core_trees/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FILTER/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbUtils.findCoreEntity.mock.calls.length).toBe(1);
+            expect(trees).toEqual([
+                {
+                    id: 'categories',
+                    system: false,
+                    label: {
+                        fr: 'Arbre des catégories'
+                    }
+                }
+            ]);
         });
     });
 

@@ -1,14 +1,14 @@
-import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '_types/tree';
 import {aql} from 'arangojs';
-import {IDbService, collectionTypes} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
 import {IRecord} from '_types/record';
+import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '_types/tree';
+import {collectionTypes, IDbService} from '../db/dbService';
+import {IDbUtils} from '../db/dbUtils';
 import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
 
 export interface ITreeRepo {
     createTree(treeData: ITree): Promise<ITree>;
     updateTree(treeData: ITree): Promise<ITree>;
-    getTrees(filters?: ITreeFilterOptions): Promise<ITree[]>;
+    getTrees(filters?: ITreeFilterOptions, strictFilters?: boolean): Promise<ITree[]>;
     deleteTree(id: string): Promise<ITree>;
 
     /**
@@ -83,7 +83,7 @@ export interface ITreeRepo {
     getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]>;
 }
 
-const TREES_COLLECTION_NAME = 'core_trees';
+export const TREES_COLLECTION_NAME = 'core_trees';
 const EDGE_COLLEC_PREFIX = 'core_edge_tree_';
 const MAX_TREE_DEPTH = 1000;
 
@@ -118,25 +118,8 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
 
             return dbUtils.cleanup(treeRes.pop());
         },
-        async getTrees(filters?: ITreeFilterOptions): Promise<ITree[]> {
-            let query = `FOR l IN ${TREES_COLLECTION_NAME}`;
-            const bindVars = {};
-
-            if (typeof filters !== 'undefined') {
-                const dbFilters = dbUtils.convertToDoc(filters);
-                const filtersKeys = Object.keys(dbFilters);
-                for (let i = 0; i < filtersKeys.length; i++) {
-                    query += ` FILTER l.@filterKey${i} == @filterValue${i}`;
-                    bindVars[`filterKey${i}`] = filtersKeys[i];
-                    bindVars[`filterValue${i}`] = `${dbFilters[filtersKeys[i]]}`;
-                }
-            }
-
-            query += ` RETURN l`;
-
-            const res = await dbService.execute({query, bindVars});
-
-            return res.map(dbUtils.cleanup);
+        async getTrees(filters?: ITreeFilterOptions, strictFilters: boolean = false): Promise<ITree[]> {
+            return dbUtils.findCoreEntity<ITree>(TREES_COLLECTION_NAME, filters, strictFilters);
         },
         async deleteTree(id: string): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);

@@ -1,8 +1,11 @@
+import {asFunction, AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IDbService} from './dbService';
 import * as winston from 'winston';
-import {AwilixContainer, asFunction} from 'awilix';
+import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
+import {ILibrary, ILibraryFilterOptions} from '_types/library';
+import {ITree, ITreeFilterOptions} from '_types/tree';
+import {IDbService} from './dbService';
 
 const COLLECTION_NAME = 'core_db_migrations';
 
@@ -11,12 +14,17 @@ export interface IDbUtils {
     cleanup?(record: {}): any;
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
+    findCoreEntity?<T extends ITree | ILibrary | IAttribute>(
+        collectionName: string,
+        filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
+        strictFilters?: boolean
+    ): Promise<T[]>;
 }
 
 export interface IMigration {
     run(): Promise<void>;
 }
-export default function(dbService: IDbService, logger: winston.Winston): IDbUtils {
+export default function(dbService: IDbService = null, logger: winston.Winston = null, config: any = null): IDbUtils {
     /**
      * Create the collections used to managed db migrations
      * This can't be in a migration file because we do have to initialize it somewhere
@@ -32,7 +40,62 @@ export default function(dbService: IDbService, logger: winston.Winston): IDbUtil
         }
     }
 
-    return {
+    /**
+     * Return the filter's conditions based on key and val supplied.
+     *
+     * @param filterKey
+     * @param filterVal
+     * @param bindVars
+     * @param index
+     * @param strictFilters
+     */
+    function _getFilterCondition(
+        filterKey: string,
+        filterVal: string | boolean | string[],
+        bindVars: any,
+        index: number | string,
+        strictFilters: boolean
+    ): any {
+        const newBindVars = {...bindVars};
+        let query;
+        // If value is an array (types or formats for example),
+        // we call this function recursively on array and join filters with an OR
+        if (Array.isArray(filterVal)) {
+            if (filterVal.length) {
+                const filters = filterVal.map((val, i) =>
+                    // We add a prefix to the index to avoid crashing with other filters
+                    _getFilterCondition(filterKey, val, newBindVars, index + '0' + i, strictFilters)
+                );
+                query = filters.map(f => f.query).join(' OR ');
+                Object.assign(newBindVars, ...filters.map(f => f.bindVars));
+            }
+        } else {
+            if (filterKey === 'label') {
+                // Search for label in any language
+                query = `${config.lang.available
+                    .map(l => `LIKE(el.label.${l}, @filterValue${index}, true)`)
+                    .join(' OR ')}`;
+
+                bindVars[`filterValue${index}`] = `${filterVal}`;
+            } else {
+                // Filter with a "like" on ID or exact value in other fields
+                query =
+                    filterKey === '_key' && !strictFilters
+                        ? `LIKE(el.@filterKey${index}, @filterValue${index}, true)`
+                        : `el.@filterKey${index} == @filterValue${index}`;
+
+                newBindVars[`filterKey${index}`] = filterKey;
+                newBindVars[`filterValue${index}`] =
+                    filterKey === 'system'
+                        ? filterVal // Boolean must not be converted to string
+                        : `${filterVal}`;
+            }
+        }
+
+        return {query, bindVars: newBindVars};
+    }
+
+    const ret = {
         /**
          * Run database migrations.
          * It takes all files present in migrations folder and run it if it's never been executed before
@@ -122,6 +185,41 @@ export default function(dbService: IDbService, logger: winston.Winston): IDbUtil
             delete newObj.id;
 
             return newObj;
+        },
+
+        async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
+            collectionName: string,
+            filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
+            strictFilters?: boolean
+        ): Promise<T[]> {
+            let query = `FOR el IN ${collectionName}`;
+            let bindVars = {};
+
+            if (typeof filters !== 'undefined') {
+                const dbFilters = ret.convertToDoc(filters);
+                const filtersKeys = Object.keys(dbFilters);
+
+                for (let i = 0; i < filtersKeys.length; i++) {
+                    const queryFilter = _getFilterCondition(
+                        filtersKeys[i],
+                        dbFilters[filtersKeys[i]],
+                        bindVars,
+                        i,
+                        strictFilters
+                    );
+
+                    query += queryFilter.query ? ' FILTER ' + queryFilter.query : '';
+                    bindVars = {...bindVars, ...queryFilter.bindVars};
+                }
+            }
+
+            query += ` RETURN el`;
+
+            const res = await dbService.execute({query, bindVars});
+
+            return res.map(ret.cleanup);
         }
     };
+
+    return ret;
 }

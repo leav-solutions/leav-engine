@@ -1,5 +1,5 @@
-import {ISystemTranslation} from './systemTranslation';
 import {IRecord} from './record';
+import {ISystemTranslation} from './systemTranslation';
 
 export interface ITree {
     id: string;
@@ -10,6 +10,8 @@ export interface ITree {
 
 export interface ITreeFilterOptions {
     id?: string;
+    label?: string;
+    system?: boolean;
 }
 
 export interface ITreeElement {

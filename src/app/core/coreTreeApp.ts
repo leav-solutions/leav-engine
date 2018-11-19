@@ -52,7 +52,7 @@ export default function(
                     }
 
                     extend type Query {
-                        trees(id: ID): [Tree]
+                        trees(id: ID, label: String, system: Boolean): [Tree!]
 
                         # Retrieve a full tree content.
                         treeContent(treeId: ID): [TreeNode!]
