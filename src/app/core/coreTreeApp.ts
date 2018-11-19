@@ -24,13 +24,13 @@ export default function(
                     type Tree {
                         id: ID!,
                         system: Boolean!,
-                        libraries: [String]!,
+                        libraries: [String!]!,
                         label(lang: [AvailableLanguage!]): SystemTranslation
                     }
 
                     input TreeInput {
                         id: ID!
-                        libraries: [String],
+                        libraries: [String!],
                         label: SystemTranslationInput
                     }
 
