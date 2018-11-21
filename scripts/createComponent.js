@@ -44,13 +44,21 @@ export default ${name};`;
 
 prog.version('0.1.0')
     .usage('[options] <compName>')
-    .option('-m, --component', 'Create in components folder')
-    .option('-n, --container', 'Create in containers folder')
+    .option('-P, --parent <parent>', 'Parent folder (where the components will be created)')
     .option('-t, --type [type]', 'Component type (functional or class)', /^(func|class)$/i)
     .action(name => {
-        const destDir = __dirname + '/../src/' + (prog.component ? 'components' : 'containers') + '/';
+        if (!prog.parent) {
+            console.log('Missing --parent argument');
+        }
+
+        const destDir = __dirname + '/../src/components/' + prog.parent + '/';
 
         const compFolder = destDir + name;
+
+        // Create new parent folder if not existing
+        if (!fs.existsSync(destDir)) {
+            fs.mkdirSync(destDir);
+        }
 
         // Create new folder if not existing
         if (!fs.existsSync(compFolder)) {
@@ -60,35 +68,35 @@ prog.version('0.1.0')
         // Create index file
         const indexFile = compFolder + '/index.ts';
         if (!fs.existsSync(indexFile)) {
-            const filecontent = `import ${name} from './${name}';\nexport default ${name};`;
+            const fileContent = `import ${name} from './${name}';\nexport default ${name};`;
 
-            fs.writeFileSync(indexFile, filecontent);
+            fs.writeFileSync(indexFile, fileContent);
         }
 
         // Create component file
         const compFile = compFolder + `/${name}.tsx`;
         if (!fs.existsSync(compFile)) {
-            const filecontent = prog.type === 'class' ? _getClassCompContent(name) : _getFuncCompContent(name);
+            const fileContent = prog.type === 'class' ? _getClassCompContent(name) : _getFuncCompContent(name);
 
-            fs.writeFileSync(compFile, filecontent);
+            fs.writeFileSync(compFile, fileContent);
         }
 
         // Create component test file
         const testFile = compFolder + `/${name}.test.tsx`;
         if (!fs.existsSync(testFile)) {
-            const filecontent = `import * as React from 'react';
-import {create} from 'react-test-renderer';
+            const fileContent = `import * as React from 'react';
+import {render} from 'enzyme';
 import ${name} from './${name}';
 
 describe('${name}', () => {
     test('Snapshot test', async () => {
-        const comp = create(<${name} />);
+        const comp = render(<${name} />);
 
         expect(comp).toMatchSnapshot();
     });
 });`;
 
-            fs.writeFileSync(testFile, filecontent);
+            fs.writeFileSync(testFile, fileContent);
         }
     })
     .parse(process.argv);

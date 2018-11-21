@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Form, Label} from 'semantic-ui-react';
 
-interface IFormFieldWrapperProps {
+export interface IFormFieldWrapperProps {
     error?: string;
     children: React.ReactNode;
 }

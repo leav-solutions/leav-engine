@@ -43,6 +43,14 @@
         }
     },
     "trees": {
-        "title": "Arbres"
+        "title": "Arbres",
+        "new": "Nouvel arbre",
+        "label": "Libellé",
+        "ID": "Identifiant",
+        "isSystem": "Système",
+        "informations": "Informations",
+        "structure": "Structure",
+        "libraries": "Bibliothèques liées",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'arbre {{treeLabel}}?"
     }
 }

@@ -93,6 +93,12 @@ export interface SystemTranslationInput {
     en?: string | null;
 }
 
+export interface TreeInput {
+    id: string;
+    libraries?: string[] | null;
+    label?: SystemTranslationInput | null;
+}
+
 export interface TreePermissionsConfInput {
     permissionTreeAttributes: (string | null)[];
     relation: PermissionsRelation;

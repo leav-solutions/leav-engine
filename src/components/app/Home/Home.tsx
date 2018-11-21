@@ -4,6 +4,7 @@ import Attributes from 'src/components/attributes/Attributes';
 import EditAttribute from 'src/components/attributes/EditAttribute';
 import EditLibrary from 'src/components/libraries/EditLibrary';
 import Libraries from 'src/components/libraries/Libraries';
+import EditTree from 'src/components/trees/EditTree';
 import Trees from 'src/components/trees/Trees';
 import MainMenu from '../MainMenu';
 function Home(): JSX.Element {
@@ -22,6 +23,7 @@ function Home(): JSX.Element {
                     <Route path="/attributes" component={Attributes} exact />
                     <Route path="/attributes/edit/:id?" component={EditAttribute} exact />
                     <Route path="/trees" component={Trees} exact />
+                    <Route path="/trees/edit/:id?" component={EditTree} exact />
                 </div>
             </div>
         </Router>

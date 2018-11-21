@@ -26,8 +26,7 @@
         "eject": "react-scripts-ts eject",
         "precommit": "lint-staged && CI=true npm test",
         "gen_types": "apollo codegen:generate --target=typescript --outputFlat src/_gqlTypes && prettier --write src/_gqlTypes/*",
-        "create_comp:component": "scripts/createComponent.js -m",
-        "create_comp:container": "scripts/createComponent.js -n"
+        "create_comp": "scripts/createComponent.js"
     },
     "devDependencies": {
         "@types/enzyme": "3.1.14",
