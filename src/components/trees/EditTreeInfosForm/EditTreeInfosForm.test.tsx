@@ -23,7 +23,7 @@ describe('EditTreeInfosForm', () => {
     });
 
     test('Render form for new tree', async () => {
-        const comp = shallow(<EditTreeInfosForm tree={} onSubmit={onSubmit} />);
+        const comp = shallow(<EditTreeInfosForm tree={null} onSubmit={onSubmit} />);
         expect(comp.find('FormInput[name="id"]').props().disabled).toBe(false);
     });
     test('Autofill ID with label on new lib', async () => {
