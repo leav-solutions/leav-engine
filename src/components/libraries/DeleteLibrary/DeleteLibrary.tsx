@@ -3,8 +3,8 @@ import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import DeleteButton from 'src/components/shared/DeleteButton';
-import {DeleteLibMutation, deleteLibQuery} from 'src/queries/deleteLibMutation';
-import {getLibsQuery} from 'src/queries/getLibrariesQuery';
+import {DeleteLibMutation, deleteLibQuery} from 'src/queries/libraries/deleteLibMutation';
+import {getLibsQuery} from 'src/queries/libraries/getLibrariesQuery';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 
 interface IDeleteLibraryProps extends WithNamespaces {

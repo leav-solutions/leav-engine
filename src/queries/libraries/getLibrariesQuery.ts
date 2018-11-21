@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import {Query} from 'react-apollo';
 import {GET_LIBRARIES, GET_LIBRARIESVariables} from 'src/_gqlTypes/GET_LIBRARIES';
-import {attributeDetailsFragment} from './attributeFragments';
+import {attributeDetailsFragment} from '../attributes/attributeFragments';
 
 export const getLibsQuery = gql`
     ${attributeDetailsFragment}

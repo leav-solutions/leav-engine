@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FormDropdownProps} from 'semantic-ui-react';
-import {getLibsQuery, LibrariesQuery} from 'src/queries/getLibrariesQuery';
+import {getLibsQuery, LibrariesQuery} from 'src/queries/libraries/getLibrariesQuery';
 import {AvailableLanguage} from 'src/_gqlTypes/globalTypes';
 import LibrariesSelectorField from '../LibrariesSelectorField';
 

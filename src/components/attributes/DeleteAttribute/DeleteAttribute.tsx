@@ -2,8 +2,8 @@ import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import DeleteButton from 'src/components/shared/DeleteButton';
-import {DeleteAttributeMutation, deleteAttrQuery} from 'src/queries/deleteAttributeMutation';
-import {getAttributesQueryName} from 'src/queries/getAttributesQuery';
+import {DeleteAttributeMutation, deleteAttrQuery} from 'src/queries/attributes/deleteAttributeMutation';
+import {getAttributesQueryName} from 'src/queries/attributes/getAttributesQuery';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 
 interface IDeleteAttributeProps extends WithNamespaces {

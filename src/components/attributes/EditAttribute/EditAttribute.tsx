@@ -3,8 +3,8 @@ import * as React from 'react';
 import {match} from 'react-router';
 import {Dimmer} from 'semantic-ui-react';
 import Loading from 'src/components/shared/Loading';
-import {AttributesQuery, getAttributesQuery} from 'src/queries/getAttributesQuery';
-import {SaveAttributeMutation, saveAttributeQuery} from 'src/queries/saveAttributeMutation';
+import {AttributesQuery, getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
+import {SaveAttributeMutation, saveAttributeQuery} from 'src/queries/attributes/saveAttributeMutation';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import EditAttributeForm from '../EditAttributeForm';
 

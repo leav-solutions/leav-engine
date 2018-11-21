@@ -3,7 +3,7 @@ import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import {AttributesQuery, getAttributesQuery} from 'src/queries/getAttributesQuery';
+import {AttributesQuery, getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
 import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';

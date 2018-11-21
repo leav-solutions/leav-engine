@@ -2,8 +2,8 @@ import {History} from 'history';
 import * as React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import Loading from 'src/components/shared/Loading';
-import {getTreesQuery, TreesQuery} from 'src/queries/getTreesQuery';
-import {SaveTreeMutation, saveTreeQuery} from 'src/queries/saveTreeMutation';
+import {getTreesQuery, TreesQuery} from 'src/queries/trees/getTreesQuery';
+import {SaveTreeMutation, saveTreeQuery} from 'src/queries/trees/saveTreeMutation';
 import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
 import EditTreeForm from '../EditTreeForm';
 

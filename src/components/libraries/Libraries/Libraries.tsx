@@ -4,7 +4,7 @@ import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import {getLibsQuery, LibrariesQuery} from 'src/queries/getLibrariesQuery';
+import {getLibsQuery, LibrariesQuery} from 'src/queries/libraries/getLibrariesQuery';
 import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
 import LibrariesList from '../LibrariesList';
 

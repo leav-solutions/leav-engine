@@ -4,7 +4,7 @@ import {Button, Icon, Modal} from 'semantic-ui-react';
 import AttributesList from 'src/components/attributes/AttributesList';
 import AttributesSelectionModal from 'src/components/attributes/AttributesSelectionModal';
 import EditAttribute from 'src/components/attributes/EditAttribute';
-import {SaveLibAttributesMutation, saveLibAttributesMutation} from 'src/queries/saveLibAttributesMutation';
+import {SaveLibAttributesMutation, saveLibAttributesMutation} from 'src/queries/libraries/saveLibAttributesMutation';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import UnlinkLibAttribute from '../UnlinkLibAttribute';

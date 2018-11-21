@@ -3,7 +3,7 @@ import * as React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import {getTreesQuery, TreesQuery} from 'src/queries/getTreesQuery';
+import {getTreesQuery, TreesQuery} from 'src/queries/trees/getTreesQuery';
 import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
 import {GET_TREESVariables} from 'src/_gqlTypes/GET_TREES';
 import TreesList from '../TreesList';

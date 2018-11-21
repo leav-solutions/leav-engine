@@ -2,7 +2,7 @@ import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import Loading from 'src/components/shared/Loading';
-import {AttributesQuery, getAttributesQuery} from 'src/queries/getAttributesQuery';
+import {AttributesQuery, getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import AttributesSelectionList from '../AttributesSelectionList';
 
