@@ -116,6 +116,9 @@ describe('Trees', () => {
             treeContent(treeId: "${testTreeName}") {
                 record {
                     id
+                    library {
+                        id
+                    }
                 }
                 children {
                     record {
@@ -128,6 +131,7 @@ describe('Trees', () => {
 
         expect(restreeContent.status).toBe(200);
         expect(restreeContent.data.data.treeContent).toBeDefined();
+        expect(restreeContent.data.data.treeContent[0].record.library.id).toBeTruthy();
         expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
         expect(restreeContent.data.errors).toBeUndefined();
 

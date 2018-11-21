@@ -39,11 +39,16 @@ export default function(
             return libs;
         },
         async getLibraryProperties(id: string): Promise<ILibrary> {
+            if (!id) {
+                throw new ValidationError({id: 'Missing library ID'});
+            }
+
             const libs = await libraryRepo.getLibraries({id});
 
             if (!libs.length) {
                 throw new ValidationError({id: 'Unknown library ' + id});
             }
+
             const props = libs.pop();
 
             return props;

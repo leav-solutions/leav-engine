@@ -1,12 +1,12 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import * as moment from 'moment';
-import {IQueryInfos} from '../../_types/queryInfos';
-import {IQueryField, IRecord, IRecordFilterOption} from '../../_types/record';
-import {IValue} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {RecordPermissionsActions} from '../../_types/permissions';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {IQueryField, IRecord, IRecordFilterOption} from '../../_types/record';
+import {IValue} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -150,6 +150,11 @@ export default function(
             const fieldsProps: {[attrName: string]: IAttribute} = {};
 
             for (const field of queryFields) {
+                // Library has its own resolver, just ignore it
+                if (field.name === 'library') {
+                    continue;
+                }
+
                 // Retrieve field properties
                 if (typeof fieldsProps[field.name] === 'undefined') {
                     fieldsProps[field.name] = await attributeDomain.getAttributeProperties(field.name);

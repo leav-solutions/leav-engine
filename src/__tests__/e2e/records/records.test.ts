@@ -36,6 +36,16 @@ describe('Records', () => {
         expect(res.data.data[testLibNameType][0].id).toBe(recordId);
     });
 
+    test('Get library details on a record', async () => {
+        const res = await makeGraphQlCall(
+            `{ ${testLibNameType}(filters: [{field: id, value: "${recordId}"}]) { id library { id } } }`
+        );
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.status).toBe(200);
+        expect(res.data.data[testLibNameType][0].library.id).toBe(testLibName);
+    });
+
     test('Delete a record', async () => {
         const res = await makeGraphQlCall(
             `mutation {deleteRecord(library: "${testLibName}", id: "${recordId}") { id }}

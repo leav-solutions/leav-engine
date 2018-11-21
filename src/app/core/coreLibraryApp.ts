@@ -97,6 +97,7 @@ export default function(
 
                 baseSchema.typeDefs += `
                     type ${libTypeName} implements Record {
+                        library: Library!,
                         ${lib.attributes.map(
                             attr =>
                                 `${attr.id}:
@@ -137,6 +138,9 @@ export default function(
                     }
 
                     return recordDomain.find(lib.id, filters, queryFields);
+                };
+                baseSchema.resolvers[libTypeName] = {
+                    library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null)
                 };
             }
 

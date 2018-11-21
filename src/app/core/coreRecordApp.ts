@@ -14,6 +14,7 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                 typeDefs: `
                     interface Record {
                         id: ID!,
+                        library: Library!,
                         created_at: Value,
                         modified_at: Value
                     }

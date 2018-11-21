@@ -1,10 +1,8 @@
+import {aql} from 'arangojs';
+import {IRecord, IRecordFilterOption} from '../../_types/record';
+import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IRecord, IRecordFilterOption} from '../../_types/record';
-import {aql} from 'arangojs';
-import {UserError} from 'graphql-errors';
-import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
-import utils from 'utils/utils';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -55,7 +53,7 @@ export default function(
                 }
             }
 
-            queryParts.push('RETURN r');
+            queryParts.push(`RETURN MERGE(r, {library: '${library}'})`);
 
             const records = await dbService.execute({query: queryParts.join(' '), bindVars});
 
