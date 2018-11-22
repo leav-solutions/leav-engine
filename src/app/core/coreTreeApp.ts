@@ -54,22 +54,24 @@ export default function(
                     extend type Query {
                         trees(id: ID, label: String, system: Boolean): [Tree!]
 
-                        # Retrieve a full tree content.
-                        treeContent(treeId: ID): [TreeNode!]
+                        # Retrieve tree content.
+                        # If startAt is specified, it returns this element's children. Otherwise, it starts
+                        # from tree root
+                        treeContent(treeId: ID!, startAt: TreeElementInput): [TreeNode!]
                     }
 
                     extend type Mutation {
-                        saveTree(tree: TreeInput): Tree!
-                        deleteTree(id: ID): Tree!
-                        treeAddElement(treeId: ID, element: TreeElementInput, parent: TreeElementInput): TreeElement!
+                        saveTree(tree: TreeInput!): Tree!
+                        deleteTree(id: ID!): Tree!
+                        treeAddElement(treeId: ID!, element: TreeElementInput!, parent: TreeElementInput): TreeElement!
                         treeMoveElement(
-                            treeId: ID,
-                            element: TreeElementInput,
+                            treeId: ID!,
+                            element: TreeElementInput!,
                             parentTo: TreeElementInput
                         ): TreeElement!
                         treeDeleteElement(
-                            treeId: ID,
-                            element: TreeElementInput,
+                            treeId: ID!,
+                            element: TreeElementInput!,
                             deleteChildren: Boolean
                         ): TreeElement!
                     }
@@ -79,9 +81,9 @@ export default function(
                         async trees(parent, args) {
                             return treeDomain.getTrees(args);
                         },
-                        async treeContent(_, {treeId, fields}, ctx, info) {
+                        async treeContent(_, {treeId, startAt}, ctx, info) {
                             ctx.treeId = treeId;
-                            return treeDomain.getTreeContent(treeId, fields);
+                            return treeDomain.getTreeContent(treeId, startAt);
                         }
                     },
                     Mutation: {

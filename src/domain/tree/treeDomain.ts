@@ -59,7 +59,7 @@ export interface ITreeDomain {
      *
      * @param treeId
      */
-    getTreeContent(treeId: string, fields: string[]): Promise<ITreeNode[]>;
+    getTreeContent(treeId: string, startingNode?: ITreeElement): Promise<ITreeNode[]>;
 
     /**
      * Retrieve first level children of an element
@@ -235,17 +235,17 @@ export default function(
 
             return treeRepo.deleteElement(treeId, element, deleteChildren);
         },
-        async getTreeContent(treeId: string, fields: string[]): Promise<ITreeNode[]> {
+        async getTreeContent(treeId: string, startingNode: ITreeElement = null): Promise<ITreeNode[]> {
             const errors: any = {};
             if (!(await _treeExists(treeId))) {
                 errors.treeId = 'Unknown tree';
             }
 
-            if (!!Object.keys(errors).length) {
+            if (Object.keys(errors).length) {
                 throw new ValidationError(errors);
             }
 
-            const treeContent = await treeRepo.getTreeContent(treeId);
+            const treeContent = await treeRepo.getTreeContent(treeId, startingNode);
 
             return treeContent;
         },

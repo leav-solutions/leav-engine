@@ -445,7 +445,7 @@ describe('treeDomain', () => {
                 mockAttributesDomain as IAttributeDomain
             );
 
-            const treeContent = await domain.getTreeContent('test_tree', ['modified_at', 'created_at']);
+            const treeContent = await domain.getTreeContent('test_tree');
 
             expect(treeRepo.getTreeContent.mock.calls.length).toBe(1);
             expect(treeContent[0].record).toMatchObject({
@@ -471,9 +471,7 @@ describe('treeDomain', () => {
                 mockAttributesDomain as IAttributeDomain
             );
 
-            const rej = await expect(domain.getTreeContent('test_tree', ['modified_at', 'created_at'])).rejects.toThrow(
-                ValidationError
-            );
+            const rej = await expect(domain.getTreeContent('test_tree')).rejects.toThrow(ValidationError);
         });
     });
 });

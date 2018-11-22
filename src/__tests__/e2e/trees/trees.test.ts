@@ -123,6 +123,9 @@ describe('Trees', () => {
                 children {
                     record {
                         id
+                        library {
+                            id
+                        }
                     }
                 }
             }
@@ -131,9 +134,38 @@ describe('Trees', () => {
 
         expect(restreeContent.status).toBe(200);
         expect(restreeContent.data.data.treeContent).toBeDefined();
+        expect(restreeContent.data.data.treeContent).toHaveLength(2);
         expect(restreeContent.data.data.treeContent[0].record.library.id).toBeTruthy();
         expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
         expect(restreeContent.data.errors).toBeUndefined();
+
+        // Get tree content from a specific node
+        // Get tree content
+        const restreeContentPartial = await makeGraphQlCall(`
+        {
+            treeContent(treeId: "${testTreeName}", startAt: {id: "${recordId2}", library: "users"}) {
+                record {
+                    id
+                    library {
+                        id
+                    }
+                }
+                children {
+                    record {
+                        id
+                        library {
+                            id
+                        }
+                    }
+                }
+            }
+        }
+        `);
+
+        expect(restreeContentPartial.status).toBe(200);
+        expect(restreeContentPartial.data.data.treeContent).toBeDefined();
+        expect(restreeContentPartial.data.data.treeContent).toHaveLength(1);
+        expect(restreeContentPartial.data.errors).toBeUndefined();
 
         // Delete element from the tree
         const resDel = await makeGraphQlCall(`mutation {
