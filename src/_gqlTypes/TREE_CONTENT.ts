@@ -1,0 +1,52 @@
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+import {TreeElementInput, AvailableLanguage} from './globalTypes';
+
+// ====================================================
+// GraphQL query operation: TREE_CONTENT
+// ====================================================
+
+export interface TREE_CONTENT_treeContent_record_library {
+    id: string;
+    label: any | null;
+}
+
+export interface TREE_CONTENT_treeContent_record {
+    id: string;
+    library: TREE_CONTENT_treeContent_record_library;
+}
+
+export interface TREE_CONTENT_treeContent_children_record_library {
+    id: string;
+    label: any | null;
+}
+
+export interface TREE_CONTENT_treeContent_children_record {
+    id: string;
+    library: TREE_CONTENT_treeContent_children_record_library;
+}
+
+export interface TREE_CONTENT_treeContent_children {
+    record: TREE_CONTENT_treeContent_children_record;
+}
+
+export interface TREE_CONTENT_treeContent {
+    record: TREE_CONTENT_treeContent_record;
+    children: TREE_CONTENT_treeContent_children[] | null;
+}
+
+export interface TREE_CONTENT {
+    /**
+     * Retrieve tree content.
+     * If startAt is specified, it returns this element's children. Otherwise, it starts
+     * from tree root
+     */
+    treeContent: TREE_CONTENT_treeContent[] | null;
+}
+
+export interface TREE_CONTENTVariables {
+    treeId: string;
+    startAt?: TreeElementInput | null;
+    lang?: AvailableLanguage[] | null;
+}

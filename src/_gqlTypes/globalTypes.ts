@@ -93,6 +93,11 @@ export interface SystemTranslationInput {
     en?: string | null;
 }
 
+export interface TreeElementInput {
+    id: string;
+    library: string;
+}
+
 export interface TreeInput {
     id: string;
     libraries?: string[] | null;
