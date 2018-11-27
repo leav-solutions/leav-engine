@@ -41,9 +41,9 @@ export default function(
 
                     type TreeNode {
                         record: Record!,
-                        ancestors: [TreeNode],
-                        children: [TreeNode],
-                        linkedRecords(attribute: ID): [Record]
+                        ancestors: [TreeNode!],
+                        children: [TreeNode!],
+                        linkedRecords(attribute: ID): [Record!]
                     }
 
                     input TreeElementInput {
