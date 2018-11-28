@@ -109,6 +109,20 @@ export default function(
                 }
             }
 
+            if (libData.recordIdentityConf) {
+                const allowedAttributes =
+                    libAttributes || (await libraryRepo.getLibraryAttributes(libData.id)).map(a => a.id);
+                const unbindedAttrs = [];
+                for (const attrId of Object.values(libData.recordIdentityConf)) {
+                    if (allowedAttributes.indexOf(attrId) === -1) {
+                        unbindedAttrs.push(attrId);
+                    }
+                }
+                if (unbindedAttrs.length) {
+                    errors.recordIdentityConf = `Attributes must be binded to library: ${unbindedAttrs.join(', ')}`;
+                }
+            }
+
             if (Object.keys(errors).length) {
                 throw new ValidationError(errors);
             }

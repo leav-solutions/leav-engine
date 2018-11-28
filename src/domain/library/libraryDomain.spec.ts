@@ -291,6 +291,39 @@ describe('LibraryDomain', () => {
             expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
         });
 
+        test('Should throw if attributes in recordIdentity are not binded to library', async function() {
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                createLibrary: jest.fn(),
+                updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                saveLibraryAttributes: jest.fn(),
+                getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+            };
+
+            const libDomain = libraryDomain(
+                mockLibRepo as ILibraryRepo,
+                mockAttrDomain as IAttributeDomain,
+                mockAdminPermDomain as IPermissionDomain,
+                mockUtils as IUtils
+            );
+
+            await expect(
+                libDomain.saveLibrary(
+                    {
+                        id: 'test',
+                        recordIdentityConf: {label: 'unknownAttribute'}
+                    },
+                    queryInfos
+                )
+            ).rejects.toThrow(ValidationError);
+
+            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+        });
+
         test('Should throw if forbidden action', async function() {
             const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(false)

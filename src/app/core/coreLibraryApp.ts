@@ -31,14 +31,16 @@ export default function(
                         system: Boolean,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         attributes: [Attribute!],
-                        permissionsConf: TreePermissionsConf
+                        permissionsConf: TreePermissionsConf,
+                        recordIdentityConf: RecordIdentityConf
                     }
 
                     input LibraryInput {
                         id: ID!
                         label: SystemTranslationInput,
                         attributes: [ID!],
-                        permissionsConf: TreePermissionsConfInput
+                        permissionsConf: TreePermissionsConfInput,
+                        recordIdentityConf: RecordIdentityConfInput
                     }
 
                     type Query {
@@ -98,6 +100,7 @@ export default function(
                 baseSchema.typeDefs += `
                     type ${libTypeName} implements Record {
                         library: Library!,
+                        whoAmI: RecordIdentity!,
                         ${lib.attributes.map(
                             attr =>
                                 `${attr.id}:
@@ -140,7 +143,8 @@ export default function(
                     return recordDomain.find(lib.id, filters, queryFields);
                 };
                 baseSchema.resolvers[libTypeName] = {
-                    library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null)
+                    library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null),
+                    whoAmI: recordDomain.getRecordIdentity
                 };
             }
 

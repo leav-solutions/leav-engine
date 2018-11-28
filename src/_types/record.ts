@@ -1,5 +1,5 @@
 import {IAttribute} from './attribute';
-import {IAttributeTypeRepo} from 'infra/attributeTypes/attributeTypesRepo';
+import {ILibrary} from './library';
 
 export interface IRecord {
     id?: number;
@@ -18,4 +18,18 @@ export interface IQueryField {
     name: string;
     fields: IQueryField[];
     arguments: Array<{name: string; value: string}>;
+}
+
+export interface IRecordIdentity {
+    id: number;
+    library: ILibrary;
+    label?: string;
+    color?: string;
+    preview?: string;
+}
+
+export interface IRecordIdentityConf {
+    label?: string;
+    color?: string;
+    preview?: string;
 }

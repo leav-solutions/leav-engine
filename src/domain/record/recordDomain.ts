@@ -1,3 +1,5 @@
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import * as moment from 'moment';
@@ -5,7 +7,7 @@ import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IQueryField, IRecord, IRecordFilterOption} from '../../_types/record';
+import {IQueryField, IRecord, IRecordFilterOption, IRecordIdentity} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -63,6 +65,13 @@ export interface IRecordDomain {
      * @param queryFields Fields to retrieve
      */
     populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
+
+    /**
+     * Return record identity values
+     *
+     * @param record
+     */
+    getRecordIdentity(record: IRecord): Promise<IRecordIdentity>;
 }
 
 export default function(
@@ -70,7 +79,9 @@ export default function(
     attributeDomain: IAttributeDomain | null = null,
     valueRepo: IValueRepo | null = null,
     actionsListDomain: IActionsListDomain = null,
-    recordPermissionDomain: IRecordPermissionDomain = null
+    recordPermissionDomain: IRecordPermissionDomain = null,
+    libraryDomain: ILibraryDomain = null,
+    valueDomain: IValueDomain = null
 ): IRecordDomain {
     return {
         async createRecord(library: string): Promise<IRecord> {
@@ -151,7 +162,7 @@ export default function(
 
             for (const field of queryFields) {
                 // Library has its own resolver, just ignore it
-                if (field.name === 'library') {
+                if (field.name === 'library' || field.name === 'whoAmI') {
                     continue;
                 }
 
@@ -255,6 +266,20 @@ export default function(
             }
 
             return record;
+        },
+        async getRecordIdentity(record: IRecord): Promise<IRecordIdentity> {
+            const lib = await libraryDomain.getLibraryProperties(record.library);
+            const conf = lib.recordIdentityConf || {};
+
+            return {
+                id: record.id,
+                library: lib,
+                label: conf.label ? (await valueDomain.getValues(lib.id, record.id, conf.label)).pop().value : null,
+                color: conf.color ? (await valueDomain.getValues(lib.id, record.id, conf.color)).pop().value : null,
+                preview: conf.preview
+                    ? (await valueDomain.getValues(lib.id, record.id, conf.preview)).pop().value
+                    : null
+            };
         }
     };
 }

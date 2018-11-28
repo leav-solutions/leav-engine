@@ -1,3 +1,5 @@
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {AttributeTypes} from '../../_types/attribute';
@@ -306,6 +308,111 @@ describe('RecordDomain', () => {
                     }
                 }
             });
+        });
+    });
+
+    describe('getRecordIdentity', () => {
+        test('Return record identity', async () => {
+            const record = {
+                id: 222536283,
+                library: 'test_lib',
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                ean: '9876543219999999',
+                visual_simple: '222713677'
+            };
+
+            const libData = {
+                id: 'test_lib',
+                recordIdentityConf: {
+                    label: 'label_attr',
+                    color: 'color_attr',
+                    preview: 'preview_attr'
+                }
+            };
+
+            const mockLibDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: global.__mockPromise(libData)
+            };
+
+            const mockValDomain: Mockify<IValueDomain> = {
+                getValues: global.__mockPromiseMultiple([
+                    [
+                        {
+                            value: 'Label Value'
+                        }
+                    ],
+                    [
+                        {
+                            value: '#123456'
+                        }
+                    ],
+                    [
+                        {
+                            value: 'http://fake-image.com/'
+                        }
+                    ]
+                ])
+            };
+
+            const recDomain = recordDomain(
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockLibDomain as ILibraryDomain,
+                mockValDomain as IValueDomain
+            );
+
+            const res = await recDomain.getRecordIdentity(record);
+
+            expect(res.id).toBe(222536283);
+            expect(res.library).toMatchObject(libData);
+            expect(res.label).toBe('Label Value');
+            expect(res.color).toBe('#123456');
+            expect(res.preview).toBe('http://fake-image.com/');
+        });
+
+        test('Return minimum identity if no config', async () => {
+            const record = {
+                id: 222536283,
+                library: 'test_lib',
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                ean: '9876543219999999',
+                visual_simple: '222713677'
+            };
+
+            const libData = {
+                id: 'test_lib'
+            };
+
+            const mockLibDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: global.__mockPromise(libData)
+            };
+
+            const mockValDomain: Mockify<IValueDomain> = {
+                getValues: jest.fn()
+            };
+
+            const recDomain = recordDomain(
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockLibDomain as ILibraryDomain,
+                mockValDomain as IValueDomain
+            );
+
+            const res = await recDomain.getRecordIdentity(record);
+
+            expect(res.id).toBe(222536283);
+            expect(res.library).toMatchObject(libData);
+            expect(res.label).toBe(null);
+            expect(res.color).toBe(null);
+            expect(res.preview).toBe(null);
         });
     });
 });

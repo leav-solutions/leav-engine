@@ -16,7 +16,28 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                         id: ID!,
                         library: Library!,
                         created_at: Value,
-                        modified_at: Value
+                        modified_at: Value,
+                        whoAmI: RecordIdentity!
+                    }
+
+                    type RecordIdentity {
+                        id: ID!,
+                        library: Library!,
+                        label: String,
+                        color: String,
+                        preview: String
+                    }
+
+                    type RecordIdentityConf {
+                        label: ID,
+                        color: ID,
+                        preview: ID
+                    }
+
+                    input RecordIdentityConfInput {
+                        label: ID,
+                        color: ID,
+                        preview: ID
                     }
 
                     extend type Mutation {
