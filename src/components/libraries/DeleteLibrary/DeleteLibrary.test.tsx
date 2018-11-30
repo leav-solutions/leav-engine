@@ -9,7 +9,8 @@ describe('DeleteLibrary', () => {
             id: 'test',
             label: {fr: 'Test', en: null},
             system: true,
-            attributes: []
+            attributes: [],
+            recordIdentityConf: {label: null, color: null, preview: null}
         };
         const comp = render(
             <MockedProvider>

@@ -13,6 +13,11 @@ export const getLibsQuery = gql`
             attributes {
                 ...AttributeDetails
             }
+            recordIdentityConf {
+                label
+                color
+                preview
+            }
         }
     }
 `;

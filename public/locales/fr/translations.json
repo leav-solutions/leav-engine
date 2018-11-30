@@ -15,7 +15,11 @@
         "informations": "Informations",
         "attributes": "Attributs",
         "confirm_unlink_attr": "Êtes-vous sûr de vouloir détacher cet attribut de la bibliothèque {{libLabel}}?",
-        "link_existing_attribute": "Ajout attribut existant"
+        "link_existing_attribute": "Ajout attribut existant",
+        "record_identity": "Carte d'identité des éléments",
+        "record_identity_label": "Libellé",
+        "record_identity_color": "Couleur",
+        "record_identity_preview": "Aperçu"
     },
     "attributes": {
         "title": "Attributs",

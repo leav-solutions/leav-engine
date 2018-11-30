@@ -66,6 +66,11 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
                                 label: {
                                     fr: libData.label.fr,
                                     en: libData.label.en
+                                },
+                                recordIdentityConf: {
+                                    label: libData.recordIdentityConf.label,
+                                    color: libData.recordIdentityConf.color,
+                                    preview: libData.recordIdentityConf.preview
                                 }
                             }
                         },

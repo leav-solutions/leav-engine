@@ -21,7 +21,8 @@ describe('EditLibraryInfosForm', () => {
                 system: false,
                 label: {fr: 'Test', en: 'Test'}
             }
-        ]
+        ],
+        recordIdentityConf: {label: null, color: null, preview: null}
     };
     const onSubmit = jest.fn();
 

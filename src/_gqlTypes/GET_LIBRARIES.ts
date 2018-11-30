@@ -15,11 +15,18 @@ export interface GET_LIBRARIES_libraries_attributes {
     label: any | null;
 }
 
+export interface GET_LIBRARIES_libraries_recordIdentityConf {
+    label: string | null;
+    color: string | null;
+    preview: string | null;
+}
+
 export interface GET_LIBRARIES_libraries {
     id: string;
     system: boolean | null;
     label: any | null;
     attributes: GET_LIBRARIES_libraries_attributes[] | null;
+    recordIdentityConf: GET_LIBRARIES_libraries_recordIdentityConf | null;
 }
 
 export interface GET_LIBRARIES {

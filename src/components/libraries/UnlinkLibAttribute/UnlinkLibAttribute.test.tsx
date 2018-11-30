@@ -17,7 +17,8 @@ describe('UnlinkLibAttribute', () => {
                     system: false,
                     label: {fr: 'Test', en: 'Test'}
                 }
-            ]
+            ],
+            recordIdentityConf: {label: null, color: null, preview: null}
         };
         const onUnlink = jest.fn();
 

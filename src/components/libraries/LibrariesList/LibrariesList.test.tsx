@@ -6,9 +6,27 @@ import LibrariesList from './LibrariesList';
 
 describe('LibrariesList', () => {
     const libraries = [
-        {id: 'test', system: false, label: {fr: 'Test', en: null}, attributes: []},
-        {id: 'test2', system: false, label: {fr: null, en: 'Test 2'}, attributes: []},
-        {id: 'test3', system: false, label: null, attributes: []}
+        {
+            id: 'test',
+            system: false,
+            label: {fr: 'Test', en: null},
+            attributes: [],
+            recordIdentityConf: {label: null, color: null, preview: null}
+        },
+        {
+            id: 'test2',
+            system: false,
+            label: {fr: null, en: 'Test 2'},
+            attributes: [],
+            recordIdentityConf: {label: null, color: null, preview: null}
+        },
+        {
+            id: 'test3',
+            system: false,
+            label: null,
+            attributes: [],
+            recordIdentityConf: {label: null, color: null, preview: null}
+        }
     ];
 
     const onRowClick = jest.fn();
