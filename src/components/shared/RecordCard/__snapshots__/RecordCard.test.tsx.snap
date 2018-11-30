@@ -1,0 +1,401 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RecordCard Snapshot test 1`] = `
+ShallowWrapper {
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <RecordCard
+    i18n={
+        Object {
+            "language": "fr",
+            "options": Object {
+              "fallbackLng": Array [
+                "en",
+              ],
+            },
+          }
+    }
+    record={
+        Object {
+            "color": null,
+            "id": "12345",
+            "label": "Test Record",
+            "library": Object {
+              "id": "test_lib",
+              "label": Object {
+                "fr": "Test Lib",
+              },
+            },
+            "preview": null,
+          }
+    }
+    t={[Function]}
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateError": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "host",
+    "props": Object {
+      "children": Array [
+        <div
+          className="ui"
+          style={
+                    Object {
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "justifyContent": "center",
+                              "margin": "0 0.8em",
+                            }
+          }
+>
+          <RecordPreview
+                    color={null}
+                    image={null}
+                    label="Test Record"
+          />
+</div>,
+        <div
+          className="ui"
+          style={
+                    Object {
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "justifyContent": "center",
+                            }
+          }
+>
+          <div
+                    style={
+                              Object {
+                                        "fontWeight": "bold",
+                                      }
+                    }
+          >
+                    Test Record
+          </div>
+          <div
+                    style={
+                              Object {
+                                        "color": "rgba(0,0,0,0.4)",
+                                        "fontSize": "0.9em",
+                                        "fontWeight": "normal",
+                                      }
+                    }
+          >
+                    Test Lib
+          </div>
+</div>,
+      ],
+      "className": "ui fluid",
+      "style": Object {
+        "borderLeft": "5px solid transparent",
+        "display": "flex",
+        "flexDirection": "row",
+      },
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": <RecordPreview
+            color={null}
+            image={null}
+            label="Test Record"
+/>,
+          "className": "ui",
+          "style": Object {
+            "display": "flex",
+            "flexDirection": "column",
+            "justifyContent": "center",
+            "margin": "0 0.8em",
+          },
+        },
+        "ref": null,
+        "rendered": Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "function",
+          "props": Object {
+            "color": null,
+            "image": null,
+            "label": "Test Record",
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        "type": "div",
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": Array [
+            <div
+              style={
+                            Object {
+                                          "fontWeight": "bold",
+                                        }
+              }
+>
+              Test Record
+</div>,
+            <div
+              style={
+                            Object {
+                                          "color": "rgba(0,0,0,0.4)",
+                                          "fontSize": "0.9em",
+                                          "fontWeight": "normal",
+                                        }
+              }
+>
+              Test Lib
+</div>,
+          ],
+          "className": "ui",
+          "style": Object {
+            "display": "flex",
+            "flexDirection": "column",
+            "justifyContent": "center",
+          },
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "Test Record",
+              "style": Object {
+                "fontWeight": "bold",
+              },
+            },
+            "ref": null,
+            "rendered": "Test Record",
+            "type": "div",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "Test Lib",
+              "style": Object {
+                "color": "rgba(0,0,0,0.4)",
+                "fontSize": "0.9em",
+                "fontWeight": "normal",
+              },
+            },
+            "ref": null,
+            "rendered": "Test Lib",
+            "type": "div",
+          },
+        ],
+        "type": "div",
+      },
+    ],
+    "type": "div",
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "host",
+      "props": Object {
+        "children": Array [
+          <div
+            className="ui"
+            style={
+                        Object {
+                                    "display": "flex",
+                                    "flexDirection": "column",
+                                    "justifyContent": "center",
+                                    "margin": "0 0.8em",
+                                  }
+            }
+>
+            <RecordPreview
+                        color={null}
+                        image={null}
+                        label="Test Record"
+            />
+</div>,
+          <div
+            className="ui"
+            style={
+                        Object {
+                                    "display": "flex",
+                                    "flexDirection": "column",
+                                    "justifyContent": "center",
+                                  }
+            }
+>
+            <div
+                        style={
+                                    Object {
+                                                "fontWeight": "bold",
+                                              }
+                        }
+            >
+                        Test Record
+            </div>
+            <div
+                        style={
+                                    Object {
+                                                "color": "rgba(0,0,0,0.4)",
+                                                "fontSize": "0.9em",
+                                                "fontWeight": "normal",
+                                              }
+                        }
+            >
+                        Test Lib
+            </div>
+</div>,
+        ],
+        "className": "ui fluid",
+        "style": Object {
+          "borderLeft": "5px solid transparent",
+          "display": "flex",
+          "flexDirection": "row",
+        },
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": <RecordPreview
+              color={null}
+              image={null}
+              label="Test Record"
+/>,
+            "className": "ui",
+            "style": Object {
+              "display": "flex",
+              "flexDirection": "column",
+              "justifyContent": "center",
+              "margin": "0 0.8em",
+            },
+          },
+          "ref": null,
+          "rendered": Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "function",
+            "props": Object {
+              "color": null,
+              "image": null,
+              "label": "Test Record",
+            },
+            "ref": null,
+            "rendered": null,
+            "type": [Function],
+          },
+          "type": "div",
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <div
+                style={
+                                Object {
+                                                "fontWeight": "bold",
+                                              }
+                }
+>
+                Test Record
+</div>,
+              <div
+                style={
+                                Object {
+                                                "color": "rgba(0,0,0,0.4)",
+                                                "fontSize": "0.9em",
+                                                "fontWeight": "normal",
+                                              }
+                }
+>
+                Test Lib
+</div>,
+            ],
+            "className": "ui",
+            "style": Object {
+              "display": "flex",
+              "flexDirection": "column",
+              "justifyContent": "center",
+            },
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "Test Record",
+                "style": Object {
+                  "fontWeight": "bold",
+                },
+              },
+              "ref": null,
+              "rendered": "Test Record",
+              "type": "div",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "Test Lib",
+                "style": Object {
+                  "color": "rgba(0,0,0,0.4)",
+                  "fontSize": "0.9em",
+                  "fontWeight": "normal",
+                },
+              },
+              "ref": null,
+              "rendered": "Test Lib",
+              "type": "div",
+            },
+          ],
+          "type": "div",
+        },
+      ],
+      "type": "div",
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getDerivedStateFromProps": true,
+          "getSnapshotBeforeUpdate": true,
+          "setState": Object {
+            "skipsComponentDidUpdateOnNullish": true,
+          },
+        },
+      },
+    },
+  },
+}
+`;

@@ -46,3 +46,19 @@ export const addWildcardToFilters = (filters, keysToProcess = ['label', 'id']) =
         return allFilters;
     }, {});
 };
+
+export const getRandomColor = (): string =>
+    '#' +
+    Math.random()
+        .toString(16)
+        .substr(-6);
+
+export const getInvertColor = (color: string): string => {
+    const hexcolor = color.replace(/#/g, '');
+    const r = parseInt(hexcolor.substr(0, 2), 16);
+    const g = parseInt(hexcolor.substr(2, 2), 16);
+    const b = parseInt(hexcolor.substr(4, 2), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return yiq >= 128 ? '#000000' : '#FFFFFF';
+};

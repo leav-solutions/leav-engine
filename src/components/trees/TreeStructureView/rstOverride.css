@@ -1,0 +1,4 @@
+/** File used to override some SortableTree CSS rules **/
+.rst__rowContents {
+    padding: 0;
+}

@@ -86,6 +86,13 @@ export interface LibraryInput {
     label?: SystemTranslationInput | null;
     attributes?: string[] | null;
     permissionsConf?: TreePermissionsConfInput | null;
+    recordIdentityConf?: RecordIdentityConfInput | null;
+}
+
+export interface RecordIdentityConfInput {
+    label?: string | null;
+    color?: string | null;
+    preview?: string | null;
 }
 
 export interface SystemTranslationInput {

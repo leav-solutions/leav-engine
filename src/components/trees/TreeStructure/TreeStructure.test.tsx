@@ -1,9 +1,28 @@
+import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-boost';
 import {render} from 'enzyme';
 import * as React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import * as sleep from 'sleep-promise';
 import {getTreeContentQuery} from 'src/queries/trees/treeContentQuery';
 import TreeStructure from './TreeStructure';
+
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+    introspectionQueryResultData: {
+        __schema: {
+            types: [
+                {
+                    kind: 'INTERFACE',
+                    name: 'Record',
+                    possibleTypes: [
+                        {
+                            name: 'UsersGroup'
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+});
 
 describe('EditTreeStructure', () => {
     test('Snapshot test', async () => {
@@ -20,10 +39,13 @@ describe('EditTreeStructure', () => {
                     data: {
                         treeContent: [
                             {
+                                __typename: 'TreeNode',
                                 record: {
+                                    __typename: 'UsersGroups',
                                     id: '12345',
                                     label: {fr: 'Test'},
                                     library: {
+                                        __typename: 'Library',
                                         id: 'test_lib',
                                         label: {fr: 'Test'}
                                     }
@@ -37,7 +59,7 @@ describe('EditTreeStructure', () => {
         ];
 
         const comp = render(
-            <MockedProvider mocks={mocks} addTypename={false}>
+            <MockedProvider mocks={mocks} addTypename cache={new InMemoryCache({fragmentMatcher})}>
                 <TreeStructure treeId={'test_tree'} />
             </MockedProvider>
         );

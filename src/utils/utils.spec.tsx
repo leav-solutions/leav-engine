@@ -1,6 +1,6 @@
 import {i18n} from 'i18next';
 import {Mockify} from 'src/_types/Mockify';
-import {addWildcardToFilters, formatIDString, localizedLabel} from './utils';
+import {addWildcardToFilters, formatIDString, localizedLabel, getRandomColor, getInvertColor} from './utils';
 
 describe('utils', () => {
     describe('localizedLabel', () => {
@@ -78,6 +78,26 @@ describe('utils', () => {
             expect(wildcardedFilters.label).toEqual('test');
             expect(wildcardedFilters.id).toEqual('%test%');
             expect(wildcardedFilters.otherKey).toEqual('%otherTest%');
+        });
+    });
+
+    describe('getRandomColor', () => {
+        test('Generate random hexadecimal color', async () => {
+            expect(getRandomColor()).toMatch(/^\#[0-9A-Fa-f]{6}$/);
+        });
+    });
+
+    describe('getInvertColor', () => {
+        test('Return opposite color', async () => {
+            expect(getInvertColor('#000000')).toMatch(/^\#[0-9A-Fa-f]{6}$/);
+            expect(getInvertColor('#000000')).toBe('#FFFFFF');
+            expect(getInvertColor('#701518')).toBe('#FFFFFF');
+            expect(getInvertColor('#252525')).toBe('#FFFFFF');
+            expect(getInvertColor('#D51558')).toBe('#FFFFFF');
+            expect(getInvertColor('#FFFFFF')).toBe('#000000');
+            expect(getInvertColor('#E0E1E2')).toBe('#000000');
+            expect(getInvertColor('#F6F6F6')).toBe('#000000');
+            expect(getInvertColor('#B7BFC7')).toBe('#000000');
         });
     });
 });

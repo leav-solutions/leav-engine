@@ -12,6 +12,7 @@ import {
     TreeItem
 } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
+import RecordCard from 'src/components/shared/RecordCard';
 import {getTreeContentQuery} from 'src/queries/trees/treeContentQuery';
 import {deleteTreeElementQuery} from 'src/queries/trees/treeDeleteElementMutation';
 import {moveTreeElementQuery} from 'src/queries/trees/treeMoveElementMutation';
@@ -85,13 +86,17 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
 
     private _convertTreeRecord = (records: TREE_CONTENT_treeContent[]): TreeItem[] => {
         return records.map(
-            (r: TREE_CONTENT_treeContent): TreeItem => ({
-                ...r.record,
-                title: r.record.id,
-                subtitle: r.record.library.id,
-                children: r.children ? this._convertTreeRecord(r.children as TREE_CONTENT_treeContent[]) : [],
-                expanded: false
-            })
+            (r: TREE_CONTENT_treeContent): TreeItem => {
+                const recordCard = <RecordCard record={r.record.whoAmI} />;
+
+                return {
+                    ...r.record,
+                    title: recordCard,
+                    // subtitle: r.record.library.id,
+                    children: r.children ? this._convertTreeRecord(r.children as TREE_CONTENT_treeContent[]) : [],
+                    expanded: false
+                };
+            }
         );
     }
 

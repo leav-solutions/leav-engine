@@ -1,10 +1,12 @@
 import gql from 'graphql-tag';
 import {Query} from 'react-apollo';
 import {TREE_CONTENT, TREE_CONTENTVariables} from 'src/_gqlTypes/TREE_CONTENT';
+import {recordIdentityFragment} from '../libraries/recordIdentityFragment';
 
 export class TreeContentQuery extends Query<TREE_CONTENT, TREE_CONTENTVariables> {}
 
 export const getTreeContentQuery = gql`
+    ${recordIdentityFragment}
     query TREE_CONTENT($treeId: ID!, $startAt: TreeElementInput, $lang: [AvailableLanguage!]) {
         treeContent(treeId: $treeId, startAt: $startAt) {
             record {
@@ -13,6 +15,7 @@ export const getTreeContentQuery = gql`
                     id
                     label(lang: $lang)
                 }
+                ...RecordIdentity
             }
             children {
                 record {
@@ -21,6 +24,7 @@ export const getTreeContentQuery = gql`
                         id
                         label(lang: $lang)
                     }
+                    ...RecordIdentity
                 }
             }
         }

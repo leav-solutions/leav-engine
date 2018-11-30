@@ -4,6 +4,7 @@ import SortableTree, {NodeData, TreeIndex, TreeItem, TreeNode} from 'react-sorta
 import {Button, Loader} from 'semantic-ui-react';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import Loading from 'src/components/shared/Loading';
+import './rstOverride.css';
 
 interface IEditTreeStructureViewProps extends WithNamespaces {
     treeData: TreeItem[];
