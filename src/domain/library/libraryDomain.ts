@@ -63,7 +63,8 @@ export default function(
             return libraryRepo.getLibraryAttributes(id);
         },
         async saveLibrary(libData: ILibrary, infos: IQueryInfos): Promise<ILibrary> {
-            const libs = await libraryRepo.getLibraries({id: libData.id});
+            const dataToSave = {...libData};
+            const libs = await libraryRepo.getLibraries({id: dataToSave.id});
             const newLib = !!libs.length;
             const errors = {} as any;
 
@@ -75,14 +76,14 @@ export default function(
                 throw new PermissionError(action);
             }
 
-            if (!utils.validateID(libData.id)) {
-                throw new ValidationError({id: 'Invalid ID format: ' + libData.id});
+            if (!utils.validateID(dataToSave.id)) {
+                throw new ValidationError({id: 'Invalid ID format: ' + dataToSave.id});
             }
 
-            if (libData.permissionsConf) {
+            if (dataToSave.permissionsConf) {
                 const availableTreeAttributes = await attributeDomain.getAttributes();
                 const unknownTreeAttributes = difference(
-                    libData.permissionsConf.permissionTreeAttributes,
+                    dataToSave.permissionsConf.permissionTreeAttributes,
                     availableTreeAttributes.map(treeAttr => treeAttr.id)
                 );
 
@@ -93,8 +94,8 @@ export default function(
 
             // New library? Link default attributes. Otherwise, save given attributes if any
             const libAttributes = newLib
-                ? typeof libData.attributes !== 'undefined'
-                    ? libData.attributes.map(attr => attr.id)
+                ? typeof dataToSave.attributes !== 'undefined'
+                    ? dataToSave.attributes.map(attr => attr.id)
                     : null
                 : ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
 
@@ -105,19 +106,27 @@ export default function(
                 if (unknownAttrs.length) {
                     errors.attributes = `Unknown attributes: ${unknownAttrs.join(', ')}`;
                 } else {
-                    await libraryRepo.saveLibraryAttributes(libData.id, libAttributes);
+                    await libraryRepo.saveLibraryAttributes(dataToSave.id, libAttributes);
                 }
             }
 
-            if (libData.recordIdentityConf) {
+            if (dataToSave.recordIdentityConf) {
                 const allowedAttributes =
-                    libAttributes || (await libraryRepo.getLibraryAttributes(libData.id)).map(a => a.id);
+                    libAttributes || (await libraryRepo.getLibraryAttributes(dataToSave.id)).map(a => a.id);
+
                 const unbindedAttrs = [];
-                for (const attrId of Object.values(libData.recordIdentityConf)) {
+                for (const identitiyField of Object.keys(dataToSave.recordIdentityConf)) {
+                    const attrId = dataToSave.recordIdentityConf[identitiyField];
+                    if (!attrId) {
+                        dataToSave.recordIdentityConf[identitiyField] = null;
+                        continue;
+                    }
+
                     if (allowedAttributes.indexOf(attrId) === -1) {
                         unbindedAttrs.push(attrId);
                     }
                 }
+
                 if (unbindedAttrs.length) {
                     errors.recordIdentityConf = `Attributes must be binded to library: ${unbindedAttrs.join(', ')}`;
                 }
@@ -127,7 +136,9 @@ export default function(
                 throw new ValidationError(errors);
             }
 
-            const lib = newLib ? await libraryRepo.updateLibrary(libData) : await libraryRepo.createLibrary(libData);
+            const lib = newLib
+                ? await libraryRepo.updateLibrary(dataToSave)
+                : await libraryRepo.createLibrary(dataToSave);
 
             return lib;
         },
