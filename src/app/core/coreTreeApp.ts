@@ -40,6 +40,7 @@ export default function(
                     }
 
                     type TreeNode {
+                        order: Int!,
                         record: Record!,
                         ancestors: [TreeNode!],
                         children: [TreeNode!],
@@ -63,11 +64,17 @@ export default function(
                     extend type Mutation {
                         saveTree(tree: TreeInput!): Tree!
                         deleteTree(id: ID!): Tree!
-                        treeAddElement(treeId: ID!, element: TreeElementInput!, parent: TreeElementInput): TreeElement!
+                        treeAddElement(
+                            treeId: ID!,
+                            element: TreeElementInput!,
+                            parent: TreeElementInput,
+                            order: Int
+                        ): TreeElement!
                         treeMoveElement(
                             treeId: ID!,
                             element: TreeElementInput!,
-                            parentTo: TreeElementInput
+                            parentTo: TreeElementInput,
+                            order: Int
                         ): TreeElement!
                         treeDeleteElement(
                             treeId: ID!,
@@ -93,13 +100,13 @@ export default function(
                         async deleteTree(parent, {id}, ctx): Promise<ITree> {
                             return treeDomain.deleteTree(id, graphqlApp.ctxToQueryInfos(ctx));
                         },
-                        async treeAddElement(_, {treeId, element, parent}): Promise<ITreeElement> {
+                        async treeAddElement(_, {treeId, element, parent, order}): Promise<ITreeElement> {
                             parent = parent || null;
-                            return treeDomain.addElement(treeId, element, parent);
+                            return treeDomain.addElement(treeId, element, parent, order);
                         },
-                        async treeMoveElement(_, {treeId, element, parentTo}): Promise<ITreeElement> {
+                        async treeMoveElement(_, {treeId, element, parentTo, order}): Promise<ITreeElement> {
                             parentTo = parentTo || null;
-                            return treeDomain.moveElement(treeId, element, parentTo);
+                            return treeDomain.moveElement(treeId, element, parentTo, order);
                         },
                         async treeDeleteElement(_, {treeId, element, parent, deleteChildren}): Promise<ITreeElement> {
                             parent = parent || null;

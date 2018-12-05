@@ -73,9 +73,15 @@ describe('Trees', () => {
 
         // Add records to the tree
         const resAdd = await makeGraphQlCall(`mutation {
-            a1: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId1}", library: "users"}) {id},
-            a2: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId2}", library: "users"}) {id},
-            a3: treeAddElement(treeId: "${testTreeName}", element: {id: "${recordId3}", library: "users"}) {id}
+            a1: treeAddElement(
+                treeId: "${testTreeName}", element: {id: "${recordId1}", library: "users"}, order: 2
+            ) {id},
+            a2: treeAddElement(
+                treeId: "${testTreeName}", element: {id: "${recordId2}", library: "users"}, order: 1
+            ) {id},
+            a3: treeAddElement(
+                treeId: "${testTreeName}", element: {id: "${recordId3}", library: "users"}, order: 0
+            ) {id}
         }`);
 
         expect(resAdd.status).toBe(200);
@@ -114,6 +120,7 @@ describe('Trees', () => {
         const restreeContent = await makeGraphQlCall(`
         {
             treeContent(treeId: "${testTreeName}") {
+                order
                 record {
                     id
                     library {
@@ -134,9 +141,13 @@ describe('Trees', () => {
 
         expect(restreeContent.status).toBe(200);
         expect(restreeContent.data.data.treeContent).toBeDefined();
+        expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
         expect(restreeContent.data.data.treeContent).toHaveLength(2);
         expect(restreeContent.data.data.treeContent[0].record.library.id).toBeTruthy();
-        expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
+        expect(restreeContent.data.data.treeContent[0].order).toBe(0);
+        expect(restreeContent.data.data.treeContent[1].order).toBe(1);
+        expect(restreeContent.data.data.treeContent[0].record.id).toBe(recordId3);
+        expect(restreeContent.data.data.treeContent[1].record.id).toBe(recordId2);
         expect(restreeContent.data.errors).toBeUndefined();
 
         // Get tree content from a specific node

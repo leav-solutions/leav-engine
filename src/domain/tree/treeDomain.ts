@@ -23,7 +23,12 @@ export interface ITreeDomain {
      * @param element
      * @param parent Parent must be a record or null to add element to root
      */
-    addElement(treeId: string, element: ITreeElement, parent: ITreeElement | null): Promise<ITreeElement>;
+    addElement(
+        treeId: string,
+        element: ITreeElement,
+        parent: ITreeElement | null,
+        order?: number
+    ): Promise<ITreeElement>;
 
     /**
      * Move an element in the tree
@@ -32,7 +37,12 @@ export interface ITreeDomain {
      * @param parentFrom A record or null to move from root
      * @param parentTo A record or null to move to root
      */
-    moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement>;
+    moveElement(
+        treeId: string,
+        element: ITreeElement,
+        parentTo: ITreeElement | null,
+        order?: number
+    ): Promise<ITreeElement>;
 
     /**
      * Delete an element from the tree
@@ -167,7 +177,8 @@ export default function(
         async addElement(
             treeId: string,
             element: ITreeElement,
-            parent: ITreeElement | null = null
+            parent: ITreeElement | null = null,
+            order: number = 0
         ): Promise<ITreeElement> {
             const errors: any = {};
 
@@ -191,9 +202,14 @@ export default function(
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.addElement(treeId, element, parent);
+            return treeRepo.addElement(treeId, element, parent, order);
         },
-        async moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement> {
+        async moveElement(
+            treeId: string,
+            element: ITreeElement,
+            parentTo: ITreeElement | null = null,
+            order: number = 0
+        ): Promise<ITreeElement> {
             const errors: any = {};
 
             if (!(await _treeExists(treeId))) {
@@ -212,7 +228,7 @@ export default function(
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.moveElement(treeId, element, parentTo);
+            return treeRepo.moveElement(treeId, element, parentTo, order);
         },
         async deleteElement(
             treeId: string,

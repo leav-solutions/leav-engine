@@ -1,22 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TreeRepo AddElement Should add an element to the root 1`] = `"INSERT {_from: @value0, _to: @value1} IN @@value2 RETURN NEW"`;
+exports[`TreeRepo AddElement Should add an element to the root 1`] = `"INSERT {_from: @value0, _to: @value1, order: @value2} IN @@value3 RETURN NEW"`;
 
 exports[`TreeRepo AddElement Should add an element to the root 2`] = `
 Object {
-  "@value2": "core_edge_tree_test_tree",
+  "@value3": "core_edge_tree_test_tree",
   "value0": "core_trees/test_tree",
   "value1": "test_lib/13445",
+  "value2": 0,
 }
 `;
 
-exports[`TreeRepo AddElement Should add an element under another 1`] = `"INSERT {_from: @value0, _to: @value1} IN @@value2 RETURN NEW"`;
+exports[`TreeRepo AddElement Should add an element under another 1`] = `"INSERT {_from: @value0, _to: @value1, order: @value2} IN @@value3 RETURN NEW"`;
 
 exports[`TreeRepo AddElement Should add an element under another 2`] = `
 Object {
-  "@value2": "core_edge_tree_test_tree",
+  "@value3": "core_edge_tree_test_tree",
   "value0": "test_lib2/6789",
   "value1": "test_lib/13445",
+  "value2": 1,
 }
 `;
 
@@ -93,7 +95,7 @@ exports[`TreeRepo MoveElement Should move an element 1`] = `
 "
                     FOR e IN @@value0
                         FILTER e._to == @value1
-                        UPDATE e WITH {_from: @value2, _to: @value1}
+                        UPDATE e WITH {_from: @value2, _to: @value1, order: @value3}
                         IN @@value0
                         RETURN NEW
                 "
@@ -104,6 +106,7 @@ Object {
   "@value0": "core_edge_tree_test_tree",
   "value1": "test_lib/13445",
   "value2": "users/6789",
+  "value3": 1,
 }
 `;
 
@@ -197,7 +200,8 @@ exports[`TreeRepo getTreeContent Should return content of a tree starting from a
                 FOR v, e, p IN 1..@value0 OUTBOUND @value1
                 @@value2
                 LET path = (FOR pv IN p.vertices RETURN pv._id)
-                RETURN MERGE(v, {path})
+                SORT LENGTH(path), e.order ASC
+                RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
             "
 `;
 
@@ -214,7 +218,8 @@ exports[`TreeRepo getTreeContent Should return full content of a tree 1`] = `
                 FOR v, e, p IN 1..@value0 OUTBOUND @value1
                 @@value2
                 LET path = (FOR pv IN p.vertices RETURN pv._id)
-                RETURN MERGE(v, {path})
+                SORT LENGTH(path), e.order ASC
+                RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
             "
 `;
 

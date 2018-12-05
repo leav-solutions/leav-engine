@@ -166,7 +166,8 @@ describe('TreeRepo', () => {
             const addedElement = await repo.addElement(
                 'test_tree',
                 {id: 13445, library: 'test_lib'},
-                {id: 6789, library: 'test_lib2'}
+                {id: 6789, library: 'test_lib2'},
+                1
             );
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -191,7 +192,8 @@ describe('TreeRepo', () => {
                 {
                     id: 6789,
                     library: 'users'
-                }
+                },
+                1
             );
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -308,63 +310,81 @@ describe('TreeRepo', () => {
                 db: new Database(),
                 execute: global.__mockPromise([
                     {
-                        _id: 'core_trees/test_tree',
-                        _key: 'categories',
-                        _rev: '_Wm_Qdtu--_',
-                        label: {
-                            fr: 'Arbre des catégories'
-                        },
-                        libraries: ['categories'],
-                        system: false,
-                        path: ['core_trees/test_tree']
+                        order: 0,
+                        record: {
+                            _id: 'core_trees/test_tree',
+                            _key: 'categories',
+                            _rev: '_Wm_Qdtu--_',
+                            label: {
+                                fr: 'Arbre des catégories'
+                            },
+                            libraries: ['categories'],
+                            system: false,
+                            path: ['core_trees/test_tree']
+                        }
                     },
                     {
-                        _id: 'categories/223588194',
-                        _key: '223588194',
-                        _rev: '_Wm_Sdaq--_',
-                        created_at: 1524057050,
-                        id: '223588194',
-                        modified_at: 1524057125,
-                        path: ['core_trees/test_tree', 'categories/223588194']
+                        order: 0,
+                        record: {
+                            _id: 'categories/223588194',
+                            _key: '223588194',
+                            _rev: '_Wm_Sdaq--_',
+                            created_at: 1524057050,
+                            id: '223588194',
+                            modified_at: 1524057125,
+                            path: ['core_trees/test_tree', 'categories/223588194']
+                        }
                     },
                     {
-                        _id: 'categories/223588185',
-                        _key: '223588185',
-                        _rev: '_Wm_SdZ2--_',
-                        created_at: 1524057050,
-                        id: '223588185',
-                        modified_at: 1524057125,
-                        path: ['core_trees/test_tree', 'categories/223588185']
+                        order: 1,
+                        record: {
+                            _id: 'categories/223588185',
+                            _key: '223588185',
+                            _rev: '_Wm_SdZ2--_',
+                            created_at: 1524057050,
+                            id: '223588185',
+                            modified_at: 1524057125,
+                            path: ['core_trees/test_tree', 'categories/223588185']
+                        }
                     },
                     {
-                        _id: 'categories/223588190',
-                        _key: '223588190',
-                        _rev: '_Wm_SdaS--_',
-                        created_at: 1524057050,
-                        id: '223588190',
-                        modified_at: 1524057125,
-                        path: ['core_trees/test_tree', 'categories/223588185', 'categories/223588190']
+                        order: 0,
+                        record: {
+                            _id: 'categories/223588190',
+                            _key: '223588190',
+                            _rev: '_Wm_SdaS--_',
+                            created_at: 1524057050,
+                            id: '223588190',
+                            modified_at: 1524057125,
+                            path: ['core_trees/test_tree', 'categories/223588185', 'categories/223588190']
+                        }
                     },
                     {
-                        _id: 'categories/223612473',
-                        _key: '223612473',
-                        _rev: '_WmDqKmm--_',
-                        created_at: 1524130036,
-                        modified_at: 1524130036,
-                        path: ['core_trees/test_tree', 'categories/223588185', 'categories/223612473']
+                        order: 1,
+                        record: {
+                            _id: 'categories/223612473',
+                            _key: '223612473',
+                            _rev: '_WmDqKmm--_',
+                            created_at: 1524130036,
+                            modified_at: 1524130036,
+                            path: ['core_trees/test_tree', 'categories/223588185', 'categories/223612473']
+                        }
                     },
                     {
-                        _id: 'categories/223612456',
-                        _key: '223612456',
-                        _rev: '_WmDqGxW--_',
-                        created_at: 1524130032,
-                        modified_at: 1524130032,
-                        path: [
-                            'core_trees/test_tree',
-                            'categories/223588185',
-                            'categories/223612473',
-                            'categories/223612456'
-                        ]
+                        order: 0,
+                        record: {
+                            _id: 'categories/223612456',
+                            _key: '223612456',
+                            _rev: '_WmDqGxW--_',
+                            created_at: 1524130032,
+                            modified_at: 1524130032,
+                            path: [
+                                'core_trees/test_tree',
+                                'categories/223588185',
+                                'categories/223612473',
+                                'categories/223612456'
+                            ]
+                        }
                     }
                 ])
             };
@@ -384,6 +404,7 @@ describe('TreeRepo', () => {
 
             expect(treeContent).toEqual([
                 {
+                    order: 0,
                     record: {
                         id: '223588194',
                         created_at: 1524057050,
@@ -393,6 +414,7 @@ describe('TreeRepo', () => {
                     children: []
                 },
                 {
+                    order: 1,
                     record: {
                         id: '223588185',
                         created_at: 1524057050,
@@ -401,6 +423,7 @@ describe('TreeRepo', () => {
                     },
                     children: [
                         {
+                            order: 0,
                             record: {
                                 id: '223588190',
                                 created_at: 1524057050,
@@ -410,6 +433,7 @@ describe('TreeRepo', () => {
                             children: []
                         },
                         {
+                            order: 1,
                             record: {
                                 id: '223612473',
                                 created_at: 1524130036,
@@ -418,6 +442,7 @@ describe('TreeRepo', () => {
                             },
                             children: [
                                 {
+                                    order: 0,
                                     record: {
                                         id: '223612456',
                                         created_at: 1524130032,

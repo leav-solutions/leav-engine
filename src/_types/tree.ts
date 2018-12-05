@@ -20,6 +20,7 @@ export interface ITreeElement {
 }
 
 export interface ITreeNode {
+    order?: number;
     record?: IRecord;
     parent?: ITreeNode[];
     ancestors?: ITreeNode[];

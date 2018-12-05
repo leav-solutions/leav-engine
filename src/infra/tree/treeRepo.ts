@@ -17,7 +17,12 @@ export interface ITreeRepo {
      * @param element
      * @param parent Parent must be a record or null to add element to root
      */
-    addElement(treeId: string, element: ITreeElement, parent: ITreeElement | null): Promise<ITreeElement>;
+    addElement(
+        treeId: string,
+        element: ITreeElement,
+        parent: ITreeElement | null,
+        order?: number
+    ): Promise<ITreeElement>;
 
     /**
      * Move an element in the tree
@@ -26,7 +31,12 @@ export interface ITreeRepo {
      * @param parentFrom A record or null to move from root
      * @param parentTo A record or null to move to root
      */
-    moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement>;
+    moveElement(
+        treeId: string,
+        element: ITreeElement,
+        parentTo: ITreeElement | null,
+        order?: number
+    ): Promise<ITreeElement>;
 
     /**
      * Delete an element from the tree
@@ -130,19 +140,29 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             // Return deleted library
             return dbUtils.cleanup(res.pop());
         },
-        async addElement(treeId: string, element: ITreeElement, parent: ITreeElement | null): Promise<ITreeElement> {
+        async addElement(
+            treeId: string,
+            element: ITreeElement,
+            parent: ITreeElement | null,
+            order: number = 0
+        ): Promise<ITreeElement> {
             const destination = parent !== null ? `${parent.library}/${parent.id}` : _getRootId(treeId);
             const elemId = `${element.library}/${element.id}`;
 
             const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
 
             const res = await dbService.execute(
-                aql`INSERT {_from: ${destination}, _to: ${elemId}} IN ${collec} RETURN NEW`
+                aql`INSERT {_from: ${destination}, _to: ${elemId}, order: ${order}} IN ${collec} RETURN NEW`
             );
 
             return element;
         },
-        async moveElement(treeId: string, element: ITreeElement, parentTo: ITreeElement | null): Promise<ITreeElement> {
+        async moveElement(
+            treeId: string,
+            element: ITreeElement,
+            parentTo: ITreeElement | null,
+            order: number = 0
+        ): Promise<ITreeElement> {
             const destination = parentTo !== null ? `${parentTo.library}/${parentTo.id}` : _getRootId(treeId);
             const elemId = `${element.library}/${element.id}`;
 
@@ -152,7 +172,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                 aql`
                     FOR e IN ${collec}
                         FILTER e._to == ${elemId}
-                        UPDATE e WITH {_from: ${destination}, _to: ${elemId}}
+                        UPDATE e WITH {_from: ${destination}, _to: ${elemId}, order: ${order}}
                         IN ${collec}
                         RETURN NEW
                 `
@@ -249,7 +269,8 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                 FOR v, e, p IN 1..${MAX_TREE_DEPTH} OUTBOUND ${nodeFrom}
                 ${collec}
                 LET path = (FOR pv IN p.vertices RETURN pv._id)
-                RETURN MERGE(v, {path})
+                SORT LENGTH(path), e.order ASC
+                RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
             `);
 
             /**
@@ -260,16 +281,16 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
              */
             for (const elem of data) {
                 // We don't want the root in the tree, skip it
-                if (elem._id === rootId) {
+                if (elem.record._id === rootId) {
                     continue;
                 }
 
                 // Last path part is the element itself, we don't need it
-                elem.path.pop();
+                elem.record.path.pop();
 
                 /** Determine where is the parent in the tree */
                 let parentInTree: any = treeContent;
-                for (const pathPart of elem.path) {
+                for (const pathPart of elem.record.path) {
                     // Root's first level children will be directly added to the tree
                     if (pathPart === nodeFrom) {
                         parentInTree = treeContent;
@@ -287,13 +308,13 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                 }
 
                 /** Add element to its parent */
-                delete elem.path;
-                elem.library = elem._id.split('/')[0];
+                delete elem.record.path;
+                elem.record.library = elem.record._id.split('/')[0];
 
                 // If destination is the tree root, there's no 'children'
                 const destination = parentInTree === treeContent ? parentInTree : parentInTree.children;
 
-                destination.push({record: dbUtils.cleanup(elem), children: []});
+                destination.push({order: elem.order, record: dbUtils.cleanup(elem.record), children: []});
             }
 
             return treeContent;
