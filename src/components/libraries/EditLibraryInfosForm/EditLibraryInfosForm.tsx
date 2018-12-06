@@ -80,7 +80,7 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
                             options={libAttributesOptions}
                             name="recordIdentityConf/label"
                             label={t('libraries.record_identity_label')}
-                            value={recordIdentityConf.label || ''}
+                            value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
                             onChange={this._handleChange}
                         />
                     </Form.Field>
@@ -91,7 +91,7 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
                             options={libAttributesOptions}
                             name="recordIdentityConf/color"
                             label={t('libraries.record_identity_color')}
-                            value={recordIdentityConf.color || ''}
+                            value={recordIdentityConf && recordIdentityConf.color ? recordIdentityConf.color : ''}
                             onChange={this._handleChange}
                         />
                     </Form.Field>
@@ -102,7 +102,7 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
                             options={libAttributesOptions}
                             name="recordIdentityConf/preview"
                             label={t('libraries.record_identity_preview')}
-                            value={recordIdentityConf.preview || ''}
+                            value={recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''}
                             onChange={this._handleChange}
                         />
                     </Form.Field>
