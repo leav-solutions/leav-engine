@@ -60,7 +60,7 @@ export default function(
                     }
 
                     type TreePermissionsConf {
-                        permissionTreeAttributes: [ID]!,
+                        permissionTreeAttributes: [ID!]!,
                         relation: PermissionsRelation!
                     }
 
