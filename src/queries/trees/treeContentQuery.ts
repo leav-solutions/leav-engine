@@ -9,6 +9,7 @@ export const getTreeContentQuery = gql`
     ${recordIdentityFragment}
     query TREE_CONTENT($treeId: ID!, $startAt: TreeElementInput, $lang: [AvailableLanguage!]) {
         treeContent(treeId: $treeId, startAt: $startAt) {
+            order
             record {
                 id
                 library {
@@ -18,6 +19,7 @@ export const getTreeContentQuery = gql`
                 ...RecordIdentity
             }
             children {
+                order
                 record {
                     id
                     library {

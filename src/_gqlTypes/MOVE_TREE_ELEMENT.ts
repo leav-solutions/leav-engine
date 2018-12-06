@@ -20,4 +20,5 @@ export interface MOVE_TREE_ELEMENTVariables {
     treeId: string;
     element: TreeElementInput;
     parentTo?: TreeElementInput | null;
+    order?: number | null;
 }

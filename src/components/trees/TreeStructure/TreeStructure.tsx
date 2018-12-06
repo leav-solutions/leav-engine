@@ -181,19 +181,54 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
     ) => {
         const element: TreeElementInput = this._nodeToTreeElement(moveData.node);
 
-        const parentTo: TreeElementInput | null =
-            moveData.nextParentNode !== null ? this._nodeToTreeElement(moveData.nextParentNode) : null;
+        // Parent node in tree
+        const parentNode = moveData.nextParentNode;
 
-        const variables: MOVE_TREE_ELEMENTVariables = {
-            treeId: this.props.treeId,
-            element,
-            parentTo
-        };
+        // Parent element to save
+        const parentTo: TreeElementInput | null = parentNode !== null ? this._nodeToTreeElement(parentNode) : null;
 
+        // Get new element position
+        let position = moveData.treeIndex;
+        if (parentNode !== null) {
+            const parentNodeAtPath = getNodeAtPath({
+                treeData: this.state.treeData,
+                path: moveData.nextPath.slice(0, -1),
+                getNodeKey: this._getNodeKey
+            });
+            position = parentNodeAtPath ? moveData.treeIndex - parentNodeAtPath.treeIndex - 1 : moveData.treeIndex;
+        }
+
+        // Save element move
         await client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
             mutation: moveTreeElementQuery,
-            variables
+            variables: {
+                treeId: this.props.treeId,
+                element,
+                parentTo,
+                order: position
+            }
         });
+
+        // Update positions for all siblings in destination
+        const siblings = parentNode !== null ? parentNode.children : this.state.treeData;
+        if (siblings && siblings.length) {
+            await Promise.all(
+                siblings.map((s, i) => {
+                    const siblingElement = this._nodeToTreeElement(s);
+                    return this._getNodeKey({node: s}) !== this._getNodeKey(moveData) // Skip moved element
+                        ? client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
+                              mutation: moveTreeElementQuery,
+                              variables: {
+                                  treeId: this.props.treeId,
+                                  element: siblingElement,
+                                  parentTo,
+                                  order: i
+                              }
+                          })
+                        : Promise.resolve();
+                })
+            );
+        }
     }
 
     private _deleteNode = async (client: ApolloClient<any>, node: ExtendedNodeData) => {

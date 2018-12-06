@@ -56,10 +56,12 @@ export interface TREE_CONTENT_treeContent_children_record {
 }
 
 export interface TREE_CONTENT_treeContent_children {
+    order: number;
     record: TREE_CONTENT_treeContent_children_record;
 }
 
 export interface TREE_CONTENT_treeContent {
+    order: number;
     record: TREE_CONTENT_treeContent_record;
     children: TREE_CONTENT_treeContent_children[] | null;
 }
