@@ -149,19 +149,22 @@ describe('Permissions', () => {
             expect(resSavePerm.data.errors).toBeUndefined();
 
             const resGetPerm = await makeGraphQlCall(`{
-                permission(
+                permissions(
                     type: record,
                     applyTo: "${testLibId}",
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
                     },
-                    action: access
-                )
+                    actions: [access]
+                ){
+                    name
+                    allowed
+                }
             }`);
 
             expect(resGetPerm.status).toBe(200);
-            expect(resGetPerm.data.data.permission).toBe(true);
+            expect(resGetPerm.data.data.permissions).toEqual([{name: 'access', allowed: true}]);
             expect(resGetPerm.data.errors).toBeUndefined();
 
             // Save library's permissions config
@@ -322,15 +325,18 @@ describe('Permissions', () => {
 
             // Get admin permissions
             const resGetAdminPerm = await makeGraphQlCall(`{
-                permission(
+                permissions(
                     type: admin,
                     usersGroup: "${allUsersTreeElemId}",
-                    action: create_library
-                )
+                    actions: [create_library]
+                ) {
+                    name
+                    allowed
+                }
             }`);
 
             expect(resGetAdminPerm.status).toBe(200);
-            expect(resGetAdminPerm.data.data.permission).toBe(true);
+            expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'create_library', allowed: true}]);
             expect(resGetAdminPerm.data.errors).toBeUndefined();
         });
     });

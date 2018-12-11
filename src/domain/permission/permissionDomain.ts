@@ -1,20 +1,30 @@
+import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITreeNode} from '_types/tree';
+import PermissionError from '../../errors/PermissionError';
 import {
+    AdminPermisisonsActions,
     IPermission,
     IPermissionsTreeTarget,
     PermissionsActions,
-    PermissionTypes,
-    AdminPermisisonsActions
+    PermissionTypes
 } from '../../_types/permissions';
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import PermissionError from '../../errors/PermissionError';
 
 export interface IPermissionDomain {
     savePermission(permData: IPermission, infos: IQueryInfos): Promise<IPermission>;
+
+    /**
+     * Retrieve exact permission for given params. No heritage here, just saved permission or null if nothing found
+     *
+     * @param type
+     * @param applyTo
+     * @param action
+     * @param usersGroupId
+     * @param permissionTreeTarget
+     */
     getSimplePermission(
         type: PermissionTypes,
         applyTo: string | null,
@@ -22,6 +32,24 @@ export interface IPermissionDomain {
         usersGroupId: number,
         permissionTreeTarget?: IPermissionsTreeTarget
     ): Promise<boolean | null>;
+
+    /**
+     * Retrieve exact permission for given params and actions. No heritage here, just saved permission for each action
+     *
+     * @param type
+     * @param applyTo
+     * @param actions
+     * @param usersGroupId
+     * @param permissionTreeTarget
+     */
+    getPermissionsByActions(
+        type: PermissionTypes,
+        applyTo: string | null,
+        actions: PermissionsActions[],
+        usersGroupId: number,
+        permissionTreeTarget?: IPermissionsTreeTarget
+    ): Promise<{[name: string]: boolean | null} | null>;
+
     getPermissionByUserGroups(
         type: PermissionTypes,
         action: PermissionsActions,
@@ -59,13 +87,31 @@ export default function(
             usersGroupId: number,
             permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<boolean | null> {
+            const perms = await ret.getPermissionsByActions(
+                type,
+                applyTo,
+                [action],
+                usersGroupId,
+                permissionTreeTarget
+            );
+
+            return perms[action];
+        },
+        async getPermissionsByActions(
+            type: PermissionTypes,
+            applyTo: string,
+            actions: PermissionsActions[],
+            usersGroupId: number,
+            permissionTreeTarget: IPermissionsTreeTarget = null
+        ): Promise<{[name: string]: boolean | null}> {
             const perms = await permissionRepo.getPermissions(type, applyTo, usersGroupId, permissionTreeTarget);
 
-            if (perms === null) {
-                return null;
-            }
+            return actions.reduce((actionsPerms, action) => {
+                actionsPerms[action] =
+                    perms !== null && typeof perms.actions[action] !== 'undefined' ? perms.actions[action] : null;
 
-            return typeof perms.actions[action] !== 'undefined' ? perms.actions[action] : null;
+                return actionsPerms;
+            }, {});
         },
         getDefaultPermission(): boolean {
             const defaultPerm =

@@ -51,12 +51,12 @@ export default function(
 
                     type PermissionAction {
                         name: PermissionsActions!
-                        allowed: Boolean!
+                        allowed: Boolean
                     }
 
                     input PermissionActionInput {
                         name: PermissionsActions!,
-                        allowed: Boolean!
+                        allowed: Boolean
                     }
 
                     type TreePermissionsConf {
@@ -98,13 +98,13 @@ export default function(
                     }
 
                     extend type Query {
-                        permission(
+                        permissions(
                             type: PermissionTypes!,
                             applyTo: ID,
-                            action: PermissionsActions!,
+                            actions: [PermissionsActions!]!,
                             usersGroup: ID!,
                             permissionTreeTarget: PermissionsTreeTargetInput
-                        ): Boolean!
+                        ): [PermissionAction]
                     }
 
                     extend type Mutation {
@@ -113,14 +113,19 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async permission(_, {type, applyTo, action, usersGroup, permissionTreeTarget}) {
-                            return permissionDomain.getSimplePermission(
+                        async permissions(_, {type, applyTo, actions, usersGroup, permissionTreeTarget}) {
+                            const perms = await permissionDomain.getPermissionsByActions(
                                 type,
                                 applyTo,
-                                action,
+                                actions,
                                 usersGroup,
                                 permissionTreeTarget
                             );
+
+                            return Object.keys(perms).reduce((permByActions, action) => {
+                                permByActions.push({name: action, allowed: perms[action]});
+                                return permByActions;
+                            }, []);
                         }
                     },
                     Mutation: {

@@ -1,9 +1,9 @@
-import permissionDomain from './permissionDomain';
-import {PermissionTypes, RecordPermissionsActions, AdminPermisisonsActions} from '../../_types/permissions';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
+import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
+import {AdminPermisisonsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import permissionDomain from './permissionDomain';
 
 describe('PermissionDomain', () => {
     describe('savePermission', () => {
@@ -49,23 +49,14 @@ describe('PermissionDomain', () => {
             expect(newPerm).toMatchObject(permData);
         });
     });
-    describe('getPermission', () => {
+    describe('getSimplePermission', () => {
         test('Should return a permission', async () => {
-            const mockPermRepo: Mockify<IPermissionRepo> = {
-                getPermissions: global.__mockPromise({
-                    type: PermissionTypes.RECORD,
-                    applyTo: 'test_lib',
-                    usersGroup: '12345',
-                    actions: {
-                        [RecordPermissionsActions.ACCESS]: true,
-                        [RecordPermissionsActions.EDIT]: false,
-                        [RecordPermissionsActions.DELETE]: null
-                    },
-                    permissionTreeTarget: 'test_lib/12345'
-                })
-            };
-
-            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
+            const permDomain = permissionDomain();
+            permDomain.getPermissionsByActions = global.__mockPromise({
+                [RecordPermissionsActions.ACCESS]: true,
+                [RecordPermissionsActions.EDIT]: false,
+                [RecordPermissionsActions.DELETE]: null
+            });
 
             const permAccess = await permDomain.getSimplePermission(
                 PermissionTypes.RECORD,
@@ -107,14 +98,19 @@ describe('PermissionDomain', () => {
             expect(permEdit).toBe(false);
             expect(permDelete).toBe(null);
         });
+    });
 
-        test('Should return null if no permission defined for this action', async () => {
+    describe('getPermissionsByActions', () => {
+        test('Return permission for each actions', async () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {
                 getPermissions: global.__mockPromise({
                     type: PermissionTypes.RECORD,
+                    applyTo: 'test_lib',
                     usersGroup: '12345',
                     actions: {
-                        [RecordPermissionsActions.ACCESS]: true
+                        [RecordPermissionsActions.ACCESS]: true,
+                        [RecordPermissionsActions.EDIT]: false,
+                        [RecordPermissionsActions.DELETE]: null
                     },
                     permissionTreeTarget: 'test_lib/12345'
                 })
@@ -122,10 +118,10 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
 
-            const permEdit = await permDomain.getSimplePermission(
+            const perms = await permDomain.getPermissionsByActions(
                 PermissionTypes.RECORD,
                 'test_lib',
-                RecordPermissionsActions.EDIT,
+                [RecordPermissionsActions.ACCESS, RecordPermissionsActions.EDIT, RecordPermissionsActions.DELETE],
                 12345,
                 {
                     id: '123',
@@ -134,7 +130,72 @@ describe('PermissionDomain', () => {
                 }
             );
 
-            expect(permEdit).toBe(null);
+            expect(perms).toEqual({
+                [RecordPermissionsActions.ACCESS]: true,
+                [RecordPermissionsActions.EDIT]: false,
+                [RecordPermissionsActions.DELETE]: null
+            });
+        });
+
+        test('Return null for ine action if no permission defined for this action', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {
+                getPermissions: global.__mockPromise({
+                    type: PermissionTypes.RECORD,
+                    applyTo: 'test_lib',
+                    usersGroup: '12345',
+                    actions: {
+                        [RecordPermissionsActions.ACCESS]: true,
+                        [RecordPermissionsActions.DELETE]: false
+                    },
+                    permissionTreeTarget: 'test_lib/12345'
+                })
+            };
+
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
+
+            const permEdit = await permDomain.getPermissionsByActions(
+                PermissionTypes.RECORD,
+                'test_lib',
+                [RecordPermissionsActions.ACCESS, RecordPermissionsActions.EDIT, RecordPermissionsActions.DELETE],
+                12345,
+                {
+                    id: '123',
+                    library: 'category',
+                    tree: 'categories'
+                }
+            );
+
+            expect(permEdit).toEqual({
+                [RecordPermissionsActions.ACCESS]: true,
+                [RecordPermissionsActions.EDIT]: null,
+                [RecordPermissionsActions.DELETE]: false
+            });
+        });
+
+        test('Return null for each action if no permission defined', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {
+                getPermissions: global.__mockPromise(null)
+            };
+
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
+
+            const permEdit = await permDomain.getPermissionsByActions(
+                PermissionTypes.RECORD,
+                'test_lib',
+                [RecordPermissionsActions.ACCESS, RecordPermissionsActions.EDIT, RecordPermissionsActions.DELETE],
+                12345,
+                {
+                    id: '123',
+                    library: 'category',
+                    tree: 'categories'
+                }
+            );
+
+            expect(permEdit).toEqual({
+                [RecordPermissionsActions.ACCESS]: null,
+                [RecordPermissionsActions.EDIT]: null,
+                [RecordPermissionsActions.DELETE]: null
+            });
         });
     });
 
