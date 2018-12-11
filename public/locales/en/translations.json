@@ -19,7 +19,12 @@
         "record_identity": "Records identity card",
         "record_identity_label": "Label",
         "record_identity_color": "Color",
-        "record_identity_preview": "Preview"
+        "record_identity_preview": "Preview",
+        "permissions": "Permissions",
+        "permissions_settings_title": "Settings",
+        "permissions_relation": "Relation",
+        "permissions_relation_and": "AND",
+        "permissions_relation_or": "OR"
     },
     "attributes": {
         "title": "Attributes",

@@ -1,7 +1,7 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES
@@ -15,6 +15,11 @@ export interface GET_LIBRARIES_libraries_attributes {
     label: any | null;
 }
 
+export interface GET_LIBRARIES_libraries_permissionsConf {
+    permissionTreeAttributes: string[];
+    relation: PermissionsRelation;
+}
+
 export interface GET_LIBRARIES_libraries_recordIdentityConf {
     label: string | null;
     color: string | null;
@@ -26,6 +31,7 @@ export interface GET_LIBRARIES_libraries {
     system: boolean | null;
     label: any | null;
     attributes: GET_LIBRARIES_libraries_attributes[] | null;
+    permissionsConf: GET_LIBRARIES_libraries_permissionsConf | null;
     recordIdentityConf: GET_LIBRARIES_libraries_recordIdentityConf | null;
 }
 

@@ -19,7 +19,12 @@
         "record_identity": "Carte d'identité des éléments",
         "record_identity_label": "Libellé",
         "record_identity_color": "Couleur",
-        "record_identity_preview": "Aperçu"
+        "record_identity_preview": "Aperçu",
+        "permissions": "Permissions",
+        "permissions_settings_title": "Paramètres",
+        "permissions_relation": "Relation",
+        "permissions_relation_and": "ET",
+        "permissions_relation_or": "OU"
     },
     "attributes": {
         "title": "Attributs",

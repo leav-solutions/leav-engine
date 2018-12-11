@@ -1,6 +1,8 @@
 import {shallow} from 'enzyme';
 import * as React from 'react';
+import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
+import {Mockify} from 'src/_types/Mockify';
 import EditLibraryForm from './EditLibraryForm';
 
 describe('EditLibraryForm', () => {
@@ -16,7 +18,7 @@ describe('EditLibraryForm', () => {
     });
 
     test('Render form for existing lib', async () => {
-        const library = {
+        const library: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test',
             label: {fr: 'Test', en: null},
             system: false,
@@ -33,7 +35,13 @@ describe('EditLibraryForm', () => {
         };
         const onSubmit = jest.fn();
 
-        const comp = shallow(<EditLibraryForm library={library} onSubmit={onSubmit} />);
+        const comp = shallow(
+            <EditLibraryForm
+                library={library as GET_LIBRARIES_libraries}
+                onSubmit={onSubmit}
+                onPermsSettingsSubmit={onSubmit}
+            />
+        );
 
         expect(
             comp
@@ -46,7 +54,7 @@ describe('EditLibraryForm', () => {
     test('Render form for new lib', async () => {
         const onSubmit = jest.fn();
 
-        const comp = shallow(<EditLibraryForm library={null} onSubmit={onSubmit} />);
+        const comp = shallow(<EditLibraryForm library={null} onSubmit={onSubmit} onPermsSettingsSubmit={onSubmit} />);
 
         expect(
             comp

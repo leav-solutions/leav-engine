@@ -13,6 +13,10 @@ export const getLibsQuery = gql`
             attributes {
                 ...AttributeDetails
             }
+            permissionsConf {
+                permissionTreeAttributes
+                relation
+            }
             recordIdentityConf {
                 label
                 color

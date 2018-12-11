@@ -24,6 +24,7 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
                           en: ''
                       },
                       attributes: [],
+                      permissionsConf: null,
                       recordIdentityConf: {
                           label: null,
                           color: null,

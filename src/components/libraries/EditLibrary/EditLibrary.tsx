@@ -79,7 +79,28 @@ class EditLibrary extends React.Component<IEditLibraryProps> {
 
                     this.props.history.replace({pathname: '/libraries/edit/' + libData.id});
                 };
-                return <EditLibraryForm library={libToEdit} onSubmit={onFormSubmit} />;
+
+                const onPermissionsFormSubmit = async libData => {
+                    await saveLibrary({
+                        variables: {
+                            libData: {
+                                id: libData.id,
+                                permissionsConf: {
+                                    permissionTreeAttributes: libData.permissionsConf.permissionTreeAttributes,
+                                    relation: libData.permissionsConf.relation
+                                }
+                            }
+                        },
+                        refetchQueries: [{query: getLibsQuery, variables: {id: libData.id}}]
+                    });
+                };
+                return (
+                    <EditLibraryForm
+                        library={libToEdit}
+                        onSubmit={onFormSubmit}
+                        onPermsSettingsSubmit={onPermissionsFormSubmit}
+                    />
+                );
             }}
         </SaveLibMutation>
     )

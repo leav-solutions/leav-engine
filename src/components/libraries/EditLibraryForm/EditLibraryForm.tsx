@@ -4,10 +4,12 @@ import {Header, Tab} from 'semantic-ui-react';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import EditLibraryAttributes from '../EditLibraryAttributes';
 import EditLibraryInfosForm from '../EditLibraryInfosForm';
+import EditLibraryPermissions from '../EditLibraryPermissions';
 
 interface IEditLibraryFormProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries | null;
     onSubmit: (formData: any) => void;
+    onPermsSettingsSubmit: (formData: any) => void;
 }
 
 class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
@@ -20,7 +22,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
     }
 
     public render() {
-        const {library, onSubmit} = this.props;
+        const {library, onSubmit, onPermsSettingsSubmit} = this.props;
         const {t} = this.props;
 
         const label =
@@ -30,7 +32,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                 ? library.label.fr || library.label.en || library.id
                 : library.id;
 
-        const panes = [
+        let panes = [
             {
                 key: 'infos',
                 menuItem: t('libraries.informations'),
@@ -39,19 +41,35 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                         <EditLibraryInfosForm library={library} onSubmit={onSubmit} />
                     </Tab.Pane>
                 )
-            },
-            {
-                key: 'attributes',
-                menuItem: t('libraries.attributes'),
-                render: () => {
-                    return (
-                        <Tab.Pane key="attributes">
-                            <EditLibraryAttributes library={library} />
-                        </Tab.Pane>
-                    );
-                }
             }
         ];
+
+        if (library !== null) {
+            panes = panes.concat([
+                {
+                    key: 'permissions',
+                    menuItem: t('libraries.permissions'),
+                    render: () => {
+                        return (
+                            <Tab.Pane key="permissions">
+                                <EditLibraryPermissions library={library} onSubmitSettings={onPermsSettingsSubmit} />
+                            </Tab.Pane>
+                        );
+                    }
+                },
+                {
+                    key: 'attributes',
+                    menuItem: t('libraries.attributes'),
+                    render: () => {
+                        return (
+                            <Tab.Pane key="attributes">
+                                <EditLibraryAttributes library={library} />
+                            </Tab.Pane>
+                        );
+                    }
+                }
+            ]);
+        }
 
         return (
             <div>

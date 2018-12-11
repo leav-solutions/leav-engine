@@ -1,20 +1,20 @@
 import {render} from 'enzyme';
 import * as React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
+import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
+import {Mockify} from 'src/_types/Mockify';
 import DeleteLibrary from './DeleteLibrary';
 
 describe('DeleteLibrary', () => {
     test('Disable button on system lib', async () => {
-        const library = {
+        const library: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test',
             label: {fr: 'Test', en: null},
-            system: true,
-            attributes: [],
-            recordIdentityConf: {label: null, color: null, preview: null}
+            system: true
         };
         const comp = render(
             <MockedProvider>
-                <DeleteLibrary library={library} />
+                <DeleteLibrary library={library as GET_LIBRARIES_libraries} />
             </MockedProvider>
         );
 
