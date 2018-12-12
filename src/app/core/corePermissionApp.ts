@@ -1,3 +1,4 @@
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IUtils} from 'utils/utils';
 import {
@@ -17,7 +18,8 @@ export interface ICorePermissionApp {
 export default function(
     graphqlApp: IGraphqlApp,
     utils: IUtils,
-    permissionDomain: IPermissionDomain
+    permissionDomain: IPermissionDomain,
+    attributeDomain: IAttributeDomain
 ): ICorePermissionApp {
     // Format permission data to match graphql schema, where "actions" field format is different
     // TODO: use a custom scalar type?
@@ -60,7 +62,7 @@ export default function(
                     }
 
                     type TreePermissionsConf {
-                        permissionTreeAttributes: [ID!]!,
+                        permissionTreeAttributes: [Attribute!]!,
                         relation: PermissionsRelation!
                     }
 
@@ -154,6 +156,17 @@ export default function(
                             };
 
                             return typesMapping[obj.type];
+                        }
+                    },
+                    TreePermissionsConf: {
+                        permissionTreeAttributes(parent) {
+                            return parent.permissionTreeAttributes
+                                ? Promise.all(
+                                      parent.permissionTreeAttributes.map(attrId =>
+                                          attributeDomain.getAttributeProperties(attrId)
+                                      )
+                                  )
+                                : [];
                         }
                     }
                 }

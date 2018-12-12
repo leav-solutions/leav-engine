@@ -174,7 +174,9 @@ describe('Permissions', () => {
                     permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
                 }) {
                     permissionsConf {
-                        permissionTreeAttributes
+                        permissionTreeAttributes {
+                            id
+                        }
                         relation
                     }
                 }
@@ -208,7 +210,9 @@ describe('Permissions', () => {
                     permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
                 }) {
                     permissionsConf {
-                        permissionTreeAttributes
+                        permissionTreeAttributes {
+                            id
+                        }
                         relation
                     }
                 }
@@ -216,6 +220,7 @@ describe('Permissions', () => {
 
             expect(resSaveAttr.status).toBe(200);
             expect(resSaveAttr.data.data.saveAttribute.permissionsConf).toBeDefined();
+            expect(resSaveAttr.data.data.saveAttribute.permissionsConf.permissionTreeAttributes[0].id).toBeDefined();
             expect(resSaveAttr.data.errors).toBeUndefined();
 
             // Save permission on attribute
