@@ -2,7 +2,7 @@ import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Accordion, Form, Icon} from 'semantic-ui-react';
 import {localizedLabel} from 'src/utils/utils';
-import {GET_LIBRARIES_libraries, GET_LIBRARIES_libraries_permissionsConf} from 'src/_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import {AttributeType, PermissionsRelation} from 'src/_gqlTypes/globalTypes';
 
 interface IEditLibraryPermissionsProps extends WithNamespaces {
@@ -10,10 +10,20 @@ interface IEditLibraryPermissionsProps extends WithNamespaces {
     onSubmitSettings: (formData: any) => void;
 }
 
+interface IEditLibraryPermissionsState {
+    permissionTreeAttributes: string[];
+    relation: PermissionsRelation;
+}
+
 function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibraryPermissionsProps): JSX.Element {
     const [settingsExpanded, setSettingsExpanded] = React.useState(false);
-    const [libPermsConf, setlibPermsConf] = React.useState<GET_LIBRARIES_libraries_permissionsConf>(
-        library.permissionsConf || {permissionTreeAttributes: [], relation: PermissionsRelation.and}
+    const [libPermsConf, setlibPermsConf] = React.useState<IEditLibraryPermissionsState>(
+        library.permissionsConf
+            ? {
+                  permissionTreeAttributes: library.permissionsConf.permissionTreeAttributes.map(a => a.id),
+                  relation: library.permissionsConf.relation
+              }
+            : {permissionTreeAttributes: [], relation: PermissionsRelation.and}
     );
     const onClickToggle = () => setSettingsExpanded(!settingsExpanded);
 
@@ -53,7 +63,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                                     options={libTreeAttributesOptions}
                                     name="permissionTreeAttributes"
                                     label={t('trees.title')}
-                                    value={libPermsConf ? libPermsConf.permissionTreeAttributes : []}
+                                    value={libPermsConf.permissionTreeAttributes}
                                     onChange={_handleChange}
                                 />
                             </Form.Field>

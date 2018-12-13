@@ -10,7 +10,7 @@ describe('EditLibraryPermissions', () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
             permissionsConf: {
-                permissionTreeAttributes: ['test_tree_attr'],
+                permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and
             }
         };
@@ -29,7 +29,10 @@ describe('EditLibraryPermissions', () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
             permissionsConf: {
-                permissionTreeAttributes: ['test_tree_attr', 'other_tree_attr'],
+                permissionTreeAttributes: [
+                    {id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'},
+                    {id: 'other_tree_attr', linked_tree: 'some_tree', label: 'Test'}
+                ],
                 relation: PermissionsRelation.and
             }
         };
@@ -47,7 +50,7 @@ describe('EditLibraryPermissions', () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
             permissionsConf: {
-                permissionTreeAttributes: ['test_tree_attr'],
+                permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and
             }
         };

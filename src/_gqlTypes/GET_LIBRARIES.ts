@@ -15,8 +15,14 @@ export interface GET_LIBRARIES_libraries_attributes {
     label: any | null;
 }
 
+export interface GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes {
+    id: string;
+    linked_tree: string | null;
+    label: any | null;
+}
+
 export interface GET_LIBRARIES_libraries_permissionsConf {
-    permissionTreeAttributes: string[];
+    permissionTreeAttributes: GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 

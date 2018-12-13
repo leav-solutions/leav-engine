@@ -14,7 +14,11 @@ export const getLibsQuery = gql`
                 ...AttributeDetails
             }
             permissionsConf {
-                permissionTreeAttributes
+                permissionTreeAttributes {
+                    id
+                    linked_tree
+                    label(lang: $lang)
+                }
                 relation
             }
             recordIdentityConf {
