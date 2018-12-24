@@ -67,7 +67,7 @@ export default function(
                     }
 
                     input TreePermissionsConfInput {
-                        permissionTreeAttributes: [ID]!,
+                        permissionTreeAttributes: [ID!]!,
                         relation: PermissionsRelation!
                     }
 
@@ -87,7 +87,7 @@ export default function(
                         type: PermissionTypes!,
                         applyTo: ID,
                         usersGroup: ID!,
-                        actions: [PermissionAction]!,
+                        actions: [PermissionAction!]!,
                         permissionTreeTarget: PermissionsTreeTarget
                     }
 
@@ -95,7 +95,7 @@ export default function(
                         type: PermissionTypes!,
                         applyTo: ID,
                         usersGroup: ID!,
-                        actions: [PermissionActionInput]!,
+                        actions: [PermissionActionInput!]!,
                         permissionTreeTarget: PermissionsTreeTargetInput
                     }
 
@@ -106,7 +106,7 @@ export default function(
                             actions: [PermissionsActions!]!,
                             usersGroup: ID!,
                             permissionTreeTarget: PermissionsTreeTargetInput
-                        ): [PermissionAction]
+                        ): [PermissionAction!]
                     }
 
                     extend type Mutation {
