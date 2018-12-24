@@ -1,4 +1,11 @@
 /** File used to override some SortableTree CSS rules **/
 .rst__rowContents {
     padding: 0;
+    background: transparent;
+}
+.rst__row.tree-node {
+    cursor: pointer;
+}
+.rst__row.tree-node.selected {
+    background: #DEDEDE;
 }

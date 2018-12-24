@@ -1,4 +1,5 @@
 import {i18n} from 'i18next';
+import {TreeNode} from 'react-sortable-tree';
 import * as removeAccents from 'remove-accents';
 
 /**
@@ -62,3 +63,6 @@ export const getInvertColor = (color: string): string => {
 
     return yiq >= 128 ? '#000000' : '#FFFFFF';
 };
+
+export const getTreeNodeKey = (nodeData: TreeNode | null) =>
+    nodeData ? nodeData.node.library.id + '/' + nodeData.node.id : '';

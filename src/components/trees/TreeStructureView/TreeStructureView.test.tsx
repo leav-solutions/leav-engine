@@ -8,8 +8,10 @@ describe('TreeStructureView', () => {
         const onVisibilityToggle = jest.fn();
         const onMoveNode = jest.fn();
         const onDeleteNode = jest.fn();
+
         const comp = shallow(
             <TreeStructureView
+                readOnly={false}
                 treeData={[]}
                 onTreeChange={onTreeChange}
                 onVisibilityToggle={onVisibilityToggle}
@@ -27,8 +29,10 @@ describe('TreeStructureView', () => {
         const onVisibilityToggle = jest.fn();
         const onMoveNode = jest.fn();
         const onDeleteNode = jest.fn();
+
         const comp = shallow(
             <TreeStructureView
+                readOnly={false}
                 treeData={[{id: 1234, library: {id: 'test_lib'}}]}
                 onTreeChange={onTreeChange}
                 onVisibilityToggle={onVisibilityToggle}

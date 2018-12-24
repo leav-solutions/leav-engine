@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import SortableTree, {NodeData, TreeIndex, TreeItem, TreeNode} from 'react-sortable-tree';
+import SortableTree, {ExtendedNodeData, NodeData, TreeItem} from 'react-sortable-tree';
 import {Button, Loader} from 'semantic-ui-react';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import Loading from 'src/components/shared/Loading';
+import {getTreeNodeKey} from 'src/utils/utils';
 import './rstOverride.css';
 
 interface IEditTreeStructureViewProps extends WithNamespaces {
@@ -12,28 +13,53 @@ interface IEditTreeStructureViewProps extends WithNamespaces {
     onVisibilityToggle: (data) => void;
     onMoveNode: (data) => void;
     onDeleteNode: (data: NodeData) => void;
-    getNodeKey?(data: TreeNode & TreeIndex): string | number;
+    readOnly: boolean;
+    onClickNode?: (nodeData: NodeData) => void;
+    selection?: [NodeData] | null;
 }
 
 function TreeStructureView({
     treeData,
     onTreeChange,
     onVisibilityToggle,
-    getNodeKey,
     onMoveNode,
     onDeleteNode,
+    onClickNode,
+    selection,
+    readOnly,
     t
 }: IEditTreeStructureViewProps) {
-    const _genNodeProps = rowInfo => {
+    const _genNodeProps = (rowInfo: ExtendedNodeData) => {
         const onDelete = () => onDeleteNode(rowInfo);
+        const onClick =
+            onClickNode &&
+            ((e: any) => {
+                if (e.target.className !== 'rst__expandButton' && e.target.className !== 'rst__collapseButton') {
+                    onClickNode(rowInfo);
+                }
+            });
+
+        const nodeClasses = ['tree-node'];
+
+        if (selection && selection.find(n => getTreeNodeKey(n) === getTreeNodeKey(rowInfo))) {
+            nodeClasses.push('selected');
+        }
 
         return {
             buttons: [
                 rowInfo.node.loading && <Loader key="loader_spinner" size="mini" active inline />,
-                <ConfirmedButton key="delete_btn" action={onDelete} confirmMessage={t('trees.confirm_delete_element')}>
-                    <Button icon="delete" style={{background: 'none', padding: 0}} />
-                </ConfirmedButton>
-            ]
+                !readOnly && (
+                    <ConfirmedButton
+                        key="delete_btn"
+                        action={onDelete}
+                        confirmMessage={t('trees.confirm_delete_element')}
+                    >
+                        <Button icon="delete" style={{background: 'none', padding: 0}} />
+                    </ConfirmedButton>
+                )
+            ],
+            className: nodeClasses.join(' '),
+            onClick
         };
     };
 
@@ -43,10 +69,11 @@ function TreeStructureView({
                 <Loading withDimmer />
             ) : (
                 <SortableTree
+                    canDrag={!readOnly}
                     treeData={treeData}
                     onChange={onTreeChange}
                     onVisibilityToggle={onVisibilityToggle}
-                    getNodeKey={getNodeKey}
+                    getNodeKey={getTreeNodeKey}
                     generateNodeProps={_genNodeProps}
                     onMoveNode={onMoveNode}
                 />

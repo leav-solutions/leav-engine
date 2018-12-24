@@ -1,5 +1,6 @@
 import {mount, render} from 'enzyme';
 import * as React from 'react';
+import {MockedProvider} from 'react-apollo/test-utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import {PermissionsRelation} from 'src/_gqlTypes/globalTypes';
 import {Mockify} from 'src/_types/Mockify';
@@ -19,7 +20,9 @@ describe('EditLibraryPermissions', () => {
 
         // TODO: replace render by shallow when bug with hooks fixed https://github.com/airbnb/enzyme/issues/1938
         const comp = render(
-            <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+            <MockedProvider>
+                <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+            </MockedProvider>
         );
 
         expect(comp.find('input[name=relation]')).toHaveLength(0);
@@ -40,7 +43,9 @@ describe('EditLibraryPermissions', () => {
         const onSubmit = jest.fn();
 
         const comp = render(
-            <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+            <MockedProvider>
+                <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+            </MockedProvider>
         );
 
         expect(comp.find('input[name=relation]')).toHaveLength(2);
@@ -58,7 +63,9 @@ describe('EditLibraryPermissions', () => {
         const onSubmit = jest.fn();
 
         const comp = mount(
-            <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+            <MockedProvider>
+                <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+            </MockedProvider>
         );
         comp.find('form').simulate('submit');
 

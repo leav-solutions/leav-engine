@@ -16,6 +16,7 @@ import RecordCard from 'src/components/shared/RecordCard';
 import {getTreeContentQuery} from 'src/queries/trees/treeContentQuery';
 import {deleteTreeElementQuery} from 'src/queries/trees/treeDeleteElementMutation';
 import {moveTreeElementQuery} from 'src/queries/trees/treeMoveElementMutation';
+import {getTreeNodeKey} from 'src/utils/utils';
 import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from 'src/_gqlTypes/DELETE_TREE_ELEMENT';
 import {TreeElementInput} from 'src/_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from 'src/_gqlTypes/MOVE_TREE_ELEMENT';
@@ -24,6 +25,9 @@ import TreeStructureView from '../TreeStructureView';
 
 interface ITreeStructureProps {
     treeId: string;
+    readOnly?: boolean;
+    onClickNode?: (nodeData: NodeData) => void;
+    selection?: [NodeData] | null;
 }
 
 interface ITreeStructureState {
@@ -42,8 +46,9 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
     }
 
     public render(): JSX.Element {
-        const {treeId} = this.props;
+        const {treeId, readOnly, onClickNode, selection} = this.props;
         const {treeData, loaded} = this.state;
+
         return (
             <ApolloConsumer>
                 {client => {
@@ -72,11 +77,13 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
                     return (
                         <TreeStructureView
                             treeData={treeData}
+                            readOnly={readOnly || false}
                             onTreeChange={this._onTreeChange}
                             onVisibilityToggle={onVisibilityToggle}
-                            getNodeKey={this._getNodeKey}
                             onMoveNode={onMoveNode}
                             onDeleteNode={onDeleteNode}
+                            onClickNode={onClickNode}
+                            selection={selection}
                         />
                     );
                 }}
@@ -124,7 +131,7 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
         // Show loading spinner on node
         const withPath = path && typeof path !== 'undefined';
         if (withPath) {
-            node = getNodeAtPath({treeData: this.state.treeData, path: path!, getNodeKey: this._getNodeKey});
+            node = getNodeAtPath({treeData: this.state.treeData, path: path!, getNodeKey: getTreeNodeKey});
             this.setState({
                 treeData: this._mergeNode(
                     {
@@ -153,7 +160,7 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
 
         // Update tree node with fetched data
         // We must get fresh node data from in case its state has changed during loading (expand/collapse...)
-        const nodeToUpdate = getNodeAtPath({treeData: this.state.treeData, path: path!, getNodeKey: this._getNodeKey});
+        const nodeToUpdate = getNodeAtPath({treeData: this.state.treeData, path: path!, getNodeKey: getTreeNodeKey});
         const newState: Partial<ITreeStructureState> = {
             loaded: true
         };
@@ -193,7 +200,7 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
             const parentNodeAtPath = getNodeAtPath({
                 treeData: this.state.treeData,
                 path: moveData.nextPath.slice(0, -1),
-                getNodeKey: this._getNodeKey
+                getNodeKey: getTreeNodeKey
             });
             position = parentNodeAtPath ? moveData.treeIndex - parentNodeAtPath.treeIndex - 1 : moveData.treeIndex;
         }
@@ -215,7 +222,7 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
             await Promise.all(
                 siblings.map((s, i) => {
                     const siblingElement = this._nodeToTreeElement(s);
-                    return this._getNodeKey({node: s}) !== this._getNodeKey(moveData) // Skip moved element
+                    return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
                         ? client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
                               mutation: moveTreeElementQuery,
                               variables: {
@@ -247,17 +254,13 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
         const updatedTree = removeNodeAtPath({
             treeData: this.state.treeData,
             path: node.path,
-            getNodeKey: this._getNodeKey
+            getNodeKey: getTreeNodeKey
         });
         this.setState({treeData: updatedTree});
     }
 
     private _mergeNode(nodeData: TreeItem, path: Array<string | number>) {
-        return changeNodeAtPath({treeData: this.state.treeData, path, newNode: nodeData, getNodeKey: this._getNodeKey});
-    }
-
-    private _getNodeKey(data) {
-        return data.node.library.id + '/' + data.node.id;
+        return changeNodeAtPath({treeData: this.state.treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey});
     }
 
     private _nodeToTreeElement(node: TreeItem): TreeElementInput {

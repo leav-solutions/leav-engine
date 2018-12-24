@@ -62,5 +62,16 @@
         "libraries": "Bibliothèques liées",
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'arbre {{treeLabel}}?",
         "confirm_delete_element": "Êtes-vous sûr de vouloir détacher cet élément?"
+    },
+    "permissions": {
+        "access": "Accéder",
+        "create": "Créer",
+        "edit": "Éditer",
+        "delete": "Supprimer",
+        "permission_col_name": "Permission",
+        "authorization": "Autorisation",
+        "deny": "Interdire",
+        "herit": "Hériter",
+        "grant": "Autoriser"
     }
 }

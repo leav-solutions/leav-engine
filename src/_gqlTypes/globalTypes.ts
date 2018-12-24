@@ -40,6 +40,33 @@ export enum AvailableLanguage {
     fr = 'fr'
 }
 
+export enum PermissionTypes {
+    admin = 'admin',
+    attribute = 'attribute',
+    record = 'record'
+}
+
+export enum PermissionsActions {
+    access = 'access',
+    access_attribute = 'access_attribute',
+    create = 'create',
+    create_attribute = 'create_attribute',
+    create_library = 'create_library',
+    create_tree = 'create_tree',
+    create_value = 'create_value',
+    delete = 'delete',
+    delete_attribute = 'delete_attribute',
+    delete_library = 'delete_library',
+    delete_tree = 'delete_tree',
+    delete_value = 'delete_value',
+    edit = 'edit',
+    edit_attribute = 'edit_attribute',
+    edit_library = 'edit_library',
+    edit_permission = 'edit_permission',
+    edit_tree = 'edit_tree',
+    edit_value = 'edit_value'
+}
+
 export enum PermissionsRelation {
     and = 'and',
     or = 'or'
@@ -89,6 +116,25 @@ export interface LibraryInput {
     recordIdentityConf?: RecordIdentityConfInput | null;
 }
 
+export interface PermissionActionInput {
+    name: PermissionsActions;
+    allowed?: boolean | null;
+}
+
+export interface PermissionInput {
+    type: PermissionTypes;
+    applyTo?: string | null;
+    usersGroup: string;
+    actions: PermissionActionInput[];
+    permissionTreeTarget?: PermissionsTreeTargetInput | null;
+}
+
+export interface PermissionsTreeTargetInput {
+    tree: string;
+    library: string;
+    id: string;
+}
+
 export interface RecordIdentityConfInput {
     label?: string | null;
     color?: string | null;
@@ -112,7 +158,7 @@ export interface TreeInput {
 }
 
 export interface TreePermissionsConfInput {
-    permissionTreeAttributes: (string | null)[];
+    permissionTreeAttributes: string[];
     relation: PermissionsRelation;
 }
 

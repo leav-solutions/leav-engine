@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Accordion, Form, Icon} from 'semantic-ui-react';
+import DefineTreePermissions from 'src/components/permissions/DefineTreePermissions';
 import {localizedLabel} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
-import {AttributeType, PermissionsRelation} from 'src/_gqlTypes/globalTypes';
+import {AttributeType, PermissionsRelation, PermissionTypes} from 'src/_gqlTypes/globalTypes';
 
 interface IEditLibraryPermissionsProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;
@@ -16,6 +17,7 @@ interface IEditLibraryPermissionsState {
 }
 
 function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibraryPermissionsProps): JSX.Element {
+    const defaultPermsConf = {permissionTreeAttributes: [], relation: PermissionsRelation.and};
     const [settingsExpanded, setSettingsExpanded] = React.useState(false);
     const [libPermsConf, setlibPermsConf] = React.useState<IEditLibraryPermissionsState>(
         library.permissionsConf
@@ -47,7 +49,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
 
     return (
         <React.Fragment>
-            <Accordion fluid styled>
+            <Accordion fluid styled style={{marginBottom: '1em'}}>
                 <Accordion.Title index={0} active={settingsExpanded} onClick={onClickToggle}>
                     <Icon name="dropdown" />
                     {t('libraries.permissions_settings_title')}
@@ -97,6 +99,11 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                     </Form>
                 </Accordion.Content>
             </Accordion>
+            <DefineTreePermissions
+                permissionType={PermissionTypes.record}
+                applyTo={library.id}
+                permissionsConf={library.permissionsConf || defaultPermsConf}
+            />
         </React.Fragment>
     );
 }

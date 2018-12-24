@@ -1,6 +1,14 @@
 import {i18n} from 'i18next';
 import {Mockify} from 'src/_types/Mockify';
-import {addWildcardToFilters, formatIDString, localizedLabel, getRandomColor, getInvertColor} from './utils';
+import {
+    addWildcardToFilters,
+    formatIDString,
+    localizedLabel,
+    getRandomColor,
+    getInvertColor,
+    getTreeNodeKey
+} from './utils';
+import {TreeNode} from 'react-sortable-tree';
 
 describe('utils', () => {
     describe('localizedLabel', () => {
@@ -98,6 +106,25 @@ describe('utils', () => {
             expect(getInvertColor('#E0E1E2')).toBe('#000000');
             expect(getInvertColor('#F6F6F6')).toBe('#000000');
             expect(getInvertColor('#B7BFC7')).toBe('#000000');
+        });
+    });
+
+    describe('getNodeKey', () => {
+        test('Return key', async () => {
+            const nodeData: TreeNode = {
+                node: {
+                    id: 12345,
+                    library: {
+                        id: 'test_lib'
+                    }
+                }
+            };
+
+            expect(getTreeNodeKey(nodeData)).toBe('test_lib/12345');
+        });
+
+        test('Return empty key if no node', async () => {
+            expect(getTreeNodeKey(null)).toBe('');
         });
     });
 });
