@@ -4,7 +4,7 @@ import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {AdminPermisisonsActions} from '../../_types/permissions';
+import {AdminPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
 import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -125,7 +125,7 @@ export default function(
             const newTree = !!trees.length;
 
             // Check permissions
-            const action = newTree ? AdminPermisisonsActions.EDIT_TREE : AdminPermisisonsActions.CREATE_TREE;
+            const action = newTree ? AdminPermissionsActions.EDIT_TREE : AdminPermissionsActions.CREATE_TREE;
             const canSaveTree = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveTree) {
@@ -152,7 +152,7 @@ export default function(
         },
         async deleteTree(id: string, infos: IQueryInfos): Promise<ITree> {
             // Check permissions
-            const action = AdminPermisisonsActions.DELETE_TREE;
+            const action = AdminPermissionsActions.DELETE_TREE;
             const canSaveTree = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveTree) {

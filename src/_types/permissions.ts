@@ -1,7 +1,15 @@
 export enum PermissionTypes {
     RECORD = 'record',
     ATTRIBUTE = 'attribute',
-    ADMIN = 'admin'
+    ADMIN = 'admin',
+    LIBRARY = 'library'
+}
+
+export enum LibraryPermissionsActions {
+    ACCESS = 'access',
+    CREATE = 'create',
+    EDIT = 'edit',
+    DELETE = 'delete'
 }
 
 export enum RecordPermissionsActions {
@@ -18,7 +26,7 @@ export enum AttributePermissionsActions {
     DELETE_VALUE = 'delete_value'
 }
 
-export enum AdminPermisisonsActions {
+export enum AdminPermissionsActions {
     CREATE_LIBRARY = 'create_library',
     EDIT_LIBRARY = 'edit_library',
     DELETE_LIBRARY = 'delete_library',
@@ -31,7 +39,11 @@ export enum AdminPermisisonsActions {
     EDIT_PERMISSION = 'edit_permission'
 }
 
-export type PermissionsActions = RecordPermissionsActions | AttributePermissionsActions | AdminPermisisonsActions;
+export type PermissionsActions =
+    | LibraryPermissionsActions
+    | RecordPermissionsActions
+    | AttributePermissionsActions
+    | AdminPermissionsActions;
 
 export enum PermissionsRelations {
     AND = 'and',

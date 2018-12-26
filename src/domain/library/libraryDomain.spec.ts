@@ -3,7 +3,7 @@ import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
-import {AdminPermisisonsActions, PermissionsRelations} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import libraryDomain from './libraryDomain';
@@ -149,7 +149,7 @@ describe('LibraryDomain', () => {
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
-                AdminPermisisonsActions.CREATE_LIBRARY
+                AdminPermissionsActions.CREATE_LIBRARY
             );
         });
 
@@ -181,7 +181,7 @@ describe('LibraryDomain', () => {
             expect(updatedLib).toMatchObject({id: 'test', system: false});
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.EDIT_LIBRARY);
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_LIBRARY);
         });
 
         test('Should update library attributes', async function() {
@@ -219,7 +219,7 @@ describe('LibraryDomain', () => {
             expect(updatedLib).toMatchObject({id: 'test', system: false});
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.EDIT_LIBRARY);
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_LIBRARY);
         });
 
         test('Should throw if unknown attributes', async function() {
@@ -395,7 +395,7 @@ describe('LibraryDomain', () => {
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
-                AdminPermisisonsActions.DELETE_LIBRARY
+                AdminPermissionsActions.DELETE_LIBRARY
             );
         });
 

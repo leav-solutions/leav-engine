@@ -6,7 +6,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
-import {AdminPermisisonsActions} from '../../_types/permissions';
+import {AdminPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 
@@ -69,7 +69,7 @@ export default function(
             const errors = {} as any;
 
             // Check permissions
-            const action = newLib ? AdminPermisisonsActions.EDIT_LIBRARY : AdminPermisisonsActions.CREATE_LIBRARY;
+            const action = newLib ? AdminPermissionsActions.EDIT_LIBRARY : AdminPermissionsActions.CREATE_LIBRARY;
             const canSaveLibrary = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveLibrary) {
@@ -144,7 +144,7 @@ export default function(
         },
         async deleteLibrary(id: string, infos: IQueryInfos): Promise<ILibrary> {
             // Check permissions
-            const action = AdminPermisisonsActions.DELETE_LIBRARY;
+            const action = AdminPermissionsActions.DELETE_LIBRARY;
             const canSaveLibrary = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveLibrary) {

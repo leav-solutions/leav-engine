@@ -6,7 +6,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {ITreeNode} from '_types/tree';
 import PermissionError from '../../errors/PermissionError';
 import {
-    AdminPermisisonsActions,
+    AdminPermissionsActions,
     IPermission,
     IPermissionsTreeTarget,
     PermissionsActions,
@@ -58,7 +58,7 @@ export interface IPermissionDomain {
         permissionTreeTarget?: IPermissionsTreeTarget
     ): Promise<boolean | null>;
     getDefaultPermission(): boolean;
-    getAdminPermission(action: AdminPermisisonsActions, userGroupId: number): Promise<boolean>;
+    getAdminPermission(action: AdminPermissionsActions, userGroupId: number): Promise<boolean>;
 }
 
 export default function(
@@ -71,7 +71,7 @@ export default function(
     const ret = {
         async savePermission(permData: IPermission, infos: IQueryInfos): Promise<IPermission> {
             // Does user have the permission to save permissions?
-            const action = AdminPermisisonsActions.EDIT_PERMISSION;
+            const action = AdminPermissionsActions.EDIT_PERMISSION;
             const canSavePermission = await ret.getAdminPermission(action, infos.userId);
 
             if (!canSavePermission) {
@@ -166,7 +166,7 @@ export default function(
 
             return userPerm;
         },
-        async getAdminPermission(action: AdminPermisisonsActions, userGroupId: number): Promise<boolean> {
+        async getAdminPermission(action: AdminPermissionsActions, userGroupId: number): Promise<boolean> {
             const userGroupAttr = await attributeRepo.getAttributes({id: 'user_groups'});
 
             // Get user group, retrieve ancestors

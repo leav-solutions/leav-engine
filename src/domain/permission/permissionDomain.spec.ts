@@ -2,7 +2,7 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {AdminPermisisonsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import permissionDomain from './permissionDomain';
 
 describe('PermissionDomain', () => {
@@ -260,7 +260,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getPermissionByUserGroups(
                 PermissionTypes.ADMIN,
-                AdminPermisisonsActions.CREATE_ATTRIBUTE,
+                AdminPermissionsActions.CREATE_ATTRIBUTE,
                 mockUserGroups,
                 null,
                 null
@@ -283,7 +283,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getPermissionByUserGroups(
                 PermissionTypes.ADMIN,
-                AdminPermisisonsActions.CREATE_ATTRIBUTE,
+                AdminPermissionsActions.CREATE_ATTRIBUTE,
                 mockUserGroups,
                 null,
                 null
@@ -300,7 +300,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getPermissionByUserGroups(
                 PermissionTypes.ADMIN,
-                AdminPermisisonsActions.CREATE_ATTRIBUTE,
+                AdminPermissionsActions.CREATE_ATTRIBUTE,
                 mockUserGroups,
                 null,
                 null
@@ -367,7 +367,7 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(true);
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
-            const perm = await permDomain.getAdminPermission(AdminPermisisonsActions.CREATE_ATTRIBUTE, 12345);
+            const perm = await permDomain.getAdminPermission(AdminPermissionsActions.CREATE_ATTRIBUTE, 12345);
 
             expect(perm).toBe(true);
         });
@@ -383,7 +383,7 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(null);
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
-            const perm = await permDomain.getAdminPermission(AdminPermisisonsActions.CREATE_ATTRIBUTE, 12345);
+            const perm = await permDomain.getAdminPermission(AdminPermissionsActions.CREATE_ATTRIBUTE, 12345);
 
             expect(perm).toBe(defaultPerm);
         });

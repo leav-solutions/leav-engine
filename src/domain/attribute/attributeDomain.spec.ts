@@ -3,7 +3,7 @@ import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
-import {AdminPermisisonsActions} from '../../_types/permissions';
+import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import attributeDomain from './attributeDomain';
@@ -104,7 +104,7 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.CREATE_ATTRIBUTE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.CREATE_ATTRIBUTE);
 
             expect(newAttr).toMatchObject({
                 actions_list: {saveValue: [{isSystem: true, name: 'validateFormat'}]},
@@ -146,7 +146,7 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.EDIT_ATTRIBUTE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_ATTRIBUTE);
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
         });
@@ -293,7 +293,7 @@ describe('attributeDomain', () => {
 
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.DELETE_ATTRIBUTE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.DELETE_ATTRIBUTE);
         });
 
         test('Should throw if unknown attribute', async function() {

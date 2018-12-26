@@ -2,7 +2,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {AdminPermisisonsActions} from '../../_types/permissions';
+import {AdminPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -53,7 +53,7 @@ describe('treeDomain', () => {
             expect(newTree).toMatchObject(mockTree);
 
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.CREATE_TREE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.CREATE_TREE);
         });
 
         test('Should update existing tree', async () => {
@@ -83,7 +83,7 @@ describe('treeDomain', () => {
             expect(newTree).toMatchObject(mockTree);
 
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.EDIT_TREE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_TREE);
         });
 
         test('Should throw if unknown libraries', async () => {
@@ -180,7 +180,7 @@ describe('treeDomain', () => {
             expect(treeRepo.deleteTree.mock.calls.length).toBe(1);
 
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermisisonsActions.DELETE_TREE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.DELETE_TREE);
         });
 
         test('Should throw if unknown tree', async function() {

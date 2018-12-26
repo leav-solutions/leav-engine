@@ -5,7 +5,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
 import {AttributeFormats, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {AdminPermisisonsActions} from '../../_types/permissions';
+import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 
@@ -202,8 +202,8 @@ export default function(
 
             // Check permissions
             const action = isExistingAttr
-                ? AdminPermisisonsActions.EDIT_ATTRIBUTE
-                : AdminPermisisonsActions.CREATE_ATTRIBUTE;
+                ? AdminPermissionsActions.EDIT_ATTRIBUTE
+                : AdminPermissionsActions.CREATE_ATTRIBUTE;
             const canSavePermission = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSavePermission) {
@@ -236,7 +236,7 @@ export default function(
         },
         async deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute> {
             // Check permissions
-            const action = AdminPermisisonsActions.DELETE_ATTRIBUTE;
+            const action = AdminPermissionsActions.DELETE_ATTRIBUTE;
             const canSavePermission = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSavePermission) {

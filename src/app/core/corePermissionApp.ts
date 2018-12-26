@@ -2,7 +2,7 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IUtils} from 'utils/utils';
 import {
-    AdminPermisisonsActions,
+    AdminPermissionsActions,
     AttributePermissionsActions,
     IPermission,
     PermissionsRelations,
@@ -48,7 +48,7 @@ export default function(
                     enum PermissionsActions {
                         ${Object.values(RecordPermissionsActions).join(' ')}
                         ${Object.values(AttributePermissionsActions).join(' ')}
-                        ${Object.values(AdminPermisisonsActions).join(' ')}
+                        ${Object.values(AdminPermissionsActions).join(' ')}
                     }
 
                     type PermissionAction {
