@@ -33,7 +33,7 @@ class Libraries extends React.Component<ILibrariesProps, ILibrariesState> {
         const lang = getSysTranslationQueryLanguage(i18next);
 
         return (
-            <div>
+            <React.Fragment>
                 <Grid>
                     <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                         <Header size="large">
@@ -67,7 +67,7 @@ class Libraries extends React.Component<ILibrariesProps, ILibrariesState> {
                         );
                     }}
                 </LibrariesQuery>
-            </div>
+            </React.Fragment>
         );
     }
 

@@ -36,13 +36,16 @@ function DefineTreePermissionsView({
     const wrapperStyle: React.CSSProperties = {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        height: '100%'
     };
 
     const childStyle: React.CSSProperties = {
         position: 'relative',
         paddingLeft: '1em',
-        width: '33%'
+        width: '33%',
+        flexDirection: 'column',
+        display: 'flex'
     };
 
     const withBorder: React.CSSProperties = {

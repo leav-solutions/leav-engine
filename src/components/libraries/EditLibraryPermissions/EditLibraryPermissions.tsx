@@ -48,7 +48,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
     };
 
     return (
-        <React.Fragment>
+        <div className="flex-col" style={{height: '100%'}}>
             <Accordion fluid styled style={{marginBottom: '1em'}}>
                 <Accordion.Title index={0} active={settingsExpanded} onClick={onClickToggle}>
                     <Icon name="dropdown" />
@@ -104,7 +104,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                 applyTo={library.id}
                 permissionsConf={library.permissionsConf || defaultPermsConf}
             />
-        </React.Fragment>
+        </div>
     );
 }
 

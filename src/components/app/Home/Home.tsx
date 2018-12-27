@@ -12,12 +12,17 @@ function Home(): JSX.Element {
         <Router>
             <div className="wrapper">
                 <div
-                    className="left"
-                    style={{position: 'fixed', width: '250px', height: '100%', backgroundColor: '#1b1c1d'}}
+                    className="left flex-col"
+                    style={{
+                        position: 'fixed',
+                        width: '250px',
+                        backgroundColor: '#1b1c1d',
+                        minHeight: '100vh'
+                    }}
                 >
                     <MainMenu />
                 </div>
-                <div className="content" style={{marginLeft: 250, padding: 20}}>
+                <div className="content flex-col" style={{marginLeft: 250, padding: 20, minHeight: '100vh'}}>
                     <Route path="/libraries" component={Libraries} exact />
                     <Route path="/libraries/edit/:id?" component={EditLibrary} exact />
                     <Route path="/attributes" component={Attributes} exact />

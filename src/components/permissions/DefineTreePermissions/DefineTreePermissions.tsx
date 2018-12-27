@@ -26,7 +26,7 @@ function DefineTreePermissions({
         key: a.id,
         menuItem: localizedLabel(a.label, i18n),
         render: () => (
-            <Tab.Pane key={a.id}>
+            <Tab.Pane key={a.id} className="grow flex-col">
                 {a.linked_tree ? (
                     <DefineTreePermissionsView
                         key={a.id}
@@ -42,7 +42,7 @@ function DefineTreePermissions({
         )
     }));
 
-    return <Tab panes={panes} />;
+    return <Tab panes={panes} className="grow flex-col" />;
 }
 
 export default withNamespaces()(DefineTreePermissions);

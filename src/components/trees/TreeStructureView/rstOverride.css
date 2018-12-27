@@ -2,9 +2,17 @@
 .rst__rowContents {
     padding: 0;
     background: transparent;
+    height: 100%;
+}
+.rst__rowLabel {
+    height: 100%;
+}
+.rst__rowTitle {
+    height: 100%;
 }
 .rst__row.tree-node {
     cursor: pointer;
+    height: 100%;
 }
 .rst__row.tree-node.selected {
     background: #DEDEDE;

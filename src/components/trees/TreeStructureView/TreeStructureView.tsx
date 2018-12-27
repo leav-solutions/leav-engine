@@ -64,7 +64,7 @@ function TreeStructureView({
     };
 
     return (
-        <div style={{height: 400}}>
+        <div className="grow">
             {!treeData.length ? (
                 <Loading withDimmer />
             ) : (

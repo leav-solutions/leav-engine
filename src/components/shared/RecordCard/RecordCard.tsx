@@ -6,9 +6,10 @@ import RecordPreview from '../RecordPreview';
 
 interface IRecordCardProps extends WithNamespaces {
     record: RecordIdentity_whoAmI;
+    style?: React.CSSProperties;
 }
 
-function RecordCard({record, i18n}: IRecordCardProps): JSX.Element {
+function RecordCard({record, style, i18n}: IRecordCardProps): JSX.Element {
     const vertAlign: React.CSSProperties = {
         display: 'flex',
         flexDirection: 'column',
@@ -20,7 +21,7 @@ function RecordCard({record, i18n}: IRecordCardProps): JSX.Element {
     };
 
     return (
-        <div className="ui fluid" style={{...border, display: 'flex', flexDirection: 'row'}}>
+        <div className="ui fluid" style={{...border, display: 'flex', flexDirection: 'row', ...style}}>
             <div className="ui" style={{...vertAlign, margin: '0 0.8em'}}>
                 <RecordPreview label={record.label || record.id} color={record.color} image={record.preview} />
             </div>

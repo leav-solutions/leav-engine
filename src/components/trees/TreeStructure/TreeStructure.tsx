@@ -94,7 +94,7 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
     private _convertTreeRecord = (records: TREE_CONTENT_treeContent[]): TreeItem[] => {
         return records.map(
             (r: TREE_CONTENT_treeContent): TreeItem => {
-                const recordCard = <RecordCard record={r.record.whoAmI} />;
+                const recordCard = <RecordCard record={r.record.whoAmI} style={{height: '100%'}} />;
 
                 return {
                     ...r.record,

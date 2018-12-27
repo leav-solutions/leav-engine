@@ -37,7 +37,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                 key: 'infos',
                 menuItem: t('libraries.informations'),
                 render: () => (
-                    <Tab.Pane key="infos">
+                    <Tab.Pane key="infos" className="grow">
                         <EditLibraryInfosForm library={library} onSubmit={onSubmit} />
                     </Tab.Pane>
                 )
@@ -51,7 +51,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                     menuItem: t('libraries.permissions'),
                     render: () => {
                         return (
-                            <Tab.Pane key="permissions">
+                            <Tab.Pane key="permissions" className="grow flex-col">
                                 <EditLibraryPermissions library={library} onSubmitSettings={onPermsSettingsSubmit} />
                             </Tab.Pane>
                         );
@@ -62,7 +62,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                     menuItem: t('libraries.attributes'),
                     render: () => {
                         return (
-                            <Tab.Pane key="attributes">
+                            <Tab.Pane key="attributes" className="grow">
                                 <EditLibraryAttributes library={library} />
                             </Tab.Pane>
                         );
@@ -72,10 +72,10 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
         }
 
         return (
-            <div>
-                <Header>{label}</Header>
-                <Tab menu={{secondary: true, pointing: true}} panes={panes} />
-            </div>
+            <React.Fragment>
+                <Header className="no-grow">{label}</Header>
+                <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col" />
+            </React.Fragment>
         );
     }
 }

@@ -4,12 +4,12 @@ exports[`DefineTreePermissionsView Snapshot test 1`] = `
 initialize {
   "0": Object {
     "attribs": Object {
-      "style": "display:flex;flex-direction:row;justify-content:flex-start",
+      "style": "display:flex;flex-direction:row;justify-content:flex-start;height:100%",
     },
     "children": Array [
       Object {
         "attribs": Object {
-          "style": "position:relative;padding-left:1em;width:33%;border-right:1px solid #999999",
+          "style": "position:relative;padding-left:1em;width:33%;flex-direction:column;display:flex;border-right:1px solid #999999",
         },
         "children": Array [
           Object {

@@ -19,7 +19,7 @@ function EditTreeForm({tree, onSubmit, t, i18n: i18next}: IEditTreeFormProps): J
             key: 'infos',
             menuItem: t('trees.informations'),
             render: () => (
-                <Tab.Pane key="infos">
+                <Tab.Pane key="infos" className="grow flex-col">
                     <EditTreeInfosForm tree={tree} onSubmit={onSubmit} />
                 </Tab.Pane>
             )
@@ -31,8 +31,10 @@ function EditTreeForm({tree, onSubmit, t, i18n: i18next}: IEditTreeFormProps): J
             key: 'structure',
             menuItem: t('trees.structure'),
             render: () => (
-                <Tab.Pane key="structure">
-                    <TreeStructure treeId={tree.id} />
+                <Tab.Pane key="structure" className="grow">
+                    <div className="flex-col" style={{height: '100%'}}>
+                        <TreeStructure treeId={tree.id} />
+                    </div>
                 </Tab.Pane>
             )
         });
@@ -40,8 +42,8 @@ function EditTreeForm({tree, onSubmit, t, i18n: i18next}: IEditTreeFormProps): J
 
     return (
         <React.Fragment>
-            <Header>{label}</Header>
-            <Tab menu={{secondary: true, pointing: true}} panes={panes} />
+            <Header className="no-grow">{label}</Header>
+            <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col" />
         </React.Fragment>
     );
 }
