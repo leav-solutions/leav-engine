@@ -9,7 +9,7 @@ initialize {
     "children": Array [
       Object {
         "attribs": Object {
-          "style": "position:relative;padding-left:1em;width:33%;flex-direction:column;display:flex;border-right:1px solid #999999",
+          "style": "position:relative;padding-left:1em;width:33%;flex-direction:column;display:flex;text-align:center;border-right:1px solid #999999",
         },
         "children": Array [
           Object {

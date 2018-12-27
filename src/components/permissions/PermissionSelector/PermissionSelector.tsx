@@ -35,14 +35,11 @@ function PermissionSelector({
     const WrapperType = as;
 
     const style: React.CSSProperties = {
-        width: '100%',
         border: 'none'
     };
 
     const wrapperStyle: React.CSSProperties = {
         background: bgColors[inputVal],
-        paddingLeft: '2em',
-        paddingRight: '2em',
         transition: 'background 0.3s linear'
     };
 
@@ -59,6 +56,7 @@ function PermissionSelector({
                 style={style}
                 onChange={_handleChange}
                 transparent
+                fluid
             />
         </WrapperType>
     );

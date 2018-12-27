@@ -45,7 +45,8 @@ function DefineTreePermissionsView({
         paddingLeft: '1em',
         width: '33%',
         flexDirection: 'column',
-        display: 'flex'
+        display: 'flex',
+        textAlign: 'center'
     };
 
     const withBorder: React.CSSProperties = {
