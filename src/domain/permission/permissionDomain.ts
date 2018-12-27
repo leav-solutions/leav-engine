@@ -9,6 +9,7 @@ import {
     AdminPermissionsActions,
     IPermission,
     IPermissionsTreeTarget,
+    LibraryPermissionsActions,
     PermissionsActions,
     PermissionTypes
 } from '../../_types/permissions';
@@ -58,7 +59,8 @@ export interface IPermissionDomain {
         permissionTreeTarget?: IPermissionsTreeTarget
     ): Promise<boolean | null>;
     getDefaultPermission(): boolean;
-    getAdminPermission(action: AdminPermissionsActions, userGroupId: number): Promise<boolean>;
+    getAdminPermission(action: AdminPermissionsActions, userId: number): Promise<boolean>;
+    getLibraryPermission(action: LibraryPermissionsActions, libraryId: string, userId: number): Promise<boolean>;
 }
 
 export default function(
@@ -166,11 +168,11 @@ export default function(
 
             return userPerm;
         },
-        async getAdminPermission(action: AdminPermissionsActions, userGroupId: number): Promise<boolean> {
+        async getAdminPermission(action: AdminPermissionsActions, userId: number): Promise<boolean> {
             const userGroupAttr = await attributeRepo.getAttributes({id: 'user_groups'});
 
             // Get user group, retrieve ancestors
-            const userGroups = await valueRepo.getValues('users', userGroupId, userGroupAttr[0]);
+            const userGroups = await valueRepo.getValues('users', userId, userGroupAttr[0]);
             const userGroupsPaths = await Promise.all(
                 userGroups.map(userGroupVal =>
                     treeRepo.getElementAncestors('users_groups', {
@@ -181,6 +183,33 @@ export default function(
             );
 
             const perm = await ret.getPermissionByUserGroups(PermissionTypes.ADMIN, action, userGroupsPaths);
+
+            return perm !== null ? perm : ret.getDefaultPermission();
+        },
+        async getLibraryPermission(
+            action: LibraryPermissionsActions,
+            libraryId: string,
+            userId: number
+        ): Promise<boolean> {
+            const userGroupAttr = await attributeRepo.getAttributes({id: 'user_groups'});
+
+            // Get user group, retrieve ancestors
+            const userGroups = await valueRepo.getValues('users', userId, userGroupAttr[0]);
+            const userGroupsPaths = await Promise.all(
+                userGroups.map(userGroupVal =>
+                    treeRepo.getElementAncestors('users_groups', {
+                        id: userGroupVal.value.record.id,
+                        library: 'users_groups'
+                    })
+                )
+            );
+
+            const perm = await ret.getPermissionByUserGroups(
+                PermissionTypes.LIBRARY,
+                action,
+                userGroupsPaths,
+                libraryId
+            );
 
             return perm !== null ? perm : ret.getDefaultPermission();
         }

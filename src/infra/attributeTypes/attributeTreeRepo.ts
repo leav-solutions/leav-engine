@@ -1,11 +1,11 @@
-import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IValue} from '../../_types/value';
-import {IAttribute} from '../../_types/attribute';
 import {aql} from 'arangojs';
-import {IDbUtils} from '../db/dbUtils';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IAttribute} from '../../_types/attribute';
+import {IValue} from '../../_types/value';
+import {IDbService} from '../db/dbService';
+import {IDbUtils} from '../db/dbUtils';
 import {ITreeRepo} from '../tree/treeRepo';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -80,13 +80,15 @@ export default function(
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const treeElements = await dbService.execute(aql`
-                FOR linkedRecord, edge
-                    IN 1 OUTBOUND ${library + '/' + recordId}
-                    ${edgeCollec}
-                    FILTER edge.attribute == ${attribute.id}
-                    RETURN {linkedRecord, edge}
-            `);
+            const query = aql`
+            FOR linkedRecord, edge
+            IN 1 OUTBOUND ${library + '/' + recordId}
+            ${edgeCollec}
+            FILTER edge.attribute == ${attribute.id}
+            RETURN {linkedRecord, edge}
+            `;
+
+            const treeElements = await dbService.execute(query);
 
             return treeElements.map(r => {
                 r.linkedRecord.library = r.linkedRecord._id.split('/')[0];

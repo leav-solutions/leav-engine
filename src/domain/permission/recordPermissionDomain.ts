@@ -1,5 +1,5 @@
 import {IValueRepo} from 'infra/value/valueRepo';
-import {RecordPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from './permissionDomain';
@@ -25,7 +25,16 @@ export default function(
         ): Promise<boolean> {
             const lib = await libraryDomain.getLibraryProperties(recordLibrary);
             if (typeof lib.permissionsConf === 'undefined') {
-                return permissionDomain.getDefaultPermission();
+                // Check if action is present in library permissions
+                const isLibAction = Object.values(LibraryPermissionsActions).indexOf(action) !== -1;
+
+                return isLibAction
+                    ? permissionDomain.getLibraryPermission(
+                          (action as unknown) as LibraryPermissionsActions,
+                          recordLibrary,
+                          userId
+                      )
+                    : permissionDomain.getDefaultPermission();
             }
 
             const treesAttrValues = await Promise.all(
@@ -41,14 +50,15 @@ export default function(
                 return allVal;
             }, {});
 
-            const perm = await treePermissionDomain.getTreePermission(
-                PermissionTypes.RECORD,
+            const perm = await treePermissionDomain.getTreePermission({
+                type: PermissionTypes.RECORD,
                 action,
                 userId,
-                recordLibrary,
-                valuesByAttr,
-                lib.permissionsConf
-            );
+                applyTo: recordLibrary,
+                treeValues: valuesByAttr,
+                permissionsConf: lib.permissionsConf,
+                getDefaultPermission: permissionDomain.getLibraryPermission
+            });
 
             return perm;
         }

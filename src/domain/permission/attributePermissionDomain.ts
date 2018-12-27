@@ -1,8 +1,8 @@
+import {IValueRepo} from 'infra/value/valueRepo';
 import {AttributePermissionsActions, PermissionTypes} from '../../_types/permissions';
-import {ITreePermissionDomain} from './treePermissionDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from './permissionDomain';
-import {IValueRepo} from 'infra/value/valueRepo';
+import {ITreePermissionDomain} from './treePermissionDomain';
 
 export interface IAttributePermissionDomain {
     getAttributePermission(
@@ -46,14 +46,15 @@ export default function(
                 return allVal;
             }, {});
 
-            const perm = treePermissionDomain.getTreePermission(
-                PermissionTypes.ATTRIBUTE,
+            const perm = treePermissionDomain.getTreePermission({
+                type: PermissionTypes.ATTRIBUTE,
                 action,
-                userGroupId,
-                attributeId,
-                valuesByAttr,
-                attrProps.permissionsConf
-            );
+                userId: userGroupId,
+                applyTo: attributeId,
+                treeValues: valuesByAttr,
+                permissionsConf: attrProps.permissionsConf,
+                getDefaultPermission: permissionDomain.getDefaultPermission
+            });
 
             return perm;
         }

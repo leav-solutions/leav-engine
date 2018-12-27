@@ -2,7 +2,12 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {AdminPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import {
+    AdminPermissionsActions,
+    LibraryPermissionsActions,
+    PermissionTypes,
+    RecordPermissionsActions
+} from '../../_types/permissions';
 import permissionDomain from './permissionDomain';
 
 describe('PermissionDomain', () => {
@@ -384,6 +389,87 @@ describe('PermissionDomain', () => {
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getAdminPermission(AdminPermissionsActions.CREATE_ATTRIBUTE, 12345);
+
+            expect(perm).toBe(defaultPerm);
+        });
+    });
+
+    describe('getLibraryPermission', () => {
+        const defaultPerm = false;
+        const mockAttrRepo: Mockify<IAttributeRepo> = {
+            getAttributes: global.__mockPromise([
+                {
+                    id: 'user_groups',
+                    linked_tree: 'users_groups'
+                }
+            ])
+        };
+
+        const mockValRepo: Mockify<IValueRepo> = {
+            getValues: global.__mockPromise([
+                {
+                    id_value: 54321,
+                    value: {
+                        record: {
+                            id: 1,
+                            library: 'users_groups'
+                        }
+                    }
+                }
+            ])
+        };
+
+        const mockTreeRepo: Mockify<ITreeRepo> = {
+            getElementAncestors: global.__mockPromise([
+                {
+                    record: {
+                        id: 1,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 2,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 3,
+                        library: 'users_groups'
+                    }
+                }
+            ])
+        };
+
+        test('Return library permission', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(
+                mockPermRepo as IPermissionRepo,
+                mockAttrRepo as IAttributeRepo,
+                mockValRepo as IValueRepo,
+                mockTreeRepo as ITreeRepo
+            );
+            permDomain.getPermissionByUserGroups = global.__mockPromise(true);
+            permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
+
+            const perm = await permDomain.getLibraryPermission(LibraryPermissionsActions.ACCESS, 'test_lib', 12345);
+
+            expect(perm).toBe(true);
+        });
+
+        test('Return default permission if nothing defined', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(
+                mockPermRepo as IPermissionRepo,
+                mockAttrRepo as IAttributeRepo,
+                mockValRepo as IValueRepo,
+                mockTreeRepo as ITreeRepo
+            );
+            permDomain.getPermissionByUserGroups = global.__mockPromise(null);
+            permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
+
+            const perm = await permDomain.getLibraryPermission(LibraryPermissionsActions.ACCESS, 'test_lib', 12345);
 
             expect(perm).toBe(defaultPerm);
         });

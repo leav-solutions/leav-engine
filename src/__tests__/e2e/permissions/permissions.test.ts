@@ -345,4 +345,53 @@ describe('Permissions', () => {
             expect(resGetAdminPerm.data.errors).toBeUndefined();
         });
     });
+
+    describe('LibraryPermissions', () => {
+        test('Save and get library permissions', async () => {
+            // Save admin permissions
+            const resSaveLibPerm = await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: library,
+                        applyTo: "${testLibId}",
+                        usersGroup: "${allUsersTreeElemId}",
+                        actions: [
+                            {name: access, allowed: true},
+                            {name: edit, allowed: true},
+                            {name: create, allowed: true},
+                            {name: delete, allowed: true},
+                        ]
+                    }
+                ) {
+                    type
+                    usersGroup
+                    actions {
+                        name
+                        allowed
+                    }
+                }
+            }`);
+
+            expect(resSaveLibPerm.status).toBe(200);
+            expect(resSaveLibPerm.data.data.savePermission.type).toBeDefined();
+            expect(resSaveLibPerm.data.errors).toBeUndefined();
+
+            // Get admin permissions
+            const resGetAdminPerm = await makeGraphQlCall(`{
+                permissions(
+                    type: library,
+                    applyTo: "${testLibId}",
+                    usersGroup: "${allUsersTreeElemId}",
+                    actions: [access]
+                ) {
+                    name
+                    allowed
+                }
+            }`);
+
+            expect(resGetAdminPerm.status).toBe(200);
+            expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'access', allowed: true}]);
+            expect(resGetAdminPerm.data.errors).toBeUndefined();
+        });
+    });
 });

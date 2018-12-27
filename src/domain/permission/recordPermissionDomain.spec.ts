@@ -1,4 +1,3 @@
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -16,7 +15,8 @@ describe('recordPermissionDomain', () => {
         };
 
         const mockPermDomain: Mockify<IPermissionDomain> = {
-            getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
+            getDefaultPermission: jest.fn().mockReturnValue(defaultPerm),
+            getLibraryPermission: jest.fn().mockReturnValue(defaultPerm)
         };
 
         const mockLibSimplePerms = {
@@ -117,6 +117,7 @@ describe('recordPermissionDomain', () => {
                 123456
             );
 
+            expect(mockPermDomain.getLibraryPermission).toBeCalled();
             expect(perm).toBe(defaultPerm);
         });
     });

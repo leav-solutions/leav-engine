@@ -1,14 +1,14 @@
+import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
 import {
-    RecordPermissionsActions,
+    IPermissionsTreeTarget,
     PermissionsRelations,
     PermissionTypes,
-    IPermissionsTreeTarget
+    RecordPermissionsActions
 } from '../../_types/permissions';
-import treePermissionDomain from './treePermissionDomain';
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IValueRepo} from 'infra/value/valueRepo';
 import {IPermissionDomain} from './permissionDomain';
+import treePermissionDomain from './treePermissionDomain';
 
 describe('TreePermissionDomain', () => {
     describe('getTreePermission', () => {
@@ -246,6 +246,25 @@ describe('TreePermissionDomain', () => {
             permissionTreeAttributes: ['category']
         };
 
+        const params = {
+            type: PermissionTypes.ATTRIBUTE,
+            action: RecordPermissionsActions.ACCESS,
+            userId: 987654,
+            applyTo: 'test_lib',
+            treeValues: {
+                category: [
+                    {
+                        record: {
+                            id: 321654,
+                            library: 'category'
+                        }
+                    }
+                ]
+            },
+            permissionsConf: mockPermConf,
+            getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
+        };
+
         test('1 tree / 1 user group with heritage', async () => {
             const treePermDomain = treePermissionDomain(
                 mockPermDomain as IPermissionDomain,
@@ -254,23 +273,7 @@ describe('TreePermissionDomain', () => {
                 mockValueRepo as IValueRepo
             );
 
-            const perm = await treePermDomain.getTreePermission(
-                PermissionTypes.ATTRIBUTE,
-                RecordPermissionsActions.ACCESS,
-                987654,
-                'test_lib',
-                {
-                    category: [
-                        {
-                            record: {
-                                id: 321654,
-                                library: 'category'
-                            }
-                        }
-                    ]
-                },
-                mockPermConf
-            );
+            const perm = await treePermDomain.getTreePermission(params);
 
             expect(mockTreeRepo.getElementAncestors.mock.calls.length).toBe(2);
             expect(perm).toBe(true);
@@ -291,24 +294,9 @@ describe('TreePermissionDomain', () => {
                 mockValueRepo as IValueRepo
             );
 
-            const perm = await treePermDomain.getTreePermission(
-                PermissionTypes.ATTRIBUTE,
-                RecordPermissionsActions.ACCESS,
-                987654,
-                'test_lib',
-                {
-                    category: [
-                        {
-                            record: {
-                                id: 321654,
-                                library: 'category'
-                            }
-                        }
-                    ]
-                },
-                mockPermConf
-            );
+            const perm = await treePermDomain.getTreePermission(params);
 
+            expect(params.getDefaultPermission).toBeCalled();
             expect(perm).toBe(defaultPerm);
         });
 
@@ -342,16 +330,12 @@ describe('TreePermissionDomain', () => {
                 mockValueNoCatRepo as IValueRepo
             );
 
-            const perm = await treePermDomain.getTreePermission(
-                PermissionTypes.ATTRIBUTE,
-                RecordPermissionsActions.ACCESS,
-                987654,
-                'test_lib',
-                {
+            const perm = await treePermDomain.getTreePermission({
+                ...params,
+                treeValues: {
                     category: []
-                },
-                mockPermConf
-            );
+                }
+            });
 
             expect(perm).toBe(defaultPerm);
         });
@@ -364,12 +348,9 @@ describe('TreePermissionDomain', () => {
                 mockValueMultipleRepo as IValueRepo
             );
 
-            const perm = await treePermDomain.getTreePermission(
-                PermissionTypes.ATTRIBUTE,
-                RecordPermissionsActions.ACCESS,
-                987654,
-                'test_lib',
-                {
+            const perm = await treePermDomain.getTreePermission({
+                ...params,
+                treeValues: {
                     category: [
                         {
                             record: {
@@ -387,11 +368,11 @@ describe('TreePermissionDomain', () => {
                         }
                     ]
                 },
-                {
+                permissionsConf: {
                     relation: PermissionsRelations.AND,
                     permissionTreeAttributes: ['category', 'status']
                 }
-            );
+            });
 
             expect(mockTreeMultipleRepo.getElementAncestors.mock.calls.length).toBe(3);
             expect(perm).toBe(false);
@@ -405,12 +386,9 @@ describe('TreePermissionDomain', () => {
                 mockValueMultipleRepo as IValueRepo
             );
 
-            const perm = await treePermDomain.getTreePermission(
-                PermissionTypes.ATTRIBUTE,
-                RecordPermissionsActions.ACCESS,
-                987654,
-                'test_lib',
-                {
+            const perm = await treePermDomain.getTreePermission({
+                ...params,
+                treeValues: {
                     category: [
                         {
                             record: {
@@ -428,11 +406,11 @@ describe('TreePermissionDomain', () => {
                         }
                     ]
                 },
-                {
+                permissionsConf: {
                     relation: PermissionsRelations.OR,
                     permissionTreeAttributes: ['category', 'status']
                 }
-            );
+            });
 
             expect(perm).toBe(true);
         });

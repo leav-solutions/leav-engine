@@ -11,14 +11,17 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from './permissionDomain';
 
 export interface ITreePermissionDomain {
-    getTreePermission(
-        type: PermissionTypes,
-        action: PermissionsActions,
-        userGroupId: number,
-        applyTo: string,
-        treeValues: {[treeAttributeId: string]: ITreeNode[]},
-        permissionsConf: ITreePermissionsConf
-    ): Promise<boolean>;
+    getTreePermission(params: IGetTreePermissionParams): Promise<boolean>;
+}
+
+export interface IGetTreePermissionParams {
+    type: PermissionTypes;
+    action: PermissionsActions;
+    userId: number;
+    applyTo: string;
+    treeValues: {[treeAttributeId: string]: ITreeNode[]};
+    permissionsConf: ITreePermissionsConf;
+    getDefaultPermission: (action?: any, applyTo?: string, userId?: number) => Promise<boolean> | boolean;
 }
 
 export default function(
@@ -65,26 +68,21 @@ export default function(
         }
 
         // No permission found, return default permission
-        return permissionDomain.getDefaultPermission();
+        return null;
     }
 
     return {
-        async getTreePermission(
-            type: PermissionTypes,
-            action: PermissionsActions,
-            userGroupId: number,
-            applyTo: string,
-            treeValues: {[treeAttributeId: string]: ITreeNode[]},
-            permissionsConf: ITreePermissionsConf
-        ): Promise<boolean> {
+        async getTreePermission(params: IGetTreePermissionParams): Promise<boolean> {
+            const {type, action, userId, applyTo, treeValues, permissionsConf, getDefaultPermission} = params;
+
             if (!permissionsConf.permissionTreeAttributes.length) {
-                return permissionDomain.getDefaultPermission();
+                return getDefaultPermission();
             }
 
             const userGroupAttr = await attributeDomain.getAttributeProperties('user_groups');
 
             // Get user group, retrieve ancestors
-            const userGroups = await valueRepo.getValues('users', userGroupId, userGroupAttr);
+            const userGroups = await valueRepo.getValues('users', userId, userGroupAttr);
             const userGroupsPaths = await Promise.all(
                 userGroups.map(userGroupVal =>
                     treeRepo.getElementAncestors('users_groups', {
@@ -97,7 +95,7 @@ export default function(
             const treePerms = await Promise.all(
                 permissionsConf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties(permTreeAttr);
-                    return _getPermTreePermission(
+                    const treePerm = await _getPermTreePermission(
                         type,
                         action,
                         applyTo,
@@ -105,6 +103,12 @@ export default function(
                         permTreeAttrProps.linked_tree,
                         treeValues[permTreeAttr]
                     );
+
+                    if (treePerm !== null) {
+                        return treePerm;
+                    }
+
+                    return getDefaultPermission(action, applyTo, userId);
                 })
             );
 
