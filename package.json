@@ -1,84 +1,88 @@
 {
-    "name": "leav_admin_app",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "apollo-boost": "0.1.16",
-        "graphql": "0.13.2",
-        "i18next": "12.0.0",
-        "i18next-browser-languagedetector": "2.2.3",
-        "i18next-xhr-backend": "1.5.1",
-        "node-fetch": "2.3.0",
-        "react": "16.7.0-alpha.2",
-        "react-apollo": "2.2.4",
-        "react-dom": "16.7.0-alpha.2",
-        "react-i18next": "8.3.5",
-        "react-router": "4.3.1",
-        "react-router-dom": "4.3.1",
-        "react-scripts-ts": "3.1.0",
-        "react-sortable-tree": "2.3.0",
-        "remove-accents": "0.4.2",
-        "semantic-ui-css": "2.4.1",
-        "semantic-ui-react": "0.83.0",
-        "sleep-promise": "8.0.1"
-    },
-    "scripts": {
-        "start": "react-scripts-ts start",
-        "build": "react-scripts-ts build",
-        "test": "react-scripts-ts test --env=jsdom",
-        "eject": "react-scripts-ts eject",
-        "precommit": "lint-staged && CI=true npm test",
-        "gen_types": "apollo codegen:generate --target=typescript --outputFlat src/_gqlTypes && prettier --write src/_gqlTypes/*",
-        "create_comp": "scripts/createComponent.js"
-    },
-    "devDependencies": {
-        "@types/enzyme": "3.1.14",
-        "@types/history": "4.7.2",
-        "@types/i18next": "11.9.3",
-        "@types/i18next-browser-languagedetector": "2.0.1",
-        "@types/i18next-xhr-backend": "1.4.1",
-        "@types/jest": "^23.3.1",
-        "@types/node": "^10.7.1",
-        "@types/node-fetch": "2.1.4",
-        "@types/react": "^16.4.11",
-        "@types/react-dom": "^16.0.7",
-        "@types/react-router-dom": "4.3.1",
-        "@types/react-sortable-tree": "0.3.2",
-        "@types/react-test-renderer": "16.0.3",
-        "apollo": "1.9.2",
-        "apollo-cli": "0.4.0",
-        "commander": "2.19.0",
-        "enzyme": "3.8.0",
-        "enzyme-adapter-react-16": "1.7.1",
-        "husky": "^1.1.1",
-        "lint-staged": "^7.2.2",
-        "prettier": "^1.14.2",
-        "react-test-renderer": "16.5.2",
-        "tslint-eslint-rules": "^5.4.0",
-        "typescript": "^3.0.1"
-    },
-    "lint-staged": {
-        "*.{ts,tsx}": [
-            "prettier --write",
-            "tslint --fix",
-            "git add"
-        ]
-    },
-    "apollo": {
-        "schemas": {
-            "default": {
-                "endpoint": {
-                    "url": "http://localhost:4001/graphql",
-                    "headers": {
-                        "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMjQ3NjUzNTEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1MjgxOTE4MDgsImV4cCI6NDY1MjM5NDIwOH0.XH6Xu108WdLMpQdOa-KnaZU541QP4jWdCkF1O0yyefg"
-                    }
-                }
-            }
+  "name": "leav_admin_app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "apollo-boost": "0.1.16",
+    "graphql": "0.13.2",
+    "i18next": "12.0.0",
+    "i18next-browser-languagedetector": "2.2.3",
+    "i18next-xhr-backend": "1.5.1",
+    "node-fetch": "2.3.0",
+    "react": "16.7.0-alpha.2",
+    "react-apollo": "2.2.4",
+    "react-dom": "16.7.0-alpha.2",
+    "react-i18next": "8.3.5",
+    "react-router": "4.3.1",
+    "react-router-dom": "4.3.1",
+    "react-scripts-ts": "3.1.0",
+    "react-sortable-tree": "2.3.0",
+    "remove-accents": "0.4.2",
+    "semantic-ui-css": "2.4.1",
+    "semantic-ui-react": "0.83.0",
+    "sleep-promise": "8.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject",
+    "gen_types": "apollo codegen:generate --target=typescript --outputFlat src/_gqlTypes && prettier --write src/_gqlTypes/*",
+    "create_comp": "scripts/createComponent.js"
+  },
+  "devDependencies": {
+    "@types/enzyme": "3.1.14",
+    "@types/history": "4.7.2",
+    "@types/i18next": "11.9.3",
+    "@types/i18next-browser-languagedetector": "2.0.1",
+    "@types/i18next-xhr-backend": "1.4.1",
+    "@types/jest": "^23.3.1",
+    "@types/node": "^10.7.1",
+    "@types/node-fetch": "2.1.4",
+    "@types/react": "^16.4.11",
+    "@types/react-dom": "^16.0.7",
+    "@types/react-router-dom": "4.3.1",
+    "@types/react-sortable-tree": "0.3.2",
+    "@types/react-test-renderer": "16.0.3",
+    "apollo": "1.9.2",
+    "apollo-cli": "0.4.0",
+    "commander": "2.19.0",
+    "enzyme": "3.8.0",
+    "enzyme-adapter-react-16": "1.7.1",
+    "husky": "^1.1.1",
+    "lint-staged": "^7.2.2",
+    "prettier": "^1.14.2",
+    "react-test-renderer": "16.5.2",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.0.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "tslint --fix",
+      "git add"
+    ]
+  },
+  "apollo": {
+    "schemas": {
+      "default": {
+        "endpoint": {
+          "url": "http://localhost:4001/graphql",
+          "headers": {
+            "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMjQ3NjUzNTEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1MjgxOTE4MDgsImV4cCI6NDY1MjM5NDIwOH0.XH6Xu108WdLMpQdOa-KnaZU541QP4jWdCkF1O0yyefg"
+          }
         }
-    },
-    "jest": {
-        "moduleNameMapper": {
-            "src/(.*)": "<rootDir>/src/$1"
-        }
+      }
     }
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "src/(.*)": "<rootDir>/src/$1"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && CI=true npm test"
+    }
+  }
 }
