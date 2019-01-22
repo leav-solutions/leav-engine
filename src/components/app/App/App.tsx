@@ -36,7 +36,7 @@ class App extends React.Component<any, IAppState> {
 
         return (
             <ApolloProvider client={gqlClient}>
-                <div className="App">
+                <div className="App height100">
                     <Home />
                 </div>
             </ApolloProvider>

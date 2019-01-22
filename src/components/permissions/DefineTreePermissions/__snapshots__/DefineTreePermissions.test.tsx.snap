@@ -4,7 +4,7 @@ exports[`DefineTreePermissions Snapshot test 1`] = `
 initialize {
   "0": Object {
     "attribs": Object {
-      "class": "grow flex-col",
+      "class": "grow flex-col height100",
     },
     "children": Array [
       Object {
@@ -43,7 +43,7 @@ initialize {
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Object {
           "attribs": Object {
-            "class": "ui bottom attached segment active tab grow flex-col",
+            "class": "ui bottom attached segment active tab grow flex-col height100",
           },
           "children": Array [
             Object {
@@ -136,7 +136,7 @@ initialize {
       },
       Object {
         "attribs": Object {
-          "class": "ui bottom attached segment active tab grow flex-col",
+          "class": "ui bottom attached segment active tab grow flex-col height100",
         },
         "children": Array [
           Object {

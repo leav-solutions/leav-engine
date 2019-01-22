@@ -48,7 +48,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
     };
 
     return (
-        <div className="flex-col" style={{height: '100%'}}>
+        <div className="flex-col height100">
             <Accordion fluid styled style={{marginBottom: '1em'}}>
                 <Accordion.Title index={0} active={settingsExpanded} onClick={onClickToggle}>
                     <Icon name="dropdown" />

@@ -51,7 +51,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
                     menuItem: t('libraries.permissions'),
                     render: () => {
                         return (
-                            <Tab.Pane key="permissions" className="grow flex-col">
+                            <Tab.Pane key="permissions" className="grow flex-col height100">
                                 <EditLibraryPermissions library={library} onSubmitSettings={onPermsSettingsSubmit} />
                             </Tab.Pane>
                         );
@@ -74,7 +74,7 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
         return (
             <React.Fragment>
                 <Header className="no-grow">{label}</Header>
-                <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col" />
+                <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col height100" />
             </React.Fragment>
         );
     }

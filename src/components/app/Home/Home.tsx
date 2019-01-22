@@ -10,7 +10,7 @@ import MainMenu from '../MainMenu';
 function Home(): JSX.Element {
     return (
         <Router>
-            <div className="wrapper">
+            <div className="wrapper height100">
                 <div
                     className="left flex-col"
                     style={{
@@ -22,7 +22,7 @@ function Home(): JSX.Element {
                 >
                     <MainMenu />
                 </div>
-                <div className="content flex-col" style={{marginLeft: 250, padding: 20, minHeight: '100vh'}}>
+                <div className="content flex-col height100" style={{marginLeft: 250, padding: 20, minHeight: '100vh'}}>
                     <Route path="/libraries" component={Libraries} exact />
                     <Route path="/libraries/edit/:id?" component={EditLibrary} exact />
                     <Route path="/attributes" component={Attributes} exact />
