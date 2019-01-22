@@ -8,11 +8,10 @@ import {SAVE_PERMISSION_savePermission_actions} from 'src/_gqlTypes/SAVE_PERMISS
 import EditPermissionsView from '../EditPermissionsView';
 
 interface IEditPermissionsProps extends WithNamespaces {
-    onSave: (permData) => void;
     permParams: GET_PERMISSIONSVariables;
 }
 
-function EditPermissions({permParams, onSave, t}: IEditPermissionsProps): JSX.Element {
+function EditPermissions({permParams, t}: IEditPermissionsProps): JSX.Element {
     return (
         <PermissionsQuery query={getPermissionsQuery} variables={permParams}>
             {({loading, error, data}) => {

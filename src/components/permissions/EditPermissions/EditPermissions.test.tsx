@@ -7,7 +7,6 @@ import EditPermissions from './EditPermissions';
 
 describe('EditPermissions', () => {
     test('Snapshot test', async () => {
-        const onSave = jest.fn();
         const permParams: GET_PERMISSIONSVariables = {
             type: PermissionTypes.admin,
             actions: [PermissionsActions.create_library, PermissionsActions.edit_library],
@@ -16,7 +15,7 @@ describe('EditPermissions', () => {
 
         const comp = render(
             <MockedProvider>
-                <EditPermissions onSave={onSave} permParams={permParams} />
+                <EditPermissions permParams={permParams} />
             </MockedProvider>
         );
 

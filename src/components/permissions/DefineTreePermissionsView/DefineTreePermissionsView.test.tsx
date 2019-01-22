@@ -6,7 +6,6 @@ import DefineTreePermissionsView from './DefineTreePermissionsView';
 
 describe('DefineTreePermissionsView', () => {
     test('Snapshot test', async () => {
-        const onSave = jest.fn();
         const mockTree = {
             id: 'test_tree_attr',
             linked_tree: 'test_tree',
@@ -17,7 +16,6 @@ describe('DefineTreePermissionsView', () => {
             <MockedProvider>
                 <DefineTreePermissionsView
                     treeAttribute={mockTree}
-                    onSavePermissions={onSave}
                     permissionType={PermissionTypes.record}
                     applyTo="test_lib"
                 />

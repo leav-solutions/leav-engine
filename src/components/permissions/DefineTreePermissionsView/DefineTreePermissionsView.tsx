@@ -8,7 +8,6 @@ import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
 
 interface IDefineTreePermissionsViewProps extends WithNamespaces {
-    onSavePermissions: (permData: any) => void;
     treeAttribute: GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes;
     permissionType: PermissionTypes;
     applyTo: string;
@@ -16,7 +15,6 @@ interface IDefineTreePermissionsViewProps extends WithNamespaces {
 
 function DefineTreePermissionsView({
     treeAttribute: tree,
-    onSavePermissions,
     permissionType,
     applyTo
 }: IDefineTreePermissionsViewProps): JSX.Element {
@@ -74,7 +72,6 @@ function DefineTreePermissionsView({
             {selectedTreeNode && selectedGroupNode && (
                 <div style={childStyle}>
                     <EditPermissions
-                        onSave={onSavePermissions}
                         permParams={{
                             type: permissionType,
                             applyTo,

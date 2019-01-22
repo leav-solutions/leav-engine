@@ -18,10 +18,6 @@ function DefineTreePermissions({
     applyTo,
     i18n
 }: IDefineTreePermissionsProps): JSX.Element {
-    const _savePermission = data => {
-        console.log('data :', data);
-    };
-
     const panes = permissionsConf.permissionTreeAttributes.map(a => ({
         key: a.id,
         menuItem: localizedLabel(a.label, i18n),
@@ -31,7 +27,6 @@ function DefineTreePermissions({
                     <DefineTreePermissionsView
                         key={a.id}
                         treeAttribute={a}
-                        onSavePermissions={_savePermission}
                         permissionType={permissionType}
                         applyTo={applyTo}
                     />
