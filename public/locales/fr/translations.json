@@ -72,6 +72,7 @@
         "authorization": "Autorisation",
         "deny": "Interdire",
         "herit": "Hériter",
-        "grant": "Autoriser"
+        "grant": "Autoriser",
+        "library_tab_name": "Bibliothèque"
     }
 }

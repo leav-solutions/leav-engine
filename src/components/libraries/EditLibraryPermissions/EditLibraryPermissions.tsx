@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import {Accordion, Form, Icon} from 'semantic-ui-react';
-import DefineTreePermissions from 'src/components/permissions/DefineTreePermissions';
+import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
+import DefineLibPermissionsView from 'src/components/permissions/DefineLibPermissionsView';
+import DefineTreePermissionsView from 'src/components/permissions/DefineTreePermissionsView';
 import {localizedLabel} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import {AttributeType, PermissionsRelation, PermissionTypes} from 'src/_gqlTypes/globalTypes';
@@ -46,6 +47,36 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
     const _handleChange = (e: React.SyntheticEvent, data: any) => {
         setlibPermsConf({...libPermsConf, [data.name]: data.value});
     };
+
+    const permsConf = library.permissionsConf || defaultPermsConf;
+    const panes = permsConf.permissionTreeAttributes.map(a => ({
+        key: a.id,
+        menuItem: localizedLabel(a.label, i18n),
+        render: () => (
+            <Tab.Pane key={a.id} className="grow flex-col height100">
+                {a.linked_tree ? (
+                    <DefineTreePermissionsView
+                        key={a.id}
+                        treeAttribute={a}
+                        permissionType={PermissionTypes.record}
+                        applyTo={library.id}
+                    />
+                ) : (
+                    <p>Missing tree ID</p>
+                )}
+            </Tab.Pane>
+        )
+    }));
+
+    panes.unshift({
+        key: 'libPermissions',
+        menuItem: t('permissions.library_tab_name'),
+        render: () => (
+            <Tab.Pane key="libPermissions" className="grow flex-col height100">
+                {<DefineLibPermissionsView key="libPermissions" applyTo={library.id} />}
+            </Tab.Pane>
+        )
+    });
 
     return (
         <div className="flex-col height100">
@@ -99,13 +130,8 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                     </Form>
                 </Accordion.Content>
             </Accordion>
-            <DefineTreePermissions
-                permissionType={PermissionTypes.record}
-                applyTo={library.id}
-                permissionsConf={library.permissionsConf || defaultPermsConf}
-            />
+            <Tab panes={panes} className="grow flex-col height100" />
         </div>
     );
 }
-
 export default withNamespaces()(EditLibraryPermissions);

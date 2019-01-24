@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {NodeData, TreeNode} from 'react-sortable-tree';
+import ColumnsDisplay from 'src/components/shared/ColumnsDisplay';
 import {getTreeNodeKey} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes} from 'src/_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions, PermissionTypes} from 'src/_gqlTypes/globalTypes';
@@ -31,70 +32,53 @@ function DefineTreePermissionsView({
             getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedGroupNode as TreeNode) ? nodeData : null
         );
 
-    const wrapperStyle: React.CSSProperties = {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        height: '100%'
-    };
+    if (!tree.linked_tree) {
+        return <p>Cannot find tree</p>;
+    }
 
-    const childStyle: React.CSSProperties = {
-        position: 'relative',
-        paddingLeft: '1em',
-        width: '33%',
-        flexDirection: 'column',
-        display: 'flex',
-        textAlign: 'center'
-    };
+    const cols = [
+        <DefinePermissionsViewLoadTree
+            key="perm_tree"
+            treeId={tree.linked_tree}
+            onClick={_selectTreeNode}
+            selectedNode={selectedTreeNode}
+        />
+    ];
 
-    const withBorder: React.CSSProperties = {
-        borderRight: '1px solid #999999'
-    };
+    if (selectedTreeNode) {
+        cols.push(
+            <DefinePermissionsViewLoadTree
+                treeId={usersGroupsTreeId}
+                onClick={_selectGroupNode}
+                selectedNode={selectedGroupNode}
+            />
+        );
 
-    return tree.linked_tree ? (
-        <div style={wrapperStyle}>
-            <div style={{...childStyle, ...withBorder}}>
-                <DefinePermissionsViewLoadTree
-                    treeId={tree.linked_tree}
-                    onClick={_selectTreeNode}
-                    selectedNode={selectedTreeNode}
+        if (selectedGroupNode) {
+            cols.push(
+                <EditPermissions
+                    permParams={{
+                        type: permissionType,
+                        applyTo,
+                        usersGroup: selectedGroupNode.node.id,
+                        actions: [
+                            PermissionsActions.access,
+                            PermissionsActions.create,
+                            PermissionsActions.edit,
+                            PermissionsActions.delete
+                        ],
+                        permissionTreeTarget: {
+                            tree: tree.linked_tree,
+                            id: selectedTreeNode.node.id,
+                            library: selectedTreeNode.node.library.id
+                        }
+                    }}
                 />
-            </div>
-            {selectedTreeNode && (
-                <div style={{...childStyle, ...withBorder}}>
-                    <DefinePermissionsViewLoadTree
-                        treeId={usersGroupsTreeId}
-                        onClick={_selectGroupNode}
-                        selectedNode={selectedGroupNode}
-                    />
-                </div>
-            )}
-            {selectedTreeNode && selectedGroupNode && (
-                <div style={childStyle}>
-                    <EditPermissions
-                        permParams={{
-                            type: permissionType,
-                            applyTo,
-                            usersGroup: selectedGroupNode.node.id,
-                            actions: [
-                                PermissionsActions.access,
-                                PermissionsActions.create,
-                                PermissionsActions.edit,
-                                PermissionsActions.delete
-                            ],
-                            permissionTreeTarget: {
-                                tree: tree.linked_tree,
-                                id: selectedTreeNode.node.id,
-                                library: selectedTreeNode.node.library.id
-                            }
-                        }}
-                    />
-                </div>
-            )}
-        </div>
-    ) : (
-        <p>Cannot find tree</p>
-    );
+            );
+        }
+    }
+
+    return <ColumnsDisplay columnsNumber={3} columnsContent={cols} />;
 }
 
 export default withNamespaces()(DefineTreePermissionsView);
