@@ -52,7 +52,7 @@ function PermissionSelector({
                 min="0"
                 max="2"
                 step="1"
-                defaultValue={inputVal}
+                value={inputVal}
                 style={style}
                 onChange={_handleChange}
                 transparent

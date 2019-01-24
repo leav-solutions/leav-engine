@@ -11,7 +11,7 @@ describe('PermissionSelector', () => {
 
         expect(comp.find('div')).toHaveLength(1);
         expect(comp.find('div').prop('style')!.background).toBe('#00FF00');
-        expect(comp.find('Input').prop('defaultValue')).toBe(2);
+        expect(comp.find('Input').prop('value')).toBe(2);
     });
 
     test('Display "herit" selector', async () => {
@@ -26,7 +26,7 @@ describe('PermissionSelector', () => {
         );
 
         expect(comp.find('div').prop('style')!.background).toBe('#FFFFFF');
-        expect(comp.find('Input').prop('defaultValue')).toBe(1);
+        expect(comp.find('Input').prop('value')).toBe(1);
     });
 
     test('Display "forbidden" selector', async () => {
@@ -41,7 +41,7 @@ describe('PermissionSelector', () => {
         );
 
         expect(comp.find('div').prop('style')!.background).toBe('#FF0000');
-        expect(comp.find('Input').prop('defaultValue')).toBe(0);
+        expect(comp.find('Input').prop('value')).toBe(0);
     });
 
     test('Calls onchange function', async () => {
