@@ -1,5 +1,7 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
+import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IUtils} from 'utils/utils';
 import {
     AdminPermissionsActions,
@@ -19,6 +21,8 @@ export default function(
     graphqlApp: IGraphqlApp,
     utils: IUtils,
     permissionDomain: IPermissionDomain,
+    treePermissionDomain: ITreePermissionDomain,
+    recordPermissionDomain: IRecordPermissionDomain,
     attributeDomain: IAttributeDomain
 ): ICorePermissionApp {
     // Format permission data to match graphql schema, where "actions" field format is different
@@ -106,6 +110,13 @@ export default function(
                             actions: [PermissionsActions!]!,
                             usersGroup: ID!,
                             permissionTreeTarget: PermissionsTreeTargetInput
+                        ): [PermissionAction!],
+                        heritedPermissions(
+                            type: PermissionTypes!,
+                            applyTo: ID,
+                            actions: [PermissionsActions!]!,
+                            userGroupId: ID!,
+                            permissionTreeTarget: PermissionsTreeTargetInput
                         ): [PermissionAction!]
                     }
 
@@ -128,6 +139,21 @@ export default function(
                                 permByActions.push({name: action, allowed: perms[action]});
                                 return permByActions;
                             }, []);
+                        },
+                        async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}) {
+                            return Promise.all(
+                                actions.map(async action => {
+                                    const perm = await recordPermissionDomain.getHeritedRecordPermission(
+                                        action,
+                                        userGroupId,
+                                        applyTo,
+                                        permissionTreeTarget.tree,
+                                        {id: permissionTreeTarget.id, library: permissionTreeTarget.library}
+                                    );
+
+                                    return {name: action, allowed: perm};
+                                })
+                            );
                         }
                     },
                     Mutation: {

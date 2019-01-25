@@ -394,4 +394,213 @@ describe('Permissions', () => {
             expect(resGetAdminPerm.data.errors).toBeUndefined();
         });
     });
+
+    describe('Herited Permissions', () => {
+        const heritTestLibName = 'test_lib_herit_perm';
+        const heritTestTreeName = 'test_tree_herit_perm';
+        const heritTestTreeElemLibName = 'test_lib_herit_perm_tree_element';
+        let userGroupId1;
+        let userGroupId2;
+        let userGroupId3;
+        let userGroupId4;
+        let userGroupId5;
+        let userGroupId6;
+        let treeElemId1;
+        let treeElemId2;
+
+        beforeAll(async () => {
+            // Create new test libs
+            await makeGraphQlCall(`mutation {
+                l1: saveLibrary(library: {id: "${heritTestLibName}", label: {fr: "Test lib"}}) { id },
+                l2: saveLibrary(library: {id: "${heritTestTreeElemLibName}", label: {fr: "Test lib"}}) { id }
+            }`);
+
+            // Create test tree
+            await makeGraphQlCall(`mutation {
+                saveTree(
+                    tree: {
+                        id: "${heritTestTreeName}",
+                        label: {fr: "Permissions Test tree"},
+                        libraries: ["${heritTestTreeElemLibName}"]
+                    }
+                ) {
+                    id
+                }
+            }`);
+
+            // Create 2 users groups
+            const resCreateGroups = await makeGraphQlCall(`mutation {
+                r1: createRecord(library: "users_groups") {id},
+                r2: createRecord(library: "users_groups") {id},
+                r3: createRecord(library: "users_groups") {id},
+                r4: createRecord(library: "users_groups") {id},
+                r5: createRecord(library: "users_groups") {id},
+                r6: createRecord(library: "users_groups") {id}
+            }`);
+            userGroupId1 = resCreateGroups.data.data.r1.id;
+            userGroupId2 = resCreateGroups.data.data.r2.id;
+            userGroupId3 = resCreateGroups.data.data.r3.id;
+            userGroupId4 = resCreateGroups.data.data.r4.id;
+            userGroupId5 = resCreateGroups.data.data.r5.id;
+            userGroupId6 = resCreateGroups.data.data.r6.id;
+
+            // Add users groups to tree
+            await makeGraphQlCall(`mutation {
+                el1: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId1}", library: "users_groups"}) {
+                    id
+                },
+                el2: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId3}", library: "users_groups"}) {
+                    id
+                },
+                el3: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId5}", library: "users_groups"}) {
+                    id
+                }
+            }`);
+
+            await makeGraphQlCall(`mutation {
+                el1: treeAddElement(
+                    treeId: "users_groups",
+                    element: {id: "${userGroupId2}", library: "users_groups"},
+                    parent: {id: "${userGroupId1}", library: "users_groups"}
+                ) { id },
+                el2: treeAddElement(
+                    treeId: "users_groups",
+                    element: {id: "${userGroupId4}", library: "users_groups"},
+                    parent: {id: "${userGroupId3}", library: "users_groups"}
+                ) { id },
+                el3: treeAddElement(
+                    treeId: "users_groups",
+                    element: {id: "${userGroupId6}", library: "users_groups"},
+                    parent: {id: "${userGroupId5}", library: "users_groups"}
+                ) { id }
+            }`);
+
+            // Create records for tree
+            const resCreateTreeRecords = await makeGraphQlCall(`mutation {
+                r1: createRecord(library: "${heritTestTreeElemLibName}") {id},
+                r2: createRecord(library: "${heritTestTreeElemLibName}") {id}
+            }`);
+            treeElemId1 = resCreateTreeRecords.data.data.r1.id;
+            treeElemId2 = resCreateTreeRecords.data.data.r2.id;
+
+            // Add records to tree
+            const r = await makeGraphQlCall(`mutation {
+                treeAddElement(
+                    treeId: "${heritTestTreeName}",
+                    element: {id: "${treeElemId1}", library: "${heritTestTreeElemLibName}"}
+                ) { id }
+            }`);
+
+            const r2 = await makeGraphQlCall(`mutation {
+                treeAddElement(
+                    treeId: "${heritTestTreeName}",
+                    element: {id: "${treeElemId2}", library: "${heritTestTreeElemLibName}"},
+                    parent: {id: "${treeElemId1}", library: "${heritTestTreeElemLibName}"}
+                ) { id }
+            }`);
+        });
+
+        describe('Record permissions', () => {
+            test('Retrieve herited permissions for record permissions: herit from user group', async () => {
+                // Save perm
+                await makeGraphQlCall(`mutation {
+                    savePermission(
+                        permission: {
+                            type: record,
+                            applyTo: "${heritTestLibName}",
+                            usersGroup: "${userGroupId1}",
+                            permissionTreeTarget: {
+                                tree: "${heritTestTreeName}",
+                                library: "${heritTestTreeElemLibName}",
+                                id: "${treeElemId2}"
+                            },
+                            actions: [
+                                {name: access, allowed: false},
+                            ]
+                        }
+                    ) { type }
+                }`);
+
+                // Get perm
+                const permHeritGroup = await makeGraphQlCall(`{
+                    p: heritedPermissions(
+                        type: record,
+                        applyTo: "${heritTestLibName}",
+                        actions: [access],
+                        userGroupId: "${userGroupId2}",
+                        permissionTreeTarget: {
+                            tree: "${heritTestTreeName}",
+                            library: "${heritTestTreeElemLibName}",
+                            id: "${treeElemId2}"
+                        }
+                    ) { name allowed }
+                  }
+                `);
+
+                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
+            });
+
+            test('Retrieve herited permissions for record permissions: herit from perm tree', async () => {
+                // Save perm
+                await makeGraphQlCall(`mutation {
+                    savePermission(
+                        permission: {
+                            type: record,
+                            applyTo: "${heritTestLibName}",
+                            usersGroup: "${userGroupId4}",
+                            permissionTreeTarget: {
+                                tree: "${heritTestTreeName}",
+                                library: "${heritTestTreeElemLibName}",
+                                id: "${treeElemId1}"
+                            },
+                            actions: [
+                                {name: access, allowed: false},
+                            ]
+                        }
+                    ) { type }
+                }`);
+
+                // Get perm
+                const permHeritGroup = await makeGraphQlCall(`{
+                    p: heritedPermissions(
+                        type: record,
+                        applyTo: "${heritTestLibName}",
+                        actions: [access],
+                        userGroupId: "${userGroupId4}",
+                        permissionTreeTarget: {
+                            tree: "${heritTestTreeName}",
+                            library: "${heritTestTreeElemLibName}",
+                            id: "${treeElemId2}"
+                        }
+                    ) { name allowed }
+                  }
+                `);
+
+                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
+            });
+
+            test('Retrieve herited permissions for record permissions: herit from default permissions', async () => {
+                // Get perm
+                const permHeritGroup = await makeGraphQlCall(`{
+                    p: heritedPermissions(
+                        type: record,
+                        applyTo: "${heritTestLibName}",
+                        actions: [access],
+                        userGroupId: "${userGroupId6}",
+                        permissionTreeTarget: {
+                            tree: "${heritTestTreeName}",
+                            library: "${heritTestTreeElemLibName}",
+                            id: "${treeElemId2}"
+                        }
+                    ) { name allowed }
+                  }
+                `);
+
+                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
+            });
+        });
+    });
 });

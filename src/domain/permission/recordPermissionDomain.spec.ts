@@ -121,4 +121,34 @@ describe('recordPermissionDomain', () => {
             expect(perm).toBe(defaultPerm);
         });
     });
+
+    describe('getHeritedRecordPermission', () => {
+        test('Return herited tree permission', async () => {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
+            const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
+                getHeritedTreePermission: global.__mockPromise(true)
+            };
+
+            const recordPermDomain = recordPermissionDomain(
+                mockPermDomain as IPermissionDomain,
+                mockTreePermDomain as ITreePermissionDomain,
+                null,
+                null,
+                null
+            );
+
+            const perm = await recordPermDomain.getHeritedRecordPermission(
+                RecordPermissionsActions.ACCESS,
+                12345,
+                'test_lib',
+                'test_tree',
+                {id: 54321, library: 'some_lib'}
+            );
+
+            expect(perm).toBe(true);
+        });
+    });
 });

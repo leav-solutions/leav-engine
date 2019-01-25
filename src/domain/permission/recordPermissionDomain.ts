@@ -1,12 +1,24 @@
 import {IValueRepo} from 'infra/value/valueRepo';
-import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import {
+    LibraryPermissionsActions,
+    PermissionsActions,
+    PermissionTypes,
+    RecordPermissionsActions
+} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from './permissionDomain';
-import {ITreePermissionDomain} from './treePermissionDomain';
+import {IGetDefaultPermissionParams, ITreePermissionDomain} from './treePermissionDomain';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(action: string, userId: number, recordLibrary: string, recordId: number): Promise<boolean>;
+    getHeritedRecordPermission(
+        action: PermissionsActions,
+        userGroupId: number,
+        recordLibrary: string,
+        permTree: string,
+        permTreeNode: {id: number; library: string}
+    ): Promise<boolean>;
 }
 
 export default function(
@@ -57,10 +69,40 @@ export default function(
                 applyTo: recordLibrary,
                 treeValues: valuesByAttr,
                 permissionsConf: lib.permissionsConf,
-                getDefaultPermission: permissionDomain.getLibraryPermission
+                getDefaultPermission: params =>
+                    permissionDomain.getLibraryPermission(params.action, params.applyTo, params.userId)
             });
 
             return perm;
+        },
+        async getHeritedRecordPermission(
+            action: PermissionsActions,
+            userGroupId: number,
+            recordLibrary: string,
+            permTree: string,
+            permTreeNode: {id: number; library: string}
+        ): Promise<boolean> {
+            const getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
+                const {applyTo, userGroups} = params;
+
+                const libPerm = await permissionDomain.getPermissionByUserGroups(
+                    PermissionTypes.LIBRARY,
+                    action,
+                    userGroups,
+                    applyTo
+                );
+
+                return libPerm !== null ? libPerm : permissionDomain.getDefaultPermission();
+            };
+
+            return treePermissionDomain.getHeritedTreePermission({
+                type: PermissionTypes.RECORD,
+                applyTo: recordLibrary,
+                action,
+                userGroupId,
+                permissionTreeTarget: {tree: permTree, ...permTreeNode},
+                getDefaultPermission
+            });
         }
     };
 }

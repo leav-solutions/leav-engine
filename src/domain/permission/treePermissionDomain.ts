@@ -2,6 +2,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {ITreeNode} from '_types/tree';
 import {
+    IPermissionsTreeTarget,
     ITreePermissionsConf,
     PermissionsActions,
     PermissionsRelations,
@@ -12,6 +13,14 @@ import {IPermissionDomain} from './permissionDomain';
 
 export interface ITreePermissionDomain {
     getTreePermission(params: IGetTreePermissionParams): Promise<boolean>;
+    getHeritedTreePermission(params: IGetHeritedTreePermissionParams): Promise<boolean>;
+}
+
+export interface IGetDefaultPermissionParams {
+    action?: any;
+    applyTo?: string;
+    userId?: number;
+    userGroups?: ITreeNode[][];
 }
 
 export interface IGetTreePermissionParams {
@@ -21,7 +30,16 @@ export interface IGetTreePermissionParams {
     applyTo: string;
     treeValues: {[treeAttributeId: string]: ITreeNode[]};
     permissionsConf: ITreePermissionsConf;
-    getDefaultPermission: (action?: any, applyTo?: string, userId?: number) => Promise<boolean> | boolean;
+    getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
+}
+
+export interface IGetHeritedTreePermissionParams {
+    type: PermissionTypes;
+    action: PermissionsActions;
+    userGroupId: number;
+    applyTo: string;
+    permissionTreeTarget: IPermissionsTreeTarget;
+    getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
 }
 
 export default function(
@@ -76,7 +94,7 @@ export default function(
             const {type, action, userId, applyTo, treeValues, permissionsConf, getDefaultPermission} = params;
 
             if (!permissionsConf.permissionTreeAttributes.length) {
-                return getDefaultPermission();
+                return getDefaultPermission({action, applyTo, userId});
             }
 
             const userGroupAttr = await attributeDomain.getAttributeProperties('user_groups');
@@ -108,7 +126,7 @@ export default function(
                         return treePerm;
                     }
 
-                    return getDefaultPermission(action, applyTo, userId);
+                    return getDefaultPermission({action, applyTo, userId});
                 })
             );
 
@@ -123,6 +141,56 @@ export default function(
             }, null);
 
             return perm;
+        },
+        async getHeritedTreePermission(params: IGetHeritedTreePermissionParams): Promise<boolean> {
+            const {type, action, userGroupId, applyTo, permissionTreeTarget, getDefaultPermission} = params;
+
+            // Get perm for user group's parent
+            const groupAncestors = await treeRepo.getElementAncestors('users_groups', {
+                id: userGroupId,
+                library: 'users_groups'
+            });
+
+            const parentPerm = await permissionDomain.getPermissionByUserGroups(
+                type,
+                action,
+                [groupAncestors.slice(0, -1)], // Start from parent group
+                applyTo,
+                permissionTreeTarget
+            );
+
+            if (parentPerm !== null) {
+                return parentPerm;
+            }
+
+            const treeElemAncestors = await treeRepo.getElementAncestors(permissionTreeTarget.tree, {
+                id: Number(permissionTreeTarget.id),
+                library: permissionTreeTarget.library
+            });
+
+            // If nothing found, get herited perm via tree
+            const perm = await _getPermTreePermission(
+                type,
+                action,
+                applyTo,
+                [groupAncestors],
+                permissionTreeTarget.tree,
+                treeElemAncestors.slice(0, -1)
+            );
+
+            if (perm !== null) {
+                return perm;
+            }
+
+            // Nothing found? Return library permission
+            const libPerm = await permissionDomain.getPermissionByUserGroups(
+                PermissionTypes.LIBRARY,
+                action,
+                [groupAncestors],
+                applyTo
+            );
+
+            return libPerm !== null ? libPerm : permissionDomain.getDefaultPermission();
         }
     };
 }
