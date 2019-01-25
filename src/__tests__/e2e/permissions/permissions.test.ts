@@ -602,5 +602,53 @@ describe('Permissions', () => {
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
         });
+
+        describe('Library permissions', () => {
+            test('Retrieve herited permissions from group', async () => {
+                // Save perm
+                await makeGraphQlCall(`mutation {
+                    savePermission(
+                        permission: {
+                            type: library,
+                            applyTo: "${heritTestLibName}",
+                            usersGroup: "${userGroupId1}",
+                            actions: [
+                                {name: access, allowed: false},
+                            ]
+                        }
+                    ) { type }
+                }`);
+
+                // Get perm
+                const permHeritGroup = await makeGraphQlCall(`{
+                    p: heritedPermissions(
+                        type: library,
+                        applyTo: "${heritTestLibName}",
+                        actions: [access],
+                        userGroupId: "${userGroupId2}",
+                    ) { name allowed }
+                  }
+                `);
+
+                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
+            });
+
+            test('Retrieve herited permissions from default permission', async () => {
+                // Get perm
+                const permHeritGroup = await makeGraphQlCall(`{
+                    p: heritedPermissions(
+                        type: library,
+                        applyTo: "${heritTestLibName}",
+                        actions: [access],
+                        userGroupId: "${userGroupId4}",
+                    ) { name allowed }
+                  }
+                `);
+
+                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
+            });
+        });
     });
 });

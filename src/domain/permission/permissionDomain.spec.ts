@@ -474,4 +474,54 @@ describe('PermissionDomain', () => {
             expect(perm).toBe(defaultPerm);
         });
     });
+
+    describe('getHeritedLibraryPermission', () => {
+        const mockTreeRepo: Mockify<ITreeRepo> = {
+            getElementAncestors: global.__mockPromise([
+                {
+                    record: {
+                        id: 1,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 2,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 3,
+                        library: 'users_groups'
+                    }
+                }
+            ])
+        };
+        test('Return herited library permission', async () => {
+            const permDomain = permissionDomain(null, null, null, mockTreeRepo as ITreeRepo);
+            permDomain.getPermissionByUserGroups = global.__mockPromise(true);
+
+            const perm = await permDomain.getHeritedLibraryPermission(
+                LibraryPermissionsActions.ACCESS,
+                'test_lib',
+                12345
+            );
+
+            expect(perm).toBe(true);
+        });
+        test('Herit of default perm if nothing defined', async () => {
+            const permDomain = permissionDomain(null, null, null, mockTreeRepo as ITreeRepo);
+            permDomain.getPermissionByUserGroups = global.__mockPromise(null);
+            permDomain.getDefaultPermission = global.__mockPromise(false);
+
+            const perm = await permDomain.getHeritedLibraryPermission(
+                LibraryPermissionsActions.ACCESS,
+                'test_lib',
+                12345
+            );
+
+            expect(perm).toBe(false);
+        });
+    });
 });

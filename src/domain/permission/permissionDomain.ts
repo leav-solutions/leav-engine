@@ -61,6 +61,11 @@ export interface IPermissionDomain {
     getDefaultPermission(): boolean;
     getAdminPermission(action: AdminPermissionsActions, userId: number): Promise<boolean>;
     getLibraryPermission(action: LibraryPermissionsActions, libraryId: string, userId: number): Promise<boolean>;
+    getHeritedLibraryPermission(
+        action: LibraryPermissionsActions,
+        libraryId: string,
+        userGroupId: number
+    ): Promise<boolean>;
 }
 
 export default function(
@@ -208,6 +213,26 @@ export default function(
                 PermissionTypes.LIBRARY,
                 action,
                 userGroupsPaths,
+                libraryId
+            );
+
+            return perm !== null ? perm : ret.getDefaultPermission();
+        },
+        async getHeritedLibraryPermission(
+            action: LibraryPermissionsActions,
+            libraryId: string,
+            userGroupId: number
+        ): Promise<boolean> {
+            // Get perm for user group's parent
+            const groupAncestors = await treeRepo.getElementAncestors('users_groups', {
+                id: userGroupId,
+                library: 'users_groups'
+            });
+
+            const perm = await ret.getPermissionByUserGroups(
+                PermissionTypes.LIBRARY,
+                action,
+                [groupAncestors.slice(0, -1)], // Start from parent group
                 libraryId
             );
 

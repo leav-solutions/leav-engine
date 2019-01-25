@@ -141,15 +141,28 @@ export default function(
                             }, []);
                         },
                         async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}) {
+                            // TODO: refactor to move switch in domain layer
                             return Promise.all(
                                 actions.map(async action => {
-                                    const perm = await recordPermissionDomain.getHeritedRecordPermission(
-                                        action,
-                                        userGroupId,
-                                        applyTo,
-                                        permissionTreeTarget.tree,
-                                        {id: permissionTreeTarget.id, library: permissionTreeTarget.library}
-                                    );
+                                    let perm;
+                                    switch (type) {
+                                        case PermissionTypes.RECORD:
+                                            perm = await recordPermissionDomain.getHeritedRecordPermission(
+                                                action,
+                                                userGroupId,
+                                                applyTo,
+                                                permissionTreeTarget.tree,
+                                                {id: permissionTreeTarget.id, library: permissionTreeTarget.library}
+                                            );
+                                            break;
+                                        case PermissionTypes.LIBRARY:
+                                            perm = await permissionDomain.getHeritedLibraryPermission(
+                                                action,
+                                                applyTo,
+                                                userGroupId
+                                            );
+                                            break;
+                                    }
 
                                     return {name: action, allowed: perm};
                                 })
