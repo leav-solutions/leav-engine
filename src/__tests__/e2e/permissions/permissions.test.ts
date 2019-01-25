@@ -650,5 +650,50 @@ describe('Permissions', () => {
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
         });
+
+        describe('Admin permissions', () => {
+            test('Retrieve herited permissions from group', async () => {
+                // Save perm
+                await makeGraphQlCall(`mutation {
+                    savePermission(
+                        permission: {
+                            type: admin,
+                            usersGroup: "${userGroupId1}",
+                            actions: [
+                                {name: create_attribute, allowed: false},
+                            ]
+                        }
+                    ) { type }
+                }`);
+
+                // Get perm
+                const permHeritGroup = await makeGraphQlCall(`{
+                    p: heritedPermissions(
+                        type: admin,
+                        actions: [create_attribute],
+                        userGroupId: "${userGroupId2}",
+                    ) { name allowed }
+                  }
+                `);
+
+                expect(permHeritGroup.data.data.p[0].name).toBe('create_attribute');
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
+            });
+
+            test('Retrieve herited permissions from default permission', async () => {
+                // Get perm
+                const permHeritGroup = await makeGraphQlCall(`{
+                    p: heritedPermissions(
+                        type: admin,
+                        actions: [create_attribute],
+                        userGroupId: "${userGroupId4}",
+                    ) { name allowed }
+                  }
+                `);
+
+                expect(permHeritGroup.data.data.p[0].name).toBe('create_attribute');
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
+            });
+        });
     });
 });

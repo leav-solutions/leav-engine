@@ -162,6 +162,12 @@ export default function(
                                                 userGroupId
                                             );
                                             break;
+                                        case PermissionTypes.ADMIN:
+                                            perm = await permissionDomain.getHeritedAdminPermission(
+                                                action,
+                                                userGroupId
+                                            );
+                                            break;
                                     }
 
                                     return {name: action, allowed: perm};
