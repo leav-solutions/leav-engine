@@ -1,4 +1,5 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IHeritedPermissionDomain} from 'domain/permission/heritedPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
@@ -23,7 +24,8 @@ export default function(
     permissionDomain: IPermissionDomain,
     treePermissionDomain: ITreePermissionDomain,
     recordPermissionDomain: IRecordPermissionDomain,
-    attributeDomain: IAttributeDomain
+    attributeDomain: IAttributeDomain,
+    heritedPermissionDomain: IHeritedPermissionDomain
 ): ICorePermissionApp {
     // Format permission data to match graphql schema, where "actions" field format is different
     // TODO: use a custom scalar type?
@@ -53,6 +55,11 @@ export default function(
                         ${Object.values(RecordPermissionsActions).join(' ')}
                         ${Object.values(AttributePermissionsActions).join(' ')}
                         ${Object.values(AdminPermissionsActions).join(' ')}
+                    }
+
+                    type HeritedPermissionAction {
+                        name: PermissionsActions!
+                        allowed: Boolean!
                     }
 
                     type PermissionAction {
@@ -117,7 +124,7 @@ export default function(
                             actions: [PermissionsActions!]!,
                             userGroupId: ID!,
                             permissionTreeTarget: PermissionsTreeTargetInput
-                        ): [PermissionAction!]
+                        ): [HeritedPermissionAction!]
                     }
 
                     extend type Mutation {
@@ -141,34 +148,15 @@ export default function(
                             }, []);
                         },
                         async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}) {
-                            // TODO: refactor to move switch in domain layer
                             return Promise.all(
                                 actions.map(async action => {
-                                    let perm;
-                                    switch (type) {
-                                        case PermissionTypes.RECORD:
-                                            perm = await recordPermissionDomain.getHeritedRecordPermission(
-                                                action,
-                                                userGroupId,
-                                                applyTo,
-                                                permissionTreeTarget.tree,
-                                                {id: permissionTreeTarget.id, library: permissionTreeTarget.library}
-                                            );
-                                            break;
-                                        case PermissionTypes.LIBRARY:
-                                            perm = await permissionDomain.getHeritedLibraryPermission(
-                                                action,
-                                                applyTo,
-                                                userGroupId
-                                            );
-                                            break;
-                                        case PermissionTypes.ADMIN:
-                                            perm = await permissionDomain.getHeritedAdminPermission(
-                                                action,
-                                                userGroupId
-                                            );
-                                            break;
-                                    }
+                                    const perm = await heritedPermissionDomain.getHeritedPermissions(
+                                        type,
+                                        applyTo,
+                                        actions,
+                                        userGroupId,
+                                        permissionTreeTarget
+                                    );
 
                                     return {name: action, allowed: perm};
                                 })

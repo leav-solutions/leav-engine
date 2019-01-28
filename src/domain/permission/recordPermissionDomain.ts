@@ -17,7 +17,7 @@ export interface IRecordPermissionDomain {
         userGroupId: number,
         recordLibrary: string,
         permTree: string,
-        permTreeNode: {id: number; library: string}
+        permTreeNode: {id: string | number; library: string}
     ): Promise<boolean>;
 }
 
