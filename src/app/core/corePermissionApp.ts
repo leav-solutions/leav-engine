@@ -153,7 +153,7 @@ export default function(
                                     const perm = await heritedPermissionDomain.getHeritedPermissions(
                                         type,
                                         applyTo,
-                                        actions,
+                                        action,
                                         userGroupId,
                                         permissionTreeTarget
                                     );
