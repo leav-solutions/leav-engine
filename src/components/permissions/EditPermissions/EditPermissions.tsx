@@ -13,7 +13,9 @@ interface IEditPermissionsProps extends WithNamespaces {
 
 function EditPermissions({permParams, t}: IEditPermissionsProps): JSX.Element {
     return (
-        <PermissionsQuery query={getPermissionsQuery} variables={permParams}>
+        // Fetch policy is set to 'network only' to bypass the cache as it would be very challenging
+        // to maintain the heritage values in the cache.
+        <PermissionsQuery query={getPermissionsQuery} variables={permParams} fetchPolicy="network-only">
             {({loading, error, data}) => {
                 if (loading) {
                     return <Loading />;
@@ -35,8 +37,13 @@ function EditPermissions({permParams, t}: IEditPermissionsProps): JSX.Element {
 
                             return (
                                 data &&
-                                data.permissions && (
-                                    <EditPermissionsView onChange={_onSave} permissions={data.permissions} />
+                                data.perm &&
+                                data.heritPerm && (
+                                    <EditPermissionsView
+                                        onChange={_onSave}
+                                        permissions={data.perm}
+                                        heritedPermissions={data.heritPerm}
+                                    />
                                 )
                             );
                         }}

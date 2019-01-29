@@ -26,5 +26,7 @@
     "webpack",
     "jest",
     "src/setupTests.ts"
-  ]
+  ],
+  "esModuleInterop": true,
+  "allowSyntheticDefaultImports": true
 }

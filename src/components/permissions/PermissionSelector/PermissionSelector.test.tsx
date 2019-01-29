@@ -6,7 +6,14 @@ describe('PermissionSelector', () => {
     const onChange = jest.fn();
     test('Display "allowed" selector', async () => {
         const comp = shallow(
-            <PermissionSelector as={'div'} value onChange={onChange} forbiddenColor="#FF0000" allowedColor="#00FF00" />
+            <PermissionSelector
+                as={'div'}
+                value
+                heritValue={false}
+                onChange={onChange}
+                forbiddenColor="#FF0000"
+                allowedColor="#00FF00"
+            />
         );
 
         expect(comp.find('div')).toHaveLength(1);
@@ -19,13 +26,16 @@ describe('PermissionSelector', () => {
             <PermissionSelector
                 as={'div'}
                 value={null}
+                heritValue={false}
                 onChange={onChange}
                 forbiddenColor="#FF0000"
                 allowedColor="#00FF00"
             />
         );
 
-        expect(comp.find('div').prop('style')!.background).toBe('#FFFFFF');
+        expect(comp.find('div').prop('style')!.background).not.toBe('#FF0000');
+        expect(comp.find('div').prop('style')!.background).not.toBe('#00FF00');
+        expect(comp.find('div').prop('style')!.background).toMatch('rgba');
         expect(comp.find('Input').prop('value')).toBe(1);
     });
 
@@ -34,6 +44,7 @@ describe('PermissionSelector', () => {
             <PermissionSelector
                 as={'div'}
                 value={false}
+                heritValue={false}
                 onChange={onChange}
                 forbiddenColor="#FF0000"
                 allowedColor="#00FF00"
@@ -46,7 +57,14 @@ describe('PermissionSelector', () => {
 
     test('Calls onchange function', async () => {
         const comp = mount(
-            <PermissionSelector as={'div'} value onChange={onChange} forbiddenColor="#FF0000" allowedColor="#00FF00" />
+            <PermissionSelector
+                as={'div'}
+                value
+                heritValue={false}
+                onChange={onChange}
+                forbiddenColor="#FF0000"
+                allowedColor="#00FF00"
+            />
         );
 
         comp.find('input').simulate('change', {target: {value: 0}});

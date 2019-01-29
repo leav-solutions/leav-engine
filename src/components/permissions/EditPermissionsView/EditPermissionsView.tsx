@@ -1,18 +1,25 @@
 import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Icon, Table} from 'semantic-ui-react';
-import {GET_PERMISSIONS_permissions} from 'src/_gqlTypes/GET_PERMISSIONS';
+import {GET_PERMISSIONS_heritPerm, GET_PERMISSIONS_perm} from 'src/_gqlTypes/GET_PERMISSIONS';
 import {SAVE_PERMISSION_savePermission_actions} from 'src/_gqlTypes/SAVE_PERMISSION';
 import PermissionSelector from '../PermissionSelector';
 
 interface IEditPermissionsViewProps extends WithNamespaces {
-    permissions: GET_PERMISSIONS_permissions[];
+    permissions: GET_PERMISSIONS_perm[];
+    heritedPermissions: GET_PERMISSIONS_heritPerm[];
     onChange: (permToSave: SAVE_PERMISSION_savePermission_actions) => void;
 }
 
-function EditPermissionsView({permissions, onChange, t}: IEditPermissionsViewProps): JSX.Element {
+function EditPermissionsView({permissions, heritedPermissions, onChange, t}: IEditPermissionsViewProps): JSX.Element {
     const permissionForbiddenColor = '#FF0000';
     const permissionAllowedColor = '#99cc00';
+
+    const heritPermByName = heritedPermissions.reduce((heritPerms, p) => {
+        heritPerms[p.name] = p.allowed;
+
+        return heritPerms;
+    }, {});
 
     return (
         <Table celled>
@@ -50,6 +57,7 @@ function EditPermissionsView({permissions, onChange, t}: IEditPermissionsViewPro
                             <PermissionSelector
                                 as={Table.Cell}
                                 value={p.allowed}
+                                heritValue={heritPermByName[p.name]}
                                 onChange={_onPermUpdate}
                                 forbiddenColor={permissionForbiddenColor}
                                 allowedColor={permissionAllowedColor}

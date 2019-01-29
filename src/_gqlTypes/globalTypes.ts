@@ -43,8 +43,8 @@ export enum AvailableLanguage {
 export enum PermissionTypes {
     admin = 'admin',
     attribute = 'attribute',
-    record = 'record',
-    library = 'library'
+    library = 'library',
+    record = 'record'
 }
 
 export enum PermissionsActions {

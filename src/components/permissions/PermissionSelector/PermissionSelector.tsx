@@ -1,8 +1,10 @@
+import hexToRgba from 'hex-rgba';
 import * as React from 'react';
 import {Input, InputOnChangeData} from 'semantic-ui-react';
 
 interface IPermissionSelectorProps {
     value: boolean | null;
+    heritValue: boolean;
     onChange: (permValue: boolean | null) => void;
     as: any;
     forbiddenColor: string;
@@ -11,6 +13,7 @@ interface IPermissionSelectorProps {
 
 function PermissionSelector({
     value,
+    heritValue,
     as,
     onChange,
     forbiddenColor,
@@ -30,6 +33,7 @@ function PermissionSelector({
     };
 
     const inputVal = permValToInputVal(value);
+    const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(heritValue)], 40);
 
     // tslint:disable-next-line:variable-name
     const WrapperType = as;
@@ -39,7 +43,7 @@ function PermissionSelector({
     };
 
     const wrapperStyle: React.CSSProperties = {
-        background: bgColors[inputVal],
+        background: bgColor,
         transition: 'background 0.3s linear'
     };
 

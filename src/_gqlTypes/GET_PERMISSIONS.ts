@@ -7,13 +7,19 @@ import {PermissionTypes, PermissionsActions, PermissionsTreeTargetInput} from '.
 // GraphQL query operation: GET_PERMISSIONS
 // ====================================================
 
-export interface GET_PERMISSIONS_permissions {
+export interface GET_PERMISSIONS_perm {
     name: PermissionsActions;
     allowed: boolean | null;
 }
 
+export interface GET_PERMISSIONS_heritPerm {
+    name: PermissionsActions;
+    allowed: boolean;
+}
+
 export interface GET_PERMISSIONS {
-    permissions: GET_PERMISSIONS_permissions[] | null;
+    perm: GET_PERMISSIONS_perm[] | null;
+    heritPerm: GET_PERMISSIONS_heritPerm[] | null;
 }
 
 export interface GET_PERMISSIONSVariables {
