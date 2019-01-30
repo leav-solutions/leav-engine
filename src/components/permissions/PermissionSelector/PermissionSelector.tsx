@@ -1,6 +1,7 @@
 import hexToRgba from 'hex-rgba';
 import * as React from 'react';
 import {Input, InputOnChangeData} from 'semantic-ui-react';
+import styled from 'styled-components';
 
 interface IPermissionSelectorProps {
     value: boolean | null;
@@ -35,22 +36,20 @@ function PermissionSelector({
     const inputVal = permValToInputVal(value);
     const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(heritValue)], 40);
 
-    // tslint:disable-next-line:variable-name
-    const WrapperType = as;
-
     const style: React.CSSProperties = {
         border: 'none'
     };
 
-    const wrapperStyle: React.CSSProperties = {
-        background: bgColor,
-        transition: 'background 0.3s linear'
-    };
+    /* tslint:disable-next-line:variable-name */
+    const Wrapper = styled(as)`
+        background: ${bgColor};
+    `;
+    Wrapper.displayName = 'Wrapper';
 
     const _handleChange = (e: React.ChangeEvent, data: InputOnChangeData) => onChange(inputValToPermVal[data.value]);
 
     return (
-        <WrapperType style={wrapperStyle}>
+        <Wrapper>
             <Input
                 type="range"
                 min="0"
@@ -62,7 +61,7 @@ function PermissionSelector({
                 transparent
                 fluid
             />
-        </WrapperType>
+        </Wrapper>
     );
 }
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styled from 'styled-components';
 
 interface IColumnsDisplayProps {
     columnsNumber: number;
@@ -6,34 +7,35 @@ interface IColumnsDisplayProps {
 }
 
 function ColumnsDisplay({columnsNumber, columnsContent}: IColumnsDisplayProps): JSX.Element {
-    const wrapperStyle: React.CSSProperties = {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        height: '100%'
-    };
+    /* tslint:disable-next-line:variable-name */
+    const Wrapper = styled.div`
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        height: 100%;
+    `;
 
-    const childStyle: React.CSSProperties = {
-        position: 'relative',
-        paddingLeft: '1em',
-        width: 100 / columnsNumber + '%',
-        flexDirection: 'column',
-        display: 'flex',
-        textAlign: 'center'
-    };
+    /* tslint:disable-next-line:variable-name */
+    const Column = styled.div`
+        position: relative;
+        padding-left: 1em;
+        width: ${100 / columnsNumber + '%'};
+        flex-direction: column;
+        display: flex;
+        text-align: center;
+        border-right: 1px solid #999999;
 
-    const withBorder: React.CSSProperties = {
-        borderRight: '1px solid #999999'
-    };
+        &:last-child {
+            border-right: none;
+        }
+    `;
 
     return (
-        <div style={wrapperStyle}>
+        <Wrapper>
             {columnsContent.map((c, i) => (
-                <div key={i} style={{...childStyle, ...withBorder}}>
-                    {c}
-                </div>
+                <Column key={i}>{c}</Column>
             ))}
-        </div>
+        </Wrapper>
     );
 }
 

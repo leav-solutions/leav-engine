@@ -48,12 +48,12 @@ initialize {
           "children": Array [
             Object {
               "attribs": Object {
-                "style": "display:flex;flex-direction:row;justify-content:flex-start;height:100%",
+                "class": "sc-bdVaJa fXdaeF",
               },
               "children": Array [
                 Object {
                   "attribs": Object {
-                    "style": "position:relative;padding-left:1em;width:33.333333333333336%;flex-direction:column;display:flex;text-align:center;border-right:1px solid #999999",
+                    "class": "sc-bwzfXH cpWdPZ",
                   },
                   "children": Array [
                     Object {
@@ -90,10 +90,10 @@ initialize {
                   "prev": null,
                   "type": "tag",
                   "x-attribsNamespace": Object {
-                    "style": undefined,
+                    "class": undefined,
                   },
                   "x-attribsPrefix": Object {
-                    "style": undefined,
+                    "class": undefined,
                   },
                 },
               ],
@@ -104,10 +104,10 @@ initialize {
               "prev": null,
               "type": "tag",
               "x-attribsNamespace": Object {
-                "style": undefined,
+                "class": undefined,
               },
               "x-attribsPrefix": Object {
-                "style": undefined,
+                "class": undefined,
               },
             },
           ],
@@ -141,12 +141,12 @@ initialize {
         "children": Array [
           Object {
             "attribs": Object {
-              "style": "display:flex;flex-direction:row;justify-content:flex-start;height:100%",
+              "class": "sc-bdVaJa fXdaeF",
             },
             "children": Array [
               Object {
                 "attribs": Object {
-                  "style": "position:relative;padding-left:1em;width:33.333333333333336%;flex-direction:column;display:flex;text-align:center;border-right:1px solid #999999",
+                  "class": "sc-bwzfXH cpWdPZ",
                 },
                 "children": Array [
                   Object {
@@ -183,10 +183,10 @@ initialize {
                 "prev": null,
                 "type": "tag",
                 "x-attribsNamespace": Object {
-                  "style": undefined,
+                  "class": undefined,
                 },
                 "x-attribsPrefix": Object {
-                  "style": undefined,
+                  "class": undefined,
                 },
               },
             ],
@@ -197,10 +197,10 @@ initialize {
             "prev": null,
             "type": "tag",
             "x-attribsNamespace": Object {
-              "style": undefined,
+              "class": undefined,
             },
             "x-attribsPrefix": Object {
-              "style": undefined,
+              "class": undefined,
             },
           },
         ],
