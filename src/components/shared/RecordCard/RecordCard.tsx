@@ -2,36 +2,55 @@ import * as React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {localizedLabel} from 'src/utils/utils';
 import {RecordIdentity_whoAmI} from 'src/_gqlTypes/RecordIdentity';
+import styled, {CSSObject} from 'styled-components';
 import RecordPreview from '../RecordPreview';
 
 interface IRecordCardProps extends WithNamespaces {
     record: RecordIdentity_whoAmI;
-    style?: React.CSSProperties;
+    style?: CSSObject;
 }
 
 function RecordCard({record, style, i18n}: IRecordCardProps): JSX.Element {
-    const vertAlign: React.CSSProperties = {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center'
-    };
+    /* tslint:disable:variable-name */
+    const Wrapper = styled.div`
+        border-left: 5px solid ${record.color || 'transparent'};
+        display: flex;
+        flex-direction: row;
+        ${style}
+    `;
+    Wrapper.displayName = 'Wrapper';
 
-    const border: React.CSSProperties = {
-        borderLeft: `5px solid ${record.color || 'transparent'}`
-    };
+    const CardPart = styled.div`
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    `;
+
+    const PreviewWrapper = styled(CardPart)`
+        margin: 0 0.8em;
+    `;
+
+    const RecordLabel = styled.div`
+        font-weight: bold;
+    `;
+
+    const LibLabel = styled.div`
+        font-weight: normal;
+        color: rgba(0, 0, 0, 0.4);
+        fontsize: 0.9em;
+    `;
+    /* tslint:enable:variable-name */
 
     return (
-        <div className="ui fluid" style={{...border, display: 'flex', flexDirection: 'row', ...style}}>
-            <div className="ui" style={{...vertAlign, margin: '0 0.8em'}}>
+        <Wrapper className="ui fluid">
+            <PreviewWrapper className="ui">
                 <RecordPreview label={record.label || record.id} color={record.color} image={record.preview} />
-            </div>
-            <div className="ui" style={vertAlign}>
-                <div style={{fontWeight: 'bold'}}>{record.label || record.id}</div>
-                <div style={{fontWeight: 'normal', color: 'rgba(0,0,0,0.4)', fontSize: '0.9em'}}>
-                    {localizedLabel(record.library.label, i18n) || record.library.id}
-                </div>
-            </div>
-        </div>
+            </PreviewWrapper>
+            <CardPart className="ui">
+                <RecordLabel>{record.label || record.id}</RecordLabel>
+                <LibLabel>{localizedLabel(record.library.label, i18n) || record.library.id}</LibLabel>
+            </CardPart>
+        </Wrapper>
     );
 }
 

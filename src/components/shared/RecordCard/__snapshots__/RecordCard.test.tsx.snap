@@ -41,71 +41,37 @@ ShallowWrapper {
   Symbol(enzyme.__node__): Object {
     "instance": null,
     "key": undefined,
-    "nodeType": "host",
+    "nodeType": "function",
     "props": Object {
       "children": Array [
-        <div
+        <Unknown
           className="ui"
-          style={
-                    Object {
-                              "display": "flex",
-                              "flexDirection": "column",
-                              "justifyContent": "center",
-                              "margin": "0 0.8em",
-                            }
-          }
 >
           <RecordPreview
                     color={null}
                     image={null}
                     label="Test Record"
           />
-</div>,
-        <div
+</Unknown>,
+        <Unknown
           className="ui"
-          style={
-                    Object {
-                              "display": "flex",
-                              "flexDirection": "column",
-                              "justifyContent": "center",
-                            }
-          }
 >
-          <div
-                    style={
-                              Object {
-                                        "fontWeight": "bold",
-                                      }
-                    }
-          >
+          <Unknown>
                     Test Record
-          </div>
-          <div
-                    style={
-                              Object {
-                                        "color": "rgba(0,0,0,0.4)",
-                                        "fontSize": "0.9em",
-                                        "fontWeight": "normal",
-                                      }
-                    }
-          >
+          </Unknown>
+          <Unknown>
                     Test Lib
-          </div>
-</div>,
+          </Unknown>
+</Unknown>,
       ],
       "className": "ui fluid",
-      "style": Object {
-        "borderLeft": "5px solid transparent",
-        "display": "flex",
-        "flexDirection": "row",
-      },
     },
     "ref": null,
     "rendered": Array [
       Object {
         "instance": null,
         "key": undefined,
-        "nodeType": "host",
+        "nodeType": "function",
         "props": Object {
           "children": <RecordPreview
             color={null}
@@ -113,12 +79,6 @@ ShallowWrapper {
             label="Test Record"
 />,
           "className": "ui",
-          "style": Object {
-            "display": "flex",
-            "flexDirection": "column",
-            "justifyContent": "center",
-            "margin": "0 0.8em",
-          },
         },
         "ref": null,
         "rendered": Object {
@@ -134,149 +94,205 @@ ShallowWrapper {
           "rendered": null,
           "type": [Function],
         },
-        "type": "div",
+        "type": Object {
+          "$$typeof": Symbol(react.forward_ref),
+          "attrs": Array [],
+          "componentStyle": ComponentStyle {
+            "componentId": "sc-htpNat",
+            "isStatic": true,
+            "rules": Array [
+              "
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    ",
+              "
+        margin: 0 0.8em;
+    ",
+            ],
+          },
+          "displayName": "Styled(styled.div)",
+          "foldedComponentIds": Array [
+            "sc-bwzfXH",
+          ],
+          "render": [Function],
+          "styledComponentId": "sc-htpNat",
+          "target": "div",
+          "toString": [Function],
+          "warnTooManyClasses": [Function],
+          "withComponent": [Function],
+        },
       },
       Object {
         "instance": null,
         "key": undefined,
-        "nodeType": "host",
+        "nodeType": "function",
         "props": Object {
           "children": Array [
-            <div
-              style={
-                            Object {
-                                          "fontWeight": "bold",
-                                        }
-              }
->
+            <Unknown>
               Test Record
-</div>,
-            <div
-              style={
-                            Object {
-                                          "color": "rgba(0,0,0,0.4)",
-                                          "fontSize": "0.9em",
-                                          "fontWeight": "normal",
-                                        }
-              }
->
+</Unknown>,
+            <Unknown>
               Test Lib
-</div>,
+</Unknown>,
           ],
           "className": "ui",
-          "style": Object {
-            "display": "flex",
-            "flexDirection": "column",
-            "justifyContent": "center",
-          },
         },
         "ref": null,
         "rendered": Array [
           Object {
             "instance": null,
             "key": undefined,
-            "nodeType": "host",
+            "nodeType": "function",
             "props": Object {
               "children": "Test Record",
-              "style": Object {
-                "fontWeight": "bold",
-              },
             },
             "ref": null,
             "rendered": "Test Record",
-            "type": "div",
+            "type": Object {
+              "$$typeof": Symbol(react.forward_ref),
+              "attrs": Array [],
+              "componentStyle": ComponentStyle {
+                "componentId": "sc-bxivhb",
+                "isStatic": true,
+                "rules": Array [
+                  "
+        font-weight: bold;
+    ",
+                ],
+              },
+              "displayName": "styled.div",
+              "foldedComponentIds": Array [],
+              "render": [Function],
+              "styledComponentId": "sc-bxivhb",
+              "target": "div",
+              "toString": [Function],
+              "warnTooManyClasses": [Function],
+              "withComponent": [Function],
+            },
           },
           Object {
             "instance": null,
             "key": undefined,
-            "nodeType": "host",
+            "nodeType": "function",
             "props": Object {
               "children": "Test Lib",
-              "style": Object {
-                "color": "rgba(0,0,0,0.4)",
-                "fontSize": "0.9em",
-                "fontWeight": "normal",
-              },
             },
             "ref": null,
             "rendered": "Test Lib",
-            "type": "div",
+            "type": Object {
+              "$$typeof": Symbol(react.forward_ref),
+              "attrs": Array [],
+              "componentStyle": ComponentStyle {
+                "componentId": "sc-ifAKCX",
+                "isStatic": true,
+                "rules": Array [
+                  "
+        font-weight: normal;
+        color: rgba(0, 0, 0, 0.4);
+        fontsize: 0.9em;
+    ",
+                ],
+              },
+              "displayName": "styled.div",
+              "foldedComponentIds": Array [],
+              "render": [Function],
+              "styledComponentId": "sc-ifAKCX",
+              "target": "div",
+              "toString": [Function],
+              "warnTooManyClasses": [Function],
+              "withComponent": [Function],
+            },
           },
         ],
-        "type": "div",
+        "type": Object {
+          "$$typeof": Symbol(react.forward_ref),
+          "attrs": Array [],
+          "componentStyle": ComponentStyle {
+            "componentId": "sc-bwzfXH",
+            "isStatic": true,
+            "rules": Array [
+              "
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    ",
+            ],
+          },
+          "displayName": "styled.div",
+          "foldedComponentIds": Array [],
+          "render": [Function],
+          "styledComponentId": "sc-bwzfXH",
+          "target": "div",
+          "toString": [Function],
+          "warnTooManyClasses": [Function],
+          "withComponent": [Function],
+        },
       },
     ],
-    "type": "div",
+    "type": Object {
+      "$$typeof": Symbol(react.forward_ref),
+      "attrs": Array [],
+      "componentStyle": ComponentStyle {
+        "componentId": "sc-bdVaJa",
+        "isStatic": true,
+        "rules": Array [
+          "
+        border-left: 5px solid ",
+          "transparent",
+          ";
+        display: flex;
+        flex-direction: row;
+        ",
+          "
+    ",
+        ],
+      },
+      "displayName": "Wrapper",
+      "foldedComponentIds": Array [],
+      "render": [Function],
+      "styledComponentId": "sc-bdVaJa",
+      "target": "div",
+      "toString": [Function],
+      "warnTooManyClasses": [Function],
+      "withComponent": [Function],
+    },
   },
   Symbol(enzyme.__nodes__): Array [
     Object {
       "instance": null,
       "key": undefined,
-      "nodeType": "host",
+      "nodeType": "function",
       "props": Object {
         "children": Array [
-          <div
+          <Unknown
             className="ui"
-            style={
-                        Object {
-                                    "display": "flex",
-                                    "flexDirection": "column",
-                                    "justifyContent": "center",
-                                    "margin": "0 0.8em",
-                                  }
-            }
 >
             <RecordPreview
                         color={null}
                         image={null}
                         label="Test Record"
             />
-</div>,
-          <div
+</Unknown>,
+          <Unknown
             className="ui"
-            style={
-                        Object {
-                                    "display": "flex",
-                                    "flexDirection": "column",
-                                    "justifyContent": "center",
-                                  }
-            }
 >
-            <div
-                        style={
-                                    Object {
-                                                "fontWeight": "bold",
-                                              }
-                        }
-            >
+            <Unknown>
                         Test Record
-            </div>
-            <div
-                        style={
-                                    Object {
-                                                "color": "rgba(0,0,0,0.4)",
-                                                "fontSize": "0.9em",
-                                                "fontWeight": "normal",
-                                              }
-                        }
-            >
+            </Unknown>
+            <Unknown>
                         Test Lib
-            </div>
-</div>,
+            </Unknown>
+</Unknown>,
         ],
         "className": "ui fluid",
-        "style": Object {
-          "borderLeft": "5px solid transparent",
-          "display": "flex",
-          "flexDirection": "row",
-        },
       },
       "ref": null,
       "rendered": Array [
         Object {
           "instance": null,
           "key": undefined,
-          "nodeType": "host",
+          "nodeType": "function",
           "props": Object {
             "children": <RecordPreview
               color={null}
@@ -284,12 +300,6 @@ ShallowWrapper {
               label="Test Record"
 />,
             "className": "ui",
-            "style": Object {
-              "display": "flex",
-              "flexDirection": "column",
-              "justifyContent": "center",
-              "margin": "0 0.8em",
-            },
           },
           "ref": null,
           "rendered": Object {
@@ -305,79 +315,169 @@ ShallowWrapper {
             "rendered": null,
             "type": [Function],
           },
-          "type": "div",
+          "type": Object {
+            "$$typeof": Symbol(react.forward_ref),
+            "attrs": Array [],
+            "componentStyle": ComponentStyle {
+              "componentId": "sc-htpNat",
+              "isStatic": true,
+              "rules": Array [
+                "
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    ",
+                "
+        margin: 0 0.8em;
+    ",
+              ],
+            },
+            "displayName": "Styled(styled.div)",
+            "foldedComponentIds": Array [
+              "sc-bwzfXH",
+            ],
+            "render": [Function],
+            "styledComponentId": "sc-htpNat",
+            "target": "div",
+            "toString": [Function],
+            "warnTooManyClasses": [Function],
+            "withComponent": [Function],
+          },
         },
         Object {
           "instance": null,
           "key": undefined,
-          "nodeType": "host",
+          "nodeType": "function",
           "props": Object {
             "children": Array [
-              <div
-                style={
-                                Object {
-                                                "fontWeight": "bold",
-                                              }
-                }
->
+              <Unknown>
                 Test Record
-</div>,
-              <div
-                style={
-                                Object {
-                                                "color": "rgba(0,0,0,0.4)",
-                                                "fontSize": "0.9em",
-                                                "fontWeight": "normal",
-                                              }
-                }
->
+</Unknown>,
+              <Unknown>
                 Test Lib
-</div>,
+</Unknown>,
             ],
             "className": "ui",
-            "style": Object {
-              "display": "flex",
-              "flexDirection": "column",
-              "justifyContent": "center",
-            },
           },
           "ref": null,
           "rendered": Array [
             Object {
               "instance": null,
               "key": undefined,
-              "nodeType": "host",
+              "nodeType": "function",
               "props": Object {
                 "children": "Test Record",
-                "style": Object {
-                  "fontWeight": "bold",
-                },
               },
               "ref": null,
               "rendered": "Test Record",
-              "type": "div",
+              "type": Object {
+                "$$typeof": Symbol(react.forward_ref),
+                "attrs": Array [],
+                "componentStyle": ComponentStyle {
+                  "componentId": "sc-bxivhb",
+                  "isStatic": true,
+                  "rules": Array [
+                    "
+        font-weight: bold;
+    ",
+                  ],
+                },
+                "displayName": "styled.div",
+                "foldedComponentIds": Array [],
+                "render": [Function],
+                "styledComponentId": "sc-bxivhb",
+                "target": "div",
+                "toString": [Function],
+                "warnTooManyClasses": [Function],
+                "withComponent": [Function],
+              },
             },
             Object {
               "instance": null,
               "key": undefined,
-              "nodeType": "host",
+              "nodeType": "function",
               "props": Object {
                 "children": "Test Lib",
-                "style": Object {
-                  "color": "rgba(0,0,0,0.4)",
-                  "fontSize": "0.9em",
-                  "fontWeight": "normal",
-                },
               },
               "ref": null,
               "rendered": "Test Lib",
-              "type": "div",
+              "type": Object {
+                "$$typeof": Symbol(react.forward_ref),
+                "attrs": Array [],
+                "componentStyle": ComponentStyle {
+                  "componentId": "sc-ifAKCX",
+                  "isStatic": true,
+                  "rules": Array [
+                    "
+        font-weight: normal;
+        color: rgba(0, 0, 0, 0.4);
+        fontsize: 0.9em;
+    ",
+                  ],
+                },
+                "displayName": "styled.div",
+                "foldedComponentIds": Array [],
+                "render": [Function],
+                "styledComponentId": "sc-ifAKCX",
+                "target": "div",
+                "toString": [Function],
+                "warnTooManyClasses": [Function],
+                "withComponent": [Function],
+              },
             },
           ],
-          "type": "div",
+          "type": Object {
+            "$$typeof": Symbol(react.forward_ref),
+            "attrs": Array [],
+            "componentStyle": ComponentStyle {
+              "componentId": "sc-bwzfXH",
+              "isStatic": true,
+              "rules": Array [
+                "
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    ",
+              ],
+            },
+            "displayName": "styled.div",
+            "foldedComponentIds": Array [],
+            "render": [Function],
+            "styledComponentId": "sc-bwzfXH",
+            "target": "div",
+            "toString": [Function],
+            "warnTooManyClasses": [Function],
+            "withComponent": [Function],
+          },
         },
       ],
-      "type": "div",
+      "type": Object {
+        "$$typeof": Symbol(react.forward_ref),
+        "attrs": Array [],
+        "componentStyle": ComponentStyle {
+          "componentId": "sc-bdVaJa",
+          "isStatic": true,
+          "rules": Array [
+            "
+        border-left: 5px solid ",
+            "transparent",
+            ";
+        display: flex;
+        flex-direction: row;
+        ",
+            "
+    ",
+          ],
+        },
+        "displayName": "Wrapper",
+        "foldedComponentIds": Array [],
+        "render": [Function],
+        "styledComponentId": "sc-bdVaJa",
+        "target": "div",
+        "toString": [Function],
+        "warnTooManyClasses": [Function],
+        "withComponent": [Function],
+      },
     },
   ],
   Symbol(enzyme.__options__): Object {
