@@ -1,6 +1,12 @@
-import {shallow} from 'enzyme';
+import {mount, shallow} from 'enzyme';
+import 'jest-styled-components';
 import * as React from 'react';
 import RecordPreview from './RecordPreview';
+
+jest.mock('src/utils/utils', () => ({
+    getInvertColor: jest.fn().mockImplementation(() => '#FFFFFF'),
+    getRandomColor: jest.fn().mockImplementation(() => '#000000')
+}));
 
 describe('RecordPreview', () => {
     test('Show an image', async () => {
@@ -11,23 +17,23 @@ describe('RecordPreview', () => {
     });
 
     test('Show initial with color if no image', async () => {
-        const comp = shallow(<RecordPreview color="#FF0000" image={null} label="TestLabel" />);
+        const comp = mount(<RecordPreview color="#FF0000" image={null} label="TestLabel" />);
 
         expect(comp.find('Image')).toHaveLength(0);
-        expect(comp.find('div.initial')).toHaveLength(1);
-        expect(comp.find('div.initial').text()).toBe('T');
-        expect(comp.find('div.initial').props().style!.backgroundColor).toBe('#FF0000');
+        expect(comp.find('GeneratedPreview')).toHaveLength(1);
+        expect(comp.find('GeneratedPreview').text()).toBe('T');
+        expect(comp.find('GeneratedPreview')).toHaveStyleRule('background-color', '#FF0000');
     });
 
     test('Show initial with random color if no color', async () => {
-        const comp = shallow(<RecordPreview color={null} image={null} label="TestLabel" />);
+        const comp = mount(<RecordPreview color={null} image={null} label="TestLabel" />);
 
-        expect(comp.find('div.initial').props().style!.backgroundColor).toMatch(/^\#[0-9A-Fa-f]{6}$/);
+        expect(comp.find('GeneratedPreview')).toHaveStyleRule('background-color', /^\#[0-9A-Fa-f]{6}$/);
     });
 
     test('Show uppercase initial', async () => {
         const comp = shallow(<RecordPreview color={null} image={null} label="testLabel" />);
 
-        expect(comp.find('div.initial').text()).toBe('T');
+        expect(comp.find('GeneratedPreview').text()).toBe('T');
     });
 });
