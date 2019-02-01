@@ -3,6 +3,7 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Icon, Table} from 'semantic-ui-react';
 import {GET_PERMISSIONS_heritPerm, GET_PERMISSIONS_perm} from 'src/_gqlTypes/GET_PERMISSIONS';
 import {SAVE_PERMISSION_savePermission_actions} from 'src/_gqlTypes/SAVE_PERMISSION';
+import styled from 'styled-components';
 import PermissionSelector from '../PermissionSelector';
 
 interface IEditPermissionsViewProps extends WithNamespaces {
@@ -11,10 +12,27 @@ interface IEditPermissionsViewProps extends WithNamespaces {
     onChange: (permToSave: SAVE_PERMISSION_savePermission_actions) => void;
 }
 
-function EditPermissionsView({permissions, heritedPermissions, onChange, t}: IEditPermissionsViewProps): JSX.Element {
-    const permissionForbiddenColor = '#FF0000';
-    const permissionAllowedColor = '#99cc00';
+const permissionForbiddenColor = '#FF0000';
+const permissionAllowedColor = '#99cc00';
 
+/* tslint:disable-next-line:variable-name */
+const ForbiddenIcon = styled(Icon)`
+    color: ${permissionForbiddenColor};
+`;
+
+/* tslint:disable-next-line:variable-name */
+const AllowedIcon = styled(Icon)`
+    color: ${permissionAllowedColor};
+`;
+
+/* tslint:disable-next-line:variable-name */
+const PermissionsHeader = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+`;
+
+function EditPermissionsView({permissions, heritedPermissions, onChange, t}: IEditPermissionsViewProps): JSX.Element {
     const heritPermByName = heritedPermissions.reduce((heritPerms, p) => {
         heritPerms[p.name] = p.allowed;
 
@@ -27,17 +45,11 @@ function EditPermissionsView({permissions, heritedPermissions, onChange, t}: IEd
                 <Table.Row>
                     <Table.HeaderCell>{t('permissions.permission_col_name')}</Table.HeaderCell>
                     <Table.HeaderCell>
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between'
-                            }}
-                        >
-                            <Icon name="ban" style={{color: permissionForbiddenColor}} />
+                        <PermissionsHeader>
+                            <ForbiddenIcon name="ban" />
                             <Icon name="sitemap" />
-                            <Icon name="checkmark" style={{color: permissionAllowedColor}} />
-                        </div>
+                            <AllowedIcon name="checkmark" />
+                        </PermissionsHeader>
                     </Table.HeaderCell>
                 </Table.Row>
             </Table.Header>

@@ -36,10 +36,6 @@ function PermissionSelector({
     const inputVal = permValToInputVal(value);
     const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(heritValue)], 40);
 
-    const style: React.CSSProperties = {
-        border: 'none'
-    };
-
     /* tslint:disable-next-line:variable-name */
     const Wrapper = styled(as)`
         background: ${bgColor};
@@ -56,7 +52,7 @@ function PermissionSelector({
                 max="2"
                 step="1"
                 value={inputVal}
-                style={style}
+                style={{border: 'none'}}
                 onChange={_handleChange}
                 transparent
                 fluid

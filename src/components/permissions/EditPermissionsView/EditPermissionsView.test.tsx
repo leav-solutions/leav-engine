@@ -4,7 +4,7 @@ import {PermissionsActions} from 'src/_gqlTypes/globalTypes';
 import EditPermissionsView from './EditPermissionsView';
 
 describe('EditPermissionsView', () => {
-    test('Snapshot test', async () => {
+    test('Show permissions selector', async () => {
         const onChange = jest.fn();
 
         const comp = shallow(
@@ -21,8 +21,8 @@ describe('EditPermissionsView', () => {
             />
         );
 
-        const forbidColor = comp.find('Icon[name="ban"]').prop('style')!.color;
-        const allowColor = comp.find('Icon[name="checkmark"]').prop('style')!.color;
+        // const forbidColor = comp.find('Icon[name="ban"]').prop('style')!.color;
+        // const allowColor = comp.find('Icon[name="checkmark"]').prop('style')!.color;
 
         expect(comp.find('PermissionSelector')).toHaveLength(2);
         expect(
@@ -30,12 +30,12 @@ describe('EditPermissionsView', () => {
                 .find('PermissionSelector')
                 .first()
                 .prop('forbiddenColor')
-        ).toBe(forbidColor);
+        ).toBe('#FF0000');
         expect(
             comp
                 .find('PermissionSelector')
                 .first()
                 .prop('allowedColor')
-        ).toBe(allowColor);
+        ).toBe('#99cc00');
     });
 });

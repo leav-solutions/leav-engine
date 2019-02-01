@@ -32,7 +32,7 @@ function EditTreeForm({tree, onSubmit, t, i18n: i18next}: IEditTreeFormProps): J
             menuItem: t('trees.structure'),
             render: () => (
                 <Tab.Pane key="structure" className="grow">
-                    <div className="flex-col" style={{height: '100%'}}>
+                    <div className="flex-col height100">
                         <TreeStructure treeId={tree.id} />
                     </div>
                 </Tab.Pane>

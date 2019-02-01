@@ -6,6 +6,7 @@ import DefineTreePermissionsView from 'src/components/permissions/DefineTreePerm
 import {localizedLabel} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import {AttributeType, PermissionsRelation, PermissionTypes} from 'src/_gqlTypes/globalTypes';
+import styled from 'styled-components';
 
 interface IEditLibraryPermissionsProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;
@@ -16,6 +17,16 @@ interface IEditLibraryPermissionsState {
     permissionTreeAttributes: string[];
     relation: PermissionsRelation;
 }
+
+/* tslint:disable-next-line:variable-name */
+const FormGroupWithMargin = styled(Form.Group)`
+    margin-top: 10px;
+`;
+
+/* tslint:disable-next-line:variable-name */
+const AccordionWithMargin = styled(Accordion)`
+    margin-bottom: 1em;
+`;
 
 function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibraryPermissionsProps): JSX.Element {
     const defaultPermsConf = {permissionTreeAttributes: [], relation: PermissionsRelation.and};
@@ -80,7 +91,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
 
     return (
         <div className="flex-col height100">
-            <Accordion fluid styled style={{marginBottom: '1em'}}>
+            <AccordionWithMargin fluid styled>
                 <Accordion.Title index={0} active={settingsExpanded} onClick={onClickToggle}>
                     <Icon name="dropdown" />
                     {t('libraries.permissions_settings_title')}
@@ -124,12 +135,12 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                                 </Form.Field>
                             </Form.Group>
                         )}
-                        <Form.Group style={{marginTop: 10}}>
+                        <FormGroupWithMargin>
                             <Form.Button>{t('admin.submit')}</Form.Button>
-                        </Form.Group>
+                        </FormGroupWithMargin>
                     </Form>
                 </Accordion.Content>
-            </Accordion>
+            </AccordionWithMargin>
             <Tab panes={panes} className="grow flex-col height100" />
         </div>
     );

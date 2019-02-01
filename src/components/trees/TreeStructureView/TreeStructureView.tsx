@@ -5,6 +5,7 @@ import {Button, Loader} from 'semantic-ui-react';
 import ConfirmedButton from 'src/components/shared/ConfirmedButton';
 import Loading from 'src/components/shared/Loading';
 import {getTreeNodeKey} from 'src/utils/utils';
+import styled from 'styled-components';
 import './rstOverride.css';
 
 interface IEditTreeStructureViewProps extends WithNamespaces {
@@ -17,6 +18,12 @@ interface IEditTreeStructureViewProps extends WithNamespaces {
     onClickNode?: (nodeData: NodeData) => void;
     selection?: [NodeData] | null;
 }
+
+/* tslint:disable-next-line:variable-name */
+const InlineBtn = styled(Button)`
+    background: none;
+    padding: 0;
+`;
 
 function TreeStructureView({
     treeData,
@@ -54,7 +61,7 @@ function TreeStructureView({
                         action={onDelete}
                         confirmMessage={t('trees.confirm_delete_element')}
                     >
-                        <Button icon="delete" style={{background: 'none', padding: 0}} />
+                        <InlineBtn icon="delete" />
                     </ConfirmedButton>
                 )
             ],

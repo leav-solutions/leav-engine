@@ -3,12 +3,18 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import {formatIDString, localizedLabel} from 'src/utils/utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
+import styled from 'styled-components';
 
 interface IEditLibraryInfosFormProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries | null;
     onLibUpdate?: (lib: GET_LIBRARIES_libraries) => void;
     onSubmit: (formData: any) => void;
 }
+
+/* tslint:disable-next-line:variable-name */
+const FormGroupWithMargin = styled(Form.Group)`
+    margin-top: 10px;
+`;
 
 class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, any> {
     constructor(props: IEditLibraryInfosFormProps) {
@@ -108,9 +114,9 @@ class EditLibraryInfosForm extends React.Component<IEditLibraryInfosFormProps, a
                         />
                     </Form.Field>
                 </Form.Group>
-                <Form.Group style={{marginTop: 10}}>
+                <FormGroupWithMargin>
                     <Form.Button>{t('admin.submit')}</Form.Button>
-                </Form.Group>
+                </FormGroupWithMargin>
             </Form>
         );
     }

@@ -4,6 +4,7 @@ import {Form} from 'semantic-ui-react';
 import FormFieldWrapper from 'src/components/shared/FormFieldWrapper';
 import {formatIDString, getSysTranslationQueryLanguage} from 'src/utils/utils';
 import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
+import styled from 'styled-components';
 import LibrariesSelector from '../LibrariesSelector';
 
 interface IEditTreeInfosFormProps extends WithNamespaces {
@@ -14,6 +15,11 @@ interface IEditTreeInfosFormProps extends WithNamespaces {
 interface IEditTreeInfosFormState extends GET_TREES_trees {
     existingTree: boolean;
 }
+
+/* tslint:disable-next-line:variable-name */
+const FormGroupWithMargin = styled(Form.Group)`
+    margin-top: 10px;
+`;
 
 class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTreeInfosFormState> {
     constructor(props: IEditTreeInfosFormProps) {
@@ -80,9 +86,9 @@ class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTr
                         value={libraries}
                     />
                 </FormFieldWrapper>
-                <Form.Group style={{marginTop: 10}}>
+                <FormGroupWithMargin>
                     <Form.Button>{t('admin.submit')}</Form.Button>
-                </Form.Group>
+                </FormGroupWithMargin>
             </Form>
         );
     }
