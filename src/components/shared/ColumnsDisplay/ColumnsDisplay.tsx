@@ -6,34 +6,40 @@ interface IColumnsDisplayProps {
     columnsContent: JSX.Element[];
 }
 
-function ColumnsDisplay({columnsNumber, columnsContent}: IColumnsDisplayProps): JSX.Element {
-    /* tslint:disable-next-line:variable-name */
-    const Wrapper = styled.div`
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        height: 100%;
-    `;
+interface IColumnProps {
+    columnsNumber: number;
+}
 
-    /* tslint:disable-next-line:variable-name */
-    const Column = styled.div`
-        position: relative;
-        padding-left: 1em;
-        width: ${100 / columnsNumber + '%'};
-        flex-direction: column;
-        display: flex;
-        text-align: center;
-        border-right: 1px solid #999999;
+/* tslint:disable-next-line:variable-name */
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 100%;
+`;
 
-        &:last-child {
-            border-right: none;
-        }
-    `;
+/* tslint:disable-next-line:variable-name */
+const Column = styled.div<IColumnProps>`
+    position: relative;
+    padding-left: 1em;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    border-right: 1px solid #999999;
+    width: ${props => 100 / props.columnsNumber + '%'}
 
+    &:last-child {
+        border-right: none;
+    }
+`;
+
+function ColumnsDisplay({columnsContent, columnsNumber}: IColumnsDisplayProps): JSX.Element {
     return (
         <Wrapper>
             {columnsContent.map((c, i) => (
-                <Column key={i}>{c}</Column>
+                <Column columnsNumber={columnsNumber} key={i}>
+                    {c}
+                </Column>
             ))}
         </Wrapper>
     );

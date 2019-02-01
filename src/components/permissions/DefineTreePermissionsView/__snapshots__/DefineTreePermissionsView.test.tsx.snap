@@ -4,12 +4,12 @@ exports[`DefineTreePermissionsView Snapshot test 1`] = `
 initialize {
   "0": Object {
     "attribs": Object {
-      "class": "sc-bdVaJa fXdaeF",
+      "class": "sc-bdVaJa goaYMK",
     },
     "children": Array [
       Object {
         "attribs": Object {
-          "class": "sc-bwzfXH cpWdPZ",
+          "class": "sc-bwzfXH cIPmQg",
         },
         "children": Array [
           Object {

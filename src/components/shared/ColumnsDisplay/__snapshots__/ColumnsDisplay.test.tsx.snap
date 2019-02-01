@@ -30,12 +30,16 @@ ShallowWrapper {
     "nodeType": "function",
     "props": Object {
       "children": Array [
-        <Unknown>
+        <Unknown
+          columnsNumber={4}
+>
           <div
                     className="col-content"
           />
 </Unknown>,
-        <Unknown>
+        <Unknown
+          columnsNumber={4}
+>
           <div
                     className="col-content"
           />
@@ -52,6 +56,7 @@ ShallowWrapper {
           "children": <div
             className="col-content"
 />,
+          "columnsNumber": 4,
         },
         "ref": null,
         "rendered": Object {
@@ -70,23 +75,23 @@ ShallowWrapper {
           "attrs": Array [],
           "componentStyle": ComponentStyle {
             "componentId": "sc-bwzfXH",
-            "isStatic": true,
+            "isStatic": false,
             "rules": Array [
               "
-        position: relative;
-        padding-left: 1em;
-        width: ",
-              "25%",
-              ";
-        flex-direction: column;
-        display: flex;
-        text-align: center;
-        border-right: 1px solid #999999;
+    position: relative;
+    padding-left: 1em;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    border-right: 1px solid #999999;
+    width: ",
+              [Function],
+              "
 
-        &:last-child {
-            border-right: none;
-        }
-    ",
+    &:last-child {
+        border-right: none;
+    }
+",
             ],
           },
           "displayName": "styled.div",
@@ -107,6 +112,7 @@ ShallowWrapper {
           "children": <div
             className="col-content"
 />,
+          "columnsNumber": 4,
         },
         "ref": null,
         "rendered": Object {
@@ -125,23 +131,23 @@ ShallowWrapper {
           "attrs": Array [],
           "componentStyle": ComponentStyle {
             "componentId": "sc-bwzfXH",
-            "isStatic": true,
+            "isStatic": false,
             "rules": Array [
               "
-        position: relative;
-        padding-left: 1em;
-        width: ",
-              "25%",
-              ";
-        flex-direction: column;
-        display: flex;
-        text-align: center;
-        border-right: 1px solid #999999;
+    position: relative;
+    padding-left: 1em;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    border-right: 1px solid #999999;
+    width: ",
+              [Function],
+              "
 
-        &:last-child {
-            border-right: none;
-        }
-    ",
+    &:last-child {
+        border-right: none;
+    }
+",
             ],
           },
           "displayName": "styled.div",
@@ -163,11 +169,11 @@ ShallowWrapper {
         "isStatic": true,
         "rules": Array [
           "
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        height: 100%;
-    ",
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 100%;
+",
         ],
       },
       "displayName": "styled.div",
@@ -187,12 +193,16 @@ ShallowWrapper {
       "nodeType": "function",
       "props": Object {
         "children": Array [
-          <Unknown>
+          <Unknown
+            columnsNumber={4}
+>
             <div
                         className="col-content"
             />
 </Unknown>,
-          <Unknown>
+          <Unknown
+            columnsNumber={4}
+>
             <div
                         className="col-content"
             />
@@ -209,6 +219,7 @@ ShallowWrapper {
             "children": <div
               className="col-content"
 />,
+            "columnsNumber": 4,
           },
           "ref": null,
           "rendered": Object {
@@ -227,23 +238,23 @@ ShallowWrapper {
             "attrs": Array [],
             "componentStyle": ComponentStyle {
               "componentId": "sc-bwzfXH",
-              "isStatic": true,
+              "isStatic": false,
               "rules": Array [
                 "
-        position: relative;
-        padding-left: 1em;
-        width: ",
-                "25%",
-                ";
-        flex-direction: column;
-        display: flex;
-        text-align: center;
-        border-right: 1px solid #999999;
+    position: relative;
+    padding-left: 1em;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    border-right: 1px solid #999999;
+    width: ",
+                [Function],
+                "
 
-        &:last-child {
-            border-right: none;
-        }
-    ",
+    &:last-child {
+        border-right: none;
+    }
+",
               ],
             },
             "displayName": "styled.div",
@@ -264,6 +275,7 @@ ShallowWrapper {
             "children": <div
               className="col-content"
 />,
+            "columnsNumber": 4,
           },
           "ref": null,
           "rendered": Object {
@@ -282,23 +294,23 @@ ShallowWrapper {
             "attrs": Array [],
             "componentStyle": ComponentStyle {
               "componentId": "sc-bwzfXH",
-              "isStatic": true,
+              "isStatic": false,
               "rules": Array [
                 "
-        position: relative;
-        padding-left: 1em;
-        width: ",
-                "25%",
-                ";
-        flex-direction: column;
-        display: flex;
-        text-align: center;
-        border-right: 1px solid #999999;
+    position: relative;
+    padding-left: 1em;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    border-right: 1px solid #999999;
+    width: ",
+                [Function],
+                "
 
-        &:last-child {
-            border-right: none;
-        }
-    ",
+    &:last-child {
+        border-right: none;
+    }
+",
               ],
             },
             "displayName": "styled.div",
@@ -320,11 +332,11 @@ ShallowWrapper {
           "isStatic": true,
           "rules": Array [
             "
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        height: 100%;
-    ",
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 100%;
+",
           ],
         },
         "displayName": "styled.div",
