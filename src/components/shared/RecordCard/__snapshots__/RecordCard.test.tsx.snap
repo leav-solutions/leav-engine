@@ -65,6 +65,8 @@ ShallowWrapper {
 </Unknown>,
       ],
       "className": "ui fluid",
+      "recordColor": null,
+      "style": undefined,
     },
     "ref": null,
     "rendered": Array [
@@ -102,13 +104,13 @@ ShallowWrapper {
             "isStatic": true,
             "rules": Array [
               "
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    ",
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+",
               "
-        margin: 0 0.8em;
-    ",
+    margin: 0 0.8em;
+",
             ],
           },
           "displayName": "Styled(styled.div)",
@@ -157,8 +159,8 @@ ShallowWrapper {
                 "isStatic": true,
                 "rules": Array [
                   "
-        font-weight: bold;
-    ",
+    font-weight: bold;
+",
                 ],
               },
               "displayName": "styled.div",
@@ -188,10 +190,10 @@ ShallowWrapper {
                 "isStatic": true,
                 "rules": Array [
                   "
-        font-weight: normal;
-        color: rgba(0, 0, 0, 0.4);
-        fontsize: 0.9em;
-    ",
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.4);
+    fontsize: 0.9em;
+",
                 ],
               },
               "displayName": "styled.div",
@@ -213,10 +215,10 @@ ShallowWrapper {
             "isStatic": true,
             "rules": Array [
               "
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    ",
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+",
             ],
           },
           "displayName": "styled.div",
@@ -235,17 +237,18 @@ ShallowWrapper {
       "attrs": Array [],
       "componentStyle": ComponentStyle {
         "componentId": "sc-bdVaJa",
-        "isStatic": true,
+        "isStatic": false,
         "rules": Array [
           "
-        border-left: 5px solid ",
-          "transparent",
+    border-left: 5px solid ",
+          [Function],
           ";
-        display: flex;
-        flex-direction: row;
-        ",
-          "
+    display: flex;
+    flex-direction: row;
     ",
+          [Function],
+          "
+",
         ],
       },
       "displayName": "Wrapper",
@@ -286,6 +289,8 @@ ShallowWrapper {
 </Unknown>,
         ],
         "className": "ui fluid",
+        "recordColor": null,
+        "style": undefined,
       },
       "ref": null,
       "rendered": Array [
@@ -323,13 +328,13 @@ ShallowWrapper {
               "isStatic": true,
               "rules": Array [
                 "
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    ",
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+",
                 "
-        margin: 0 0.8em;
-    ",
+    margin: 0 0.8em;
+",
               ],
             },
             "displayName": "Styled(styled.div)",
@@ -378,8 +383,8 @@ ShallowWrapper {
                   "isStatic": true,
                   "rules": Array [
                     "
-        font-weight: bold;
-    ",
+    font-weight: bold;
+",
                   ],
                 },
                 "displayName": "styled.div",
@@ -409,10 +414,10 @@ ShallowWrapper {
                   "isStatic": true,
                   "rules": Array [
                     "
-        font-weight: normal;
-        color: rgba(0, 0, 0, 0.4);
-        fontsize: 0.9em;
-    ",
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.4);
+    fontsize: 0.9em;
+",
                   ],
                 },
                 "displayName": "styled.div",
@@ -434,10 +439,10 @@ ShallowWrapper {
               "isStatic": true,
               "rules": Array [
                 "
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    ",
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+",
               ],
             },
             "displayName": "styled.div",
@@ -456,17 +461,18 @@ ShallowWrapper {
         "attrs": Array [],
         "componentStyle": ComponentStyle {
           "componentId": "sc-bdVaJa",
-          "isStatic": true,
+          "isStatic": false,
           "rules": Array [
             "
-        border-left: 5px solid ",
-            "transparent",
+    border-left: 5px solid ",
+            [Function],
             ";
-        display: flex;
-        flex-direction: row;
-        ",
-            "
+    display: flex;
+    flex-direction: row;
     ",
+            [Function],
+            "
+",
           ],
         },
         "displayName": "Wrapper",
