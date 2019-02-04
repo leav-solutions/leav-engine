@@ -244,14 +244,10 @@ export default function(
         ): Promise<boolean> {
             // Get perm for user group's parent
             const includeTreeRoot = true;
-            const groupAncestors = await treeRepo.getElementAncestors(
-                'users_groups',
-                {
-                    id: userGroupId,
-                    library: 'users_groups'
-                },
-                includeTreeRoot
-            );
+            const groupAncestors = await treeRepo.getElementAncestors('users_groups', {
+                id: userGroupId,
+                library: 'users_groups'
+            });
 
             const perm = await ret.getPermissionByUserGroups(
                 PermissionTypes.LIBRARY,
