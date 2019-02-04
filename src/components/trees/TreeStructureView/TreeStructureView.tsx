@@ -21,8 +21,11 @@ interface IEditTreeStructureViewProps extends WithNamespaces {
 
 /* tslint:disable-next-line:variable-name */
 const InlineBtn = styled(Button)`
-    background: none;
-    padding: 0;
+    /* Trick to override more specific CSS rules */
+    &&& {
+        background: none;
+        padding: 0;
+    }
 `;
 
 function TreeStructureView({
