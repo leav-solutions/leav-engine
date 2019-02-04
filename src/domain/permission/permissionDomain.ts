@@ -152,7 +152,10 @@ export default function(
                         }
                     }
 
-                    return null;
+                    // Nothing found in tree, check on root level
+                    const rootPerm = await ret.getSimplePermission(type, applyTo, action, null, permissionTreeTarget);
+
+                    return rootPerm;
                 })
             );
 
@@ -240,10 +243,15 @@ export default function(
             userGroupId: number
         ): Promise<boolean> {
             // Get perm for user group's parent
-            const groupAncestors = await treeRepo.getElementAncestors('users_groups', {
-                id: userGroupId,
-                library: 'users_groups'
-            });
+            const includeTreeRoot = true;
+            const groupAncestors = await treeRepo.getElementAncestors(
+                'users_groups',
+                {
+                    id: userGroupId,
+                    library: 'users_groups'
+                },
+                includeTreeRoot
+            );
 
             const perm = await ret.getPermissionByUserGroups(
                 PermissionTypes.LIBRARY,

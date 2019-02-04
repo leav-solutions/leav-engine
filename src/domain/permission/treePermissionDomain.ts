@@ -85,8 +85,14 @@ export default function(
             }
         }
 
-        // No permission found, return default permission
-        return null;
+        // Nothing found on tree or no value defined, return root level permission
+        const rootPerm = await permissionDomain.getPermissionByUserGroups(type, action, userGroupsPaths, applyTo, {
+            id: null,
+            library: null,
+            tree: permTreeId
+        });
+
+        return rootPerm;
     }
 
     return {

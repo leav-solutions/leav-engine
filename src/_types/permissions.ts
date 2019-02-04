@@ -71,12 +71,12 @@ export interface IPermissionsTreeTarget {
     /**
      * Tree element's library
      */
-    library: string;
+    library: string | null;
 
     /**
      * Tree element's ID
      */
-    id: string | number;
+    id: string | number | null;
 }
 
 export interface IPermission {
@@ -91,9 +91,9 @@ export interface IPermission {
     applyTo?: string;
 
     /**
-     * Users group concerned by this permission
+     * Users group concerned by this permission. If null, applies to root level
      */
-    usersGroup: string;
+    usersGroup: string | null;
 
     /**
      * Permission by action: create, edit...

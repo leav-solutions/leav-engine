@@ -297,6 +297,27 @@ describe('PermissionDomain', () => {
             expect(perm).toBe(false);
         });
 
+        test('Return root permission if nothing found on tree', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);
+
+            permDomain.getSimplePermission = jest
+                .fn()
+                .mockImplementation((type, applyTo, action, usersGroupId, permissionTreeTarget) => {
+                    return usersGroupId === null ? false : null;
+                });
+
+            const perm = await permDomain.getPermissionByUserGroups(
+                PermissionTypes.ADMIN,
+                AdminPermissionsActions.CREATE_ATTRIBUTE,
+                mockUserGroups,
+                null,
+                null
+            );
+
+            expect(perm).toBe(false);
+        });
+
         test('Return null if no permission found', async () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {};
             const permDomain = permissionDomain(mockPermRepo as IPermissionRepo);

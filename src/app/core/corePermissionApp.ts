@@ -82,30 +82,37 @@ export default function(
                         relation: PermissionsRelation!
                     }
 
+                    # If id and library are not specified, permission will apply to tree root
                     type PermissionsTreeTarget {
                         tree: ID!,
-                        library: ID!,
-                        id: ID!
+                        library: ID,
+                        id: ID
                     }
 
+                    # If id and library are not specified, permission will apply to tree root
                     input PermissionsTreeTargetInput {
                         tree: ID!,
-                        library: ID!,
-                        id: ID!
+                        library: ID,
+                        id: ID
                     }
 
+                    # A "null" users groups means this permission applies at root level. A "null" on tree target's
+                    # id for tree-based permission means it applies to root level on this tree.
                     type Permission {
                         type: PermissionTypes!,
                         applyTo: ID,
-                        usersGroup: ID!,
+                        usersGroup: ID,
                         actions: [PermissionAction!]!,
                         permissionTreeTarget: PermissionsTreeTarget
                     }
 
+                    # If users group is not specified, permission will be saved at root level.
+                    # If saving a tree-based permission (record or attribute) and tree target's id is not specified,
+                    # permission will be saved at root level for any element of the tree.
                     input PermissionInput {
                         type: PermissionTypes!,
                         applyTo: ID,
-                        usersGroup: ID!,
+                        usersGroup: ID,
                         actions: [PermissionActionInput!]!,
                         permissionTreeTarget: PermissionsTreeTargetInput
                     }

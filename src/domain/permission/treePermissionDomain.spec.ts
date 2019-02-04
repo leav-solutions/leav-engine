@@ -300,7 +300,36 @@ describe('TreePermissionDomain', () => {
             expect(perm).toBe(defaultPerm);
         });
 
+        test('Return permission on tree root level', async () => {
+            const mockRootLevelPermDomain: Mockify<IPermissionDomain> = {
+                getPermissionByUserGroups: jest
+                    .fn()
+                    .mockImplementation((type, applyTo, action, usersGroupId, permissionTreeTarget) => {
+                        return permissionTreeTarget.id === null ? true : null;
+                    }),
+                getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
+            };
+
+            const treePermDomain = treePermissionDomain(
+                mockRootLevelPermDomain as IPermissionDomain,
+                mockTreeRepo as ITreeRepo,
+                mockAttrDomain as IAttributeDomain,
+                mockValueRepo as IValueRepo
+            );
+
+            const perm = await treePermDomain.getTreePermission({
+                ...params
+            });
+
+            expect(perm).toBe(true);
+        });
+
         test('No value on permission tree attribute', async () => {
+            const mockNoValPermDomain: Mockify<IPermissionDomain> = {
+                getPermissionByUserGroups: global.__mockPromise(null),
+                getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
+            };
+
             const mockValueNoCatRepo: Mockify<IValueRepo> = {
                 getValues: jest.fn().mockImplementation((lib, rec, attr) => {
                     switch (attr.id) {
@@ -324,7 +353,7 @@ describe('TreePermissionDomain', () => {
             };
 
             const treePermDomain = treePermissionDomain(
-                mockPermDomain as IPermissionDomain,
+                mockNoValPermDomain as IPermissionDomain,
                 mockTreeRepo as ITreeRepo,
                 mockAttrDomain as IAttributeDomain,
                 mockValueNoCatRepo as IValueRepo

@@ -8,7 +8,7 @@ export interface IPermissionRepo {
     getPermissions(
         type: PermissionTypes,
         applyTo: string,
-        usersGroupId: number,
+        usersGroupId: number | null,
         permissionTreeTarget?: IPermissionsTreeTarget
     ): Promise<IPermission | null>;
 }
@@ -28,7 +28,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
         }
 
         return {
-            id: treeTarget.library + '/' + treeTarget.id,
+            id: treeTarget.id && treeTarget.library ? treeTarget.library + '/' + treeTarget.id : null,
             tree: treeTarget.tree
         };
     }
@@ -38,7 +38,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
             return null;
         }
 
-        const [library, id] = treeTarget.id.split('/');
+        const [library, id] = treeTarget.id ? treeTarget.id.split('/') : [null, null];
 
         return {
             ...treeTarget,
@@ -49,11 +49,13 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
 
     return {
         async savePermission(permData: IPermission): Promise<IPermission> {
+            const userGroupToSave = permData.usersGroup ? USERS_GROUP_LIB_NAME + '/' + permData.usersGroup : null;
+
             // Upsert in permissions collection
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
             const dbPermData = {
                 ...permData,
-                usersGroup: USERS_GROUP_LIB_NAME + '/' + permData.usersGroup,
+                usersGroup: userGroupToSave,
                 permissionTreeTarget: permData.permissionTreeTarget
                     ? _toDbTreeTarget(permData.permissionTreeTarget)
                     : null
@@ -76,6 +78,7 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
 
             const savedPerm = {
                 ...res[0],
+                usersGroup: permData.usersGroup ? res[0].usersGroup : null,
                 permissionTreeTarget: _toCoreTreeTarget(res[0].permissionTreeTarget)
             };
 
@@ -84,18 +87,20 @@ export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermi
         async getPermissions(
             type: PermissionTypes,
             applyTo: string = null,
-            usersGroupId: number,
+            usersGroupId: number | null,
             permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<IPermission | null> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
 
             const dbTarget = permissionTreeTarget ? _toDbTreeTarget(permissionTreeTarget) : null;
 
+            const userGroupToFilter = usersGroupId ? USERS_GROUP_LIB_NAME + '/' + usersGroupId : null;
+
             const query = aql`
                 FOR p IN ${col}
                 FILTER p.type == ${type}
                     AND p.applyTo == ${applyTo}
-                    AND p.usersGroup == ${USERS_GROUP_LIB_NAME + '/' + usersGroupId}
+                    AND p.usersGroup == ${userGroupToFilter}
                     AND p.permissionTreeTarget == ${dbTarget}
                 RETURN p
             `;

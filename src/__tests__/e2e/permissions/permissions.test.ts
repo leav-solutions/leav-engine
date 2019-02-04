@@ -406,8 +406,8 @@ describe('Permissions', () => {
         let userGroupId5;
         let userGroupId6;
         let treeElemId1;
-        let treeElemId2;
 
+        let treeElemId2;
         beforeAll(async () => {
             // Create new test libs
             await makeGraphQlCall(`mutation {
@@ -694,6 +694,112 @@ describe('Permissions', () => {
                 expect(permHeritGroup.data.data.p[0].name).toBe('create_attribute');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
+        });
+    });
+
+    describe('Root level permissions', () => {
+        let userGroupId;
+
+        beforeAll(async () => {
+            // Create 2 users groups
+            const resCreateGroups = await makeGraphQlCall(`mutation {
+                r1: createRecord(library: "users_groups") {id}
+            }`);
+            userGroupId = resCreateGroups.data.data.r1.id;
+
+            // Add users groups to tree
+            await makeGraphQlCall(`mutation {
+                el1: treeAddElement(
+                    treeId: "users_groups",
+                    element: {
+                        id: "${userGroupId}",
+                        library: "users_groups"
+                    }
+                ) {
+                    id
+                }
+            }`);
+        });
+
+        test('Save/get permission on users groups root level', async () => {
+            // Save perm
+            const resSavePerm = await makeGraphQlCall(`mutation {
+                perm: savePermission(
+                    permission: {
+                        type: library,
+                        applyTo: "${testLibId}",
+                        usersGroup: null,
+                        actions: [
+                            {name: access, allowed: false},
+                        ]
+                    }
+                ) { type usersGroup }
+            }`);
+
+            expect(resSavePerm.status).toBe(200);
+            expect(resSavePerm.data.errors).toBeUndefined();
+            expect(resSavePerm.data.data.perm.usersGroup).toBe(null);
+
+            // Retrieve permission
+            const resGetPerm = await makeGraphQlCall(`{
+                p: heritedPermissions(
+                    type: library,
+                    applyTo: "${testLibId}",
+                    actions: [access],
+                    userGroupId: "${userGroupId}",
+                ) { name allowed }
+              }
+            `);
+            expect(resGetPerm.status).toBe(200);
+            expect(resGetPerm.data.errors).toBeUndefined();
+            expect(resGetPerm.data.data.p[0].name).toBe('access');
+            expect(resGetPerm.data.data.p[0].allowed).toBe(false);
+        });
+
+        test('Save/get permission on any tree root level', async () => {
+            // Save perm
+            const resSavePerm = await makeGraphQlCall(`mutation {
+                perm: savePermission(
+                    permission: {
+                        type: record,
+                        applyTo: "${testLibId}",
+                        usersGroup: "${userGroupId}",
+                        actions: [
+                            {name: access, allowed: false},
+                        ],
+                        permissionTreeTarget: {
+                            tree: "${permTreeName}",
+                            id: null,
+                            library: null
+                        }
+                    }
+                ) { type usersGroup permissionTreeTarget {tree id library}}
+            }`);
+
+            expect(resSavePerm.status).toBe(200);
+            expect(resSavePerm.data.errors).toBeUndefined();
+            expect(resSavePerm.data.data.perm.permissionTreeTarget.tree).toBe(permTreeName);
+            expect(resSavePerm.data.data.perm.permissionTreeTarget.id).toBe(null);
+
+            // Retrieve permission
+            const resGetPerm = await makeGraphQlCall(`{
+                p: heritedPermissions(
+                    type: record,
+                    applyTo: "${testLibId}",
+                    actions: [access],
+                    userGroupId: "${userGroupId}",
+                    permissionTreeTarget: {
+                        tree: "${permTreeName}",
+                        id: "${permTreeElemId}",
+                        library: "${permTreeLibName}"
+                    }
+                ) { name allowed }
+              }
+            `);
+            expect(resGetPerm.status).toBe(200);
+            expect(resGetPerm.data.errors).toBeUndefined();
+            expect(resGetPerm.data.data.p[0].name).toBe('access');
+            expect(resGetPerm.data.data.p[0].allowed).toBe(false);
         });
     });
 });
