@@ -335,6 +335,10 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             });
         },
         async getElementAncestors(treeId: string, element: ITreeElement): Promise<ITreeNode[]> {
+            if (!element.id) {
+                return [];
+            }
+
             const treeEdgeCollec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
 
             const query = aql`

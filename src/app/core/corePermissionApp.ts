@@ -122,14 +122,14 @@ export default function(
                             type: PermissionTypes!,
                             applyTo: ID,
                             actions: [PermissionsActions!]!,
-                            usersGroup: ID!,
+                            usersGroup: ID,
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [PermissionAction!],
                         heritedPermissions(
                             type: PermissionTypes!,
                             applyTo: ID,
                             actions: [PermissionsActions!]!,
-                            userGroupId: ID!,
+                            userGroupId: ID,
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [HeritedPermissionAction!]
                     }
