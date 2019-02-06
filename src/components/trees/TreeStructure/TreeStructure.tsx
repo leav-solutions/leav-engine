@@ -1,6 +1,7 @@
 import {ApolloClient} from 'apollo-boost';
 import * as React from 'react';
 import {ApolloConsumer} from 'react-apollo';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {
     changeNodeAtPath,
     ExtendedNodeData,
@@ -21,13 +22,15 @@ import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from 'src/_gqlTypes/D
 import {TreeElementInput} from 'src/_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from 'src/_gqlTypes/MOVE_TREE_ELEMENT';
 import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from 'src/_gqlTypes/TREE_CONTENT';
+import styled from 'styled-components';
 import TreeStructureView from '../TreeStructureView';
 
-interface ITreeStructureProps {
+interface ITreeStructureProps extends WithNamespaces {
     treeId: string;
     readOnly?: boolean;
     onClickNode?: (nodeData: NodeData) => void;
     selection?: [NodeData] | null;
+    withFakeRoot?: boolean;
 }
 
 interface ITreeStructureState {
@@ -35,18 +38,46 @@ interface ITreeStructureState {
     loaded: boolean;
 }
 
+/* tslint:disable-next-line:variable-name */
+const RootElem = styled.div`
+    height: 100%;
+    padding-left: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`;
+
 class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureState> {
-    constructor(props) {
+    constructor(props: ITreeStructureProps) {
         super(props);
 
+        const fakeRootData = [
+            {
+                record: {
+                    id: 'root',
+                    library: {id: 'root', label: null},
+                    whoAmI: {
+                        id: 'root',
+                        label: props.t('permissions.any_record'),
+                        color: 'transparent',
+                        library: {id: 'root', label: null},
+                        preview: null
+                    }
+                },
+                children: [],
+                order: 0
+            }
+        ];
+        const initTreeData = props.withFakeRoot ? this._convertTreeRecord(fakeRootData) : [];
+
         this.state = {
-            treeData: [],
+            treeData: initTreeData,
             loaded: false
         };
     }
 
     public render(): JSX.Element {
-        const {treeId, readOnly, onClickNode, selection} = this.props;
+        const {treeId, readOnly, onClickNode, selection, withFakeRoot} = this.props;
         const {treeData, loaded} = this.state;
 
         return (
@@ -54,7 +85,8 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
                 {client => {
                     // Init tree with root children
                     if (!loaded) {
-                        this._loadChildren(client, treeId);
+                        const path = withFakeRoot ? ['root/root'] : undefined;
+                        this._loadChildren(client, treeId, null, path);
                     }
 
                     const onVisibilityToggle = ({expanded, node, path}) => {
@@ -94,11 +126,16 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
     private _convertTreeRecord = (records: TREE_CONTENT_treeContent[]): TreeItem[] => {
         return records.map(
             (r: TREE_CONTENT_treeContent): TreeItem => {
-                const recordCard = <RecordCard record={r.record.whoAmI} style={{height: '100%'}} />;
+                const nodeTitle =
+                    r.record.id !== 'root' ? (
+                        <RecordCard record={r.record.whoAmI} style={{height: '100%'}} />
+                    ) : (
+                        <RootElem>{r.record.whoAmI.label}</RootElem>
+                    );
 
                 return {
                     ...r.record,
-                    title: recordCard,
+                    title: nodeTitle,
                     // subtitle: r.record.library.id,
                     children: r.children ? this._convertTreeRecord(r.children as TREE_CONTENT_treeContent[]) : [],
                     expanded: false
@@ -122,27 +159,27 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
     private _loadChildren = async (
         client: ApolloClient<any>,
         treeId: string,
-        parent?: TreeElementInput,
+        parent?: TreeElementInput | null,
         path?: Array<string | number>,
         expand: boolean = true
     ) => {
-        let node;
-
         // Show loading spinner on node
-        const withPath = path && typeof path !== 'undefined';
-        if (withPath) {
-            node = getNodeAtPath({treeData: this.state.treeData, path: path!, getNodeKey: getTreeNodeKey});
-            this.setState({
-                treeData: this._mergeNode(
-                    {
-                        ...node.node,
-                        loading: true,
-                        loaded: false,
-                        expanded: expand
-                    },
-                    path!
-                )
-            });
+        const withPath = !!path;
+        if (withPath && parent) {
+            const node = getNodeAtPath({treeData: this.state.treeData, path: path!, getNodeKey: getTreeNodeKey});
+            if (node !== null) {
+                this.setState({
+                    treeData: this._mergeNode(
+                        {
+                            ...node.node,
+                            loading: true,
+                            loaded: false,
+                            expanded: expand
+                        },
+                        path!
+                    )
+                });
+            }
         }
 
         // Retrieve data
@@ -271,4 +308,4 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
     }
 }
 
-export default TreeStructure;
+export default withNamespaces()(TreeStructure);

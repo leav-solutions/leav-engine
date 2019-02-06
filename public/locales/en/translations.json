@@ -3,7 +3,8 @@
         "title": "Administration",
         "submit": "Submit",
         "cancel": "Cancel",
-        "loading": "Loading..."
+        "loading": "Loading...",
+        "any_record": "Tous {libLabel}"
     },
     "libraries": {
         "title": "Libraries",
@@ -73,6 +74,7 @@
         "deny": "Deny",
         "herit": "Herit",
         "grant": "grant",
-        "library_tab_name": "Library"
+        "library_tab_name": "Library",
+        "any_record": "Any records"
     }
 }

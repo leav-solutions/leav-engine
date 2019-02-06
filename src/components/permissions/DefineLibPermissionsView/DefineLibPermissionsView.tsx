@@ -35,7 +35,7 @@ function DefineLibPermissionsView({applyTo}: IDefineLibPermissionsViewProps): JS
                 permParams={{
                     type: PermissionTypes.library,
                     applyTo,
-                    usersGroup: selectedGroupNode.node.id,
+                    usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
                     actions: [
                         PermissionsActions.access,
                         PermissionsActions.create,

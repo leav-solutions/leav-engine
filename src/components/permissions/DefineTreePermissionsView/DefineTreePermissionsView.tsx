@@ -60,7 +60,7 @@ function DefineTreePermissionsView({
                     permParams={{
                         type: permissionType,
                         applyTo,
-                        usersGroup: selectedGroupNode.node.id,
+                        usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
                         actions: [
                             PermissionsActions.access,
                             PermissionsActions.create,
@@ -69,8 +69,9 @@ function DefineTreePermissionsView({
                         ],
                         permissionTreeTarget: {
                             tree: tree.linked_tree,
-                            id: selectedTreeNode.node.id,
-                            library: selectedTreeNode.node.library.id
+                            id: selectedTreeNode.node.id !== 'root' ? selectedTreeNode.node.id : null,
+                            library:
+                                selectedTreeNode.node.library.id !== 'root' ? selectedTreeNode.node.library.id : null
                         }
                     }}
                 />

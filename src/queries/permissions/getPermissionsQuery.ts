@@ -7,7 +7,7 @@ export const getPermissionsQuery = gql`
         $type: PermissionTypes!
         $applyTo: ID
         $actions: [PermissionsActions!]!
-        $usersGroup: ID!
+        $usersGroup: ID
         $permissionTreeTarget: PermissionsTreeTargetInput
     ) {
         perm: permissions(

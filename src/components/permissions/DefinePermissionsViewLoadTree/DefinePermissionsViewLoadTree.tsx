@@ -41,6 +41,7 @@ function DefinePermissionsViewLoadTree({
                             onClickNode={onClick}
                             selection={selectedNode ? [selectedNode] : null}
                             readOnly
+                            withFakeRoot
                         />
                     </React.Fragment>
                 );

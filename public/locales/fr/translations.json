@@ -73,6 +73,7 @@
         "deny": "Interdire",
         "herit": "Hériter",
         "grant": "Autoriser",
-        "library_tab_name": "Bibliothèque"
+        "library_tab_name": "Bibliothèque",
+        "any_record": "Tous les éléments"
     }
 }
