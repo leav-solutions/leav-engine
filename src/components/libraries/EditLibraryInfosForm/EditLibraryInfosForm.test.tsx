@@ -21,7 +21,9 @@ describe('EditLibraryInfosForm', () => {
                 type: AttributeType.simple,
                 format: AttributeFormat.text,
                 system: false,
-                label: {fr: 'Test', en: 'Test'}
+                label: {fr: 'Test', en: 'Test'},
+                linked_tree: null,
+                permissionsConf: null
             }
         ]
     };

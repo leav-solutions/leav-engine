@@ -83,10 +83,37 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
 
                 const formErrors = error && error.graphQLErrors.length ? error.graphQLErrors[0] : null;
 
+                const onPermsSettingsSubmit = async attrData => {
+                    if (attrToEdit === null) {
+                        return;
+                    }
+
+                    await saveAttribute({
+                        variables: {
+                            attrData: {
+                                id: attrToEdit.id,
+                                label: attrToEdit.label,
+                                type: attrToEdit.type,
+                                format: attrToEdit.format,
+                                permissionsConf: {
+                                    permissionTreeAttributes: attrData.permissionsConf.permissionTreeAttributes,
+                                    relation: attrData.permissionsConf.relation
+                                }
+                            }
+                        },
+                        refetchQueries: [{query: getAttributesQuery, variables: {id: attrData.id}}]
+                    });
+                };
+
                 return (
-                    <Dimmer.Dimmable>
+                    <Dimmer.Dimmable className="flex-col height100">
                         {loading && <Loading withDimmer />}
-                        <EditAttributeForm attribute={attrToEdit} onSubmit={onFormSubmit} errors={formErrors} />
+                        <EditAttributeForm
+                            attribute={attrToEdit}
+                            onSubmit={onFormSubmit}
+                            errors={formErrors}
+                            onPermsSettingsSubmit={onPermsSettingsSubmit}
+                        />
                     </Dimmer.Dimmable>
                 );
             }}

@@ -15,7 +15,9 @@ describe('AttributesSelectionList', () => {
                 label: {
                     fr: 'Test',
                     en: 'Test'
-                }
+                },
+                linked_tree: null,
+                permissionsConf: null
             }
         ];
 

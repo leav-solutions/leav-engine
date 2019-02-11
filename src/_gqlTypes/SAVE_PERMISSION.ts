@@ -13,15 +13,15 @@ export interface SAVE_PERMISSION_savePermission_actions {
 }
 
 export interface SAVE_PERMISSION_savePermission_permissionTreeTarget {
-    id: string;
+    id: string | null;
     tree: string;
-    library: string;
+    library: string | null;
 }
 
 export interface SAVE_PERMISSION_savePermission {
     type: PermissionTypes;
     applyTo: string | null;
-    usersGroup: string;
+    usersGroup: string | null;
     actions: SAVE_PERMISSION_savePermission_actions[];
     permissionTreeTarget: SAVE_PERMISSION_savePermission_permissionTreeTarget | null;
 }

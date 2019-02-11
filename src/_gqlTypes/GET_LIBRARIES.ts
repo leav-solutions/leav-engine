@@ -7,12 +7,25 @@ import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation} 
 // GraphQL query operation: GET_LIBRARIES
 // ====================================================
 
+export interface GET_LIBRARIES_libraries_attributes_permissionsConf_permissionTreeAttributes {
+    id: string;
+    linked_tree: string | null;
+    label: any | null;
+}
+
+export interface GET_LIBRARIES_libraries_attributes_permissionsConf {
+    permissionTreeAttributes: GET_LIBRARIES_libraries_attributes_permissionsConf_permissionTreeAttributes[];
+    relation: PermissionsRelation;
+}
+
 export interface GET_LIBRARIES_libraries_attributes {
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
     label: any | null;
+    linked_tree: string | null;
+    permissionsConf: GET_LIBRARIES_libraries_attributes_permissionsConf | null;
 }
 
 export interface GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes {

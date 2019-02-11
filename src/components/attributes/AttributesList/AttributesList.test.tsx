@@ -12,21 +12,27 @@ describe('AttributesList', () => {
             type: AttributeType.simple,
             format: AttributeFormat.text,
             system: false,
-            label: {fr: 'Test 1', en: null}
+            label: {fr: 'Test 1', en: null},
+            linked_tree: null,
+            permissionsConf: null
         },
         {
             id: 'attr2',
             type: AttributeType.simple,
             format: AttributeFormat.text,
             system: false,
-            label: {fr: 'Test 2', en: null}
+            label: {fr: 'Test 2', en: null},
+            linked_tree: null,
+            permissionsConf: null
         },
         {
             id: 'attr3',
             type: AttributeType.simple,
             format: AttributeFormat.text,
             system: false,
-            label: {fr: 'Test 3', en: null}
+            label: {fr: 'Test 3', en: null},
+            linked_tree: null,
+            permissionsConf: null
         }
     ];
 

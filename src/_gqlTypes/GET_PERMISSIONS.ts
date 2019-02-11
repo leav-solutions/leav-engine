@@ -26,6 +26,6 @@ export interface GET_PERMISSIONSVariables {
     type: PermissionTypes;
     applyTo?: string | null;
     actions: PermissionsActions[];
-    usersGroup: string;
+    usersGroup?: string | null;
     permissionTreeTarget?: PermissionsTreeTargetInput | null;
 }

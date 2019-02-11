@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
 
-// const lang = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',').join(' ') : 'en';
 export const attributeDetailsFragment = gql`
     fragment AttributeDetails on Attribute {
         id
@@ -8,5 +7,14 @@ export const attributeDetailsFragment = gql`
         format
         system
         label(lang: $lang)
+        linked_tree
+        permissionsConf {
+            permissionTreeAttributes {
+                id
+                linked_tree
+                label(lang: $lang)
+            }
+            relation
+        }
     }
 `;

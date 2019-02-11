@@ -3,14 +3,14 @@ import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
-import EditAttributeForm from './EditAttributeForm';
+import EditAttributeInfosForm from './EditAttributeInfosForm';
 
 jest.mock('src/utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr)
 }));
 
-describe('EditAttributeForm', () => {
+describe('EditAttributeInfosForm', () => {
     const attribute: GET_ATTRIBUTES_attributes = {
         id: 'attr1',
         type: AttributeType.simple,
@@ -21,16 +21,9 @@ describe('EditAttributeForm', () => {
         permissionsConf: null
     };
     const onSubmit = jest.fn();
-    const onPermsSettingsSubmit = jest.fn();
 
     test('Render form for existing attribute', async () => {
-        const comp = shallow(
-            <EditAttributeForm
-                attribute={attribute}
-                onSubmit={onSubmit}
-                onPermsSettingsSubmit={onPermsSettingsSubmit}
-            />
-        );
+        const comp = shallow(<EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} />);
 
         expect(
             comp
@@ -42,9 +35,7 @@ describe('EditAttributeForm', () => {
     });
 
     test('Render form for new attribute', async () => {
-        const comp = shallow(
-            <EditAttributeForm attribute={null} onSubmit={onSubmit} onPermsSettingsSubmit={onPermsSettingsSubmit} />
-        );
+        const comp = shallow(<EditAttributeInfosForm attribute={null} onSubmit={onSubmit} />);
 
         expect(
             comp
@@ -56,9 +47,7 @@ describe('EditAttributeForm', () => {
     });
 
     test.only('Autofill ID with label on new attribute', async () => {
-        const comp = renderer.create(
-            <EditAttributeForm attribute={null} onSubmit={onSubmit} onPermsSettingsSubmit={onPermsSettingsSubmit} />
-        );
+        const comp = renderer.create(<EditAttributeInfosForm attribute={null} onSubmit={onSubmit} />);
 
         renderer.act(() => {
             comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {
@@ -72,13 +61,7 @@ describe('EditAttributeForm', () => {
     });
 
     test('Call submit function on submit', async () => {
-        const comp = shallow(
-            <EditAttributeForm
-                attribute={attribute}
-                onSubmit={onSubmit}
-                onPermsSettingsSubmit={onPermsSettingsSubmit}
-            />
-        );
+        const comp = shallow(<EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} />);
         comp.find('Form').simulate('submit');
 
         expect(onSubmit).toBeCalled();

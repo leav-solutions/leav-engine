@@ -1,11 +1,22 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_ATTRIBUTES
 // ====================================================
+
+export interface GET_ATTRIBUTES_attributes_permissionsConf_permissionTreeAttributes {
+    id: string;
+    linked_tree: string | null;
+    label: any | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_permissionsConf {
+    permissionTreeAttributes: GET_ATTRIBUTES_attributes_permissionsConf_permissionTreeAttributes[];
+    relation: PermissionsRelation;
+}
 
 export interface GET_ATTRIBUTES_attributes {
     id: string;
@@ -13,6 +24,8 @@ export interface GET_ATTRIBUTES_attributes {
     format: AttributeFormat | null;
     system: boolean;
     label: any | null;
+    linked_tree: string | null;
+    permissionsConf: GET_ATTRIBUTES_attributes_permissionsConf | null;
 }
 
 export interface GET_ATTRIBUTES {

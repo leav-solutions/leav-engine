@@ -122,18 +122,26 @@ export interface PermissionActionInput {
     allowed?: boolean | null;
 }
 
+/**
+ * If users group is not specified, permission will be saved at root level.
+ * If saving a tree-based permission (record or attribute) and tree target's id is not specified,
+ * permission will be saved at root level for any element of the tree.
+ */
 export interface PermissionInput {
     type: PermissionTypes;
     applyTo?: string | null;
-    usersGroup: string;
+    usersGroup?: string | null;
     actions: PermissionActionInput[];
     permissionTreeTarget?: PermissionsTreeTargetInput | null;
 }
 
+/**
+ * If id and library are not specified, permission will apply to tree root
+ */
 export interface PermissionsTreeTargetInput {
     tree: string;
-    library: string;
-    id: string;
+    library?: string | null;
+    id?: string | null;
 }
 
 export interface RecordIdentityConfInput {
