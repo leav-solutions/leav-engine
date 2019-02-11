@@ -3,28 +3,32 @@
 exports[`EditLibraryAttributes Snapshot test 1`] = `
 <div>
   <button
+    aria-pressed={undefined}
     className="ui medium icon left labeled button"
     disabled={undefined}
     onClick={[Function]}
-    role="button"
+    role={undefined}
     tabIndex={undefined}
   >
     <i
       aria-hidden="true"
       className="plus icon"
+      onClick={[Function]}
     />
     attributes.new
   </button>
   <button
+    aria-pressed={undefined}
     className="ui medium icon left labeled button"
     disabled={undefined}
     onClick={[Function]}
-    role="button"
+    role={undefined}
     tabIndex={undefined}
   >
     <i
       aria-hidden="true"
       className="plus icon"
+      onClick={[Function]}
     />
     libraries.link_existing_attribute
   </button>

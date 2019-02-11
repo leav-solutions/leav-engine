@@ -38,8 +38,8 @@ exports[`AttributesSelectionList Snapshot test 1`] = `
         <div
           className="ui fitted read-only checkbox"
           onChange={[Function]}
-          onClick={[Function]}
           onMouseDown={[Function]}
+          onMouseUp={[Function]}
         >
           <input
             checked={false}
@@ -47,7 +47,6 @@ exports[`AttributesSelectionList Snapshot test 1`] = `
             disabled={undefined}
             id={undefined}
             name={undefined}
-            onClick={[Function]}
             readOnly={true}
             tabIndex={0}
             type="checkbox"

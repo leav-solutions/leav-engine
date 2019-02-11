@@ -1,5 +1,6 @@
 import {shallow} from 'enzyme';
 import * as React from 'react';
+import * as renderer from 'react-test-renderer';
 import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
 import EditAttributeForm from './EditAttributeForm';
@@ -43,16 +44,18 @@ describe('EditAttributeForm', () => {
         expect(comp.find('FormInput[name="id"]').props().disabled).toBe(false);
     });
 
-    test('Autofill ID with label on new attribute', async () => {
-        const comp = shallow(<EditAttributeForm attribute={null} onSubmit={onSubmit} />);
+    test.only('Autofill ID with label on new attribute', async () => {
+        const comp = renderer.create(<EditAttributeForm attribute={null} onSubmit={onSubmit} />);
 
-        comp.find('FormInput[name="label/fr"]').simulate('change', null, {
-            type: 'text',
-            name: 'label/fr',
-            value: 'labelfr'
+        renderer.act(() => {
+            comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {
+                type: 'text',
+                name: 'label/fr',
+                value: 'labelfr'
+            });
         });
 
-        expect(comp.find('FormInput[name="id"]').props().value).toBe('labelfr');
+        expect(comp.root.findByProps({name: 'id'}).props.value).toBe('labelfr');
     });
 
     test('Call submit function on submit', async () => {
