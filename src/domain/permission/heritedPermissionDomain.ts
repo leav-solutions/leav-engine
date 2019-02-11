@@ -8,6 +8,7 @@ import {
 } from '../../_types/permissions';
 import {IPermissionDomain} from './permissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
+import {ITreePermissionDomain} from './treePermissionDomain';
 
 export interface IHeritedPermissionDomain {
     /**
@@ -30,7 +31,8 @@ export interface IHeritedPermissionDomain {
 
 export default function(
     recordPermissionDomain: IRecordPermissionDomain,
-    permissionDomain: IPermissionDomain
+    permissionDomain: IPermissionDomain,
+    treePermissionDomain: ITreePermissionDomain
 ): IHeritedPermissionDomain {
     return {
         async getHeritedPermissions(
@@ -50,6 +52,16 @@ export default function(
                         permissionTreeTarget.tree,
                         {id: permissionTreeTarget.id, library: permissionTreeTarget.library}
                     );
+                    break;
+                case PermissionTypes.ATTRIBUTE:
+                    perm = treePermissionDomain.getHeritedTreePermission({
+                        type: PermissionTypes.ATTRIBUTE,
+                        applyTo,
+                        action,
+                        userGroupId,
+                        permissionTreeTarget,
+                        getDefaultPermission: permissionDomain.getDefaultPermission
+                    });
                     break;
                 case PermissionTypes.LIBRARY:
                     perm = await permissionDomain.getHeritedLibraryPermission(
