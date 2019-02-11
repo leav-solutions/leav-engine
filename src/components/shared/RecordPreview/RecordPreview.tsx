@@ -33,31 +33,21 @@ const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
 `;
 GeneratedPreview.displayName = 'GeneratedPreview';
 
-class RecordPreview extends React.Component<IRecordPreviewProps> {
-    constructor(props: IRecordPreviewProps) {
-        super(props);
+function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.Element {
+    if (image) {
+        return <Image src={image} avatar style={style} />;
     }
 
-    public shouldComponentUpdate = (p): boolean => p.color !== this.props.color || p.image !== this.props.image;
+    const initial = label[0].toLocaleUpperCase();
 
-    public render() {
-        const {label, color, image, style} = this.props;
+    const bgColor = color || getRandomColor();
+    const fontColor = getInvertColor(bgColor);
 
-        if (image) {
-            return <Image src={image} avatar style={style} />;
-        }
-
-        const initial = label[0].toLocaleUpperCase();
-
-        const bgColor = color || getRandomColor();
-        const fontColor = getInvertColor(bgColor);
-
-        return (
-            <GeneratedPreview className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
-                {initial}
-            </GeneratedPreview>
-        );
-    }
+    return (
+        <GeneratedPreview className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
+            {initial}
+        </GeneratedPreview>
+    );
 }
 
-export default RecordPreview;
+export default React.memo(RecordPreview);
