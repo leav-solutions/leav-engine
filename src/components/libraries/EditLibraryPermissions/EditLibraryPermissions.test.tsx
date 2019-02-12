@@ -1,4 +1,4 @@
-import {mount, render} from 'enzyme';
+import {mount} from 'enzyme';
 import * as React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
@@ -11,21 +11,20 @@ describe('EditLibraryPermissions', () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
             permissionsConf: {
-                permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
+                permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}}],
                 relation: PermissionsRelation.and
             }
         };
 
         const onSubmit = jest.fn();
 
-        // TODO: replace render by shallow when bug with hooks fixed https://github.com/airbnb/enzyme/issues/1938
-        const comp = render(
+        const comp = mount(
             <MockedProvider>
                 <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
             </MockedProvider>
         );
 
-        expect(comp.find('input[name=relation]')).toHaveLength(0);
+        expect(comp.find('input[name="relation"]')).toHaveLength(0);
     });
 
     test('Show relation if more than 1 tree selected', async () => {
@@ -33,8 +32,8 @@ describe('EditLibraryPermissions', () => {
             id: 'test_lib',
             permissionsConf: {
                 permissionTreeAttributes: [
-                    {id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'},
-                    {id: 'other_tree_attr', linked_tree: 'some_tree', label: 'Test'}
+                    {id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}},
+                    {id: 'other_tree_attr', linked_tree: 'some_other_tree', label: {fr: 'Test 2'}}
                 ],
                 relation: PermissionsRelation.and
             }
@@ -42,20 +41,20 @@ describe('EditLibraryPermissions', () => {
 
         const onSubmit = jest.fn();
 
-        const comp = render(
+        const comp = mount(
             <MockedProvider>
                 <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
             </MockedProvider>
         );
 
-        expect(comp.find('input[name=relation]')).toHaveLength(2);
+        expect(comp.find('input[name="relation"]')).toHaveLength(2);
     });
 
     test('Call submit function on submit', async () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
             permissionsConf: {
-                permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
+                permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}}],
                 relation: PermissionsRelation.and
             }
         };
