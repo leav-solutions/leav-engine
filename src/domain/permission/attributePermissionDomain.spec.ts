@@ -1,9 +1,9 @@
+import {IValueRepo} from 'infra/value/valueRepo';
 import {AttributePermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import attributePermissionDomain from './attributePermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {IValueRepo} from 'infra/value/valueRepo';
 
 describe('AttributePermissionDomain', () => {
     describe('getAttributePermission', () => {

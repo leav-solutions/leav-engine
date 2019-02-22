@@ -30,9 +30,9 @@ export interface IHeritedPermissionDomain {
 }
 
 export default function(
-    recordPermissionDomain: IRecordPermissionDomain,
-    permissionDomain: IPermissionDomain,
-    treePermissionDomain: ITreePermissionDomain
+    recordPermissionDomain: IRecordPermissionDomain = null,
+    permissionDomain: IPermissionDomain = null,
+    treePermissionDomain: ITreePermissionDomain = null
 ): IHeritedPermissionDomain {
     return {
         async getHeritedPermissions(
