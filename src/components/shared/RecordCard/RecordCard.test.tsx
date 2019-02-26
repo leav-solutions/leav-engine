@@ -1,7 +1,7 @@
 import {mount, shallow} from 'enzyme';
 import 'jest-styled-components';
-import * as React from 'react';
-import {RecordIdentity_whoAmI} from 'src/_gqlTypes/RecordIdentity';
+import React from 'react';
+import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import RecordCard from './RecordCard';
 
 describe('RecordCard', () => {

@@ -1,7 +1,7 @@
 import {shallow} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {create} from 'react-test-renderer';
-import Loading from 'src/components/shared/Loading';
+import Loading from '../../shared/Loading';
 
 describe('Loading', () => {
     test('Snapshot test', async () => {

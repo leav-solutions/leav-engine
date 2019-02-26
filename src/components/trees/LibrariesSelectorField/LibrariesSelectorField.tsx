@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {DropdownProps, Form} from 'semantic-ui-react';
-import {localizedLabel} from 'src/utils/utils';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
+import {localizedLabel} from '../../../utils/utils';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
 
 interface ILibrariesSelectorFieldProps extends DropdownProps, WithNamespaces {
     loading?: boolean;

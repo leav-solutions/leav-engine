@@ -1,6 +1,6 @@
 import {mount, shallow} from 'enzyme';
-import * as React from 'react';
-import {Mockify} from 'src/_types/Mockify';
+import React from 'react';
+import {Mockify} from '../../../_types//Mockify';
 import ConfirmedButton from './ConfirmedButton';
 
 describe('ConfirmedButton', () => {

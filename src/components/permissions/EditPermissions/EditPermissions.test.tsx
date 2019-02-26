@@ -1,8 +1,8 @@
 import {render} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_PERMISSIONSVariables} from 'src/_gqlTypes/GET_PERMISSIONS';
-import {PermissionsActions, PermissionTypes} from 'src/_gqlTypes/globalTypes';
+import {GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
+import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import EditPermissions from './EditPermissions';
 
 describe('EditPermissions', () => {

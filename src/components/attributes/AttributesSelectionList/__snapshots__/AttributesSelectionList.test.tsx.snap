@@ -44,17 +44,11 @@ exports[`AttributesSelectionList Snapshot test 1`] = `
           <input
             checked={false}
             className="hidden"
-            disabled={undefined}
-            id={undefined}
-            name={undefined}
             readOnly={true}
             tabIndex={0}
             type="checkbox"
-            value={undefined}
           />
-          <label
-            htmlFor={undefined}
-          />
+          <label />
         </div>
       </td>
       <td

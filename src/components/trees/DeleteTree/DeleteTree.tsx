@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import ConfirmedButton from 'src/components/shared/ConfirmedButton';
-import DeleteButton from 'src/components/shared/DeleteButton';
-import {DeleteTreeMutation, deleteTreeQuery} from 'src/queries/trees/deleteTreeMutation';
-import {getTreesQueryName} from 'src/queries/trees/getTreesQuery';
-import {localizedLabel} from 'src/utils/utils';
-import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
+import {DeleteTreeMutation, deleteTreeQuery} from '../../../queries/trees/deleteTreeMutation';
+import {getTreesQueryName} from '../../../queries/trees/getTreesQuery';
+import {localizedLabel} from '../../../utils/utils';
+import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import ConfirmedButton from '../../shared/ConfirmedButton';
+import DeleteButton from '../../shared/DeleteButton';
 
 interface IDeleteTreeProps extends WithNamespaces {
     tree?: GET_TREES_trees;

@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Dropdown, Input, Table} from 'semantic-ui-react';
-import Loading from 'src/components/shared/Loading';
-import {localizedLabel} from 'src/utils/utils';
-import {AttributeDetails} from 'src/_gqlTypes/AttributeDetails';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
+import {localizedLabel} from '../../../utils/utils';
+import {AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import Loading from '../../shared/Loading';
 
 interface IAttributesListProps extends WithNamespaces {
     attributes: AttributeDetails[] | null;

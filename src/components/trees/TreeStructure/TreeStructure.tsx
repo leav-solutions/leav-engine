@@ -1,5 +1,5 @@
 import {ApolloClient} from 'apollo-boost';
-import * as React from 'react';
+import React from 'react';
 import {ApolloConsumer} from 'react-apollo';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {
@@ -13,16 +13,16 @@ import {
     TreeItem
 } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
-import RecordCard from 'src/components/shared/RecordCard';
-import {getTreeContentQuery} from 'src/queries/trees/treeContentQuery';
-import {deleteTreeElementQuery} from 'src/queries/trees/treeDeleteElementMutation';
-import {moveTreeElementQuery} from 'src/queries/trees/treeMoveElementMutation';
-import {getTreeNodeKey} from 'src/utils/utils';
-import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from 'src/_gqlTypes/DELETE_TREE_ELEMENT';
-import {TreeElementInput} from 'src/_gqlTypes/globalTypes';
-import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from 'src/_gqlTypes/MOVE_TREE_ELEMENT';
-import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from 'src/_gqlTypes/TREE_CONTENT';
 import styled from 'styled-components';
+import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
+import {deleteTreeElementQuery} from '../../../queries/trees/treeDeleteElementMutation';
+import {moveTreeElementQuery} from '../../../queries/trees/treeMoveElementMutation';
+import {getTreeNodeKey} from '../../../utils/utils';
+import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
+import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
+import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
+import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../../../_gqlTypes/TREE_CONTENT';
+import RecordCard from '../../shared/RecordCard';
 import TreeStructureView from '../TreeStructureView';
 
 interface ITreeStructureProps extends WithNamespaces {

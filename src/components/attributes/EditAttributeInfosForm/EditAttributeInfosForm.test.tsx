@@ -1,11 +1,11 @@
 import {shallow} from 'enzyme';
-import * as React from 'react';
-import * as renderer from 'react-test-renderer';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
+import React from 'react';
+import renderer from 'react-test-renderer';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import EditAttributeInfosForm from './EditAttributeInfosForm';
 
-jest.mock('src/utils/utils', () => ({
+jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr)
 }));

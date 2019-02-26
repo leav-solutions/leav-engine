@@ -1,6 +1,6 @@
 import {shallow} from 'enzyme';
-import * as React from 'react';
-import {PermissionsActions} from 'src/_gqlTypes/globalTypes';
+import React from 'react';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import EditPermissionsView from './EditPermissionsView';
 
 describe('EditPermissionsView', () => {

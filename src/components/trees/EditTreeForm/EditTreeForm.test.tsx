@@ -1,8 +1,8 @@
 import {shallow} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import EditTreeForm from './EditTreeForm';
 
-jest.mock('src/utils/utils', () => ({
+jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr)
 }));

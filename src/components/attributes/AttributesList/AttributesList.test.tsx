@@ -1,8 +1,8 @@
 import {mount, shallow} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import AttributesList from './AttributesList';
 
 describe('AttributesList', () => {

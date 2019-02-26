@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import {Image} from 'semantic-ui-react';
-import {getInvertColor, getRandomColor} from 'src/utils/utils';
 import styled, {CSSObject} from 'styled-components';
+import {getInvertColor, getRandomColor} from '../../../utils/utils';
 
 interface IRecordPreviewProps {
     label: string;

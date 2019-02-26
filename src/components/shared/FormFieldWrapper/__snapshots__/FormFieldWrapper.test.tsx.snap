@@ -9,13 +9,9 @@ exports[`FormFieldWrapper Snapshot test 1`] = `
   >
     <div
       className="ui input"
-      content={undefined}
     >
       <input
-        disabled={undefined}
         onChange={[Function]}
-        required={undefined}
-        tabIndex={undefined}
         type="text"
       />
     </div>

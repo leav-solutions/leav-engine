@@ -1,10 +1,10 @@
 import {History} from 'history';
-import * as React from 'react';
+import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
-import Loading from 'src/components/shared/Loading';
-import {getTreesQuery, TreesQuery} from 'src/queries/trees/getTreesQuery';
-import {SaveTreeMutation, saveTreeQuery} from 'src/queries/trees/saveTreeMutation';
-import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
+import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
+import {SaveTreeMutation, saveTreeQuery} from '../../../queries/trees/saveTreeMutation';
+import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import Loading from '../../shared/Loading';
 import EditTreeForm from '../EditTreeForm';
 
 interface IEditTreeProps extends WithNamespaces {

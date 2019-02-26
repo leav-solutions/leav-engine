@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import {Mutation} from 'react-apollo';
-import {SAVE_TREE, SAVE_TREEVariables} from 'src/_gqlTypes/SAVE_TREE';
+import {SAVE_TREE, SAVE_TREEVariables} from '../../_gqlTypes/SAVE_TREE';
 
 export class SaveTreeMutation extends Mutation<SAVE_TREE, SAVE_TREEVariables> {}
 

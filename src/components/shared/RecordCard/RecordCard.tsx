@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import {localizedLabel} from 'src/utils/utils';
-import {RecordIdentity_whoAmI} from 'src/_gqlTypes/RecordIdentity';
 import styled, {CSSObject} from 'styled-components';
+import {localizedLabel} from '../../../utils/utils';
+import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import RecordPreview from '../RecordPreview';
 
 interface IRecordCardProps extends WithNamespaces {

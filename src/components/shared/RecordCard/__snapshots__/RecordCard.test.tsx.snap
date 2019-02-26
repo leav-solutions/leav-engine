@@ -5,31 +5,31 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <RecordCard
     i18n={
-        Object {
-            "language": "fr",
-            "options": Object {
-              "fallbackLng": Array [
-                "en",
-              ],
-            },
-          }
+      Object {
+        "language": "fr",
+        "options": Object {
+          "fallbackLng": Array [
+            "en",
+          ],
+        },
+      }
     }
     record={
-        Object {
-            "color": null,
-            "id": "12345",
-            "label": "Test Record",
-            "library": Object {
-              "id": "test_lib",
-              "label": Object {
-                "fr": "Test Lib",
-              },
-            },
-            "preview": null,
-          }
+      Object {
+        "color": null,
+        "id": "12345",
+        "label": "Test Record",
+        "library": Object {
+          "id": "test_lib",
+          "label": Object {
+            "fr": "Test Lib",
+          },
+        },
+        "preview": null,
+      }
     }
     t={[Function]}
-/>,
+  />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "checkPropTypes": [Function],
@@ -45,25 +45,25 @@ ShallowWrapper {
     "nodeType": "function",
     "props": Object {
       "children": Array [
-        <Unknown
+        <ForwardRef
           className="ui"
->
+        >
           <RecordPreview
-                    color={null}
-                    image={null}
-                    label="Test Record"
+            color={null}
+            image={null}
+            label="Test Record"
           />
-</Unknown>,
-        <Unknown
+        </ForwardRef>,
+        <ForwardRef
           className="ui"
->
-          <Unknown>
-                    Test Record
-          </Unknown>
-          <Unknown>
-                    Test Lib
-          </Unknown>
-</Unknown>,
+        >
+          <ForwardRef>
+            Test Record
+          </ForwardRef>
+          <ForwardRef>
+            Test Lib
+          </ForwardRef>
+        </ForwardRef>,
       ],
       "className": "ui fluid",
       "recordColor": null,
@@ -80,7 +80,7 @@ ShallowWrapper {
             color={null}
             image={null}
             label="Test Record"
-/>,
+          />,
           "className": "ui",
         },
         "ref": null,
@@ -132,12 +132,12 @@ ShallowWrapper {
         "nodeType": "function",
         "props": Object {
           "children": Array [
-            <Unknown>
+            <ForwardRef>
               Test Record
-</Unknown>,
-            <Unknown>
+            </ForwardRef>,
+            <ForwardRef>
               Test Lib
-</Unknown>,
+            </ForwardRef>,
           ],
           "className": "ui",
         },
@@ -269,25 +269,25 @@ ShallowWrapper {
       "nodeType": "function",
       "props": Object {
         "children": Array [
-          <Unknown
+          <ForwardRef
             className="ui"
->
+          >
             <RecordPreview
-                        color={null}
-                        image={null}
-                        label="Test Record"
+              color={null}
+              image={null}
+              label="Test Record"
             />
-</Unknown>,
-          <Unknown
+          </ForwardRef>,
+          <ForwardRef
             className="ui"
->
-            <Unknown>
-                        Test Record
-            </Unknown>
-            <Unknown>
-                        Test Lib
-            </Unknown>
-</Unknown>,
+          >
+            <ForwardRef>
+              Test Record
+            </ForwardRef>
+            <ForwardRef>
+              Test Lib
+            </ForwardRef>
+          </ForwardRef>,
         ],
         "className": "ui fluid",
         "recordColor": null,
@@ -304,7 +304,7 @@ ShallowWrapper {
               color={null}
               image={null}
               label="Test Record"
-/>,
+            />,
             "className": "ui",
           },
           "ref": null,
@@ -356,12 +356,12 @@ ShallowWrapper {
           "nodeType": "function",
           "props": Object {
             "children": Array [
-              <Unknown>
+              <ForwardRef>
                 Test Record
-</Unknown>,
-              <Unknown>
+              </ForwardRef>,
+              <ForwardRef>
                 Test Lib
-</Unknown>,
+              </ForwardRef>,
             ],
             "className": "ui",
           },

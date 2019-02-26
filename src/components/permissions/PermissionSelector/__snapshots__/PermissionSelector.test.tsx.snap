@@ -17,12 +17,10 @@ exports[`PermissionSelector Snapshot testing 1`] = `
     }
   >
     <input
-      disabled={undefined}
       max="2"
       min="0"
       onChange={[Function]}
       step="1"
-      tabIndex={undefined}
       type="range"
       value={2}
     />

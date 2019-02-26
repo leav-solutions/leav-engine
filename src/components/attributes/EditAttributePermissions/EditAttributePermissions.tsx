@@ -1,13 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
-import DefineTreePermissionsView from 'src/components/permissions/DefineTreePermissionsView';
-import Loading from 'src/components/shared/Loading';
-import {AttributesQuery, getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
-import {localizedLabel} from 'src/utils/utils';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
-import {AttributeType, PermissionsRelation, PermissionTypes} from 'src/_gqlTypes/globalTypes';
 import styled from 'styled-components';
+import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import {localizedLabel} from '../../../utils/utils';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeType, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
+import Loading from '../../shared/Loading';
 
 interface IEditAttributePermissionsProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes;

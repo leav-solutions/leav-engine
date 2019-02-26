@@ -1,8 +1,8 @@
 import {shallow} from 'enzyme';
-import * as React from 'react';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
-import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
-import {Mockify} from 'src/_types/Mockify';
+import React from 'react';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import {Mockify} from '../../../_types//Mockify';
 import UnlinkLibAttribute from './UnlinkLibAttribute';
 
 describe('UnlinkLibAttribute', () => {

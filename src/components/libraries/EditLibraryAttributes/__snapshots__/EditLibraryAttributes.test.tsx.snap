@@ -3,12 +3,8 @@
 exports[`EditLibraryAttributes Snapshot test 1`] = `
 <div>
   <button
-    aria-pressed={undefined}
     className="ui medium icon left labeled button"
-    disabled={undefined}
     onClick={[Function]}
-    role={undefined}
-    tabIndex={undefined}
   >
     <i
       aria-hidden="true"
@@ -18,12 +14,8 @@ exports[`EditLibraryAttributes Snapshot test 1`] = `
     attributes.new
   </button>
   <button
-    aria-pressed={undefined}
     className="ui medium icon left labeled button"
-    disabled={undefined}
     onClick={[Function]}
-    role={undefined}
-    tabIndex={undefined}
   >
     <i
       aria-hidden="true"

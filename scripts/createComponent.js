@@ -3,7 +3,7 @@ const fs = require('fs');
 const prog = require('commander');
 
 const _getFuncCompContent = name =>
-    `import * as React from 'react';
+    `import React from 'react';
 
 interface I${name}Props {
 
@@ -18,7 +18,7 @@ function ${name}({}: I${name}Props): JSX.Element {
 export default ${name};`;
 
 const _getClassCompContent = name =>
-    `import * as React from 'react';
+    `import React from 'react';
 
 interface I${name}Props {
 
@@ -51,7 +51,7 @@ prog.version('0.1.0')
             console.log('Missing --parent argument');
         }
 
-        const destDir = __dirname + '/../src/components/' + prog.parent + '/';
+        const destDir = __dirname + '//components/' + prog.parent + '/';
 
         const compFolder = destDir + name;
 
@@ -84,7 +84,7 @@ prog.version('0.1.0')
         // Create component test file
         const testFile = compFolder + `/${name}.test.tsx`;
         if (!fs.existsSync(testFile)) {
-            const fileContent = `import * as React from 'react';
+            const fileContent = `import React from 'react';
 import {render} from 'enzyme';
 import ${name} from './${name}';
 

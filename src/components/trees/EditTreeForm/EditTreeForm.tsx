@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Header, Tab} from 'semantic-ui-react';
-import {localizedLabel} from 'src/utils/utils';
-import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
+import {localizedLabel} from '../../../utils/utils';
+import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
 import EditTreeInfosForm from '../EditTreeInfosForm';
 import TreeStructure from '../TreeStructure';
 

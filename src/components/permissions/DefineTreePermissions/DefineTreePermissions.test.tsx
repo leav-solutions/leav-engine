@@ -1,7 +1,7 @@
 import {render} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import {PermissionsRelation, PermissionTypes} from 'src/_gqlTypes/globalTypes';
+import {PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissions from './DefineTreePermissions';
 
 describe('DefineTreePermissions', () => {

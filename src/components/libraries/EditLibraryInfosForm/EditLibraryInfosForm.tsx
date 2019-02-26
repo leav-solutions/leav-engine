@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
-import {formatIDString, localizedLabel} from 'src/utils/utils';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
 import styled from 'styled-components';
+import {formatIDString, localizedLabel} from '../../../utils/utils';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
 
 interface IEditLibraryInfosFormProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries | null;

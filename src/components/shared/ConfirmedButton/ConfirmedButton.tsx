@@ -1,5 +1,5 @@
 import {TranslationFunction} from 'i18next';
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Confirm} from 'semantic-ui-react';
 

@@ -1,8 +1,8 @@
 import {shallow} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {create} from 'react-test-renderer';
 import {Form} from 'semantic-ui-react';
-import FormFieldWrapper from 'src/components/shared/FormFieldWrapper';
+import FormFieldWrapper from '../../shared/FormFieldWrapper';
 
 describe('FormFieldWrapper', () => {
     const testInput = <Form.Input />;

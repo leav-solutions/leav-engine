@@ -1,14 +1,14 @@
 import {i18n} from 'i18next';
-import {Mockify} from 'src/_types/Mockify';
+import {TreeNode} from 'react-sortable-tree';
+import {Mockify} from '../_types//Mockify';
 import {
     addWildcardToFilters,
     formatIDString,
-    localizedLabel,
-    getRandomColor,
     getInvertColor,
-    getTreeNodeKey
+    getRandomColor,
+    getTreeNodeKey,
+    localizedLabel
 } from './utils';
-import {TreeNode} from 'react-sortable-tree';
 
 describe('utils', () => {
     describe('localizedLabel', () => {

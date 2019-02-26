@@ -1,9 +1,9 @@
 import {render} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
-import {Mockify} from 'src/_types/Mockify';
 import DeleteTree from '.';
+import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {Mockify} from '../../../_types//Mockify';
 
 describe('DeleteTree', () => {
     test('Render button for system tree', async () => {

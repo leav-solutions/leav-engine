@@ -1,11 +1,11 @@
 import {History} from 'history';
 import {i18n} from 'i18next';
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import {getLibsQuery, LibrariesQuery} from 'src/queries/libraries/getLibrariesQuery';
-import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
+import {getLibsQuery, LibrariesQuery} from '../../../queries/libraries/getLibrariesQuery';
+import {addWildcardToFilters, getSysTranslationQueryLanguage} from '../../../utils/utils';
 import LibrariesList from '../LibrariesList';
 
 interface ILibrariesProps extends WithNamespaces {

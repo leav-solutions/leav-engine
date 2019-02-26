@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
-import {localizedLabel} from 'src/utils/utils';
-import {GET_LIBRARIES_libraries_permissionsConf} from 'src/_gqlTypes/GET_LIBRARIES';
-import {PermissionTypes} from 'src/_gqlTypes/globalTypes';
+import {localizedLabel} from '../../../utils/utils';
+import {GET_LIBRARIES_libraries_permissionsConf} from '../../../_gqlTypes/GET_LIBRARIES';
+import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissionsView from '../DefineTreePermissionsView';
 
 interface IDefineTreePermissionsProps extends WithNamespaces {

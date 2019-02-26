@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
-import FormFieldWrapper from 'src/components/shared/FormFieldWrapper';
-import {formatIDString, getSysTranslationQueryLanguage} from 'src/utils/utils';
-import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
 import styled from 'styled-components';
+import {formatIDString, getSysTranslationQueryLanguage} from '../../../utils/utils';
+import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import FormFieldWrapper from '../../shared/FormFieldWrapper';
 import LibrariesSelector from '../LibrariesSelector';
 
 interface IEditTreeInfosFormProps extends WithNamespaces {

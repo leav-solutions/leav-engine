@@ -1,10 +1,10 @@
 import {History} from 'history';
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import {AttributesQuery, getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
-import {addWildcardToFilters, getSysTranslationQueryLanguage} from 'src/utils/utils';
+import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import {addWildcardToFilters, getSysTranslationQueryLanguage} from '../../../utils/utils';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
 

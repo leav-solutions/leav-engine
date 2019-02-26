@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {NodeData, TreeNode} from 'react-sortable-tree';
-import ColumnsDisplay from 'src/components/shared/ColumnsDisplay';
-import {getTreeNodeKey} from 'src/utils/utils';
-import {GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes} from 'src/_gqlTypes/GET_LIBRARIES';
-import {PermissionsActions, PermissionTypes} from 'src/_gqlTypes/globalTypes';
+import {getTreeNodeKey} from '../../../utils/utils';
+import {GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes} from '../../../_gqlTypes/GET_LIBRARIES';
+import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
 

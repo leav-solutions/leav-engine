@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
-import Loading from 'src/components/shared/Loading';
-import {AttributesQuery, getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
+import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import Loading from '../../shared/Loading';
 import AttributesSelectionList from '../AttributesSelectionList';
 
 interface IAttributesSelectionProps extends WithNamespaces {

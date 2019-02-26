@@ -1,5 +1,5 @@
 import hexToRgba from 'hex-rgba';
-import * as React from 'react';
+import React from 'react';
 import {Input, InputOnChangeData} from 'semantic-ui-react';
 import styled from 'styled-components';
 

@@ -1,10 +1,10 @@
 import {mount} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import * as sleep from 'sleep-promise';
-import {getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
-import {AttributeFormat, AttributeType, PermissionsRelation} from 'src/_gqlTypes/globalTypes';
+import sleep from 'sleep-promise';
 import EditAttributePermissions from '.';
+import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import {AttributeFormat, AttributeType, PermissionsRelation} from '../../../_gqlTypes/globalTypes';
 
 describe('EditAttributePermissions', () => {
     const mocks = [

@@ -1,8 +1,8 @@
 import {render} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
-import {Mockify} from 'src/_types/Mockify';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {Mockify} from '../../../_types//Mockify';
 import DeleteLibrary from './DeleteLibrary';
 
 describe('DeleteLibrary', () => {

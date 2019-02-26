@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import {NodeData, TreeNode} from 'react-sortable-tree';
-import ColumnsDisplay from 'src/components/shared/ColumnsDisplay';
-import {getTreeNodeKey} from 'src/utils/utils';
-import {PermissionsActions, PermissionTypes} from 'src/_gqlTypes/globalTypes';
+import {getTreeNodeKey} from '../../../utils/utils';
+import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
 

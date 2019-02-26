@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import {Mutation} from 'react-apollo';
-import {SAVE_PERMISSION, SAVE_PERMISSIONVariables} from 'src/_gqlTypes/SAVE_PERMISSION';
+import {SAVE_PERMISSION, SAVE_PERMISSIONVariables} from '../../_gqlTypes/SAVE_PERMISSION';
 
 export const savePermissionsQuery = gql`
     mutation SAVE_PERMISSION($permData: PermissionInput!) {

@@ -1,8 +1,8 @@
 import ApolloClient, {InMemoryCache, IntrospectionFragmentMatcher, IntrospectionResultData} from 'apollo-boost';
 import fetch from 'node-fetch';
-import * as React from 'react';
+import React from 'react';
 import {ApolloProvider} from 'react-apollo';
-import Loading from 'src/components/shared/Loading';
+import Loading from '../../shared/Loading';
 import Home from '../Home';
 
 interface IAppState {

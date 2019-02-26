@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';

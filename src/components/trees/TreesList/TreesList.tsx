@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Checkbox, Input, Table} from 'semantic-ui-react';
-import Loading from 'src/components/shared/Loading';
-import {localizedLabel} from 'src/utils/utils';
-import {GET_TREES_trees} from 'src/_gqlTypes/GET_TREES';
+import {localizedLabel} from '../../../utils/utils';
+import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import Loading from '../../shared/Loading';
 import DeleteTree from '../DeleteTree';
 
 interface ITreesListProps extends WithNamespaces {

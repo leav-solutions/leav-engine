@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import {Query} from 'react-apollo';
-import {GET_PERMISSIONS, GET_PERMISSIONSVariables} from 'src/_gqlTypes/GET_PERMISSIONS';
+import {GET_PERMISSIONS, GET_PERMISSIONSVariables} from '../../_gqlTypes/GET_PERMISSIONS';
 
 export const getPermissionsQuery = gql`
     query GET_PERMISSIONS(

@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Icon, Table} from 'semantic-ui-react';
-import {GET_PERMISSIONS_heritPerm, GET_PERMISSIONS_perm} from 'src/_gqlTypes/GET_PERMISSIONS';
-import {SAVE_PERMISSION_savePermission_actions} from 'src/_gqlTypes/SAVE_PERMISSION';
 import styled from 'styled-components';
+import {GET_PERMISSIONS_heritPerm, GET_PERMISSIONS_perm} from '../../../_gqlTypes/GET_PERMISSIONS';
+import {SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PERMISSION';
 import PermissionSelector from '../PermissionSelector';
 
 interface IEditPermissionsViewProps extends WithNamespaces {

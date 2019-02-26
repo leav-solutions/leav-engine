@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import {Query} from 'react-apollo';
-import {GET_TREES, GET_TREESVariables} from 'src/_gqlTypes/GET_TREES';
+import {GET_TREES, GET_TREESVariables} from '../../_gqlTypes/GET_TREES';
 
 export const getTreesQueryName = 'GET_TREES';
 

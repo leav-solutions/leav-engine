@@ -4,22 +4,22 @@ exports[`ConfirmedButton Snapshot test 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ConfirmedButton
-    action={[Function]}
+    action={[MockFunction]}
     confirmMessage="Test"
     i18n={
-        Object {
-            "language": "fr",
-            "options": Object {
-              "fallbackLng": Array [
-                "en",
-              ],
-            },
-          }
+      Object {
+        "language": "fr",
+        "options": Object {
+          "fallbackLng": Array [
+            "en",
+          ],
+        },
+      }
     }
     t={[Function]}
->
+  >
     <div />
-</ConfirmedButton>,
+  </ConfirmedButton>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "checkPropTypes": [Function],
@@ -37,7 +37,7 @@ ShallowWrapper {
       "children": Array [
         <div
           onClick={[Function]}
-/>,
+        />,
         <Confirm
           cancelButton="admin.cancel"
           closeOnDimmerClick={false}
@@ -48,7 +48,7 @@ ShallowWrapper {
           onConfirm={[Function]}
           open={false}
           size="small"
-/>,
+        />,
       ],
       "onClick": [Function],
     },
@@ -96,7 +96,7 @@ ShallowWrapper {
         "children": Array [
           <div
             onClick={[Function]}
-/>,
+          />,
           <Confirm
             cancelButton="admin.cancel"
             closeOnDimmerClick={false}
@@ -107,7 +107,7 @@ ShallowWrapper {
             onConfirm={[Function]}
             open={false}
             size="small"
-/>,
+          />,
         ],
         "onClick": [Function],
       },

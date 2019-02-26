@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import Loading from 'src/components/shared/Loading';
-import {getPermissionsQuery, PermissionsQuery} from 'src/queries/permissions/getPermissionsQuery';
-import {SavePermissionsMutation, savePermissionsQuery} from 'src/queries/permissions/savePermissionMutation';
-import {GET_PERMISSIONSVariables} from 'src/_gqlTypes/GET_PERMISSIONS';
-import {SAVE_PERMISSION_savePermission_actions} from 'src/_gqlTypes/SAVE_PERMISSION';
+import {getPermissionsQuery, PermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
+import {SavePermissionsMutation, savePermissionsQuery} from '../../../queries/permissions/savePermissionMutation';
+import {GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
+import {SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PERMISSION';
+import Loading from '../../shared/Loading';
 import EditPermissionsView from '../EditPermissionsView';
 
 interface IEditPermissionsProps extends WithNamespaces {

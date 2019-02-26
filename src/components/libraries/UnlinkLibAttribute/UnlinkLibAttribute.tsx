@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
-import ConfirmedButton from 'src/components/shared/ConfirmedButton';
-import {AttributeDetails} from 'src/_gqlTypes/AttributeDetails';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
+import {AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import ConfirmedButton from '../../shared/ConfirmedButton';
 
 interface IUnlinkLibAttributeProps extends WithNamespaces {
     attribute?: AttributeDetails;

@@ -1,12 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
-import Attributes from 'src/components/attributes/Attributes';
-import EditAttribute from 'src/components/attributes/EditAttribute';
-import EditLibrary from 'src/components/libraries/EditLibrary';
-import Libraries from 'src/components/libraries/Libraries';
-import EditTree from 'src/components/trees/EditTree';
-import Trees from 'src/components/trees/Trees';
 import styled from 'styled-components';
+import Attributes from '../../attributes/Attributes';
+import EditAttribute from '../../attributes/EditAttribute';
+import EditLibrary from '../../libraries/EditLibrary';
+import Libraries from '../../libraries/Libraries';
+import EditTree from '../../trees/EditTree';
+import Trees from '../../trees/Trees';
 import MainMenu from '../MainMenu';
 
 /* tslint:disable-next-line:variable-name */

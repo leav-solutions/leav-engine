@@ -1,7 +1,7 @@
 import {render} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import {AvailableLanguage} from 'src/_gqlTypes/globalTypes';
+import {AvailableLanguage} from '../../../_gqlTypes/globalTypes';
 import LibrariesSelector from './LibrariesSelector';
 
 describe('LibrariesSelector', () => {

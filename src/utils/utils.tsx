@@ -1,6 +1,6 @@
 import {i18n} from 'i18next';
 import {TreeNode} from 'react-sortable-tree';
-import * as removeAccents from 'remove-accents';
+import removeAccents from 'remove-accents';
 
 /**
  * Return label matching user language (or default language) from an object containing all languages labels

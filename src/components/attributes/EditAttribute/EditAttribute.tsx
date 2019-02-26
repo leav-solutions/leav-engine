@@ -1,11 +1,11 @@
 import {History} from 'history';
-import * as React from 'react';
+import React from 'react';
 import {match} from 'react-router';
 import {Dimmer} from 'semantic-ui-react';
-import Loading from 'src/components/shared/Loading';
-import {AttributesQuery, getAttributesQuery} from 'src/queries/attributes/getAttributesQuery';
-import {SaveAttributeMutation, saveAttributeQuery} from 'src/queries/attributes/saveAttributeMutation';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
+import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import {SaveAttributeMutation, saveAttributeQuery} from '../../../queries/attributes/saveAttributeMutation';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import Loading from '../../shared/Loading';
 import EditAttributeForm from '../EditAttributeForm';
 
 export interface IEditAttributeMatchParams {

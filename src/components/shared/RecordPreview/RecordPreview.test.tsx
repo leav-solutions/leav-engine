@@ -1,9 +1,9 @@
 import {mount, shallow} from 'enzyme';
 import 'jest-styled-components';
-import * as React from 'react';
+import React from 'react';
 import RecordPreview from './RecordPreview';
 
-jest.mock('src/utils/utils', () => ({
+jest.mock('../../../utils/utils', () => ({
     getInvertColor: jest.fn().mockImplementation(() => '#FFFFFF'),
     getRandomColor: jest.fn().mockImplementation(() => '#000000')
 }));

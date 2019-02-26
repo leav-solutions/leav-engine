@@ -1,11 +1,11 @@
 import {DataProxy} from 'apollo-cache';
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import ConfirmedButton from 'src/components/shared/ConfirmedButton';
-import DeleteButton from 'src/components/shared/DeleteButton';
-import {DeleteLibMutation, deleteLibQuery} from 'src/queries/libraries/deleteLibMutation';
-import {getLibsQuery} from 'src/queries/libraries/getLibrariesQuery';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
+import {DeleteLibMutation, deleteLibQuery} from '../../../queries/libraries/deleteLibMutation';
+import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import ConfirmedButton from '../../shared/ConfirmedButton';
+import DeleteButton from '../../shared/DeleteButton';
 
 interface IDeleteLibraryProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;
@@ -40,7 +40,7 @@ class DeleteLibrary extends React.Component<IDeleteLibraryProps> {
         );
     }
 
-    private _updateCache = (cache: DataProxy, {data: {deleteLibrary}}) => {
+    private _updateCache = (cache: DataProxy, {data: {deleteLibrary}}: any) => {
         const cacheData: any = cache.readQuery({query: getLibsQuery});
         cache.writeQuery({
             query: getLibsQuery,

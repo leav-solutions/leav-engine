@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {NodeData} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
-import Loading from 'src/components/shared/Loading';
-import TreeStructure from 'src/components/trees/TreeStructure';
-import {getTreesQuery, TreesQuery} from 'src/queries/trees/getTreesQuery';
-import {localizedLabel} from 'src/utils/utils';
+import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
+import {localizedLabel} from '../../../utils/utils';
+import Loading from '../../shared/Loading';
+import TreeStructure from '../../trees/TreeStructure';
 
 interface IDefinePermissionsViewLoadTreeProps extends WithNamespaces {
     treeId: string;

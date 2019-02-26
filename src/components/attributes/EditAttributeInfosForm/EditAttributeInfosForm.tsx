@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
-import FormFieldWrapper from 'src/components/shared/FormFieldWrapper';
-import {formatIDString} from 'src/utils/utils';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
-import {ErrorTypes, IFormError} from 'src/_types/errors';
+import {formatIDString} from '../../../utils/utils';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import {ErrorTypes, IFormError} from '../../../_types//errors';
+import FormFieldWrapper from '../../shared/FormFieldWrapper';
 
 interface IEditAttributeInfosFormProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes | null;

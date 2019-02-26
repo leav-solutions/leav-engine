@@ -1,9 +1,9 @@
 import {render} from 'enzyme';
 import {History} from 'history';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {match} from 'react-router';
-import {Mockify} from 'src/_types/Mockify';
+import {Mockify} from '../../../_types//Mockify';
 import EditAttribute, {IEditAttributeMatchParams} from './EditAttribute';
 
 describe('EditAttribute', () => {

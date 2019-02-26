@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Table} from 'semantic-ui-react';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
 
 interface IAttributesSelectionListProps extends WithNamespaces {
     attributes: GET_ATTRIBUTES_attributes[];

@@ -1,20 +1,20 @@
 import {shallow} from 'enzyme';
-import * as React from 'react';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
-import {AttributeFormat, AttributeType} from 'src/_gqlTypes/globalTypes';
-import {Mockify} from 'src/_types/Mockify';
+import React from 'react';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import {Mockify} from '../../../_types//Mockify';
 import EditLibraryForm from './EditLibraryForm';
 
 describe('EditLibraryForm', () => {
     beforeAll(() => {
-        jest.mock('src/utils/utils', () => ({
+        jest.mock('../../../utils/utils', () => ({
             formatIDString: jest.fn().mockImplementation(s => s),
             localizedLabel: jest.fn().mockImplementation(l => l.fr)
         }));
     });
 
     afterAll(() => {
-        jest.unmock('src/utils/utils');
+        jest.unmock('../../../utils/utils');
     });
 
     test('Render form for existing lib', async () => {

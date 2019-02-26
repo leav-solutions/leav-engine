@@ -1,9 +1,9 @@
 import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-boost';
 import {render} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import * as sleep from 'sleep-promise';
-import {getTreeContentQuery} from 'src/queries/trees/treeContentQuery';
+import sleep from 'sleep-promise';
+import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
 import TreeStructure from './TreeStructure';
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({

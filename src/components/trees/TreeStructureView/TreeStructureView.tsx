@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import SortableTree, {ExtendedNodeData, NodeData, TreeItem} from 'react-sortable-tree';
 import {Button, Loader} from 'semantic-ui-react';
-import ConfirmedButton from 'src/components/shared/ConfirmedButton';
-import Loading from 'src/components/shared/Loading';
-import {getTreeNodeKey} from 'src/utils/utils';
 import styled from 'styled-components';
+import {getTreeNodeKey} from '../../../utils/utils';
+import ConfirmedButton from '../../shared/ConfirmedButton';
+import Loading from '../../shared/Loading';
 import './rstOverride.css';
 
 interface IEditTreeStructureViewProps extends WithNamespaces {

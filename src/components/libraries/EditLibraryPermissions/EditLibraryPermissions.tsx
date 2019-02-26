@@ -1,12 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
-import DefineLibPermissionsView from 'src/components/permissions/DefineLibPermissionsView';
-import DefineTreePermissionsView from 'src/components/permissions/DefineTreePermissionsView';
-import {localizedLabel} from 'src/utils/utils';
-import {GET_LIBRARIES_libraries} from 'src/_gqlTypes/GET_LIBRARIES';
-import {AttributeType, PermissionsRelation, PermissionTypes} from 'src/_gqlTypes/globalTypes';
 import styled from 'styled-components';
+import {localizedLabel} from '../../../utils/utils';
+import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {AttributeType, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import DefineLibPermissionsView from '../../permissions/DefineLibPermissionsView';
+import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
 
 interface IEditLibraryPermissionsProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;

@@ -1,8 +1,8 @@
 import {render} from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_ATTRIBUTES_attributes} from 'src/_gqlTypes/GET_ATTRIBUTES';
-import {Mockify} from 'src/_types/Mockify';
+import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {Mockify} from '../../../_types//Mockify';
 import DeleteAttribute from './DeleteAttribute';
 
 describe('DeleteAttribute', () => {
