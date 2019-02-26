@@ -51,7 +51,7 @@ prog.version('0.1.0')
             console.log('Missing --parent argument');
         }
 
-        const destDir = __dirname + '//components/' + prog.parent + '/';
+        const destDir = __dirname + '/../src/components/' + prog.parent + '/';
 
         const compFolder = destDir + name;
 
