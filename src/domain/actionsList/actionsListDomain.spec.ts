@@ -1,6 +1,6 @@
-import ValidationError from '../../errors/ValidationError';
 import * as Joi from 'joi';
 import {IUtils} from 'utils/utils';
+import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import actionListDomain from './actionsListDomain';
 

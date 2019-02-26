@@ -1,11 +1,11 @@
 import ValidationError from '../../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
-import validateRegexAction from './validateRegexAction';
 import {IActionsListDomain} from '../actionsListDomain';
+import validateRegexAction from './validateRegexAction';
 
 describe('validateRegexAction', () => {
     const mockActionListDomain: Mockify<IActionsListDomain> = {
-        handleJoiError: jest.fn().mockRejectedValue({
+        handleJoiError: jest.fn().mockReturnValue({
             test_attr: 'error'
         })
     };

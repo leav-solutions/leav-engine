@@ -1,11 +1,11 @@
 import ValidationError from '../../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
-import validateFormatAction from './validateFormatAction';
 import {IActionsListDomain} from '../actionsListDomain';
+import validateFormatAction from './validateFormatAction';
 
 describe('validateFormatAction', () => {
     const mockActionListDomain: Mockify<IActionsListDomain> = {
-        handleJoiError: jest.fn().mockRejectedValue({
+        handleJoiError: jest.fn().mockReturnValue({
             test_attr: 'error'
         })
     };
@@ -45,8 +45,12 @@ describe('validateFormatAction', () => {
     test('validateFormat', async () => {
         // Extended
         const extValue = {street: 'test', city: {zipcode: 38000, name: 'Grenoble'}};
-        const badExtValue = {street: 'test', city: {zipcode: 'aaa', name: 'Grenoble'}};
         expect(action(extValue, {}, {attribute: attrExt})).toMatchObject(extValue);
+    });
+
+    test('Throw if invalid format', async () => {
+        // Extended
+        const badExtValue = {street: 'test', city: {zipcode: 'aaa', name: 'Grenoble'}};
         expect(() => action(badExtValue, {}, {attribute: attrExt})).toThrow(ValidationError);
     });
 });

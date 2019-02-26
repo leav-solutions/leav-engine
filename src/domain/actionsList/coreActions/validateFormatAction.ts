@@ -1,4 +1,5 @@
 import * as Joi from 'joi';
+import ValidationError from '../../../errors/ValidationError';
 import {
     ActionsListIOTypes,
     ActionsListValueType,
@@ -6,7 +7,6 @@ import {
     IActionsListFunction
 } from '../../../_types/actionsList';
 import {AttributeFormats, IAttribute, IEmbeddedAttribute} from '../../../_types/attribute';
-import ValidationError from '../../../errors/ValidationError';
 import {IActionsListDomain} from '../actionsListDomain';
 
 export default function(actionsListDomain: IActionsListDomain): IActionsListFunction {
