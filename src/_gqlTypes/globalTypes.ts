@@ -1,4 +1,5 @@
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -50,6 +51,9 @@ export enum PermissionTypes {
 export enum PermissionsActions {
     access = 'access',
     access_attribute = 'access_attribute',
+    access_attributes = 'access_attributes',
+    access_libraries = 'access_libraries',
+    access_trees = 'access_trees',
     create = 'create',
     create_attribute = 'create_attribute',
     create_library = 'create_library',

@@ -71,6 +71,7 @@
         "confirm_delete_element": "Do you really want to detach this element?"
     },
     "permissions": {
+        "title": "Admin Permissions",
         "access": "Access",
         "create": "Create",
         "edit": "Edit",
@@ -81,6 +82,18 @@
         "herit": "Herit",
         "grant": "grant",
         "library_tab_name": "Library",
-        "any_record": "Any records"
+        "any_record": "Any records",
+        "access_libraries": "Access libraries",
+        "create_library": "Create library",
+        "edit_library": "Edit library",
+        "delete_library": "Delete library",
+        "access_attributes": "Access attributes",
+        "create_attribute": "Create attribute",
+        "edit_attribute": "Edit attribute",
+        "delete_attribute": "Delete attribute",
+        "access_trees": "Access trees",
+        "create_tree": "Create tree",
+        "edit_tree": "Edit tree",
+        "delete_tree": "Delete tree"
     }
 }

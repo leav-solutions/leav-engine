@@ -19,6 +19,10 @@ class MainMenu extends React.Component<WithNamespaces> {
         {
             id: 'trees',
             label: this.props.t('trees.title')
+        },
+        {
+            id: 'permissions',
+            label: this.props.t('permissions.title')
         }
     ];
 

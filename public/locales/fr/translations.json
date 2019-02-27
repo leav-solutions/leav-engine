@@ -70,6 +70,7 @@
         "confirm_delete_element": "Êtes-vous sûr de vouloir détacher cet élément?"
     },
     "permissions": {
+        "title": "Permissions administration",
         "access": "Accéder",
         "create": "Créer",
         "edit": "Éditer",
@@ -80,6 +81,18 @@
         "herit": "Hériter",
         "grant": "Autoriser",
         "library_tab_name": "Bibliothèque",
-        "any_record": "Tous les éléments"
+        "any_record": "Tous les éléments",
+        "access_libraries": "Accéder aux bibliothèques",
+        "create_library": "Créer une bibliothèque",
+        "edit_library": "Éditer une bibliothèque",
+        "delete_library": "Supprimer une bibliothèque",
+        "access_attributes": "Accéder aux attributs",
+        "create_attribute": "Créer un attribut",
+        "edit_attribute": "Éditer un attribut",
+        "delete_attribute": "Supprimer un attribut",
+        "access_trees": "Accéder aux arbres",
+        "create_tree": "Créer un arbre",
+        "edit_tree": "Éditer un arbre",
+        "delete_tree": "Supprimer un arbre"
     }
 }

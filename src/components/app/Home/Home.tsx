@@ -5,6 +5,7 @@ import Attributes from '../../attributes/Attributes';
 import EditAttribute from '../../attributes/EditAttribute';
 import EditLibrary from '../../libraries/EditLibrary';
 import Libraries from '../../libraries/Libraries';
+import AdminPermissions from '../../permissions/AdminPermissions';
 import EditTree from '../../trees/EditTree';
 import Trees from '../../trees/Trees';
 import MainMenu from '../MainMenu';
@@ -38,6 +39,7 @@ function Home(): JSX.Element {
                     <Route path="/attributes/edit/:id?" component={EditAttribute} exact />
                     <Route path="/trees" component={Trees} exact />
                     <Route path="/trees/edit/:id?" component={EditTree} exact />
+                    <Route path="/permissions" component={AdminPermissions} exact />
                 </Content>
             </div>
         </Router>
