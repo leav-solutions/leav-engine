@@ -186,6 +186,24 @@ describe('Permissions', () => {
             expect(resSaveLib.data.data.saveLibrary.permissionsConf).toBeDefined();
             expect(resSaveLib.data.errors).toBeUndefined();
 
+            const resIsAllowed = await makeGraphQlCall(`query {
+                isAllowed(
+                    type: record,
+                    actions: [delete],
+                    applyTo: "${testLibId}",
+                    target: {recordId: "${testLibRecordId}"}
+                ) {
+                    name
+                    allowed
+                }
+            }`);
+
+            expect(resIsAllowed.status).toBe(200);
+            expect(resIsAllowed.data.data.isAllowed).toBeDefined();
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('delete');
+            expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(false);
+            expect(resIsAllowed.data.errors).toBeUndefined();
+
             const resDelRecord = await makeGraphQlCall(`mutation {
                 deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {
                     id
@@ -274,6 +292,24 @@ describe('Permissions', () => {
                 }
             }`);
 
+            const resIsAllowed = await makeGraphQlCall(`query {
+                isAllowed(
+                    type: attribute,
+                    actions: [edit_value],
+                    applyTo: "${testLibId}",
+                    target: {recordId: "${testLibRecordId}", attributeId: "${testPermAttrId}"}
+                ) {
+                    name
+                    allowed
+                }
+            }`);
+
+            expect(resIsAllowed.status).toBe(200);
+            expect(resIsAllowed.data.data.isAllowed).toBeDefined();
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('edit_value');
+            expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(false);
+            expect(resIsAllowed.data.errors).toBeUndefined();
+
             // Apply permission
             const res = await makeGraphQlCall(`mutation {
                 saveValue(
@@ -343,6 +379,22 @@ describe('Permissions', () => {
             expect(resGetAdminPerm.status).toBe(200);
             expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'create_library', allowed: true}]);
             expect(resGetAdminPerm.data.errors).toBeUndefined();
+
+            const resIsAllowed = await makeGraphQlCall(`query {
+                isAllowed(
+                    type: admin,
+                    actions: [create_library]
+                ) {
+                    name
+                    allowed
+                }
+            }`);
+
+            expect(resIsAllowed.status).toBe(200);
+            expect(resIsAllowed.data.data.isAllowed).toBeDefined();
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('create_library');
+            expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(true);
+            expect(resIsAllowed.data.errors).toBeUndefined();
         });
     });
 
@@ -377,7 +429,7 @@ describe('Permissions', () => {
             expect(resSaveLibPerm.data.errors).toBeUndefined();
 
             // Get admin permissions
-            const resGetAdminPerm = await makeGraphQlCall(`{
+            const resGetLibPerm = await makeGraphQlCall(`{
                 permissions(
                     type: library,
                     applyTo: "${testLibId}",
@@ -389,9 +441,26 @@ describe('Permissions', () => {
                 }
             }`);
 
-            expect(resGetAdminPerm.status).toBe(200);
-            expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'access', allowed: true}]);
-            expect(resGetAdminPerm.data.errors).toBeUndefined();
+            expect(resGetLibPerm.status).toBe(200);
+            expect(resGetLibPerm.data.data.permissions).toEqual([{name: 'access', allowed: true}]);
+            expect(resGetLibPerm.data.errors).toBeUndefined();
+
+            const resIsAllowed = await makeGraphQlCall(`query {
+                isAllowed(
+                    type: library,
+                    actions: [access],
+                    applyTo: "${testLibId}"
+                ) {
+                    name
+                    allowed
+                }
+            }`);
+
+            expect(resIsAllowed.status).toBe(200);
+            expect(resIsAllowed.data.data.isAllowed).toBeDefined();
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('access');
+            expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(true);
+            expect(resIsAllowed.data.errors).toBeUndefined();
         });
     });
 

@@ -1,6 +1,6 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IHeritedPermissionDomain} from 'domain/permission/heritedPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {IPermissionsHelperDomain} from 'domain/permission/permissionsHelperDomain';
 import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IUtils} from 'utils/utils';
@@ -25,7 +25,7 @@ export default function(
     treePermissionDomain: ITreePermissionDomain,
     recordPermissionDomain: IRecordPermissionDomain,
     attributeDomain: IAttributeDomain,
-    heritedPermissionDomain: IHeritedPermissionDomain
+    permissionsHelperDomain: IPermissionsHelperDomain
 ): ICorePermissionApp {
     // Format permission data to match graphql schema, where "actions" field format is different
     // TODO: use a custom scalar type?
@@ -117,7 +117,23 @@ export default function(
                         permissionTreeTarget: PermissionsTreeTargetInput
                     }
 
+                    # Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
+                    # attributeId is only required for attribute permission
+                    input PermissionTarget {
+                        attributeId: ID,
+                        recordId: ID!
+                    }
+
                     extend type Query {
+                        # Return permissions (applying heritage) for current user
+                        isAllowed(
+                            type: PermissionTypes!,
+                            applyTo: ID,
+                            actions: [PermissionsActions!]!,
+                            target: PermissionTarget
+                        ): [PermissionAction!],
+
+                        # Return saved permissions (no heritage) for given user group
                         permissions(
                             type: PermissionTypes!,
                             applyTo: ID,
@@ -125,6 +141,8 @@ export default function(
                             usersGroup: ID,
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [PermissionAction!],
+
+                        # Return herited permissions only for given user group
                         heritedPermissions(
                             type: PermissionTypes!,
                             applyTo: ID,
@@ -140,6 +158,23 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
+                        async isAllowed(_, {type, applyTo, actions, target}, ctx) {
+                            const {userId} = graphqlApp.ctxToQueryInfos(ctx);
+
+                            return Promise.all(
+                                actions.map(async action => {
+                                    const perm = await permissionsHelperDomain.isAllowed(
+                                        type,
+                                        action,
+                                        userId,
+                                        applyTo,
+                                        target
+                                    );
+
+                                    return {name: action, allowed: perm};
+                                })
+                            );
+                        },
                         async permissions(_, {type, applyTo, actions, usersGroup, permissionTreeTarget}) {
                             const perms = await permissionDomain.getPermissionsByActions(
                                 type,
@@ -157,7 +192,7 @@ export default function(
                         async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}) {
                             return Promise.all(
                                 actions.map(async action => {
-                                    const perm = await heritedPermissionDomain.getHeritedPermissions(
+                                    const perm = await permissionsHelperDomain.getHeritedPermissions(
                                         type,
                                         applyTo,
                                         action,

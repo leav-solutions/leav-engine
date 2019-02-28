@@ -23,7 +23,7 @@ export default function(
     return {
         async getAttributePermission(
             action: AttributePermissionsActions,
-            userGroupId: number,
+            userId: number,
             attributeId: string,
             recordLibrary: string,
             recordId: number
@@ -49,7 +49,7 @@ export default function(
             const perm = treePermissionDomain.getTreePermission({
                 type: PermissionTypes.ATTRIBUTE,
                 action,
-                userId: userGroupId,
+                userId,
                 applyTo: attributeId,
                 treeValues: valuesByAttr,
                 permissionsConf: attrProps.permissionsConf,
