@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "apollo-boost": "0.1.16",
+    "apollo": "2.5.3",
+    "apollo-boost": "0.3.1",
     "graphql": "14.1.1",
     "hex-rgba": "1.0.2",
     "i18next": "12.0.0",
@@ -12,7 +13,7 @@
     "jest-styled-components": "6.3.1",
     "node-fetch": "2.3.0",
     "react": "16.8.1",
-    "react-apollo": "2.2.4",
+    "react-apollo": "2.5.1",
     "react-dom": "16.8.1",
     "react-i18next": "8.3.5",
     "react-router": "4.3.1",
@@ -30,7 +31,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "gen_types": "apollo codegen:generate --target=typescript --outputFlat src/_gqlTypes && prettier --write src/_gqlTypes/*",
+    "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat src/_gqlTypes && prettier --write src/_gqlTypes/*",
     "create_comp": "scripts/createComponent.js"
   },
   "devDependencies": {
@@ -48,7 +49,6 @@
     "@types/react-sortable-tree": "0.3.2",
     "@types/react-test-renderer": "16.8.0",
     "@types/styled-components": "4.1.6",
-    "apollo": "1.9.2",
     "apollo-cli": "0.4.0",
     "commander": "2.19.0",
     "enzyme": "3.8.0",
@@ -69,18 +69,6 @@
       "tslint --fix",
       "git add"
     ]
-  },
-  "apollo": {
-    "schemas": {
-      "default": {
-        "endpoint": {
-          "url": "http://localhost:4001/graphql",
-          "headers": {
-            "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMjQ3NjUzNTEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1MjgxOTE4MDgsImV4cCI6NDY1MjM5NDIwOH0.XH6Xu108WdLMpQdOa-KnaZU541QP4jWdCkF1O0yyefg"
-          }
-        }
-      }
-    }
   },
   "husky": {
     "hooks": {
