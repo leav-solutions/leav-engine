@@ -27,12 +27,15 @@ export enum AttributePermissionsActions {
 }
 
 export enum AdminPermissionsActions {
+    ACCESS_LIBRARIES = 'access_libraries',
     CREATE_LIBRARY = 'create_library',
     EDIT_LIBRARY = 'edit_library',
     DELETE_LIBRARY = 'delete_library',
+    ACCESS_ATTRIBUTES = 'access_attributes',
     CREATE_ATTRIBUTE = 'create_attribute',
     EDIT_ATTRIBUTE = 'edit_attribute',
     DELETE_ATTRIBUTE = 'delete_attribute',
+    ACCESS_TREES = 'access_trees',
     CREATE_TREE = 'create_tree',
     EDIT_TREE = 'edit_tree',
     DELETE_TREE = 'delete_tree',
