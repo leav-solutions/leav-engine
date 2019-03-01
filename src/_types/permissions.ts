@@ -27,19 +27,20 @@ export enum AttributePermissionsActions {
 }
 
 export enum AdminPermissionsActions {
-    ACCESS_LIBRARIES = 'access_libraries',
-    CREATE_LIBRARY = 'create_library',
-    EDIT_LIBRARY = 'edit_library',
-    DELETE_LIBRARY = 'delete_library',
-    ACCESS_ATTRIBUTES = 'access_attributes',
-    CREATE_ATTRIBUTE = 'create_attribute',
-    EDIT_ATTRIBUTE = 'edit_attribute',
-    DELETE_ATTRIBUTE = 'delete_attribute',
-    ACCESS_TREES = 'access_trees',
-    CREATE_TREE = 'create_tree',
-    EDIT_TREE = 'edit_tree',
-    DELETE_TREE = 'delete_tree',
-    EDIT_PERMISSION = 'edit_permission'
+    ACCESS_LIBRARIES = 'admin_access_libraries',
+    CREATE_LIBRARY = 'admin_create_library',
+    EDIT_LIBRARY = 'admin_edit_library',
+    DELETE_LIBRARY = 'admin_delete_library',
+    ACCESS_ATTRIBUTES = 'admin_access_attributes',
+    CREATE_ATTRIBUTE = 'admin_create_attribute',
+    EDIT_ATTRIBUTE = 'admin_edit_attribute',
+    DELETE_ATTRIBUTE = 'admin_delete_attribute',
+    ACCESS_TREES = 'admin_access_trees',
+    CREATE_TREE = 'admin_create_tree',
+    EDIT_TREE = 'admin_edit_tree',
+    DELETE_TREE = 'admin_delete_tree',
+    ACCESS_PERMISSIONS = 'admin_access_permissions',
+    EDIT_PERMISSION = 'admin_edit_permission'
 }
 
 export type PermissionsActions =
