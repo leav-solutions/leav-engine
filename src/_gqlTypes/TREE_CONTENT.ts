@@ -1,4 +1,5 @@
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import {TreeElementInput, AvailableLanguage} from './globalTypes';

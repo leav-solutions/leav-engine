@@ -37,10 +37,10 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
                         type,
                         usersGroup,
                         actions: [
-                            PermissionsActions.access_libraries,
-                            PermissionsActions.create_library,
-                            PermissionsActions.edit_library,
-                            PermissionsActions.delete_library
+                            PermissionsActions.admin_access_libraries,
+                            PermissionsActions.admin_create_library,
+                            PermissionsActions.admin_edit_library,
+                            PermissionsActions.admin_delete_library
                         ]
                     }}
                 />
@@ -50,10 +50,10 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
                         type,
                         usersGroup,
                         actions: [
-                            PermissionsActions.access_attributes,
-                            PermissionsActions.create_attribute,
-                            PermissionsActions.edit_attribute,
-                            PermissionsActions.delete_attribute
+                            PermissionsActions.admin_access_attributes,
+                            PermissionsActions.admin_create_attribute,
+                            PermissionsActions.admin_edit_attribute,
+                            PermissionsActions.admin_delete_attribute
                         ]
                     }}
                 />
@@ -63,11 +63,19 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
                         type,
                         usersGroup,
                         actions: [
-                            PermissionsActions.access_trees,
-                            PermissionsActions.create_tree,
-                            PermissionsActions.edit_tree,
-                            PermissionsActions.delete_tree
+                            PermissionsActions.admin_access_trees,
+                            PermissionsActions.admin_create_tree,
+                            PermissionsActions.admin_edit_tree,
+                            PermissionsActions.admin_delete_tree
                         ]
+                    }}
+                />
+                <h4>{t('permissions.title')}</h4>
+                <EditPermissions
+                    permParams={{
+                        type,
+                        usersGroup,
+                        actions: [PermissionsActions.admin_access_permissions, PermissionsActions.admin_edit_permission]
                     }}
                 />
             </div>

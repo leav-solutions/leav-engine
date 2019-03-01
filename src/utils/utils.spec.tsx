@@ -1,5 +1,7 @@
 import {i18n} from 'i18next';
 import {TreeNode} from 'react-sortable-tree';
+import {PermissionsActions} from '../_gqlTypes/globalTypes';
+import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {Mockify} from '../_types//Mockify';
 import {
     addWildcardToFilters,
@@ -7,7 +9,8 @@ import {
     getInvertColor,
     getRandomColor,
     getTreeNodeKey,
-    localizedLabel
+    localizedLabel,
+    permsArrayToObject
 } from './utils';
 
 describe('utils', () => {
@@ -125,6 +128,26 @@ describe('utils', () => {
 
         test('Return empty key if no node', async () => {
             expect(getTreeNodeKey(null)).toBe('');
+        });
+    });
+
+    describe('permsArrayToObject', () => {
+        test('Converts an array of permissions to an object', async () => {
+            const perms: IS_ALLOWED_isAllowed[] = [
+                {
+                    name: PermissionsActions.access,
+                    allowed: true
+                },
+                {
+                    name: PermissionsActions.edit,
+                    allowed: false
+                }
+            ];
+
+            expect(permsArrayToObject(perms)).toEqual({
+                access: true,
+                edit: false
+            });
         });
     });
 });

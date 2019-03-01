@@ -1,6 +1,7 @@
 import {i18n} from 'i18next';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
+import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 
 /**
  * Return label matching user language (or default language) from an object containing all languages labels
@@ -66,3 +67,11 @@ export const getInvertColor = (color: string): string => {
 
 export const getTreeNodeKey = (nodeData: TreeNode | null) =>
     nodeData ? nodeData.node.library.id + '/' + nodeData.node.id : '';
+
+export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} => {
+    return perms.reduce((allPerms, perm) => {
+        allPerms[perm.name] = perm.allowed;
+
+        return allPerms;
+    }, {});
+};

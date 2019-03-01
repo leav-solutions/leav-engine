@@ -1,7 +1,9 @@
 import ApolloClient, {InMemoryCache, IntrospectionFragmentMatcher, IntrospectionResultData} from 'apollo-boost';
-import fetch from 'node-fetch';
 import React from 'react';
 import {ApolloProvider} from 'react-apollo';
+import {IsAllowedQuery, isAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
+import {permsArrayToObject} from '../../../utils/utils';
+import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import Home from '../Home';
 
@@ -36,9 +38,54 @@ class App extends React.Component<any, IAppState> {
 
         return (
             <ApolloProvider client={gqlClient}>
-                <div className="App height100">
-                    <Home />
-                </div>
+                <IsAllowedQuery
+                    query={isAllowedQuery}
+                    variables={{
+                        type: PermissionTypes.admin,
+                        actions: [
+                            PermissionsActions.admin_access_attributes,
+                            PermissionsActions.admin_access_libraries,
+                            PermissionsActions.admin_access_permissions,
+                            PermissionsActions.admin_access_trees,
+                            PermissionsActions.admin_create_attribute,
+                            PermissionsActions.admin_create_library,
+                            PermissionsActions.admin_create_tree,
+                            PermissionsActions.admin_delete_attribute,
+                            PermissionsActions.admin_delete_library,
+                            PermissionsActions.admin_delete_tree,
+                            PermissionsActions.admin_edit_attribute,
+                            PermissionsActions.admin_edit_library,
+                            PermissionsActions.admin_edit_permission,
+                            PermissionsActions.admin_edit_tree
+                        ]
+                    }}
+                >
+                    {({loading, data, error}) => {
+                        if (loading) {
+                            return <Loading />;
+                        }
+
+                        // Cache admin permissions
+                        if (!data || !data.isAllowed || error) {
+                            return <p>Could not retrieve permissions!</p>;
+                        }
+
+                        gqlClient.writeData({
+                            data: {
+                                adminPermissions: {
+                                    __typename: 'AdminPermissions',
+                                    ...permsArrayToObject(data.isAllowed)
+                                }
+                            }
+                        });
+
+                        return (
+                            <div className="App height100">
+                                <Home />
+                            </div>
+                        );
+                    }}
+                </IsAllowedQuery>
             </ApolloProvider>
         );
     }

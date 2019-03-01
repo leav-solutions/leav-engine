@@ -51,24 +51,25 @@ export enum PermissionTypes {
 export enum PermissionsActions {
     access = 'access',
     access_attribute = 'access_attribute',
-    access_attributes = 'access_attributes',
-    access_libraries = 'access_libraries',
-    access_trees = 'access_trees',
+    admin_access_attributes = 'admin_access_attributes',
+    admin_access_libraries = 'admin_access_libraries',
+    admin_access_permissions = 'admin_access_permissions',
+    admin_access_trees = 'admin_access_trees',
+    admin_create_attribute = 'admin_create_attribute',
+    admin_create_library = 'admin_create_library',
+    admin_create_tree = 'admin_create_tree',
+    admin_delete_attribute = 'admin_delete_attribute',
+    admin_delete_library = 'admin_delete_library',
+    admin_delete_tree = 'admin_delete_tree',
+    admin_edit_attribute = 'admin_edit_attribute',
+    admin_edit_library = 'admin_edit_library',
+    admin_edit_permission = 'admin_edit_permission',
+    admin_edit_tree = 'admin_edit_tree',
     create = 'create',
-    create_attribute = 'create_attribute',
-    create_library = 'create_library',
-    create_tree = 'create_tree',
     create_value = 'create_value',
     delete = 'delete',
-    delete_attribute = 'delete_attribute',
-    delete_library = 'delete_library',
-    delete_tree = 'delete_tree',
     delete_value = 'delete_value',
     edit = 'edit',
-    edit_attribute = 'edit_attribute',
-    edit_library = 'edit_library',
-    edit_permission = 'edit_permission',
-    edit_tree = 'edit_tree',
     edit_value = 'edit_value'
 }
 
@@ -137,6 +138,15 @@ export interface PermissionInput {
     usersGroup?: string | null;
     actions: PermissionActionInput[];
     permissionTreeTarget?: PermissionsTreeTargetInput | null;
+}
+
+/**
+ * Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
+ * attributeId is only required for attribute permission
+ */
+export interface PermissionTarget {
+    attributeId?: string | null;
+    recordId: string;
 }
 
 /**
