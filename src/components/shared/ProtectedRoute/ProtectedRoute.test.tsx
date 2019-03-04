@@ -3,6 +3,7 @@ import React from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import UserContext from '../UserContext';
+import {IUserContext} from '../UserContext/UserContext';
 import ProtectedRoute from './ProtectedRoute';
 
 describe('ProtectedRoute', () => {
