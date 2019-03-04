@@ -15,7 +15,12 @@ function EditPermissions({permParams, t}: IEditPermissionsProps): JSX.Element {
     return (
         // Fetch policy is set to 'network only' to bypass the cache as it would be very challenging
         // to maintain the heritage values in the cache.
-        <PermissionsQuery query={getPermissionsQuery} variables={permParams} fetchPolicy="network-only">
+        <PermissionsQuery
+            query={getPermissionsQuery}
+            variables={permParams}
+            fetchPolicy="network-only"
+            notifyOnNetworkStatusChange // Needed to avoid query getting stuck on "loading" state
+        >
             {({loading, error, data}) => {
                 if (loading) {
                     return <Loading />;
