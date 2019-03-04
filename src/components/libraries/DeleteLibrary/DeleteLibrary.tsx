@@ -11,42 +11,34 @@ interface IDeleteLibraryProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;
 }
 
-class DeleteLibrary extends React.Component<IDeleteLibraryProps> {
-    constructor(props: IDeleteLibraryProps) {
-        super(props);
-    }
-
-    public render() {
-        const {library, t} = this.props;
-
-        return (
-            <DeleteLibMutation mutation={deleteLibQuery} update={this._updateCache}>
-                {deleteLib => {
-                    const onDelete = async () =>
-                        deleteLib({
-                            variables: {libID: library.id}
-                        });
-
-                    const libLabel =
-                        library.label !== null ? library.label.fr || library.label.en || library.id : library.id;
-
-                    return (
-                        <ConfirmedButton action={onDelete} confirmMessage={t('libraries.confirm_delete', {libLabel})}>
-                            <DeleteButton disabled={!!library.system} />
-                        </ConfirmedButton>
-                    );
-                }}
-            </DeleteLibMutation>
-        );
-    }
-
-    private _updateCache = (cache: DataProxy, {data: {deleteLibrary}}: any) => {
+function DeleteLibrary({library, t}: IDeleteLibraryProps): JSX.Element {
+    const _updateCache = (cache: DataProxy, {data: {deleteLibrary}}: any) => {
         const cacheData: any = cache.readQuery({query: getLibsQuery});
         cache.writeQuery({
             query: getLibsQuery,
             data: {libraries: cacheData.libraries.filter(l => l.id !== deleteLibrary.id)}
         });
-    }
+    };
+
+    return (
+        <DeleteLibMutation mutation={deleteLibQuery} update={_updateCache}>
+            {deleteLib => {
+                const onDelete = async () =>
+                    deleteLib({
+                        variables: {libID: library.id}
+                    });
+
+                const libLabel =
+                    library.label !== null ? library.label.fr || library.label.en || library.id : library.id;
+
+                return (
+                    <ConfirmedButton action={onDelete} confirmMessage={t('libraries.confirm_delete', {libLabel})}>
+                        <DeleteButton disabled={!!library.system} />
+                    </ConfirmedButton>
+                );
+            }}
+        </DeleteLibMutation>
+    );
 }
 
 export default withNamespaces()(DeleteLibrary);
