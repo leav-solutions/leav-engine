@@ -51,10 +51,10 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
                 id: 'attributes',
                 title: t('attributes.title'),
                 actions: [
-                    PermissionsActions.admin_access_libraries,
-                    PermissionsActions.admin_create_library,
-                    PermissionsActions.admin_edit_library,
-                    PermissionsActions.admin_delete_library
+                    PermissionsActions.admin_access_attributes,
+                    PermissionsActions.admin_create_attribute,
+                    PermissionsActions.admin_edit_attribute,
+                    PermissionsActions.admin_delete_attribute
                 ]
             },
             {
