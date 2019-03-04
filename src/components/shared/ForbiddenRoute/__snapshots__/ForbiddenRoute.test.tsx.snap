@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ForbiddenRoute Snapshot test 1`] = `
+initialize {
+  "0": Object {
+    "attribs": Object {},
+    "children": Array [
+      Object {
+        "attribs": Object {
+          "aria-hidden": "true",
+          "class": "ban icon",
+        },
+        "children": Array [],
+        "name": "i",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Object {
+          "data": "admin.forbidden_route",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "text",
+        },
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+      },
+      Object {
+        "data": "admin.forbidden_route",
+        "next": null,
+        "parent": [Circular],
+        "prev": Object {
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "ban icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+        "type": "text",
+      },
+    ],
+    "name": "h3",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": null,
+    "parent": null,
+    "prev": null,
+    "root": Object {
+      "attribs": Object {},
+      "children": Array [
+        [Circular],
+      ],
+      "name": "root",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+      "x-attribsNamespace": Object {},
+      "x-attribsPrefix": Object {},
+    },
+    "type": "tag",
+    "x-attribsNamespace": Object {},
+    "x-attribsPrefix": Object {},
+  },
+  "_root": [Circular],
+  "length": 1,
+  "options": Object {
+    "decodeEntities": true,
+    "normalizeWhitespace": false,
+    "withDomLvl1": true,
+    "xml": false,
+  },
+}
+`;

@@ -3,7 +3,8 @@
         "title": "Administration",
         "submit": "Valider",
         "cancel": "Annuler",
-        "loading": "Chargement..."
+        "loading": "Chargement...",
+        "forbidden_route": "Accès interdit"
     },
     "libraries": {
         "title": "Bibliothèques",

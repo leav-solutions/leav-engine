@@ -4,7 +4,8 @@
         "submit": "Submit",
         "cancel": "Cancel",
         "loading": "Loading...",
-        "any_record": "Tous {libLabel}"
+        "any_record": "Any {libLabel}",
+        "forbidden_route": "Access denied"
     },
     "libraries": {
         "title": "Libraries",
