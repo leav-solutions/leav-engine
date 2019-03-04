@@ -5,6 +5,8 @@ import {IsAllowedQuery, isAllowedQuery} from '../../../queries/permissions/isAll
 import {permsArrayToObject} from '../../../utils/utils';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
+import UserContext from '../../shared/UserContext';
+import {IUserContext} from '../../shared/UserContext/UserContext';
 import Home from '../Home';
 
 interface IAppState {
@@ -70,19 +72,18 @@ class App extends React.Component<any, IAppState> {
                             return <p>Could not retrieve permissions!</p>;
                         }
 
-                        gqlClient.writeData({
-                            data: {
-                                adminPermissions: {
-                                    __typename: 'AdminPermissions',
-                                    ...permsArrayToObject(data.isAllowed)
-                                }
-                            }
-                        });
+                        const userData: IUserContext = {
+                            id: 1,
+                            name: '',
+                            permissions: permsArrayToObject(data.isAllowed)
+                        };
 
                         return (
-                            <div className="App height100">
-                                <Home />
-                            </div>
+                            <UserContext.Provider value={userData}>
+                                <div className="App height100">
+                                    <Home />
+                                </div>
+                            </UserContext.Provider>
                         );
                     }}
                 </IsAllowedQuery>

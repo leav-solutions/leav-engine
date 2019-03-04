@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import {adminPermissionsQuery, AdminPermissionsQuery} from '../../../queries/permissions/userAdminPermissions';
+import UserContext from '../../shared/UserContext';
 import AppMenu from '../AppMenu';
 
 function MainMenu({t}: WithNamespaces) {
+    const userData = useContext(UserContext);
+
     const menuItems = [
         {
             id: 'libraries',
@@ -23,18 +25,11 @@ function MainMenu({t}: WithNamespaces) {
         }
     ];
 
-    return (
-        <AdminPermissionsQuery query={adminPermissionsQuery}>
-            {({data}) => {
-                const filteredItems =
-                    data && data.adminPermissions
-                        ? menuItems.filter(item => data.adminPermissions![`admin_access_${item.id}`])
-                        : [];
+    const filteredItems = userData.permissions
+        ? menuItems.filter(item => userData.permissions![`admin_access_${item.id}`])
+        : [];
 
-                return <AppMenu items={filteredItems} />;
-            }}
-        </AdminPermissionsQuery>
-    );
+    return <AppMenu items={filteredItems} />;
 }
 
 export default withNamespaces()(MainMenu);
