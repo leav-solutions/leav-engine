@@ -1,11 +1,13 @@
 import React from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 import styled from 'styled-components';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Attributes from '../../attributes/Attributes';
 import EditAttribute from '../../attributes/EditAttribute';
 import EditLibrary from '../../libraries/EditLibrary';
 import Libraries from '../../libraries/Libraries';
 import AdminPermissions from '../../permissions/AdminPermissions';
+import ProtectedRoute from '../../shared/ProtectedRoute';
 import EditTree from '../../trees/EditTree';
 import Trees from '../../trees/Trees';
 import MainMenu from '../MainMenu';
@@ -33,13 +35,51 @@ function Home(): JSX.Element {
                     <MainMenu />
                 </LeftCol>
                 <Content className="content flex-col height100">
-                    <Route path="/libraries" component={Libraries} exact />
-                    <Route path="/libraries/edit/:id?" component={EditLibrary} exact />
-                    <Route path="/attributes" component={Attributes} exact />
-                    <Route path="/attributes/edit/:id?" component={EditAttribute} exact />
-                    <Route path="/trees" component={Trees} exact />
-                    <Route path="/trees/edit/:id?" component={EditTree} exact />
-                    <Route path="/permissions" component={AdminPermissions} exact />
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_libraries]}
+                        path="/libraries"
+                        component={Libraries}
+                        exact
+                    />
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_libraries, PermissionsActions.admin_edit_library]}
+                        path="/libraries/edit/:id?"
+                        component={EditLibrary}
+                        exact
+                    />
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_attributes]}
+                        path="/attributes"
+                        component={Attributes}
+                        exact
+                    />
+                    <ProtectedRoute
+                        permissions={[
+                            PermissionsActions.admin_access_attributes,
+                            PermissionsActions.admin_edit_attribute
+                        ]}
+                        path="/attributes/edit/:id?"
+                        component={EditAttribute}
+                        exact
+                    />
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_trees]}
+                        path="/trees"
+                        component={Trees}
+                        exact
+                    />
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_trees, PermissionsActions.admin_edit_tree]}
+                        path="/trees/edit/:id?"
+                        component={EditTree}
+                        exact
+                    />
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_permissions]}
+                        path="/permissions"
+                        component={AdminPermissions}
+                        exact
+                    />
                 </Content>
             </div>
         </Router>
