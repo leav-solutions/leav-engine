@@ -19,38 +19,10 @@ interface IEditAttributeProps {
     afterSubmit?: (attrData: GET_ATTRIBUTES_attributes) => void;
 }
 
-class EditAttribute extends React.Component<IEditAttributeProps> {
-    constructor(props: IEditAttributeProps) {
-        super(props);
-    }
-    public render() {
-        const {match: routeMatch, attributeId} = this.props;
+function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: IEditAttributeProps): JSX.Element {
+    const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
-        const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
-
-        return attrId ? (
-            <AttributesQuery query={getAttributesQuery} variables={{id: '' + attrId}}>
-                {({loading, error, data}) => {
-                    if (loading || !data) {
-                        return <Loading />;
-                    }
-                    if (typeof error !== 'undefined') {
-                        return <p>Error: {error.message}</p>;
-                    }
-
-                    if (data.attributes === null) {
-                        return <p>Unknown attribute</p>;
-                    }
-
-                    return this._getEditAttributeForm(data.attributes[0]);
-                }}
-            </AttributesQuery>
-        ) : (
-            this._getEditAttributeForm(null)
-        );
-    }
-
-    private _getEditAttributeForm = (attrToEdit: GET_ATTRIBUTES_attributes | null): JSX.Element => (
+    const _getEditAttributeForm = (attrToEdit: GET_ATTRIBUTES_attributes | null): JSX.Element => (
         <SaveAttributeMutation mutation={saveAttributeQuery}>
             {(saveAttribute, {loading, error}) => {
                 const onFormSubmit = async attrData => {
@@ -72,12 +44,12 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
                         ]
                     });
 
-                    if (this.props.afterSubmit) {
-                        this.props.afterSubmit(attrData);
+                    if (afterSubmit) {
+                        afterSubmit(attrData);
                     }
 
-                    if (this.props.history) {
-                        this.props.history.replace({pathname: '/attributes/edit/' + attrData.id});
+                    if (history) {
+                        history.replace({pathname: '/attributes/edit/' + attrData.id});
                     }
                 };
 
@@ -118,7 +90,28 @@ class EditAttribute extends React.Component<IEditAttributeProps> {
                 );
             }}
         </SaveAttributeMutation>
-    )
+    );
+
+    return attrId ? (
+        <AttributesQuery query={getAttributesQuery} variables={{id: '' + attrId}}>
+            {({loading, error, data}) => {
+                if (loading || !data) {
+                    return <Loading />;
+                }
+                if (typeof error !== 'undefined') {
+                    return <p>Error: {error.message}</p>;
+                }
+
+                if (data.attributes === null) {
+                    return <p>Unknown attribute</p>;
+                }
+
+                return _getEditAttributeForm(data.attributes[0]);
+            }}
+        </AttributesQuery>
+    ) : (
+        _getEditAttributeForm(null)
+    );
 }
 
 export default EditAttribute;
