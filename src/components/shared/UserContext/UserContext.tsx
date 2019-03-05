@@ -7,6 +7,6 @@ export interface IUserContext {
 }
 
 /* tslint:disable-next-line:variable-name */
-const UserContext = React.createContext<IUserContext>({id: null, name: null, permissions: null});
+const UserContext = React.createContext<IUserContext | null>(null);
 
 export default UserContext;
