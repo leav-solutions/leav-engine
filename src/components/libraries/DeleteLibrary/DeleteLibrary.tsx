@@ -1,9 +1,11 @@
 import {DataProxy} from 'apollo-cache';
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
+import useUserData from '../../../hooks/useUserData';
 import {DeleteLibMutation, deleteLibQuery} from '../../../queries/libraries/deleteLibMutation';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
 
@@ -11,7 +13,8 @@ interface IDeleteLibraryProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;
 }
 
-function DeleteLibrary({library, t}: IDeleteLibraryProps): JSX.Element {
+function DeleteLibrary({library, t}: IDeleteLibraryProps): JSX.Element | null {
+    const userData = useUserData();
     const _updateCache = (cache: DataProxy, {data: {deleteLibrary}}: any) => {
         const cacheData: any = cache.readQuery({query: getLibsQuery});
         cache.writeQuery({
@@ -20,7 +23,7 @@ function DeleteLibrary({library, t}: IDeleteLibraryProps): JSX.Element {
         });
     };
 
-    return (
+    return userData.permissions[PermissionsActions.admin_delete_library] ? (
         <DeleteLibMutation mutation={deleteLibQuery} update={_updateCache}>
             {deleteLib => {
                 const onDelete = async () =>
@@ -38,7 +41,7 @@ function DeleteLibrary({library, t}: IDeleteLibraryProps): JSX.Element {
                 );
             }}
         </DeleteLibMutation>
-    );
+    ) : null;
 }
 
 export default withNamespaces()(DeleteLibrary);

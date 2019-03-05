@@ -10,6 +10,7 @@ interface IEditPermissionsViewProps extends WithNamespaces {
     permissions: GET_PERMISSIONS_perm[];
     heritedPermissions: GET_PERMISSIONS_heritPerm[];
     onChange: (permToSave: SAVE_PERMISSION_savePermission_actions) => void;
+    readOnly?: boolean;
 }
 
 const permissionForbiddenColor = '#FF0000';
@@ -32,7 +33,13 @@ const PermissionsHeader = styled.div`
     justify-content: space-between;
 `;
 
-function EditPermissionsView({permissions, heritedPermissions, onChange, t}: IEditPermissionsViewProps): JSX.Element {
+function EditPermissionsView({
+    permissions,
+    heritedPermissions,
+    onChange,
+    readOnly,
+    t
+}: IEditPermissionsViewProps): JSX.Element {
     const heritPermByName = heritedPermissions.reduce((heritPerms, p) => {
         heritPerms[p.name] = p.allowed;
 
@@ -73,6 +80,7 @@ function EditPermissionsView({permissions, heritedPermissions, onChange, t}: IEd
                                 onChange={_onPermUpdate}
                                 forbiddenColor={permissionForbiddenColor}
                                 allowedColor={permissionAllowedColor}
+                                readOnly={readOnly}
                             />
                         </Table.Row>
                     );
@@ -81,5 +89,8 @@ function EditPermissionsView({permissions, heritedPermissions, onChange, t}: IEd
         </Table>
     );
 }
+EditPermissionsView.defaultProps = {
+    readOnly: false
+};
 
 export default withNamespaces()(EditPermissionsView);

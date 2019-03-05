@@ -3,6 +3,7 @@ import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
 import {Mockify} from '../../../_types//Mockify';
+import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import DeleteLibrary from './DeleteLibrary';
 
 describe('DeleteLibrary', () => {
@@ -14,7 +15,9 @@ describe('DeleteLibrary', () => {
         };
         const comp = render(
             <MockedProvider>
-                <DeleteLibrary library={library as GET_LIBRARIES_libraries} />
+                <MockedUserContextProvider>
+                    <DeleteLibrary library={library as GET_LIBRARIES_libraries} />
+                </MockedUserContextProvider>
             </MockedProvider>
         );
 

@@ -42,7 +42,7 @@ function Home(): JSX.Element {
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_libraries, PermissionsActions.admin_edit_library]}
+                        permissions={[PermissionsActions.admin_access_libraries]}
                         path="/libraries/edit/:id?"
                         component={EditLibrary}
                         exact

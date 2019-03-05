@@ -14,6 +14,7 @@ import UnlinkLibAttribute from '../UnlinkLibAttribute';
 
 interface IEditLibraryAttributesProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries | null;
+    readOnly: boolean;
 }
 
 interface IEditLibraryAttributesState {
@@ -32,7 +33,7 @@ class EditLibraryAttributes extends React.Component<IEditLibraryAttributesProps,
     }
 
     public render() {
-        const {library, t} = this.props;
+        const {library, readOnly, t} = this.props;
         const {showNewAttrModal, showAddExistingAttrModal} = this.state;
         const onRowClick = () => null;
 
@@ -74,20 +75,29 @@ class EditLibraryAttributes extends React.Component<IEditLibraryAttributesProps,
                         return (
                             library && (
                                 <div>
-                                    <Button icon labelPosition="left" size="medium" onClick={this._openNewAttrModal}>
-                                        <Icon name="plus" />
-                                        {t('attributes.new')}
-                                    </Button>
+                                    {!readOnly && (
+                                        <Button
+                                            icon
+                                            labelPosition="left"
+                                            size="medium"
+                                            onClick={this._openNewAttrModal}
+                                        >
+                                            <Icon name="plus" />
+                                            {t('attributes.new')}
+                                        </Button>
+                                    )}
 
-                                    <Button
-                                        icon
-                                        labelPosition="left"
-                                        size="medium"
-                                        onClick={this._openAddExistingAttrModal}
-                                    >
-                                        <Icon name="plus" />
-                                        {t('libraries.link_existing_attribute')}
-                                    </Button>
+                                    {!readOnly && (
+                                        <Button
+                                            icon
+                                            labelPosition="left"
+                                            size="medium"
+                                            onClick={this._openAddExistingAttrModal}
+                                        >
+                                            <Icon name="plus" />
+                                            {t('libraries.link_existing_attribute')}
+                                        </Button>
+                                    )}
 
                                     <AttributesList
                                         loading={false}
@@ -95,24 +105,28 @@ class EditLibraryAttributes extends React.Component<IEditLibraryAttributesProps,
                                         onRowClick={onRowClick}
                                         withFilters={false}
                                     >
-                                        <UnlinkLibAttribute
-                                            library={library}
-                                            key="unlink_attr_btn"
-                                            onUnlink={_onClickUnlink}
-                                        />
+                                        {!readOnly && (
+                                            <UnlinkLibAttribute
+                                                library={library}
+                                                key="unlink_attr_btn"
+                                                onUnlink={_onClickUnlink}
+                                            />
+                                        )}
                                     </AttributesList>
 
-                                    <Modal
-                                        size="large"
-                                        open={showNewAttrModal}
-                                        onClose={this._closeNewAttrModal}
-                                        centered
-                                    >
-                                        <Modal.Header>{t('attributes.new')}</Modal.Header>
-                                        <Modal.Content>
-                                            <EditAttribute attributeId={null} afterSubmit={_onNewAttributeSaved} />
-                                        </Modal.Content>
-                                    </Modal>
+                                    {!readOnly && (
+                                        <Modal
+                                            size="large"
+                                            open={showNewAttrModal}
+                                            onClose={this._closeNewAttrModal}
+                                            centered
+                                        >
+                                            <Modal.Header>{t('attributes.new')}</Modal.Header>
+                                            <Modal.Content>
+                                                <EditAttribute attributeId={null} afterSubmit={_onNewAttributeSaved} />
+                                            </Modal.Content>
+                                        </Modal>
+                                    )}
 
                                     {library.attributes && (
                                         <AttributesSelectionModal

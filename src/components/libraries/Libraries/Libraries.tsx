@@ -3,8 +3,10 @@ import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery, LibrariesQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {addWildcardToFilters, getSysTranslationQueryLanguage} from '../../../utils/utils';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import LibrariesList from '../LibrariesList';
 
 interface ILibrariesProps extends WithNamespaces {
@@ -13,6 +15,7 @@ interface ILibrariesProps extends WithNamespaces {
 
 function Libraries({i18n: i18next, t, history}: ILibrariesProps): JSX.Element {
     const lang = getSysTranslationQueryLanguage(i18next);
+    const userData = useUserData();
     const [filters, setFilters] = useState<any>({});
 
     const _onFiltersUpdate = (filterElem: any) => {
@@ -38,12 +41,14 @@ function Libraries({i18n: i18next, t, history}: ILibrariesProps): JSX.Element {
                         {t('libraries.title')}
                     </Header>
                 </Grid.Column>
-                <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
-                    <Button icon labelPosition="left" size="medium" as={Link} to={'/libraries/edit'}>
-                        <Icon name="plus" />
-                        {t('libraries.new')}
-                    </Button>
-                </Grid.Column>
+                {userData.permissions[PermissionsActions.admin_create_library] && (
+                    <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
+                        <Button icon labelPosition="left" size="medium" as={Link} to={'/libraries/edit'}>
+                            <Icon name="plus" />
+                            {t('libraries.new')}
+                        </Button>
+                    </Grid.Column>
+                )}
             </Grid>
             <LibrariesQuery query={getLibsQuery} variables={{...addWildcardToFilters(filters), lang}}>
                 {({loading, error, data}) => {

@@ -8,9 +8,10 @@ import EditPermissions from '../EditPermissions';
 
 interface IDefineLibPermissionsViewProps {
     applyTo: string;
+    readOnly: boolean;
 }
 
-function DefineLibPermissionsView({applyTo}: IDefineLibPermissionsViewProps): JSX.Element {
+function DefineLibPermissionsView({applyTo, readOnly}: IDefineLibPermissionsViewProps): JSX.Element {
     const usersGroupsTreeId = 'users_groups';
 
     const [selectedGroupNode, setSelectedGroupNode] = React.useState<NodeData | null>(null);
@@ -43,6 +44,7 @@ function DefineLibPermissionsView({applyTo}: IDefineLibPermissionsViewProps): JS
                         PermissionsActions.delete
                     ]
                 }}
+                readOnly={readOnly}
             />
         );
     }

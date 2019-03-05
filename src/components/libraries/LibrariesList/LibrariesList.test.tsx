@@ -2,6 +2,7 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {BrowserRouter as Router} from 'react-router-dom';
+import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import LibrariesList from './LibrariesList';
 
 describe('LibrariesList', () => {
@@ -39,7 +40,13 @@ describe('LibrariesList', () => {
         const comp = shallow(
             <Router>
                 <MockedProvider>
-                    <LibrariesList libraries={libraries} onRowClick={onRowClick} onFiltersUpdate={onFiltersUpdate} />
+                    <MockedUserContextProvider>
+                        <LibrariesList
+                            libraries={libraries}
+                            onRowClick={onRowClick}
+                            onFiltersUpdate={onFiltersUpdate}
+                        />
+                    </MockedUserContextProvider>
                 </MockedProvider>
             </Router>
         );
@@ -53,7 +60,9 @@ describe('LibrariesList', () => {
         const changeFilter = jest.fn();
         const comp = mount(
             <MockedProvider>
-                <LibrariesList libraries={libraries} onRowClick={onRowClick} onFiltersUpdate={changeFilter} />
+                <MockedUserContextProvider>
+                    <LibrariesList libraries={libraries} onRowClick={onRowClick} onFiltersUpdate={changeFilter} />
+                </MockedUserContextProvider>
             </MockedProvider>
         );
 

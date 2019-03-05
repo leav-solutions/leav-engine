@@ -42,6 +42,7 @@ describe('EditLibraryForm', () => {
                 library={library as GET_LIBRARIES_libraries}
                 onSubmit={onSubmit}
                 onPermsSettingsSubmit={onSubmit}
+                readOnly={false}
             />
         );
 
@@ -56,7 +57,9 @@ describe('EditLibraryForm', () => {
     test('Render form for new lib', async () => {
         const onSubmit = jest.fn();
 
-        const comp = shallow(<EditLibraryForm library={null} onSubmit={onSubmit} onPermsSettingsSubmit={onSubmit} />);
+        const comp = shallow(
+            <EditLibraryForm library={null} onSubmit={onSubmit} onPermsSettingsSubmit={onSubmit} readOnly={false} />
+        );
 
         expect(
             comp

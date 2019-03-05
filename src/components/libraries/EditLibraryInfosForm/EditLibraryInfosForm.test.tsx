@@ -30,12 +30,14 @@ describe('EditLibraryInfosForm', () => {
     const onSubmit = jest.fn();
 
     test('Render form for existing library', async () => {
-        const comp = shallow(<EditLibraryInfosForm onSubmit={onSubmit} library={library as GET_LIBRARIES_libraries} />);
+        const comp = shallow(
+            <EditLibraryInfosForm onSubmit={onSubmit} library={library as GET_LIBRARIES_libraries} readonly={false} />
+        );
         expect(comp.find('FormInput[name="id"]').props().disabled).toBe(true);
     });
 
     test('Render form for new library', async () => {
-        const comp = shallow(<EditLibraryInfosForm onSubmit={onSubmit} library={null} />);
+        const comp = shallow(<EditLibraryInfosForm onSubmit={onSubmit} library={null} readonly={false} />);
         expect(comp.find('FormInput[name="id"]').props().disabled).toBe(false);
     });
 
@@ -53,7 +55,9 @@ describe('EditLibraryInfosForm', () => {
     // });
 
     test('Call submit function on submit', async () => {
-        const comp = shallow(<EditLibraryInfosForm onSubmit={onSubmit} library={library as GET_LIBRARIES_libraries} />);
+        const comp = shallow(
+            <EditLibraryInfosForm onSubmit={onSubmit} library={library as GET_LIBRARIES_libraries} readonly={false} />
+        );
         comp.find('Form').simulate('submit');
 
         expect(onSubmit).toBeCalledWith(library);

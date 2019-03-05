@@ -10,6 +10,7 @@ interface IPermissionSelectorProps {
     as: any;
     forbiddenColor: string;
     allowedColor: string;
+    readOnly?: boolean;
 }
 
 function PermissionSelector({
@@ -18,7 +19,8 @@ function PermissionSelector({
     as,
     onChange,
     forbiddenColor,
-    allowedColor
+    allowedColor,
+    readOnly
 }: IPermissionSelectorProps): JSX.Element {
     const permValToInputVal = permVal => (permVal === false ? 0 : permVal === null ? 1 : 2);
     const inputValToPermVal = {
@@ -52,6 +54,7 @@ function PermissionSelector({
                 max="2"
                 step="1"
                 value={inputVal}
+                disabled={readOnly}
                 style={{border: 'none'}}
                 onChange={_handleChange}
                 transparent
@@ -60,5 +63,8 @@ function PermissionSelector({
         </Wrapper>
     );
 }
+PermissionSelector.defaultProps = {
+    readOnly: false
+};
 
 export default PermissionSelector;

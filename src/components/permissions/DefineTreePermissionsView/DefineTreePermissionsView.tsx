@@ -12,12 +12,14 @@ interface IDefineTreePermissionsViewProps extends WithNamespaces {
     treeAttribute: GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes;
     permissionType: PermissionTypes;
     applyTo: string;
+    readOnly?: boolean;
 }
 
 function DefineTreePermissionsView({
     treeAttribute: tree,
     permissionType,
-    applyTo
+    applyTo,
+    readOnly
 }: IDefineTreePermissionsViewProps): JSX.Element {
     const usersGroupsTreeId = 'users_groups';
     const [selectedTreeNode, setSelectedTreeNode] = React.useState<NodeData | null>(null);
@@ -74,6 +76,7 @@ function DefineTreePermissionsView({
                                 selectedTreeNode.node.library.id !== 'root' ? selectedTreeNode.node.library.id : null
                         }
                     }}
+                    readOnly={readOnly}
                 />
             );
         }
@@ -81,5 +84,8 @@ function DefineTreePermissionsView({
 
     return <ColumnsDisplay columnsNumber={3} columnsContent={cols} />;
 }
+DefineTreePermissionsView.defaultProps = {
+    readOnly: false
+};
 
 export default withNamespaces()(DefineTreePermissionsView);

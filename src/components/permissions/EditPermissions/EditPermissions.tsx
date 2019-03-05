@@ -9,9 +9,10 @@ import EditPermissionsView from '../EditPermissionsView';
 
 interface IEditPermissionsProps extends WithNamespaces {
     permParams: GET_PERMISSIONSVariables;
+    readOnly?: boolean;
 }
 
-function EditPermissions({permParams, t}: IEditPermissionsProps): JSX.Element {
+function EditPermissions({permParams, readOnly, t}: IEditPermissionsProps): JSX.Element {
     return (
         // Fetch policy is set to 'network only' to bypass the cache as it would be very challenging
         // to maintain the heritage values in the cache.
@@ -48,6 +49,7 @@ function EditPermissions({permParams, t}: IEditPermissionsProps): JSX.Element {
                                         onChange={_onSave}
                                         permissions={data.perm}
                                         heritedPermissions={data.heritPerm}
+                                        readOnly={readOnly}
                                     />
                                 )
                             );
@@ -58,5 +60,8 @@ function EditPermissions({permParams, t}: IEditPermissionsProps): JSX.Element {
         </PermissionsQuery>
     );
 }
+EditPermissions.defaultProps = {
+    readOnly: false
+};
 
 export default withNamespaces()(EditPermissions);

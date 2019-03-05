@@ -2,10 +2,12 @@ import {History} from 'history';
 import {i18n} from 'i18next';
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
+import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery, LibrariesQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from '../../../queries/libraries/saveLibMutation';
 import {getSysTranslationQueryLanguage} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditLibraryForm from '../EditLibraryForm';
 
@@ -18,6 +20,8 @@ interface IEditLibraryProps extends WithNamespaces {
 function EditLibrary({match, history, i18n: i18next}: IEditLibraryProps) {
     const libraryId = match.params.id;
     const lang = getSysTranslationQueryLanguage(i18next);
+    const userData = useUserData();
+    const readOnly = !userData.permissions[PermissionsActions.admin_edit_library];
 
     /**
      * Retrieve EditLibraryForm, wrapped by mutation component
@@ -71,6 +75,7 @@ function EditLibrary({match, history, i18n: i18next}: IEditLibraryProps) {
                         library={libToEdit}
                         onSubmit={onFormSubmit}
                         onPermsSettingsSubmit={onPermissionsFormSubmit}
+                        readOnly={readOnly}
                     />
                 );
             }}

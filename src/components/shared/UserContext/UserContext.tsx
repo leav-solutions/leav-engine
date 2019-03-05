@@ -1,9 +1,9 @@
 import React from 'react';
 
 export interface IUserContext {
-    id: number | null;
-    name: string | null;
-    permissions: {[name: string]: boolean} | null;
+    id: number;
+    name: string;
+    permissions: {[name: string]: boolean};
 }
 
 /* tslint:disable-next-line:variable-name */

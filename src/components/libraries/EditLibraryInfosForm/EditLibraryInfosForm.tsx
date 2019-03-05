@@ -8,6 +8,7 @@ import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
 interface IEditLibraryInfosFormProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries | null;
     onSubmit: (formData: any) => void;
+    readonly: boolean;
 }
 
 /* tslint:disable-next-line:variable-name */
@@ -15,7 +16,7 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-function EditLibraryInfosForm({library, onSubmit, t, i18n}: IEditLibraryInfosFormProps) {
+function EditLibraryInfosForm({library, onSubmit, readonly, t, i18n}: IEditLibraryInfosFormProps) {
     const existingLib = library !== null;
     const langs = ['fr', 'en'];
 
@@ -84,6 +85,7 @@ function EditLibraryInfosForm({library, onSubmit, t, i18n}: IEditLibraryInfosFor
                         <label>{lang}</label>
                         <Form.Input
                             name={'label/' + lang}
+                            disabled={readonly}
                             value={label ? label[lang] || '' : ''}
                             onChange={_handleChange}
                         />
@@ -92,7 +94,7 @@ function EditLibraryInfosForm({library, onSubmit, t, i18n}: IEditLibraryInfosFor
             </Form.Group>
             <Form.Field>
                 <label>{t('libraries.ID')}</label>
-                <Form.Input disabled={existingLib} name="id" onChange={_handleChange} value={id || ''} />
+                <Form.Input disabled={existingLib || readonly} name="id" onChange={_handleChange} value={id || ''} />
             </Form.Field>
             <Form.Group grouped>
                 <label>{t('libraries.record_identity')}</label>
@@ -102,6 +104,7 @@ function EditLibraryInfosForm({library, onSubmit, t, i18n}: IEditLibraryInfosFor
                         selection
                         options={libAttributesOptions}
                         name="recordIdentityConf/label"
+                        disabled={readonly}
                         label={t('libraries.record_identity_label')}
                         value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
                         onChange={_handleChange}
@@ -113,6 +116,7 @@ function EditLibraryInfosForm({library, onSubmit, t, i18n}: IEditLibraryInfosFor
                         selection
                         options={libAttributesOptions}
                         name="recordIdentityConf/color"
+                        disabled={readonly}
                         label={t('libraries.record_identity_color')}
                         value={recordIdentityConf && recordIdentityConf.color ? recordIdentityConf.color : ''}
                         onChange={_handleChange}
@@ -124,15 +128,18 @@ function EditLibraryInfosForm({library, onSubmit, t, i18n}: IEditLibraryInfosFor
                         selection
                         options={libAttributesOptions}
                         name="recordIdentityConf/preview"
+                        disabled={readonly}
                         label={t('libraries.record_identity_preview')}
                         value={recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''}
                         onChange={_handleChange}
                     />
                 </Form.Field>
             </Form.Group>
-            <FormGroupWithMargin>
-                <Form.Button>{t('admin.submit')}</Form.Button>
-            </FormGroupWithMargin>
+            {!readonly && (
+                <FormGroupWithMargin>
+                    <Form.Button>{t('admin.submit')}</Form.Button>
+                </FormGroupWithMargin>
+            )}
         </Form>
     );
 }

@@ -11,6 +11,7 @@ import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsVi
 interface IEditLibraryPermissionsProps extends WithNamespaces {
     library: GET_LIBRARIES_libraries;
     onSubmitSettings: (formData: any) => void;
+    readOnly: boolean;
 }
 
 interface IEditLibraryPermissionsState {
@@ -28,7 +29,13 @@ const AccordionWithMargin = styled(Accordion)`
     margin-bottom: 1em;
 `;
 
-function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibraryPermissionsProps): JSX.Element {
+function EditLibraryPermissions({
+    library,
+    onSubmitSettings,
+    readOnly,
+    t,
+    i18n
+}: IEditLibraryPermissionsProps): JSX.Element {
     const defaultPermsConf = {permissionTreeAttributes: [], relation: PermissionsRelation.and};
     const [settingsExpanded, setSettingsExpanded] = React.useState(false);
     const [libPermsConf, setlibPermsConf] = React.useState<IEditLibraryPermissionsState>(
@@ -71,6 +78,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                         treeAttribute={a}
                         permissionType={PermissionTypes.record}
                         applyTo={library.id}
+                        readOnly={readOnly}
                     />
                 ) : (
                     <p>Missing tree ID</p>
@@ -84,7 +92,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
         menuItem: t('permissions.library_tab_name'),
         render: () => (
             <Tab.Pane key="libPermissions" className="grow flex-col height100">
-                {<DefineLibPermissionsView key="libPermissions" applyTo={library.id} />}
+                {<DefineLibPermissionsView key="libPermissions" applyTo={library.id} readOnly={readOnly} />}
             </Tab.Pane>
         )
     });
@@ -106,6 +114,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                                     multiple
                                     options={libTreeAttributesOptions}
                                     name="permissionTreeAttributes"
+                                    disabled={readOnly}
                                     label={t('trees.title')}
                                     value={libPermsConf.permissionTreeAttributes}
                                     onChange={_handleChange}
@@ -118,6 +127,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                                 <Form.Field inline>
                                     <Form.Radio
                                         name="relation"
+                                        disabled={readOnly}
                                         label={t('libraries.permissions_relation_and')}
                                         value={PermissionsRelation.and}
                                         checked={libPermsConf.relation === PermissionsRelation.and}
@@ -127,6 +137,7 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                                 <Form.Field inline>
                                     <Form.Radio
                                         name="relation"
+                                        disabled={readOnly}
                                         label={t('libraries.permissions_relation_or')}
                                         value={PermissionsRelation.or}
                                         checked={libPermsConf.relation === PermissionsRelation.or}
@@ -135,9 +146,11 @@ function EditLibraryPermissions({library, onSubmitSettings, t, i18n}: IEditLibra
                                 </Form.Field>
                             </Form.Group>
                         )}
-                        <FormGroupWithMargin>
-                            <Form.Button>{t('admin.submit')}</Form.Button>
-                        </FormGroupWithMargin>
+                        {!readOnly && (
+                            <FormGroupWithMargin>
+                                <Form.Button>{t('admin.submit')}</Form.Button>
+                            </FormGroupWithMargin>
+                        )}
                     </Form>
                 </Accordion.Content>
             </AccordionWithMargin>

@@ -85,6 +85,7 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
                                 usersGroup,
                                 actions: group.actions
                             }}
+                            readOnly={false}
                         />
                     </PermBlockWrapper>
                 ))}
