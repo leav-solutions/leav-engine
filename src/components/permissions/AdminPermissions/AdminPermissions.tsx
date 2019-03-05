@@ -3,6 +3,7 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {NodeData, TreeNode} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
 import styled from 'styled-components';
+import useUserData from '../../../hooks/useUserData';
 import {getTreeNodeKey} from '../../../utils/utils';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';
@@ -16,6 +17,9 @@ const PermBlockWrapper = styled.div`
 
 function AdminPermissions({t}: WithNamespaces): JSX.Element {
     const usersGroupsTreeId = 'users_groups';
+
+    const userData = useUserData();
+    const readOnly = !userData.permissions[PermissionsActions.admin_edit_permission];
 
     const [selectedGroupNode, setSelectedGroupNode] = React.useState<NodeData | null>(null);
     const _selectGroupNode = (nodeData: NodeData) =>
@@ -85,7 +89,7 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
                                 usersGroup,
                                 actions: group.actions
                             }}
-                            readOnly={false}
+                            readOnly={readOnly}
                         />
                     </PermBlockWrapper>
                 ))}
