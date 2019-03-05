@@ -11,35 +11,25 @@ interface IDeleteTreeProps extends WithNamespaces {
     tree?: GET_TREES_trees;
 }
 
-class DeleteTree extends React.Component<IDeleteTreeProps> {
-    constructor(props: IDeleteTreeProps) {
-        super(props);
-    }
+function DeleteTree({tree, t, i18n}: IDeleteTreeProps): JSX.Element | null {
+    return !!tree ? (
+        <DeleteTreeMutation mutation={deleteTreeQuery} refetchQueries={[getTreesQueryName]}>
+            {deleteTree => {
+                const onDelete = async () =>
+                    deleteTree({
+                        variables: {treeId: tree.id}
+                    });
 
-    public render() {
-        const {tree, t, i18n} = this.props;
+                const treeLabel = localizedLabel(tree.label, i18n);
 
-        return !!tree ? (
-            <DeleteTreeMutation mutation={deleteTreeQuery} refetchQueries={[getTreesQueryName]}>
-                {deleteTree => {
-                    const onDelete = async () =>
-                        deleteTree({
-                            variables: {treeId: tree.id}
-                        });
-
-                    const treeLabel = localizedLabel(tree.label, i18n);
-
-                    return (
-                        <ConfirmedButton action={onDelete} confirmMessage={t('trees.confirm_delete', {treeLabel})}>
-                            <DeleteButton disabled={tree.system} />
-                        </ConfirmedButton>
-                    );
-                }}
-            </DeleteTreeMutation>
-        ) : (
-            ''
-        );
-    }
+                return (
+                    <ConfirmedButton action={onDelete} confirmMessage={t('trees.confirm_delete', {treeLabel})}>
+                        <DeleteButton disabled={tree.system} />
+                    </ConfirmedButton>
+                );
+            }}
+        </DeleteTreeMutation>
+    ) : null;
 }
 
 export default withNamespaces()(DeleteTree);
