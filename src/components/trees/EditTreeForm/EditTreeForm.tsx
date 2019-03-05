@@ -9,9 +9,10 @@ import TreeStructure from '../TreeStructure';
 interface IEditTreeFormProps extends WithNamespaces {
     tree: GET_TREES_trees | null;
     onSubmit: (formData: any) => void;
+    readOnly: boolean;
 }
 
-function EditTreeForm({tree, onSubmit, t, i18n: i18next}: IEditTreeFormProps): JSX.Element {
+function EditTreeForm({tree, onSubmit, readOnly, t, i18n: i18next}: IEditTreeFormProps): JSX.Element {
     const label = tree === null ? t('trees.new') : localizedLabel(tree.label, i18next);
 
     const panes = [
@@ -20,7 +21,7 @@ function EditTreeForm({tree, onSubmit, t, i18n: i18next}: IEditTreeFormProps): J
             menuItem: t('trees.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow flex-col">
-                    <EditTreeInfosForm tree={tree} onSubmit={onSubmit} />
+                    <EditTreeInfosForm tree={tree} onSubmit={onSubmit} readOnly={readOnly} />
                 </Tab.Pane>
             )
         }
@@ -33,7 +34,7 @@ function EditTreeForm({tree, onSubmit, t, i18n: i18next}: IEditTreeFormProps): J
             render: () => (
                 <Tab.Pane key="structure" className="grow">
                     <div className="flex-col height100">
-                        <TreeStructure treeId={tree.id} />
+                        <TreeStructure treeId={tree.id} readOnly={readOnly} />
                     </div>
                 </Tab.Pane>
             )

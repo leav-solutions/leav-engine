@@ -66,7 +66,7 @@ function Home(): JSX.Element {
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_trees, PermissionsActions.admin_edit_tree]}
+                        permissions={[PermissionsActions.admin_access_trees]}
                         path="/trees/edit/:id?"
                         component={EditTree}
                         exact

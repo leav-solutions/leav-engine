@@ -3,9 +3,11 @@ import React, {useState} from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
 import {addWildcardToFilters, getSysTranslationQueryLanguage} from '../../../utils/utils';
 import {GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
 
 interface ITreesProps extends WithNamespaces {
@@ -15,6 +17,7 @@ interface ITreesProps extends WithNamespaces {
 function Trees({history, t, i18n: i18next}: ITreesProps): JSX.Element {
     const lang = getSysTranslationQueryLanguage(i18next);
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
+    const userData = useUserData();
 
     const _onFiltersUpdate = (filterElem: any) => {
         const newElemState =
@@ -39,12 +42,14 @@ function Trees({history, t, i18n: i18next}: ITreesProps): JSX.Element {
                         {t('trees.title')}
                     </Header>
                 </Grid.Column>
-                <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
-                    <Button icon labelPosition="left" size="medium" as={Link} to={'/trees/edit/'}>
-                        <Icon name="plus" />
-                        {t('trees.new')}
-                    </Button>
-                </Grid.Column>
+                {userData.permissions[PermissionsActions.admin_create_tree] && (
+                    <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
+                        <Button icon labelPosition="left" size="medium" as={Link} to={'/trees/edit/'}>
+                            <Icon name="plus" />
+                            {t('trees.new')}
+                        </Button>
+                    </Grid.Column>
+                )}
             </Grid>
             <TreesQuery query={getTreesQuery} variables={{...addWildcardToFilters(filters), lang}}>
                 {({loading, error, data}) => {

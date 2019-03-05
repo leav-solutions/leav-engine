@@ -4,6 +4,7 @@ import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {Mockify} from '../../../_types//Mockify';
+import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import Trees from './Trees';
 
 describe('Trees', () => {
@@ -12,9 +13,11 @@ describe('Trees', () => {
 
         const comp = render(
             <MockedProvider>
-                <Router>
-                    <Trees history={mockHistory as History} />
-                </Router>
+                <MockedUserContextProvider>
+                    <Router>
+                        <Trees history={mockHistory as History} />
+                    </Router>
+                </MockedUserContextProvider>
             </MockedProvider>
         );
 

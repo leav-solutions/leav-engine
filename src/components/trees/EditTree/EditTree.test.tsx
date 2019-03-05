@@ -3,6 +3,7 @@ import {History} from 'history';
 import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {Mockify} from '../../../_types//Mockify';
+import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import EditTree from './EditTree';
 
 describe('EditTree', () => {
@@ -12,7 +13,9 @@ describe('EditTree', () => {
 
         const comp = render(
             <MockedProvider>
-                <EditTree match={mockMatch} history={mockHistory as History} />
+                <MockedUserContextProvider>
+                    <EditTree match={mockMatch} history={mockHistory as History} />
+                </MockedUserContextProvider>
             </MockedProvider>
         );
 

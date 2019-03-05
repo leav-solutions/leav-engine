@@ -10,6 +10,7 @@ import LibrariesSelector from '../LibrariesSelector';
 interface IEditTreeInfosFormProps extends WithNamespaces {
     tree: GET_TREES_trees | null;
     onSubmit: (formData: any) => void;
+    readOnly: boolean;
 }
 
 interface IEditTreeInfosFormState extends GET_TREES_trees {
@@ -39,7 +40,7 @@ class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTr
     }
 
     public render() {
-        const {t, i18n} = this.props;
+        const {t, i18n, readOnly} = this.props;
         const {id, label, libraries, existingTree, system} = this.state;
         const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
         const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
@@ -55,6 +56,7 @@ class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTr
                                 label={lang}
                                 width="4"
                                 name={'label/' + lang}
+                                disabled={readOnly}
                                 required={lang === defaultLang}
                                 value={label && label[lang] ? label[lang] : ''}
                                 onChange={this._handleChange}
@@ -66,7 +68,7 @@ class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTr
                     <Form.Input
                         label={t('trees.ID')}
                         width="4"
-                        disabled={existingTree}
+                        disabled={existingTree || readOnly}
                         name="id"
                         onChange={this._handleChange}
                         value={id}
@@ -74,7 +76,7 @@ class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTr
                 </FormFieldWrapper>
                 <FormFieldWrapper>
                     <LibrariesSelector
-                        disabled={system}
+                        disabled={system || readOnly}
                         lang={userLang}
                         fluid
                         selection
@@ -86,9 +88,11 @@ class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTr
                         value={libraries}
                     />
                 </FormFieldWrapper>
-                <FormGroupWithMargin>
-                    <Form.Button>{t('admin.submit')}</Form.Button>
-                </FormGroupWithMargin>
+                {!readOnly && (
+                    <FormGroupWithMargin>
+                        <Form.Button>{t('admin.submit')}</Form.Button>
+                    </FormGroupWithMargin>
+                )}
             </Form>
         );
     }

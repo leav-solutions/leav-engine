@@ -18,16 +18,17 @@ describe('EditTreeInfosForm', () => {
     const onSubmit = jest.fn();
 
     test('Render form for existing tree', async () => {
-        const comp = shallow(<EditTreeInfosForm tree={mockTree} onSubmit={onSubmit} />);
+        const comp = shallow(<EditTreeInfosForm tree={mockTree} onSubmit={onSubmit} readOnly={false} />);
         expect(comp.find('FormInput[name="id"]').props().disabled).toBe(true);
     });
 
     test('Render form for new tree', async () => {
-        const comp = shallow(<EditTreeInfosForm tree={null} onSubmit={onSubmit} />);
+        const comp = shallow(<EditTreeInfosForm tree={null} onSubmit={onSubmit} readOnly={false} />);
         expect(comp.find('FormInput[name="id"]').props().disabled).toBe(false);
     });
+
     test('Autofill ID with label on new lib', async () => {
-        const comp = shallow(<EditTreeInfosForm onSubmit={onSubmit} tree={null} />);
+        const comp = shallow(<EditTreeInfosForm onSubmit={onSubmit} tree={null} readOnly={false} />);
 
         comp.find('FormInput[name="label/fr"]').simulate('change', null, {
             type: 'text',
@@ -39,7 +40,7 @@ describe('EditTreeInfosForm', () => {
     });
 
     test('Call submit function on submit', async () => {
-        const comp = shallow(<EditTreeInfosForm onSubmit={onSubmit} tree={mockTree} />);
+        const comp = shallow(<EditTreeInfosForm onSubmit={onSubmit} tree={mockTree} readOnly={false} />);
         comp.find('Form').simulate('submit');
 
         expect(onSubmit).toBeCalled();
