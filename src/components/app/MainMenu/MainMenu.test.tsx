@@ -2,6 +2,7 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {BrowserRouter as Router} from 'react-router-dom';
+import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import MainMenu from './MainMenu';
 
 describe('MainMenu', () => {
@@ -9,9 +10,11 @@ describe('MainMenu', () => {
         // TODO: test menu hiding if not allowed
         const comp = shallow(
             <MockedProvider>
-                <Router>
-                    <MainMenu />
-                </Router>
+                <MockedUserContextProvider>
+                    <Router>
+                        <MainMenu />
+                    </Router>
+                </MockedUserContextProvider>
             </MockedProvider>
         ).html();
 

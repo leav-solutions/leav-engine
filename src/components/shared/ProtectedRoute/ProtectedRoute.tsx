@@ -1,8 +1,8 @@
-import React, {ReactNode, useContext} from 'react';
+import React, {ReactNode} from 'react';
 import {Route, RouteComponentProps, RouteProps} from 'react-router-dom';
+import useUserData from '../../../hooks/useUserData';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ForbiddenRoute from '../ForbiddenRoute';
-import UserContext from '../UserContext';
 
 interface IProtectedRouteProps extends RouteProps {
     permissions?: PermissionsActions[];
@@ -11,7 +11,7 @@ interface IProtectedRouteProps extends RouteProps {
 
 /* tslint:disable-next-line:variable-name */
 function ProtectedRoute({component: Component, permissions, ...rest}: IProtectedRouteProps): JSX.Element {
-    const userData = useContext(UserContext);
+    const userData = useUserData();
 
     const hasAccess =
         !permissions ||

@@ -1,10 +1,10 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import UserContext from '../../shared/UserContext';
+import useUserData from '../../../hooks/useUserData';
 import AppMenu from '../AppMenu';
 
 function MainMenu({t}: WithNamespaces) {
-    const userData = useContext(UserContext);
+    const userData = useUserData();
 
     const menuItems = [
         {
