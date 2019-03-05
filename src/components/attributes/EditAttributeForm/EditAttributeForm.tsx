@@ -12,6 +12,7 @@ interface IEditAttributeFormProps extends WithNamespaces {
     onSubmit: (formData: any) => void;
     onPermsSettingsSubmit: (formData: any) => void;
     errors?: IFormError;
+    readOnly: boolean;
 }
 
 function EditAttributeForm({
@@ -20,7 +21,8 @@ function EditAttributeForm({
     attribute,
     onSubmit,
     onPermsSettingsSubmit,
-    errors
+    errors,
+    readOnly
 }: IEditAttributeFormProps) {
     const headerLabel =
         attribute !== null && attribute.label ? localizedLabel(attribute.label, i18next) : t('attributes.new');
@@ -31,7 +33,12 @@ function EditAttributeForm({
             menuItem: t('attributes.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} errors={errors} />
+                    <EditAttributeInfosForm
+                        attribute={attribute}
+                        onSubmit={onSubmit}
+                        errors={errors}
+                        readOnly={readOnly}
+                    />
                 </Tab.Pane>
             )
         }
@@ -44,7 +51,11 @@ function EditAttributeForm({
             render: () => {
                 return (
                     <Tab.Pane key="permissions" className="grow flex-col height100">
-                        <EditAttributePermissions attribute={attribute} onSubmitSettings={onPermsSettingsSubmit} />
+                        <EditAttributePermissions
+                            attribute={attribute}
+                            onSubmitSettings={onPermsSettingsSubmit}
+                            readOnly={readOnly}
+                        />
                     </Tab.Pane>
                 );
             }

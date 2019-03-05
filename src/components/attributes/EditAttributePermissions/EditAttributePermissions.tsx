@@ -12,9 +12,16 @@ import Loading from '../../shared/Loading';
 interface IEditAttributePermissionsProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes;
     onSubmitSettings: (formData: any) => void;
+    readOnly: boolean;
 }
 
-function EditAttributePermissions({attribute, onSubmitSettings, i18n, t}: IEditAttributePermissionsProps): JSX.Element {
+function EditAttributePermissions({
+    attribute,
+    onSubmitSettings,
+    readOnly,
+    i18n,
+    t
+}: IEditAttributePermissionsProps): JSX.Element {
     const [permissionTreeAttributes, setPermissionTreeAttributes] = React.useState<string[]>(
         attribute.permissionsConf ? attribute.permissionsConf.permissionTreeAttributes.map(a => a.id) : []
     );
@@ -74,6 +81,7 @@ function EditAttributePermissions({attribute, onSubmitSettings, i18n, t}: IEditA
                                         treeAttribute={a}
                                         permissionType={PermissionTypes.attribute}
                                         applyTo={attribute.id}
+                                        readOnly={readOnly}
                                     />
                                 ) : (
                                     <p>Missing tree ID</p>
@@ -101,6 +109,7 @@ function EditAttributePermissions({attribute, onSubmitSettings, i18n, t}: IEditA
                                                 name="permissionTreeAttributes"
                                                 label={t('trees.title')}
                                                 value={permissionTreeAttributes}
+                                                disabled={readOnly}
                                                 onChange={_handleTreesChange}
                                             />
                                         </Form.Field>
@@ -114,6 +123,7 @@ function EditAttributePermissions({attribute, onSubmitSettings, i18n, t}: IEditA
                                                     label={t('libraries.permissions_relation_and')}
                                                     value={PermissionsRelation.and}
                                                     checked={relation === PermissionsRelation.and}
+                                                    disabled={readOnly}
                                                     onChange={_handleRelationChange}
                                                 />
                                             </Form.Field>
@@ -123,14 +133,17 @@ function EditAttributePermissions({attribute, onSubmitSettings, i18n, t}: IEditA
                                                     label={t('libraries.permissions_relation_or')}
                                                     value={PermissionsRelation.or}
                                                     checked={relation === PermissionsRelation.or}
+                                                    disabled={readOnly}
                                                     onChange={_handleRelationChange}
                                                 />
                                             </Form.Field>
                                         </Form.Group>
                                     )}
-                                    <FormGroupWithMargin>
-                                        <Form.Button>{t('admin.submit')}</Form.Button>
-                                    </FormGroupWithMargin>
+                                    {!readOnly && (
+                                        <FormGroupWithMargin>
+                                            <Form.Button>{t('admin.submit')}</Form.Button>
+                                        </FormGroupWithMargin>
+                                    )}
                                 </Form>
                             </Accordion.Content>
                         </AccordionWithMargin>

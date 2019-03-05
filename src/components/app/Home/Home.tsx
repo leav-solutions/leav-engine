@@ -54,10 +54,7 @@ function Home(): JSX.Element {
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[
-                            PermissionsActions.admin_access_attributes,
-                            PermissionsActions.admin_edit_attribute
-                        ]}
+                        permissions={[PermissionsActions.admin_access_attributes]}
                         path="/attributes/edit/:id?"
                         component={EditAttribute}
                         exact

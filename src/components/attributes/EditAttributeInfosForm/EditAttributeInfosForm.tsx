@@ -11,9 +11,17 @@ interface IEditAttributeInfosFormProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes | null;
     onSubmit: (formData: any) => void;
     errors?: IFormError;
+    readOnly: boolean;
 }
 
-function EditAttributeInfosForm({t, i18n: i18next, errors, attribute, onSubmit}: IEditAttributeInfosFormProps) {
+function EditAttributeInfosForm({
+    t,
+    i18n: i18next,
+    errors,
+    attribute,
+    onSubmit,
+    readOnly
+}: IEditAttributeInfosFormProps) {
     const defaultAttribute: GET_ATTRIBUTES_attributes = {
         id: '',
         system: false,
@@ -83,6 +91,7 @@ function EditAttributeInfosForm({t, i18n: i18next, errors, attribute, onSubmit}:
                                 label={lang}
                                 width="4"
                                 name={'label/' + lang}
+                                disabled={readOnly}
                                 required={lang === defaultLang}
                                 value={formValues.label && formValues.label[lang] ? formValues.label[lang] : ''}
                                 onChange={_handleChange}
@@ -94,7 +103,7 @@ function EditAttributeInfosForm({t, i18n: i18next, errors, attribute, onSubmit}:
                     <Form.Input
                         label={t('attributes.ID')}
                         width="4"
-                        disabled={existingAttr}
+                        disabled={existingAttr || readOnly}
                         name="id"
                         onChange={_handleChange}
                         value={formValues.id}
@@ -104,7 +113,7 @@ function EditAttributeInfosForm({t, i18n: i18next, errors, attribute, onSubmit}:
                     <Form.Select
                         label={t('attributes.type')}
                         width="4"
-                        disabled={formValues.system}
+                        disabled={formValues.system || readOnly}
                         value={formValues.type}
                         name="type"
                         onChange={_handleChange}
@@ -119,7 +128,7 @@ function EditAttributeInfosForm({t, i18n: i18next, errors, attribute, onSubmit}:
                 <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.format : ''}>
                     <Form.Select
                         label={t('attributes.format')}
-                        disabled={formValues.system}
+                        disabled={formValues.system || readOnly}
                         width="4"
                         value={formValues.format || ''}
                         name="format"
@@ -130,9 +139,11 @@ function EditAttributeInfosForm({t, i18n: i18next, errors, attribute, onSubmit}:
                         }))}
                     />
                 </FormFieldWrapper>
-                <Form.Group inline>
-                    <Form.Button>{t('admin.submit')}</Form.Button>
-                </Form.Group>
+                {!readOnly && (
+                    <Form.Group inline>
+                        <Form.Button>{t('admin.submit')}</Form.Button>
+                    </Form.Group>
+                )}
             </Form>
         </React.Fragment>
     );

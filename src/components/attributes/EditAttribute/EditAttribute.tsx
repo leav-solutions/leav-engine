@@ -2,9 +2,11 @@ import {History} from 'history';
 import React from 'react';
 import {match} from 'react-router';
 import {Dimmer} from 'semantic-ui-react';
+import useUserData from '../../../hooks/useUserData';
 import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {SaveAttributeMutation, saveAttributeQuery} from '../../../queries/attributes/saveAttributeMutation';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeForm from '../EditAttributeForm';
 
@@ -21,6 +23,8 @@ interface IEditAttributeProps {
 
 function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
+    const userData = useUserData();
+    const readOnly = !userData.permissions[PermissionsActions.admin_edit_attribute];
 
     const _getEditAttributeForm = (attrToEdit: GET_ATTRIBUTES_attributes | null): JSX.Element => (
         <SaveAttributeMutation mutation={saveAttributeQuery}>
@@ -85,6 +89,7 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                             onSubmit={onFormSubmit}
                             errors={formErrors}
                             onPermsSettingsSubmit={onPermsSettingsSubmit}
+                            readOnly={readOnly}
                         />
                     </Dimmer.Dimmable>
                 );

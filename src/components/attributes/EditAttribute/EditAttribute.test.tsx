@@ -4,6 +4,7 @@ import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {match} from 'react-router';
 import {Mockify} from '../../../_types//Mockify';
+import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import EditAttribute, {IEditAttributeMatchParams} from './EditAttribute';
 
 describe('EditAttribute', () => {
@@ -13,7 +14,12 @@ describe('EditAttribute', () => {
 
         const comp = render(
             <MockedProvider>
-                <EditAttribute match={mockMatch as match<IEditAttributeMatchParams>} history={mockHistory as History} />
+                <MockedUserContextProvider>
+                    <EditAttribute
+                        match={mockMatch as match<IEditAttributeMatchParams>}
+                        history={mockHistory as History}
+                    />
+                </MockedUserContextProvider>
             </MockedProvider>
         );
 
