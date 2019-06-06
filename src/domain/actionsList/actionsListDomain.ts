@@ -1,5 +1,5 @@
 import {AwilixContainer} from 'awilix';
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import {IActionsListFunction, IActionsListSavedAction, IActionsListParams} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
 import {IValidationErrorFieldDetail} from '../../errors/ValidationError';
