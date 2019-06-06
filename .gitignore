@@ -51,3 +51,5 @@ logs
 ### VSCode ###
 .vscode
 
+### A helper file ###
+/src/__tests__/e2e/test.js

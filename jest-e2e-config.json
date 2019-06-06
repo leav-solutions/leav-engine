@@ -7,10 +7,8 @@
         "\\.(ts|tsx)$": "ts-jest"
     },
     "testRegex": "src\/__tests__\/e2e\/.*(.test.ts)$",
-    "globalSetup":
-        "./src/__tests__/e2e/globalSetupHook.js",
-    "globalTeardown":
-        "./src/__tests__/e2e/teardown.js",
+    "globalSetup": "./src/__tests__/e2e/globalSetupHook.js",
+    "globalTeardown": "./src/__tests__/e2e/teardown.js",
     "setupFiles": [
         "<rootDir>/src/__tests__/jestUtils.ts"
     ]

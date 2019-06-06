@@ -1,4 +1,4 @@
-import {description} from 'joi';
+import {description} from '@hapi/joi';
 import {IAttribute} from './attribute';
 import libraryDomain from 'domain/library/libraryDomain';
 

@@ -1,10 +1,28 @@
 import axios from 'axios';
 import {config} from '../../config';
+import * as jwt from 'jsonwebtoken';
+import * as fs from 'fs';
 
 async function _getAuthToken() {
     const conf: any = await config;
 
-    return conf.auth.token;
+    const token = jwt.sign(
+        {
+            userId: '1',
+            login: 'admin',
+            role: 'admin'
+        },
+        conf.auth.key,
+        {
+            algorithm: conf.auth.algorithm,
+            expiresIn: conf.auth.tokenExpiration
+        }
+    );
+
+    // fs.appendFileSync("../../../log/test.txt", token.toString() + "\n");
+    console.log('token');
+    console.log(token);
+    return token;
 }
 
 async function _getGraphQLUrl() {
