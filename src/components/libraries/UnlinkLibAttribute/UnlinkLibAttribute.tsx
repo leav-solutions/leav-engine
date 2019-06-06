@@ -12,10 +12,6 @@ interface IUnlinkLibAttributeProps extends WithNamespaces {
 }
 
 class UnlinkLibAttribute extends React.Component<IUnlinkLibAttributeProps> {
-    constructor(props: IUnlinkLibAttributeProps) {
-        super(props);
-    }
-
     public render() {
         const {attribute, library, t, onUnlink} = this.props;
 

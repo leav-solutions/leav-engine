@@ -19,7 +19,8 @@ describe('RecordCard', () => {
     test('Snapshot test', async () => {
         const comp = shallow(<RecordCard record={mockRecord} />);
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find('RecordPreview')).toHaveLength(1);
+        expect(comp.text()).toMatch('Test Record');
     });
 
     test('Allow styling', async () => {

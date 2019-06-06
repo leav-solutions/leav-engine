@@ -24,10 +24,6 @@ class AttributesList extends React.Component<IAttributesListProps> {
         filters: {}
     };
 
-    constructor(props: IAttributesListProps) {
-        super(props);
-    }
-
     public render = () => {
         const {attributes, t, onRowClick, children, loading, filters, withFilters, i18n: i18next} = this.props;
         const childrenList: React.ReactNode[] = children ? (!Array.isArray(children) ? [children] : children) : [];

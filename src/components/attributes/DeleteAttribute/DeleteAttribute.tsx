@@ -11,10 +11,6 @@ interface IDeleteAttributeProps extends WithNamespaces {
 }
 
 class DeleteAttribute extends React.Component<IDeleteAttributeProps> {
-    constructor(props: IDeleteAttributeProps) {
-        super(props);
-    }
-
     public render() {
         const {attribute, t} = this.props;
 

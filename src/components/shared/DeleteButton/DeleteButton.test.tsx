@@ -6,7 +6,7 @@ describe('DeleteButton', () => {
     test('Snapshot test', async () => {
         const comp = shallow(<DeleteButton disabled={false} />);
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find('Button')).toHaveLength(1);
     });
 
     test('Disable button', async () => {

@@ -9,17 +9,6 @@ describe('ConfirmedButton', () => {
         stopPropagation: jest.fn()
     };
 
-    test('Snapshot test', async () => {
-        const action = jest.fn();
-
-        const comp = shallow(
-            <ConfirmedButton action={action} confirmMessage="Test">
-                <div />
-            </ConfirmedButton>
-        );
-        expect(comp).toMatchSnapshot();
-    });
-
     test('Render child', async () => {
         const action = jest.fn();
 

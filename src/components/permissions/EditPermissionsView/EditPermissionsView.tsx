@@ -63,7 +63,7 @@ function EditPermissionsView({
             <Table.Body>
                 {permissions.map(p => {
                     if (!p) {
-                        return;
+                        return null;
                     }
 
                     const _onPermUpdate = (permVal: boolean | null) => onChange({name: p.name, allowed: permVal});

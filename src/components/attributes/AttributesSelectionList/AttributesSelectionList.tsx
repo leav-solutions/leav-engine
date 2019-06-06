@@ -10,10 +10,6 @@ interface IAttributesSelectionListProps extends WithNamespaces {
 }
 
 class AttributesSelectionList extends React.Component<IAttributesSelectionListProps> {
-    constructor(props: IAttributesSelectionListProps) {
-        super(props);
-    }
-
     public render() {
         const {attributes, toggleSelection, selection, t} = this.props;
 
