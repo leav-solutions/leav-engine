@@ -1,7 +1,6 @@
 import axios from 'axios';
-import {config} from '../../config';
 import * as jwt from 'jsonwebtoken';
-import * as fs from 'fs';
+import {config} from '../../config';
 
 async function _getAuthToken() {
     const conf: any = await config;
@@ -19,9 +18,6 @@ async function _getAuthToken() {
         }
     );
 
-    // fs.appendFileSync("../../../log/test.txt", token.toString() + "\n");
-    console.log('token');
-    console.log(token);
     return token;
 }
 
