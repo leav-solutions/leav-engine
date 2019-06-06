@@ -338,16 +338,16 @@ describe('Permissions', () => {
                         type: admin,
                         usersGroup: "${allUsersTreeElemId}",
                         actions: [
-                            {name: create_library, allowed: true},
-                            {name: edit_library, allowed: true},
-                            {name: delete_library, allowed: true},
-                            {name: create_attribute, allowed: true},
-                            {name: edit_attribute, allowed: true},
-                            {name: delete_attribute, allowed: true},
-                            {name: create_tree, allowed: true},
-                            {name: edit_tree, allowed: true},
-                            {name: delete_tree, allowed: true},
-                            {name: edit_permission allowed: true}
+                            {name: admin_create_library, allowed: true},
+                            {name: admin_edit_library, allowed: true},
+                            {name: admin_delete_library, allowed: true},
+                            {name: admin_create_attribute, allowed: true},
+                            {name: admin_edit_attribute, allowed: true},
+                            {name: admin_delete_attribute, allowed: true},
+                            {name: admin_create_tree, allowed: true},
+                            {name: admin_edit_tree, allowed: true},
+                            {name: admin_delete_tree, allowed: true},
+                            {name: admin_edit_permission allowed: true}
                         ]
                     }
                 ) {
@@ -369,7 +369,7 @@ describe('Permissions', () => {
                 permissions(
                     type: admin,
                     usersGroup: "${allUsersTreeElemId}",
-                    actions: [create_library]
+                    actions: [admin_create_library]
                 ) {
                     name
                     allowed
@@ -377,13 +377,13 @@ describe('Permissions', () => {
             }`);
 
             expect(resGetAdminPerm.status).toBe(200);
-            expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'create_library', allowed: true}]);
+            expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'admin_create_library', allowed: true}]);
             expect(resGetAdminPerm.data.errors).toBeUndefined();
 
             const resIsAllowed = await makeGraphQlCall(`query {
                 isAllowed(
                     type: admin,
-                    actions: [create_library]
+                    actions: [admin_create_library]
                 ) {
                     name
                     allowed
@@ -392,7 +392,7 @@ describe('Permissions', () => {
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toBeDefined();
-            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('create_library');
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('admin_create_library');
             expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(true);
             expect(resIsAllowed.data.errors).toBeUndefined();
         });
@@ -729,7 +729,7 @@ describe('Permissions', () => {
                             type: admin,
                             usersGroup: "${userGroupId1}",
                             actions: [
-                                {name: create_attribute, allowed: false},
+                                {name: admin_create_attribute, allowed: false},
                             ]
                         }
                     ) { type }
@@ -739,13 +739,13 @@ describe('Permissions', () => {
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: heritedPermissions(
                         type: admin,
-                        actions: [create_attribute],
+                        actions: [admin_create_attribute],
                         userGroupId: "${userGroupId2}",
                     ) { name allowed }
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('create_attribute');
+                expect(permHeritGroup.data.data.p[0].name).toBe('admin_create_attribute');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
             });
 
@@ -754,13 +754,13 @@ describe('Permissions', () => {
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: heritedPermissions(
                         type: admin,
-                        actions: [create_attribute],
+                        actions: [admin_create_attribute],
                         userGroupId: "${userGroupId4}",
                     ) { name allowed }
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('create_attribute');
+                expect(permHeritGroup.data.data.p[0].name).toBe('admin_create_attribute');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
         });
