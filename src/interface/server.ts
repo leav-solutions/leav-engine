@@ -1,7 +1,7 @@
 import {graphqlHapi} from 'apollo-server-hapi';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
-import * as hapi from 'hapi';
+import * as hapi from '@hapi/hapi';
 import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 import {IUtils} from 'utils/utils';
 import * as winston from 'winston';

@@ -1,10 +1,24 @@
 import axios from 'axios';
+import * as jwt from 'jsonwebtoken';
 import {config} from '../../config';
 
 async function _getAuthToken() {
     const conf: any = await config;
 
-    return conf.auth.token;
+    const token = jwt.sign(
+        {
+            userId: '1',
+            login: 'admin',
+            role: 'admin'
+        },
+        conf.auth.key,
+        {
+            algorithm: conf.auth.algorithm,
+            expiresIn: conf.auth.tokenExpiration
+        }
+    );
+
+    return token;
 }
 
 async function _getGraphQLUrl() {

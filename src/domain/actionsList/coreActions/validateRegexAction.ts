@@ -1,5 +1,5 @@
 import ValidationError from '../../../errors/ValidationError';
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import {
     ActionsListIOTypes,
     ActionsListValueType,

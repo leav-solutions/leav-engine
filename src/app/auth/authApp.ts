@@ -1,9 +1,9 @@
 import {IRecord} from '_types/record';
 import * as bcrypt from 'bcrypt';
-import {badData, unauthorized} from 'boom';
+import {badData, unauthorized} from '@hapi/boom';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {Server} from 'hapi';
+import {Server} from '@hapi/hapi';
 import * as jwt from 'jsonwebtoken';
 import * as winston from 'winston';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
