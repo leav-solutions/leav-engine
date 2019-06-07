@@ -40,7 +40,8 @@ export enum AdminPermissionsActions {
     EDIT_TREE = 'admin_edit_tree',
     DELETE_TREE = 'admin_delete_tree',
     ACCESS_PERMISSIONS = 'admin_access_permissions',
-    EDIT_PERMISSION = 'admin_edit_permission'
+    EDIT_PERMISSION = 'admin_edit_permission',
+    ACCESS_NAVIGATOR = 'admin_access_navigator'
 }
 
 export type PermissionsActions =
