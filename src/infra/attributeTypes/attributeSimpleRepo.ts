@@ -1,11 +1,12 @@
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IAttribute} from '../../_types/attribute';
+import {IAttribute, AttributeFormats} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
+import * as bcrypt from 'bcrypt';
 
 export default function(dbService: IDbService | any): IAttributeTypeRepo {
     async function _saveValue(
@@ -15,6 +16,9 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
         value: IValue
     ): Promise<IValue> {
         const collec = dbService.db.collection(library);
+        if (attribute.format === AttributeFormats.ENCRYPTED) {
+            value.value = await bcrypt.hash(value.value, 10);
+        }
         const updatedDoc = await collec.update(
             {
                 _key: recordId

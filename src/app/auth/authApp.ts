@@ -48,11 +48,9 @@ export default function(
                 path: '/auth/authenticate',
                 async handler(req) {
                     const {login, password} = req.payload as any;
-
                     if (typeof login === 'undefined' || typeof password === 'undefined') {
                         return badData('Missing credentials');
                     }
-
                     // Get user id
                     try {
                         const users = await recordDomain.find('users', {login});
@@ -74,7 +72,7 @@ export default function(
                         const token = jwt.sign(
                             {
                                 userId: user.id,
-                                login: user.email,
+                                login: user.login,
                                 role: 'admin'
                             },
                             config.auth.key,
@@ -83,7 +81,6 @@ export default function(
                                 expiresIn: config.auth.tokenExpiration
                             }
                         );
-
                         return {
                             token
                         };
@@ -103,9 +100,7 @@ export default function(
             if (!tokenPayload.userId) {
                 return false;
             }
-
             const users = await recordDomain.find('users', {id: tokenPayload.userId});
-
             return !!users.length;
         }
     };
