@@ -11,6 +11,7 @@ import Home from '../Home';
 
 interface IAppState {
     fragmentMatcher: IntrospectionFragmentMatcher | null;
+    token: string;
 }
 
 class App extends React.Component<any, IAppState> {
@@ -18,13 +19,16 @@ class App extends React.Component<any, IAppState> {
     constructor(props) {
         super(props);
 
-        this.state = {fragmentMatcher: null};
+        this.state = {
+            fragmentMatcher: null,
+            token: props.token
+        };
 
         this._getFragmentMatcher();
     }
 
     public render() {
-        const {fragmentMatcher} = this.state;
+        const {fragmentMatcher, token} = this.state;
 
         if (!fragmentMatcher) {
             return <Loading />;
@@ -33,7 +37,7 @@ class App extends React.Component<any, IAppState> {
         const gqlClient = new ApolloClient({
             uri: process.env.REACT_APP_API_URL,
             headers: {
-                Authorization: process.env.REACT_APP_USER_TOKEN
+                Authorization: token
             },
             cache: new InMemoryCache({fragmentMatcher})
         });
@@ -97,11 +101,12 @@ class App extends React.Component<any, IAppState> {
      * More info: https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
      */
     private _getFragmentMatcher = async () => {
+        const {token} = this.state;
         const res = await fetch(process.env.REACT_APP_API_URL || '', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: process.env.REACT_APP_USER_TOKEN || ''
+                Authorization: token
             },
             body: JSON.stringify({
                 variables: {},
