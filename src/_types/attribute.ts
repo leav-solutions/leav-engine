@@ -13,6 +13,7 @@ export interface IAttribute {
     embedded_fields?: IEmbeddedAttribute[];
     actions_list?: IActionsListConfig;
     permissionsConf?: ITreePermissionsConf;
+    multipleValues?: boolean;
 }
 
 export interface IEmbeddedAttribute {
@@ -33,6 +34,7 @@ export interface IAttributeFilterOptions {
     system?: boolean;
     label?: string;
     linked_library?: string;
+    multipleValues?: boolean;
 }
 
 export enum AttributeTypes {

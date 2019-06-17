@@ -4,7 +4,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
-import {AttributeFormats, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -214,13 +214,20 @@ export default function(
                 throw new ValidationError({id: 'Invalid ID format: ' + attrData.id});
             }
 
+            if (
+                (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) &&
+                attrData.multipleValues
+            ) {
+                throw new ValidationError({multipleValues: 'Multiple values not allowed for this attribute type'});
+            }
+
             const attrToSave = {...attrData};
             attrToSave.actions_list =
                 !isExistingAttr && typeof attrToSave.actions_list === 'undefined'
                     ? _getDefaultActionsList(attrData)
                     : typeof attrToSave.actions_list !== 'undefined'
-                        ? attrToSave.actions_list
-                        : null;
+                    ? attrToSave.actions_list
+                    : null;
 
             // Check output type of last action
             _validateInputType(attrToSave);

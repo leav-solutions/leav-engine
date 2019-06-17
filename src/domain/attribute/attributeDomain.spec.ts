@@ -271,6 +271,43 @@ describe('attributeDomain', () => {
             };
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(PermissionError);
         });
+
+        test('Should throw if multiple values on simple or simple link attribute', async function() {
+            const mockPermDomain = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                createAttribute: jest.fn(),
+                updateAttribute: jest.fn()
+            };
+
+            const attrDomain = attributeDomain(
+                mockAttrRepo as IAttributeRepo,
+                null,
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
+            );
+
+            attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
+
+            const attrToSaveSimple = {
+                id: 'test',
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.TEXT,
+                multipleValues: true
+            };
+            await expect(attrDomain.saveAttribute(attrToSaveSimple, queryInfos)).rejects.toThrow(ValidationError);
+
+            const attrToSaveSimpleLink = {
+                id: 'test',
+                type: AttributeTypes.SIMPLE_LINK,
+                format: AttributeFormats.TEXT,
+                multipleValues: true
+            };
+            await expect(attrDomain.saveAttribute(attrToSaveSimpleLink, queryInfos)).rejects.toThrow(ValidationError);
+        });
     });
 
     describe('deleteAttribute', () => {

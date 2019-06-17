@@ -38,7 +38,8 @@ export default function(
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttribute],
                         actions_list: ActionsListConfiguration,
-                        permissionsConf: TreePermissionsConf
+                        permissionsConf: TreePermissionsConf,
+                        multipleValues: Boolean
                     }
 
                     input AttributeInput {
@@ -50,7 +51,8 @@ export default function(
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttributeInput],
                         actions_list: ActionsListConfigurationInput,
-                        permissionsConf: TreePermissionsConfInput
+                        permissionsConf: TreePermissionsConfInput,
+                        multipleValues: Boolean
                     }
 
                     type EmbeddedAttribute {
@@ -75,7 +77,8 @@ export default function(
                             type: [AttributeType],
                             format: [AttributeFormat],
                             label: String,
-                            system: Boolean
+                            system: Boolean,
+                            multipleValues: Boolean
                         ): [Attribute!]
                     }
 

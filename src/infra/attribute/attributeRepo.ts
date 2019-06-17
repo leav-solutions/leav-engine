@@ -38,7 +38,8 @@ export default function(
                 system: false,
                 label: {fr: '', en: ''},
                 type: AttributeTypes.ADVANCED,
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
+                multipleValues: false
             };
             let docToInsert = dbUtils.convertToDoc(attrData);
 
@@ -56,7 +57,8 @@ export default function(
                 system: false,
                 label: {fr: '', en: ''},
                 type: AttributeTypes.ADVANCED,
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
+                multipleValues: false
             };
             let docToInsert = dbUtils.convertToDoc(attrData);
 
