@@ -43,6 +43,7 @@
         "permissions_relation": "Relation",
         "permissions_relation_and": "AND",
         "permissions_relation_or": "OR",
+        "multipleValues": "Multiple values",
         "allow_multiple_values": "Allow multiple values",
         "types": {
             "tree": "Tree",

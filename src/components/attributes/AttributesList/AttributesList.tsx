@@ -47,6 +47,7 @@ class AttributesList extends React.Component<IAttributesListProps> {
                         <Table.HeaderCell width={4}>{t('attributes.ID')}</Table.HeaderCell>
                         <Table.HeaderCell width={3}>{t('attributes.type')}</Table.HeaderCell>
                         <Table.HeaderCell width={3}>{t('attributes.format')}</Table.HeaderCell>
+                        <Table.HeaderCell width={1}>{t('attributes.multipleValues')}</Table.HeaderCell>
                         <Table.HeaderCell width={1}>{t('attributes.isSystem')}</Table.HeaderCell>
                         <Table.HeaderCell width={1} />
                     </Table.Row>
@@ -100,6 +101,14 @@ class AttributesList extends React.Component<IAttributesListProps> {
                             </Table.HeaderCell>
                             <Table.HeaderCell>
                                 <Checkbox
+                                    indeterminate={typeof filters.multipleValues === 'undefined'}
+                                    name="multipleValues"
+                                    checked={filters.multipleValues}
+                                    onChange={this._handleFilterChange}
+                                />
+                            </Table.HeaderCell>
+                            <Table.HeaderCell>
+                                <Checkbox
                                     indeterminate={typeof filters.system === 'undefined'}
                                     name="system"
                                     checked={filters.system}
@@ -129,6 +138,9 @@ class AttributesList extends React.Component<IAttributesListProps> {
                                     <Table.Cell>{t('attributes.types.' + a.type)}</Table.Cell>
                                     <Table.Cell>{a.format ? t('attributes.formats.' + a.format) : ''}</Table.Cell>
                                     <Table.Cell width={1}>
+                                        <Checkbox readOnly checked={a.multipleValues} />
+                                    </Table.Cell>
+                                    <Table.Cell width={1}>
                                         <Checkbox readOnly checked={a.system} />
                                     </Table.Cell>
                                     <Table.Cell textAlign="right" width={1} className="actions">
@@ -147,7 +159,7 @@ class AttributesList extends React.Component<IAttributesListProps> {
 
     private _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state
-        if (d.type === 'checkbox' && this.props.filters.system === false && d.checked) {
+        if (d.type === 'checkbox' && this.props.filters[d.name] === false && d.checked) {
             d.indeterminate = true;
             d.checked = false;
         }

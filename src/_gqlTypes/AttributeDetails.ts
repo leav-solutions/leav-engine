@@ -26,6 +26,6 @@ export interface AttributeDetails {
     system: boolean;
     label: any | null;
     linked_tree: string | null;
-    multipleValues: boolean | null;
+    multipleValues: boolean;
     permissionsConf: AttributeDetails_permissionsConf | null;
 }

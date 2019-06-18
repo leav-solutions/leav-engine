@@ -26,7 +26,7 @@ export interface GET_ATTRIBUTES_attributes {
     system: boolean;
     label: any | null;
     linked_tree: string | null;
-    multipleValues: boolean | null;
+    multipleValues: boolean;
     permissionsConf: GET_ATTRIBUTES_attributes_permissionsConf | null;
 }
 

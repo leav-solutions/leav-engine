@@ -24,7 +24,8 @@ describe('EditAttributePermissions', () => {
                             system: false,
                             label: {fr: 'Test tree', en: null},
                             linked_tree: 'some_tree',
-                            permissionsConf: null
+                            permissionsConf: null,
+                            multipleValues: false
                         },
                         {
                             __typename: 'Attribute',
@@ -34,7 +35,8 @@ describe('EditAttributePermissions', () => {
                             system: false,
                             label: {fr: 'Test tree 2', en: null},
                             linked_tree: 'some_other_tree',
-                            permissionsConf: null
+                            permissionsConf: null,
+                            multipleValues: false
                         }
                     ]
                 }
@@ -50,6 +52,7 @@ describe('EditAttributePermissions', () => {
             system: false,
             label: {fr: 'Test 1', en: null},
             linked_tree: null,
+            multipleValues: true,
             permissionsConf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and
@@ -59,7 +62,7 @@ describe('EditAttributePermissions', () => {
 
         const comp = mount(
             <MockedProvider mocks={mocks} addTypename>
-                <EditAttributePermissions attribute={attr} onSubmitSettings={onSubmit} />
+                <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
             </MockedProvider>
         );
         await sleep(0);
@@ -76,6 +79,7 @@ describe('EditAttributePermissions', () => {
             system: false,
             label: {fr: 'Test 1', en: null},
             linked_tree: null,
+            multipleValues: true,
             permissionsConf: {
                 permissionTreeAttributes: [
                     {id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'},
@@ -88,7 +92,7 @@ describe('EditAttributePermissions', () => {
 
         const comp = mount(
             <MockedProvider mocks={mocks} addTypename>
-                <EditAttributePermissions attribute={attr} onSubmitSettings={onSubmit} />
+                <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
             </MockedProvider>
         );
         await sleep(0);
@@ -105,6 +109,7 @@ describe('EditAttributePermissions', () => {
             system: false,
             label: {fr: 'Test 1', en: null},
             linked_tree: null,
+            multipleValues: true,
             permissionsConf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and
@@ -114,7 +119,7 @@ describe('EditAttributePermissions', () => {
 
         const comp = mount(
             <MockedProvider mocks={mocks} addTypename>
-                <EditAttributePermissions attribute={attr} onSubmitSettings={onSubmit} />
+                <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
             </MockedProvider>
         );
         await sleep(0);

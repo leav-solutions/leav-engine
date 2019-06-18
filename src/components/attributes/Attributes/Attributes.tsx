@@ -17,6 +17,7 @@ interface IAttributesProps extends WithNamespaces {
 interface IAttributesFilters {
     id?: string;
     label?: string;
+    multipleValues?: boolean;
     isSystem?: boolean;
 }
 

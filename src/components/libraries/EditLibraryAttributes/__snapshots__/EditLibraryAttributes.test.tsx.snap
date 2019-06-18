@@ -56,6 +56,11 @@ exports[`EditLibraryAttributes Snapshot test 1`] = `
         <th
           className="one wide"
         >
+          attributes.multipleValues
+        </th>
+        <th
+          className="one wide"
+        >
           attributes.isSystem
         </th>
         <th

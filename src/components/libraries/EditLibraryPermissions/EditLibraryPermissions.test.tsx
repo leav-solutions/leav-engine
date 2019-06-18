@@ -20,7 +20,11 @@ describe('EditLibraryPermissions', () => {
 
         const comp = mount(
             <MockedProvider>
-                <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+                <EditLibraryPermissions
+                    readOnly={false}
+                    library={lib as GET_LIBRARIES_libraries}
+                    onSubmitSettings={onSubmit}
+                />
             </MockedProvider>
         );
 
@@ -33,7 +37,11 @@ describe('EditLibraryPermissions', () => {
             permissionsConf: {
                 permissionTreeAttributes: [
                     {id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}},
-                    {id: 'other_tree_attr', linked_tree: 'some_other_tree', label: {fr: 'Test 2'}}
+                    {
+                        id: 'other_tree_attr',
+                        linked_tree: 'some_other_tree',
+                        label: {fr: 'Test 2'}
+                    }
                 ],
                 relation: PermissionsRelation.and
             }
@@ -43,7 +51,11 @@ describe('EditLibraryPermissions', () => {
 
         const comp = mount(
             <MockedProvider>
-                <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+                <EditLibraryPermissions
+                    readOnly={false}
+                    library={lib as GET_LIBRARIES_libraries}
+                    onSubmitSettings={onSubmit}
+                />
             </MockedProvider>
         );
 
@@ -63,7 +75,11 @@ describe('EditLibraryPermissions', () => {
 
         const comp = mount(
             <MockedProvider>
-                <EditLibraryPermissions library={lib as GET_LIBRARIES_libraries} onSubmitSettings={onSubmit} />
+                <EditLibraryPermissions
+                    readOnly={false}
+                    library={lib as GET_LIBRARIES_libraries}
+                    onSubmitSettings={onSubmit}
+                />
             </MockedProvider>
         );
         comp.find('form').simulate('submit');

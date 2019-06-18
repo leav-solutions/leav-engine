@@ -26,7 +26,7 @@ export interface GET_LIBRARIES_libraries_attributes {
     system: boolean;
     label: any | null;
     linked_tree: string | null;
-    multipleValues: boolean | null;
+    multipleValues: boolean;
     permissionsConf: GET_LIBRARIES_libraries_attributes_permissionsConf | null;
 }
 
