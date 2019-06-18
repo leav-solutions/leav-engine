@@ -53,6 +53,7 @@ export enum PermissionsActions {
     access_attribute = 'access_attribute',
     admin_access_attributes = 'admin_access_attributes',
     admin_access_libraries = 'admin_access_libraries',
+    admin_access_navigator = 'admin_access_navigator',
     admin_access_permissions = 'admin_access_permissions',
     admin_access_trees = 'admin_access_trees',
     admin_create_attribute = 'admin_create_attribute',
@@ -104,6 +105,7 @@ export interface AttributeInput {
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
     actions_list?: ActionsListConfigurationInput | null;
     permissionsConf?: TreePermissionsConfInput | null;
+    multipleValues?: boolean | null;
 }
 
 export interface EmbeddedAttributeInput {

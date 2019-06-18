@@ -32,7 +32,8 @@ function EditAttributeInfosForm({
         type: AttributeType.simple,
         format: AttributeFormat.text,
         linked_tree: null,
-        permissionsConf: null
+        permissionsConf: null,
+        multipleValues: false
     };
 
     const [formValues, setFormValues] = React.useState<GET_ATTRIBUTES_attributes>(
@@ -137,6 +138,17 @@ function EditAttributeInfosForm({
                             text: t('attributes.formats.' + f),
                             value: f
                         }))}
+                    />
+                </FormFieldWrapper>
+                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multipleValues : ''}>
+                    <Form.Checkbox
+                        label={t('attributes.allow_multiple_values')}
+                        disabled={formValues.system || readOnly}
+                        width="8"
+                        toggle
+                        name="multipleValues"
+                        onChange={_handleChange}
+                        checked={!!formValues.multipleValues}
                     />
                 </FormFieldWrapper>
                 {!readOnly && (

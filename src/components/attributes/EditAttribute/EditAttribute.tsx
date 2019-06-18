@@ -39,7 +39,8 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                                     en: attrData.label.en
                                 },
                                 type: attrData.type,
-                                format: attrData.format
+                                format: attrData.format,
+                                multipleValues: attrData.multipleValues
                             }
                         },
                         refetchQueries: [
@@ -71,6 +72,7 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                                 label: attrToEdit.label,
                                 type: attrToEdit.type,
                                 format: attrToEdit.format,
+                                multipleValues: attrToEdit.multipleValues,
                                 permissionsConf: {
                                     permissionTreeAttributes: attrData.permissionsConf.permissionTreeAttributes,
                                     relation: attrData.permissionsConf.relation

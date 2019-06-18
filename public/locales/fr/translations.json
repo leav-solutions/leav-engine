@@ -42,6 +42,7 @@
         "permissions_relation_and": "ET",
         "permissions_relation_or": "OU",
         "informations": "Informations",
+        "allow_multiple_values": "Autoriser les valeurs multiples",
         "types": {
             "tree": "Arbre",
             "advanced": "Avancé",

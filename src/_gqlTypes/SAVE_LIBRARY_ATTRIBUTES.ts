@@ -26,6 +26,7 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes {
     system: boolean;
     label: any | null;
     linked_tree: string | null;
+    multipleValues: boolean | null;
     permissionsConf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissionsConf | null;
 }
 

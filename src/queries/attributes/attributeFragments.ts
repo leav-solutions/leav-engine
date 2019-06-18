@@ -8,6 +8,7 @@ export const attributeDetailsFragment = gql`
         system
         label(lang: $lang)
         linked_tree
+        multipleValues
         permissionsConf {
             permissionTreeAttributes {
                 id

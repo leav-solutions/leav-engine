@@ -16,8 +16,16 @@ export const getAttributesQuery = gql`
         $type: [AttributeType]
         $format: [AttributeFormat]
         $system: Boolean
+        $multipleValues: Boolean
     ) {
-        attributes(id: $id, label: $label, type: $type, format: $format, system: $system) {
+        attributes(
+            id: $id
+            label: $label
+            type: $type
+            format: $format
+            system: $system
+            multipleValues: $multipleValues
+        ) {
             ...AttributeDetails
         }
     }

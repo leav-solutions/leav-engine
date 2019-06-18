@@ -76,6 +76,7 @@ class App extends React.Component<any, IAppState> {
                             return <p>Could not retrieve permissions!</p>;
                         }
 
+                        // TODO: get real user ID and name
                         const userData: IUserContext = {
                             id: 1,
                             name: '',
