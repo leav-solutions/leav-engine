@@ -1,6 +1,6 @@
-import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
-import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
+import {AttributeTypes} from '../../_types/attribute';
+import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 describe('AttributeIndexRepo', () => {
@@ -96,18 +96,11 @@ describe('AttributeIndexRepo', () => {
                 execute: global.__mockPromise(queryRes)
             };
 
-            const mockCleanupRes = jest
-                .fn()
-                .mockReturnValueOnce({
-                    id: 987654,
-                    created_at: 1521475225,
-                    modified_at: 1521475225
-                })
-                .mockReturnValueOnce({
-                    id: 987655,
-                    created_at: 1521475225,
-                    modified_at: 1521475225
-                });
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: 987654,
+                created_at: 1521475225,
+                modified_at: 1521475225
+            });
 
             const mockDbUtils = {
                 cleanup: mockCleanupRes
@@ -121,23 +114,14 @@ describe('AttributeIndexRepo', () => {
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-            expect(mockDbUtils.cleanup.mock.calls.length).toBe(2);
+            expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
 
-            expect(values.length).toBe(2);
+            expect(values.length).toBe(1);
 
             expect(values[0]).toMatchObject({
                 id_value: null,
                 value: {
                     id: 987654,
-                    created_at: 1521475225,
-                    modified_at: 1521475225
-                }
-            });
-
-            expect(values[1]).toMatchObject({
-                id_value: null,
-                value: {
-                    id: 987655,
                     created_at: 1521475225,
                     modified_at: 1521475225
                 }

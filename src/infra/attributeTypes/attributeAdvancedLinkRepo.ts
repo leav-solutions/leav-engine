@@ -1,10 +1,10 @@
-import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {aql} from 'arangojs';
+import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IValue} from '_types/value';
 import {IAttribute} from '../../_types/attribute';
-import {aql} from 'arangojs';
+import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -82,7 +82,9 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                     RETURN {linkedRecord, edge}
             `);
 
-            return res.map(r => ({
+            const valuesToReturn = attribute.multipleValues ? res : res.slice(0, 1);
+
+            return valuesToReturn.map(r => ({
                 id_value: Number(r.edge._key),
                 value: dbUtils.cleanup(r.linkedRecord),
                 attribute: r.edge.attribute,

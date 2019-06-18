@@ -1,11 +1,12 @@
-import attributeAdvancedRepo from './attributeAdvancedRepo';
-import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
+import {AttributeTypes} from '../../_types/attribute';
+import attributeAdvancedRepo from './attributeAdvancedRepo';
 
 describe('AttributeStandardRepo', () => {
     const mockAttribute = {
         id: 'test_attr',
-        type: AttributeTypes.ADVANCED
+        type: AttributeTypes.ADVANCED,
+        multipleValues: true
     };
 
     describe('createValue', () => {
@@ -297,36 +298,36 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for standard attribute', async function() {
-            const traversalRes = [
-                {
-                    value: {
-                        _key: 987654,
-                        value: 'test val'
-                    },
-                    edge: {
-                        _from: 'test_lib/123456',
-                        _to: 'core_values/987654',
-                        attribute: 'test_attr',
-                        modified_at: 99999,
-                        created_at: 99999
-                    }
+        const traversalRes = [
+            {
+                value: {
+                    _key: 987654,
+                    value: 'test val'
                 },
-                {
-                    value: {
-                        _key: 987655,
-                        value: 'test val2'
-                    },
-                    edge: {
-                        _from: 'test_lib/123456',
-                        _to: 'core_values/987655',
-                        attribute: 'test_attr',
-                        modified_at: 99999,
-                        created_at: 99999
-                    }
+                edge: {
+                    _from: 'test_lib/123456',
+                    _to: 'core_values/987654',
+                    attribute: 'test_attr',
+                    modified_at: 99999,
+                    created_at: 99999
                 }
-            ];
+            },
+            {
+                value: {
+                    _key: 987655,
+                    value: 'test val2'
+                },
+                edge: {
+                    _from: 'test_lib/123456',
+                    _to: 'core_values/987655',
+                    attribute: 'test_attr',
+                    modified_at: 99999,
+                    created_at: 99999
+                }
+            }
+        ];
 
+        test('Should return values for advanced attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -342,6 +343,31 @@ describe('AttributeStandardRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(values.length).toBe(2);
+            expect(values[0]).toMatchObject({
+                id_value: 987654,
+                value: 'test val',
+                attribute: 'test_attr',
+                modified_at: 99999,
+                created_at: 99999
+            });
+        });
+
+        test('Should return only first value if not multiple values', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
+
+            const mockAttrNotMultival = {
+                ...mockAttribute,
+                multipleValues: false
+            };
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival);
+
+            expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
                 id_value: 987654,
                 value: 'test val',

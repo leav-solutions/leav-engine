@@ -15,7 +15,7 @@ Object {
 }
 `;
 
-exports[`AttributeStandardRepo getValues Should return values for standard attribute 1`] = `
+exports[`AttributeStandardRepo getValues Should return values for advanced attribute 1`] = `
 "
                 FOR value, edge
                     IN 1 OUTBOUND @value0
@@ -25,7 +25,7 @@ exports[`AttributeStandardRepo getValues Should return values for standard attri
             "
 `;
 
-exports[`AttributeStandardRepo getValues Should return values for standard attribute 2`] = `
+exports[`AttributeStandardRepo getValues Should return values for advanced attribute 2`] = `
 Object {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",

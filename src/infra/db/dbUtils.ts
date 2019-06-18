@@ -78,6 +78,8 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
 
                 bindVars[`filterValue${index}`] = `${filterVal}`;
             } else {
+                const isBooleanCol = filterKey === 'system' || filterKey === 'multipleValues';
+
                 // Filter with a "like" on ID or exact value in other fields
                 query =
                     filterKey === '_key' && !strictFilters
@@ -85,10 +87,9 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
                         : `el.@filterKey${index} == @filterValue${index}`;
 
                 newBindVars[`filterKey${index}`] = filterKey;
-                newBindVars[`filterValue${index}`] =
-                    filterKey === 'system'
-                        ? filterVal // Boolean must not be converted to string
-                        : `${filterVal}`;
+                newBindVars[`filterValue${index}`] = isBooleanCol
+                    ? filterVal // Boolean must not be converted to string
+                    : `${filterVal}`;
             }
         }
 

@@ -1,6 +1,6 @@
-import attributeSimpleRepo from './attributeSimpleRepo';
-import {AttributeTypes} from '../../_types/attribute';
 import {Database} from 'arangojs';
+import {AttributeTypes} from '../../_types/attribute';
+import attributeSimpleRepo from './attributeSimpleRepo';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {
@@ -45,7 +45,7 @@ describe('AttributeIndexRepo', () => {
 
     describe('getValues', () => {
         test('Should return values for index attribute', async function() {
-            const queryRes = ['test val'];
+            const queryRes = ['test val', 'other val that should not be returned'];
 
             const mockDbServ = {
                 db: new Database(),

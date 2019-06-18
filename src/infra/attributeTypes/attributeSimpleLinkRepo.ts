@@ -1,10 +1,10 @@
-import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IValue} from '../../_types/value';
-import {IAttribute} from '../../_types/attribute';
-import {IDbUtils} from '../db/dbUtils';
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IAttribute} from '../../_types/attribute';
+import {IValue} from '../../_types/value';
+import {IDbService} from '../db/dbService';
+import {IDbUtils} from '../db/dbUtils';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
 export default function(
@@ -34,7 +34,7 @@ export default function(
                         RETURN l
             `);
 
-            return res.map(r => ({id_value: null, value: dbUtils.cleanup(r)}));
+            return res.slice(0, 1).map(r => ({id_value: null, value: dbUtils.cleanup(r)}));
         },
         async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             return null;

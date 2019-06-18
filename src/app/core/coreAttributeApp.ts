@@ -39,7 +39,7 @@ export default function(
                         embedded_fields: [EmbeddedAttribute],
                         actions_list: ActionsListConfiguration,
                         permissionsConf: TreePermissionsConf,
-                        multipleValues: Boolean
+                        multipleValues: Boolean!
                     }
 
                     input AttributeInput {
@@ -129,18 +129,26 @@ export default function(
             return fullSchema;
         },
         getGraphQLFormat(attribute: IAttribute): string {
+            let typeToReturn;
+
             if (attribute.id === 'id') {
-                return 'ID!';
+                typeToReturn = 'ID!';
             } else if (
                 attribute.type === AttributeTypes.SIMPLE_LINK ||
                 attribute.type === AttributeTypes.ADVANCED_LINK
             ) {
-                return 'linkValue';
+                typeToReturn = 'linkValue';
             } else if (attribute.type === AttributeTypes.TREE) {
-                return 'treeValue';
+                typeToReturn = 'treeValue';
             } else {
-                return 'Value';
+                typeToReturn = 'Value';
             }
+
+            if (attribute.multipleValues) {
+                typeToReturn = `[${typeToReturn}!]`;
+            }
+
+            return typeToReturn;
         }
     };
 }

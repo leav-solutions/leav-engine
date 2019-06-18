@@ -21,6 +21,24 @@ Object {
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo getValues Should return only first value if not multiple attribute 1`] = `
+"
+                FOR linkedRecord, edge
+                    IN 1 OUTBOUND @value0
+                    @@value1
+                    FILTER edge.attribute == @value2
+                    RETURN {linkedRecord, edge}
+            "
+`;
+
+exports[`AttributeAdvancedLinkRepo getValues Should return only first value if not multiple attribute 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": "test_lib/123456",
+  "value2": "test_adv_link_attr",
+}
+`;
+
 exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced link attribute 1`] = `
 "
                 FOR linkedRecord, edge

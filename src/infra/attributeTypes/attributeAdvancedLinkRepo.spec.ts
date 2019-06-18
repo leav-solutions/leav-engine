@@ -1,13 +1,14 @@
-import {IValue} from '../../_types/value';
 import {Database} from 'arangojs';
 import {AttributeTypes} from '../../_types/attribute';
+import {IValue} from '../../_types/value';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
 
 describe('AttributeAdvancedLinkRepo', () => {
     const mockAttribute = {
         id: 'test_adv_link_attr',
         type: AttributeTypes.ADVANCED_LINK,
-        linked_library: 'test_linked_lib'
+        linked_library: 'test_linked_lib',
+        multipleValues: true
     };
 
     const savedEdgeData = {
@@ -225,48 +226,48 @@ describe('AttributeAdvancedLinkRepo', () => {
         });
     });
     describe('getValues', () => {
-        test('Should return values for advanced link attribute', async function() {
-            const traversalRes = [
-                {
-                    linkedRecord: {
-                        _key: '123456',
-                        _id: 'images/123456',
-                        _rev: '_WgJhrXO--_',
-                        created_at: 88888,
-                        modified_at: 88888
-                    },
-                    edge: {
-                        _key: '112233',
-                        _id: 'core_edge_values_links/112233',
-                        _from: 'ubs/222536283',
-                        _to: 'images/123456',
-                        _rev: '_WgJilsW--_',
-                        attribute: 'test_adv_link_attr',
-                        modified_at: 99999,
-                        created_at: 99999
-                    }
+        const traversalRes = [
+            {
+                linkedRecord: {
+                    _key: '123456',
+                    _id: 'images/123456',
+                    _rev: '_WgJhrXO--_',
+                    created_at: 88888,
+                    modified_at: 88888
                 },
-                {
-                    linkedRecord: {
-                        _key: '123457',
-                        _id: 'images/123457',
-                        _rev: '_WgJhrXO--_',
-                        created_at: 77777,
-                        modified_at: 77777
-                    },
-                    edge: {
-                        _key: '112234',
-                        _id: 'core_edge_values_links/112234',
-                        _from: 'ubs/222536283',
-                        _to: 'images/123457',
-                        _rev: '_WgJilsW--_',
-                        attribute: 'test_adv_link_attr',
-                        modified_at: 66666,
-                        created_at: 66666
-                    }
+                edge: {
+                    _key: '112233',
+                    _id: 'core_edge_values_links/112233',
+                    _from: 'ubs/222536283',
+                    _to: 'images/123456',
+                    _rev: '_WgJilsW--_',
+                    attribute: 'test_adv_link_attr',
+                    modified_at: 99999,
+                    created_at: 99999
                 }
-            ];
+            },
+            {
+                linkedRecord: {
+                    _key: '123457',
+                    _id: 'images/123457',
+                    _rev: '_WgJhrXO--_',
+                    created_at: 77777,
+                    modified_at: 77777
+                },
+                edge: {
+                    _key: '112234',
+                    _id: 'core_edge_values_links/112234',
+                    _from: 'ubs/222536283',
+                    _to: 'images/123457',
+                    _rev: '_WgJilsW--_',
+                    attribute: 'test_adv_link_attr',
+                    modified_at: 66666,
+                    created_at: 66666
+                }
+            }
+        ];
 
+        test('Should return values for advanced link attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -321,6 +322,50 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: 'test_adv_link_attr',
                 modified_at: 66666,
                 created_at: 66666
+            });
+        });
+
+        test('Should return only first value if not multiple attribute', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: 123456,
+                created_at: 88888,
+                modified_at: 88888
+            });
+
+            const mockDbUtils = {
+                cleanup: mockCleanupRes
+            };
+
+            const mockAttributeNotMultiVal = {
+                ...mockAttribute,
+                multipleValues: false
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(values.length).toBe(1);
+            expect(values[0]).toMatchObject({
+                id_value: 112233,
+                value: {
+                    id: 123456,
+                    created_at: 88888,
+                    modified_at: 88888
+                },
+                attribute: 'test_adv_link_attr',
+                modified_at: 99999,
+                created_at: 99999
             });
         });
     });

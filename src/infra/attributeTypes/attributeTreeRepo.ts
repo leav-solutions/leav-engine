@@ -90,7 +90,9 @@ export default function(
 
             const treeElements = await dbService.execute(query);
 
-            return treeElements.map(r => {
+            const elementsToReturn = attribute.multipleValues ? treeElements : treeElements.slice(0, 1);
+
+            return elementsToReturn.map(r => {
                 r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
 
                 return {

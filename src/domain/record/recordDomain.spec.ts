@@ -3,6 +3,7 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {AttributeTypes} from '../../_types/attribute';
+import {mockAttrAdvMultiVal, mockAttrId} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -121,7 +122,7 @@ describe('RecordDomain', () => {
     });
 
     describe('populateRecordFields', () => {
-        test('Should populate record fields', async function() {
+        test.only('Should populate record fields', async function() {
             const record = {
                 id: 222536283,
                 created_at: 1520931427,
@@ -196,6 +197,74 @@ describe('RecordDomain', () => {
                     value: 'MyLabelProcessed',
                     raw_value: 'MyLabel'
                 }
+            });
+        });
+
+        test('Should populate record fields on multiple values', async function() {
+            const record = {
+                id: 222536283,
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                ean: '9876543219999999',
+                visual_simple: '222713677'
+            };
+
+            const recRepo: Mockify<IRecordRepo> = {};
+
+            const mockValRepo: Mockify<IValueRepo> = {
+                getValues: global.__mockPromise([
+                    {
+                        id: '1',
+                        value: 'MyLabel'
+                    },
+                    {
+                        id: '2',
+                        value: 'MyOtherLabel'
+                    }
+                ])
+            };
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: jest.fn().mockImplementation(attributeName => {
+                    const attribute = attributeName === 'id' ? mockAttrId : mockAttrAdvMultiVal;
+
+                    return Promise.resolve(attribute);
+                })
+            };
+
+            const mockALDomain: Mockify<IActionsListDomain> = {
+                runActionsList: jest.fn()
+            };
+
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                mockAttributeDomain as IAttributeDomain,
+                mockValRepo as IValueRepo,
+                mockALDomain as IActionsListDomain
+            );
+
+            const findRes = await recDomain.populateRecordFields('test_lib', record, [
+                {
+                    name: 'label',
+                    fields: [{name: 'id', fields: [], arguments: []}, {name: 'value', fields: [], arguments: []}],
+                    arguments: []
+                }
+            ]);
+
+            expect(findRes).toEqual({
+                ...record,
+                label: [
+                    {
+                        id: '1',
+                        value: 'MyLabel',
+                        raw_value: 'MyLabel'
+                    },
+                    {
+                        id: '2',
+                        value: 'MyOtherLabel',
+                        raw_value: 'MyOtherLabel'
+                    }
+                ]
             });
         });
 

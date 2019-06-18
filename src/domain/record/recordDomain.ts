@@ -3,12 +3,12 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import * as moment from 'moment';
+import {IValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IQueryField, IRecord, IRecordFilterOption, IRecordIdentity} from '../../_types/record';
-import {IValue} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -83,7 +83,88 @@ export default function(
     libraryDomain: ILibraryDomain = null,
     valueDomain: IValueDomain = null
 ): IRecordDomain {
-    return {
+    /**
+     * Recursively populate fields on a link attribute
+     *
+     * @param attrProps
+     * @param field
+     * @param fieldValue
+     */
+    const _populateFieldsLinkAttribute = async (
+        attrProps: IAttribute,
+        field: IQueryField,
+        fieldValue: IValue
+    ): Promise<IValue> => {
+        if (field.fields.length) {
+            const _processFieldValue = (record: IRecord, valueFields: IQueryField[]): Promise<IRecord> => {
+                const linkedLibrary = attrProps.linked_library || record.library;
+                return ret.populateRecordFields(linkedLibrary, record, valueFields);
+            };
+
+            const linkFields = field.fields;
+            // "value" is the linked record,
+            // so retrieve fields requested for this record through the "value" field
+            const valueLinkFields = linkFields.reduce((acc, linkField) => {
+                if (linkField.name === 'value') {
+                    acc = acc.concat(linkField.fields);
+                } else if (linkField.name !== 'id_value') {
+                    acc.push(linkField);
+                }
+                return acc;
+            }, []);
+            // If value is an array (like in tree values), populate recursively all elements
+            if (Array.isArray(fieldValue.value)) {
+                fieldValue.value = await Promise.all(
+                    fieldValue.value.map(val => _processFieldValue(val, valueLinkFields))
+                );
+            } else {
+                fieldValue.value = await _processFieldValue(fieldValue.value, valueLinkFields);
+            }
+            // Add library on linked record to help determine which type is the record
+            if (attrProps.linked_library) {
+                fieldValue.value.library = attrProps.linked_library;
+            }
+        }
+
+        return fieldValue;
+    };
+
+    /**
+     * Run actions list on a value
+     *
+     * @param isLinkAttribute
+     * @param value
+     * @param attrProps
+     * @param record
+     * @param library
+     */
+    const _runActionsList = async (
+        isLinkAttribute: boolean,
+        value: IValue,
+        attrProps: IAttribute,
+        record: IRecord,
+        library: string
+    ) => {
+        let processedValue: IValue;
+        if (!isLinkAttribute && value !== null) {
+            processedValue =
+                !!attrProps.actions_list && !!attrProps.actions_list.getValue
+                    ? await actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
+                          attribute: attrProps,
+                          recordId: record.id,
+                          library,
+                          value
+                      })
+                    : value;
+            processedValue.raw_value = value.value;
+        } else {
+            processedValue = value;
+        }
+
+        return processedValue;
+    };
+
+    const ret = {
         async createRecord(library: string): Promise<IRecord> {
             const recordData = {created_at: moment().unix(), modified_at: moment().unix()};
 
@@ -176,11 +257,12 @@ export default function(
                     fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK;
 
                 // Get field value
-                let value: IValue = null;
                 if (
                     typeof record[field.name] === 'undefined' ||
                     fieldsProps[field.name].type !== AttributeTypes.SIMPLE
                 ) {
+                    // We haven't retrieved this value yet (straight from query for example),
+                    // so let's get it from DB now
                     const fieldValues = await valueRepo.getValues(
                         library,
                         record.id,
@@ -189,79 +271,36 @@ export default function(
                     );
 
                     if (fieldValues !== null && fieldValues.length) {
-                        const fieldValue = fieldValues[0];
-
-                        // If value is a linked record, recursively populate fields on this record
-                        if (field.fields.length && isLinkAttribute) {
-                            const _processFieldValue = (fieldVal, valueFields): Promise<any> => {
-                                const linkedLibrary = fieldsProps[field.name].linked_library || fieldVal.library;
-
-                                return this.populateRecordFields(linkedLibrary, fieldVal, valueFields);
-                            };
-
-                            const linkFields = field.fields;
-
-                            // "value" is the linked record,
-                            // so retrieve fields requested for this record through the "value" field
-                            const valueLinkFields = linkFields.reduce((acc, linkField) => {
-                                if (linkField.name === 'value') {
-                                    acc = acc.concat(linkField.fields);
-                                } else if (linkField.name !== 'id_value') {
-                                    acc.push(linkField);
+                        const values = await Promise.all(
+                            fieldValues.map(async fieldValue => {
+                                // If value is a linked record, recursively populate fields on this record
+                                if (isLinkAttribute) {
+                                    fieldValue = await _populateFieldsLinkAttribute(
+                                        fieldsProps[field.name],
+                                        field,
+                                        fieldValue
+                                    );
                                 }
 
-                                return acc;
-                            }, []);
-
-                            // If value is an array (like in tree values), populate recursively all elements
-                            if (Array.isArray(fieldValue.value)) {
-                                fieldValue.value = await Promise.all(
-                                    fieldValue.value.map(val => _processFieldValue(val, valueLinkFields))
+                                fieldValue = await _runActionsList(
+                                    isLinkAttribute,
+                                    fieldValue,
+                                    fieldsProps[field.name],
+                                    record,
+                                    library
                                 );
-                            } else {
-                                fieldValue.value = await _processFieldValue(fieldValue.value, valueLinkFields);
-                            }
 
-                            // Add library on linked record to help determine which type is the record
-                            if (isLinkAttribute && fieldsProps[field.name].linked_library) {
-                                fieldValue.value.library = fieldsProps[field.name].linked_library;
-                            }
-                        }
+                                return fieldValue;
+                            })
+                        );
 
-                        value = fieldValue;
+                        record[field.name] = fieldsProps[field.name].multipleValues ? values : values[0];
                     }
                 } else if (field.name !== 'id') {
                     // Format attribute field into simple value
-                    value = {
+                    record[field.name] = {
                         value: record[field.name]
                     };
-                }
-
-                // Run actions list, if any
-                if (field.name !== 'id') {
-                    let processedValue;
-
-                    if (!isLinkAttribute && value !== null) {
-                        processedValue =
-                            !!fieldsProps[field.name].actions_list && !!fieldsProps[field.name].actions_list.getValue
-                                ? await actionsListDomain.runActionsList(
-                                      fieldsProps[field.name].actions_list.getValue,
-                                      value,
-                                      {
-                                          attribute: fieldsProps[field.name],
-                                          recordId: record.id,
-                                          library,
-                                          value
-                                      }
-                                  )
-                                : value;
-
-                        processedValue.raw_value = value.value;
-                    } else {
-                        processedValue = value;
-                    }
-
-                    record[field.name] = processedValue;
                 }
             }
 
@@ -282,4 +321,6 @@ export default function(
             };
         }
     };
+
+    return ret;
 }

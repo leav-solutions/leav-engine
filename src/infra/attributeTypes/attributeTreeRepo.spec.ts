@@ -21,7 +21,8 @@ describe('AttributeTreeRepo', () => {
     const mockAttribute = {
         id: 'test_tree_attr',
         type: AttributeTypes.TREE,
-        linked_tree: 'test_tree'
+        linked_tree: 'test_tree',
+        multipleValues: true
     };
 
     const savedEdgeData = {
@@ -240,35 +241,115 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return linked tree element', async function() {
-            const traversalRes = [
-                {
-                    linkedRecord: {
-                        _key: '123456',
-                        _id: 'images/123456',
-                        _rev: '_WgJhrXO--_',
-                        created_at: 88888,
-                        modified_at: 88888
-                    },
-                    edge: {
-                        _key: '112233',
-                        _id: 'core_edge_values_links/112233',
-                        _from: 'ubs/222536283',
-                        _to: 'images/123456',
-                        _rev: '_WgJilsW--_',
-                        attribute: 'test_tree_attr',
-                        modified_at: 99999,
-                        created_at: 99999
-                    }
+        const traversalRes = [
+            {
+                linkedRecord: {
+                    _key: '123456',
+                    _id: 'images/123456',
+                    _rev: '_WgJhrXO--_',
+                    created_at: 88888,
+                    modified_at: 88888
+                },
+                edge: {
+                    _key: '112233',
+                    _id: 'core_edge_values_links/112233',
+                    _from: 'ubs/222536283',
+                    _to: 'images/123456',
+                    _rev: '_WgJilsW--_',
+                    attribute: 'test_tree_attr',
+                    modified_at: 99999,
+                    created_at: 99999
                 }
-            ];
+            },
+            {
+                linkedRecord: {
+                    _key: '123457',
+                    _id: 'images/123457',
+                    _rev: '_WgJhrXO--_',
+                    created_at: 88888,
+                    modified_at: 88888
+                },
+                edge: {
+                    _key: '11223344',
+                    _id: 'core_edge_values_links/11223344',
+                    _from: 'ubs/222536283',
+                    _to: 'images/123457',
+                    _rev: '_WgJilsW--_',
+                    attribute: 'test_tree_attr',
+                    modified_at: 99999,
+                    created_at: 99999
+                }
+            }
+        ];
 
-            const mockDbServ = {
-                db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+        const mockDbServ = {
+            db: new Database(),
+            execute: global.__mockPromise(traversalRes)
+        };
+
+        test('Should return linked tree element', async function() {
+            const mockCleanupRes = jest
+                .fn()
+                .mockReturnValueOnce({
+                    id: 123456,
+                    created_at: 88888,
+                    modified_at: 88888
+                })
+                .mockReturnValueOnce({
+                    id: 123457,
+                    created_at: 88888,
+                    modified_at: 88888
+                });
+
+            const mockDbUtils = {
+                cleanup: mockCleanupRes
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValueOnce({
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(values.length).toBe(2);
+            expect(values[0]).toMatchObject({
+                id_value: 112233,
+                value: {
+                    record: {
+                        id: 123456,
+                        created_at: 88888,
+                        modified_at: 88888
+                    }
+                },
+                attribute: 'test_tree_attr',
+                modified_at: 99999,
+                created_at: 99999
+            });
+
+            expect(values[1]).toMatchObject({
+                id_value: 11223344,
+                value: {
+                    record: {
+                        id: 123457,
+                        created_at: 88888,
+                        modified_at: 88888
+                    }
+                },
+                attribute: 'test_tree_attr',
+                modified_at: 99999,
+                created_at: 99999
+            });
+        });
+
+        test('Should return only first linked tree element if not multiple values', async function() {
+            const mockAttributeNotMultiVal = {
+                ...mockAttribute,
+                multipleValues: false
+            };
+
+            const mockCleanupRes = jest.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
                 modified_at: 88888
@@ -280,12 +361,7 @@ describe('AttributeTreeRepo', () => {
 
             const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
 
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
-
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({

@@ -1,9 +1,9 @@
-import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IValue} from '../../_types/value';
-import {IAttribute} from '../../_types/attribute';
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IAttribute} from '../../_types/attribute';
+import {IValue} from '../../_types/value';
+import {IDbService} from '../db/dbService';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -108,7 +108,9 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
                     RETURN {value, edge}
             `);
 
-            return res.map(r => ({
+            const valuesToReturn = attribute.multipleValues ? res : res.slice(0, 1);
+
+            return valuesToReturn.map(r => ({
                 id_value: r.value._key,
                 value: r.value.value,
                 attribute: r.edge.attribute,
