@@ -39,7 +39,8 @@ export default function(
                         embedded_fields: [EmbeddedAttribute],
                         actions_list: ActionsListConfiguration,
                         permissionsConf: TreePermissionsConf,
-                        multipleValues: Boolean!
+                        multipleValues: Boolean!,
+                        versionsConf: valuesVersionsConf
                     }
 
                     input AttributeInput {
@@ -52,7 +53,8 @@ export default function(
                         embedded_fields: [EmbeddedAttributeInput],
                         actions_list: ActionsListConfigurationInput,
                         permissionsConf: TreePermissionsConfInput,
-                        multipleValues: Boolean
+                        multipleValues: Boolean,
+                        versionsConf: valuesVersionsConfInput
                     }
 
                     type EmbeddedAttribute {
@@ -71,6 +73,16 @@ export default function(
                         embedded_fields: [EmbeddedAttributeInput]
                     }
 
+                    type valuesVersionsConf {
+                        versionable: Boolean!,
+                        trees: [String!]
+                    }
+
+                    input valuesVersionsConfInput {
+                        versionable: Boolean!,
+                        trees: [String!]
+                    }
+
                     extend type Query {
                         attributes(
                             id: ID,
@@ -78,7 +90,8 @@ export default function(
                             format: [AttributeFormat],
                             label: String,
                             system: Boolean,
-                            multipleValues: Boolean
+                            multipleValues: Boolean,
+                            versionable: Boolean
                         ): [Attribute!]
                     }
 

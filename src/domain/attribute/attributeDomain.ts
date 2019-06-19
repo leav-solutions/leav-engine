@@ -1,4 +1,6 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
+import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
@@ -47,7 +49,8 @@ export default function(
     attributeRepo: IAttributeRepo = null,
     actionsListDomain: IActionsListDomain = null,
     permissionDomain: IPermissionDomain = null,
-    utils: IUtils = null
+    utils: IUtils = null,
+    treeRepo: ITreeRepo = null
 ): IAttributeDomain {
     function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
         // TODO: save defaults action on attribute creation
@@ -128,6 +131,42 @@ export default function(
         }
     }
 
+    async function _validateAttributeData(attrData: IAttribute): Promise<{}> {
+        const errors = {} as any;
+
+        if (!utils.validateID(attrData.id)) {
+            errors.id = 'Invalid ID format: ' + attrData.id;
+        }
+
+        if (
+            (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) &&
+            attrData.multipleValues
+        ) {
+            errors.multipleValues = 'Multiple values not allowed for this attribute type';
+        }
+
+        if (
+            attrData.versionsConf &&
+            attrData.versionsConf.versionable &&
+            attrData.versionsConf.trees &&
+            attrData.versionsConf.trees.length
+        ) {
+            const existingTrees = await treeRepo.getTrees();
+            const unknownTrees = difference(attrData.versionsConf.trees, existingTrees.map(a => a.id));
+            if (unknownTrees.length) {
+                errors.versionsConf = `Unknown trees: ${unknownTrees.join(', ')}`;
+            }
+        }
+
+        // Check output type of last action
+        _validateInputType(attrData);
+
+        // Check presence of system actions
+        _validateRequiredActions(attrData);
+
+        return errors;
+    }
+
     /**
      * Check if last actions's output type matches attribute allowed input type
      *
@@ -199,6 +238,7 @@ export default function(
 
             const attrs = await attributeRepo.getAttributes({id: attrData.id});
             const isExistingAttr = !!attrs.length;
+            const attrToSave = {...attrData};
 
             // Check permissions
             const action = isExistingAttr
@@ -210,18 +250,7 @@ export default function(
                 throw new PermissionError(action);
             }
 
-            if (!utils.validateID(attrData.id)) {
-                throw new ValidationError({id: 'Invalid ID format: ' + attrData.id});
-            }
-
-            if (
-                (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) &&
-                attrData.multipleValues
-            ) {
-                throw new ValidationError({multipleValues: 'Multiple values not allowed for this attribute type'});
-            }
-
-            const attrToSave = {...attrData};
+            // Add default actions list on new attribute
             attrToSave.actions_list =
                 !isExistingAttr && typeof attrToSave.actions_list === 'undefined'
                     ? _getDefaultActionsList(attrData)
@@ -229,11 +258,12 @@ export default function(
                     ? attrToSave.actions_list
                     : null;
 
-            // Check output type of last action
-            _validateInputType(attrToSave);
+            // Check settings validity
+            const validationErrors = await _validateAttributeData(attrData);
 
-            // Check presence of system actions
-            _validateRequiredActions(attrToSave);
+            if (Object.keys(validationErrors).length) {
+                throw new ValidationError(validationErrors);
+            }
 
             const attr = isExistingAttr
                 ? await attributeRepo.updateAttribute(attrToSave)
