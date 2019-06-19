@@ -94,6 +94,13 @@ export default function(
                     cors: true
                 }
             });
+            server.route({
+                method: 'GET',
+                path: '/auth/test-token',
+                handler: () => {
+                    return 'OK';
+                }
+            });
         },
         async validateToken(tokenPayload: any): Promise<boolean> {
             // Get user by id
