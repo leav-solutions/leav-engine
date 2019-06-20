@@ -98,7 +98,10 @@ export default function(
                 method: 'GET',
                 path: '/auth/test-token',
                 handler: () => {
-                    return 'OK';
+                    return {statusCode: 200, message: 'Valid token'};
+                },
+                options: {
+                    cors: true
                 }
             });
         },
