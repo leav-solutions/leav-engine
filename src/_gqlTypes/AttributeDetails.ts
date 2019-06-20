@@ -19,6 +19,11 @@ export interface AttributeDetails_permissionsConf {
     relation: PermissionsRelation;
 }
 
+export interface AttributeDetails_versionsConf {
+    versionable: boolean;
+    trees: string[] | null;
+}
+
 export interface AttributeDetails {
     id: string;
     type: AttributeType;
@@ -28,4 +33,5 @@ export interface AttributeDetails {
     linked_tree: string | null;
     multipleValues: boolean;
     permissionsConf: AttributeDetails_permissionsConf | null;
+    versionsConf: AttributeDetails_versionsConf | null;
 }

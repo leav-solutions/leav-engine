@@ -44,6 +44,9 @@
         "informations": "Informations",
         "multipleValues": "Valeurs multiples",
         "allow_multiple_values": "Autoriser les valeurs multiples",
+        "values_versions": "Versions de valeurs",
+        "versionable": "Valeurs versionables",
+        "versions_trees": "Arbres",
         "types": {
             "tree": "Arbre",
             "advanced": "Avancé",

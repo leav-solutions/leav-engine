@@ -6,6 +6,7 @@ import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types//errors';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
+import TreesSelector from '../../trees/TreesSelector';
 
 interface IEditAttributeInfosFormProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes | null;
@@ -33,7 +34,11 @@ function EditAttributeInfosForm({
         format: AttributeFormat.text,
         linked_tree: null,
         permissionsConf: null,
-        multipleValues: false
+        multipleValues: false,
+        versionsConf: {
+            versionable: false,
+            trees: []
+        }
     };
 
     const [formValues, setFormValues] = React.useState<GET_ATTRIBUTES_attributes>(
@@ -47,12 +52,12 @@ function EditAttributeInfosForm({
         const name: string = data.name;
         const stateUpdate: Partial<GET_ATTRIBUTES_attributes> = {};
         if (name.indexOf('/') !== -1) {
-            const [field, lang] = name.split('/');
+            const [field, subfield] = name.split('/');
             stateUpdate[field] = {...formValues[field]};
-            stateUpdate[field][lang] = value;
+            stateUpdate[field][subfield] = value;
 
             // On new attribute, automatically generate an ID based on label
-            if (!existingAttr && field === 'label' && lang === process.env.REACT_APP_DEFAULT_LANG) {
+            if (!existingAttr && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
                 stateUpdate.id = formatIDString(value);
             }
         } else {
@@ -70,6 +75,9 @@ function EditAttributeInfosForm({
     const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
     const fieldsErrors = errors && errors.type === ErrorTypes.VALIDATION_ERROR ? errors.fields : {};
+    const isVersionable = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
+        formValues.type
+    );
 
     return (
         <React.Fragment>
@@ -151,6 +159,36 @@ function EditAttributeInfosForm({
                         checked={!!formValues.multipleValues}
                     />
                 </FormFieldWrapper>
+                {isVersionable && (
+                    <Form.Group grouped>
+                        <label>{t('attributes.values_versions')}</label>
+                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multipleValues : ''}>
+                            <Form.Checkbox
+                                label={t('attributes.versionable')}
+                                disabled={formValues.system || readOnly}
+                                width="8"
+                                toggle
+                                name="versionsConf/versionable"
+                                onChange={_handleChange}
+                                checked={!!formValues.versionsConf && formValues.versionsConf.versionable}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                            <TreesSelector
+                                fluid
+                                selection
+                                width="4"
+                                disabled={formValues.system || readOnly}
+                                label={t('attributes.versions_trees')}
+                                placeholder={t('attributes.versions_trees')}
+                                value={formValues.versionsConf ? formValues.versionsConf.trees || [] : []}
+                                name="versionsConf/trees"
+                                onChange={_handleChange}
+                                filters={{type: [AttributeType.tree]}}
+                            />
+                        </FormFieldWrapper>
+                    </Form.Group>
+                )}
                 {!readOnly && (
                     <Form.Group inline>
                         <Form.Button>{t('admin.submit')}</Form.Button>

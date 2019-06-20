@@ -13,7 +13,7 @@ const base: GET_ATTRIBUTES_attributes = {
     system: false,
     linked_tree: null,
     permissionsConf: null,
-    versionsConf: {versionable: false, treeAttributes: null}
+    versionsConf: {versionable: false, trees: null}
 };
 
 export const mockAttrSimple = {...base, id: 'simple_attribute'};
@@ -23,7 +23,7 @@ export const mockAttrAdv = {...base, id: 'advanced_attribute', type: AttributeTy
 export const mockAttrAdvMultiVal = {...mockAttrAdv, multipleValues: true};
 export const mockAttrAdvVersionable = {
     ...mockAttrAdv,
-    versionsConf: {versionable: true, treeAttributes: ['tree_attribute']}
+    versionsConf: {versionable: true, trees: ['tree_attribute']}
 };
 
 export const mockAttrSimpleLink = {...base, id: 'simple_link_attribute', type: AttributeType.simple_link};

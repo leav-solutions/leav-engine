@@ -19,6 +19,11 @@ export interface GET_ATTRIBUTES_attributes_permissionsConf {
     relation: PermissionsRelation;
 }
 
+export interface GET_ATTRIBUTES_attributes_versionsConf {
+    versionable: boolean;
+    trees: string[] | null;
+}
+
 export interface GET_ATTRIBUTES_attributes {
     id: string;
     type: AttributeType;
@@ -28,6 +33,7 @@ export interface GET_ATTRIBUTES_attributes {
     linked_tree: string | null;
     multipleValues: boolean;
     permissionsConf: GET_ATTRIBUTES_attributes_permissionsConf | null;
+    versionsConf: GET_ATTRIBUTES_attributes_versionsConf | null;
 }
 
 export interface GET_ATTRIBUTES {
@@ -42,4 +48,5 @@ export interface GET_ATTRIBUTESVariables {
     format?: (AttributeFormat | null)[] | null;
     system?: boolean | null;
     multipleValues?: boolean | null;
+    versionable?: boolean | null;
 }

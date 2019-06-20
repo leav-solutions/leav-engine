@@ -45,6 +45,9 @@
         "permissions_relation_or": "OR",
         "multipleValues": "Multiple values",
         "allow_multiple_values": "Allow multiple values",
+        "values_versions": "Values versions",
+        "versionable": "Values versionable",
+        "versions_trees": "Trees",
         "types": {
             "tree": "Tree",
             "advanced": "Advanced",
