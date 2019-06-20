@@ -1,0 +1,3 @@
+// Copy this file to apollo.token.js and put any valid token in order to use apollo CLI tools like types generation
+module.exports =
+    '';
