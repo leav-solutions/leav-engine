@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {Button} from 'semantic-ui-react';
 interface ILoginProps {
     onSuccess: (token: string) => void;
@@ -15,11 +15,11 @@ function Login({onSuccess}: ILoginProps): JSX.Element {
     const [jwt, setJwt] = useState(false);
     const [loginError, setLoginError] = useState('');
     const authUrl = process.env.REACT_APP_AUTH_URL || '';
-    const proceedAuth = () => {
-        setIsLoading(true);
-        setLoginError('');
-        setJwt(false);
-        setTimeout(() => {
+    const proceedAuth = useCallback(
+        () => {
+            setIsLoading(true);
+            setLoginError('');
+            setJwt(false);
             fetch(authUrl, {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
@@ -31,10 +31,12 @@ function Login({onSuccess}: ILoginProps): JSX.Element {
                 .then(response => response.json())
                 .then(
                     data => {
+                        setIsLoading(false);
                         setJwt(data.token);
                         onSuccess(data.token);
                     },
                     error => {
+                        setIsLoading(false);
                         let appError = '';
                         if (error.response) {
                             // The request was made and the server responded with a status code
@@ -50,10 +52,10 @@ function Login({onSuccess}: ILoginProps): JSX.Element {
                         }
                         setLoginError(appError);
                     }
-                )
-                .then(() => setIsLoading(false));
-        }, 500);
-    };
+                );
+        },
+        [onSuccess, authUrl, login, password]
+    );
 
     return (
         <div className="ui middle aligned center aligned grid">
