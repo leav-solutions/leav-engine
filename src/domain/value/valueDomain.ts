@@ -1,17 +1,18 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import * as moment from 'moment';
-import {IQueryInfos} from '../../_types/queryInfos';
-import {IValue} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
-import {RecordPermissionsActions, AttributePermissionsActions} from '../../_types/permissions';
+import {AttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {IValue} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
-import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
+import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 
 export interface IValueDomain {
     getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]>;
@@ -32,8 +33,36 @@ export default function(
     recordRepo: IRecordRepo = null,
     actionsListDomain: IActionsListDomain = null,
     recordPermissionDomain: IRecordPermissionDomain = null,
-    attributePermissionDomain: IAttributePermissionDomain = null
+    attributePermissionDomain: IAttributePermissionDomain = null,
+    treeRepo: ITreeRepo = null
 ): IValueDomain {
+    const _validateVersion = async (value: IValue): Promise<string[]> => {
+        const trees = Object.keys(value.version);
+        const existingTrees = await treeRepo.getTrees();
+        const existingTreesIds = existingTrees.map(t => t.id);
+
+        const badElements = await trees.reduce(async (prevErrors, treeName) => {
+            // As our reduce function is async, we must wait for previous iteration to resolve
+            const errors = await prevErrors;
+
+            if (!existingTreesIds.includes(treeName)) {
+                errors.push([`Unknown tree ${treeName}`]);
+                return errors;
+            }
+
+            const isPresent = await treeRepo.isElementPresent(treeName, value.version[treeName]);
+            if (!isPresent) {
+                errors.push([
+                    `Element ${value.version[treeName].library}/${
+                        value.version[treeName].id
+                    } not present in tree ${treeName}`
+                ]);
+            }
+            return errors;
+        }, Promise.resolve([]));
+        return badElements;
+    };
+
     return {
         async getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]> {
             // Get library
@@ -99,6 +128,18 @@ export default function(
 
                 if (existingVal === null) {
                     throw new ValidationError({id: 'Unknown value'});
+                }
+            }
+
+            if (!!value.version) {
+                if (!attrData.versionsConf.versionable) {
+                    throw new ValidationError({version: 'Attribute is not versionable'});
+                }
+
+                const badElements = await _validateVersion(value);
+
+                if (badElements.length) {
+                    throw new ValidationError({version: badElements.join('. ')});
                 }
             }
 

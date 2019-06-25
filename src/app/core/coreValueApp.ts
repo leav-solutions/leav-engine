@@ -11,12 +11,23 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
+                    type ValueVersion {
+                        name: String!,
+                        value: TreeElement!
+                    }
+
+                    input ValueVersionInput {
+                        name: String!,
+                        value: TreeElementInput!
+                    }
+
                     type Value {
                         id_value: ID,
                         value: String,
                         raw_value: String,
                         modified_at: Int,
-                        created_at: Int
+                        created_at: Int,
+                        version: [ValueVersion]
                     }
 
                     type linkValue {
@@ -35,7 +46,8 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
 
                     input ValueInput {
                         id_value: ID,
-                        value: String
+                        value: String,
+                        version: [ValueVersionInput]
                     }
 
                     extend type Mutation {
@@ -46,13 +58,34 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                 resolvers: {
                     Mutation: {
                         async saveValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
-                            return valueDomain.saveValue(
+                            // Convert version
+                            if (!!value.version) {
+                                value.version = value.version.reduce((formattedVers, valVers) => {
+                                    formattedVers[valVers.name] = valVers.value;
+
+                                    return formattedVers;
+                                }, {});
+                            }
+
+                            const savedVal = await valueDomain.saveValue(
                                 library,
                                 recordId,
                                 attribute,
                                 value,
                                 graphqlApp.ctxToQueryInfos(ctx)
                             );
+
+                            let formattedVersion = null;
+                            if (savedVal.version) {
+                                const versionsNames = Object.keys(savedVal.version);
+                                formattedVersion = [];
+
+                                for (const versName of versionsNames) {
+                                    formattedVersion.push({name: versName, value: savedVal.version[versName]});
+                                }
+                            }
+
+                            return {...savedVal, version: formattedVersion};
                         },
                         async deleteValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
                             return valueDomain.deleteValue(

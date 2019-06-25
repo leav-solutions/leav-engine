@@ -25,7 +25,7 @@ export const mockAttrAdv = {...base, id: 'advanced_attribute', type: AttributeTy
 export const mockAttrAdvMultiVal = {...mockAttrAdv, multipleValues: true};
 export const mockAttrAdvVersionable = {
     ...mockAttrAdv,
-    versionsConf: {versionable: true, trees: ['tree_attribute']}
+    versionsConf: {versionable: true, trees: ['my_tree']}
 };
 
 export const mockAttrSimpleLink = {...base, id: 'simple_link_attribute', type: AttributeTypes.SIMPLE_LINK};

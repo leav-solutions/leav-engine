@@ -1,4 +1,5 @@
 import {Database} from 'arangojs';
+import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {ITreeRepo} from '../tree/treeRepo';
@@ -33,7 +34,10 @@ describe('AttributeTreeRepo', () => {
         _key: 978654321,
         attribute: 'test_tree_attr',
         modified_at: 400999999,
-        created_at: 400999999
+        created_at: 400999999,
+        version: {
+            my_tree: 'test_lib/1'
+        }
     };
 
     const valueData: IValue = {
@@ -41,7 +45,23 @@ describe('AttributeTreeRepo', () => {
         value: 'categories/123456',
         attribute: 'test_tree_attr',
         modified_at: 400999999,
-        created_at: 400999999
+        created_at: 400999999,
+        version: {
+            my_tree: {
+                id: 1,
+                library: 'test_lib'
+            }
+        }
+    };
+
+    const mockDbUtils: Mockify<IDbUtils> = {
+        convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
+        convertValueVersionFromDb: jest.fn().mockReturnValue({
+            my_tree: {
+                id: 1,
+                library: 'test_lib'
+            }
+        })
     };
 
     describe('createValue', () => {
@@ -57,12 +77,18 @@ describe('AttributeTreeRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeTreeRepo(mockDbServ, null);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'categories/123456',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
             });
 
             expect(mockDbEdgeCollec.save.mock.calls.length).toBe(1);
@@ -71,7 +97,10 @@ describe('AttributeTreeRepo', () => {
                 _to: 'categories/123456',
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                version: {
+                    my_tree: 'test_lib/1'
+                }
             });
 
             expect(createdVal).toMatchObject({
@@ -79,7 +108,13 @@ describe('AttributeTreeRepo', () => {
                 value: 'categories/123456',
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
             });
         });
     });
@@ -97,12 +132,18 @@ describe('AttributeTreeRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeTreeRepo(mockDbServ, null);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
                 value: 'categories/123456',
-                modified_at: 400999999
+                modified_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
             });
 
             expect(mockDbEdgeCollec.updateByExample.mock.calls.length).toBe(1);
@@ -114,7 +155,10 @@ describe('AttributeTreeRepo', () => {
                     _from: 'test_lib/12345',
                     _to: 'categories/123456',
                     attribute: 'test_tree_attr',
-                    modified_at: 400999999
+                    modified_at: 400999999,
+                    version: {
+                        my_tree: 'test_lib/1'
+                    }
                 }
             );
 
@@ -193,11 +237,12 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtils = {
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -301,11 +346,12 @@ describe('AttributeTreeRepo', () => {
                     modified_at: 88888
                 });
 
-            const mockDbUtils = {
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -355,11 +401,12 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtils = {
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 

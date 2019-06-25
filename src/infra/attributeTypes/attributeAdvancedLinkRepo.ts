@@ -8,13 +8,13 @@ import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
-export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttributeTypeRepo {
+export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): IAttributeTypeRepo {
     return {
         async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
-            const edgeData = {
+            const edgeData: any = {
                 _from: library + '/' + recordId,
                 _to: attribute.linked_library + '/' + value.value,
                 attribute: attribute.id,
@@ -22,40 +22,62 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                 created_at: value.created_at
             };
 
+            if (value.version) {
+                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
+            }
+
             let savedEdge;
             savedEdge = await edgeCollec.save(edgeData);
             savedEdge = await edgeCollec.firstExample(savedEdge);
 
-            return {
+            const res: IValue = {
                 id_value: savedEdge._key,
                 value: Number(savedEdge._to.split('/')[1]),
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at
+                created_at: savedEdge.created_at,
+                version: savedEdge.version
             };
+
+            if (value.version) {
+                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
+            }
+
+            return res;
         },
         async updateValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link
-            const edgeData = {
+            const edgeData: any = {
                 _from: library + '/' + recordId,
                 _to: attribute.linked_library + '/' + value.value,
                 attribute: attribute.id,
                 modified_at: value.modified_at
             };
 
+            if (value.version) {
+                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
+            }
+
             let savedEdge;
             await edgeCollec.updateByExample({_key: value.id_value}, edgeData);
             savedEdge = await edgeCollec.firstExample({_key: value.id_value});
 
-            return {
+            const res: IValue = {
                 id_value: savedEdge._key,
                 value: Number(savedEdge._to.split('/')[1]),
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at
+                created_at: savedEdge.created_at,
+                version: savedEdge.version
             };
+
+            if (value.version) {
+                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
+            }
+
+            return res;
         },
         async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);

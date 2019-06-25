@@ -14,10 +14,12 @@ export interface IAttribute {
     actions_list?: IActionsListConfig;
     permissionsConf?: ITreePermissionsConf;
     multipleValues?: boolean;
-    versionsConf?: {
-        versionable: boolean;
-        trees?: string[];
-    };
+    versionsConf?: IAttributeVersionsConf;
+}
+
+export interface IAttributeVersionsConf {
+    versionable: boolean;
+    trees?: string[];
 }
 
 export interface IEmbeddedAttribute {

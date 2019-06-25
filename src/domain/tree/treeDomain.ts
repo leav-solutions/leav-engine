@@ -13,6 +13,7 @@ import {IPermissionDomain} from '../permission/permissionDomain';
 import {IRecordDomain} from '../record/recordDomain';
 
 export interface ITreeDomain {
+    isElementPresent(treeId: string, element: ITreeElement): Promise<boolean>;
     saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, infos: IQueryInfos): Promise<ITree>;
     getTrees(filters?: ITreeFilterOptions): Promise<ITree[]>;
@@ -279,6 +280,9 @@ export default function(
             }
 
             return treeRepo.getLinkedRecords(treeId, attribute, element);
+        },
+        async isElementPresent(treeId: string, element: ITreeElement): Promise<boolean> {
+            return treeRepo.isElementPresent(treeId, element);
         }
     };
 }

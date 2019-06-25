@@ -1,4 +1,5 @@
 import {Database} from 'arangojs';
+import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeAdvancedRepo from './attributeAdvancedRepo';
 
@@ -9,8 +10,18 @@ describe('AttributeStandardRepo', () => {
         multipleValues: true
     };
 
+    const mockDbUtils: Mockify<IDbUtils> = {
+        convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
+        convertValueVersionFromDb: jest.fn().mockReturnValue({
+            my_tree: {
+                id: 1,
+                library: 'test_lib'
+            }
+        })
+    };
+
     describe('createValue', () => {
-        test('Should create a new standard value', async function() {
+        test('Should create a new advanced value', async function() {
             const createdValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -76,10 +87,98 @@ describe('AttributeStandardRepo', () => {
 
             expect(createdVal).toMatchObject(newValueData);
         });
+
+        test('Should save version on value', async function() {
+            const createdValueData = {
+                _id: 'core_values/987654',
+                _rev: '_WSywvyC--_',
+                _key: 987654,
+                value: 'test_val',
+                version: {
+                    my_tree: 'test_lib/1'
+                }
+            };
+
+            const createdEdgeData = {
+                _id: 'core_edge_values_links/222435651',
+                _rev: '_WSywvyC--_',
+                _from: 'test_lib/12345',
+                _to: 'core_values/987654',
+                _key: 978654321,
+                attribute: 'test_attr',
+                modified_at: 400999999,
+                created_at: 400999999,
+                version: {
+                    my_tree: 'test_lib/1'
+                }
+            };
+
+            const newValueData = {
+                id_value: 987654,
+                value: 'test_val',
+                attribute: 'test_attr',
+                modified_at: 400999999,
+                created_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
+            };
+
+            const mockDbCollec = {
+                save: global.__mockPromise(createdValueData),
+                document: global.__mockPromise(createdValueData)
+            };
+
+            const mockDbEdgeCollec = {
+                save: global.__mockPromise(createdEdgeData),
+                firstExample: global.__mockPromise(createdEdgeData)
+            };
+
+            const mockDb = {
+                collection: jest.fn().mockReturnValue(mockDbCollec),
+                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
+            };
+
+            const mockDbServ = {db: mockDb};
+
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+
+            const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
+                value: 'test val',
+                modified_at: 400999999,
+                created_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
+            });
+
+            expect(mockDbCollec.save.mock.calls.length).toBe(1);
+            expect(mockDbCollec.save).toBeCalledWith({value: 'test val'});
+
+            expect(mockDbEdgeCollec.save.mock.calls.length).toBe(1);
+            expect(mockDbEdgeCollec.save).toBeCalledWith({
+                _from: 'test_lib/12345',
+                _to: 'core_values/987654',
+                attribute: 'test_attr',
+                modified_at: 400999999,
+                created_at: 400999999,
+                version: {
+                    my_tree: 'test_lib/1'
+                }
+            });
+
+            expect(createdVal).toMatchObject(newValueData);
+        });
     });
 
     describe('updateValue', () => {
-        test('Should update a standard value', async function() {
+        test('Should update an advanced value', async function() {
             const savedValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -145,6 +244,99 @@ describe('AttributeStandardRepo', () => {
                     _to: 'core_values/987654',
                     attribute: 'test_attr',
                     modified_at: 500999999
+                }
+            );
+
+            expect(savedVal).toMatchObject(valueData);
+        });
+
+        test('Should update value version', async function() {
+            const savedValueData = {
+                _id: 'core_values/987654',
+                _rev: '_WSywvyC--_',
+                _key: 987654,
+                value: 'test_val',
+                version: {
+                    my_tree: 'test_lib/1'
+                }
+            };
+
+            const savedEdgeData = {
+                _id: 'core_edge_values_links/222435651',
+                _rev: '_WSywvyC--_',
+                _from: 'test_lib/12345',
+                _to: 'core_values/987654',
+                _key: 978654321,
+                attribute: 'test_attr',
+                modified_at: 400999999,
+                created_at: 400999999,
+                version: {
+                    my_tree: 'test_lib/1'
+                }
+            };
+
+            const valueData = {
+                id_value: 987654,
+                value: 'test_val',
+                attribute: 'test_attr',
+                modified_at: 400999999,
+                created_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
+            };
+
+            const mockDbCollec = {
+                update: global.__mockPromise(savedValueData),
+                document: global.__mockPromise(savedValueData)
+            };
+
+            const mockDbEdgeCollec = {
+                updateByExample: global.__mockPromise(),
+                firstExample: global.__mockPromise(savedEdgeData)
+            };
+
+            const mockDb = {
+                collection: jest.fn().mockReturnValue(mockDbCollec),
+                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
+            };
+
+            const mockDbServ = {db: mockDb};
+
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+
+            const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
+                id_value: 987654,
+                value: 'test val',
+                modified_at: 500999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
+            });
+
+            expect(mockDbCollec.update.mock.calls.length).toBe(1);
+            expect(mockDbCollec.update).toBeCalledWith({_key: 987654}, {value: 'test val'});
+
+            expect(mockDbEdgeCollec.updateByExample.mock.calls.length).toBe(1);
+            expect(mockDbEdgeCollec.updateByExample).toBeCalledWith(
+                {
+                    _from: 'test_lib/12345',
+                    _to: 'core_values/987654'
+                },
+                {
+                    _from: 'test_lib/12345',
+                    _to: 'core_values/987654',
+                    attribute: 'test_attr',
+                    modified_at: 500999999,
+                    version: {
+                        my_tree: 'test_lib/1'
+                    }
                 }
             );
 
@@ -368,6 +560,33 @@ describe('AttributeStandardRepo', () => {
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival);
 
             expect(values.length).toBe(1);
+            expect(values[0]).toMatchObject({
+                id_value: 987654,
+                value: 'test val',
+                attribute: 'test_attr',
+                modified_at: 99999,
+                created_at: 99999
+            });
+        });
+
+        test('Should return values for version', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, {
+                version: {my_tree: {id: 123456, library: 'my_lib'}}
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
                 id_value: 987654,
                 value: 'test val',
