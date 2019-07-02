@@ -525,7 +525,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
@@ -547,10 +547,10 @@ describe('AttributeStandardRepo', () => {
         test('Should return only first value if not multiple values', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+                execute: global.__mockPromise([traversalRes[0]])
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
@@ -560,6 +560,7 @@ describe('AttributeStandardRepo', () => {
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival);
 
             expect(values.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT 1');
             expect(values[0]).toMatchObject({
                 id_value: 987654,
                 value: 'test val',
@@ -569,31 +570,23 @@ describe('AttributeStandardRepo', () => {
             });
         });
 
-        test('Should return values for version', async function() {
+        test('Should return all values if forced', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
 
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, {
-                version: {my_tree: {id: 123456, library: 'my_lib'}}
-            });
+            const mockAttrNotMultival = {
+                ...mockAttribute,
+                multipleValues: false
+            };
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival, true);
 
             expect(values.length).toBe(2);
-            expect(values[0]).toMatchObject({
-                id_value: 987654,
-                value: 'test val',
-                attribute: 'test_attr',
-                modified_at: 99999,
-                created_at: 99999
-            });
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
         });
     });
 

@@ -1,6 +1,6 @@
-import {IAttribute, AttributeTypes} from '../../_types/attribute';
-import {IValue} from '../../_types/value';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import {IValue, IValuesOptions} from '../../_types/value';
 
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
@@ -50,7 +50,13 @@ export interface IAttributeTypeRepo {
      * @param attribute
      * @return Array<{}>    Return an empty array if no value found
      */
-    getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]>;
+    getValues(
+        library: string,
+        recordId: number,
+        attribute: IAttribute,
+        forceGetAllValues?: boolean,
+        options?: IValuesOptions
+    ): Promise<IValue[]>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value

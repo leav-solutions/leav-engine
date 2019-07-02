@@ -1,7 +1,7 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IValue} from '_types/value';
+import {IValue, IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {mockAttrAdv, mockAttrAdvVersionable} from '../../__tests__/mocks/attribute';
@@ -650,6 +650,321 @@ describe('ValueDomain', () => {
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
             expect(resValue).toMatchObject(valueData);
+        });
+
+        test('Should return versioned values', async function() {
+            const valueData = [
+                {
+                    value: 'val1',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 7, library: 'my_lib'}
+                    }
+                },
+                {
+                    value: 'val2',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 8, library: 'my_lib'}
+                    }
+                }
+            ];
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getElementAncestors: global.__mockPromise([
+                    {
+                        record: {
+                            id: 9,
+                            library: 'my_lib'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 8,
+                            library: 'my_lib'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 7,
+                            library: 'my_lib'
+                        }
+                    }
+                ])
+            };
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain,
+                null,
+                null,
+                mockTreeRepo as ITreeRepo
+            );
+
+            const version: IValueVersion = {
+                my_tree: {id: 9, library: 'my_lib'}
+            };
+
+            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+            expect(mockValRepo.getValues.mock.calls[0][4]).toMatchObject({version});
+            expect(mockTreeRepo.getElementAncestors).toBeCalledTimes(1);
+            expect(resValue.length).toBe(1);
+            expect(resValue[0].value).toBe('val2');
+            expect(resValue[0].version).toMatchObject({
+                my_tree: {id: 8, library: 'my_lib'}
+            });
+        });
+
+        test('Should return versioned values with multiple trees', async function() {
+            const valueData = [
+                {
+                    value: 'val1',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 9, library: 'my_lib'},
+                        other_tree: {id: 1, library: 'my_lib'},
+                        third_tree: {id: 88, library: 'my_lib'}
+                    }
+                },
+                {
+                    value: 'val2',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 8, library: 'my_lib'},
+                        other_tree: {id: 2, library: 'my_lib'},
+                        third_tree: {id: 99, library: 'my_lib'}
+                    }
+                },
+                {
+                    value: 'val3',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 8, library: 'my_lib'},
+                        other_tree: {id: 2, library: 'my_lib'},
+                        third_tree: {id: 99, library: 'my_lib'}
+                    }
+                },
+                {
+                    value: 'val4',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 9, library: 'my_lib'},
+                        other_tree: {id: 2, library: 'my_lib'},
+                        third_tree: {id: 88, library: 'my_lib'}
+                    }
+                }
+            ];
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getElementAncestors: jest.fn().mockImplementation((treeId, elem) => {
+                    let parents;
+                    switch (treeId) {
+                        case 'my_tree':
+                            parents = [
+                                {
+                                    record: {
+                                        id: 9,
+                                        library: 'my_lib'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 8,
+                                        library: 'my_lib'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 7,
+                                        library: 'my_lib'
+                                    }
+                                }
+                            ];
+                            break;
+                        case 'other_tree':
+                            parents = [
+                                {
+                                    record: {
+                                        id: 3,
+                                        library: 'my_lib'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 2,
+                                        library: 'my_lib'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 1,
+                                        library: 'my_lib'
+                                    }
+                                }
+                            ];
+                            break;
+                        case 'third_tree':
+                            parents = [
+                                {
+                                    record: {
+                                        id: 99,
+                                        library: 'my_lib'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 88,
+                                        library: 'my_lib'
+                                    }
+                                }
+                            ];
+                            break;
+                    }
+
+                    return Promise.resolve(parents);
+                })
+            };
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrAdvVersionableWithThreeTrees = {
+                ...mockAttrAdvVersionable,
+                versionsConf: {
+                    versionable: true,
+                    trees: ['my_tree', 'other_tree', 'third_tree']
+                }
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableWithThreeTrees)
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain,
+                null,
+                null,
+                mockTreeRepo as ITreeRepo
+            );
+
+            const version: IValueVersion = {
+                my_tree: {id: 9, library: 'my_lib'},
+                other_tree: {id: 3, library: 'my_lib'},
+                third_tree: {id: 99, library: 'my_lib'}
+            };
+
+            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+            expect(mockValRepo.getValues.mock.calls[0][4]).toMatchObject({version});
+            expect(mockTreeRepo.getElementAncestors).toBeCalledTimes(3);
+            expect(resValue.length).toBe(2);
+            expect(resValue[0].value).toBe('val2');
+            expect(resValue[1].value).toBe('val3');
+            expect(resValue[0].version).toMatchObject({
+                my_tree: {id: 8, library: 'my_lib'},
+                other_tree: {id: 2, library: 'my_lib'},
+                third_tree: {id: 99, library: 'my_lib'}
+            });
+        });
+
+        test('Should return empty array if no values matching version', async function() {
+            const valueData = [
+                {
+                    value: 'val1',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 99, library: 'my_lib'}
+                    }
+                },
+                {
+                    value: 'val2',
+                    attribute: 'test_attr',
+                    version: {
+                        my_tree: {id: 88, library: 'my_lib'}
+                    }
+                }
+            ];
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getElementAncestors: global.__mockPromise([
+                    {
+                        record: {
+                            id: 9,
+                            library: 'my_lib'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 8,
+                            library: 'my_lib'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 7,
+                            library: 'my_lib'
+                        }
+                    }
+                ])
+            };
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain,
+                null,
+                null,
+                mockTreeRepo as ITreeRepo
+            );
+
+            const version: IValueVersion = {
+                my_tree: {id: 9, library: 'my_lib'}
+            };
+
+            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+
+            expect(resValue.length).toBe(0);
         });
 
         test('Should throw if unknown attribute', async function() {

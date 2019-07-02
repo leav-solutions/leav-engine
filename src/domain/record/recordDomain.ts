@@ -3,7 +3,7 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import * as moment from 'moment';
-import {IValue} from '_types/value';
+import {IValue, IValuesOptions, IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {RecordPermissionsActions} from '../../_types/permissions';
@@ -55,7 +55,12 @@ export interface IRecordDomain {
      * @param filters Filters to apply on records selection
      * @param fields Fields to retrieve on each records
      */
-    find(library: string, filters?: IRecordFiltersLight, fields?: IQueryField[]): Promise<IRecord[]>;
+    find(
+        library: string,
+        filters?: IRecordFiltersLight,
+        fields?: IQueryField[],
+        options?: IValuesOptions
+    ): Promise<IRecord[]>;
 
     /**
      * Add values for requested fields on the record. Values can be of any types here.
@@ -64,7 +69,12 @@ export interface IRecordDomain {
      * @param record
      * @param queryFields Fields to retrieve
      */
-    populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord>;
+    populateRecordFields(
+        library: string,
+        record: IRecord,
+        queryFields: IQueryField[],
+        options?: IValuesOptions
+    ): Promise<IRecord>;
 
     /**
      * Return record identity values
@@ -212,7 +222,12 @@ export default function(
 
             return recordRepo.deleteRecord(library, id);
         },
-        async find(library: string, filters?: IRecordFiltersLight, fields?: IQueryField[]): Promise<IRecord[]> {
+        async find(
+            library: string,
+            filters?: IRecordFiltersLight,
+            fields?: IQueryField[],
+            version?: IValueVersion
+        ): Promise<IRecord[]> {
             const fullFilters: IRecordFilterOption[] = [];
 
             // Hydrate filters with attribute properties and cast filters values if needed
@@ -233,12 +248,19 @@ export default function(
 
             // Populate records with requested fields
             if (typeof fields !== 'undefined' && fields.length) {
-                records = await Promise.all(records.map(record => this.populateRecordFields(library, record, fields)));
+                records = await Promise.all(
+                    records.map(record => this.populateRecordFields(library, record, fields, version))
+                );
             }
 
             return records;
         },
-        async populateRecordFields(library: string, record: IRecord, queryFields: IQueryField[]): Promise<IRecord> {
+        async populateRecordFields(
+            library: string,
+            record: IRecord,
+            queryFields: IQueryField[],
+            options?: IValuesOptions
+        ): Promise<IRecord> {
             const fieldsProps: {[attrName: string]: IAttribute} = {};
 
             for (const field of queryFields) {
@@ -263,11 +285,13 @@ export default function(
                 ) {
                     // We haven't retrieved this value yet (straight from query for example),
                     // so let's get it from DB now
+                    const fieldOpts = {...options, ...field.arguments};
                     const fieldValues = await valueRepo.getValues(
                         library,
                         record.id,
                         fieldsProps[field.name],
-                        field.arguments
+                        false,
+                        fieldOpts
                     );
 
                     if (fieldValues !== null && fieldValues.length) {

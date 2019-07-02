@@ -3,7 +3,7 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {AttributeTypes} from '../../_types/attribute';
-import {mockAttrAdvMultiVal, mockAttrId} from '../../__tests__/mocks/attribute';
+import {mockAttrAdvMultiVal, mockAttrAdvVersionable, mockAttrId} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -122,7 +122,7 @@ describe('RecordDomain', () => {
     });
 
     describe('populateRecordFields', () => {
-        test.only('Should populate record fields', async function() {
+        test('Should populate record fields', async function() {
             const record = {
                 id: 222536283,
                 created_at: 1520931427,
@@ -188,7 +188,8 @@ describe('RecordDomain', () => {
                     type: AttributeTypes.ADVANCED,
                     actions_list: {getValue: [{name: 'formatAttr'}]}
                 },
-                []
+                false,
+                {}
             );
             expect(findRes).toEqual({
                 ...record,
@@ -360,7 +361,8 @@ describe('RecordDomain', () => {
                     id: 'linkedElem',
                     type: AttributeTypes.SIMPLE_LINK
                 },
-                []
+                false,
+                {}
             );
             expect(findRes).toEqual({
                 ...record,
@@ -374,6 +376,72 @@ describe('RecordDomain', () => {
                             value: 'MyLabel',
                             raw_value: 'MyLabel'
                         }
+                    }
+                }
+            });
+        });
+
+        test('Should populate record fields with version', async function() {
+            const record = {
+                id: 222536283,
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                ean: '9876543219999999',
+                visual_simple: '222713677'
+            };
+
+            const recRepo: Mockify<IRecordRepo> = {};
+
+            const mockValRepo: Mockify<IValueRepo> = {
+                getValues: global.__mockPromise([
+                    {
+                        id: '222827150',
+                        value: 'MyLabel',
+                        version: {
+                            my_tree: {library: 'my_lib', id: 123456789}
+                        }
+                    }
+                ])
+            };
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                mockAttributeDomain as IAttributeDomain,
+                mockValRepo as IValueRepo,
+                null
+            );
+
+            const findRes = await recDomain.populateRecordFields(
+                'test_lib',
+                record,
+                [
+                    {
+                        name: 'label',
+                        fields: [
+                            {name: 'id_value', fields: [], arguments: []},
+                            {name: 'value', fields: [], arguments: []},
+                            {name: 'version', fields: [], arguments: []}
+                        ],
+                        arguments: []
+                    }
+                ],
+                {
+                    my_tree: {library: 'my_lib', id: 123456789}
+                }
+            );
+
+            expect(findRes).toEqual({
+                ...record,
+                label: {
+                    id: '222827150',
+                    value: 'MyLabel',
+                    raw_value: 'MyLabel',
+                    version: {
+                        my_tree: {library: 'my_lib', id: 123456789}
                     }
                 }
             });

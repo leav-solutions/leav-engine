@@ -118,13 +118,13 @@ export default function(
                     }
 
                     extend type Query {
-                        ${libQueryName}(filters: [${libTypeName}Filter]): [${libTypeName}!]
+                        ${libQueryName}(filters: [${libTypeName}Filter], version: ValueVersionInput): [${libTypeName}!]
                     }
                 `;
 
                 baseSchema.resolvers.Query[libQueryName] = async (
                     parent,
-                    {filters},
+                    {filters, version},
                     context,
                     info
                 ): Promise<IRecord[]> => {
@@ -140,7 +140,9 @@ export default function(
                         filters = {};
                     }
 
-                    return recordDomain.find(lib.id, filters, queryFields);
+                    const formattedVersion = typeof version !== 'undefined' ? {[version.name]: version.value} : {};
+
+                    return recordDomain.find(lib.id, filters, queryFields, {version: formattedVersion});
                 };
                 baseSchema.resolvers[libTypeName] = {
                     library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null),

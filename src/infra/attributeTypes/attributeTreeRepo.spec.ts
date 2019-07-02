@@ -327,12 +327,12 @@ describe('AttributeTreeRepo', () => {
             }
         ];
 
-        const mockDbServ = {
-            db: new Database(),
-            execute: global.__mockPromise(traversalRes)
-        };
-
         test('Should return linked tree element', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
             const mockCleanupRes = jest
                 .fn()
                 .mockReturnValueOnce({
@@ -390,6 +390,11 @@ describe('AttributeTreeRepo', () => {
         });
 
         test('Should return only first linked tree element if not multiple values', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([traversalRes[0]])
+            };
+
             const mockAttributeNotMultiVal = {
                 ...mockAttribute,
                 multipleValues: false
@@ -411,6 +416,7 @@ describe('AttributeTreeRepo', () => {
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 
             expect(values.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT 1');
             expect(values[0]).toMatchObject({
                 id_value: 112233,
                 value: {
@@ -424,6 +430,35 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 99999,
                 created_at: 99999
             });
+        });
+
+        test('Should return all values if forced', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+            const mockAttributeNotMultiVal = {
+                ...mockAttribute,
+                multipleValues: false
+            };
+
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: 123456,
+                created_at: 88888,
+                modified_at: 88888
+            });
+
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
+                cleanup: mockCleanupRes
+            };
+
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal, true);
+
+            expect(values.length).toBe(2);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
         });
     });
 });

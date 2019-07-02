@@ -21,13 +21,25 @@ Object {
 }
 `;
 
+exports[`AttributeTreeRepo getValues Should return all values if forced 1`] = `
+"
+                FOR linkedRecord, edge
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                
+                RETURN {linkedRecord, edge}
+            "
+`;
+
 exports[`AttributeTreeRepo getValues Should return linked tree element 1`] = `
 "
-            FOR linkedRecord, edge
-            IN 1 OUTBOUND @value0
-            @@value1
-            FILTER edge.attribute == @value2
-            RETURN {linkedRecord, edge}
+                FOR linkedRecord, edge
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                
+                RETURN {linkedRecord, edge}
             "
 `;
 

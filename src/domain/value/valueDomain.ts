@@ -1,13 +1,15 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
+import {isEqual} from 'lodash';
 import * as moment from 'moment';
+import {ITreeNode} from '_types/tree';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IValue} from '../../_types/value';
+import {IValue, IValuesOptions} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
@@ -15,7 +17,7 @@ import {IAttributePermissionDomain} from '../permission/attributePermissionDomai
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 
 export interface IValueDomain {
-    getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]>;
+    getValues(library: string, recordId: number, attribute: string, options?: IValuesOptions): Promise<IValue[]>;
     saveValue(library: string, recordId: number, attribute: string, value: IValue, infos: IQueryInfos): Promise<IValue>;
     deleteValue(
         library: string,
@@ -24,6 +26,12 @@ export interface IValueDomain {
         value: IValue,
         infos: IQueryInfos
     ): Promise<IValue>;
+}
+
+interface IFindValueTree {
+    name: string;
+    currentIndex: number;
+    elements: ITreeNode[];
 }
 
 export default function(
@@ -63,19 +71,118 @@ export default function(
         return badElements;
     };
 
+    /**
+     * Get maching values for given version
+     *
+     * @param version
+     * @param values
+     */
+    const _getValuesForVersion = (version, values): IValue[] => {
+        return values.filter(v => isEqual(v.version, version));
+    };
+
+    /**
+     * Find closest values matching given versions trees.
+     * We start from leaves of each tree and get up on each tree consecutively until we find a value with version
+     * matcing our version
+     *
+     * Example:
+     *      Tree A:                             Tree B:
+     *          ├── A                                ├── 1
+     *              └── B                                └── 2
+     *                  └── C                                └── 3
+     *      Value stored on version B|2
+     * Lookup order:
+     *      C|3
+     *      B|3
+     *      A|3
+     *      C|2
+     *      B|2   <--- Value found => we return this value
+     *
+     * @param trees
+     * @param values
+     */
+    const _findValue = (trees: IFindValueTree[], values: IValue[]): IValue[] => {
+        // Extract version from all trees at their current state
+        const version = trees.reduce((vers, t) => {
+            const {library: elemLibrary, id: elemId} = t.elements[t.currentIndex].record;
+            vers[t.name] = {library: elemLibrary, id: elemId};
+
+            return vers;
+        }, {});
+
+        const matchingValues = _getValuesForVersion(version, values);
+        // Yay we found a value! Just return it
+        if (matchingValues.length) {
+            return matchingValues;
+        }
+
+        // We run through each tree to determine what version we're checking next:
+        //      On the first tree having a parent, we go one level up and don't look further
+        //      If we reach a tree root, we start over from the bottom.
+        //      If we reach all trees roots, it means we're done and didn't find anything
+        let indexMoved = false;
+        for (const [i, tree] of trees.entries()) {
+            // Element has parent, go up
+            if (tree.currentIndex < tree.elements.length - 1) {
+                trees[i].currentIndex++;
+                indexMoved = true;
+                break; // Don't look on the other trees, only one movement at a time
+            } else {
+                // No more parents, go back down
+                trees[i].currentIndex = 0;
+            }
+        }
+
+        // We changed an index somewhere so we need to keep looking with this new position
+        if (indexMoved) {
+            return _findValue(trees, values);
+        }
+
+        // Nothing found :(
+        return [];
+    };
+
     return {
-        async getValues(library: string, recordId: number, attribute: string, options?: any): Promise<IValue[]> {
+        async getValues(
+            library: string,
+            recordId: number,
+            attribute: string,
+            options?: IValuesOptions
+        ): Promise<IValue[]> {
             // Get library
             const lib = await libraryDomain.getLibraries({id: library});
 
-            // Check if exists and can delete
+            // Check if exists
             if (!lib.length) {
                 throw new ValidationError({id: 'Unknown library'});
             }
 
             const attr = await attributeDomain.getAttributeProperties(attribute);
 
-            return valueRepo.getValues(library, recordId, attr);
+            if (!attr.versionsConf || !attr.versionsConf.versionable) {
+                return valueRepo.getValues(library, recordId, attr, false, options);
+            } else {
+                // Get all values, no matter the version.
+                const allValues: IValue[] = await valueRepo.getValues(library, recordId, attr, true, options);
+
+                // Get trees ancestors
+                const trees: IFindValueTree[] = await Promise.all(
+                    attr.versionsConf.trees.map(
+                        async (treeName: string): Promise<IFindValueTree> => {
+                            const ancestors = await treeRepo.getElementAncestors(treeName, options.version[treeName]);
+                            return {
+                                name: treeName,
+                                currentIndex: 0,
+                                elements: ancestors
+                            };
+                        }
+                    )
+                );
+
+                // Retrieve appropriate value among all values
+                return _findValue(trees, allValues);
+            }
         },
         async saveValue(
             library: string,

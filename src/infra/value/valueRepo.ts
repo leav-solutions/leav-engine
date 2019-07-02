@@ -1,11 +1,5 @@
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
-import {IRecord, IRecordFilterOption} from '_types/record';
-import {aql} from 'arangojs';
-import {UserError} from 'graphql-errors';
-import {IAttributeRepo} from '../attribute/attributeRepo';
 import {IAttribute} from '_types/attribute';
-import {IValue} from '_types/value';
+import {IValue, IValuesOptions} from '_types/value';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 
 export interface IValueRepo {
@@ -49,7 +43,13 @@ export interface IValueRepo {
      * @param attribute
      * @return Array<{}>    Return an empty array if no value found
      */
-    getValues(library: string, recordId: number, attribute: IAttribute, options?: any): Promise<IValue[]>;
+    getValues(
+        library: string,
+        recordId: number,
+        attribute: IAttribute,
+        forceGetAllValues?: boolean,
+        options?: IValuesOptions
+    ): Promise<IValue[]>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value
@@ -78,9 +78,15 @@ export default function(attributeTypesRepo: IAttributeTypesRepo | null = null): 
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.deleteValue(library, recordId, attribute, value);
         },
-        getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+        getValues(
+            library: string,
+            recordId: number,
+            attribute: IAttribute,
+            forceGetAllValues?: boolean,
+            options?: IValuesOptions
+        ): Promise<IValue[]> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValues(library, recordId, attribute);
+            return typeRepo.getValues(library, recordId, attribute, forceGetAllValues, options);
         },
         getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

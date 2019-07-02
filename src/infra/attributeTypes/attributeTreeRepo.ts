@@ -99,22 +99,28 @@ export default function(
                 id_value: value.id_value
             };
         },
-        async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+        async getValues(
+            library: string,
+            recordId: number,
+            attribute: IAttribute,
+            forceGetAllValues: boolean = false
+        ): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
+            const limitOne = aql.literal(!attribute.multipleValues && !forceGetAllValues ? 'LIMIT 1' : '');
+
             const query = aql`
-            FOR linkedRecord, edge
-            IN 1 OUTBOUND ${library + '/' + recordId}
-            ${edgeCollec}
-            FILTER edge.attribute == ${attribute.id}
-            RETURN {linkedRecord, edge}
+                FOR linkedRecord, edge
+                IN 1 OUTBOUND ${library + '/' + recordId}
+                ${edgeCollec}
+                FILTER edge.attribute == ${attribute.id}
+                ${limitOne}
+                RETURN {linkedRecord, edge}
             `;
 
             const treeElements = await dbService.execute(query);
 
-            const elementsToReturn = attribute.multipleValues ? treeElements : treeElements.slice(0, 1);
-
-            return elementsToReturn.map(r => {
+            return treeElements.map(r => {
                 r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
 
                 return {

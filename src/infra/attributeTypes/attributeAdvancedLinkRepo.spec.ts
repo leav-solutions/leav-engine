@@ -379,7 +379,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         test('Should return only first value if not multiple attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+                execute: global.__mockPromise([traversalRes[0]])
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({
@@ -404,6 +404,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT 1');
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
@@ -419,6 +420,43 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 99999,
                 created_at: 99999
             });
+        });
+
+        test('Should return all values if forced', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const mockCleanupRes = jest
+                .fn()
+                .mockReturnValueOnce({
+                    id: 123456,
+                    created_at: 88888,
+                    modified_at: 88888
+                })
+                .mockReturnValueOnce({
+                    id: 123457,
+                    created_at: 77777,
+                    modified_at: 77777
+                });
+
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
+                cleanup: mockCleanupRes
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+
+            const mockAttrNotMultival = {
+                ...mockAttribute,
+                multipleValues: false
+            };
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival, true);
+
+            expect(values.length).toBe(2);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
         });
     });
 });
