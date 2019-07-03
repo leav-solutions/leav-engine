@@ -118,7 +118,10 @@ export default function(
                     }
 
                     extend type Query {
-                        ${libQueryName}(filters: [${libTypeName}Filter], version: ValueVersionInput): [${libTypeName}!]
+                        ${libQueryName}(
+                            filters: [${libTypeName}Filter],
+                            version: [ValueVersionInput]
+                        ): [${libTypeName}!]
                     }
                 `;
 
@@ -140,7 +143,13 @@ export default function(
                         filters = {};
                     }
 
-                    const formattedVersion = typeof version !== 'undefined' ? {[version.name]: version.value} : null;
+                    const formattedVersion =
+                        typeof version !== 'undefined'
+                            ? version.reduce((allVers, vers) => {
+                                  allVers[vers.name] = vers.value;
+                                  return allVers;
+                              }, {})
+                            : null;
 
                     return recordDomain.find(lib.id, filters, queryFields, {version: formattedVersion});
                 };
