@@ -81,7 +81,13 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                                 formattedVersion = [];
 
                                 for (const versName of versionsNames) {
-                                    formattedVersion.push({name: versName, value: savedVal.version[versName]});
+                                    formattedVersion.push({
+                                        name: versName,
+                                        value: {
+                                            library: savedVal.version[versName].library,
+                                            id: Number(savedVal.version[versName].id)
+                                        }
+                                    });
                                 }
                             }
 

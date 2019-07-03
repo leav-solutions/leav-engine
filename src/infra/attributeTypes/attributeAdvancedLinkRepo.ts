@@ -1,6 +1,6 @@
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IValue} from '_types/value';
+import {IValue, IValuesOptions} from '_types/value';
 import {IAttribute} from '../../_types/attribute';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -98,20 +98,31 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
             library: string,
             recordId: number,
             attribute: IAttribute,
-            forceGetAllValues: boolean = false
+            forceGetAllValues: boolean = false,
+            options?: IValuesOptions
         ): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const limitOne = aql.literal(!attribute.multipleValues && !forceGetAllValues ? 'LIMIT 1' : '');
-
-            const res = await dbService.execute(aql`
+            const queryParts = [
+                aql`
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
                     FILTER edge.attribute == ${attribute.id}
-                    ${limitOne}
-                    RETURN {linkedRecord, edge}
+                `
+            ];
+
+            if (!forceGetAllValues && typeof options !== 'undefined' && options.version) {
+                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            }
+
+            const limitOne = aql.literal(!attribute.multipleValues && !forceGetAllValues ? 'LIMIT 1' : '');
+            queryParts.push(aql`
+                ${limitOne}
+                RETURN {linkedRecord, edge}
             `);
+            const query = aql.join(queryParts);
+            const res = await dbService.execute(query);
 
             return res.map(r => ({
                 id_value: Number(r.edge._key),

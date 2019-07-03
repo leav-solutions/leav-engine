@@ -1,7 +1,6 @@
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
 import {AttributeTypes} from '../../_types/attribute';
 import {mockAttrAdvMultiVal, mockAttrAdvVersionable, mockAttrId} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
@@ -133,7 +132,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromise([
                     {
                         id: '222827150',
@@ -168,7 +167,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo,
+                mockValDomain as IValueDomain,
                 mockALDomain as IActionsListDomain
             );
 
@@ -180,17 +179,7 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockValRepo.getValues).toBeCalledWith(
-                'test_lib',
-                222536283,
-                {
-                    id: 'label',
-                    type: AttributeTypes.ADVANCED,
-                    actions_list: {getValue: [{name: 'formatAttr'}]}
-                },
-                false,
-                {}
-            );
+            expect(mockValDomain.getValues).toBeCalledWith('test_lib', 222536283, 'label', {});
             expect(findRes).toEqual({
                 ...record,
                 label: {
@@ -212,7 +201,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromise([
                     {
                         id: '1',
@@ -240,7 +229,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo,
+                mockValDomain as IValueDomain,
                 mockALDomain as IActionsListDomain
             );
 
@@ -280,7 +269,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValDomain: Mockify<IValueDomain> = {
                 getValues: jest
                     .fn()
                     .mockReturnValueOnce([
@@ -325,7 +314,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo
+                mockValDomain as IValueDomain
             );
 
             const findRes = await recDomain.populateRecordFields('test_lib', record, [
@@ -354,16 +343,7 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockValRepo.getValues).toBeCalledWith(
-                'test_lib',
-                222536283,
-                {
-                    id: 'linkedElem',
-                    type: AttributeTypes.SIMPLE_LINK
-                },
-                false,
-                {}
-            );
+            expect(mockValDomain.getValues).toBeCalledWith('test_lib', 222536283, 'linkedElem', {});
             expect(findRes).toEqual({
                 ...record,
                 linkedElem: {
@@ -392,7 +372,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromise([
                     {
                         id: '222827150',
@@ -411,7 +391,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo,
+                mockValDomain as IValueDomain,
                 null
             );
 
@@ -495,11 +475,10 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 null,
                 null,
+                mockValDomain as IValueDomain,
                 null,
                 null,
-                null,
-                mockLibDomain as ILibraryDomain,
-                mockValDomain as IValueDomain
+                mockLibDomain as ILibraryDomain
             );
 
             const res = await recDomain.getRecordIdentity(record);
@@ -536,11 +515,10 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 null,
                 null,
+                mockValDomain as IValueDomain,
                 null,
                 null,
-                null,
-                mockLibDomain as ILibraryDomain,
-                mockValDomain as IValueDomain
+                mockLibDomain as ILibraryDomain
             );
 
             const res = await recDomain.getRecordIdentity(record);

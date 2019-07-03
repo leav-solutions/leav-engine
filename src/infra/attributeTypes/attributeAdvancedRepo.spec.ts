@@ -1,6 +1,7 @@
 import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
+import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeAdvancedRepo from './attributeAdvancedRepo';
 
 describe('AttributeStandardRepo', () => {
@@ -568,6 +569,43 @@ describe('AttributeStandardRepo', () => {
                 modified_at: 99999,
                 created_at: 99999
             });
+        });
+
+        test('Should return values filtered by version', async function() {
+            const traversalResWithVers = [
+                {
+                    value: {
+                        _key: 987654,
+                        value: 'test val'
+                    },
+                    edge: {
+                        _from: 'test_lib/123456',
+                        _to: 'core_values/987654',
+                        attribute: 'test_attr',
+                        modified_at: 99999,
+                        created_at: 99999,
+                        version: {
+                            my_tree: 'my_lib/1345'
+                        }
+                    }
+                }
+            ];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalResWithVers)
+            };
+
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttrAdvVersionableSimple, false, {
+                version: {my_tree: {library: 'my_lib', id: 1345}}
+            });
+
+            expect(values).toHaveLength(1);
+            expect(values[0].value).toBe('test val');
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('FILTER edge.version');
         });
 
         test('Should return all values if forced', async function() {

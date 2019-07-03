@@ -27,6 +27,11 @@ export default function(
                         ${Object.values(AttributeFormats).join(' ')}
                     }
 
+                    enum ValueVersionMode {
+                        simple
+                        smart
+                    }
+
                     # Application Attribute
                     type Attribute {
                         id: ID!,
@@ -75,11 +80,13 @@ export default function(
 
                     type valuesVersionsConf {
                         versionable: Boolean!,
+                        mode: ValueVersionMode,
                         trees: [String!]
                     }
 
                     input valuesVersionsConfInput {
                         versionable: Boolean!,
+                        mode: ValueVersionMode,
                         trees: [String!]
                     }
 

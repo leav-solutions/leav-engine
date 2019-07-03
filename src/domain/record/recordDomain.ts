@@ -1,7 +1,6 @@
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
 import * as moment from 'moment';
 import {IValue, IValuesOptions, IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
@@ -87,11 +86,10 @@ export interface IRecordDomain {
 export default function(
     recordRepo: IRecordRepo | null = null,
     attributeDomain: IAttributeDomain | null = null,
-    valueRepo: IValueRepo | null = null,
+    valueDomain: IValueDomain = null,
     actionsListDomain: IActionsListDomain = null,
     recordPermissionDomain: IRecordPermissionDomain = null,
-    libraryDomain: ILibraryDomain = null,
-    valueDomain: IValueDomain = null
+    libraryDomain: ILibraryDomain = null
 ): IRecordDomain {
     /**
      * Recursively populate fields on a link attribute
@@ -286,13 +284,7 @@ export default function(
                     // We haven't retrieved this value yet (straight from query for example),
                     // so let's get it from DB now
                     const fieldOpts = {...options, ...field.arguments};
-                    const fieldValues = await valueRepo.getValues(
-                        library,
-                        record.id,
-                        fieldsProps[field.name],
-                        false,
-                        fieldOpts
-                    );
+                    const fieldValues = await valueDomain.getValues(library, record.id, field.name, fieldOpts);
 
                     if (fieldValues !== null && fieldValues.length) {
                         const values = await Promise.all(

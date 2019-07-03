@@ -17,8 +17,14 @@ export interface IAttribute {
     versionsConf?: IAttributeVersionsConf;
 }
 
+export enum ValueVersionMode {
+    SIMPLE = 'simple',
+    SMART = 'smart'
+}
+
 export interface IAttributeVersionsConf {
     versionable: boolean;
+    mode?: ValueVersionMode;
     trees?: string[];
 }
 

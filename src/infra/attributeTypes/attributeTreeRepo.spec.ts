@@ -2,6 +2,7 @@ import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
+import {mockAttrTreeVersionableSimple} from '../../__tests__/mocks/attribute';
 import {ITreeRepo} from '../tree/treeRepo';
 import attributeTreeRepo from './attributeTreeRepo';
 
@@ -387,6 +388,61 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 99999,
                 created_at: 99999
             });
+        });
+
+        test('Should return linked tree element filtered by version', async function() {
+            const traversalResWithVers = [
+                {
+                    linkedRecord: {
+                        _key: '123456',
+                        _id: 'images/123456',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 88888,
+                        modified_at: 88888
+                    },
+                    edge: {
+                        _key: '112233',
+                        _id: 'core_edge_values_links/112233',
+                        _from: 'ubs/222536283',
+                        _to: 'images/123456',
+                        _rev: '_WgJilsW--_',
+                        attribute: 'test_tree_attr',
+                        modified_at: 99999,
+                        created_at: 99999,
+                        version: {
+                            my_tree: 'my_lib/1345'
+                        }
+                    }
+                }
+            ];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalResWithVers)
+            };
+
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: 123456,
+                created_at: 88888,
+                modified_at: 88888
+            });
+
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
+                cleanup: mockCleanupRes
+            };
+
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttrTreeVersionableSimple, false, {
+                version: {
+                    my_tree: {library: 'my_lib', id: 1345}
+                }
+            });
+
+            expect(values.length).toBe(1);
+            expect(values[0].id_value).toBe(112233);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('FILTER edge.version');
         });
 
         test('Should return only first linked tree element if not multiple values', async function() {

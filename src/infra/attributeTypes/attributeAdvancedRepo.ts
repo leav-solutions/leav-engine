@@ -127,16 +127,25 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
         ): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const limitOne = aql.literal(!attribute.multipleValues && !forceGetAllValues ? 'LIMIT 1' : '');
-
-            const query = aql`
+            const queryParts = [
+                aql`
                 FOR value, edge
-                    IN 1 OUTBOUND ${library + '/' + recordId}
-                    ${edgeCollec}
-                    FILTER edge.attribute == ${attribute.id}
-                    ${limitOne}
-                    RETURN {value, edge}
-            `;
+                IN 1 OUTBOUND ${library + '/' + recordId}
+                ${edgeCollec}
+                FILTER edge.attribute == ${attribute.id}
+                `
+            ];
+
+            if (!forceGetAllValues && typeof options !== 'undefined' && options.version) {
+                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            }
+
+            const limitOne = aql.literal(!attribute.multipleValues && !forceGetAllValues ? 'LIMIT 1' : '');
+            queryParts.push(aql`
+                ${limitOne}
+                RETURN {value, edge}
+            `);
+            const query = aql.join(queryParts);
             const res = await dbService.execute(query);
 
             return res.map(r => ({

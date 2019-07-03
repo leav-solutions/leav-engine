@@ -4,7 +4,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import {IValue, IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
-import {mockAttrAdv, mockAttrAdvVersionable} from '../../__tests__/mocks/attribute';
+import {mockAttrAdv, mockAttrAdvVersionable, mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -652,7 +652,43 @@ describe('ValueDomain', () => {
             expect(resValue).toMatchObject(valueData);
         });
 
-        test('Should return versioned values', async function() {
+        test('Should return versioned values in simple mode', async function() {
+            const version = {my_tree: {library: 'my_lib', id: 12345}};
+            const valueData = {
+                value: 'test val',
+                attribute: 'test_attr',
+                version
+            };
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableSimple)
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain
+            );
+
+            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+            expect(mockValRepo.getValues.mock.calls[0][3]).toBe(false);
+            expect(mockValRepo.getValues.mock.calls[0][4]).toMatchObject({version});
+            expect(resValue).toMatchObject(valueData);
+        });
+
+        test('Should return versioned values in smart mode', async function() {
             const valueData = [
                 {
                     value: 'val1',

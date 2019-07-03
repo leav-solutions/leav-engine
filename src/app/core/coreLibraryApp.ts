@@ -140,7 +140,7 @@ export default function(
                         filters = {};
                     }
 
-                    const formattedVersion = typeof version !== 'undefined' ? {[version.name]: version.value} : {};
+                    const formattedVersion = typeof version !== 'undefined' ? {[version.name]: version.value} : null;
 
                     return recordDomain.find(lib.id, filters, queryFields, {version: formattedVersion});
                 };

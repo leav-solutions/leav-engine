@@ -27,8 +27,9 @@ exports[`AttributeAdvancedLinkRepo getValues Should return all values if forced 
                     IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge.attribute == @value2
-                    
-                    RETURN {linkedRecord, edge}
+                 
+                
+                RETURN {linkedRecord, edge}
             "
 `;
 
@@ -38,8 +39,9 @@ exports[`AttributeAdvancedLinkRepo getValues Should return only first value if n
                     IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge.attribute == @value2
-                    LIMIT 1
-                    RETURN {linkedRecord, edge}
+                 
+                LIMIT 1
+                RETURN {linkedRecord, edge}
             "
 `;
 
@@ -51,14 +53,27 @@ Object {
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo getValues Should return values filtered by version 1`] = `
+"
+                FOR linkedRecord, edge
+                    IN 1 OUTBOUND @value0
+                    @@value1
+                    FILTER edge.attribute == @value2
+                 FILTER edge.version == @value3 
+                
+                RETURN {linkedRecord, edge}
+            "
+`;
+
 exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced link attribute 1`] = `
 "
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge.attribute == @value2
-                    
-                    RETURN {linkedRecord, edge}
+                 
+                
+                RETURN {linkedRecord, edge}
             "
 `;
 

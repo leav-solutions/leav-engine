@@ -376,6 +376,61 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
+        test('Should return values filtered by version', async function() {
+            const traversalResWithVers = [
+                {
+                    linkedRecord: {
+                        _key: '123457',
+                        _id: 'images/123457',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 77777,
+                        modified_at: 77777
+                    },
+                    edge: {
+                        _key: '112233',
+                        _id: 'core_edge_values_links/112234',
+                        _from: 'ubs/222536283',
+                        _to: 'images/123457',
+                        _rev: '_WgJilsW--_',
+                        attribute: 'test_adv_link_attr',
+                        modified_at: 66666,
+                        created_at: 66666,
+                        version: {
+                            my_tree: 'my_lib/1345'
+                        }
+                    }
+                }
+            ];
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalResWithVers)
+            };
+
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: 123456,
+                created_at: 88888,
+                modified_at: 88888
+            });
+
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
+                cleanup: mockCleanupRes
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, false, {
+                version: {
+                    my_tree: {library: 'my_lib', id: 1345}
+                }
+            });
+
+            expect(values.length).toBe(1);
+            expect(values[0].id_value).toBe(112233);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('FILTER edge.version');
+        });
+
         test('Should return only first value if not multiple attribute', async function() {
             const mockDbServ = {
                 db: new Database(),

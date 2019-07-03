@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import {ITreeNode} from '_types/tree';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {AttributeTypes} from '../../_types/attribute';
+import {AttributeTypes, ValueVersionMode} from '../../_types/attribute';
 import {AttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IValue, IValuesOptions} from '../../_types/value';
@@ -72,7 +72,7 @@ export default function(
     };
 
     /**
-     * Get maching values for given version
+     * Get matching values for given version
      *
      * @param version
      * @param values
@@ -106,7 +106,7 @@ export default function(
         // Extract version from all trees at their current state
         const version = trees.reduce((vers, t) => {
             const {library: elemLibrary, id: elemId} = t.elements[t.currentIndex].record;
-            vers[t.name] = {library: elemLibrary, id: elemId};
+            vers[t.name] = {library: elemLibrary, id: Number(elemId)};
 
             return vers;
         }, {});
@@ -160,7 +160,11 @@ export default function(
 
             const attr = await attributeDomain.getAttributeProperties(attribute);
 
-            if (!attr.versionsConf || !attr.versionsConf.versionable) {
+            if (
+                !attr.versionsConf ||
+                !attr.versionsConf.versionable ||
+                attr.versionsConf.mode === ValueVersionMode.SIMPLE
+            ) {
                 return valueRepo.getValues(library, recordId, attr, false, options);
             } else {
                 // Get all values, no matter the version.

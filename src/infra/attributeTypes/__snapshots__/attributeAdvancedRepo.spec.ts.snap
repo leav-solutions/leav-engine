@@ -18,22 +18,36 @@ Object {
 exports[`AttributeStandardRepo getValues Should return all values if forced 1`] = `
 "
                 FOR value, edge
-                    IN 1 OUTBOUND @value0
-                    @@value1
-                    FILTER edge.attribute == @value2
-                    
-                    RETURN {value, edge}
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                 
+                
+                RETURN {value, edge}
+            "
+`;
+
+exports[`AttributeStandardRepo getValues Should return values filtered by version 1`] = `
+"
+                FOR value, edge
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                 FILTER edge.version == @value3 
+                LIMIT 1
+                RETURN {value, edge}
             "
 `;
 
 exports[`AttributeStandardRepo getValues Should return values for advanced attribute 1`] = `
 "
                 FOR value, edge
-                    IN 1 OUTBOUND @value0
-                    @@value1
-                    FILTER edge.attribute == @value2
-                    
-                    RETURN {value, edge}
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                 
+                
+                RETURN {value, edge}
             "
 `;
 
