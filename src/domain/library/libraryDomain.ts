@@ -65,11 +65,11 @@ export default function(
         async saveLibrary(libData: ILibrary, infos: IQueryInfos): Promise<ILibrary> {
             const dataToSave = {...libData};
             const libs = await libraryRepo.getLibraries({id: dataToSave.id});
-            const newLib = !!libs.length;
+            const existingLib = !!libs.length;
             const errors = {} as any;
 
             // Check permissions
-            const action = newLib ? AdminPermissionsActions.EDIT_LIBRARY : AdminPermissionsActions.CREATE_LIBRARY;
+            const action = existingLib ? AdminPermissionsActions.EDIT_LIBRARY : AdminPermissionsActions.CREATE_LIBRARY;
             const canSaveLibrary = await permissionDomain.getAdminPermission(action, infos.userId);
 
             if (!canSaveLibrary) {
@@ -93,7 +93,7 @@ export default function(
             }
 
             // New library? Link default attributes. Otherwise, save given attributes if any
-            const libAttributes = newLib
+            const libAttributes = existingLib
                 ? typeof dataToSave.attributes !== 'undefined'
                     ? dataToSave.attributes.map(attr => attr.id)
                     : null
@@ -136,7 +136,7 @@ export default function(
                 throw new ValidationError(errors);
             }
 
-            const lib = newLib
+            const lib = existingLib
                 ? await libraryRepo.updateLibrary(dataToSave)
                 : await libraryRepo.createLibrary(dataToSave);
 

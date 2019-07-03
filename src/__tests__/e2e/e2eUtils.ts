@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
+import {AttributeFormats, AttributeTypes, IAttributeVersionsConf} from '_types/attribute';
 import {config} from '../../config';
 
 async function _getAuthToken() {
@@ -38,4 +39,63 @@ export async function makeGraphQlCall(query: string): Promise<any> {
     } catch (e) {
         console.error('GraphQL query error:', e.message, '\n', e.response.data);
     }
+}
+
+export async function gqlSaveLibrary(id: string, label: string, additionalAttributes: string[] = []) {
+    const baseAttributes = ['id', 'modified_by', 'modified_at', 'created_by', 'created_at'];
+    const libAttributes = baseAttributes.concat(additionalAttributes);
+
+    const saveLibRes = await makeGraphQlCall(`mutation {
+        saveLibrary(library: {
+            id: "${id}",
+            label: {fr: "${label}"},
+            attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
+        }) { id }
+    }`);
+
+    await makeGraphQlCall(`mutation { refreshSchema }`);
+
+    return saveLibRes.data.data;
+}
+
+export async function gqlSaveAttribute(
+    id: string,
+    type: AttributeTypes,
+    label: string,
+    format?: AttributeFormats,
+    versionsConf?: IAttributeVersionsConf
+) {
+    const query = `mutation {
+        saveAttribute(
+            attribute: {
+                id: "${id}",
+                type: ${type},
+                format: ${format || 'text'},
+                label: {fr: "${label}"},
+                versionsConf: ${
+                    versionsConf
+                        ? `{versionable: ${
+                              versionsConf.versionable ? 'true' : 'false'
+                          }, trees: [${versionsConf.trees.map(t => `"${t}"`).join(', ')}]}`
+                        : 'null'
+                }
+            }
+        ) { id }
+    }`;
+    const saveAttrRes = await makeGraphQlCall(query);
+    await makeGraphQlCall(`mutation { refreshSchema }`);
+
+    return saveAttrRes.data.data;
+}
+
+export async function gqlSaveTree(id: string, label: string, libraries: string[]) {
+    const saveTreeRes = await makeGraphQlCall(`mutation {
+        saveTree(
+            tree: {id: "${id}", label: {fr: "${label}"}, libraries: [${libraries.map(l => `"${l}"`).join(', ')}]}
+        ) {
+            id
+        }
+    }`);
+
+    return saveTreeRes.data.data;
 }

@@ -1,9 +1,11 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
+import {mockAttrAdvVersionable, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import attributeDomain from './attributeDomain';
@@ -307,6 +309,36 @@ describe('attributeDomain', () => {
                 multipleValues: true
             };
             await expect(attrDomain.saveAttribute(attrToSaveSimpleLink, queryInfos)).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if using invalid tree on versions conf', async function() {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: jest.fn().mockImplementation(filters => {
+                    return Promise.resolve(filters.type === AttributeTypes.TREE ? [mockAttrTree] : []);
+                }),
+                createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
+                updateAttribute: jest.fn()
+            };
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise([])
+            };
+
+            const attrDomain = attributeDomain(
+                mockAttrRepo as IAttributeRepo,
+                mockALDomain as IActionsListDomain,
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils,
+                mockTreeRepo as ITreeRepo
+            );
+
+            attrDomain.getAttributes = global.__mockPromise([{}]);
+
+            await expect(attrDomain.saveAttribute(mockAttrAdvVersionable, queryInfos)).rejects.toThrow(ValidationError);
         });
     });
 

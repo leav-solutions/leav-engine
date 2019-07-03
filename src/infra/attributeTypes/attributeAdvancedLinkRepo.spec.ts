@@ -1,4 +1,5 @@
 import {Database} from 'arangojs';
+import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
@@ -19,7 +20,13 @@ describe('AttributeAdvancedLinkRepo', () => {
         _key: 978654321,
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
-        created_at: 400999999
+        created_at: 400999999,
+        version: {
+            my_tree: {
+                id: 1,
+                library: 'test_lib'
+            }
+        }
     };
 
     const valueData: IValue = {
@@ -28,6 +35,16 @@ describe('AttributeAdvancedLinkRepo', () => {
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
         created_at: 400999999
+    };
+
+    const mockDbUtils: Mockify<IDbUtils> = {
+        convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
+        convertValueVersionFromDb: jest.fn().mockReturnValue({
+            my_tree: {
+                id: 1,
+                library: 'test_lib'
+            }
+        })
     };
 
     describe('createValue', () => {
@@ -43,12 +60,18 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 987654,
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
             });
 
             expect(mockDbEdgeCollec.save.mock.calls.length).toBe(1);
@@ -57,7 +80,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 _to: 'test_linked_lib/987654',
                 attribute: 'test_adv_link_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                version: {
+                    my_tree: 'test_lib/1'
+                }
             });
 
             expect(createdVal).toMatchObject({
@@ -65,7 +91,13 @@ describe('AttributeAdvancedLinkRepo', () => {
                 value: 987654,
                 attribute: 'test_adv_link_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
             });
         });
     });
@@ -83,12 +115,18 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
                 value: 987654,
-                modified_at: 400999999
+                modified_at: 400999999,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
             });
 
             expect(mockDbEdgeCollec.updateByExample.mock.calls.length).toBe(1);
@@ -100,11 +138,22 @@ describe('AttributeAdvancedLinkRepo', () => {
                     _from: 'test_lib/12345',
                     _to: 'test_linked_lib/987654',
                     attribute: 'test_adv_link_attr',
-                    modified_at: 400999999
+                    modified_at: 400999999,
+                    version: {
+                        my_tree: 'test_lib/1'
+                    }
                 }
             );
 
-            expect(savedVal).toMatchObject(valueData);
+            expect(savedVal).toMatchObject({
+                ...valueData,
+                version: {
+                    my_tree: {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                }
+            });
         });
     });
 
@@ -179,11 +228,12 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtils = {
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -286,11 +336,12 @@ describe('AttributeAdvancedLinkRepo', () => {
                     modified_at: 77777
                 });
 
-            const mockDbUtils = {
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
@@ -325,10 +376,34 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should return only first value if not multiple attribute', async function() {
+        test('Should return values filtered by version', async function() {
+            const traversalResWithVers = [
+                {
+                    linkedRecord: {
+                        _key: '123457',
+                        _id: 'images/123457',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 77777,
+                        modified_at: 77777
+                    },
+                    edge: {
+                        _key: '112233',
+                        _id: 'core_edge_values_links/112234',
+                        _from: 'ubs/222536283',
+                        _to: 'images/123457',
+                        _rev: '_WgJilsW--_',
+                        attribute: 'test_adv_link_attr',
+                        modified_at: 66666,
+                        created_at: 66666,
+                        version: {
+                            my_tree: 'my_lib/1345'
+                        }
+                    }
+                }
+            ];
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+                execute: global.__mockPromise(traversalResWithVers)
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({
@@ -337,7 +412,39 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtils = {
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
+                cleanup: mockCleanupRes
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, false, {
+                version: {
+                    my_tree: {library: 'my_lib', id: 1345}
+                }
+            });
+
+            expect(values.length).toBe(1);
+            expect(values[0].id_value).toBe(112233);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('FILTER edge.version');
+        });
+
+        test('Should return only first value if not multiple attribute', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([traversalRes[0]])
+            };
+
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: 123456,
+                created_at: 88888,
+                modified_at: 88888
+            });
+
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
                 cleanup: mockCleanupRes
             };
 
@@ -346,12 +453,13 @@ describe('AttributeAdvancedLinkRepo', () => {
                 multipleValues: false
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT 1');
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
@@ -367,6 +475,43 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 99999,
                 created_at: 99999
             });
+        });
+
+        test('Should return all values if forced', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const mockCleanupRes = jest
+                .fn()
+                .mockReturnValueOnce({
+                    id: 123456,
+                    created_at: 88888,
+                    modified_at: 88888
+                })
+                .mockReturnValueOnce({
+                    id: 123457,
+                    created_at: 77777,
+                    modified_at: 77777
+                });
+
+            const mockDbUtilsWithCleanup = {
+                ...mockDbUtils,
+                cleanup: mockCleanupRes
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+
+            const mockAttrNotMultival = {
+                ...mockAttribute,
+                multipleValues: false
+            };
+
+            const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival, true);
+
+            expect(values.length).toBe(2);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
         });
     });
 });

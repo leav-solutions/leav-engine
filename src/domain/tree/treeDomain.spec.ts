@@ -474,4 +474,18 @@ describe('treeDomain', () => {
             const rej = await expect(domain.getTreeContent('test_tree')).rejects.toThrow(ValidationError);
         });
     });
+
+    describe('isElementPresent', () => {
+        test('Should return if element is present or not', async () => {
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                isElementPresent: global.__mockPromise(true)
+            };
+
+            const domain = treeDomain(mockTreeRepo as ITreeRepo, mockLibDomain as ILibraryDomain, null, null);
+
+            const isPresent = await domain.isElementPresent('test_tree', {id: 12345, library: 'test_lib'});
+
+            expect(isPresent).toBe(true);
+        });
+    });
 });

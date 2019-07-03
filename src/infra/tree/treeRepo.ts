@@ -244,11 +244,12 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
             const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
             const elemId = `${element.library}/${element.id}`;
 
-            const res = await dbService.execute(aql`
+            const query = aql`
                 FOR e IN ${collec}
                     FILTER e._to == ${elemId}
                     RETURN e
-            `);
+            `;
+            const res = await dbService.execute(query);
 
             return !!res.length;
         },

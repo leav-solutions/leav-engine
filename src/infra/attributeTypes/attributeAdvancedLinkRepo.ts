@@ -1,6 +1,6 @@
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IValue} from '_types/value';
+import {IValue, IValuesOptions} from '_types/value';
 import {IAttribute} from '../../_types/attribute';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -8,13 +8,13 @@ import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
-export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttributeTypeRepo {
+export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): IAttributeTypeRepo {
     return {
         async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
-            const edgeData = {
+            const edgeData: any = {
                 _from: library + '/' + recordId,
                 _to: attribute.linked_library + '/' + value.value,
                 attribute: attribute.id,
@@ -22,40 +22,62 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                 created_at: value.created_at
             };
 
+            if (value.version) {
+                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
+            }
+
             let savedEdge;
             savedEdge = await edgeCollec.save(edgeData);
             savedEdge = await edgeCollec.firstExample(savedEdge);
 
-            return {
+            const res: IValue = {
                 id_value: savedEdge._key,
                 value: Number(savedEdge._to.split('/')[1]),
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at
+                created_at: savedEdge.created_at,
+                version: savedEdge.version
             };
+
+            if (value.version) {
+                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
+            }
+
+            return res;
         },
         async updateValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link
-            const edgeData = {
+            const edgeData: any = {
                 _from: library + '/' + recordId,
                 _to: attribute.linked_library + '/' + value.value,
                 attribute: attribute.id,
                 modified_at: value.modified_at
             };
 
+            if (value.version) {
+                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
+            }
+
             let savedEdge;
             await edgeCollec.updateByExample({_key: value.id_value}, edgeData);
             savedEdge = await edgeCollec.firstExample({_key: value.id_value});
 
-            return {
+            const res: IValue = {
                 id_value: savedEdge._key,
                 value: Number(savedEdge._to.split('/')[1]),
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at
+                created_at: savedEdge.created_at,
+                version: savedEdge.version
             };
+
+            if (value.version) {
+                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
+            }
+
+            return res;
         },
         async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -72,19 +94,37 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils): IAttrib
                 id_value: value.id_value
             };
         },
-        async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+        async getValues(
+            library: string,
+            recordId: number,
+            attribute: IAttribute,
+            forceGetAllValues: boolean = false,
+            options?: IValuesOptions
+        ): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-            const res = await dbService.execute(aql`
+
+            const queryParts = [
+                aql`
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
                     FILTER edge.attribute == ${attribute.id}
-                    RETURN {linkedRecord, edge}
+                `
+            ];
+
+            if (!forceGetAllValues && typeof options !== 'undefined' && options.version) {
+                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            }
+
+            const limitOne = aql.literal(!attribute.multipleValues && !forceGetAllValues ? 'LIMIT 1' : '');
+            queryParts.push(aql`
+                ${limitOne}
+                RETURN {linkedRecord, edge}
             `);
+            const query = aql.join(queryParts);
+            const res = await dbService.execute(query);
 
-            const valuesToReturn = attribute.multipleValues ? res : res.slice(0, 1);
-
-            return valuesToReturn.map(r => ({
+            return res.map(r => ({
                 id_value: Number(r.edge._key),
                 value: dbUtils.cleanup(r.linkedRecord),
                 attribute: r.edge.attribute,

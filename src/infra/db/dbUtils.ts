@@ -5,6 +5,7 @@ import * as winston from 'winston';
 import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
 import {ITree, ITreeFilterOptions} from '_types/tree';
+import {IDbValueVersion, IValueVersion} from '_types/value';
 import {IDbService} from './dbService';
 
 const COLLECTION_NAME = 'core_db_migrations';
@@ -19,6 +20,8 @@ export interface IDbUtils {
         filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
         strictFilters?: boolean
     ): Promise<T[]>;
+    convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
+    convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
 }
 
 export interface IMigration {
@@ -219,6 +222,27 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
             const res = await dbService.execute({query, bindVars});
 
             return res.map(ret.cleanup);
+        },
+        convertValueVersionToDb(version: IValueVersion): IDbValueVersion {
+            return Object.keys(version).reduce((allVers, treeName) => {
+                const {library, id} = version[treeName];
+
+                allVers[treeName] = `${library}/${id}`;
+
+                return allVers;
+            }, {});
+        },
+        convertValueVersionFromDb(version: IDbValueVersion): IValueVersion {
+            return Object.keys(version).reduce((allVers, treeName) => {
+                const [library, id] = version[treeName].split('/');
+
+                allVers[treeName] = {
+                    library,
+                    id: Number(id)
+                };
+
+                return allVers;
+            }, {});
         }
     };
 

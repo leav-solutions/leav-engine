@@ -14,6 +14,18 @@ export interface IAttribute {
     actions_list?: IActionsListConfig;
     permissionsConf?: ITreePermissionsConf;
     multipleValues?: boolean;
+    versionsConf?: IAttributeVersionsConf;
+}
+
+export enum ValueVersionMode {
+    SIMPLE = 'simple',
+    SMART = 'smart'
+}
+
+export interface IAttributeVersionsConf {
+    versionable: boolean;
+    mode?: ValueVersionMode;
+    trees?: string[];
 }
 
 export interface IEmbeddedAttribute {

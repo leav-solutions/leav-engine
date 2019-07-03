@@ -1,9 +1,8 @@
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
 import {AttributeTypes} from '../../_types/attribute';
-import {mockAttrAdvMultiVal, mockAttrId} from '../../__tests__/mocks/attribute';
+import {mockAttrAdvMultiVal, mockAttrAdvVersionable, mockAttrId} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -122,7 +121,7 @@ describe('RecordDomain', () => {
     });
 
     describe('populateRecordFields', () => {
-        test.only('Should populate record fields', async function() {
+        test('Should populate record fields', async function() {
             const record = {
                 id: 222536283,
                 created_at: 1520931427,
@@ -133,7 +132,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromise([
                     {
                         id: '222827150',
@@ -168,7 +167,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo,
+                mockValDomain as IValueDomain,
                 mockALDomain as IActionsListDomain
             );
 
@@ -180,16 +179,7 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockValRepo.getValues).toBeCalledWith(
-                'test_lib',
-                222536283,
-                {
-                    id: 'label',
-                    type: AttributeTypes.ADVANCED,
-                    actions_list: {getValue: [{name: 'formatAttr'}]}
-                },
-                []
-            );
+            expect(mockValDomain.getValues).toBeCalledWith('test_lib', 222536283, 'label', {});
             expect(findRes).toEqual({
                 ...record,
                 label: {
@@ -211,7 +201,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromise([
                     {
                         id: '1',
@@ -239,7 +229,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo,
+                mockValDomain as IValueDomain,
                 mockALDomain as IActionsListDomain
             );
 
@@ -279,7 +269,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {};
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValDomain: Mockify<IValueDomain> = {
                 getValues: jest
                     .fn()
                     .mockReturnValueOnce([
@@ -324,7 +314,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 recRepo as IRecordRepo,
                 mockAttributeDomain as IAttributeDomain,
-                mockValRepo as IValueRepo
+                mockValDomain as IValueDomain
             );
 
             const findRes = await recDomain.populateRecordFields('test_lib', record, [
@@ -353,15 +343,7 @@ describe('RecordDomain', () => {
                 }
             ]);
 
-            expect(mockValRepo.getValues).toBeCalledWith(
-                'test_lib',
-                222536283,
-                {
-                    id: 'linkedElem',
-                    type: AttributeTypes.SIMPLE_LINK
-                },
-                []
-            );
+            expect(mockValDomain.getValues).toBeCalledWith('test_lib', 222536283, 'linkedElem', {});
             expect(findRes).toEqual({
                 ...record,
                 linkedElem: {
@@ -374,6 +356,72 @@ describe('RecordDomain', () => {
                             value: 'MyLabel',
                             raw_value: 'MyLabel'
                         }
+                    }
+                }
+            });
+        });
+
+        test('Should populate record fields with version', async function() {
+            const record = {
+                id: 222536283,
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                ean: '9876543219999999',
+                visual_simple: '222713677'
+            };
+
+            const recRepo: Mockify<IRecordRepo> = {};
+
+            const mockValDomain: Mockify<IValueDomain> = {
+                getValues: global.__mockPromise([
+                    {
+                        id: '222827150',
+                        value: 'MyLabel',
+                        version: {
+                            my_tree: {library: 'my_lib', id: 123456789}
+                        }
+                    }
+                ])
+            };
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const recDomain = recordDomain(
+                recRepo as IRecordRepo,
+                mockAttributeDomain as IAttributeDomain,
+                mockValDomain as IValueDomain,
+                null
+            );
+
+            const findRes = await recDomain.populateRecordFields(
+                'test_lib',
+                record,
+                [
+                    {
+                        name: 'label',
+                        fields: [
+                            {name: 'id_value', fields: [], arguments: []},
+                            {name: 'value', fields: [], arguments: []},
+                            {name: 'version', fields: [], arguments: []}
+                        ],
+                        arguments: []
+                    }
+                ],
+                {
+                    my_tree: {library: 'my_lib', id: 123456789}
+                }
+            );
+
+            expect(findRes).toEqual({
+                ...record,
+                label: {
+                    id: '222827150',
+                    value: 'MyLabel',
+                    raw_value: 'MyLabel',
+                    version: {
+                        my_tree: {library: 'my_lib', id: 123456789}
                     }
                 }
             });
@@ -427,11 +475,10 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 null,
                 null,
+                mockValDomain as IValueDomain,
                 null,
                 null,
-                null,
-                mockLibDomain as ILibraryDomain,
-                mockValDomain as IValueDomain
+                mockLibDomain as ILibraryDomain
             );
 
             const res = await recDomain.getRecordIdentity(record);
@@ -468,11 +515,10 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain(
                 null,
                 null,
+                mockValDomain as IValueDomain,
                 null,
                 null,
-                null,
-                mockLibDomain as ILibraryDomain,
-                mockValDomain as IValueDomain
+                mockLibDomain as ILibraryDomain
             );
 
             const res = await recDomain.getRecordIdentity(record);
