@@ -43,6 +43,7 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                                 multipleValues: attrData.multipleValues,
                                 versionsConf: {
                                     versionable: attrData.versionsConf ? attrData.versionsConf.versionable : false,
+                                    mode: attrData.versionsConf ? attrData.versionsConf.mode : null,
                                     trees: attrData.versionsConf ? attrData.versionsConf.trees : null
                                 }
                             }

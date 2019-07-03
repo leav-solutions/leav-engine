@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_ATTRIBUTES
@@ -21,6 +21,7 @@ export interface GET_ATTRIBUTES_attributes_permissionsConf {
 
 export interface GET_ATTRIBUTES_attributes_versionsConf {
     versionable: boolean;
+    mode: ValueVersionMode | null;
     trees: string[] | null;
 }
 

@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AttributeType, AttributeFormat, PermissionsRelation} from './globalTypes';
+import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: AttributeDetails
@@ -21,6 +21,7 @@ export interface AttributeDetails_permissionsConf {
 
 export interface AttributeDetails_versionsConf {
     versionable: boolean;
+    mode: ValueVersionMode | null;
     trees: string[] | null;
 }
 

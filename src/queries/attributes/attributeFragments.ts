@@ -19,6 +19,7 @@ export const attributeDetailsFragment = gql`
         }
         versionsConf {
             versionable
+            mode
             trees
         }
     }

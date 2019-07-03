@@ -2,7 +2,7 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import {mockAttrSimple} from '../../../__mocks__/attributes';
 import EditAttributeForm from './EditAttributeForm';
 
 jest.mock('../../../utils/utils', () => ({
@@ -12,13 +12,7 @@ jest.mock('../../../utils/utils', () => ({
 
 describe('EditAttributeForm', () => {
     const attribute: GET_ATTRIBUTES_attributes = {
-        id: 'attr1',
-        type: AttributeType.simple,
-        format: AttributeFormat.text,
-        system: false,
-        label: {fr: 'Test 1', en: null},
-        linked_tree: null,
-        permissionsConf: null
+        ...mockAttrSimple
     };
     const onSubmit = jest.fn();
     const onPermsSettingsSubmit = jest.fn();
@@ -29,6 +23,7 @@ describe('EditAttributeForm', () => {
                 attribute={attribute}
                 onSubmit={onSubmit}
                 onPermsSettingsSubmit={onPermsSettingsSubmit}
+                readOnly={false}
             />
         );
 
@@ -37,13 +32,18 @@ describe('EditAttributeForm', () => {
                 .find('Header')
                 .shallow()
                 .text()
-        ).toBe('Test 1');
+        ).toBe('Mon Attribut');
         expect(comp.find('FormInput[name="id"]').props().disabled).toBe(true);
     });
 
     test('Render form for new attribute', async () => {
         const comp = shallow(
-            <EditAttributeForm attribute={null} onSubmit={onSubmit} onPermsSettingsSubmit={onPermsSettingsSubmit} />
+            <EditAttributeForm
+                attribute={null}
+                onSubmit={onSubmit}
+                onPermsSettingsSubmit={onPermsSettingsSubmit}
+                readOnly={false}
+            />
         );
 
         expect(
@@ -57,7 +57,12 @@ describe('EditAttributeForm', () => {
 
     test.only('Autofill ID with label on new attribute', async () => {
         const comp = renderer.create(
-            <EditAttributeForm attribute={null} onSubmit={onSubmit} onPermsSettingsSubmit={onPermsSettingsSubmit} />
+            <EditAttributeForm
+                attribute={null}
+                onSubmit={onSubmit}
+                onPermsSettingsSubmit={onPermsSettingsSubmit}
+                readOnly={false}
+            />
         );
 
         renderer.act(() => {
@@ -77,6 +82,7 @@ describe('EditAttributeForm', () => {
                 attribute={attribute}
                 onSubmit={onSubmit}
                 onPermsSettingsSubmit={onPermsSettingsSubmit}
+                readOnly={false}
             />
         );
         comp.find('Form').simulate('submit');

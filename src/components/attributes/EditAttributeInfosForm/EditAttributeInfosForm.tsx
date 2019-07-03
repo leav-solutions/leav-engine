@@ -3,7 +3,7 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
 import {formatIDString} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types//errors';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 import TreesSelector from '../../trees/TreesSelector';
@@ -37,6 +37,7 @@ function EditAttributeInfosForm({
         multipleValues: false,
         versionsConf: {
             versionable: false,
+            mode: ValueVersionMode.smart,
             trees: []
         }
     };
@@ -162,7 +163,7 @@ function EditAttributeInfosForm({
                 {isVersionable && (
                     <Form.Group grouped>
                         <label>{t('attributes.values_versions')}</label>
-                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multipleValues : ''}>
+                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
                             <Form.Checkbox
                                 label={t('attributes.versionable')}
                                 disabled={formValues.system || readOnly}
@@ -171,6 +172,30 @@ function EditAttributeInfosForm({
                                 name="versionsConf/versionable"
                                 onChange={_handleChange}
                                 checked={!!formValues.versionsConf && formValues.versionsConf.versionable}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                            <Form.Select
+                                label={t('attributes.versions_mode')}
+                                disabled={formValues.system || readOnly}
+                                width="4"
+                                name="versionsConf/mode"
+                                onChange={_handleChange}
+                                options={[
+                                    {
+                                        text: t('attributes.versions_mode_simple'),
+                                        value: ValueVersionMode.simple
+                                    },
+                                    {
+                                        text: t('attributes.versions_mode_smart'),
+                                        value: ValueVersionMode.smart
+                                    }
+                                ]}
+                                value={
+                                    !!formValues.versionsConf && formValues.versionsConf.mode
+                                        ? formValues.versionsConf.mode
+                                        : ValueVersionMode.smart
+                                }
                             />
                         </FormFieldWrapper>
                         <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>

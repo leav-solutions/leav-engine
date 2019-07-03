@@ -47,6 +47,9 @@
         "values_versions": "Versions de valeurs",
         "versionable": "Valeurs versionables",
         "versions_trees": "Arbres",
+        "versions_mode": "Mode",
+        "versions_mode_simple": "Simple",
+        "versions_mode_smart": "Intelligent",
         "types": {
             "tree": "Arbre",
             "advanced": "Avancé",

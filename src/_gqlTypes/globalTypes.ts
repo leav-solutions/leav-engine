@@ -79,6 +79,11 @@ export enum PermissionsRelation {
     or = 'or'
 }
 
+export enum ValueVersionMode {
+    simple = 'simple',
+    smart = 'smart'
+}
+
 export interface ActionConfigurationInput {
     name: AvailableActionsName;
     params?: (ActionConfigurationParamInput | null)[] | null;
@@ -190,6 +195,7 @@ export interface TreePermissionsConfInput {
 
 export interface valuesVersionsConfInput {
     versionable: boolean;
+    mode?: ValueVersionMode | null;
     trees?: string[] | null;
 }
 

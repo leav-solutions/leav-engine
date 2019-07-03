@@ -1,5 +1,5 @@
 import {GET_ATTRIBUTES_attributes} from '../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from '../_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, ValueVersionMode} from '../_gqlTypes/globalTypes';
 
 const base: GET_ATTRIBUTES_attributes = {
     id: 'test_attribute',
@@ -13,7 +13,7 @@ const base: GET_ATTRIBUTES_attributes = {
     system: false,
     linked_tree: null,
     permissionsConf: null,
-    versionsConf: {versionable: false, trees: null}
+    versionsConf: {versionable: false, mode: ValueVersionMode.smart, trees: null}
 };
 
 export const mockAttrSimple = {...base, id: 'simple_attribute'};
