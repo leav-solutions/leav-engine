@@ -40,7 +40,12 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                                 },
                                 type: attrData.type,
                                 format: attrData.format,
-                                multipleValues: attrData.multipleValues
+                                multipleValues: attrData.multipleValues,
+                                versionsConf: {
+                                    versionable: attrData.versionsConf ? attrData.versionsConf.versionable : false,
+                                    mode: attrData.versionsConf ? attrData.versionsConf.mode : null,
+                                    trees: attrData.versionsConf ? attrData.versionsConf.trees : null
+                                }
                             }
                         },
                         refetchQueries: [

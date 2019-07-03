@@ -17,5 +17,10 @@ export const attributeDetailsFragment = gql`
             }
             relation
         }
+        versionsConf {
+            versionable
+            mode
+            trees
+        }
     }
 `;

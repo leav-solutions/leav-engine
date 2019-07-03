@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_LIBRARY_ATTRIBUTES
@@ -19,6 +19,12 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissionsConf 
     relation: PermissionsRelation;
 }
 
+export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_versionsConf {
+    versionable: boolean;
+    mode: ValueVersionMode | null;
+    trees: string[] | null;
+}
+
 export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes {
     id: string;
     type: AttributeType;
@@ -28,6 +34,7 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes {
     linked_tree: string | null;
     multipleValues: boolean;
     permissionsConf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissionsConf | null;
+    versionsConf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_versionsConf | null;
 }
 
 export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary {

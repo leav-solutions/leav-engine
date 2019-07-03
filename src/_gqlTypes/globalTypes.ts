@@ -79,6 +79,11 @@ export enum PermissionsRelation {
     or = 'or'
 }
 
+export enum ValueVersionMode {
+    simple = 'simple',
+    smart = 'smart'
+}
+
 export interface ActionConfigurationInput {
     name: AvailableActionsName;
     params?: (ActionConfigurationParamInput | null)[] | null;
@@ -106,6 +111,7 @@ export interface AttributeInput {
     actions_list?: ActionsListConfigurationInput | null;
     permissionsConf?: TreePermissionsConfInput | null;
     multipleValues?: boolean | null;
+    versionsConf?: valuesVersionsConfInput | null;
 }
 
 export interface EmbeddedAttributeInput {
@@ -185,6 +191,12 @@ export interface TreeInput {
 export interface TreePermissionsConfInput {
     permissionTreeAttributes: string[];
     relation: PermissionsRelation;
+}
+
+export interface valuesVersionsConfInput {
+    versionable: boolean;
+    mode?: ValueVersionMode | null;
+    trees?: string[] | null;
 }
 
 //==============================================================

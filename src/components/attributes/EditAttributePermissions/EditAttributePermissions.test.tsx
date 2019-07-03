@@ -4,7 +4,8 @@ import {MockedProvider} from 'react-apollo/test-utils';
 import sleep from 'sleep-promise';
 import EditAttributePermissions from '.';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {AttributeFormat, AttributeType, PermissionsRelation} from '../../../_gqlTypes/globalTypes';
+import {AttributeType, PermissionsRelation} from '../../../_gqlTypes/globalTypes';
+import {mockAttrSimple, mockAttrTree} from '../../../__mocks__/attributes';
 
 describe('EditAttributePermissions', () => {
     const mocks = [
@@ -17,26 +18,30 @@ describe('EditAttributePermissions', () => {
                 data: {
                     attributes: [
                         {
+                            ...mockAttrTree,
                             __typename: 'Attribute',
+                            label: {
+                                fr: 'Attr 1'
+                            },
                             id: 'test_tree_attr',
-                            type: AttributeType.tree,
-                            format: null,
-                            system: false,
-                            label: {fr: 'Test tree', en: null},
                             linked_tree: 'some_tree',
-                            permissionsConf: null,
-                            multipleValues: false
+                            versionsConf: {
+                                ...mockAttrTree.versionsConf,
+                                __typename: 'valuesVersionsConf'
+                            }
                         },
                         {
+                            ...mockAttrTree,
                             __typename: 'Attribute',
+                            label: {
+                                fr: 'Attr 2'
+                            },
                             id: 'other_test_tree_attr',
-                            type: AttributeType.tree,
-                            format: null,
-                            system: false,
-                            label: {fr: 'Test tree 2', en: null},
                             linked_tree: 'some_other_tree',
-                            permissionsConf: null,
-                            multipleValues: false
+                            versionsConf: {
+                                ...mockAttrTree.versionsConf,
+                                __typename: 'valuesVersionsConf'
+                            }
                         }
                     ]
                 }
@@ -46,13 +51,7 @@ describe('EditAttributePermissions', () => {
 
     test('Hide relation if 1 tree selected', async () => {
         const attr = {
-            id: 'attr1',
-            type: AttributeType.simple,
-            format: AttributeFormat.text,
-            system: false,
-            label: {fr: 'Test 1', en: null},
-            linked_tree: null,
-            multipleValues: true,
+            ...mockAttrSimple,
             permissionsConf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and
@@ -73,13 +72,7 @@ describe('EditAttributePermissions', () => {
 
     test('Show relation if more than 1 tree selected', async () => {
         const attr = {
-            id: 'attr1',
-            type: AttributeType.simple,
-            format: AttributeFormat.text,
-            system: false,
-            label: {fr: 'Test 1', en: null},
-            linked_tree: null,
-            multipleValues: true,
+            ...mockAttrSimple,
             permissionsConf: {
                 permissionTreeAttributes: [
                     {id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'},
@@ -103,13 +96,7 @@ describe('EditAttributePermissions', () => {
 
     test('Call submit function on submit', async () => {
         const attr = {
-            id: 'attr1',
-            type: AttributeType.simple,
-            format: AttributeFormat.text,
-            system: false,
-            label: {fr: 'Test 1', en: null},
-            linked_tree: null,
-            multipleValues: true,
+            ...mockAttrSimple,
             permissionsConf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and

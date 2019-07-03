@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES
@@ -19,6 +19,12 @@ export interface GET_LIBRARIES_libraries_attributes_permissionsConf {
     relation: PermissionsRelation;
 }
 
+export interface GET_LIBRARIES_libraries_attributes_versionsConf {
+    versionable: boolean;
+    mode: ValueVersionMode | null;
+    trees: string[] | null;
+}
+
 export interface GET_LIBRARIES_libraries_attributes {
     id: string;
     type: AttributeType;
@@ -28,6 +34,7 @@ export interface GET_LIBRARIES_libraries_attributes {
     linked_tree: string | null;
     multipleValues: boolean;
     permissionsConf: GET_LIBRARIES_libraries_attributes_permissionsConf | null;
+    versionsConf: GET_LIBRARIES_libraries_attributes_versionsConf | null;
 }
 
 export interface GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes {
