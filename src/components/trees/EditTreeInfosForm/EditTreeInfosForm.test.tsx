@@ -1,5 +1,7 @@
 import {shallow} from 'enzyme';
 import React from 'react';
+import {MockedProvider} from 'react-apollo/test-utils';
+import {act, create} from 'react-test-renderer';
 import EditTreeInfosForm from './EditTreeInfosForm';
 
 jest.mock('../../../utils/utils', () => ({
@@ -28,15 +30,21 @@ describe('EditTreeInfosForm', () => {
     });
 
     test('Autofill ID with label on new lib', async () => {
-        const comp = shallow(<EditTreeInfosForm onSubmit={onSubmit} tree={null} readOnly={false} />);
+        const comp = create(
+            <MockedProvider>
+                <EditTreeInfosForm onSubmit={onSubmit} tree={null} readOnly={false} />
+            </MockedProvider>
+        );
 
-        comp.find('FormInput[name="label/fr"]').simulate('change', null, {
-            type: 'text',
-            name: 'label/fr',
-            value: 'labelfr'
+        act(() => {
+            comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {
+                type: 'text',
+                name: 'label/fr',
+                value: 'labelfr'
+            });
         });
 
-        expect(comp.find('FormInput[name="id"]').props().value).toBe('labelfr');
+        expect(comp.root.findByProps({name: 'id'}).props.value).toBe('labelfr');
     });
 
     test('Call submit function on submit', async () => {
