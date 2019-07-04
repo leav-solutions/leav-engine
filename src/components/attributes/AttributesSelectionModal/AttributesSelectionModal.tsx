@@ -30,42 +30,44 @@ class AttributesSelectionModal extends React.Component<IAttributesSelectionProps
         const {t, openModal, selection} = this.props;
         const {pendingSelection} = this.state;
         return (
-            <AttributesQuery query={getAttributesQuery}>
-                {({loading, error, data}) => {
-                    if (loading || !data) {
-                        return <Loading />;
-                    }
-                    if (typeof error !== 'undefined') {
-                        return <p>Error: {error.message}</p>;
-                    }
+            openModal && (
+                <AttributesQuery query={getAttributesQuery}>
+                    {({loading, error, data}) => {
+                        if (loading || !data) {
+                            return <Loading />;
+                        }
+                        if (typeof error !== 'undefined') {
+                            return <p>Error: {error.message}</p>;
+                        }
 
-                    return (
-                        data.attributes && (
-                            <Modal
-                                size="small"
-                                open={openModal}
-                                onClose={this._handleclose}
-                                centered
-                                closeOnDimmerClick
-                                closeOnEscape
-                            >
-                                <Modal.Header>{t('libraries.link_existing_attribute')}</Modal.Header>
-                                <Modal.Content scrolling>
-                                    <AttributesSelectionList
-                                        attributes={data.attributes.filter(a => selection.indexOf(a.id) === -1)}
-                                        selection={pendingSelection}
-                                        toggleSelection={this._toggleSelection}
-                                    />
-                                </Modal.Content>
-                                <Modal.Actions>
-                                    <Button onClick={this._handleclose}>{t('admin.cancel')}</Button>
-                                    <Button onClick={this._handleSubmit}>{t('admin.submit')}</Button>
-                                </Modal.Actions>
-                            </Modal>
-                        )
-                    );
-                }}
-            </AttributesQuery>
+                        return (
+                            data.attributes && (
+                                <Modal
+                                    size="small"
+                                    open={openModal}
+                                    onClose={this._handleclose}
+                                    centered
+                                    closeOnDimmerClick
+                                    closeOnEscape
+                                >
+                                    <Modal.Header>{t('libraries.link_existing_attribute')}</Modal.Header>
+                                    <Modal.Content scrolling>
+                                        <AttributesSelectionList
+                                            attributes={data.attributes.filter(a => selection.indexOf(a.id) === -1)}
+                                            selection={pendingSelection}
+                                            toggleSelection={this._toggleSelection}
+                                        />
+                                    </Modal.Content>
+                                    <Modal.Actions>
+                                        <Button onClick={this._handleclose}>{t('admin.cancel')}</Button>
+                                        <Button onClick={this._handleSubmit}>{t('admin.submit')}</Button>
+                                    </Modal.Actions>
+                                </Modal>
+                            )
+                        );
+                    }}
+                </AttributesQuery>
+            )
         );
     }
 
