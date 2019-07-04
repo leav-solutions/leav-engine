@@ -134,7 +134,7 @@ function EditAttributeInfosForm({
                     <Form.Select
                         label={t('attributes.type')}
                         width="4"
-                        disabled={formValues.system || readOnly}
+                        disabled={existingAttr || formValues.system || readOnly}
                         value={formValues.type}
                         name="type"
                         onChange={_handleChange}
