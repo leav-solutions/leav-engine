@@ -174,44 +174,48 @@ function EditAttributeInfosForm({
                                 checked={!!formValues.versionsConf && formValues.versionsConf.versionable}
                             />
                         </FormFieldWrapper>
-                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
-                            <Form.Select
-                                label={t('attributes.versions_mode')}
-                                disabled={formValues.system || readOnly}
-                                width="4"
-                                name="versionsConf/mode"
-                                onChange={_handleChange}
-                                options={[
-                                    {
-                                        text: t('attributes.versions_mode_simple'),
-                                        value: ValueVersionMode.simple
-                                    },
-                                    {
-                                        text: t('attributes.versions_mode_smart'),
-                                        value: ValueVersionMode.smart
-                                    }
-                                ]}
-                                value={
-                                    !!formValues.versionsConf && formValues.versionsConf.mode
-                                        ? formValues.versionsConf.mode
-                                        : ValueVersionMode.smart
-                                }
-                            />
-                        </FormFieldWrapper>
-                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
-                            <TreesSelector
-                                fluid
-                                selection
-                                width="4"
-                                disabled={formValues.system || readOnly}
-                                label={t('attributes.versions_trees')}
-                                placeholder={t('attributes.versions_trees')}
-                                value={formValues.versionsConf ? formValues.versionsConf.trees || [] : []}
-                                name="versionsConf/trees"
-                                onChange={_handleChange}
-                                filters={{type: [AttributeType.tree]}}
-                            />
-                        </FormFieldWrapper>
+                        {!!formValues.versionsConf && formValues.versionsConf.versionable && (
+                            <React.Fragment>
+                                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                                    <Form.Select
+                                        label={t('attributes.versions_mode')}
+                                        disabled={formValues.system || readOnly}
+                                        width="4"
+                                        name="versionsConf/mode"
+                                        onChange={_handleChange}
+                                        options={[
+                                            {
+                                                text: t('attributes.versions_mode_simple'),
+                                                value: ValueVersionMode.simple
+                                            },
+                                            {
+                                                text: t('attributes.versions_mode_smart'),
+                                                value: ValueVersionMode.smart
+                                            }
+                                        ]}
+                                        value={
+                                            !!formValues.versionsConf && formValues.versionsConf.mode
+                                                ? formValues.versionsConf.mode
+                                                : ValueVersionMode.smart
+                                        }
+                                    />
+                                </FormFieldWrapper>
+                                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                                    <TreesSelector
+                                        fluid
+                                        selection
+                                        width="4"
+                                        disabled={formValues.system || readOnly}
+                                        label={t('attributes.versions_trees')}
+                                        placeholder={t('attributes.versions_trees')}
+                                        value={formValues.versionsConf ? formValues.versionsConf.trees || [] : []}
+                                        name="versionsConf/trees"
+                                        onChange={_handleChange}
+                                        filters={{type: [AttributeType.tree]}}
+                                    />
+                                </FormFieldWrapper>
+                            </React.Fragment>
+                        )}
                     </Form.Group>
                 )}
                 {!readOnly && (
