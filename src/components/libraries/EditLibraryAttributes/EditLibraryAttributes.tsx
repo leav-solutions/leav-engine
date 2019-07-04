@@ -1,10 +1,12 @@
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
+import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {
     SaveLibAttributesMutation,
     saveLibAttributesMutation
 } from '../../../queries/libraries/saveLibAttributesMutation';
+import {getSysTranslationQueryLanguage} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
 import AttributesList from '../../attributes/AttributesList';
@@ -33,17 +35,21 @@ class EditLibraryAttributes extends React.Component<IEditLibraryAttributesProps,
     }
 
     public render() {
-        const {library, readOnly, t} = this.props;
+        const {library, readOnly, t, i18n: i18next} = this.props;
         const {showNewAttrModal, showAddExistingAttrModal} = this.state;
         const onRowClick = () => null;
+        const lang = getSysTranslationQueryLanguage(i18next);
 
         // TODO: put submit button in Modal.Actions (and handle form submission from here)
         return (
             library && (
                 <SaveLibAttributesMutation mutation={saveLibAttributesMutation}>
                     {saveLibAttr => {
-                        const saveAttributes = (attributesToSave: string[]) => {
-                            return saveLibAttr({variables: {libId: library.id, attributes: attributesToSave}});
+                        const saveAttributes = async (attributesToSave: string[]) => {
+                            return saveLibAttr({
+                                variables: {libId: library.id, attributes: attributesToSave},
+                                refetchQueries: [{query: getLibsQuery, variables: {id: library.id, lang}}]
+                            });
                         };
 
                         const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes) => {
