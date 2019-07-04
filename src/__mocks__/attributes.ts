@@ -12,6 +12,7 @@ const base: GET_ATTRIBUTES_attributes = {
     multipleValues: false,
     system: false,
     linked_tree: null,
+    linked_library: null,
     permissionsConf: null,
     versionsConf: {versionable: false, mode: ValueVersionMode.smart, trees: null}
 };

@@ -51,6 +51,8 @@
         "versions_mode": "Mode",
         "versions_mode_simple": "Simple",
         "versions_mode_smart": "Smart",
+        "linked_library": "Linked library",
+        "linked_tree": "Linked tree",
         "types": {
             "tree": "Tree",
             "advanced": "Advanced",

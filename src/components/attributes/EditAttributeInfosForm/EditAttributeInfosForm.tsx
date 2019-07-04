@@ -1,10 +1,11 @@
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
-import {formatIDString} from '../../../utils/utils';
+import {formatIDString, getSysTranslationQueryLanguage} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types//errors';
+import LibrariesSelector from '../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 import TreesSelector from '../../trees/TreesSelector';
 
@@ -33,6 +34,7 @@ function EditAttributeInfosForm({
         type: AttributeType.simple,
         format: AttributeFormat.text,
         linked_tree: null,
+        linked_library: null,
         permissionsConf: null,
         multipleValues: false,
         versionsConf: {
@@ -41,6 +43,8 @@ function EditAttributeInfosForm({
             trees: []
         }
     };
+
+    const userLang = getSysTranslationQueryLanguage(i18next);
 
     const [formValues, setFormValues] = React.useState<GET_ATTRIBUTES_attributes>(
         attribute !== null ? attribute : defaultAttribute
@@ -85,6 +89,7 @@ function EditAttributeInfosForm({
         formValues.type
     );
     const isVersionable = !!formValues.versionsConf && formValues.versionsConf.versionable;
+    const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(formValues.type);
 
     return (
         <React.Fragment>
@@ -157,6 +162,39 @@ function EditAttributeInfosForm({
                         />
                     </FormFieldWrapper>
                 )}
+                {isLinkAttribute && (
+                    <FormFieldWrapper>
+                        <LibrariesSelector
+                            disabled={formValues.system || readOnly}
+                            lang={userLang}
+                            fluid
+                            selection
+                            multiple={false}
+                            label={t('attributes.linked_library')}
+                            placeholder={t('attributes.linked_library')}
+                            width="4"
+                            name="linked_library"
+                            onChange={_handleChange}
+                            value={formValues.linked_library || ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {formValues.type === AttributeType.tree && (
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                        <TreesSelector
+                            fluid
+                            selection
+                            multiple={false}
+                            width="4"
+                            disabled={formValues.system || readOnly}
+                            label={t('attributes.linked_tree')}
+                            placeholder={t('attributes.linked_tree')}
+                            value={formValues.linked_tree || ''}
+                            name="linked_tree"
+                            onChange={_handleChange}
+                        />
+                    </FormFieldWrapper>
+                )}
                 {allowMultipleValues && (
                     <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multipleValues : ''}>
                         <Form.Checkbox
@@ -215,6 +253,7 @@ function EditAttributeInfosForm({
                                         fluid
                                         selection
                                         width="4"
+                                        multiple
                                         disabled={formValues.system || readOnly}
                                         label={t('attributes.versions_trees')}
                                         placeholder={t('attributes.versions_trees')}

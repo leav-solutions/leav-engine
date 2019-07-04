@@ -31,6 +31,7 @@ export interface AttributeDetails {
     format: AttributeFormat | null;
     system: boolean;
     label: any | null;
+    linked_library: string | null;
     linked_tree: string | null;
     multipleValues: boolean;
     permissionsConf: AttributeDetails_permissionsConf | null;

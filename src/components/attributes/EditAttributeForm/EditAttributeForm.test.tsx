@@ -7,7 +7,8 @@ import EditAttributeForm from './EditAttributeForm';
 
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr)
+    localizedLabel: jest.fn().mockImplementation(l => l.fr),
+    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr', 'fr'])
 }));
 
 describe('EditAttributeForm', () => {

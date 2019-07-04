@@ -31,6 +31,7 @@ export interface GET_LIBRARIES_libraries_attributes {
     format: AttributeFormat | null;
     system: boolean;
     label: any | null;
+    linked_library: string | null;
     linked_tree: string | null;
     multipleValues: boolean;
     permissionsConf: GET_LIBRARIES_libraries_attributes_permissionsConf | null;

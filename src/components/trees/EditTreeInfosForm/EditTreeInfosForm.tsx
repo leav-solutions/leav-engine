@@ -4,8 +4,8 @@ import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {formatIDString, getSysTranslationQueryLanguage} from '../../../utils/utils';
 import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import LibrariesSelector from '../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
-import LibrariesSelector from '../LibrariesSelector';
 
 interface IEditTreeInfosFormProps extends WithNamespaces {
     tree: GET_TREES_trees | null;
@@ -80,6 +80,7 @@ class EditTreeInfosForm extends React.Component<IEditTreeInfosFormProps, IEditTr
                         lang={userLang}
                         fluid
                         selection
+                        multiple
                         label={t('trees.libraries')}
                         placeholder={t('trees.libraries')}
                         width="4"

@@ -31,6 +31,7 @@ export interface GET_ATTRIBUTES_attributes {
     format: AttributeFormat | null;
     system: boolean;
     label: any | null;
+    linked_library: string | null;
     linked_tree: string | null;
     multipleValues: boolean;
     permissionsConf: GET_ATTRIBUTES_attributes_permissionsConf | null;

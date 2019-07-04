@@ -19,7 +19,7 @@ function TreesSelectorField({loading, trees, i18n, ...fieldProps}: IAttributesSe
     delete fieldProps.i18nOptions;
     delete fieldProps.reportNS;
 
-    return loading ? <Loading /> : <Form.Dropdown {...fieldProps} search multiple options={options} />;
+    return loading ? <Loading /> : <Form.Dropdown {...fieldProps} search options={options} />;
 }
 
 export default withNamespaces()(TreesSelectorField);

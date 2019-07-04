@@ -7,7 +7,8 @@ import EditAttributeInfosForm from './EditAttributeInfosForm';
 
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr)
+    localizedLabel: jest.fn().mockImplementation(l => l.fr),
+    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr', 'fr'])
 }));
 
 describe('EditAttributeInfosForm', () => {
@@ -18,12 +19,13 @@ describe('EditAttributeInfosForm', () => {
         system: false,
         label: {fr: 'Test 1', en: null},
         linked_tree: null,
+        linked_library: null,
         permissionsConf: null
     };
     const onSubmit = jest.fn();
 
     test('Render form for existing attribute', async () => {
-        const comp = shallow(<EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} />);
+        const comp = shallow(<EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} readOnly={false} />);
 
         expect(
             comp
@@ -35,7 +37,7 @@ describe('EditAttributeInfosForm', () => {
     });
 
     test('Render form for new attribute', async () => {
-        const comp = shallow(<EditAttributeInfosForm attribute={null} onSubmit={onSubmit} />);
+        const comp = shallow(<EditAttributeInfosForm attribute={null} onSubmit={onSubmit} readOnly={false} />);
 
         expect(
             comp
@@ -47,7 +49,7 @@ describe('EditAttributeInfosForm', () => {
     });
 
     test.only('Autofill ID with label on new attribute', async () => {
-        const comp = renderer.create(<EditAttributeInfosForm attribute={null} onSubmit={onSubmit} />);
+        const comp = renderer.create(<EditAttributeInfosForm attribute={null} onSubmit={onSubmit} readOnly={false} />);
 
         renderer.act(() => {
             comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {
@@ -61,7 +63,7 @@ describe('EditAttributeInfosForm', () => {
     });
 
     test('Call submit function on submit', async () => {
-        const comp = shallow(<EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} />);
+        const comp = shallow(<EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} readOnly={false} />);
         comp.find('Form').simulate('submit');
 
         expect(onSubmit).toBeCalled();

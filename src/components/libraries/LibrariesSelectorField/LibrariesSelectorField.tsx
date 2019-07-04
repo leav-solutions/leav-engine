@@ -21,7 +21,7 @@ function LibrariesSelectorField({loading, libraries, i18n, ...fieldProps}: ILibr
     delete fieldProps.i18nOptions;
     delete fieldProps.reportNS;
 
-    return <Form.Dropdown {...fieldProps} search multiple options={options} />;
+    return <Form.Dropdown {...fieldProps} search options={options} />;
 }
 
 LibrariesSelectorField.defaultProps = {

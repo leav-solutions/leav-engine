@@ -50,6 +50,8 @@
         "versions_mode": "Mode",
         "versions_mode_simple": "Simple",
         "versions_mode_smart": "Intelligent",
+        "linked_library": "Bibliothèque liée",
+        "linked_tree": "Arbre lié",
         "types": {
             "tree": "Arbre",
             "advanced": "Avancé",
