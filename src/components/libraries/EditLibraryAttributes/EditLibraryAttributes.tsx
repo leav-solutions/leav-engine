@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
@@ -19,153 +19,120 @@ interface IEditLibraryAttributesProps extends WithNamespaces {
     readOnly: boolean;
 }
 
-interface IEditLibraryAttributesState {
-    showNewAttrModal: boolean;
-    showAddExistingAttrModal: boolean;
-}
+function EditLibraryAttributes({library, readOnly, t, i18n: i18next}: IEditLibraryAttributesProps) {
+    const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
+    const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
+    const onRowClick = () => null;
+    const lang = getSysTranslationQueryLanguage(i18next);
 
-class EditLibraryAttributes extends React.Component<IEditLibraryAttributesProps, IEditLibraryAttributesState> {
-    constructor(props: IEditLibraryAttributesProps) {
-        super(props);
+    const _openNewAttrModal = () => {
+        setShowNewAttrModal(true);
+    };
 
-        this.state = {
-            showNewAttrModal: false,
-            showAddExistingAttrModal: false
-        };
-    }
+    const _closeNewAttrModal = () => {
+        setShowNewAttrModal(false);
+    };
 
-    public render() {
-        const {library, readOnly, t, i18n: i18next} = this.props;
-        const {showNewAttrModal, showAddExistingAttrModal} = this.state;
-        const onRowClick = () => null;
-        const lang = getSysTranslationQueryLanguage(i18next);
+    const _openAddExistingAttrModal = () => {
+        setShowAddExistingAttrModal(true);
+    };
 
-        // TODO: put submit button in Modal.Actions (and handle form submission from here)
-        return (
-            library && (
-                <SaveLibAttributesMutation mutation={saveLibAttributesMutation}>
-                    {saveLibAttr => {
-                        const saveAttributes = async (attributesToSave: string[]) => {
-                            return saveLibAttr({
-                                variables: {libId: library.id, attributes: attributesToSave},
-                                refetchQueries: [{query: getLibsQuery, variables: {id: library.id, lang}}]
-                            });
-                        };
+    const _closeAddExistingAttrModal = () => {
+        setShowAddExistingAttrModal(false);
+    };
+    return (
+        library && (
+            <SaveLibAttributesMutation mutation={saveLibAttributesMutation}>
+                {saveLibAttr => {
+                    const saveAttributes = async (attributesToSave: string[]) => {
+                        return saveLibAttr({
+                            variables: {libId: library.id, attributes: attributesToSave},
+                            refetchQueries: [{query: getLibsQuery, variables: {id: library.id, lang}}]
+                        });
+                    };
 
-                        const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes) => {
-                            if (library === null) {
-                                return;
-                            }
-
-                            const attributesList = library.attributes
-                                ? [...library.attributes.map(a => a.id), newAttr.id]
-                                : [newAttr.id];
-
-                            await saveAttributes(attributesList);
-                            this._closeNewAttrModal();
-                        };
-
-                        const _onClickUnlink = async (attributesList: string[]) => {
-                            return saveAttributes(attributesList);
-                        };
-
-                        const onExistingAttrAdded = async (selection: string[]) => {
-                            const newLibAttributes = library.attributes ? library.attributes.map(a => a.id) : [];
-                            newLibAttributes.push(...selection);
-
-                            await saveAttributes(newLibAttributes);
-                            this._closeAddExistingAttrModal();
+                    const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes) => {
+                        if (library === null) {
                             return;
-                        };
+                        }
 
-                        return (
-                            library && (
-                                <div>
+                        const attributesList = library.attributes
+                            ? [...library.attributes.map(a => a.id), newAttr.id]
+                            : [newAttr.id];
+
+                        await saveAttributes(attributesList);
+                        _closeNewAttrModal();
+                    };
+
+                    const _onClickUnlink = async (attributesList: string[]) => {
+                        return saveAttributes(attributesList);
+                    };
+
+                    const onExistingAttrAdded = async (selection: string[]) => {
+                        const newLibAttributes = library.attributes ? library.attributes.map(a => a.id) : [];
+                        newLibAttributes.push(...selection);
+
+                        await saveAttributes(newLibAttributes);
+                        _closeAddExistingAttrModal();
+                        return;
+                    };
+
+                    return (
+                        library && (
+                            <div>
+                                {!readOnly && (
+                                    <Button icon labelPosition="left" size="medium" onClick={_openNewAttrModal}>
+                                        <Icon name="plus" />
+                                        {t('attributes.new')}
+                                    </Button>
+                                )}
+
+                                {!readOnly && (
+                                    <Button icon labelPosition="left" size="medium" onClick={_openAddExistingAttrModal}>
+                                        <Icon name="plus" />
+                                        {t('libraries.link_existing_attribute')}
+                                    </Button>
+                                )}
+
+                                <AttributesList
+                                    loading={false}
+                                    attributes={library ? library.attributes : []}
+                                    onRowClick={onRowClick}
+                                    withFilters={false}
+                                >
                                     {!readOnly && (
-                                        <Button
-                                            icon
-                                            labelPosition="left"
-                                            size="medium"
-                                            onClick={this._openNewAttrModal}
-                                        >
-                                            <Icon name="plus" />
-                                            {t('attributes.new')}
-                                        </Button>
-                                    )}
-
-                                    {!readOnly && (
-                                        <Button
-                                            icon
-                                            labelPosition="left"
-                                            size="medium"
-                                            onClick={this._openAddExistingAttrModal}
-                                        >
-                                            <Icon name="plus" />
-                                            {t('libraries.link_existing_attribute')}
-                                        </Button>
-                                    )}
-
-                                    <AttributesList
-                                        loading={false}
-                                        attributes={library ? library.attributes : []}
-                                        onRowClick={onRowClick}
-                                        withFilters={false}
-                                    >
-                                        {!readOnly && (
-                                            <UnlinkLibAttribute
-                                                library={library}
-                                                key="unlink_attr_btn"
-                                                onUnlink={_onClickUnlink}
-                                            />
-                                        )}
-                                    </AttributesList>
-
-                                    {!readOnly && (
-                                        <Modal
-                                            size="large"
-                                            open={showNewAttrModal}
-                                            onClose={this._closeNewAttrModal}
-                                            centered
-                                        >
-                                            <Modal.Header>{t('attributes.new')}</Modal.Header>
-                                            <Modal.Content>
-                                                <EditAttribute attributeId={null} afterSubmit={_onNewAttributeSaved} />
-                                            </Modal.Content>
-                                        </Modal>
-                                    )}
-
-                                    {library.attributes && (
-                                        <AttributesSelectionModal
-                                            openModal={showAddExistingAttrModal}
-                                            onClose={this._closeAddExistingAttrModal}
-                                            onSubmit={onExistingAttrAdded}
-                                            selection={library.attributes.map(a => a.id)}
+                                        <UnlinkLibAttribute
+                                            library={library}
+                                            key="unlink_attr_btn"
+                                            onUnlink={_onClickUnlink}
                                         />
                                     )}
-                                </div>
-                            )
-                        );
-                    }}
-                </SaveLibAttributesMutation>
-            )
-        );
-    }
+                                </AttributesList>
 
-    private _openNewAttrModal = () => {
-        this.setState({showNewAttrModal: true});
-    }
+                                {!readOnly && (
+                                    <Modal size="large" open={showNewAttrModal} onClose={_closeNewAttrModal} centered>
+                                        <Modal.Header>{t('attributes.new')}</Modal.Header>
+                                        <Modal.Content>
+                                            <EditAttribute attributeId={null} afterSubmit={_onNewAttributeSaved} />
+                                        </Modal.Content>
+                                    </Modal>
+                                )}
 
-    private _closeNewAttrModal = () => {
-        this.setState({showNewAttrModal: false});
-    }
-
-    private _openAddExistingAttrModal = () => {
-        this.setState({showAddExistingAttrModal: true});
-    }
-
-    private _closeAddExistingAttrModal = () => {
-        this.setState({showAddExistingAttrModal: false});
-    }
+                                {library.attributes && (
+                                    <AttributesSelectionModal
+                                        openModal={showAddExistingAttrModal}
+                                        onClose={_closeAddExistingAttrModal}
+                                        onSubmit={onExistingAttrAdded}
+                                        selection={library.attributes.map(a => a.id)}
+                                    />
+                                )}
+                            </div>
+                        )
+                    );
+                }}
+            </SaveLibAttributesMutation>
+        )
+    );
 }
 
 export default withNamespaces()(EditLibraryAttributes);
