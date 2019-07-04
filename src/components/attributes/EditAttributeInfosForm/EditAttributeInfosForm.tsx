@@ -76,9 +76,15 @@ function EditAttributeInfosForm({
     const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
     const fieldsErrors = errors && errors.type === ErrorTypes.VALIDATION_ERROR ? errors.fields : {};
-    const isVersionable = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
+
+    const allowFormat = [AttributeType.advanced, AttributeType.simple].includes(formValues.type);
+    const allowMultipleValues = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
         formValues.type
     );
+    const allowVersionable = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
+        formValues.type
+    );
+    const isVersionable = !!formValues.versionsConf && formValues.versionsConf.versionable;
 
     return (
         <React.Fragment>
@@ -135,32 +141,36 @@ function EditAttributeInfosForm({
                         })}
                     />
                 </FormFieldWrapper>
-                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.format : ''}>
-                    <Form.Select
-                        label={t('attributes.format')}
-                        disabled={formValues.system || readOnly}
-                        width="4"
-                        value={formValues.format || ''}
-                        name="format"
-                        onChange={_handleChange}
-                        options={Object.keys(AttributeFormat).map(f => ({
-                            text: t('attributes.formats.' + f),
-                            value: f
-                        }))}
-                    />
-                </FormFieldWrapper>
-                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multipleValues : ''}>
-                    <Form.Checkbox
-                        label={t('attributes.allow_multiple_values')}
-                        disabled={formValues.system || readOnly}
-                        width="8"
-                        toggle
-                        name="multipleValues"
-                        onChange={_handleChange}
-                        checked={!!formValues.multipleValues}
-                    />
-                </FormFieldWrapper>
-                {isVersionable && (
+                {allowFormat && (
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.format : ''}>
+                        <Form.Select
+                            label={t('attributes.format')}
+                            disabled={formValues.system || readOnly}
+                            width="4"
+                            value={formValues.format || ''}
+                            name="format"
+                            onChange={_handleChange}
+                            options={Object.keys(AttributeFormat).map(f => ({
+                                text: t('attributes.formats.' + f),
+                                value: f
+                            }))}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {allowMultipleValues && (
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multipleValues : ''}>
+                        <Form.Checkbox
+                            label={t('attributes.allow_multiple_values')}
+                            disabled={formValues.system || readOnly}
+                            width="8"
+                            toggle
+                            name="multipleValues"
+                            onChange={_handleChange}
+                            checked={!!formValues.multipleValues}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {allowVersionable && (
                     <Form.Group grouped>
                         <label>{t('attributes.values_versions')}</label>
                         <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
@@ -171,10 +181,10 @@ function EditAttributeInfosForm({
                                 toggle
                                 name="versionsConf/versionable"
                                 onChange={_handleChange}
-                                checked={!!formValues.versionsConf && formValues.versionsConf.versionable}
+                                checked={isVersionable}
                             />
                         </FormFieldWrapper>
-                        {!!formValues.versionsConf && formValues.versionsConf.versionable && (
+                        {isVersionable && (
                             <React.Fragment>
                                 <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
                                     <Form.Select
