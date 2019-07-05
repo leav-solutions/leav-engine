@@ -13,13 +13,13 @@ export default function(actionsListDomain: IActionsListDomain): IActionsListFunc
     return {
         name: 'validateFormat',
         description: 'Check if value matches attribute format',
-        inputTypes: [
+        input_types: [
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,
             ActionsListIOTypes.BOOLEAN,
             ActionsListIOTypes.OBJECT
         ],
-        outputTypes: [
+        output_types: [
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,
             ActionsListIOTypes.BOOLEAN,

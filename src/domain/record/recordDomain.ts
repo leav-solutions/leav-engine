@@ -310,7 +310,7 @@ export default function(
                             })
                         );
 
-                        record[field.name] = fieldsProps[field.name].multipleValues ? values : values[0];
+                        record[field.name] = fieldsProps[field.name].multiple_values ? values : values[0];
                     }
                 } else if (field.name !== 'id') {
                     // Format attribute field into simple value

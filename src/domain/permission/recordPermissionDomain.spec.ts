@@ -21,7 +21,7 @@ describe('recordPermissionDomain', () => {
 
         const mockLibSimplePerms = {
             system: false,
-            permissionsConf: {
+            permissions_conf: {
                 relation: 'AND',
                 permissionTreeAttributes: ['category']
             }

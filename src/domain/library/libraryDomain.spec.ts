@@ -282,7 +282,10 @@ describe('LibraryDomain', () => {
                     {
                         id: 'test',
                         attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}],
-                        permissionsConf: {permissionTreeAttributes: ['unknownTree'], relation: PermissionsRelations.AND}
+                        permissions_conf: {
+                            permissionTreeAttributes: ['unknownTree'],
+                            relation: PermissionsRelations.AND
+                        }
                     },
                     queryInfos
                 )

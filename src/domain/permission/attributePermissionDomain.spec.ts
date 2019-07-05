@@ -19,7 +19,7 @@ describe('AttributePermissionDomain', () => {
         const mockAttributeDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: global.__mockPromise({
                 id: 'test_attr',
-                permissionsConf: {
+                permissions_conf: {
                     permissionTreeAttributes: ['category'],
                     relation: PermissionsRelations.AND
                 }

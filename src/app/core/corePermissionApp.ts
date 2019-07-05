@@ -72,12 +72,12 @@ export default function(
                         allowed: Boolean
                     }
 
-                    type TreePermissionsConf {
+                    type Treepermissions_conf {
                         permissionTreeAttributes: [Attribute!]!,
                         relation: PermissionsRelation!
                     }
 
-                    input TreePermissionsConfInput {
+                    input Treepermissions_confInput {
                         permissionTreeAttributes: [ID!]!,
                         relation: PermissionsRelation!
                     }
@@ -233,7 +233,7 @@ export default function(
                             return typesMapping[obj.type];
                         }
                     },
-                    TreePermissionsConf: {
+                    Treepermissions_conf: {
                         permissionTreeAttributes(parent) {
                             return parent.permissionTreeAttributes
                                 ? Promise.all(

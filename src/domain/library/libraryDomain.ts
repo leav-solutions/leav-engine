@@ -80,15 +80,15 @@ export default function(
                 throw new ValidationError({id: 'Invalid ID format: ' + dataToSave.id});
             }
 
-            if (dataToSave.permissionsConf) {
+            if (dataToSave.permissions_conf) {
                 const availableTreeAttributes = await attributeDomain.getAttributes();
                 const unknownTreeAttributes = difference(
-                    dataToSave.permissionsConf.permissionTreeAttributes,
+                    dataToSave.permissions_conf.permissionTreeAttributes,
                     availableTreeAttributes.map(treeAttr => treeAttr.id)
                 );
 
                 if (unknownTreeAttributes.length) {
-                    errors.permissionsConf = `Unknown tree attributes: ${unknownTreeAttributes.join(', ')}`;
+                    errors.permissions_conf = `Unknown tree attributes: ${unknownTreeAttributes.join(', ')}`;
                 }
             }
 

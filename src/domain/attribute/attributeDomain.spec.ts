@@ -57,15 +57,15 @@ describe('attributeDomain', () => {
             getAvailableActions: jest.fn().mockReturnValue([
                 {
                     name: 'validateFormat',
-                    outputTypes: ['string']
+                    output_types: ['string']
                 },
                 {
                     name: 'toNumber',
-                    outputTypes: ['number']
+                    output_types: ['number']
                 },
                 {
                     name: 'toJSON',
-                    outputTypes: ['string']
+                    output_types: ['string']
                 }
             ])
         };
@@ -109,7 +109,7 @@ describe('attributeDomain', () => {
             expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.CREATE_ATTRIBUTE);
 
             expect(newAttr).toMatchObject({
-                actions_list: {saveValue: [{isSystem: true, name: 'validateFormat'}]},
+                actions_list: {saveValue: [{is_system: true, name: 'validateFormat'}]},
                 format: 'text',
                 id: 'test',
                 type: 'advanced'
@@ -140,7 +140,7 @@ describe('attributeDomain', () => {
                 {
                     id: 'test',
                     type: AttributeTypes.ADVANCED,
-                    actions_list: {saveValue: [{isSystem: true, name: 'validateFormat'}]}
+                    actions_list: {saveValue: [{is_system: true, name: 'validateFormat'}]}
                 },
                 queryInfos
             );
@@ -177,7 +177,7 @@ describe('attributeDomain', () => {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
                 actions_list: {
-                    saveValue: [{isSystem: true, name: 'validateFormat'}, {isSystem: false, name: 'toNumber'}]
+                    saveValue: [{is_system: true, name: 'validateFormat'}, {is_system: false, name: 'toNumber'}]
                 }
             };
 
@@ -211,7 +211,7 @@ describe('attributeDomain', () => {
             const attrToSave = {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
-                actions_list: {saveValue: [{isSystem: true, name: 'toJSON'}]}
+                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]}
             };
 
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
@@ -240,7 +240,7 @@ describe('attributeDomain', () => {
             const attrToSave = {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
-                actions_list: {saveValue: [{isSystem: true, name: 'toJSON'}]}
+                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]}
             };
 
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
@@ -269,7 +269,7 @@ describe('attributeDomain', () => {
             const attrToSave = {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
-                actions_list: {saveValue: [{isSystem: true, name: 'toJSON'}]}
+                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]}
             };
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(PermissionError);
         });
@@ -298,7 +298,7 @@ describe('attributeDomain', () => {
                 id: 'test',
                 type: AttributeTypes.SIMPLE,
                 format: AttributeFormats.TEXT,
-                multipleValues: true
+                multiple_values: true
             };
             await expect(attrDomain.saveAttribute(attrToSaveSimple, queryInfos)).rejects.toThrow(ValidationError);
 
@@ -306,7 +306,7 @@ describe('attributeDomain', () => {
                 id: 'test',
                 type: AttributeTypes.SIMPLE_LINK,
                 format: AttributeFormats.TEXT,
-                multipleValues: true
+                multiple_values: true
             };
             await expect(attrDomain.saveAttribute(attrToSaveSimpleLink, queryInfos)).rejects.toThrow(ValidationError);
         });

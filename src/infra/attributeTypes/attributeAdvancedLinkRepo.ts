@@ -116,7 +116,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
                 queryParts.push(aql`FILTER edge.version == ${options.version}`);
             }
 
-            const limitOne = aql.literal(!attribute.multipleValues && !forceGetAllValues ? 'LIMIT 1' : '');
+            const limitOne = aql.literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
             queryParts.push(aql`
                 ${limitOne}
                 RETURN {linkedRecord, edge}

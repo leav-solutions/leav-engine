@@ -1,5 +1,5 @@
-import ValidationError from '../../../errors/ValidationError';
 import * as Joi from '@hapi/joi';
+import ValidationError from '../../../errors/ValidationError';
 import {
     ActionsListIOTypes,
     ActionsListValueType,
@@ -12,8 +12,8 @@ export default function(actionsListDomain: IActionsListDomain): IActionsListFunc
     return {
         name: 'validateRegex',
         description: 'Check if value is a string matching given regex',
-        inputTypes: [ActionsListIOTypes.STRING],
-        outputTypes: [ActionsListIOTypes.STRING],
+        input_types: [ActionsListIOTypes.STRING],
+        output_types: [ActionsListIOTypes.STRING],
         params: [{name: 'regex', type: 'string', description: 'Validation regex'}],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): ActionsListValueType => {
             let schema = Joi.string();

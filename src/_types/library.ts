@@ -16,7 +16,7 @@ export interface ILibrary {
     /**
      * Records permissions settings for this library
      */
-    permissionsConf?: ITreePermissionsConf;
+    permissions_conf?: ITreePermissionsConf;
 
     /**
      * Records identity settings for this library

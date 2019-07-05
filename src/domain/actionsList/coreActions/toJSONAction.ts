@@ -9,8 +9,8 @@ export default function(): IActionsListFunction {
     return {
         name: 'toJSON',
         description: 'Convert value to a JSON string',
-        inputTypes: [ActionsListIOTypes.OBJECT],
-        outputTypes: [ActionsListIOTypes.STRING],
+        input_types: [ActionsListIOTypes.OBJECT],
+        output_types: [ActionsListIOTypes.STRING],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
             return JSON.stringify(value);
         }

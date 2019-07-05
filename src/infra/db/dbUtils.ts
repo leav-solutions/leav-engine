@@ -81,7 +81,7 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
 
                 bindVars[`filterValue${index}`] = `${filterVal}`;
             } else {
-                const isBooleanCol = filterKey === 'system' || filterKey === 'multipleValues';
+                const isBooleanCol = filterKey === 'system' || filterKey === 'multiple_values';
 
                 // Filter with a "like" on ID or exact value in other fields
                 query =

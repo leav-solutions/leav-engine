@@ -31,7 +31,7 @@ export default function(
                         system: Boolean,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         attributes: [Attribute!],
-                        permissionsConf: TreePermissionsConf,
+                        permissions_conf: Treepermissions_conf,
                         recordIdentityConf: RecordIdentityConf
                     }
 
@@ -39,7 +39,7 @@ export default function(
                         id: ID!
                         label: SystemTranslationInput,
                         attributes: [ID!],
-                        permissionsConf: TreePermissionsConfInput,
+                        permissions_conf: Treepermissions_confInput,
                         recordIdentityConf: RecordIdentityConfInput
                     }
 

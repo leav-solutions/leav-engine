@@ -72,7 +72,7 @@ export async function gqlSaveAttribute(
                 type: ${type},
                 format: ${format || 'text'},
                 label: {fr: "${label}"},
-                versionsConf: ${
+                versions_conf: ${
                     versionsConf
                         ? `{versionable: ${
                               versionsConf.versionable ? 'true' : 'false'

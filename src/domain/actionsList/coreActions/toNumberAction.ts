@@ -9,8 +9,8 @@ export default function(): IActionsListFunction {
     return {
         name: 'toNumber',
         description: 'Convert value to number',
-        inputTypes: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
-        outputTypes: [ActionsListIOTypes.NUMBER],
+        input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
+        output_types: [ActionsListIOTypes.NUMBER],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): number => {
             return Number(value);
         }

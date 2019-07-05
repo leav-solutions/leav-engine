@@ -43,9 +43,9 @@ export default function(
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttribute],
                         actions_list: ActionsListConfiguration,
-                        permissionsConf: TreePermissionsConf,
-                        multipleValues: Boolean!,
-                        versionsConf: valuesVersionsConf
+                        permissions_conf: Treepermissions_conf,
+                        multiple_values: Boolean!,
+                        versions_conf: valuesversions_conf
                     }
 
                     input AttributeInput {
@@ -57,9 +57,9 @@ export default function(
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttributeInput],
                         actions_list: ActionsListConfigurationInput,
-                        permissionsConf: TreePermissionsConfInput,
-                        multipleValues: Boolean,
-                        versionsConf: valuesVersionsConfInput
+                        permissions_conf: Treepermissions_confInput,
+                        multiple_values: Boolean,
+                        versions_conf: valuesversions_confInput
                     }
 
                     type EmbeddedAttribute {
@@ -78,13 +78,13 @@ export default function(
                         embedded_fields: [EmbeddedAttributeInput]
                     }
 
-                    type valuesVersionsConf {
+                    type valuesversions_conf {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
                         trees: [String!]
                     }
 
-                    input valuesVersionsConfInput {
+                    input valuesversions_confInput {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
                         trees: [String!]
@@ -97,7 +97,7 @@ export default function(
                             format: [AttributeFormat],
                             label: String,
                             system: Boolean,
-                            multipleValues: Boolean,
+                            multiple_values: Boolean,
                             versionable: Boolean
                         ): [Attribute!]
                     }
@@ -164,7 +164,7 @@ export default function(
                 typeToReturn = 'Value';
             }
 
-            if (attribute.multipleValues) {
+            if (attribute.multiple_values) {
                 typeToReturn = `[${typeToReturn}!]`;
             }
 

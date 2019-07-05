@@ -1,0 +1,26 @@
+{
+    "libraries": [
+        {
+            "id": "lib1",
+            "label": {"fr": "Ma biblio"},
+            "attributes": ["attr1", "attr2"]
+        },
+        {
+            "id": "lib2",
+            "label": {"fr": "Ma biblio 2"},
+            "attributes": ["attr1", "attr2"]
+        }
+    ],
+    "attributes": [
+        {
+            "id": "attr1",
+            "type": "simple",
+            "format": "text",
+            "label": {"fr": "Mon attribut"},
+            "multiple_values": false
+        }
+    ],
+    "trees": [],
+    "records": [],
+    "values": []
+}

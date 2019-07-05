@@ -1,6 +1,4 @@
-import {description} from '@hapi/joi';
 import {IAttribute} from './attribute';
-import libraryDomain from 'domain/library/libraryDomain';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',
@@ -37,14 +35,14 @@ export interface IActionsListParams {
 export interface IActionsListFunction {
     name: string;
     description: string;
-    inputTypes: ActionsListIOTypes[];
-    outputTypes: ActionsListIOTypes[];
+    input_types: ActionsListIOTypes[];
+    output_types: ActionsListIOTypes[];
     params?: Array<{name: string; type: string; description: string}>;
     action: (value: ActionsListValueType, params: IActionsListParams, ctx: IActionsListContext) => ActionsListValueType;
 }
 
 export interface IActionsListSavedAction {
     name: string;
-    isSystem: boolean;
+    is_system: boolean;
     params?: [{name: string; value: string}];
 }

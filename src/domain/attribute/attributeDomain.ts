@@ -61,11 +61,11 @@ export default function(
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'toNumber',
-                            isSystem: true
+                            is_system: true
                         },
                         {
                             name: 'validateFormat',
-                            isSystem: true
+                            is_system: true
                         }
                     ]
                 };
@@ -74,17 +74,17 @@ export default function(
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'validateFormat',
-                            isSystem: true
+                            is_system: true
                         },
                         {
                             name: 'encrypt',
-                            isSystem: true
+                            is_system: true
                         }
                     ],
                     [ActionsListEvents.GET_VALUE]: [
                         {
                             name: 'toBoolean',
-                            isSystem: true
+                            is_system: true
                         }
                     ]
                 };
@@ -93,15 +93,15 @@ export default function(
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'parseJSON',
-                            isSystem: true
+                            is_system: true
                         },
                         {
                             name: 'validateFormat',
-                            isSystem: true
+                            is_system: true
                         },
                         {
                             name: 'toJSON',
-                            isSystem: true
+                            is_system: true
                         }
                     ]
                 };
@@ -110,7 +110,7 @@ export default function(
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'validateFormat',
-                            isSystem: true
+                            is_system: true
                         }
                     ]
                 };
@@ -140,21 +140,21 @@ export default function(
 
         if (
             (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) &&
-            attrData.multipleValues
+            attrData.multiple_values
         ) {
-            errors.multipleValues = 'Multiple values not allowed for this attribute type';
+            errors.multiple_values = 'Multiple values not allowed for this attribute type';
         }
 
         if (
-            attrData.versionsConf &&
-            attrData.versionsConf.versionable &&
-            attrData.versionsConf.trees &&
-            attrData.versionsConf.trees.length
+            attrData.versions_conf &&
+            attrData.versions_conf.versionable &&
+            attrData.versions_conf.trees &&
+            attrData.versions_conf.trees.length
         ) {
             const existingTrees = await treeRepo.getTrees();
-            const unknownTrees = difference(attrData.versionsConf.trees, existingTrees.map(a => a.id));
+            const unknownTrees = difference(attrData.versions_conf.trees, existingTrees.map(a => a.id));
             if (unknownTrees.length) {
-                errors.versionsConf = `Unknown trees: ${unknownTrees.join(', ')}`;
+                errors.versions_conf = `Unknown trees: ${unknownTrees.join(', ')}`;
             }
         }
 
@@ -183,11 +183,11 @@ export default function(
         const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
         const allowedInputType = _getAllowedInputType(attrData);
 
-        if (lastActionDetails.outputTypes.indexOf(allowedInputType) === -1) {
+        if (lastActionDetails.output_types.indexOf(allowedInputType) === -1) {
             throw new ValidationError({
                 'actions_list.saveValue': `Last action is invalid:
                     expected action with ouptput types including ${allowedInputType},
-                    received ${lastActionDetails.outputTypes}`
+                    received ${lastActionDetails.output_types}`
             });
         }
     }
@@ -206,7 +206,7 @@ export default function(
         const missingActions = [];
         for (const event of Object.keys(defaultActions)) {
             for (const defAction of defaultActions[event]) {
-                if (defAction.isSystem && !attrData.actions_list[event].find(a => a.name === defAction.name)) {
+                if (defAction.is_system && !attrData.actions_list[event].find(a => a.name === defAction.name)) {
                     missingActions.push(`${event} => ${defAction.name}`);
                 }
             }

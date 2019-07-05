@@ -8,7 +8,7 @@ describe('AttributeStandardRepo', () => {
     const mockAttribute = {
         id: 'test_attr',
         type: AttributeTypes.ADVANCED,
-        multipleValues: true
+        multiple_values: true
     };
 
     const mockDbUtils: Mockify<IDbUtils> = {
@@ -555,7 +555,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
-                multipleValues: false
+                multiple_values: false
             };
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival);
@@ -618,7 +618,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
-                multipleValues: false
+                multiple_values: false
             };
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival, true);

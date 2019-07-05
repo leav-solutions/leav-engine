@@ -29,19 +29,19 @@ export default function(
             recordId: number
         ): Promise<boolean> {
             const attrProps = await attributeDomain.getAttributeProperties(attributeId);
-            if (typeof attrProps.permissionsConf === 'undefined') {
+            if (typeof attrProps.permissions_conf === 'undefined') {
                 return permissionDomain.getDefaultPermission();
             }
 
             const treesAttrValues = await Promise.all(
-                attrProps.permissionsConf.permissionTreeAttributes.map(async permTreeAttr => {
+                attrProps.permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties(permTreeAttr);
                     return valueRepo.getValues(recordLibrary, recordId, permTreeAttrProps);
                 })
             );
 
             const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-                allVal[attrProps.permissionsConf.permissionTreeAttributes[i]] = treeVal.map(v => v.value);
+                allVal[attrProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value);
 
                 return allVal;
             }, {});
@@ -52,7 +52,7 @@ export default function(
                 userId,
                 applyTo: attributeId,
                 treeValues: valuesByAttr,
-                permissionsConf: attrProps.permissionsConf,
+                permissions_conf: attrProps.permissions_conf,
                 getDefaultPermission: permissionDomain.getDefaultPermission
             });
 

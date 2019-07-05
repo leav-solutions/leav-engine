@@ -66,7 +66,7 @@ export default function(db: Database): IDbService {
             }
         },
         async dropCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
-            if (!await collectionExists(name)) {
+            if (!(await collectionExists(name))) {
                 throw new Error(`Collection ${name} does not exist`);
             }
 

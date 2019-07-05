@@ -29,7 +29,7 @@ export interface IGetTreePermissionParams {
     userId: number;
     applyTo: string;
     treeValues: {[treeAttributeId: string]: ITreeNode[]};
-    permissionsConf: ITreePermissionsConf;
+    permissions_conf: ITreePermissionsConf;
     getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
 }
 
@@ -97,9 +97,9 @@ export default function(
 
     return {
         async getTreePermission(params: IGetTreePermissionParams): Promise<boolean> {
-            const {type, action, userId, applyTo, treeValues, permissionsConf, getDefaultPermission} = params;
+            const {type, action, userId, applyTo, treeValues, permissions_conf, getDefaultPermission} = params;
 
-            if (!permissionsConf.permissionTreeAttributes.length) {
+            if (!permissions_conf.permissionTreeAttributes.length) {
                 return getDefaultPermission({action, applyTo, userId});
             }
 
@@ -117,7 +117,7 @@ export default function(
             );
 
             const treePerms = await Promise.all(
-                permissionsConf.permissionTreeAttributes.map(async permTreeAttr => {
+                permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties(permTreeAttr);
                     const treePerm = await _getPermTreePermission(
                         type,
@@ -141,7 +141,7 @@ export default function(
                     return treePerm;
                 }
 
-                return permissionsConf.relation === PermissionsRelations.AND
+                return permissions_conf.relation === PermissionsRelations.AND
                     ? globalPerm && treePerm
                     : globalPerm || treePerm;
             }, null);

@@ -7,8 +7,8 @@ export default function(dbService: IDbService): IMigration {
         async run() {
             const res = await dbService.execute(aql`
                 FOR el in core_attributes
-                    FILTER el.multipleValues == null
-                    UPDATE el WITH {multipleValues: false} IN core_attributes
+                    FILTER el.multiple_values == null
+                    UPDATE el WITH {multiple_values: false} IN core_attributes
             `);
         }
     };

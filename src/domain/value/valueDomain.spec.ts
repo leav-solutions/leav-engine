@@ -884,7 +884,7 @@ describe('ValueDomain', () => {
 
             const mockAttrAdvVersionableWithThreeTrees = {
                 ...mockAttrAdvVersionable,
-                versionsConf: {
+                versions_conf: {
                     versionable: true,
                     trees: ['my_tree', 'other_tree', 'third_tree']
                 }

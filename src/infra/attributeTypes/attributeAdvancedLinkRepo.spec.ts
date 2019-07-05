@@ -9,7 +9,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         id: 'test_adv_link_attr',
         type: AttributeTypes.ADVANCED_LINK,
         linked_library: 'test_linked_lib',
-        multipleValues: true
+        multiple_values: true
     };
 
     const savedEdgeData = {
@@ -450,7 +450,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const mockAttributeNotMultiVal = {
                 ...mockAttribute,
-                multipleValues: false
+                multiple_values: false
             };
 
             const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
@@ -505,7 +505,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
-                multipleValues: false
+                multiple_values: false
             };
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrNotMultival, true);

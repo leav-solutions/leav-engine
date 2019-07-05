@@ -51,8 +51,8 @@ describe('runActionsList', () => {
 
         const res = await domain.runActionsList(
             [
-                {name: 'convert', params: [{name: 'firstArg', value: 'test'}], isSystem: false},
-                {name: 'validate', isSystem: true}
+                {name: 'convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
+                {name: 'validate', is_system: true}
             ],
             val,
             ctx
@@ -93,8 +93,8 @@ describe('runActionsList', () => {
         await expect(
             domain.runActionsList(
                 [
-                    {name: 'convert', params: [{name: 'firstArg', value: 'test'}], isSystem: false},
-                    {name: 'validate', isSystem: true}
+                    {name: 'convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
+                    {name: 'validate', is_system: true}
                 ],
                 val,
                 ctx

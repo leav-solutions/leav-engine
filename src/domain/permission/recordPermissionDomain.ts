@@ -36,7 +36,7 @@ export default function(
             recordId: number
         ): Promise<boolean> {
             const lib = await libraryDomain.getLibraryProperties(recordLibrary);
-            if (typeof lib.permissionsConf === 'undefined') {
+            if (typeof lib.permissions_conf === 'undefined') {
                 // Check if action is present in library permissions
                 const isLibAction = Object.values(LibraryPermissionsActions).indexOf(action) !== -1;
 
@@ -50,14 +50,14 @@ export default function(
             }
 
             const treesAttrValues = await Promise.all(
-                lib.permissionsConf.permissionTreeAttributes.map(async permTreeAttr => {
+                lib.permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties(permTreeAttr);
                     return valueRepo.getValues(recordLibrary, recordId, permTreeAttrProps);
                 })
             );
 
             const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-                allVal[lib.permissionsConf.permissionTreeAttributes[i]] = treeVal.map(v => v.value);
+                allVal[lib.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value);
 
                 return allVal;
             }, {});
@@ -68,7 +68,7 @@ export default function(
                 userId,
                 applyTo: recordLibrary,
                 treeValues: valuesByAttr,
-                permissionsConf: lib.permissionsConf,
+                permissions_conf: lib.permissions_conf,
                 getDefaultPermission: params =>
                     permissionDomain.getLibraryPermission(params.action, params.applyTo, params.userId)
             });

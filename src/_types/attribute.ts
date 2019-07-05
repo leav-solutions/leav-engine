@@ -12,9 +12,9 @@ export interface IAttribute {
     linked_tree?: string;
     embedded_fields?: IEmbeddedAttribute[];
     actions_list?: IActionsListConfig;
-    permissionsConf?: ITreePermissionsConf;
-    multipleValues?: boolean;
-    versionsConf?: IAttributeVersionsConf;
+    permissions_conf?: ITreePermissionsConf;
+    multiple_values?: boolean;
+    versions_conf?: IAttributeVersionsConf;
 }
 
 export enum ValueVersionMode {
@@ -46,7 +46,7 @@ export interface IAttributeFilterOptions {
     system?: boolean;
     label?: string;
     linked_library?: string;
-    multipleValues?: boolean;
+    multiple_values?: boolean;
 }
 
 export enum AttributeTypes {

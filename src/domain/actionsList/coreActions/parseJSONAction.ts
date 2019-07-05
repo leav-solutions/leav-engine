@@ -9,8 +9,8 @@ export default function(): IActionsListFunction {
     return {
         name: 'parseJSON',
         description: 'Parse a JSON string',
-        inputTypes: [ActionsListIOTypes.STRING],
-        outputTypes: [ActionsListIOTypes.OBJECT],
+        input_types: [ActionsListIOTypes.STRING],
+        output_types: [ActionsListIOTypes.OBJECT],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
             return JSON.parse('' + value);
         }

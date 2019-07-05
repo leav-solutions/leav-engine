@@ -1,10 +1,10 @@
+import {flow, partialRight} from 'lodash';
 import {
     ActionsListIOTypes,
+    ActionsListValueType,
     IActionsListContext,
-    IActionsListFunction,
-    ActionsListValueType
+    IActionsListFunction
 } from '../../../_types/actionsList';
-import {flow, partialRight} from 'lodash';
 
 export default function(): IActionsListFunction {
     const _toString = (num, d) =>
@@ -24,8 +24,8 @@ export default function(): IActionsListFunction {
     return {
         name: 'formatNumber',
         description: 'Format a number',
-        inputTypes: [ActionsListIOTypes.NUMBER],
-        outputTypes: [ActionsListIOTypes.STRING],
+        input_types: [ActionsListIOTypes.NUMBER],
+        output_types: [ActionsListIOTypes.STRING],
         params: [
             {
                 name: 'decimals',

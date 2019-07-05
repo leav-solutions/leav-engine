@@ -161,9 +161,9 @@ export default function(
             const attr = await attributeDomain.getAttributeProperties(attribute);
 
             if (
-                !attr.versionsConf ||
-                !attr.versionsConf.versionable ||
-                attr.versionsConf.mode === ValueVersionMode.SIMPLE
+                !attr.versions_conf ||
+                !attr.versions_conf.versionable ||
+                attr.versions_conf.mode === ValueVersionMode.SIMPLE
             ) {
                 return valueRepo.getValues(library, recordId, attr, false, options);
             } else {
@@ -172,7 +172,7 @@ export default function(
 
                 // Get trees ancestors
                 const trees: IFindValueTree[] = await Promise.all(
-                    attr.versionsConf.trees.map(
+                    attr.versions_conf.trees.map(
                         async (treeName: string): Promise<IFindValueTree> => {
                             const ancestors = await treeRepo.getElementAncestors(treeName, options.version[treeName]);
                             return {
@@ -243,7 +243,7 @@ export default function(
             }
 
             if (!!value.version) {
-                if (!attrData.versionsConf.versionable) {
+                if (!attrData.versions_conf.versionable) {
                     throw new ValidationError({version: 'Attribute is not versionable'});
                 }
 

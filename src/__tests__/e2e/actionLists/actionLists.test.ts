@@ -6,8 +6,8 @@ describe('ActionList', () => {
             availableActions {
                 name
                 description
-                inputTypes
-                outputTypes
+                input_types
+                output_types
                 params {
                     name
                     type

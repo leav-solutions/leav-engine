@@ -24,7 +24,7 @@ describe('AttributeTreeRepo', () => {
         id: 'test_tree_attr',
         type: AttributeTypes.TREE,
         linked_tree: 'test_tree',
-        multipleValues: true
+        multiple_values: true
     };
 
     const savedEdgeData = {
@@ -453,7 +453,7 @@ describe('AttributeTreeRepo', () => {
 
             const mockAttributeNotMultiVal = {
                 ...mockAttribute,
-                multipleValues: false
+                multiple_values: false
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({
@@ -495,7 +495,7 @@ describe('AttributeTreeRepo', () => {
             };
             const mockAttributeNotMultiVal = {
                 ...mockAttribute,
-                multipleValues: false
+                multiple_values: false
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({

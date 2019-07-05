@@ -8,42 +8,42 @@ const base: IAttribute = {
     },
     type: AttributeTypes.SIMPLE,
     format: AttributeFormats.TEXT,
-    multipleValues: false,
+    multiple_values: false,
     system: false,
     linked_library: null,
     linked_tree: null,
     embedded_fields: null,
     actions_list: null,
-    permissionsConf: null,
-    versionsConf: {versionable: false}
+    permissions_conf: null,
+    versions_conf: {versionable: false}
 };
 
 export const mockAttrSimple = {...base, id: 'simple_attribute'};
 export const mockAttrId = {...base, id: 'id', system: true};
 
 export const mockAttrAdv = {...base, id: 'advanced_attribute', type: AttributeTypes.ADVANCED};
-export const mockAttrAdvMultiVal = {...mockAttrAdv, multipleValues: true};
+export const mockAttrAdvMultiVal = {...mockAttrAdv, multiple_values: true};
 export const mockAttrAdvVersionable = {
     ...mockAttrAdv,
-    versionsConf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
+    versions_conf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
 };
 export const mockAttrAdvVersionableSimple = {
     ...mockAttrAdvVersionable,
-    versionsConf: {...mockAttrAdvVersionable.versionsConf, mode: ValueVersionMode.SIMPLE}
+    versions_conf: {...mockAttrAdvVersionable.versions_conf, mode: ValueVersionMode.SIMPLE}
 };
 
 export const mockAttrSimpleLink = {...base, id: 'simple_link_attribute', type: AttributeTypes.SIMPLE_LINK};
 
 export const mockAttrAdvLink = {...base, id: 'adv_link_attribute', type: AttributeTypes.ADVANCED_LINK};
-export const mockAttrAdvLinkMultiVal = {...mockAttrAdvLink, multipleValues: true};
+export const mockAttrAdvLinkMultiVal = {...mockAttrAdvLink, multiple_values: true};
 
 export const mockAttrTree = {...base, id: 'tree_attribute', type: AttributeTypes.TREE};
 export const mockAttrTreeVersionable = {
     ...mockAttrTree,
-    versionsConf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
+    versions_conf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
 };
 export const mockAttrTreeVersionableSimple = {
     ...mockAttrTreeVersionable,
-    versionsConf: {...mockAttrTreeVersionable.versionsConf, mode: ValueVersionMode.SIMPLE}
+    versions_conf: {...mockAttrTreeVersionable.versions_conf, mode: ValueVersionMode.SIMPLE}
 };
-export const mockAttrTreeMultival = {...mockAttrTree, multipleValues: true};
+export const mockAttrTreeMultival = {...mockAttrTree, multiple_values: true};

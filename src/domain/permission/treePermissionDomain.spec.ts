@@ -261,7 +261,7 @@ describe('TreePermissionDomain', () => {
                     }
                 ]
             },
-            permissionsConf: mockPermConf,
+            permissions_conf: mockPermConf,
             getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
         };
 
@@ -397,7 +397,7 @@ describe('TreePermissionDomain', () => {
                         }
                     ]
                 },
-                permissionsConf: {
+                permissions_conf: {
                     relation: PermissionsRelations.AND,
                     permissionTreeAttributes: ['category', 'status']
                 }
@@ -435,7 +435,7 @@ describe('TreePermissionDomain', () => {
                         }
                     ]
                 },
-                permissionsConf: {
+                permissions_conf: {
                     relation: PermissionsRelations.OR,
                     permissionTreeAttributes: ['category', 'status']
                 }

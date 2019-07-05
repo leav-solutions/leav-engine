@@ -1,17 +1,17 @@
+import * as moment from 'moment';
 import {
     ActionsListIOTypes,
     ActionsListValueType,
     IActionsListContext,
     IActionsListFunction
 } from '../../../_types/actionsList';
-import * as moment from 'moment';
 
 export default function(): IActionsListFunction {
     return {
         name: 'formatDate',
         description: 'Convert timestamp to a date',
-        inputTypes: [ActionsListIOTypes.NUMBER],
-        outputTypes: [ActionsListIOTypes.STRING],
+        input_types: [ActionsListIOTypes.NUMBER],
+        output_types: [ActionsListIOTypes.STRING],
         params: [
             {
                 name: 'format',

@@ -34,14 +34,14 @@ export default function(actionsListDomain: IActionsListDomain): ICoreAttributeAp
                     type Action {
                         name: AvailableActionsName!,
                         description: String,
-                        inputTypes: [ActionIOTypes]!,
-                        outputTypes: [ActionIOTypes]!,
+                        input_types: [ActionIOTypes]!,
+                        output_types: [ActionIOTypes]!,
                         params: [ActionParam]
                     }
 
                     type ActionConfiguration {
                         name: String!,
-                        isSystem: Boolean!,
+                        is_system: Boolean!,
                         params: [ActionConfigurationParam]
                     }
 

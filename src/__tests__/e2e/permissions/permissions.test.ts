@@ -91,7 +91,7 @@ describe('Permissions', () => {
                     "created_at",
                     "${testLibAttrId}"
                 ],
-                permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
+                permissions_conf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
             }) {
                 id
             }
@@ -171,9 +171,9 @@ describe('Permissions', () => {
             const resSaveLib = await makeGraphQlCall(`mutation {
                 saveLibrary(library: {
                     id: "${testLibId}",
-                    permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
+                    permissions_conf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
                 }) {
-                    permissionsConf {
+                    permissions_conf {
                         permissionTreeAttributes {
                             id
                         }
@@ -183,7 +183,7 @@ describe('Permissions', () => {
             }`);
 
             expect(resSaveLib.status).toBe(200);
-            expect(resSaveLib.data.data.saveLibrary.permissionsConf).toBeDefined();
+            expect(resSaveLib.data.data.saveLibrary.permissions_conf).toBeDefined();
             expect(resSaveLib.data.errors).toBeUndefined();
 
             const resIsAllowed = await makeGraphQlCall(`query {
@@ -225,9 +225,9 @@ describe('Permissions', () => {
                     id: "${testPermAttrId}",
                     type: simple,
                     label: {fr: "Permissions Test Attribute"},
-                    permissionsConf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
+                    permissions_conf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
                 }) {
-                    permissionsConf {
+                    permissions_conf {
                         permissionTreeAttributes {
                             id
                         }
@@ -237,8 +237,8 @@ describe('Permissions', () => {
             }`);
 
             expect(resSaveAttr.status).toBe(200);
-            expect(resSaveAttr.data.data.saveAttribute.permissionsConf).toBeDefined();
-            expect(resSaveAttr.data.data.saveAttribute.permissionsConf.permissionTreeAttributes[0].id).toBeDefined();
+            expect(resSaveAttr.data.data.saveAttribute.permissions_conf).toBeDefined();
+            expect(resSaveAttr.data.data.saveAttribute.permissions_conf.permissionTreeAttributes[0].id).toBeDefined();
             expect(resSaveAttr.data.errors).toBeUndefined();
 
             // Save permission on attribute
