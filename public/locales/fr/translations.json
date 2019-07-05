@@ -107,5 +107,24 @@
         "admin_delete_tree": "Supprimer un arbre",
         "admin_access_permissions": "Accéder aux permissions",
         "admin_edit_permission": "Éditer les permissions"
+    },
+    "login": {
+        "header": "Authentification",
+        "email": "Adresse e-mail",
+        "password": "Mot de passe",
+        "submit": "Envoyer",
+        "apologize_header" : "Nous sommes désolés,",
+        "apologize" : "nous ne pouvons vous authentifier :",
+        "loading": {
+            "header": "Juste un instant,",
+            "text": "Nous sommes en train de vous authentifier..."
+        },
+        "error": {
+            "bad_credentials" : "Paramètres d'authentification incorrects.",
+            "no_server_response": "Le serveur ne répond pas."
+        }
+    },
+    "navigator": {
+        "title": "Navigateur"
     }
 }

@@ -14,7 +14,7 @@ const setToken = (tokenStr: string) => {
 const token = window.sessionStorage.accessToken || '';
 
 window.sessionStorage.accessToken = token;
-if (token === '') {
+if (token === '' || token === undefined || token === 'undefined') {
     // window.location.replace(`${authAppUrl}?referer=${window.location}`);
     ReactDOM.render(<Login onSuccess={setToken} />, document.getElementById('root') as HTMLElement);
 } else {

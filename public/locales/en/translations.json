@@ -108,5 +108,21 @@
         "admin_delete_tree": "Delete tree",
         "admin_access_permissions": "Access permissions",
         "admin_edit_permission": "Edit permission"
-    }
+    },
+    "login": {
+        "header": "Authentification",
+        "email": "Email address",
+        "password": "Password",
+        "submit": "Submit",
+        "apologize_header" : "We are sorry,",
+        "apologize" : "we were not able to authenticate you :",
+        "loading": {
+            "header": "Just a second,",
+            "text": "we are authenticating you..."
+        },
+        "error": {
+            "bad_credentials" : "Invalid credentials.",
+            "no_server_response": "The server does not respond."
+        }
+    },
 }
