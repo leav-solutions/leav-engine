@@ -3,9 +3,10 @@ import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {addWildcardToFilters, getSysTranslationQueryLanguage} from '../../../utils/utils';
+import {addWildcardToFilters} from '../../../utils/utils';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
@@ -21,8 +22,8 @@ interface IAttributesFilters {
     isSystem?: boolean;
 }
 
-function Attributes({t, history, i18n: i18next}: IAttributesProps): JSX.Element {
-    const lang = getSysTranslationQueryLanguage(i18next);
+function Attributes({t, history}: IAttributesProps): JSX.Element {
+    const {lang} = useLang();
     const [filters, setFilters] = useState<IAttributesFilters>({});
     const userData = useUserData();
 

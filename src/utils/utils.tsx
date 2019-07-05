@@ -1,6 +1,7 @@
 import {i18n} from 'i18next';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
+import {AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 
 /**
@@ -20,7 +21,7 @@ export const localizedLabel = (labels: any, i18next: i18n): string => {
     return labels[userLang] || labels[fallbackLang] || labels[Object.keys(labels)[0]] || '';
 };
 
-export const getSysTranslationQueryLanguage = (i18next: i18n) => {
+export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage[] => {
     const userLang = i18next.language.split('-')[0];
     const fallbackLang = i18next.options.fallbackLng ? i18next.options.fallbackLng[0] : '';
 

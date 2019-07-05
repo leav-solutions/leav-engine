@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {formatIDString, getSysTranslationQueryLanguage} from '../../../utils/utils';
+import useLang from '../../../hooks/useLang';
+import {formatIDString} from '../../../utils/utils';
 import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
 import LibrariesSelector from '../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
@@ -22,7 +23,7 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-function EditTreeInfosForm({tree, onSubmit, t, i18n, readOnly}: IEditTreeInfosFormProps): JSX.Element {
+function EditTreeInfosForm({tree, onSubmit, t, readOnly}: IEditTreeInfosFormProps): JSX.Element {
     const defaultTree = {
         id: '',
         label: null,
@@ -39,7 +40,7 @@ function EditTreeInfosForm({tree, onSubmit, t, i18n, readOnly}: IEditTreeInfosFo
 
     const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
     const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
-    const userLang = getSysTranslationQueryLanguage(i18n);
+    const {lang: userLang} = useLang();
 
     const _handleChange = (event, data) => {
         const value = data.type === 'checkbox' ? data.checked : data.value;

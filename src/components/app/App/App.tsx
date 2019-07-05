@@ -1,9 +1,11 @@
 import ApolloClient, {InMemoryCache, IntrospectionFragmentMatcher, IntrospectionResultData} from 'apollo-boost';
 import React from 'react';
 import {ApolloProvider} from 'react-apollo';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {IsAllowedQuery, isAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
-import {permsArrayToObject} from '../../../utils/utils';
+import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import LangContext from '../../shared/LangContext';
 import Loading from '../../shared/Loading';
 import UserContext from '../../shared/UserContext';
 import {IUserContext} from '../../shared/UserContext/UserContext';
@@ -14,7 +16,11 @@ interface IAppState {
     token: string;
 }
 
-class App extends React.Component<any, IAppState> {
+interface IAppProps extends WithNamespaces {
+    token: string;
+}
+
+class App extends React.Component<IAppProps, IAppState> {
     // TODO: handle auth token properly
     constructor(props) {
         super(props);
@@ -28,6 +34,7 @@ class App extends React.Component<any, IAppState> {
     }
 
     public render() {
+        const {i18n} = this.props;
         const {fragmentMatcher, token} = this.state;
 
         if (!fragmentMatcher) {
@@ -82,13 +89,16 @@ class App extends React.Component<any, IAppState> {
                             name: '',
                             permissions: permsArrayToObject(data.isAllowed)
                         };
+                        const lang = getSysTranslationQueryLanguage(i18n);
 
                         return (
-                            <UserContext.Provider value={userData}>
-                                <div className="App height100">
-                                    <Home />
-                                </div>
-                            </UserContext.Provider>
+                            <LangContext.Provider value={{lang}}>
+                                <UserContext.Provider value={userData}>
+                                    <div className="App height100">
+                                        <Home />
+                                    </div>
+                                </UserContext.Provider>
+                            </LangContext.Provider>
                         );
                     }}
                 </IsAllowedQuery>
@@ -137,4 +147,4 @@ class App extends React.Component<any, IAppState> {
     }
 }
 
-export default App;
+export default withNamespaces()(App);

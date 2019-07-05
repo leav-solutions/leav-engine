@@ -6,9 +6,9 @@ import EditTreeInfosForm from './EditTreeInfosForm';
 
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr),
-    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr'])
+    localizedLabel: jest.fn().mockImplementation(l => l.fr)
 }));
+jest.mock('../../../hooks/useLang', () => jest.fn().mockReturnValue(['fr']));
 
 describe('EditTreeInfosForm', () => {
     const mockTree = {

@@ -3,9 +3,10 @@ import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery, LibrariesQuery} from '../../../queries/libraries/getLibrariesQuery';
-import {addWildcardToFilters, getSysTranslationQueryLanguage} from '../../../utils/utils';
+import {addWildcardToFilters} from '../../../utils/utils';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import LibrariesList from '../LibrariesList';
 
@@ -13,8 +14,8 @@ interface ILibrariesProps extends WithNamespaces {
     history: History;
 }
 
-function Libraries({i18n: i18next, t, history}: ILibrariesProps): JSX.Element {
-    const lang = getSysTranslationQueryLanguage(i18next);
+function Libraries({t, history}: ILibrariesProps): JSX.Element {
+    const {lang} = useLang();
     const userData = useUserData();
     const [filters, setFilters] = useState<any>({});
 

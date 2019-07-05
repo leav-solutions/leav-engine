@@ -3,6 +3,7 @@ import {History} from 'history';
 import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
 import {Mockify} from '../../../_types//Mockify';
+import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import EditLibrary from './EditLibrary';
 
@@ -13,9 +14,11 @@ describe('EditLibrary', () => {
 
         const comp = render(
             <MockedProvider>
-                <MockedUserContextProvider>
-                    <EditLibrary match={mockMatch} history={mockHistory as History} />
-                </MockedUserContextProvider>
+                <MockedLangContextProvider>
+                    <MockedUserContextProvider>
+                        <EditLibrary match={mockMatch} history={mockHistory as History} />
+                    </MockedUserContextProvider>
+                </MockedLangContextProvider>
             </MockedProvider>
         );
 

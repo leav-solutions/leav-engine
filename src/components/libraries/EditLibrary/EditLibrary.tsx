@@ -2,10 +2,10 @@ import {History} from 'history';
 import {i18n} from 'i18next';
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
+import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery, LibrariesQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from '../../../queries/libraries/saveLibMutation';
-import {getSysTranslationQueryLanguage} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
@@ -17,9 +17,9 @@ interface IEditLibraryProps extends WithNamespaces {
     i18n: i18n;
 }
 
-function EditLibrary({match, history, i18n: i18next}: IEditLibraryProps) {
+function EditLibrary({match, history}: IEditLibraryProps) {
     const libraryId = match.params.id;
-    const lang = getSysTranslationQueryLanguage(i18next);
+    const {lang} = useLang();
     const userData = useUserData();
     const readOnly = !userData.permissions[PermissionsActions.admin_edit_library];
 

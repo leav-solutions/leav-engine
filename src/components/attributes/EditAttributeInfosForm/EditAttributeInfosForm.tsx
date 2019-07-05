@@ -1,7 +1,8 @@
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
-import {formatIDString, getSysTranslationQueryLanguage} from '../../../utils/utils';
+import useLang from '../../../hooks/useLang';
+import {formatIDString} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types//errors';
@@ -16,14 +17,7 @@ interface IEditAttributeInfosFormProps extends WithNamespaces {
     readOnly: boolean;
 }
 
-function EditAttributeInfosForm({
-    t,
-    i18n: i18next,
-    errors,
-    attribute,
-    onSubmit,
-    readOnly
-}: IEditAttributeInfosFormProps) {
+function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEditAttributeInfosFormProps) {
     const defaultAttribute: GET_ATTRIBUTES_attributes = {
         id: '',
         system: false,
@@ -44,7 +38,7 @@ function EditAttributeInfosForm({
         }
     };
 
-    const userLang = getSysTranslationQueryLanguage(i18next);
+    const {lang: userLang} = useLang();
 
     const [formValues, setFormValues] = React.useState<GET_ATTRIBUTES_attributes>(
         attribute !== null ? attribute : defaultAttribute

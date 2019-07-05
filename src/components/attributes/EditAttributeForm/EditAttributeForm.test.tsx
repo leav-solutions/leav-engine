@@ -3,6 +3,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
+import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 import EditAttributeForm from './EditAttributeForm';
 
 jest.mock('../../../utils/utils', () => ({
@@ -20,12 +21,14 @@ describe('EditAttributeForm', () => {
 
     test('Render form for existing attribute', async () => {
         const comp = shallow(
-            <EditAttributeForm
-                attribute={attribute}
-                onSubmit={onSubmit}
-                onPermsSettingsSubmit={onPermsSettingsSubmit}
-                readOnly={false}
-            />
+            <MockedLangContextProvider>
+                <EditAttributeForm
+                    attribute={attribute}
+                    onSubmit={onSubmit}
+                    onPermsSettingsSubmit={onPermsSettingsSubmit}
+                    readOnly={false}
+                />
+            </MockedLangContextProvider>
         );
 
         expect(
@@ -39,12 +42,14 @@ describe('EditAttributeForm', () => {
 
     test('Render form for new attribute', async () => {
         const comp = shallow(
-            <EditAttributeForm
-                attribute={null}
-                onSubmit={onSubmit}
-                onPermsSettingsSubmit={onPermsSettingsSubmit}
-                readOnly={false}
-            />
+            <MockedLangContextProvider>
+                <EditAttributeForm
+                    attribute={null}
+                    onSubmit={onSubmit}
+                    onPermsSettingsSubmit={onPermsSettingsSubmit}
+                    readOnly={false}
+                />
+            </MockedLangContextProvider>
         );
 
         expect(
@@ -58,12 +63,14 @@ describe('EditAttributeForm', () => {
 
     test.only('Autofill ID with label on new attribute', async () => {
         const comp = renderer.create(
-            <EditAttributeForm
-                attribute={null}
-                onSubmit={onSubmit}
-                onPermsSettingsSubmit={onPermsSettingsSubmit}
-                readOnly={false}
-            />
+            <MockedLangContextProvider>
+                <EditAttributeForm
+                    attribute={null}
+                    onSubmit={onSubmit}
+                    onPermsSettingsSubmit={onPermsSettingsSubmit}
+                    readOnly={false}
+                />
+            </MockedLangContextProvider>
         );
 
         renderer.act(() => {
@@ -79,12 +86,14 @@ describe('EditAttributeForm', () => {
 
     test('Call submit function on submit', async () => {
         const comp = shallow(
-            <EditAttributeForm
-                attribute={attribute}
-                onSubmit={onSubmit}
-                onPermsSettingsSubmit={onPermsSettingsSubmit}
-                readOnly={false}
-            />
+            <MockedLangContextProvider>
+                <EditAttributeForm
+                    attribute={attribute}
+                    onSubmit={onSubmit}
+                    onPermsSettingsSubmit={onPermsSettingsSubmit}
+                    readOnly={false}
+                />
+            </MockedLangContextProvider>
         );
         comp.find('Form').simulate('submit');
 

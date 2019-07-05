@@ -3,9 +3,10 @@ import React, {useState} from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
-import {addWildcardToFilters, getSysTranslationQueryLanguage} from '../../../utils/utils';
+import {addWildcardToFilters} from '../../../utils/utils';
 import {GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
@@ -14,8 +15,8 @@ interface ITreesProps extends WithNamespaces {
     history: History;
 }
 
-function Trees({history, t, i18n: i18next}: ITreesProps): JSX.Element {
-    const lang = getSysTranslationQueryLanguage(i18next);
+function Trees({history, t}: ITreesProps): JSX.Element {
+    const {lang} = useLang();
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
     const userData = useUserData();
 

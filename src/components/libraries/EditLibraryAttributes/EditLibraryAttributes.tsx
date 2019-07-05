@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {
     SaveLibAttributesMutation,
     saveLibAttributesMutation
 } from '../../../queries/libraries/saveLibAttributesMutation';
-import {getSysTranslationQueryLanguage} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
 import AttributesList from '../../attributes/AttributesList';
@@ -19,11 +19,11 @@ interface IEditLibraryAttributesProps extends WithNamespaces {
     readOnly: boolean;
 }
 
-function EditLibraryAttributes({library, readOnly, t, i18n: i18next}: IEditLibraryAttributesProps) {
+function EditLibraryAttributes({library, readOnly, t}: IEditLibraryAttributesProps) {
     const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
     const onRowClick = () => null;
-    const lang = getSysTranslationQueryLanguage(i18next);
+    const lang = useLang();
 
     const _openNewAttrModal = () => {
         setShowNewAttrModal(true);
