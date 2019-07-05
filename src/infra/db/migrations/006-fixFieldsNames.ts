@@ -10,7 +10,7 @@ export default function(dbService: IDbService): IMigration {
                     UPDATE a WITH {
                         versions_conf: a.versionsConf, versionsConf: null,
                         permissions_conf: a.permissionsConf, permissionsConf: null,
-                        multiple_values: a.multipleValues, multipleValues: null
+                        multiple_values: TO_BOOL(a.multipleValues), multipleValues: null
                     } IN core_attributes OPTIONS { keepNull: false }
             `);
         }
