@@ -10,7 +10,7 @@ export default function(dbService: IDbService): IMigration {
                     UPDATE a WITH {
                         versions_conf: a.versions_conf ? a.versions_conf : a.versionsConf,
                         permissions_conf: a.permissions_conf ? a.permissions_conf : a.permissionsConf,
-                        multiple_values: a.multiple_values ? a.multiple_values : a.multipleValues,
+                        multiple_values: a.multiple_values ? a.multiple_values : TO_BOOL(a.multipleValues),
                         versionsConf: null,
                         permissionsConf: null,
                         multipleValues: null
