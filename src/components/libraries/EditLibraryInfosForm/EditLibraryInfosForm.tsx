@@ -30,7 +30,7 @@ function EditLibraryInfosForm({library, onSubmit, readonly, t, i18n}: IEditLibra
                       en: ''
                   },
                   attributes: [],
-                  permissionsConf: null,
+                  permissions_conf: null,
                   recordIdentityConf: {
                       label: null,
                       color: null,

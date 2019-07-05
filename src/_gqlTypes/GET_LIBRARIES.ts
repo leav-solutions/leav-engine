@@ -8,18 +8,18 @@ import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, 
 // GraphQL query operation: GET_LIBRARIES
 // ====================================================
 
-export interface GET_LIBRARIES_libraries_attributes_permissionsConf_permissionTreeAttributes {
+export interface GET_LIBRARIES_libraries_attributes_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
     label: any | null;
 }
 
-export interface GET_LIBRARIES_libraries_attributes_permissionsConf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_attributes_permissionsConf_permissionTreeAttributes[];
+export interface GET_LIBRARIES_libraries_attributes_permissions_conf {
+    permissionTreeAttributes: GET_LIBRARIES_libraries_attributes_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
-export interface GET_LIBRARIES_libraries_attributes_versionsConf {
+export interface GET_LIBRARIES_libraries_attributes_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
     trees: string[] | null;
@@ -33,19 +33,19 @@ export interface GET_LIBRARIES_libraries_attributes {
     label: any | null;
     linked_library: string | null;
     linked_tree: string | null;
-    multipleValues: boolean;
-    permissionsConf: GET_LIBRARIES_libraries_attributes_permissionsConf | null;
-    versionsConf: GET_LIBRARIES_libraries_attributes_versionsConf | null;
+    multiple_values: boolean;
+    permissions_conf: GET_LIBRARIES_libraries_attributes_permissions_conf | null;
+    versions_conf: GET_LIBRARIES_libraries_attributes_versions_conf | null;
 }
 
-export interface GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes {
+export interface GET_LIBRARIES_libraries_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
     label: any | null;
 }
 
-export interface GET_LIBRARIES_libraries_permissionsConf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_permissionsConf_permissionTreeAttributes[];
+export interface GET_LIBRARIES_libraries_permissions_conf {
+    permissionTreeAttributes: GET_LIBRARIES_libraries_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
@@ -60,7 +60,7 @@ export interface GET_LIBRARIES_libraries {
     system: boolean | null;
     label: any | null;
     attributes: GET_LIBRARIES_libraries_attributes[] | null;
-    permissionsConf: GET_LIBRARIES_libraries_permissionsConf | null;
+    permissions_conf: GET_LIBRARIES_libraries_permissions_conf | null;
     recordIdentityConf: GET_LIBRARIES_libraries_recordIdentityConf | null;
 }
 

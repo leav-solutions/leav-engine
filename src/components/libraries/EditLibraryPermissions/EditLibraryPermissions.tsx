@@ -39,17 +39,17 @@ function EditLibraryPermissions({
     const defaultPermsConf = {permissionTreeAttributes: [], relation: PermissionsRelation.and};
     const [settingsExpanded, setSettingsExpanded] = React.useState(false);
     const [libPermsConf, setlibPermsConf] = React.useState<IEditLibraryPermissionsState>(
-        library.permissionsConf
+        library.permissions_conf
             ? {
-                  permissionTreeAttributes: library.permissionsConf.permissionTreeAttributes.map(a => a.id),
-                  relation: library.permissionsConf.relation
+                  permissionTreeAttributes: library.permissions_conf.permissionTreeAttributes.map(a => a.id),
+                  relation: library.permissions_conf.relation
               }
             : {permissionTreeAttributes: [], relation: PermissionsRelation.and}
     );
     const onClickToggle = () => setSettingsExpanded(!settingsExpanded);
 
     const _handleSubmit = (formData: any) => {
-        onSubmitSettings({id: library.id, permissionsConf: libPermsConf});
+        onSubmitSettings({id: library.id, permissions_conf: libPermsConf});
     };
 
     const libTreeAttributesOptions = library.attributes
@@ -66,7 +66,7 @@ function EditLibraryPermissions({
         setlibPermsConf({...libPermsConf, [data.name]: data.value});
     };
 
-    const permsConf = library.permissionsConf || defaultPermsConf;
+    const permsConf = library.permissions_conf || defaultPermsConf;
     const panes = permsConf.permissionTreeAttributes.map(a => ({
         key: a.id,
         menuItem: localizedLabel(a.label, i18n),

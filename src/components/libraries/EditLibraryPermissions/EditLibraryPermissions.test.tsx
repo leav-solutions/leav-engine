@@ -10,7 +10,7 @@ describe('EditLibraryPermissions', () => {
     test('Hide relation if 1 tree selected', async () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
-            permissionsConf: {
+            permissions_conf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}}],
                 relation: PermissionsRelation.and
             }
@@ -34,7 +34,7 @@ describe('EditLibraryPermissions', () => {
     test('Show relation if more than 1 tree selected', async () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
-            permissionsConf: {
+            permissions_conf: {
                 permissionTreeAttributes: [
                     {id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}},
                     {
@@ -65,7 +65,7 @@ describe('EditLibraryPermissions', () => {
     test('Call submit function on submit', async () => {
         const lib: Mockify<GET_LIBRARIES_libraries> = {
             id: 'test_lib',
-            permissionsConf: {
+            permissions_conf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}}],
                 relation: PermissionsRelation.and
             }

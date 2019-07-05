@@ -42,11 +42,11 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                                 format: attrData.format,
                                 linked_tree: attrData.linked_tree,
                                 linked_library: attrData.linked_library,
-                                multipleValues: attrData.multipleValues,
-                                versionsConf: {
-                                    versionable: attrData.versionsConf ? attrData.versionsConf.versionable : false,
-                                    mode: attrData.versionsConf ? attrData.versionsConf.mode : null,
-                                    trees: attrData.versionsConf ? attrData.versionsConf.trees : null
+                                multiple_values: attrData.multiple_values,
+                                versions_conf: {
+                                    versionable: attrData.versions_conf ? attrData.versions_conf.versionable : false,
+                                    mode: attrData.versions_conf ? attrData.versions_conf.mode : null,
+                                    trees: attrData.versions_conf ? attrData.versions_conf.trees : null
                                 }
                             }
                         },
@@ -79,10 +79,10 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                                 label: attrToEdit.label,
                                 type: attrToEdit.type,
                                 format: attrToEdit.format,
-                                multipleValues: attrToEdit.multipleValues,
-                                permissionsConf: {
-                                    permissionTreeAttributes: attrData.permissionsConf.permissionTreeAttributes,
-                                    relation: attrData.permissionsConf.relation
+                                multiple_values: attrToEdit.multiple_values,
+                                permissions_conf: {
+                                    permissionTreeAttributes: attrData.permissions_conf.permissionTreeAttributes,
+                                    relation: attrData.permissions_conf.relation
                                 }
                             }
                         },

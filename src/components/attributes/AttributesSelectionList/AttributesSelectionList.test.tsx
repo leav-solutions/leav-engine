@@ -17,7 +17,7 @@ describe('AttributesSelectionList', () => {
                     en: 'Test'
                 },
                 linked_tree: null,
-                permissionsConf: null
+                permissions_conf: null
             }
         ];
 

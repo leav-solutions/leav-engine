@@ -25,9 +25,9 @@ describe('EditAttributePermissions', () => {
                             },
                             id: 'test_tree_attr',
                             linked_tree: 'some_tree',
-                            versionsConf: {
-                                ...mockAttrTree.versionsConf,
-                                __typename: 'valuesVersionsConf'
+                            versions_conf: {
+                                ...mockAttrTree.versions_conf,
+                                __typename: 'valuesversions_conf'
                             }
                         },
                         {
@@ -38,9 +38,9 @@ describe('EditAttributePermissions', () => {
                             },
                             id: 'other_test_tree_attr',
                             linked_tree: 'some_other_tree',
-                            versionsConf: {
-                                ...mockAttrTree.versionsConf,
-                                __typename: 'valuesVersionsConf'
+                            versions_conf: {
+                                ...mockAttrTree.versions_conf,
+                                __typename: 'valuesversions_conf'
                             }
                         }
                     ]
@@ -52,7 +52,7 @@ describe('EditAttributePermissions', () => {
     test('Hide relation if 1 tree selected', async () => {
         const attr = {
             ...mockAttrSimple,
-            permissionsConf: {
+            permissions_conf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and
             }
@@ -73,7 +73,7 @@ describe('EditAttributePermissions', () => {
     test('Show relation if more than 1 tree selected', async () => {
         const attr = {
             ...mockAttrSimple,
-            permissionsConf: {
+            permissions_conf: {
                 permissionTreeAttributes: [
                     {id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'},
                     {id: 'other_test_tree_attr', linked_tree: 'some_other_tree', label: 'Test'}
@@ -97,7 +97,7 @@ describe('EditAttributePermissions', () => {
     test('Call submit function on submit', async () => {
         const attr = {
             ...mockAttrSimple,
-            permissionsConf: {
+            permissions_conf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: 'Test'}],
                 relation: PermissionsRelation.and
             }

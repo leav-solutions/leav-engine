@@ -12,7 +12,7 @@ describe('LibrariesList', () => {
             system: false,
             label: {fr: 'Test', en: null},
             attributes: [],
-            permissionsConf: null,
+            permissions_conf: null,
             recordIdentityConf: {label: null, color: null, preview: null}
         },
         {
@@ -20,7 +20,7 @@ describe('LibrariesList', () => {
             system: false,
             label: {fr: null, en: 'Test 2'},
             attributes: [],
-            permissionsConf: null,
+            permissions_conf: null,
             recordIdentityConf: {label: null, color: null, preview: null}
         },
         {
@@ -28,7 +28,7 @@ describe('LibrariesList', () => {
             system: false,
             label: null,
             attributes: [],
-            permissionsConf: null,
+            permissions_conf: null,
             recordIdentityConf: {label: null, color: null, preview: null}
         }
     ];

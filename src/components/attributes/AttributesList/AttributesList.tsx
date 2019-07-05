@@ -47,7 +47,7 @@ class AttributesList extends React.Component<IAttributesListProps> {
                         <Table.HeaderCell width={4}>{t('attributes.ID')}</Table.HeaderCell>
                         <Table.HeaderCell width={3}>{t('attributes.type')}</Table.HeaderCell>
                         <Table.HeaderCell width={3}>{t('attributes.format')}</Table.HeaderCell>
-                        <Table.HeaderCell width={1}>{t('attributes.multipleValues')}</Table.HeaderCell>
+                        <Table.HeaderCell width={1}>{t('attributes.multiple_values')}</Table.HeaderCell>
                         <Table.HeaderCell width={1}>{t('attributes.isSystem')}</Table.HeaderCell>
                         <Table.HeaderCell width={1} />
                     </Table.Row>
@@ -101,9 +101,9 @@ class AttributesList extends React.Component<IAttributesListProps> {
                             </Table.HeaderCell>
                             <Table.HeaderCell>
                                 <Checkbox
-                                    indeterminate={typeof filters.multipleValues === 'undefined'}
-                                    name="multipleValues"
-                                    checked={filters.multipleValues}
+                                    indeterminate={typeof filters.multiple_values === 'undefined'}
+                                    name="multiple_values"
+                                    checked={filters.multiple_values}
                                     onChange={this._handleFilterChange}
                                 />
                             </Table.HeaderCell>
@@ -138,7 +138,7 @@ class AttributesList extends React.Component<IAttributesListProps> {
                                     <Table.Cell>{t('attributes.types.' + a.type)}</Table.Cell>
                                     <Table.Cell>{a.format ? t('attributes.formats.' + a.format) : ''}</Table.Cell>
                                     <Table.Cell width={1}>
-                                        <Checkbox readOnly checked={a.multipleValues} />
+                                        <Checkbox readOnly checked={a.multiple_values} />
                                     </Table.Cell>
                                     <Table.Cell width={1}>
                                         <Checkbox readOnly checked={a.system} />

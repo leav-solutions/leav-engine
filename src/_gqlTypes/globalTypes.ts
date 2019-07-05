@@ -109,9 +109,9 @@ export interface AttributeInput {
     linked_tree?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
     actions_list?: ActionsListConfigurationInput | null;
-    permissionsConf?: TreePermissionsConfInput | null;
-    multipleValues?: boolean | null;
-    versionsConf?: valuesVersionsConfInput | null;
+    permissions_conf?: Treepermissions_confInput | null;
+    multiple_values?: boolean | null;
+    versions_conf?: valuesversions_confInput | null;
 }
 
 export interface EmbeddedAttributeInput {
@@ -126,7 +126,7 @@ export interface LibraryInput {
     id: string;
     label?: SystemTranslationInput | null;
     attributes?: string[] | null;
-    permissionsConf?: TreePermissionsConfInput | null;
+    permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
 }
 
@@ -188,12 +188,12 @@ export interface TreeInput {
     label?: SystemTranslationInput | null;
 }
 
-export interface TreePermissionsConfInput {
+export interface Treepermissions_confInput {
     permissionTreeAttributes: string[];
     relation: PermissionsRelation;
 }
 
-export interface valuesVersionsConfInput {
+export interface valuesversions_confInput {
     versionable: boolean;
     mode?: ValueVersionMode | null;
     trees?: string[] | null;

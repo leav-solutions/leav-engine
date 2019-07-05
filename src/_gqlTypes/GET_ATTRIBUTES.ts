@@ -8,18 +8,18 @@ import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, 
 // GraphQL query operation: GET_ATTRIBUTES
 // ====================================================
 
-export interface GET_ATTRIBUTES_attributes_permissionsConf_permissionTreeAttributes {
+export interface GET_ATTRIBUTES_attributes_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
     label: any | null;
 }
 
-export interface GET_ATTRIBUTES_attributes_permissionsConf {
-    permissionTreeAttributes: GET_ATTRIBUTES_attributes_permissionsConf_permissionTreeAttributes[];
+export interface GET_ATTRIBUTES_attributes_permissions_conf {
+    permissionTreeAttributes: GET_ATTRIBUTES_attributes_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
-export interface GET_ATTRIBUTES_attributes_versionsConf {
+export interface GET_ATTRIBUTES_attributes_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
     trees: string[] | null;
@@ -33,9 +33,9 @@ export interface GET_ATTRIBUTES_attributes {
     label: any | null;
     linked_library: string | null;
     linked_tree: string | null;
-    multipleValues: boolean;
-    permissionsConf: GET_ATTRIBUTES_attributes_permissionsConf | null;
-    versionsConf: GET_ATTRIBUTES_attributes_versionsConf | null;
+    multiple_values: boolean;
+    permissions_conf: GET_ATTRIBUTES_attributes_permissions_conf | null;
+    versions_conf: GET_ATTRIBUTES_attributes_versions_conf | null;
 }
 
 export interface GET_ATTRIBUTES {
@@ -49,6 +49,6 @@ export interface GET_ATTRIBUTESVariables {
     type?: (AttributeType | null)[] | null;
     format?: (AttributeFormat | null)[] | null;
     system?: boolean | null;
-    multipleValues?: boolean | null;
+    multiple_values?: boolean | null;
     versionable?: boolean | null;
 }

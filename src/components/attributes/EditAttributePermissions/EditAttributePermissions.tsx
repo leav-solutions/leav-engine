@@ -23,12 +23,12 @@ function EditAttributePermissions({
     t
 }: IEditAttributePermissionsProps): JSX.Element {
     const [permissionTreeAttributes, setPermissionTreeAttributes] = React.useState<string[]>(
-        attribute.permissionsConf ? attribute.permissionsConf.permissionTreeAttributes.map(a => a.id) : []
+        attribute.permissions_conf ? attribute.permissions_conf.permissionTreeAttributes.map(a => a.id) : []
     );
     const _handleTreesChange = (e, data) => setPermissionTreeAttributes(data.value);
 
     const [relation, setRelation] = React.useState<PermissionsRelation>(
-        attribute.permissionsConf ? attribute.permissionsConf.relation : PermissionsRelation.and
+        attribute.permissions_conf ? attribute.permissions_conf.relation : PermissionsRelation.and
     );
     const _handleRelationChange = (e, data) => setRelation(data.value);
 
@@ -36,7 +36,7 @@ function EditAttributePermissions({
     const onClickToggle = () => setSettingsExpanded(!settingsExpanded);
 
     const _handleSubmit = (formData: any) => {
-        onSubmitSettings({id: attribute.id, permissionsConf: {permissionTreeAttributes, relation}});
+        onSubmitSettings({id: attribute.id, permissions_conf: {permissionTreeAttributes, relation}});
     };
 
     /* tslint:disable-next-line:variable-name */

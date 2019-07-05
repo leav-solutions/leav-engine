@@ -29,9 +29,9 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
         format: AttributeFormat.text,
         linked_tree: null,
         linked_library: null,
-        permissionsConf: null,
-        multipleValues: false,
-        versionsConf: {
+        permissions_conf: null,
+        multiple_values: false,
+        versions_conf: {
             versionable: false,
             mode: ValueVersionMode.smart,
             trees: []
@@ -82,7 +82,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
     const allowVersionable = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
         formValues.type
     );
-    const isVersionable = !!formValues.versionsConf && formValues.versionsConf.versionable;
+    const isVersionable = !!formValues.versions_conf && formValues.versions_conf.versionable;
     const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(formValues.type);
 
     return (
@@ -174,7 +174,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     </FormFieldWrapper>
                 )}
                 {formValues.type === AttributeType.tree && (
-                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versions_conf : ''}>
                         <TreesSelector
                             fluid
                             selection
@@ -190,40 +190,40 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     </FormFieldWrapper>
                 )}
                 {allowMultipleValues && (
-                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multipleValues : ''}>
+                    <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.multiple_values : ''}>
                         <Form.Checkbox
                             label={t('attributes.allow_multiple_values')}
                             disabled={formValues.system || readOnly}
                             width="8"
                             toggle
-                            name="multipleValues"
+                            name="multiple_values"
                             onChange={_handleChange}
-                            checked={!!formValues.multipleValues}
+                            checked={!!formValues.multiple_values}
                         />
                     </FormFieldWrapper>
                 )}
                 {allowVersionable && (
                     <Form.Group grouped>
                         <label>{t('attributes.values_versions')}</label>
-                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                        <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versions_conf : ''}>
                             <Form.Checkbox
                                 label={t('attributes.versionable')}
                                 disabled={formValues.system || readOnly}
                                 width="8"
                                 toggle
-                                name="versionsConf/versionable"
+                                name="versions_conf/versionable"
                                 onChange={_handleChange}
                                 checked={isVersionable}
                             />
                         </FormFieldWrapper>
                         {isVersionable && (
                             <React.Fragment>
-                                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versions_conf : ''}>
                                     <Form.Select
                                         label={t('attributes.versions_mode')}
                                         disabled={formValues.system || readOnly}
                                         width="4"
-                                        name="versionsConf/mode"
+                                        name="versions_conf/mode"
                                         onChange={_handleChange}
                                         options={[
                                             {
@@ -236,13 +236,13 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                                             }
                                         ]}
                                         value={
-                                            !!formValues.versionsConf && formValues.versionsConf.mode
-                                                ? formValues.versionsConf.mode
+                                            !!formValues.versions_conf && formValues.versions_conf.mode
+                                                ? formValues.versions_conf.mode
                                                 : ValueVersionMode.smart
                                         }
                                     />
                                 </FormFieldWrapper>
-                                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versionsConf : ''}>
+                                <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versions_conf : ''}>
                                     <TreesSelector
                                         fluid
                                         selection
@@ -251,8 +251,8 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                                         disabled={formValues.system || readOnly}
                                         label={t('attributes.versions_trees')}
                                         placeholder={t('attributes.versions_trees')}
-                                        value={formValues.versionsConf ? formValues.versionsConf.trees || [] : []}
-                                        name="versionsConf/trees"
+                                        value={formValues.versions_conf ? formValues.versions_conf.trees || [] : []}
+                                        name="versions_conf/trees"
                                         onChange={_handleChange}
                                         filters={{type: [AttributeType.tree]}}
                                     />

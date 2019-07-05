@@ -8,18 +8,18 @@ import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, 
 // GraphQL mutation operation: SAVE_LIBRARY_ATTRIBUTES
 // ====================================================
 
-export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissionsConf_permissionTreeAttributes {
+export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
     label: any | null;
 }
 
-export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissionsConf {
-    permissionTreeAttributes: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissionsConf_permissionTreeAttributes[];
+export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissions_conf {
+    permissionTreeAttributes: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
-export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_versionsConf {
+export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
     trees: string[] | null;
@@ -33,9 +33,9 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes {
     label: any | null;
     linked_library: string | null;
     linked_tree: string | null;
-    multipleValues: boolean;
-    permissionsConf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissionsConf | null;
-    versionsConf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_versionsConf | null;
+    multiple_values: boolean;
+    permissions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissions_conf | null;
+    versions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_versions_conf | null;
 }
 
 export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary {

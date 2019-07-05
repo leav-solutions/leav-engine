@@ -30,7 +30,7 @@ describe('EditLibraryForm', () => {
                     system: false,
                     label: {fr: 'Test', en: 'Test'},
                     linked_tree: null,
-                    permissionsConf: null
+                    permissions_conf: null
                 }
             ],
             recordIdentityConf: {label: null, color: null, preview: null}

@@ -13,7 +13,7 @@ export const getLibsQuery = gql`
             attributes {
                 ...AttributeDetails
             }
-            permissionsConf {
+            permissions_conf {
                 permissionTreeAttributes {
                     id
                     linked_tree

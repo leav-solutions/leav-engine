@@ -43,7 +43,7 @@
         "permissions_relation": "Relation",
         "permissions_relation_and": "AND",
         "permissions_relation_or": "OR",
-        "multipleValues": "Multiple values",
+        "multiple_values": "Multiple values",
         "allow_multiple_values": "Allow multiple values",
         "values_versions": "Values versions",
         "versionable": "Values versionable",

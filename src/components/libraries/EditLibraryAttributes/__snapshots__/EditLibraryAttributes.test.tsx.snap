@@ -56,7 +56,7 @@ exports[`EditLibraryAttributes Snapshot test 1`] = `
         <th
           className="one wide"
         >
-          attributes.multipleValues
+          attributes.multiple_values
         </th>
         <th
           className="one wide"

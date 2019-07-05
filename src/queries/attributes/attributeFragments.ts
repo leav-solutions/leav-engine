@@ -9,8 +9,8 @@ export const attributeDetailsFragment = gql`
         label(lang: $lang)
         linked_library
         linked_tree
-        multipleValues
-        permissionsConf {
+        multiple_values
+        permissions_conf {
             permissionTreeAttributes {
                 id
                 linked_tree
@@ -18,7 +18,7 @@ export const attributeDetailsFragment = gql`
             }
             relation
         }
-        versionsConf {
+        versions_conf {
             versionable
             mode
             trees

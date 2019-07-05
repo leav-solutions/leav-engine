@@ -13,7 +13,7 @@ describe('DefineTreePermissions', () => {
         const comp = render(
             <MockedProvider>
                 <DefineTreePermissions
-                    permissionsConf={mockConf}
+                    permissions_conf={mockConf}
                     applyTo="test_lib"
                     permissionType={PermissionTypes.record}
                 />

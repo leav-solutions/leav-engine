@@ -8,18 +8,18 @@ import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} f
 // GraphQL fragment: AttributeDetails
 // ====================================================
 
-export interface AttributeDetails_permissionsConf_permissionTreeAttributes {
+export interface AttributeDetails_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
     label: any | null;
 }
 
-export interface AttributeDetails_permissionsConf {
-    permissionTreeAttributes: AttributeDetails_permissionsConf_permissionTreeAttributes[];
+export interface AttributeDetails_permissions_conf {
+    permissionTreeAttributes: AttributeDetails_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
-export interface AttributeDetails_versionsConf {
+export interface AttributeDetails_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
     trees: string[] | null;
@@ -33,7 +33,7 @@ export interface AttributeDetails {
     label: any | null;
     linked_library: string | null;
     linked_tree: string | null;
-    multipleValues: boolean;
-    permissionsConf: AttributeDetails_permissionsConf | null;
-    versionsConf: AttributeDetails_versionsConf | null;
+    multiple_values: boolean;
+    permissions_conf: AttributeDetails_permissions_conf | null;
+    versions_conf: AttributeDetails_versions_conf | null;
 }

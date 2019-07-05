@@ -10,7 +10,7 @@ export const saveAttributeQuery = gql`
             format
             type
             system
-            multipleValues
+            multiple_values
         }
     }
 `;

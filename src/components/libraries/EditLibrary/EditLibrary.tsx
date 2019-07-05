@@ -61,9 +61,9 @@ function EditLibrary({match, history}: IEditLibraryProps) {
                         variables: {
                             libData: {
                                 id: libData.id,
-                                permissionsConf: {
-                                    permissionTreeAttributes: libData.permissionsConf.permissionTreeAttributes,
-                                    relation: libData.permissionsConf.relation
+                                permissions_conf: {
+                                    permissionTreeAttributes: libData.permissions_conf.permissionTreeAttributes,
+                                    relation: libData.permissions_conf.relation
                                 }
                             }
                         },

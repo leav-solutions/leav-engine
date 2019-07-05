@@ -14,7 +14,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute {
     format: AttributeFormat | null;
     type: AttributeType;
     system: boolean;
-    multipleValues: boolean;
+    multiple_values: boolean;
 }
 
 export interface SAVE_ATTRIBUTE {

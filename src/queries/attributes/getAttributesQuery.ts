@@ -16,7 +16,7 @@ export const getAttributesQuery = gql`
         $type: [AttributeType]
         $format: [AttributeFormat]
         $system: Boolean
-        $multipleValues: Boolean
+        $multiple_values: Boolean
         $versionable: Boolean
     ) {
         attributes(
@@ -25,7 +25,7 @@ export const getAttributesQuery = gql`
             type: $type
             format: $format
             system: $system
-            multipleValues: $multipleValues
+            multiple_values: $multiple_values
             versionable: $versionable
         ) {
             ...AttributeDetails
