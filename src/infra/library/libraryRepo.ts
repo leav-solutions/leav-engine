@@ -70,7 +70,7 @@ export default function(
             docToInsert = {...defaultParams, ...docToInsert};
 
             const libAttributes = docToInsert.attributes;
-            delete docToInsert.attributes; // Attributes has to be handled separately
+            delete docToInsert.attributes; // Attributes have to be handled separately
 
             // Create new collection for library
             await dbService.createCollection(docToInsert._key);
@@ -83,6 +83,7 @@ export default function(
         },
         async updateLibrary(libData: ILibrary): Promise<ILibrary> {
             const docToInsert = dbUtils.convertToDoc(libData);
+            delete docToInsert.attributes; // Attributes have to be handled separately
 
             // Insert in libraries collection
             const col = dbService.db.collection(LIB_COLLECTION_NAME);

@@ -1,5 +1,5 @@
-import * as moment from 'moment';
 import {aql} from 'arangojs';
+import * as moment from 'moment';
 import {AttributeTypes} from '../../../_types/attribute';
 import {collectionTypes, IDbService} from '../dbService';
 import {IMigration} from '../dbUtils';
@@ -32,8 +32,7 @@ export default function(dbService: IDbService): IMigration {
                 const userGroupsLibParams = {
                     _key: userGroupsLibKey,
                     system: true,
-                    label: {fr: "Groupes d'utilisateurs", en: 'Users groups'},
-                    attributes: libAttributes
+                    label: {fr: "Groupes d'utilisateurs", en: 'Users groups'}
                 };
 
                 if (!(await dbService.collectionExists(userGroupsLibKey))) {
@@ -125,13 +124,6 @@ export default function(dbService: IDbService): IMigration {
                 // Insert in libraries collection
                 const col = dbService.db.collection('core_attributes');
                 const res = await dbService.execute(aql`INSERT ${attrParams} IN ${col} RETURN NEW`);
-
-                await dbService.execute(aql`
-                    FOR l IN core_libraries
-                        FILTER l._key == 'users'
-                        UPDATE l WITH {attributes: UNIQUE(APPEND(l.attributes, [{id: ${userGroupsAttrKey}}]))}
-                        IN core_libraries
-                `);
 
                 await dbService.execute(aql`
                     LET attrToInsert = {
