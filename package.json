@@ -5,8 +5,8 @@
     "main": "build/index.js",
     "scripts": {
         "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
-        "start:dev": "ts-node --type-check src/",
-        "start:build": "tsc && node .",
+        "start:dev": "ts-node --type-check src/ --server",
+        "start:build": "tsc && node . --server",
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",
         "test:e2e": "jest -c jest-e2e-config.json",
@@ -15,7 +15,8 @@
         "prettier": "prettier --write 'src/**/*.ts'",
         "dev": "run-p lint:watch start:watch test:watch",
         "precommit": "lint-staged && npm test",
-        "db:migrate": "tsc && node . --migrate"
+        "db:migrate": "tsc && node . --migrate",
+        "import": "ts-node src/ import --clear"
     },
     "repository": {
         "type": "git",
@@ -59,6 +60,7 @@
         "arangojs": "^6.10.0",
         "awilix": "^3.0.8",
         "bcrypt": "^3.0.6",
+        "commander": "^2.20.0",
         "deep-extend": "^0.5.1",
         "graphql": "^0.13.2",
         "graphql-errors": "^2.1.0",
