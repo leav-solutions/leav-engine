@@ -169,7 +169,7 @@ describe('LibraryRepo', () => {
                     _key: '222400220',
                     _id: 'core_edge_libraries_attributes/222400220',
                     _from: 'core_libraries/users',
-                    _to: 'core_attributes/created_at',
+                    _to: 'core_attributes/my_attr',
                     _rev: '_WSse-um--B'
                 }
             ];
@@ -188,14 +188,14 @@ describe('LibraryRepo', () => {
                     type: 'link'
                 },
                 {
-                    id: 'created_at',
+                    id: 'other_attr',
                     format: 'numeric',
-                    label: {en: 'Creation date'},
-                    system: true,
+                    label: {en: 'Attr'},
+                    system: false,
                     type: 'index'
                 },
                 {
-                    id: 'modified_at',
+                    id: 'created_at',
                     format: 'numeric',
                     label: {en: 'Modification date'},
                     system: true,
@@ -203,7 +203,7 @@ describe('LibraryRepo', () => {
                 }
             ]);
 
-            const createdAttrs = await libRepo.saveLibraryAttributes('users', ['id', 'created_at']);
+            const createdAttrs = await libRepo.saveLibraryAttributes('users', ['id', 'my_attr']);
             expect(mockDbServ.execute.mock.calls.length).toBe(2);
 
             // First call is to delete unused attributes
@@ -220,7 +220,7 @@ describe('LibraryRepo', () => {
             expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
 
-            expect(createdAttrs).toEqual(['id', 'created_at']);
+            expect(createdAttrs).toEqual(['id', 'my_attr']);
         });
     });
 

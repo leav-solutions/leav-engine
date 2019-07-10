@@ -53,7 +53,7 @@ exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library a
 Object {
   "@value1": "core_edge_libraries_attributes",
   "value0": Array [
-    "modified_at",
+    "other_attr",
   ],
   "value2": "core_libraries/users",
 }
@@ -82,7 +82,7 @@ Object {
   "@value2": "core_edge_libraries_attributes",
   "value0": Array [
     "id",
-    "created_at",
+    "my_attr",
   ],
   "value1": "core_libraries/users",
 }

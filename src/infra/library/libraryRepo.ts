@@ -114,7 +114,7 @@ export default function(
 
             // Get current library attributes
             const currentAttrs = await this.getLibraryAttributes(libId);
-            const deletedAttrs = difference(currentAttrs.map(a => a.id), attributes);
+            const deletedAttrs = difference(currentAttrs.filter(a => !a.system).map(a => a.id), attributes);
 
             // Unlink attributes not used anymore
             if (deletedAttrs.length) {
