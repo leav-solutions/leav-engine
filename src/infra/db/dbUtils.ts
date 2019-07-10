@@ -233,16 +233,18 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
             }, {});
         },
         convertValueVersionFromDb(version: IDbValueVersion): IValueVersion {
-            return Object.keys(version).reduce((allVers, treeName) => {
-                const [library, id] = version[treeName].split('/');
+            return version
+                ? Object.keys(version).reduce((allVers, treeName) => {
+                      const [library, id] = version[treeName].split('/');
 
-                allVers[treeName] = {
-                    library,
-                    id: Number(id)
-                };
+                      allVers[treeName] = {
+                          library,
+                          id: Number(id)
+                      };
 
-                return allVers;
-            }, {});
+                      return allVers;
+                  }, {})
+                : null;
         }
     };
 
