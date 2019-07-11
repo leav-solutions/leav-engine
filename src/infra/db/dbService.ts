@@ -1,5 +1,6 @@
 import {Database} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IUtils} from 'utils/utils';
 
 export interface IDbService {
     db?: Database;
@@ -39,7 +40,7 @@ export enum collectionTypes {
     EDGE = 'edge'
 }
 
-export default function(db: Database): IDbService {
+export default function(db: Database, utils: IUtils): IDbService {
     const collectionExists = async function(name: string): Promise<boolean> {
         const collections = await db.listCollections();
 
@@ -49,8 +50,13 @@ export default function(db: Database): IDbService {
     return {
         db,
         async execute(query: string | AqlQuery): Promise<any[]> {
-            const res = await db.query(query);
-            return res.all();
+            try {
+                const res = await db.query(query);
+                return res.all();
+            } catch (e) {
+                e.query = query;
+                utils.rethrow(e);
+            }
         },
         async createCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
             if (await collectionExists(name)) {
