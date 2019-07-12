@@ -2,6 +2,8 @@ import {Database} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
 
+const MAX_ATTEMPTS = 10;
+
 export interface IDbService {
     db?: Database;
 
@@ -10,7 +12,7 @@ export interface IDbService {
      *
      * @param query
      */
-    execute?(query: string | AqlQuery): Promise<any>;
+    execute?(query: string | AqlQuery, attempts?: number): Promise<any>;
 
     /**
      * Create a new collection in database
@@ -47,14 +49,28 @@ export default function(db: Database, utils: IUtils): IDbService {
         return collections.reduce((exists, c) => exists || c.name === name, false);
     };
 
+    const _sleep = (ms: number): Promise<void> => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    };
+
     return {
         db,
-        async execute(query: string | AqlQuery): Promise<any[]> {
+        async execute(query: string | AqlQuery, attempts: number = 0): Promise<any[]> {
             try {
                 const res = await db.query(query);
                 return res.all();
             } catch (e) {
+                // Handle write-write conflicts: we try the query again with a growing delay between trials.
+                // If we reach maximum attempts and still no success, stop it and throw the exception
+                // error 1200 === conflict
+                if (e.isArangoError && e.errorNum === 1200 && attempts < MAX_ATTEMPTS) {
+                    const timeToWait = 2 ** attempts;
+                    await _sleep(timeToWait);
+                    return this.execute(query, attempts + 1);
+                }
+
                 e.query = query;
+
                 utils.rethrow(e);
             }
         },
