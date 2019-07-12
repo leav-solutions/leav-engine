@@ -69,6 +69,7 @@ export default function(db: Database, utils: IUtils): IDbService {
                     return this.execute(query, attempts + 1);
                 }
 
+                e.message += `\nQuery was: ${JSON.stringify(query).replace(/\\n/g, ' ')}`;
                 e.query = query;
 
                 utils.rethrow(e);

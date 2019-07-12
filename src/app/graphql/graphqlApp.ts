@@ -6,10 +6,10 @@ import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
 import * as uuid from 'uuid';
 import * as winston from 'winston';
-import {IQueryInfos} from '../../_types/queryInfos';
-import {IQueryField} from '../../_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp {
     schema: GraphQLSchema;
@@ -40,7 +40,7 @@ export default function(
 
         // Error is logged with original message
         err.message = `[${errId}] ${err.message}`;
-        logger.error(err.stack);
+        logger.error(`${err.message}\n${err.stack}`);
 
         if (config.env !== 'development' && config.env !== 'test') {
             err.message = `[${errId}] Internal Error`;
