@@ -1,6 +1,7 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import {isNumber} from 'util';
 import {ITree, ITreeElement} from '_types/tree';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreApp} from './coreApp';
@@ -16,6 +17,23 @@ export default function(
     graphqlApp: IGraphqlApp,
     coreApp: ICoreApp
 ): ITreeAttributeApp {
+    /**
+     * Retrieve parent tree attribute by recursively getting up on GraphQL query path.
+     * We consider that the attribute is the first key that it's not one of our tree queries keys (ancestors, children,
+     * value) and not a number (which is an array index)
+     *
+     * @param path
+     * @return string
+     */
+    const _findParentAttribute = (path): string => {
+        const restrictedKeys = ['ancestors', 'children', 'value'];
+        if (!restrictedKeys.includes(path.key) && !isNumber(path.key)) {
+            return path.key;
+        }
+
+        return path.prev !== null ? _findParentAttribute(path.prev) : null;
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -142,7 +160,7 @@ export default function(
                             // we have to retrieve parent tree attributes to find out which tree we must use
                             let treeId;
                             if (typeof ctx.treeId === 'undefined') {
-                                const attribute = info.path.prev.prev.key;
+                                const attribute = _findParentAttribute(info.path);
                                 const attributeProps = await attributeDomain.getAttributeProperties(attribute);
                                 treeId = attributeProps.linked_tree;
                             } else {
@@ -161,7 +179,7 @@ export default function(
                             // we have to retrieve parent tree attributes to find out which tree we must use
                             let treeId;
                             if (typeof ctx.treeId === 'undefined') {
-                                const attribute = info.path.prev.prev.key;
+                                const attribute = _findParentAttribute(info.path);
                                 const attributeProps = await attributeDomain.getAttributeProperties(attribute);
                                 treeId = attributeProps.linked_tree;
                             } else {
