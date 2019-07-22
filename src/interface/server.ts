@@ -1,5 +1,4 @@
 import * as hapi from '@hapi/hapi';
-import {SchemaChangeCallback} from 'apollo-server-core';
 import {ApolloServer} from 'apollo-server-hapi';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
@@ -56,8 +55,6 @@ export default function(
                 port: config.server.port
             });
 
-            let _onSchemaUpdate: SchemaChangeCallback;
-
             try {
                 // Auth Check
                 await server.register(hapiAuthJwt2);
@@ -110,23 +107,18 @@ export default function(
                         /**
                          * Init the function we want to call on schema change.
                          * The callback received here is an Apollo internal function which actually update
-                         * the schema stored by Apollo Server. We assign it to _onSchemaUpdate which is called
-                         * when graphqlApp emits a 'schemaUpdate' (see below).
+                         * the schema stored by Apollo Server. We init an event listener to execute this function
+                         * when a change occurs (new library, new attribute...)
                          */
                         onSchemaChange: callback => {
-                            _onSchemaUpdate = callback;
+                            graphqlApp.schemaUpdateEmitter.on(graphqlApp.SCHEMA_UPDATE_EVENT, callback);
 
-                            return () =>
-                                graphqlApp.schemaUpdateEmitter.off(graphqlApp.SCHEMA_UPDATE_EVENT, _onSchemaUpdate);
+                            return () => graphqlApp.schemaUpdateEmitter.off(graphqlApp.SCHEMA_UPDATE_EVENT, callback);
                         }
                     },
                     subscriptions: false
                 });
                 await apolloServ.applyMiddleware({app: server, cors: true, path: '/graphql'});
-
-                // Listen to schemaUpdate event. The actual _onSchemaUpdate function is initialized
-                // during Apollo Server instantiation (see above in the gateway)
-                graphqlApp.schemaUpdateEmitter.on(graphqlApp.SCHEMA_UPDATE_EVENT, _onSchemaUpdate);
 
                 await server.start();
                 logger.info(`Server running at: ${server.info.uri}`);
