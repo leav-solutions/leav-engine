@@ -1,4 +1,5 @@
 import {Database} from 'arangojs';
+import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
@@ -102,11 +103,11 @@ describe('AttributeIndexRepo', () => {
                 modified_at: 1521475225
             });
 
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeSimpleLinkRepo(mockDbServ, null, mockDbUtils);
+            const attrRepo = attributeSimpleLinkRepo(mockDbServ, null, mockDbUtils as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 

@@ -61,12 +61,12 @@ describe('AttributeRepo', () => {
             };
 
             const mockCleanupRes = attrData;
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue(docAttrData)
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const updatedAttr = await attrRepo.updateAttribute(attrData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -96,12 +96,12 @@ describe('AttributeRepo', () => {
             };
 
             const mockCleanupRes = attrData;
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
                 convertToDoc: jest.fn().mockReturnValue(docAttrData)
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const createdAttr = await attrRepo.createAttribute(attrData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -143,7 +143,7 @@ describe('AttributeRepo', () => {
             };
 
             const mockCleanupRes = attrData;
-            const mockDbUtils = {
+            const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(attrData),
                 convertToDoc: jest.fn().mockReturnValue(docAttrData)
             };
@@ -152,7 +152,7 @@ describe('AttributeRepo', () => {
                 clearAllValues: jest.fn()
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils, mockValueRepo as IValueRepo);
+            const attrRepo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils, mockValueRepo as IValueRepo);
             attrRepo.getAttributes = global.__mockPromise([attrData]);
 
             const deleteRes = await attrRepo.deleteAttribute(attrData);

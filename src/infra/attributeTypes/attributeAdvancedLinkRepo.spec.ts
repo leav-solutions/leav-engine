@@ -60,7 +60,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 987654,
@@ -115,7 +115,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
@@ -233,7 +233,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -341,7 +341,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
@@ -417,7 +417,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, false, {
                 version: {
@@ -453,7 +453,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 multiple_values: false
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 
@@ -501,7 +501,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const mockAttrNotMultival = {
                 ...mockAttribute,

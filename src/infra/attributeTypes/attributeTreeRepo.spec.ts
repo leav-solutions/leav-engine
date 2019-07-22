@@ -78,7 +78,7 @@ describe('AttributeTreeRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'categories/123456',
@@ -133,7 +133,7 @@ describe('AttributeTreeRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
@@ -243,7 +243,7 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -352,7 +352,7 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -432,7 +432,7 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrTreeVersionableSimple, false, {
                 version: {
                     my_tree: {library: 'my_lib', id: 1345}
@@ -467,7 +467,7 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 
@@ -509,7 +509,7 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup);
+            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal, true);
 

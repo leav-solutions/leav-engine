@@ -145,7 +145,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'test val',
@@ -307,7 +307,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
@@ -526,7 +526,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
@@ -551,7 +551,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise([traversalRes[0]])
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
@@ -596,7 +596,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalResWithVers)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrAdvVersionableSimple, false, {
                 version: {my_tree: {library: 'my_lib', id: 1345}}
@@ -614,7 +614,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils);
+            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
