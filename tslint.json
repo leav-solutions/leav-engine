@@ -1,6 +1,11 @@
 {
     "defaultSeverity": "error",
     "extends": ["tslint:latest", "tslint-eslint-rules"],
+    "linterOptions": {
+        "exclude": [
+            "node_modules/**"
+        ]
+    },
     "rules": {
         "ter-indent": [
             false
