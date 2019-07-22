@@ -73,7 +73,8 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
     const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
     const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
-    const fieldsErrors = errors && errors.type === ErrorTypes.VALIDATION_ERROR ? errors.fields : {};
+    const fieldsErrors =
+        errors && errors.extensions.code === ErrorTypes.VALIDATION_ERROR ? errors.extensions.fields : {};
 
     const allowFormat = [AttributeType.advanced, AttributeType.simple].includes(formValues.type);
     const allowMultipleValues = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
@@ -87,7 +88,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
 
     return (
         <React.Fragment>
-            {errors && errors.type === ErrorTypes.PERMISSION_ERROR && (
+            {errors && errors.extensions.code === ErrorTypes.PERMISSION_ERROR && (
                 <Message negative>
                     <Message.Header>
                         <Icon name="ban" /> {errors.message}

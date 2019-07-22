@@ -9,7 +9,9 @@ export interface IErrorByField {
 }
 
 export interface IFormError {
-    type: ErrorTypes;
     message?: string;
-    fields?: IErrorByField;
+    extensions: {
+        code: ErrorTypes;
+        fields?: IErrorByField;
+    };
 }
