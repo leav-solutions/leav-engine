@@ -178,7 +178,7 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].fields[attrSimpleName]).toBeDefined();
+        expect(res.data.errors[0].extensions.fields[attrSimpleName]).toBeDefined();
     });
 
     test('Save value simple extended', async () => {
@@ -225,7 +225,7 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].fields[attrSimpleExtendedName]).toBeDefined();
+        expect(res.data.errors[0].extensions.fields[attrSimpleExtendedName]).toBeDefined();
     });
 
     test('Save value simple link', async () => {

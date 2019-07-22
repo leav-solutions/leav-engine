@@ -60,7 +60,7 @@ describe('Attributes', () => {
         expect(res.data.data).toBeNull();
         expect(res.data.errors).toBeDefined();
         expect(res.data.errors[0].message).toBeDefined();
-        expect(res.data.errors[0].fields).toBeDefined();
+        expect(res.data.errors[0].extensions.fields).toBeDefined();
     });
 
     test('Delete an attribute', async () => {

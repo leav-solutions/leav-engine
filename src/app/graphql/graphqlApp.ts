@@ -1,18 +1,17 @@
+import {makeExecutableSchema} from 'apollo-server';
 import {AwilixContainer} from 'awilix';
+import {EventEmitter} from 'events';
 import {GraphQLResolveInfo, GraphQLSchema, Kind} from 'graphql';
-import {maskErrors} from 'graphql-errors';
-import {makeExecutableSchema} from 'graphql-tools';
 import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
-import * as uuid from 'uuid';
 import * as winston from 'winston';
-import PermissionError from '../../errors/PermissionError';
-import ValidationError from '../../errors/ValidationError';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp {
     schema: GraphQLSchema;
+    schemaUpdateEmitter: EventEmitter;
+    SCHEMA_UPDATE_EVENT: string;
     generateSchema(): Promise<void>;
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
     ctxToQueryInfos(ctx: any): IQueryInfos;
@@ -31,25 +30,12 @@ export default function(
 ): IGraphqlApp {
     let _fullSchema: GraphQLSchema;
 
-    function _handleError(err: Error | ValidationError) {
-        if (err instanceof ValidationError || err instanceof PermissionError) {
-            return err;
-        }
-
-        const errId = uuid.v4();
-
-        // Error is logged with original message
-        err.message = `[${errId}] ${err.message}`;
-        logger.error(`${err.message}\n${err.stack}`);
-
-        if (config.env !== 'development' && config.env !== 'test') {
-            err.message = `[${errId}] Internal Error`;
-        }
-
-        return err;
-    }
+    const schemaUpdateEmitter = new EventEmitter();
+    const SCHEMA_UPDATE_EVENT = 'schemaUpdate';
 
     return {
+        SCHEMA_UPDATE_EVENT,
+        schemaUpdateEmitter,
         get schema(): GraphQLSchema {
             return _fullSchema;
         },
@@ -71,9 +57,10 @@ export default function(
 
                 // Put together a schema
                 const schema = makeExecutableSchema(appSchema);
-                maskErrors(schema, _handleError);
 
                 _fullSchema = schema;
+
+                schemaUpdateEmitter.emit(SCHEMA_UPDATE_EVENT, schema);
             } catch (e) {
                 utils.rethrow(e, 'Error generating schema:');
             }
