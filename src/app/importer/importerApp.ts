@@ -1,4 +1,3 @@
-import {CollectionType} from 'arangojs/lib/cjs/collection';
 import {AwilixContainer} from 'awilix';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -10,7 +9,8 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {now} from 'moment';
 import {isArray} from 'util';
 import {IQueryInfos} from '_types/queryInfos';
-import {collectionTypes, IDbService} from '../../infra/db/dbService';
+import {IDbService} from '../../infra/db/dbService';
+import {AttributeTypes} from '../../_types/attribute';
 
 export interface IImporterApp {
     import(filepath: string, clear: boolean): Promise<void>;
@@ -26,16 +26,6 @@ export default function(
     dbUtils: IDbUtils,
     dbService: IDbService
 ): IImporterApp {
-    const _clearDb = async () => {
-        // Drop all collections
-        const cols = await dbService.db.listCollections();
-        for (const col of cols) {
-            const colType =
-                col.type === CollectionType.DOCUMENT_COLLECTION ? collectionTypes.DOCUMENT : collectionTypes.EDGE;
-            await dbService.dropCollection(col.name, colType);
-        }
-    };
-
     const _processLibraries = (libraries, infos: IQueryInfos): Promise<any[]> => {
         return Promise.all(
             libraries.map(lib => {
@@ -131,7 +121,7 @@ export default function(
                     for (const key of Object.keys(recordsMapping[libName])) {
                         const value = !!valSettings.values
                             ? valSettings.values[Number(key) % valSettings.values.length]
-                            : attrName + key;
+                            : _generateValue(attrName, key, attributesById, recordsMapping);
 
                         valuesToImport.push({
                             library: libName,
@@ -177,6 +167,29 @@ export default function(
         );
     };
 
+    const _generateValue = (attrName, key, attributesById, recordsMapping): string => {
+        const attrType = attributesById[attrName].type;
+        const isLinkAttribute =
+            attrType === AttributeTypes.SIMPLE_LINK ||
+            attrType === AttributeTypes.ADVANCED_LINK ||
+            attrType === AttributeTypes.TREE;
+
+        if (isLinkAttribute) {
+            const linkedLib = attributesById[attrName].linked_library;
+
+            if (!linkedLib) {
+                throw new Error(`Missing linked_library on attribute ${attrName}`);
+            }
+
+            const linkedRecordsKeys = Object.keys(recordsMapping[linkedLib]);
+            const linkedRecordKey = linkedRecordsKeys[Number(key) % linkedRecordsKeys.length];
+
+            return linkedRecordKey;
+        } else {
+            return attrName + key;
+        }
+    };
+
     const _saveTreeContent = async (treeId, treeNodes, parent, recordsMapping) => {
         for (const node of treeNodes) {
             const treeElem = {id: recordsMapping[node.library][node.recordKey], library: node.library};
@@ -196,11 +209,13 @@ export default function(
             };
 
             if (clear) {
-                await _clearDb();
+                await dbUtils.clearDatabase();
             }
 
             // Run DB migration before doing anything
             await dbUtils.migrate(depsManager);
+
+            console.info('Start importing data');
 
             const fileContent = await fs.readFile(filepath, {encoding: 'utf8'});
             const data = JSON.parse(fileContent);
