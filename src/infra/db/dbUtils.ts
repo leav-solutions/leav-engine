@@ -1,3 +1,4 @@
+import {CollectionType} from 'arangojs/lib/cjs/collection';
 import {asFunction, AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -6,7 +7,7 @@ import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
 import {ITree, ITreeFilterOptions} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
-import {IDbService} from './dbService';
+import {collectionTypes, IDbService} from './dbService';
 
 const COLLECTION_NAME = 'core_db_migrations';
 
@@ -22,6 +23,7 @@ export interface IDbUtils {
     ): Promise<T[]>;
     convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
     convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
+    clearDatabase(): Promise<void>;
 }
 
 export interface IMigration {
@@ -245,6 +247,15 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
                       return allVers;
                   }, {})
                 : null;
+        },
+        async clearDatabase(): Promise<void> {
+            // Drop all collections
+            const cols = await dbService.db.listCollections();
+            for (const col of cols) {
+                const colType =
+                    col.type === CollectionType.DOCUMENT_COLLECTION ? collectionTypes.DOCUMENT : collectionTypes.EDGE;
+                await dbService.dropCollection(col.name, colType);
+            }
         }
     };
 
