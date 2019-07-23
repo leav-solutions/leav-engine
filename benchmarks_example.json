@@ -1,5 +1,5 @@
 {
-    "dataFile": "./data.json",
+    "dataFile": "./data_example.json",
     "actions": {
         "libs": {
             "reps": 100,
