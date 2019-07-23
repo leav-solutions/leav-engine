@@ -1,7 +1,8 @@
+import {IBenchmarkApp} from 'app/benchmark/benchmarkApp';
 import {IImporterApp} from 'app/importer/importerApp';
 import * as program from 'commander';
 
-export default function(importerApp: IImporterApp = null) {
+export default function(importerApp: IImporterApp = null, benchmarkApp: IBenchmarkApp) {
     return {
         run(args) {
             program
@@ -11,6 +12,17 @@ export default function(importerApp: IImporterApp = null) {
                 .action(async (file, options) => {
                     try {
                         await importerApp.import(file, options.clear);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                });
+
+            program
+                .command('benchmark <file>')
+                .description('Run benchmarks')
+                .action(async (file, options) => {
+                    try {
+                        await benchmarkApp.run(file);
                     } catch (e) {
                         console.error(e);
                     }

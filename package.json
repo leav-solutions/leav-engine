@@ -16,7 +16,8 @@
         "dev": "run-p lint:watch start:watch test:watch",
         "precommit": "lint-staged && npm test",
         "db:migrate": "tsc && node . --migrate",
-        "import": "ts-node src/ import --clear"
+        "import": "ts-node src/ import --clear",
+        "benchmark": "ts-node src/ benchmark"
     },
     "repository": {
         "type": "git",
@@ -35,6 +36,7 @@
         "@types/lodash": "^4.14.109",
         "@types/node": "^10.3.1",
         "@types/winston": "^2.3.9",
+        "apollo-server-testing": "^2.7.0",
         "axios": "^0.19.0",
         "husky": "^0.14.3",
         "jest": "^24.1.0",
