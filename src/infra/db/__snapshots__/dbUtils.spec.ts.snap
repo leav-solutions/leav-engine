@@ -1,29 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`dbUtils findCoreEntity Filter with a LIKE on ID 1`] = `"FOR el IN core_trees FILTER LIKE(el.@filterKey0, @filterValue0, true) FILTER el.@filterKey1 == @filterValue1 FILTER LIKE(el.label.fr, @filterValue2, true) OR LIKE(el.label.en, @filterValue2, true) RETURN el"`;
+exports[`dbUtils findCoreEntity Filter with a LIKE on ID 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true)  RETURN el"`;
 
 exports[`dbUtils findCoreEntity Filter with a LIKE on ID 2`] = `
 Object {
-  "filterKey0": "_key",
-  "filterKey1": "system",
-  "filterValue0": "categories",
-  "filterValue1": false,
-  "filterValue2": "Arbre des catégories",
+  "@value0": "core_trees",
+  "value1": "_key",
+  "value2": "categories",
+  "value3": "system",
+  "value4": false,
+  "value5": "fr",
+  "value6": "Arbre des catégories",
+  "value7": "en",
 }
 `;
 
-exports[`dbUtils findCoreEntity Find core entity without filters 1`] = `"FOR el IN core_trees RETURN el"`;
+exports[`dbUtils findCoreEntity Find core entity without filters 1`] = `"FOR el IN @@value0  RETURN el"`;
 
-exports[`dbUtils findCoreEntity Find core entity without filters 2`] = `Object {}`;
+exports[`dbUtils findCoreEntity Find core entity without filters 2`] = `
+Object {
+  "@value0": "core_trees",
+}
+`;
 
-exports[`dbUtils findCoreEntity Should filter label on any language 1`] = `"FOR el IN core_trees FILTER LIKE(el.@filterKey0, @filterValue0, true) FILTER el.@filterKey1 == @filterValue1 FILTER LIKE(el.label.fr, @filterValue2, true) OR LIKE(el.label.en, @filterValue2, true) RETURN el"`;
+exports[`dbUtils findCoreEntity Should filter label on any language 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true)  RETURN el"`;
 
 exports[`dbUtils findCoreEntity Should filter label on any language 2`] = `
 Object {
-  "filterKey0": "_key",
-  "filterKey1": "system",
-  "filterValue0": "categories",
-  "filterValue1": false,
-  "filterValue2": "Arbre des catégories",
+  "@value0": "core_trees",
+  "value1": "_key",
+  "value2": "categories",
+  "value3": "system",
+  "value4": false,
+  "value5": "fr",
+  "value6": "Arbre des catégories",
+  "value7": "en",
 }
 `;

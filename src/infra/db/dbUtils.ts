@@ -1,3 +1,4 @@
+import {aql} from 'arangojs';
 import {CollectionType} from 'arangojs/lib/cjs/collection';
 import {asFunction, AwilixContainer} from 'awilix';
 import * as fs from 'fs';
@@ -57,48 +58,33 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
     function _getFilterCondition(
         filterKey: string,
         filterVal: string | boolean | string[],
-        bindVars: any,
-        index: number | string,
         strictFilters: boolean
     ): any {
-        const newBindVars = {...bindVars};
-        let query;
+        const queryParts = [];
+
         // If value is an array (types or formats for example),
         // we call this function recursively on array and join filters with an OR
         if (Array.isArray(filterVal)) {
             if (filterVal.length) {
-                const filters = filterVal.map((val, i) =>
-                    // We add a prefix to the index to avoid crashing with other filters
-                    _getFilterCondition(filterKey, val, newBindVars, index + '0' + i, strictFilters)
-                );
-                query = filters.map(f => f.query).join(' OR ');
-                Object.assign(newBindVars, ...filters.map(f => f.bindVars));
+                const valParts = filterVal.map(val => _getFilterCondition(filterKey, val, strictFilters));
+                queryParts.push(aql.join(valParts, ' OR '));
             }
         } else {
             if (filterKey === 'label') {
                 // Search for label in any language
-                query = `${config.lang.available
-                    .map(l => `LIKE(el.label.${l}, @filterValue${index}, true)`)
-                    .join(' OR ')}`;
-
-                bindVars[`filterValue${index}`] = `${filterVal}`;
+                const valParts = config.lang.available.map(l => aql`LIKE(el.label.${l}, ${filterVal}, true)`);
+                queryParts.push(aql.join(valParts, ' OR '));
             } else {
-                const isBooleanCol = filterKey === 'system' || filterKey === 'multiple_values';
-
                 // Filter with a "like" on ID or exact value in other fields
-                query =
+                queryParts.push(
                     filterKey === '_key' && !strictFilters
-                        ? `LIKE(el.@filterKey${index}, @filterValue${index}, true)`
-                        : `el.@filterKey${index} == @filterValue${index}`;
-
-                newBindVars[`filterKey${index}`] = filterKey;
-                newBindVars[`filterValue${index}`] = isBooleanCol
-                    ? filterVal // Boolean must not be converted to string
-                    : `${filterVal}`;
+                        ? aql`LIKE(el.${filterKey}, ${filterVal}, true)`
+                        : aql`el.${filterKey} == ${filterVal}`
+                );
             }
         }
 
-        return {query, bindVars: newBindVars};
+        return aql.join(queryParts);
     }
 
     const ret = {
@@ -192,36 +178,36 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
 
             return newObj;
         },
-
+        /**
+         * Search core entities (libraries, attributes, trees)
+         *
+         * @param collectionName
+         * @param filters
+         * @param strictFilters
+         */
         async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
             collectionName: string,
             filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
             strictFilters?: boolean
         ): Promise<T[]> {
-            let query = `FOR el IN ${collectionName}`;
-            let bindVars = {};
+            const collec = dbService.db.collection(collectionName);
+            const queryParts = [aql`FOR el IN ${collec}`];
 
             if (typeof filters !== 'undefined') {
                 const dbFilters = ret.convertToDoc(filters);
                 const filtersKeys = Object.keys(dbFilters);
 
-                for (let i = 0; i < filtersKeys.length; i++) {
-                    const queryFilter = _getFilterCondition(
-                        filtersKeys[i],
-                        dbFilters[filtersKeys[i]],
-                        bindVars,
-                        i,
-                        strictFilters
-                    );
-
-                    query += queryFilter.query ? ' FILTER ' + queryFilter.query : '';
-                    bindVars = {...bindVars, ...queryFilter.bindVars};
+                for (const filterKey of filtersKeys) {
+                    const filterVal = dbFilters[filterKey];
+                    const conds = _getFilterCondition(filterKey, filterVal, strictFilters);
+                    queryParts.push(aql`FILTER`, conds);
                 }
             }
 
-            query += ` RETURN el`;
+            queryParts.push(aql` RETURN el`);
 
-            const res = await dbService.execute({query, bindVars});
+            const query = aql.join(queryParts);
+            const res = await dbService.execute(query);
 
             return res.map(ret.cleanup);
         },

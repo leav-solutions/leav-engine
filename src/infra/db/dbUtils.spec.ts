@@ -85,8 +85,8 @@ describe('dbUtils', () => {
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR el IN core_trees/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars['@value0']).toBe('core_trees');
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(res[0]).toMatchObject({
@@ -109,13 +109,13 @@ describe('dbUtils', () => {
         test('Should filter label on any language', async function() {
             const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME, {label: 'test'});
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(LIKE(.*)label\.fr(.*)OR LIKE(.*)label\.en)/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(LIKE(.*)label\.(.*)OR LIKE(.*)label\.)/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
         });
 
         test('Should return an empty array if no results', async function() {
-            mockDbServ = {db: null, execute: global.__mockPromise([])};
+            mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             testDbUtils = dbUtils(mockDbServ, null, {lang: {available: ['fr', 'en']}});
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn();
