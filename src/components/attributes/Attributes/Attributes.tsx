@@ -70,7 +70,7 @@ function Attributes({t, history}: IAttributesProps): JSX.Element {
                     return (
                         <AttributesList
                             loading={loading || !data}
-                            attributes={data ? data.attributes : []}
+                            attributes={data && data.attributes ? data.attributes.list : []}
                             onRowClick={onRowClick}
                             onFiltersUpdate={_onFiltersUpdate}
                             filters={filters}

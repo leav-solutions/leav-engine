@@ -3,10 +3,10 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {formatIDString, localizedLabel} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 
 interface IEditLibraryInfosFormProps extends WithNamespaces {
-    library: GET_LIBRARIES_libraries | null;
+    library: GET_LIBRARIES_libraries_list | null;
     onSubmit: (formData: any) => void;
     readonly: boolean;
 }
@@ -20,7 +20,7 @@ function EditLibraryInfosForm({library, onSubmit, readonly, t, i18n}: IEditLibra
     const existingLib = library !== null;
     const langs = ['fr', 'en'];
 
-    const libraryToEdit: GET_LIBRARIES_libraries =
+    const libraryToEdit: GET_LIBRARIES_libraries_list =
         library === null
             ? {
                   id: '',
@@ -39,7 +39,7 @@ function EditLibraryInfosForm({library, onSubmit, readonly, t, i18n}: IEditLibra
               }
             : library;
 
-    const [libData, setLibData] = useState<GET_LIBRARIES_libraries>(libraryToEdit);
+    const [libData, setLibData] = useState<GET_LIBRARIES_libraries_list>(libraryToEdit);
     const {id, label, attributes, recordIdentityConf} = libData;
 
     const libAttributesOptions = attributes
@@ -54,7 +54,7 @@ function EditLibraryInfosForm({library, onSubmit, readonly, t, i18n}: IEditLibra
     const _handleChange = (event, data) => {
         const value = data.type === 'checkbox' ? data.checked : data.value;
         const name: string = data.name;
-        const stateUpdate: Partial<GET_LIBRARIES_libraries> = {};
+        const stateUpdate: Partial<GET_LIBRARIES_libraries_list> = {};
 
         if (name.indexOf('/') !== -1) {
             const [field, subField] = name.split('/');

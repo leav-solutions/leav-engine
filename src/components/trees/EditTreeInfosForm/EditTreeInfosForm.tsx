@@ -4,17 +4,17 @@ import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
 import {formatIDString} from '../../../utils/utils';
-import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import LibrariesSelector from '../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 
 interface IEditTreeInfosFormProps extends WithNamespaces {
-    tree: GET_TREES_trees | null;
+    tree: GET_TREES_trees_list | null;
     onSubmit: (formData: any) => void;
     readOnly: boolean;
 }
 
-interface IEditTreeInfosFormState extends GET_TREES_trees {
+interface IEditTreeInfosFormState extends GET_TREES_trees_list {
     existingTree: boolean;
 }
 
@@ -45,7 +45,7 @@ function EditTreeInfosForm({tree, onSubmit, t, readOnly}: IEditTreeInfosFormProp
     const _handleChange = (event, data) => {
         const value = data.type === 'checkbox' ? data.checked : data.value;
         const name: string = data.name;
-        const stateUpdate: Partial<GET_TREES_trees> = {};
+        const stateUpdate: Partial<GET_TREES_trees_list> = {};
 
         if (name.indexOf('/') !== -1) {
             const [field, lang] = name.split('/');

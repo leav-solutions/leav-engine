@@ -1,13 +1,13 @@
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Header, Tab} from 'semantic-ui-react';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import EditLibraryAttributes from '../EditLibraryAttributes';
 import EditLibraryInfosForm from '../EditLibraryInfosForm';
 import EditLibraryPermissions from '../EditLibraryPermissions';
 
 interface IEditLibraryFormProps extends WithNamespaces {
-    library: GET_LIBRARIES_libraries | null;
+    library: GET_LIBRARIES_libraries_list | null;
     onSubmit: (formData: any) => void;
     onPermsSettingsSubmit: (formData: any) => void;
     readOnly: boolean;

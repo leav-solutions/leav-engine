@@ -2,14 +2,14 @@ import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Checkbox, Input, Table} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import Loading from '../../shared/Loading';
 import DeleteTree from '../DeleteTree';
 
 interface ITreesListProps extends WithNamespaces {
-    trees: GET_TREES_trees[] | null;
+    trees: GET_TREES_trees_list[] | null;
     loading?: boolean;
-    onRowClick: (tree: GET_TREES_trees) => void;
+    onRowClick: (tree: GET_TREES_trees_list) => void;
     onFiltersUpdate?: (filters: any) => void;
     filters?: any;
 }

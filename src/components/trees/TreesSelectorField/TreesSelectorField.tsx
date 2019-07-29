@@ -2,12 +2,12 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {DropdownProps, Form} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import Loading from '../../shared/Loading';
 
 interface IAttributesSelectorFieldProps extends DropdownProps, WithNamespaces {
     loading?: boolean;
-    trees: GET_TREES_trees[] | null;
+    trees: GET_TREES_trees_list[] | null;
 }
 
 function TreesSelectorField({loading, trees, i18n, ...fieldProps}: IAttributesSelectorFieldProps): JSX.Element {

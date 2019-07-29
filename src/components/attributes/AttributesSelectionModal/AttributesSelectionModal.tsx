@@ -2,7 +2,7 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../shared/Loading';
 import AttributesSelectionList from '../AttributesSelectionList';
 
@@ -53,7 +53,9 @@ class AttributesSelectionModal extends React.Component<IAttributesSelectionProps
                                     <Modal.Header>{t('libraries.link_existing_attribute')}</Modal.Header>
                                     <Modal.Content scrolling>
                                         <AttributesSelectionList
-                                            attributes={data.attributes.filter(a => selection.indexOf(a.id) === -1)}
+                                            attributes={data.attributes.list.filter(
+                                                a => selection.indexOf(a.id) === -1
+                                            )}
                                             selection={pendingSelection}
                                             toggleSelection={this._toggleSelection}
                                         />
@@ -80,7 +82,7 @@ class AttributesSelectionModal extends React.Component<IAttributesSelectionProps
         this.props.onSubmit(this.state.pendingSelection);
     }
 
-    private _toggleSelection = (selectedAttr: GET_ATTRIBUTES_attributes) => {
+    private _toggleSelection = (selectedAttr: GET_ATTRIBUTES_attributes_list) => {
         const {pendingSelection} = this.state;
 
         const newSelection =

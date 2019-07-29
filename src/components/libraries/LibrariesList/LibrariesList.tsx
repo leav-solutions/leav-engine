@@ -2,13 +2,13 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Icon, Input, Table} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import Loading from '../../shared/Loading';
 import DeleteLibrary from '../DeleteLibrary';
 
 interface ILibrariesListProps extends WithNamespaces {
-    libraries: GET_LIBRARIES_libraries[] | null;
-    onRowClick: (library: GET_LIBRARIES_libraries) => void;
+    libraries: GET_LIBRARIES_libraries_list[] | null;
+    onRowClick: (library: GET_LIBRARIES_libraries_list) => void;
     onFiltersUpdate?: (filters: any) => void;
     loading?: boolean;
     filters?: any;

@@ -6,7 +6,7 @@ import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery, LibrariesQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {SaveLibMutation, saveLibQuery} from '../../../queries/libraries/saveLibMutation';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditLibraryForm from '../EditLibraryForm';
@@ -28,7 +28,7 @@ function EditLibrary({match, history}: IEditLibraryProps) {
      * @param libToEdit
      * @param history
      */
-    const _getEditLibraryForm = (libToEdit: GET_LIBRARIES_libraries | null) => (
+    const _getEditLibraryForm = (libToEdit: GET_LIBRARIES_libraries_list | null) => (
         <SaveLibMutation mutation={saveLibQuery}>
             {saveLibrary => {
                 const onFormSubmit = async libData => {
@@ -96,7 +96,8 @@ function EditLibrary({match, history}: IEditLibraryProps) {
                     return 'Unknown library';
                 }
 
-                const libToEdit = data!.libraries !== null && data!.libraries!.length ? data!.libraries![0] : null;
+                const libToEdit =
+                    data!.libraries !== null && data!.libraries!.list.length ? data!.libraries!.list[0] : null;
 
                 return _getEditLibraryForm(libToEdit);
             }}

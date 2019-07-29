@@ -16,34 +16,38 @@ describe('EditAttributePermissions', () => {
             },
             result: {
                 data: {
-                    attributes: [
-                        {
-                            ...mockAttrTree,
-                            __typename: 'Attribute',
-                            label: {
-                                fr: 'Attr 1'
+                    attributes: {
+                        __typename: 'AttributesList',
+                        totalCount: 2,
+                        list: [
+                            {
+                                ...mockAttrTree,
+                                __typename: 'Attribute',
+                                label: {
+                                    fr: 'Attr 1'
+                                },
+                                id: 'test_tree_attr',
+                                linked_tree: 'some_tree',
+                                versions_conf: {
+                                    ...mockAttrTree.versions_conf,
+                                    __typename: 'valuesversions_conf'
+                                }
                             },
-                            id: 'test_tree_attr',
-                            linked_tree: 'some_tree',
-                            versions_conf: {
-                                ...mockAttrTree.versions_conf,
-                                __typename: 'valuesversions_conf'
+                            {
+                                ...mockAttrTree,
+                                __typename: 'Attribute',
+                                label: {
+                                    fr: 'Attr 2'
+                                },
+                                id: 'other_test_tree_attr',
+                                linked_tree: 'some_other_tree',
+                                versions_conf: {
+                                    ...mockAttrTree.versions_conf,
+                                    __typename: 'valuesversions_conf'
+                                }
                             }
-                        },
-                        {
-                            ...mockAttrTree,
-                            __typename: 'Attribute',
-                            label: {
-                                fr: 'Attr 2'
-                            },
-                            id: 'other_test_tree_attr',
-                            linked_tree: 'some_other_tree',
-                            versions_conf: {
-                                ...mockAttrTree.versions_conf,
-                                __typename: 'valuesversions_conf'
-                            }
-                        }
-                    ]
+                        ]
+                    }
                 }
             }
         }

@@ -20,15 +20,20 @@ export const getAttributesQuery = gql`
         $versionable: Boolean
     ) {
         attributes(
-            id: $id
-            label: $label
-            type: $type
-            format: $format
-            system: $system
-            multiple_values: $multiple_values
-            versionable: $versionable
+            filters: {
+                id: $id
+                label: $label
+                type: $type
+                format: $format
+                system: $system
+                multiple_values: $multiple_values
+                versionable: $versionable
+            }
         ) {
-            ...AttributeDetails
+            totalCount
+            list {
+                ...AttributeDetails
+            }
         }
     }
 `;

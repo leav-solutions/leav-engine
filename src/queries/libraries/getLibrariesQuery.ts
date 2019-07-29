@@ -6,25 +6,28 @@ import {attributeDetailsFragment} from '../attributes/attributeFragments';
 export const getLibsQuery = gql`
     ${attributeDetailsFragment}
     query GET_LIBRARIES($id: ID, $label: String, $system: Boolean, $lang: [AvailableLanguage!]) {
-        libraries(id: $id, label: $label, system: $system) {
-            id
-            system
-            label
-            attributes {
-                ...AttributeDetails
-            }
-            permissions_conf {
-                permissionTreeAttributes {
-                    id
-                    linked_tree
-                    label(lang: $lang)
-                }
-                relation
-            }
-            recordIdentityConf {
+        libraries(filters: {id: $id, label: $label, system: $system}) {
+            totalCount
+            list {
+                id
+                system
                 label
-                color
-                preview
+                attributes {
+                    ...AttributeDetails
+                }
+                permissions_conf {
+                    permissionTreeAttributes {
+                        id
+                        linked_tree
+                        label(lang: $lang)
+                    }
+                    relation
+                }
+                recordIdentityConf {
+                    label
+                    color
+                    preview
+                }
             }
         }
     }

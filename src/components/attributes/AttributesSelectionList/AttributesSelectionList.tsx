@@ -1,12 +1,12 @@
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Table} from 'semantic-ui-react';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 
 interface IAttributesSelectionListProps extends WithNamespaces {
-    attributes: GET_ATTRIBUTES_attributes[];
+    attributes: GET_ATTRIBUTES_attributes_list[];
     selection: string[];
-    toggleSelection: (attribute: GET_ATTRIBUTES_attributes) => void;
+    toggleSelection: (attribute: GET_ATTRIBUTES_attributes_list) => void;
 }
 
 class AttributesSelectionList extends React.Component<IAttributesSelectionListProps> {

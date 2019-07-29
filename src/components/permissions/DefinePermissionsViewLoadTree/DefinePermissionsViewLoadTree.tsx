@@ -30,7 +30,7 @@ function DefinePermissionsViewLoadTree({
                     return <p>Unknown tree</p>;
                 }
 
-                const treeData = data.trees[0];
+                const treeData = data.trees.list[0];
 
                 return (
                     <React.Fragment>

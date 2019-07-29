@@ -1,11 +1,11 @@
 import {shallow} from 'enzyme';
 import React from 'react';
-import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {mockTree} from '../../../__mocks__/trees';
 import TreesSelectorField from './TreesSelectorField';
 
 describe('TreesSelectorField', () => {
-    const trees: GET_TREES_trees[] = [
+    const trees: GET_TREES_trees_list[] = [
         {
             ...mockTree,
             id: 'tree1'

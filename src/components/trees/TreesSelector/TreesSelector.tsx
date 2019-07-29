@@ -12,7 +12,13 @@ function TreesSelector({filters, ...fieldProps}: IAttributesSelectorProps): JSX.
     return (
         <TreesQuery query={getTreesQuery} variables={filters}>
             {({loading, error, data}) => {
-                return <TreesSelectorField {...fieldProps} loading={loading} trees={!!data ? data.trees : []} />;
+                return (
+                    <TreesSelectorField
+                        {...fieldProps}
+                        loading={loading}
+                        trees={!!data && data.trees ? data.trees.list : []}
+                    />
+                );
             }}
         </TreesQuery>
     );

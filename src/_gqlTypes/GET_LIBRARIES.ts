@@ -2,30 +2,30 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeFormat, AttributeType, AvailableLanguage, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES
 // ====================================================
 
-export interface GET_LIBRARIES_libraries_attributes_permissions_conf_permissionTreeAttributes {
+export interface GET_LIBRARIES_libraries_list_attributes_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
     label: any | null;
 }
 
-export interface GET_LIBRARIES_libraries_attributes_permissions_conf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_attributes_permissions_conf_permissionTreeAttributes[];
+export interface GET_LIBRARIES_libraries_list_attributes_permissions_conf {
+    permissionTreeAttributes: GET_LIBRARIES_libraries_list_attributes_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
-export interface GET_LIBRARIES_libraries_attributes_versions_conf {
+export interface GET_LIBRARIES_libraries_list_attributes_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
     trees: string[] | null;
 }
 
-export interface GET_LIBRARIES_libraries_attributes {
+export interface GET_LIBRARIES_libraries_list_attributes {
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
@@ -34,38 +34,43 @@ export interface GET_LIBRARIES_libraries_attributes {
     linked_library: string | null;
     linked_tree: string | null;
     multiple_values: boolean;
-    permissions_conf: GET_LIBRARIES_libraries_attributes_permissions_conf | null;
-    versions_conf: GET_LIBRARIES_libraries_attributes_versions_conf | null;
+    permissions_conf: GET_LIBRARIES_libraries_list_attributes_permissions_conf | null;
+    versions_conf: GET_LIBRARIES_libraries_list_attributes_versions_conf | null;
 }
 
-export interface GET_LIBRARIES_libraries_permissions_conf_permissionTreeAttributes {
+export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
     label: any | null;
 }
 
-export interface GET_LIBRARIES_libraries_permissions_conf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_permissions_conf_permissionTreeAttributes[];
+export interface GET_LIBRARIES_libraries_list_permissions_conf {
+    permissionTreeAttributes: GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
-export interface GET_LIBRARIES_libraries_recordIdentityConf {
+export interface GET_LIBRARIES_libraries_list_recordIdentityConf {
     label: string | null;
     color: string | null;
     preview: string | null;
 }
 
-export interface GET_LIBRARIES_libraries {
+export interface GET_LIBRARIES_libraries_list {
     id: string;
     system: boolean | null;
     label: any | null;
-    attributes: GET_LIBRARIES_libraries_attributes[] | null;
-    permissions_conf: GET_LIBRARIES_libraries_permissions_conf | null;
-    recordIdentityConf: GET_LIBRARIES_libraries_recordIdentityConf | null;
+    attributes: GET_LIBRARIES_libraries_list_attributes[] | null;
+    permissions_conf: GET_LIBRARIES_libraries_list_permissions_conf | null;
+    recordIdentityConf: GET_LIBRARIES_libraries_list_recordIdentityConf | null;
+}
+
+export interface GET_LIBRARIES_libraries {
+    totalCount: number;
+    list: GET_LIBRARIES_libraries_list[];
 }
 
 export interface GET_LIBRARIES {
-    libraries: GET_LIBRARIES_libraries[] | null;
+    libraries: GET_LIBRARIES_libraries | null;
 }
 
 export interface GET_LIBRARIESVariables {

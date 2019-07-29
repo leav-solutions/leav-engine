@@ -2,13 +2,13 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Header, Tab} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {IFormError} from '../../../_types//errors';
 import EditAttributeInfosForm from '../EditAttributeInfosForm';
 import EditAttributePermissions from '../EditAttributePermissions';
 
 interface IEditAttributeFormProps extends WithNamespaces {
-    attribute: GET_ATTRIBUTES_attributes | null;
+    attribute: GET_ATTRIBUTES_attributes_list | null;
     onSubmit: (formData: any) => void;
     onPermsSettingsSubmit: (formData: any) => void;
     errors?: IFormError;

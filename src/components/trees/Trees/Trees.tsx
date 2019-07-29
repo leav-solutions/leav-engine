@@ -62,7 +62,7 @@ function Trees({history, t}: ITreesProps): JSX.Element {
 
                     return (
                         <TreesList
-                            trees={data ? data.trees : null}
+                            trees={data && data.trees ? data.trees.list : null}
                             onRowClick={onRowClick}
                             onFiltersUpdate={_onFiltersUpdate}
                             filters={filters}

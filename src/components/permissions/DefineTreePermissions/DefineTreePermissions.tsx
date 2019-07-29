@@ -2,14 +2,14 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries_permissions_conf} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list_permissions_conf} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissionsView from '../DefineTreePermissionsView';
 
 interface IDefineTreePermissionsProps extends WithNamespaces {
     permissionType: PermissionTypes;
     applyTo: string;
-    permissions_conf: GET_LIBRARIES_libraries_permissions_conf;
+    permissions_conf: GET_LIBRARIES_libraries_list_permissions_conf;
 }
 
 function DefineTreePermissions({

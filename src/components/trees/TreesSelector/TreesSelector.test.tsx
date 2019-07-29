@@ -14,25 +14,29 @@ describe('TreesSelector', () => {
                 },
                 result: {
                     data: {
-                        trees: [
-                            {
-                                __typename: 'Tree',
-                                id: 'test_tree',
-                                system: false,
-                                label: {
-                                    en: 'TestTree',
-                                    fr: 'TestTree'
-                                },
-                                libraries: ['test_lib']
-                            }
-                        ]
+                        trees: {
+                            __typename: 'TreesList',
+                            totalCount: 1,
+                            list: [
+                                {
+                                    __typename: 'Tree',
+                                    id: 'test_tree',
+                                    system: false,
+                                    label: {
+                                        en: 'TestTree',
+                                        fr: 'TestTree'
+                                    },
+                                    libraries: ['test_lib']
+                                }
+                            ]
+                        }
                     }
                 }
             }
         ];
 
         const comp = mount(
-            <MockedProvider mocks={mocks}>
+            <MockedProvider mocks={mocks} addTypename>
                 <TreesSelector />
             </MockedProvider>
         );

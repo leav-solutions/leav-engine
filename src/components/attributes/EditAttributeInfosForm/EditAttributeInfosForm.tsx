@@ -3,7 +3,7 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {formatIDString} from '../../../utils/utils';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types//errors';
 import LibrariesSelector from '../../libraries/LibrariesSelector';
@@ -11,14 +11,14 @@ import FormFieldWrapper from '../../shared/FormFieldWrapper';
 import TreesSelector from '../../trees/TreesSelector';
 
 interface IEditAttributeInfosFormProps extends WithNamespaces {
-    attribute: GET_ATTRIBUTES_attributes | null;
+    attribute: GET_ATTRIBUTES_attributes_list | null;
     onSubmit: (formData: any) => void;
     errors?: IFormError;
     readOnly: boolean;
 }
 
 function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEditAttributeInfosFormProps) {
-    const defaultAttribute: GET_ATTRIBUTES_attributes = {
+    const defaultAttribute: GET_ATTRIBUTES_attributes_list = {
         id: '',
         system: false,
         label: {
@@ -40,7 +40,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
 
     const {lang: userLang} = useLang();
 
-    const [formValues, setFormValues] = React.useState<GET_ATTRIBUTES_attributes>(
+    const [formValues, setFormValues] = React.useState<GET_ATTRIBUTES_attributes_list>(
         attribute !== null ? attribute : defaultAttribute
     );
 
@@ -49,7 +49,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
     const _handleChange = (e, data) => {
         const value = data.type === 'checkbox' ? data.checked : data.value;
         const name: string = data.name;
-        const stateUpdate: Partial<GET_ATTRIBUTES_attributes> = {};
+        const stateUpdate: Partial<GET_ATTRIBUTES_attributes_list> = {};
         if (name.indexOf('/') !== -1) {
             const [field, subfield] = name.split('/');
             stateUpdate[field] = {...formValues[field]};
@@ -63,7 +63,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
             stateUpdate[name] = value;
         }
 
-        setFormValues({...formValues, ...(stateUpdate as GET_ATTRIBUTES_attributes)});
+        setFormValues({...formValues, ...(stateUpdate as GET_ATTRIBUTES_attributes_list)});
     };
 
     const _handleSubmit = e => {

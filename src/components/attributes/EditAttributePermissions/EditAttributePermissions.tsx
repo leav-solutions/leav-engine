@@ -4,13 +4,13 @@ import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
 import Loading from '../../shared/Loading';
 
 interface IEditAttributePermissionsProps extends WithNamespaces {
-    attribute: GET_ATTRIBUTES_attributes;
+    attribute: GET_ATTRIBUTES_attributes_list;
     onSubmitSettings: (formData: any) => void;
     readOnly: boolean;
 }
@@ -60,7 +60,7 @@ function EditAttributePermissions({
                     return <p>Error: {error.message}</p>;
                 }
 
-                const treeAttributes = data && data.attributes ? data.attributes : [];
+                const treeAttributes = data && data.attributes ? data.attributes.list : [];
 
                 const treeAttributesOptions = treeAttributes.map(a => ({
                     key: a.id,

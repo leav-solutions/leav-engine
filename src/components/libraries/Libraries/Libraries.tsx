@@ -62,7 +62,7 @@ function Libraries({t, history}: ILibrariesProps): JSX.Element {
                     return (
                         <LibrariesList
                             loading={loading || !data}
-                            libraries={data ? data.libraries : []}
+                            libraries={data && data.libraries ? data.libraries.list : []}
                             onRowClick={onRowClick}
                             onFiltersUpdate={_onFiltersUpdate}
                             filters={filters}

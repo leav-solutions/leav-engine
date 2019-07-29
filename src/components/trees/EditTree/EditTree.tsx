@@ -4,7 +4,7 @@ import {WithNamespaces, withNamespaces} from 'react-i18next';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
 import {SaveTreeMutation, saveTreeQuery} from '../../../queries/trees/saveTreeMutation';
-import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditTreeForm from '../EditTreeForm';
@@ -18,7 +18,7 @@ function EditTree({match, history}: IEditTreeProps): JSX.Element {
     const treeId = match.params.id;
     const userData = useUserData();
 
-    const _getEditTreeForm = (treeToEdit: GET_TREES_trees | null) => {
+    const _getEditTreeForm = (treeToEdit: GET_TREES_trees_list | null) => {
         const readOnly = !userData.permissions[PermissionsActions.admin_edit_tree];
 
         return (
@@ -57,7 +57,7 @@ function EditTree({match, history}: IEditTreeProps): JSX.Element {
                     return 'Unknown tree';
                 }
 
-                return _getEditTreeForm(data.trees[0]);
+                return _getEditTreeForm(data.trees.list[0]);
             }}
         </TreesQuery>
     ) : (

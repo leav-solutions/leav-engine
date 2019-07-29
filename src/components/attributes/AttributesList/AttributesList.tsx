@@ -3,13 +3,13 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Checkbox, Dropdown, Input, Table} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils/utils';
 import {AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 
 interface IAttributesListProps extends WithNamespaces {
     attributes: AttributeDetails[] | null;
-    onRowClick: (attribute: GET_ATTRIBUTES_attributes) => void;
+    onRowClick: (attribute: GET_ATTRIBUTES_attributes_list) => void;
     onFiltersUpdate?: (filters: any) => void;
     loading: boolean;
     withFilters?: boolean;

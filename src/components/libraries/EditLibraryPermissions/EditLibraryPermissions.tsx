@@ -3,13 +3,13 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {AttributeType, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineLibPermissionsView from '../../permissions/DefineLibPermissionsView';
 import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
 
 interface IEditLibraryPermissionsProps extends WithNamespaces {
-    library: GET_LIBRARIES_libraries;
+    library: GET_LIBRARIES_libraries_list;
     onSubmitSettings: (formData: any) => void;
     readOnly: boolean;
 }

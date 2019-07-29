@@ -12,7 +12,11 @@ function LibrariesSelector({lang, ...fieldProps}: ILibrariesSelectorProps): JSX.
     return (
         <LibrariesQuery query={getLibsQuery} variables={{lang}}>
             {({loading, error, data}) => (
-                <LibrariesSelectorField {...fieldProps} loading={loading} libraries={!!data ? data.libraries : null} />
+                <LibrariesSelectorField
+                    {...fieldProps}
+                    loading={loading}
+                    libraries={!!data && data.libraries ? data.libraries.list : null}
+                />
             )}
         </LibrariesQuery>
     );

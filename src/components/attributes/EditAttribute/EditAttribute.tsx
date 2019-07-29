@@ -5,7 +5,7 @@ import {Dimmer} from 'semantic-ui-react';
 import useUserData from '../../../hooks/useUserData';
 import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {SaveAttributeMutation, saveAttributeQuery} from '../../../queries/attributes/saveAttributeMutation';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeForm from '../EditAttributeForm';
@@ -18,7 +18,7 @@ interface IEditAttributeProps {
     match?: match<IEditAttributeMatchParams>;
     history?: History;
     attributeId?: number | null;
-    afterSubmit?: (attrData: GET_ATTRIBUTES_attributes) => void;
+    afterSubmit?: (attrData: GET_ATTRIBUTES_attributes_list) => void;
 }
 
 function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: IEditAttributeProps): JSX.Element {
@@ -26,7 +26,7 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
     const userData = useUserData();
     const readOnly = !userData.permissions[PermissionsActions.admin_edit_attribute];
 
-    const _getEditAttributeForm = (attrToEdit: GET_ATTRIBUTES_attributes | null): JSX.Element => (
+    const _getEditAttributeForm = (attrToEdit: GET_ATTRIBUTES_attributes_list | null): JSX.Element => (
         <SaveAttributeMutation mutation={saveAttributeQuery}>
             {(saveAttribute, {loading, error}) => {
                 const onFormSubmit = async attrData => {
@@ -120,7 +120,7 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                     return <p>Unknown attribute</p>;
                 }
 
-                return _getEditAttributeForm(data.attributes[0]);
+                return _getEditAttributeForm(data.attributes.list[0]);
             }}
         </AttributesQuery>
     ) : (

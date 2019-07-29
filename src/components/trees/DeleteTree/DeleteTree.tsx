@@ -4,13 +4,13 @@ import useUserData from '../../../hooks/useUserData';
 import {DeleteTreeMutation, deleteTreeQuery} from '../../../queries/trees/deleteTreeMutation';
 import {getTreesQueryName} from '../../../queries/trees/getTreesQuery';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
 
 interface IDeleteTreeProps extends WithNamespaces {
-    tree?: GET_TREES_trees;
+    tree?: GET_TREES_trees_list;
 }
 
 function DeleteTree({tree, t, i18n}: IDeleteTreeProps): JSX.Element | null {

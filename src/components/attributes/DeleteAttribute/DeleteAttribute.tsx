@@ -2,12 +2,12 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {DeleteAttributeMutation, deleteAttrQuery} from '../../../queries/attributes/deleteAttributeMutation';
 import {getAttributesQueryName} from '../../../queries/attributes/getAttributesQuery';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
 
 interface IDeleteAttributeProps extends WithNamespaces {
-    attribute?: GET_ATTRIBUTES_attributes;
+    attribute?: GET_ATTRIBUTES_attributes_list;
 }
 
 class DeleteAttribute extends React.Component<IDeleteAttributeProps> {

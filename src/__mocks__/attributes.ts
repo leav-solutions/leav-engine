@@ -1,7 +1,7 @@
-import {GET_ATTRIBUTES_attributes} from '../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../_gqlTypes/globalTypes';
 
-const base: GET_ATTRIBUTES_attributes = {
+const base: GET_ATTRIBUTES_attributes_list = {
     id: 'test_attribute',
     label: {
         fr: 'Mon Attribut',

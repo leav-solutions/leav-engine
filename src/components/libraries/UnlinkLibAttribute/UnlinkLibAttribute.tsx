@@ -2,12 +2,12 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
 import {AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 
 interface IUnlinkLibAttributeProps extends WithNamespaces {
     attribute?: AttributeDetails;
-    library: GET_LIBRARIES_libraries | null;
+    library: GET_LIBRARIES_libraries_list | null;
     onUnlink: (attributesList: string[]) => void;
 }
 

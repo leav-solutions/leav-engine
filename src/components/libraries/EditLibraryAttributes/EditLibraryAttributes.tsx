@@ -7,15 +7,15 @@ import {
     SaveLibAttributesMutation,
     saveLibAttributesMutation
 } from '../../../queries/libraries/saveLibAttributesMutation';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import AttributesList from '../../attributes/AttributesList';
 import AttributesSelectionModal from '../../attributes/AttributesSelectionModal';
 import EditAttribute from '../../attributes/EditAttribute';
 import UnlinkLibAttribute from '../UnlinkLibAttribute';
 
 interface IEditLibraryAttributesProps extends WithNamespaces {
-    library: GET_LIBRARIES_libraries | null;
+    library: GET_LIBRARIES_libraries_list | null;
     readOnly: boolean;
 }
 
@@ -51,7 +51,7 @@ function EditLibraryAttributes({library, readOnly, t}: IEditLibraryAttributesPro
                         });
                     };
 
-                    const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes) => {
+                    const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes_list) => {
                         if (library === null) {
                             return;
                         }

@@ -2,12 +2,12 @@ import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {Header, Tab} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_TREES_trees} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import EditTreeInfosForm from '../EditTreeInfosForm';
 import TreeStructure from '../TreeStructure';
 
 interface IEditTreeFormProps extends WithNamespaces {
-    tree: GET_TREES_trees | null;
+    tree: GET_TREES_trees_list | null;
     onSubmit: (formData: any) => void;
     readOnly: boolean;
 }
