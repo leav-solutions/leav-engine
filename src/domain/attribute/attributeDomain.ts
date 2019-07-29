@@ -7,6 +7,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
+import {IList, IPaginationParams} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -26,7 +27,11 @@ export interface IAttributeDomain {
      * @param filters
      * @returns Promise<[{}]>
      */
-    getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]>;
+    getAttributes(
+        filters?: IAttributeFilterOptions,
+        withCount?: boolean,
+        pagination?: IPaginationParams
+    ): Promise<IList<IAttribute>>;
 
     /**
      * Save attribute.
@@ -152,7 +157,7 @@ export default function(
             attrData.versions_conf.trees.length
         ) {
             const existingTrees = await treeRepo.getTrees();
-            const unknownTrees = difference(attrData.versions_conf.trees, existingTrees.map(a => a.id));
+            const unknownTrees = difference(attrData.versions_conf.trees, existingTrees.list.map(a => a.id));
             if (unknownTrees.length) {
                 errors.versions_conf = `Unknown trees: ${unknownTrees.join(', ')}`;
             }
@@ -221,23 +226,25 @@ export default function(
         async getAttributeProperties(id: string): Promise<IAttribute> {
             const attrs = await attributeRepo.getAttributes({id}, true);
 
-            if (!attrs.length) {
+            if (!attrs.list.length) {
                 throw new ValidationError({id: 'Unknown attribute ' + id});
             }
-            const props = attrs.pop();
+            const props = attrs.list.pop();
 
             return props;
         },
-        async getAttributes(filters?: IAttributeFilterOptions): Promise<IAttribute[]> {
-            const attrs = await attributeRepo.getAttributes(filters);
-
-            return attrs;
+        async getAttributes(
+            filters?: IAttributeFilterOptions,
+            withCount: boolean = false,
+            pagination?: IPaginationParams
+        ): Promise<IList<IAttribute>> {
+            return attributeRepo.getAttributes(filters, false, withCount, pagination);
         },
         async saveAttribute(attrData: IAttribute, infos: IQueryInfos): Promise<IAttribute> {
             // TODO: Validate attribute data (linked library, linked tree...)
 
             const attrs = await attributeRepo.getAttributes({id: attrData.id});
-            const isExistingAttr = !!attrs.length;
+            const isExistingAttr = !!attrs.list.length;
             const attrToSave = {...attrData};
 
             // Check permissions
@@ -284,11 +291,11 @@ export default function(
             const attr = await this.getAttributes({id});
 
             // Check if exists and can delete
-            if (!attr.length) {
+            if (!attr.list.length) {
                 throw new ValidationError({id: 'Unknown attribute ' + id});
             }
 
-            const attrProps = attr.pop();
+            const attrProps = attr.list.pop();
 
             if (attrProps.system) {
                 throw new ValidationError({id: 'Cannot delete system attribute'});

@@ -47,7 +47,7 @@ export default function(
     const _validateVersion = async (value: IValue): Promise<string[]> => {
         const trees = Object.keys(value.version);
         const existingTrees = await treeRepo.getTrees();
-        const existingTreesIds = existingTrees.map(t => t.id);
+        const existingTreesIds = existingTrees.list.map(t => t.id);
 
         const badElements = await trees.reduce(async (prevErrors, treeName) => {
             // As our reduce function is async, we must wait for previous iteration to resolve
@@ -61,9 +61,8 @@ export default function(
             const isPresent = await treeRepo.isElementPresent(treeName, value.version[treeName]);
             if (!isPresent) {
                 errors.push([
-                    `Element ${value.version[treeName].library}/${
-                        value.version[treeName].id
-                    } not present in tree ${treeName}`
+                    `Element ${value.version[treeName].library}/${value.version[treeName].id}
+                    not present in tree ${treeName}`
                 ]);
             }
             return errors;
@@ -154,7 +153,7 @@ export default function(
             const lib = await libraryDomain.getLibraries({id: library});
 
             // Check if exists
-            if (!lib.length) {
+            if (!lib.list.length) {
                 throw new ValidationError({id: 'Unknown library'});
             }
 
@@ -201,7 +200,7 @@ export default function(
             const valueExists = value.id_value && attrData.type !== AttributeTypes.SIMPLE;
 
             // Check if exists and can delete
-            if (!lib.length) {
+            if (!lib.list.length) {
                 throw new ValidationError({id: 'Unknown library'});
             }
 
@@ -292,7 +291,7 @@ export default function(
             const lib = await libraryDomain.getLibraries({id: library});
 
             // Check if exists and can delete
-            if (!lib.length) {
+            if (!lib.list.length) {
                 throw new ValidationError({id: 'Unknown library'});
             }
 

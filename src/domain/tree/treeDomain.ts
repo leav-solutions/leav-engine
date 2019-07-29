@@ -1,6 +1,7 @@
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
+import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -16,7 +17,7 @@ export interface ITreeDomain {
     isElementPresent(treeId: string, element: ITreeElement): Promise<boolean>;
     saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, infos: IQueryInfos): Promise<ITree>;
-    getTrees(filters?: ITreeFilterOptions): Promise<ITree[]>;
+    getTrees(filters?: ITreeFilterOptions, withCount?: boolean, pagination?: IPaginationParams): Promise<IList<ITree>>;
 
     /**
      * Add an element to the tree
@@ -109,7 +110,7 @@ export default function(
     async function _treeExists(treeId: string): Promise<boolean> {
         const trees = await treeRepo.getTrees({id: treeId});
 
-        return !!trees.length;
+        return !!trees.list.length;
     }
 
     async function _treeElementExists(treeElement: ITreeElement) {
@@ -123,7 +124,7 @@ export default function(
     return {
         async saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree> {
             const trees = await treeRepo.getTrees({id: tree.id});
-            const newTree = !!trees.length;
+            const newTree = !!trees.list.length;
 
             // Check permissions
             const action = newTree ? AdminPermissionsActions.EDIT_TREE : AdminPermissionsActions.CREATE_TREE;
@@ -139,7 +140,7 @@ export default function(
 
             // Check if all libraries exists
             const libs = await libraryDomain.getLibraries();
-            const libsIds = libs.map(lib => lib.id);
+            const libsIds = libs.list.map(lib => lib.id);
 
             const unknownLibs = difference(tree.libraries, libsIds);
 
@@ -162,18 +163,22 @@ export default function(
 
             const trees = await this.getTrees({id});
 
-            if (!trees.length) {
+            if (!trees.list.length) {
                 throw new ValidationError({id: 'Unknown tree'});
             }
 
-            if (trees.pop().system) {
+            if (trees.list.pop().system) {
                 throw new ValidationError({id: 'Cannot delete system tree'});
             }
 
             return treeRepo.deleteTree(id);
         },
-        async getTrees(filters?: ITreeFilterOptions): Promise<ITree[]> {
-            return treeRepo.getTrees(filters);
+        async getTrees(
+            filters?: ITreeFilterOptions,
+            withCount?: boolean,
+            pagination?: IPaginationParams
+        ): Promise<IList<ITree>> {
+            return treeRepo.getTrees(filters, false, withCount, pagination);
         },
         async addElement(
             treeId: string,
@@ -275,7 +280,7 @@ export default function(
         async getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]> {
             const attrs = await attributeDomain.getAttributes({id: attribute});
 
-            if (!attrs.length) {
+            if (!attrs.list.length) {
                 throw new ValidationError({id: 'Unknown attribute ' + attribute});
             }
 

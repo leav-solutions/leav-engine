@@ -3,12 +3,14 @@ import {CollectionType} from 'arangojs/lib/cjs/collection';
 import {asFunction, AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import * as path from 'path';
+import {isArray} from 'util';
 import * as winston from 'winston';
 import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
+import {IList, IPaginationParams} from '_types/list';
 import {ITree, ITreeFilterOptions} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
-import {collectionTypes, IDbService} from './dbService';
+import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
 
 const COLLECTION_NAME = 'core_db_migrations';
 
@@ -20,8 +22,10 @@ export interface IDbUtils {
     findCoreEntity?<T extends ITree | ILibrary | IAttribute>(
         collectionName: string,
         filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
-        strictFilters?: boolean
-    ): Promise<T[]>;
+        strictFilters?: boolean,
+        withCount?: boolean,
+        pagination?: IPaginationParams
+    ): Promise<IList<T>>;
     convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
     convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
     clearDatabase(): Promise<void>;
@@ -109,7 +113,7 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
 
             for (const file of migrationFiles) {
                 // Check if it's been run before
-                if (typeof executedMigrations.find(el => el === file) === 'undefined') {
+                if (typeof (executedMigrations as []).find(el => el === file) === 'undefined') {
                     const importedFile = await import(path.resolve(migrationsDir, file));
 
                     if (typeof importedFile.default !== 'function') {
@@ -188,8 +192,10 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
         async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
             collectionName: string,
             filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
-            strictFilters?: boolean
-        ): Promise<T[]> {
+            strictFilters?: boolean,
+            withCount: boolean = false,
+            pagination?: IPaginationParams
+        ): Promise<IList<T>> {
             const collec = dbService.db.collection(collectionName);
             const queryParts = [aql`FOR el IN ${collec}`];
 
@@ -204,12 +210,21 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
                 }
             }
 
-            queryParts.push(aql` RETURN el`);
+            if (!!pagination) {
+                queryParts.push(aql`LIMIT ${pagination.offset || 0}, ${pagination.limit}`);
+            }
+
+            queryParts.push(aql`RETURN el`);
 
             const query = aql.join(queryParts);
-            const res = await dbService.execute(query);
+            const res = await dbService.execute<IExecuteWithCount | any[]>(query, withCount);
 
-            return res.map(ret.cleanup);
+            const results = !isArray(res) ? res.results : res;
+
+            return {
+                totalCount: withCount ? (res as IExecuteWithCount).totalCount : null,
+                list: results.map(ret.cleanup)
+            };
         },
         convertValueVersionToDb(version: IValueVersion): IDbValueVersion {
             return Object.keys(version).reduce((allVers, treeName) => {

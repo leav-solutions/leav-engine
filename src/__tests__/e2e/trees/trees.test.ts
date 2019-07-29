@@ -30,19 +30,19 @@ describe('Trees', () => {
     });
 
     test('Get Trees list', async () => {
-        const res = await makeGraphQlCall('{ trees { id libraries } }');
+        const res = await makeGraphQlCall('{ trees { list{id libraries} } }');
 
         expect(res.status).toBe(200);
-        expect(res.data.data.trees.length).toBeGreaterThanOrEqual(2);
+        expect(res.data.data.trees.list.length).toBeGreaterThanOrEqual(2);
         expect(res.data.errors).toBeUndefined();
     });
 
     test('Get Tree by ID', async () => {
-        const res = await makeGraphQlCall(`{ trees(id: "${testTreeName}") { id libraries } }`);
+        const res = await makeGraphQlCall(`{ trees(filters: {id: "${testTreeName}"}) { list {id libraries} } }`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.trees.length).toBe(1);
-        expect(res.data.data.trees[0].libraries).toBeDefined();
+        expect(res.data.data.trees.list.length).toBe(1);
+        expect(res.data.data.trees.list[0].libraries).toBeDefined();
         expect(res.data.errors).toBeUndefined();
     });
 

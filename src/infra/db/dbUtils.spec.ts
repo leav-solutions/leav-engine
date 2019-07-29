@@ -1,6 +1,7 @@
 import {Database} from 'arangojs';
+import {ITree} from '_types/tree';
 import {TREES_COLLECTION_NAME} from '../../infra/tree/treeRepo';
-import dbUtils from './dbUtils';
+import dbUtils, {IDbUtils} from './dbUtils';
 
 describe('dbUtils', () => {
     describe('cleanupSystemKeys', () => {
@@ -46,7 +47,7 @@ describe('dbUtils', () => {
 
     describe('findCoreEntity', () => {
         let mockDbServ;
-        let testDbUtils;
+        let testDbUtils: IDbUtils;
         beforeEach(() => {
             mockDbServ = {
                 db: new Database(),
@@ -81,7 +82,7 @@ describe('dbUtils', () => {
         test('Find core entity without filters', async () => {
             const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME);
 
-            expect(res).toHaveLength(1);
+            expect(res.list).toHaveLength(1);
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
@@ -89,7 +90,7 @@ describe('dbUtils', () => {
             expect(mockDbServ.execute.mock.calls[0][0].bindVars['@value0']).toBe('core_trees');
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
-            expect(res[0]).toMatchObject({
+            expect(res.list[0]).toMatchObject({
                 id: 'categories',
                 system: false,
                 label: {
@@ -114,6 +115,14 @@ describe('dbUtils', () => {
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
         });
 
+        test('Should limit results', async function() {
+            const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME, {}, false, true, {limit: 5, offset: 0});
+
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/LIMIT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+        });
+
         test('Should return an empty array if no results', async function() {
             mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             testDbUtils = dbUtils(mockDbServ, null, {lang: {available: ['fr', 'en']}});
@@ -121,10 +130,10 @@ describe('dbUtils', () => {
             testDbUtils.convertToDoc = jest.fn();
 
             mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME);
+            const res = await testDbUtils.findCoreEntity<ITree>(TREES_COLLECTION_NAME);
 
-            expect(res).toBeInstanceOf(Array);
-            expect(res.length).toBe(0);
+            expect(res.list).toBeInstanceOf(Array);
+            expect(res.list.length).toBe(0);
         });
     });
 

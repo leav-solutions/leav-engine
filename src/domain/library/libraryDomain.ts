@@ -2,6 +2,7 @@ import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
+import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -11,7 +12,11 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 
 export interface ILibraryDomain {
-    getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]>;
+    getLibraries(
+        filters?: ILibraryFilterOptions,
+        withCount?: boolean,
+        pagination?: IPaginationParams
+    ): Promise<IList<ILibrary>>;
     saveLibrary(library: ILibrary, infos: IQueryInfos): Promise<ILibrary>;
     deleteLibrary(id: string, infos: IQueryInfos): Promise<ILibrary>;
     getLibraryProperties(id: string): Promise<ILibrary>;
@@ -25,18 +30,25 @@ export default function(
     utils: IUtils = null
 ): ILibraryDomain {
     return {
-        async getLibraries(filters?: ILibraryFilterOptions): Promise<ILibrary[]> {
-            let libs = await libraryRepo.getLibraries(filters);
+        async getLibraries(
+            filters?: ILibraryFilterOptions,
+            withCount: boolean = false,
+            pagination?: IPaginationParams
+        ): Promise<IList<ILibrary>> {
+            const libsList = await libraryRepo.getLibraries(filters, false, withCount, pagination);
 
-            libs = await Promise.all(
-                libs.map(async lib => {
+            const libs = await Promise.all(
+                libsList.list.map(async lib => {
                     lib.attributes = await libraryRepo.getLibraryAttributes(lib.id);
 
                     return lib;
                 })
             );
 
-            return libs;
+            return {
+                totalCount: libsList.totalCount,
+                list: libs
+            };
         },
         async getLibraryProperties(id: string): Promise<ILibrary> {
             if (!id) {
@@ -45,18 +57,18 @@ export default function(
 
             const libs = await libraryRepo.getLibraries({id});
 
-            if (!libs.length) {
+            if (!libs.list.length) {
                 throw new ValidationError({id: 'Unknown library ' + id});
             }
 
-            const props = libs.pop();
+            const props = libs.list.pop();
 
             return props;
         },
         async getLibraryAttributes(id: string): Promise<IAttribute[]> {
             const libs = await libraryRepo.getLibraries({id});
 
-            if (!libs.length) {
+            if (!libs.list.length) {
                 throw new ValidationError({id: 'Unknown library ' + id});
             }
 
@@ -65,7 +77,7 @@ export default function(
         async saveLibrary(libData: ILibrary, infos: IQueryInfos): Promise<ILibrary> {
             const dataToSave = {...libData};
             const libs = await libraryRepo.getLibraries({id: dataToSave.id});
-            const existingLib = !!libs.length;
+            const existingLib = !!libs.list.length;
             const errors = {} as any;
 
             // Check permissions
@@ -84,7 +96,7 @@ export default function(
                 const availableTreeAttributes = await attributeDomain.getAttributes();
                 const unknownTreeAttributes = difference(
                     dataToSave.permissions_conf.permissionTreeAttributes,
-                    availableTreeAttributes.map(treeAttr => treeAttr.id)
+                    availableTreeAttributes.list.map(treeAttr => treeAttr.id)
                 );
 
                 if (unknownTreeAttributes.length) {
@@ -101,7 +113,7 @@ export default function(
 
             if (libAttributes !== null) {
                 const availableAttributes = await attributeDomain.getAttributes();
-                const unknownAttrs = difference(libAttributes, availableAttributes.map(attr => attr.id));
+                const unknownAttrs = difference(libAttributes, availableAttributes.list.map(attr => attr.id));
 
                 if (unknownAttrs.length) {
                     errors.attributes = `Unknown attributes: ${unknownAttrs.join(', ')}`;
@@ -155,11 +167,11 @@ export default function(
             const lib = await this.getLibraries({id});
 
             // Check if exists and can delete
-            if (!lib.length) {
+            if (!lib.list.length) {
                 throw new ValidationError({id: 'Unknown library'});
             }
 
-            if (lib.pop().system) {
+            if (lib.list.pop().system) {
                 throw new ValidationError({id: 'Cannot delete system library'});
             }
 

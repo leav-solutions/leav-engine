@@ -1,4 +1,5 @@
 import {aql} from 'arangojs';
+import {IList, IPaginationParams} from '_types/list';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {ILibrary} from '../../_types/library';
 import {IDbService} from '../db/dbService';
@@ -7,7 +8,12 @@ import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
-    getAttributes(filters?: IAttributeFilterOptions, strictFilters?: boolean): Promise<IAttribute[]>;
+    getAttributes(
+        filters?: IAttributeFilterOptions,
+        strictFilters?: boolean,
+        withCount?: boolean,
+        pagination?: IPaginationParams
+    ): Promise<IList<IAttribute>>;
     updateAttribute(attrData: IAttribute): Promise<IAttribute>;
     createAttribute(attrData: IAttribute): Promise<IAttribute>;
     deleteAttribute(attrData: IAttribute): Promise<IAttribute>;
@@ -29,8 +35,19 @@ export default function(
     config = null
 ): IAttributeRepo {
     return {
-        async getAttributes(filters?: IAttributeFilterOptions, strictFilters: boolean = false): Promise<IAttribute[]> {
-            return dbUtils.findCoreEntity<IAttribute>(ATTRIB_COLLECTION_NAME, filters, strictFilters);
+        async getAttributes(
+            filters?: IAttributeFilterOptions,
+            strictFilters: boolean = false,
+            withCount: boolean = false,
+            pagination?: IPaginationParams
+        ): Promise<IList<IAttribute>> {
+            return dbUtils.findCoreEntity<IAttribute>(
+                ATTRIB_COLLECTION_NAME,
+                filters,
+                strictFilters,
+                withCount,
+                pagination
+            );
         },
         async updateAttribute(attrData: IAttribute): Promise<IAttribute> {
             const defaultParams = {

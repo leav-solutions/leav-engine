@@ -3,10 +3,21 @@ import {makeGraphQlCall} from '../e2eUtils';
 describe('Attributes', () => {
     const testAttrName = 'test_attribute';
     test('Get attributes list', async () => {
-        const res = await makeGraphQlCall('{ attributes { id } }');
+        const res = await makeGraphQlCall('{ attributes { list {id} } }');
 
         expect(res.status).toBe(200);
-        expect(res.data.data.attributes.length).toBeGreaterThanOrEqual(1);
+
+        expect(res.data.data.attributes.list.length).toBeGreaterThanOrEqual(1);
+        expect(res.data.errors).toBeUndefined();
+    });
+
+    test('Should paginate attributes list', async () => {
+        const res = await makeGraphQlCall('{ attributes(pagination: {limit: 2, offset: 0}) { totalCount list {id} } }');
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.data.attributes.totalCount).toBeGreaterThan(2);
+        expect(res.data.data.attributes.list.length).toBe(2);
         expect(res.data.errors).toBeUndefined();
     });
 
@@ -29,27 +40,27 @@ describe('Attributes', () => {
         expect(res.data.errors).toBeUndefined();
 
         // Check if new attribute is in attributes list
-        const libsRes = await makeGraphQlCall(`{ attributes { id } }`);
+        const libsRes = await makeGraphQlCall(`{ attributes { list {id} } }`);
 
         expect(libsRes.status).toBe(200);
-        expect(libsRes.data.data.attributes.filter(lib => lib.id === testAttrName).length).toBe(1);
+        expect(libsRes.data.data.attributes.list.filter(lib => lib.id === testAttrName).length).toBe(1);
     });
 
     test('Get Attribute by ID', async () => {
-        const res = await makeGraphQlCall(`{attributes(id: "modified_at") { id }}`);
+        const res = await makeGraphQlCall(`{attributes(filters: {id: "modified_at"}) { list {id} }}`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.attributes.length).toBe(1);
+        expect(res.data.data.attributes.list.length).toBe(1);
         expect(res.data.errors).toBeUndefined();
     });
 
     test('Return only request language on label', async () => {
-        const res = await makeGraphQlCall(`{attributes(id: "modified_at") { id label(lang: [fr]) }}`);
+        const res = await makeGraphQlCall(`{attributes(filters: {id: "modified_at"}) { list {id label(lang: [fr])}}}`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.attributes.length).toBe(1);
-        expect(res.data.data.attributes[0].label.fr).toBeTruthy();
-        expect(res.data.data.attributes[0].label.en).toBeUndefined();
+        expect(res.data.data.attributes.list.length).toBe(1);
+        expect(res.data.data.attributes.list[0].label.fr).toBeTruthy();
+        expect(res.data.data.attributes.list[0].label.en).toBeUndefined();
         expect(res.data.errors).toBeUndefined();
     });
 

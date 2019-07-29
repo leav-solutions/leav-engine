@@ -119,10 +119,10 @@ describe('LibraryRepo', () => {
 
         test('Should delete a library and return deleted library', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([
-                    {id: 'attr1', type: AttributeTypes.SIMPLE},
-                    {id: 'attr2', type: AttributeTypes.SIMPLE}
-                ]),
+                getAttributes: global.__mockPromise({
+                    list: [{id: 'attr1', type: AttributeTypes.SIMPLE}, {id: 'attr2', type: AttributeTypes.SIMPLE}],
+                    totalCount: 0
+                }),
                 deleteAttribute: global.__mockPromise({})
             };
 

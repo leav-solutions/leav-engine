@@ -41,7 +41,7 @@ describe('ValueDomain', () => {
     describe('saveValue', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
             isElementPresent: global.__mockPromise(true),
-            getTrees: global.__mockPromise([mockTree])
+            getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
         };
 
         test('Should save an indexed value', async function() {
@@ -56,7 +56,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -101,7 +101,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -155,7 +155,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -199,7 +199,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const mockValRepo = {};
@@ -222,11 +222,11 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributes: global.__mockPromise([{id: 'test_attr'}])
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([])
+                getLibraries: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const mockValRepo = {};
@@ -253,7 +253,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const mockValRepo = {};
@@ -295,7 +295,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const mockRecRepo = {updateRecord: global.__mockPromise({})};
@@ -350,7 +350,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -395,7 +395,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -438,11 +438,11 @@ describe('ValueDomain', () => {
             };
 
             const mockTreeRepoNoTree: Mockify<ITreeRepo> = {
-                getTrees: global.__mockPromise([])
+                getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -490,7 +490,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -537,7 +537,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -570,7 +570,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
@@ -582,11 +582,11 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributes: global.__mockPromise([{id: 'test_attr'}])
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([])
+                getLibraries: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
@@ -602,7 +602,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
@@ -635,7 +635,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -669,7 +669,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -738,7 +738,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -895,7 +895,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -980,7 +980,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const valDomain = valueDomain(
@@ -1011,7 +1011,7 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
             const mockValRepo = {};
@@ -1027,11 +1027,11 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributes: global.__mockPromise([{id: 'test_attr'}])
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise([])
+                getLibraries: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const mockValRepo = {};

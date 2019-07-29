@@ -16,21 +16,21 @@ describe('attributeDomain', () => {
     describe('getAttributes', () => {
         test('Should return a list of attributes', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test'}, {id: 'test2'}])
+                getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
             };
 
             const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
             const attr = await attrDomain.getAttributes();
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
-            expect(attr.length).toBe(2);
+            expect(attr.list.length).toBe(2);
         });
     });
 
     describe('getAttributeProperties', () => {
         test('Should return a list of attributes', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test'}])
+                getAttributes: global.__mockPromise({list: [{id: 'test'}], totalCount: 0})
             };
 
             const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
@@ -43,7 +43,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if unknown attribute', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([])
+                getAttributes: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
@@ -80,7 +80,7 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([]),
+                getAttributes: global.__mockPromise({list: [], totalCount: 0}),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
                 updateAttribute: jest.fn()
             };
@@ -122,7 +122,7 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
@@ -159,7 +159,7 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
@@ -194,7 +194,7 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
@@ -223,7 +223,7 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
@@ -252,7 +252,7 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
@@ -280,7 +280,7 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise([{id: 'test', system: false}]),
+                getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
                 updateAttribute: jest.fn()
             };
@@ -318,14 +318,15 @@ describe('attributeDomain', () => {
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: jest.fn().mockImplementation(filters => {
-                    return Promise.resolve(filters.type === AttributeTypes.TREE ? [mockAttrTree] : []);
+                    const list = filters.type === AttributeTypes.TREE ? [mockAttrTree] : [];
+                    return Promise.resolve({list, totalCount: list.length});
                 }),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
                 updateAttribute: jest.fn()
             };
 
             const mockTreeRepo: Mockify<ITreeRepo> = {
-                getTrees: global.__mockPromise([])
+                getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const attrDomain = attributeDomain(
@@ -356,7 +357,7 @@ describe('attributeDomain', () => {
                 null,
                 mockPermDomain as IPermissionDomain
             );
-            attrDomain.getAttributes = global.__mockPromise([attrData]);
+            attrDomain.getAttributes = global.__mockPromise({list: [attrData], totalCount: 1});
 
             const deleteRes = await attrDomain.deleteAttribute(attrData.id, queryInfos);
 
@@ -376,7 +377,7 @@ describe('attributeDomain', () => {
         test('Should throw if system attribute', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
             const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
-            attrDomain.getAttributes = global.__mockPromise([{system: true}]);
+            attrDomain.getAttributes = global.__mockPromise({list: [{system: true}], totalCount: 1});
 
             await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow();
         });
@@ -392,7 +393,7 @@ describe('attributeDomain', () => {
                 null,
                 mockPermDomain as IPermissionDomain
             );
-            attrDomain.getAttributes = global.__mockPromise([]);
+            attrDomain.getAttributes = global.__mockPromise({list: [], totalCount: 0});
 
             await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow(PermissionError);
         });

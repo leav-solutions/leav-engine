@@ -70,8 +70,22 @@ export default function(
                         library: String!
                     }
 
+                    input TreesFiltersInput {
+                        id: ID,
+                        label: String,
+                        system: Boolean
+                    }
+
+                    type TreesList {
+                        totalCount: Int!,
+                        list: [Tree!]!
+                    }
+
                     extend type Query {
-                        trees(id: ID, label: String, system: Boolean): [Tree!]
+                        trees(
+                            filters: TreesFiltersInput,
+                            pagination: Pagination
+                        ): TreesList
 
                         # Retrieve tree content.
                         # If startAt is specified, it returns this element's children. Otherwise, it starts
@@ -103,8 +117,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async trees(parent, args) {
-                            return treeDomain.getTrees(args);
+                        async trees(parent, {filters, pagination}) {
+                            return treeDomain.getTrees(filters, true, pagination);
                         },
                         async treeContent(_, {treeId, startAt}, ctx, info) {
                             ctx.treeId = treeId;

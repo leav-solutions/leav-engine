@@ -339,12 +339,15 @@ describe('PermissionDomain', () => {
     describe('getAdminPermission', () => {
         const defaultPerm = false;
         const mockAttrRepo: Mockify<IAttributeRepo> = {
-            getAttributes: global.__mockPromise([
-                {
-                    id: 'user_groups',
-                    linked_tree: 'users_groups'
-                }
-            ])
+            getAttributes: global.__mockPromise({
+                list: [
+                    {
+                        id: 'user_groups',
+                        linked_tree: 'users_groups'
+                    }
+                ],
+                totalCount: 0
+            })
         };
         const mockValRepo: Mockify<IValueRepo> = {
             getValues: global.__mockPromise([
@@ -418,12 +421,15 @@ describe('PermissionDomain', () => {
     describe('getLibraryPermission', () => {
         const defaultPerm = false;
         const mockAttrRepo: Mockify<IAttributeRepo> = {
-            getAttributes: global.__mockPromise([
-                {
-                    id: 'user_groups',
-                    linked_tree: 'users_groups'
-                }
-            ])
+            getAttributes: global.__mockPromise({
+                list: [
+                    {
+                        id: 'user_groups',
+                        linked_tree: 'users_groups'
+                    }
+                ],
+                totalCount: 0
+            })
         };
 
         const mockValRepo: Mockify<IValueRepo> = {

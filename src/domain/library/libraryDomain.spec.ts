@@ -11,39 +11,42 @@ import libraryDomain from './libraryDomain';
 describe('LibraryDomain', () => {
     const queryInfos = {userId: 1};
     const mockAttrDomain: Mockify<IAttributeDomain> = {
-        getAttributes: global.__mockPromise([
-            {id: 'id', type: AttributeTypes.SIMPLE},
-            {id: 'created_at', type: AttributeTypes.SIMPLE},
-            {id: 'created_by', type: AttributeTypes.SIMPLE},
-            {id: 'modified_at', type: AttributeTypes.SIMPLE},
-            {id: 'modified_by', type: AttributeTypes.SIMPLE},
-            {id: 'attr1', type: AttributeTypes.SIMPLE},
-            {id: 'attr2', type: AttributeTypes.SIMPLE}
-        ])
+        getAttributes: global.__mockPromise({
+            list: [
+                {id: 'id', type: AttributeTypes.SIMPLE},
+                {id: 'created_at', type: AttributeTypes.SIMPLE},
+                {id: 'created_by', type: AttributeTypes.SIMPLE},
+                {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                {id: 'attr1', type: AttributeTypes.SIMPLE},
+                {id: 'attr2', type: AttributeTypes.SIMPLE}
+            ],
+            totalCount: 0
+        })
     };
 
     describe('getLibraries', () => {
         test('Should return a list of libs', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test'}, {id: 'test2'}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2}),
                 getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}]))
             };
 
             const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
-            const lib = await libDomain.getLibraries();
+            const lib = await libDomain.getLibraries({}, true);
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
             expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(2);
-            expect(lib.length).toBe(2);
+            expect(lib.totalCount).toBe(2);
 
-            expect(lib[0].attributes).toBeDefined();
+            expect(lib.list[0].attributes).toBeDefined();
         });
     });
 
     describe('getLibraryProperties', () => {
         test('Should return library properties', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: true}])
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
             };
 
             const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
@@ -93,7 +96,7 @@ describe('LibraryDomain', () => {
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraryAttributes: global.__mockPromise(attrs),
-                getLibraries: global.__mockPromise([{id: 'test', system: true}])
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
             };
 
             const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
@@ -126,7 +129,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([]),
+                getLibraries: global.__mockPromise({list: [], totalCount: 0}),
                 createLibrary: global.__mockPromise({id: 'test', system: false}),
                 updateLibrary: jest.fn(),
                 saveLibraryAttributes: jest.fn()
@@ -159,7 +162,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
@@ -190,7 +193,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
@@ -228,7 +231,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
@@ -264,7 +267,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
@@ -300,7 +303,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn(),
@@ -333,7 +336,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
@@ -359,7 +362,7 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([{id: 'test', system: false}]),
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createLibrary: jest.fn(),
                 updateLibrary: global.__mockPromise({id: 'test', system: false}),
                 saveLibraryAttributes: jest.fn()
@@ -390,7 +393,7 @@ describe('LibraryDomain', () => {
                 null,
                 mockAdminPermDomain as IPermissionDomain
             );
-            libDomain.getLibraries = global.__mockPromise([libData]);
+            libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
 
             const deleteRes = await libDomain.deleteLibrary(libData.id, queryInfos);
 

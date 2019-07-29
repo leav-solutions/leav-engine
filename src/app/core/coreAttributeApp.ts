@@ -90,16 +90,26 @@ export default function(
                         trees: [String!]
                     }
 
+                    input AttributesFiltersInput {
+                        id: ID,
+                        type: [AttributeType],
+                        format: [AttributeFormat],
+                        label: String,
+                        system: Boolean,
+                        multiple_values: Boolean,
+                        versionable: Boolean
+                    }
+
+                    type AttributesList {
+                        totalCount: Int!,
+                        list: [Attribute!]!
+                    }
+
                     extend type Query {
                         attributes(
-                            id: ID,
-                            type: [AttributeType],
-                            format: [AttributeFormat],
-                            label: String,
-                            system: Boolean,
-                            multiple_values: Boolean,
-                            versionable: Boolean
-                        ): [Attribute!]
+                            filters: AttributesFiltersInput,
+                            pagination: Pagination
+                        ): AttributesList
                     }
 
                     extend type Mutation {
@@ -109,8 +119,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async attributes(parent, args) {
-                            return attributeDomain.getAttributes(args);
+                        async attributes(parent, {filters, pagination}) {
+                            return attributeDomain.getAttributes(filters, true, pagination);
                         }
                     },
                     Mutation: {

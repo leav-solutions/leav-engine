@@ -1,4 +1,5 @@
 import {aql} from 'arangojs';
+import {IList, IPaginationParams} from '_types/list';
 import {IRecord} from '_types/record';
 import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '_types/tree';
 import {collectionTypes, IDbService} from '../db/dbService';
@@ -8,7 +9,12 @@ import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
 export interface ITreeRepo {
     createTree(treeData: ITree): Promise<ITree>;
     updateTree(treeData: ITree): Promise<ITree>;
-    getTrees(filters?: ITreeFilterOptions, strictFilters?: boolean): Promise<ITree[]>;
+    getTrees(
+        filters?: ITreeFilterOptions,
+        strictFilters?: boolean,
+        withCount?: boolean,
+        pagination?: IPaginationParams
+    ): Promise<IList<ITree>>;
     deleteTree(id: string): Promise<ITree>;
 
     /**
@@ -128,8 +134,13 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
 
             return dbUtils.cleanup(treeRes.pop());
         },
-        async getTrees(filters?: ITreeFilterOptions, strictFilters: boolean = false): Promise<ITree[]> {
-            return dbUtils.findCoreEntity<ITree>(TREES_COLLECTION_NAME, filters, strictFilters);
+        async getTrees(
+            filters?: ITreeFilterOptions,
+            strictFilters: boolean = false,
+            withCount: boolean = false,
+            pagination?: IPaginationParams
+        ): Promise<IList<ITree>> {
+            return dbUtils.findCoreEntity<ITree>(TREES_COLLECTION_NAME, filters, strictFilters, withCount, pagination);
         },
         async deleteTree(id: string): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);

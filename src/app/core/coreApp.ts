@@ -31,6 +31,11 @@ export default function(
 
                     scalar SystemTranslation
 
+                    input Pagination {
+                        limit: Int!,
+                        offset: Int!
+                    }
+
                     input SystemTranslationInput {
                         ${config.lang.available.map(l => `${l}: String${l === config.lang.default ? '!' : ''}`)}
                     }

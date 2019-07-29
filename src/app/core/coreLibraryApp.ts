@@ -43,8 +43,22 @@ export default function(
                         recordIdentityConf: RecordIdentityConfInput
                     }
 
+                    input LibrariesFiltersInput {
+                        id: ID,
+                        label: String,
+                        system: Boolean
+                    }
+
+                    type LibrariesList {
+                        totalCount: Int!,
+                        list: [Library!]!
+                    }
+
                     type Query {
-                        libraries(id: ID, label: String, system: Boolean): [Library!]
+                        libraries(
+                            filters: LibrariesFiltersInput,
+                            pagination: Pagination
+                        ): LibrariesList
                     }
 
                     type Mutation {
@@ -55,8 +69,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async libraries(parent, args, ctx) {
-                            return libraryDomain.getLibraries(args);
+                        async libraries(parent, {filters, pagination}, ctx) {
+                            return libraryDomain.getLibraries(filters, true, pagination);
                         }
                     },
                     Mutation: {
@@ -93,7 +107,7 @@ export default function(
                 }
             };
 
-            for (const lib of libraries) {
+            for (const lib of libraries.list) {
                 const libQueryName = utils.libNameToQueryName(lib.id);
                 const libTypeName = utils.libNameToTypeName(lib.id);
 

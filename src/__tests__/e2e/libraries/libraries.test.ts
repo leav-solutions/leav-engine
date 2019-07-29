@@ -2,10 +2,10 @@ import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Libraries', () => {
     test('Get libraries list', async () => {
-        const res = await makeGraphQlCall('{ libraries { id } }');
+        const res = await makeGraphQlCall('{ libraries { list { id } } }');
 
         expect(res.status).toBe(200);
-        expect(res.data.data.libraries.length).toBeGreaterThanOrEqual(1);
+        expect(res.data.data.libraries.list.length).toBeGreaterThanOrEqual(1);
         expect(res.data.errors).toBeUndefined();
     });
 
@@ -21,10 +21,10 @@ describe('Libraries', () => {
         expect(res.data.errors).toBeUndefined();
 
         // Check if new lib is in libraries list
-        const libsRes = await makeGraphQlCall(`{ libraries { id } }`);
+        const libsRes = await makeGraphQlCall(`{ libraries { list { id } } }`);
 
         expect(libsRes.status).toBe(200);
-        expect(libsRes.data.data.libraries.filter(lib => lib.id === 'libraries_test').length).toBe(1);
+        expect(libsRes.data.data.libraries.list.filter(lib => lib.id === 'libraries_test').length).toBe(1);
     });
 
     test('Schema regeneration after library creation', async () => {
@@ -36,20 +36,20 @@ describe('Libraries', () => {
     });
 
     test('Get library by ID', async () => {
-        const res = await makeGraphQlCall(`{libraries(id: "users") { id }}`);
+        const res = await makeGraphQlCall(`{libraries(filters: {id: "users"}) { list { id } }}`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.libraries.length).toBe(1);
+        expect(res.data.data.libraries.list.length).toBe(1);
         expect(res.data.errors).toBeUndefined();
     });
 
     test('Return only request language on label', async () => {
-        const res = await makeGraphQlCall(`{libraries(id: "users") { id label(lang: [fr]) }}`);
+        const res = await makeGraphQlCall(`{libraries(filters: {id: "users"}) { list {id label(lang: [fr])} }}`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.libraries.length).toBe(1);
-        expect(res.data.data.libraries[0].label.fr).toBeTruthy();
-        expect(res.data.data.libraries[0].label.en).toBeUndefined();
+        expect(res.data.data.libraries.list.length).toBe(1);
+        expect(res.data.data.libraries.list[0].label.fr).toBeTruthy();
+        expect(res.data.data.libraries.list[0].label.en).toBeUndefined();
         expect(res.data.errors).toBeUndefined();
     });
 

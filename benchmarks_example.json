@@ -1,29 +1,9 @@
 {
     "dataFile": "./data_example.json",
     "actions": {
-        "libs": {
-            "reps": 100,
-            "query": "{libraries {id label attributes {id label}}}"
-        },
         "attributes": {
-            "reps": 100,
-            "query": "{attributes {id system label type format}}"
-        },
-        "trees": {
-            "reps": 100,
-            "query": "{trees {id system label}}"
-        },
-        "tree_content": {
-            "reps": 100,
-            "query": "{ treeContent(treeId: \"categories\") { record { id ... on Categorie { name { value } } } children { record { id ... on Categorie { name { value } } } children { record { id ... on Categorie { name { value } } } children { record { id ... on Categorie { name { value } } } } } } } }"
-        },
-        "ubs": {
-            "reps": 10,
-            "query": "{ ubs { id label { value } eans { value { id ...on Product { label { value } category { value { record { ...on Categorie { name { value } } } } } } } } } }"
-        },
-        "create_products": {
-            "reps": 10,
-            "query": "mutation { createRecord(library: \"products\") { id } }"
+            "reps": 1000,
+            "query": "{ attributes { totalCount list { id label multiple_values system } } }"
         }
     }
 }

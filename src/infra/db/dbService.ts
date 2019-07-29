@@ -1,18 +1,32 @@
 import {Database} from 'arangojs';
-import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {AqlQuery, isAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
 
 const MAX_ATTEMPTS = 10;
+
+export interface IExecuteWithCount {
+    totalCount: number;
+    results: any[];
+}
 
 export interface IDbService {
     db?: Database;
 
     /**
      * Execute an AQL query
+     * If withTotalCount is set to true, return an object with totalCount and results. Otherwise, just return
+     * results straight from DB.
      *
      * @param query
+     * @param withTotalCount
+     * @param attempts Used when we have to retry a query after a write-write conflict
+     * @throws If query fails or we still have a conflict after all attempts
      */
-    execute?(query: string | AqlQuery, attempts?: number): Promise<any>;
+    execute?<T extends IExecuteWithCount | any[] = any[]>(
+        query: string | AqlQuery,
+        withTotalCount?: boolean,
+        attempts?: number
+    ): Promise<T>;
 
     /**
      * Create a new collection in database
@@ -55,10 +69,26 @@ export default function(db: Database, utils: IUtils): IDbService {
 
     return {
         db,
-        async execute(query: string | AqlQuery, attempts: number = 0): Promise<any[]> {
+        async execute<T extends IExecuteWithCount | any[] = any[]>(
+            query: string | AqlQuery,
+            withTotalCount: boolean = false,
+            attempts: number = 0
+        ): Promise<T> {
             try {
-                const res = await db.query(query);
-                return res.all();
+                // Convert query to AqlQuery if we have a simple query to match query() types
+                const queryToRun = isAqlQuery(query)
+                    ? {...query}
+                    : {
+                          query,
+                          bindVars: {}
+                      };
+
+                const queryOptions = withTotalCount ? {count: true, options: {fullCount: true}} : {};
+
+                const cursor = await db.query(queryToRun, queryOptions);
+
+                const results = await cursor.all();
+                return withTotalCount ? {totalCount: cursor.extra.stats.fullCount, results} : results;
             } catch (e) {
                 // Handle write-write conflicts: we try the query again with a growing delay between trials.
                 // If we reach maximum attempts and still no success, stop it and throw the exception
@@ -66,7 +96,7 @@ export default function(db: Database, utils: IUtils): IDbService {
                 if (e.isArangoError && e.errorNum === 1200 && attempts < MAX_ATTEMPTS) {
                     const timeToWait = 2 ** attempts;
                     await _sleep(timeToWait);
-                    return this.execute(query, attempts + 1);
+                    return this.execute(query, withTotalCount, attempts + 1);
                 }
 
                 e.message += `\nQuery was: ${JSON.stringify(query).replace(/\\n/g, ' ')}`;

@@ -181,7 +181,7 @@ export default function(
             const userGroupAttr = await attributeRepo.getAttributes({id: 'user_groups'});
 
             // Get user group, retrieve ancestors
-            const userGroups = await valueRepo.getValues('users', userId, userGroupAttr[0]);
+            const userGroups = await valueRepo.getValues('users', userId, userGroupAttr.list[0]);
             const userGroupsPaths = await Promise.all(
                 userGroups.map(userGroupVal =>
                     treeRepo.getElementAncestors('users_groups', {
@@ -218,7 +218,7 @@ export default function(
             const userGroupAttr = await attributeRepo.getAttributes({id: 'user_groups'});
 
             // Get user group, retrieve ancestors
-            const userGroups = await valueRepo.getValues('users', userId, userGroupAttr[0]);
+            const userGroups = await valueRepo.getValues('users', userId, userGroupAttr.list[0]);
             const userGroupsPaths = await Promise.all(
                 userGroups.map(userGroupVal =>
                     treeRepo.getElementAncestors('users_groups', {
