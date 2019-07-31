@@ -237,9 +237,9 @@ describe('treeDomain', () => {
             };
             const domain = treeDomain(treeRepo as ITreeRepo);
 
-            const trees = await domain.getTrees({id: 'test'});
+            const trees = await domain.getTrees({filters: {id: 'test'}});
 
-            expect(treeRepo.getTrees.mock.calls[0][0]).toMatchObject({id: 'test'});
+            expect(treeRepo.getTrees.mock.calls[0][0].filters).toMatchObject({id: 'test'});
             expect(trees.list.length).toBe(2);
         });
     });

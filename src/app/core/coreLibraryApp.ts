@@ -70,7 +70,7 @@ export default function(
                 resolvers: {
                     Query: {
                         async libraries(parent, {filters, pagination}, ctx) {
-                            return libraryDomain.getLibraries(filters, true, pagination);
+                            return libraryDomain.getLibraries({filters, withCount: true, pagination});
                         }
                     },
                     Mutation: {

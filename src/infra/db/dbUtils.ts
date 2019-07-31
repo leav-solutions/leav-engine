@@ -14,18 +14,20 @@ import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
 
 const COLLECTION_NAME = 'core_db_migrations';
 
+export interface IFindCoreEntityParams {
+    collectionName: string;
+    filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions;
+    strictFilters?: boolean;
+    withCount?: boolean;
+    pagination?: IPaginationParams;
+}
+
 export interface IDbUtils {
     migrate?(depsManager: AwilixContainer): Promise<void>;
     cleanup?(record: {}): any;
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
-    findCoreEntity?<T extends ITree | ILibrary | IAttribute>(
-        collectionName: string,
-        filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
-        strictFilters?: boolean,
-        withCount?: boolean,
-        pagination?: IPaginationParams
-    ): Promise<IList<T>>;
+    findCoreEntity?<T extends ITree | ILibrary | IAttribute>(params: IFindCoreEntityParams): Promise<IList<T>>;
     convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
     convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
     clearDatabase(): Promise<void>;
@@ -190,16 +192,22 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
          * @param strictFilters
          */
         async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
-            collectionName: string,
-            filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
-            strictFilters?: boolean,
-            withCount: boolean = false,
-            pagination?: IPaginationParams
+            params: IFindCoreEntityParams
         ): Promise<IList<T>> {
+            const defaultParams: IFindCoreEntityParams = {
+                collectionName: null,
+                filters: null,
+                strictFilters: false,
+                withCount: false,
+                pagination: null
+            };
+
+            const {collectionName, filters, strictFilters, withCount, pagination} = {...defaultParams, ...params};
+
             const collec = dbService.db.collection(collectionName);
             const queryParts = [aql`FOR el IN ${collec}`];
 
-            if (typeof filters !== 'undefined') {
+            if (filters !== null) {
                 const dbFilters = ret.convertToDoc(filters);
                 const filtersKeys = Object.keys(dbFilters);
 

@@ -3,11 +3,12 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
+import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {IList, IPaginationParams} from '../../_types/list';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {IList} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -27,11 +28,7 @@ export interface IAttributeDomain {
      * @param filters
      * @returns Promise<[{}]>
      */
-    getAttributes(
-        filters?: IAttributeFilterOptions,
-        withCount?: boolean,
-        pagination?: IPaginationParams
-    ): Promise<IList<IAttribute>>;
+    getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>>;
 
     /**
      * Save attribute.
@@ -224,7 +221,7 @@ export default function(
 
     return {
         async getAttributeProperties(id: string): Promise<IAttribute> {
-            const attrs = await attributeRepo.getAttributes({id}, true);
+            const attrs = await attributeRepo.getAttributes({filters: {id}, strictFilters: true});
 
             if (!attrs.list.length) {
                 throw new ValidationError({id: 'Unknown attribute ' + id});
@@ -233,17 +230,13 @@ export default function(
 
             return props;
         },
-        async getAttributes(
-            filters?: IAttributeFilterOptions,
-            withCount: boolean = false,
-            pagination?: IPaginationParams
-        ): Promise<IList<IAttribute>> {
-            return attributeRepo.getAttributes(filters, false, withCount, pagination);
+        async getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
+            return attributeRepo.getAttributes(params);
         },
         async saveAttribute(attrData: IAttribute, infos: IQueryInfos): Promise<IAttribute> {
             // TODO: Validate attribute data (linked library, linked tree...)
 
-            const attrs = await attributeRepo.getAttributes({id: attrData.id});
+            const attrs = await attributeRepo.getAttributes({filters: {id: attrData.id}, strictFilters: true});
             const isExistingAttr = !!attrs.list.length;
             const attrToSave = {...attrData};
 
@@ -288,7 +281,7 @@ export default function(
             }
 
             // Get attribute
-            const attr = await this.getAttributes({id});
+            const attr = await this.getAttributes({filters: {id}});
 
             // Check if exists and can delete
             if (!attr.list.length) {

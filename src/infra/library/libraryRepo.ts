@@ -1,8 +1,9 @@
 import {aql} from 'arangojs';
 import {difference} from 'lodash';
-import {IList, IPaginationParams} from '_types/list';
+import {IGetCoreEntitiesParams} from '_types/shared';
 import {IAttribute} from '../../_types/attribute';
-import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
+import {ILibrary} from '../../_types/library';
+import {IList} from '../../_types/list';
 import {IAttributeRepo} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -17,12 +18,7 @@ export interface ILibraryRepo {
      * @param filters                   Filters libraries returned
      * @return Promise<Array<object>>   All libraries data
      */
-    getLibraries(
-        filters?: ILibraryFilterOptions,
-        strictFilters?: boolean,
-        withCount?: boolean,
-        pagination?: IPaginationParams
-    ): Promise<IList<ILibrary>>;
+    getLibraries(params: IGetCoreEntitiesParams): Promise<IList<ILibrary>>;
 
     /**
      * Create new library
@@ -66,13 +62,22 @@ export default function(
     config = null
 ): ILibraryRepo {
     return {
-        async getLibraries(
-            filters?: ILibraryFilterOptions,
-            strictFilters: boolean = false,
-            withCount: boolean = false,
-            pagination?: IPaginationParams
-        ): Promise<IList<ILibrary>> {
-            return dbUtils.findCoreEntity<ILibrary>(LIB_COLLECTION_NAME, filters, strictFilters, withCount, pagination);
+        async getLibraries(params: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
+            const defaultParams: IGetCoreEntitiesParams = {
+                filters: null,
+                strictFilters: false,
+                withCount: false,
+                pagination: null
+            };
+
+            const {filters, strictFilters, withCount, pagination} = {...defaultParams, ...params};
+            return dbUtils.findCoreEntity<ILibrary>({
+                collectionName: LIB_COLLECTION_NAME,
+                filters,
+                strictFilters,
+                withCount,
+                pagination
+            });
         },
         async createLibrary(libData: ILibrary): Promise<ILibrary> {
             const defaultParams = {_key: '', system: false, label: {fr: '', en: ''}};
@@ -104,7 +109,7 @@ export default function(
         },
         async deleteLibrary(id: string): Promise<ILibrary> {
             // Delete attributes linked to this library
-            const linkedAttributes = await attributeRepo.getAttributes({linked_library: id});
+            const linkedAttributes = await attributeRepo.getAttributes({filters: {linked_library: id}});
             for (const linkedAttribute of linkedAttributes.list) {
                 attributeRepo.deleteAttribute(linkedAttribute);
             }

@@ -1,13 +1,14 @@
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
-import {IList, IPaginationParams} from '_types/list';
+import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
+import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
-import {ITree, ITreeElement, ITreeFilterOptions, ITreeNode} from '../../_types/tree';
+import {ITree, ITreeElement, ITreeNode} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -17,7 +18,7 @@ export interface ITreeDomain {
     isElementPresent(treeId: string, element: ITreeElement): Promise<boolean>;
     saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, infos: IQueryInfos): Promise<ITree>;
-    getTrees(filters?: ITreeFilterOptions, withCount?: boolean, pagination?: IPaginationParams): Promise<IList<ITree>>;
+    getTrees(params?: IGetCoreEntitiesParams): Promise<IList<ITree>>;
 
     /**
      * Add an element to the tree
@@ -108,7 +109,7 @@ export default function(
     utils: IUtils = null
 ): ITreeDomain {
     async function _treeExists(treeId: string): Promise<boolean> {
-        const trees = await treeRepo.getTrees({id: treeId});
+        const trees = await treeRepo.getTrees({filters: {id: treeId}});
 
         return !!trees.list.length;
     }
@@ -123,7 +124,7 @@ export default function(
 
     return {
         async saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree> {
-            const trees = await treeRepo.getTrees({id: tree.id});
+            const trees = await treeRepo.getTrees({filters: {id: tree.id}});
             const newTree = !!trees.list.length;
 
             // Check permissions
@@ -161,7 +162,7 @@ export default function(
                 throw new PermissionError(action);
             }
 
-            const trees = await this.getTrees({id});
+            const trees = await this.getTrees({filters: {id}});
 
             if (!trees.list.length) {
                 throw new ValidationError({id: 'Unknown tree'});
@@ -173,12 +174,8 @@ export default function(
 
             return treeRepo.deleteTree(id);
         },
-        async getTrees(
-            filters?: ITreeFilterOptions,
-            withCount?: boolean,
-            pagination?: IPaginationParams
-        ): Promise<IList<ITree>> {
-            return treeRepo.getTrees(filters, false, withCount, pagination);
+        async getTrees(params?: IGetCoreEntitiesParams): Promise<IList<ITree>> {
+            return treeRepo.getTrees(params);
         },
         async addElement(
             treeId: string,
@@ -278,7 +275,7 @@ export default function(
             return treeRepo.getElementAncestors(treeId, element);
         },
         async getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]> {
-            const attrs = await attributeDomain.getAttributes({id: attribute});
+            const attrs = await attributeDomain.getAttributes({filters: {id: attribute}});
 
             if (!attrs.list.length) {
                 throw new ValidationError({id: 'Unknown attribute ' + attribute});

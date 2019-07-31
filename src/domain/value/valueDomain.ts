@@ -150,7 +150,7 @@ export default function(
             options?: IValuesOptions
         ): Promise<IValue[]> {
             // Get library
-            const lib = await libraryDomain.getLibraries({id: library});
+            const lib = await libraryDomain.getLibraries({filters: {id: library}, strictFilters: true});
 
             // Check if exists
             if (!lib.list.length) {
@@ -195,7 +195,7 @@ export default function(
             infos: IQueryInfos
         ): Promise<IValue> {
             // Get library
-            const lib = await libraryDomain.getLibraries({id: library});
+            const lib = await libraryDomain.getLibraries({filters: {id: library}});
             const attrData = await attributeDomain.getAttributeProperties(attribute);
             const valueExists = value.id_value && attrData.type !== AttributeTypes.SIMPLE;
 
@@ -288,7 +288,7 @@ export default function(
             infos: IQueryInfos
         ): Promise<IValue> {
             // Get library
-            const lib = await libraryDomain.getLibraries({id: library});
+            const lib = await libraryDomain.getLibraries({filters: {id: library}});
 
             // Check if exists and can delete
             if (!lib.list.length) {

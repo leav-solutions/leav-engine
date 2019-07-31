@@ -120,7 +120,7 @@ export default function(
                 resolvers: {
                     Query: {
                         async attributes(parent, {filters, pagination}) {
-                            return attributeDomain.getAttributes(filters, true, pagination);
+                            return attributeDomain.getAttributes({filters, withCount: true, pagination});
                         }
                     },
                     Mutation: {

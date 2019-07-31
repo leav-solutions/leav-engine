@@ -33,7 +33,7 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
-            const lib = await libDomain.getLibraries({}, true);
+            const lib = await libDomain.getLibraries({withCount: true});
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
             expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(2);
@@ -53,7 +53,7 @@ describe('LibraryDomain', () => {
             const lib = await libDomain.getLibraryProperties('test');
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraries).toBeCalledWith({id: 'test'});
+            expect(mockLibRepo.getLibraries).toBeCalledWith({filters: {id: 'test'}, strictFilters: true});
             expect(lib).toMatchObject({id: 'test', system: true});
         });
 

@@ -37,7 +37,7 @@ describe('attributeDomain', () => {
             const attr = await attrDomain.getAttributeProperties('test');
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getAttributes).toBeCalledWith({id: 'test'}, true);
+            expect(mockAttrRepo.getAttributes).toBeCalledWith({filters: {id: 'test'}, strictFilters: true});
             expect(attr).toMatchObject({id: 'test'});
         });
 

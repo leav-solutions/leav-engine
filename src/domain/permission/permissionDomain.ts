@@ -178,7 +178,10 @@ export default function(
             return userPerm;
         },
         async getAdminPermission(action: AdminPermissionsActions, userId: number): Promise<boolean> {
-            const userGroupAttr = await attributeRepo.getAttributes({id: 'user_groups'});
+            const userGroupAttr = await attributeRepo.getAttributes({
+                filters: {id: 'user_groups'},
+                strictFilters: true
+            });
 
             // Get user group, retrieve ancestors
             const userGroups = await valueRepo.getValues('users', userId, userGroupAttr.list[0]);
@@ -215,7 +218,10 @@ export default function(
             libraryId: string,
             userId: number
         ): Promise<boolean> {
-            const userGroupAttr = await attributeRepo.getAttributes({id: 'user_groups'});
+            const userGroupAttr = await attributeRepo.getAttributes({
+                filters: {id: 'user_groups'},
+                strictFilters: true
+            });
 
             // Get user group, retrieve ancestors
             const userGroups = await valueRepo.getValues('users', userId, userGroupAttr.list[0]);

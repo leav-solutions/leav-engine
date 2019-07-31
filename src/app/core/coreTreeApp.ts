@@ -118,7 +118,7 @@ export default function(
                 resolvers: {
                     Query: {
                         async trees(parent, {filters, pagination}) {
-                            return treeDomain.getTrees(filters, true, pagination);
+                            return treeDomain.getTrees({filters, withCount: true, pagination});
                         },
                         async treeContent(_, {treeId, startAt}, ctx, info) {
                             ctx.treeId = treeId;

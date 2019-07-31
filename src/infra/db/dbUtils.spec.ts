@@ -80,7 +80,7 @@ describe('dbUtils', () => {
         });
 
         test('Find core entity without filters', async () => {
-            const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME);
+            const res = await testDbUtils.findCoreEntity({collectionName: TREES_COLLECTION_NAME});
 
             expect(res.list).toHaveLength(1);
 
@@ -100,7 +100,10 @@ describe('dbUtils', () => {
         });
 
         test('Filter with a LIKE on ID', async function() {
-            const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME, {id: 'test'});
+            const res = await testDbUtils.findCoreEntity({
+                collectionName: TREES_COLLECTION_NAME,
+                filters: {id: 'test'}
+            });
 
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(FILTER LIKE){1}/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
@@ -108,7 +111,10 @@ describe('dbUtils', () => {
         });
 
         test('Should filter label on any language', async function() {
-            const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME, {label: 'test'});
+            const res = await testDbUtils.findCoreEntity({
+                collectionName: TREES_COLLECTION_NAME,
+                filters: {label: 'test'}
+            });
 
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(LIKE(.*)label\.(.*)OR LIKE(.*)label\.)/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
@@ -116,11 +122,31 @@ describe('dbUtils', () => {
         });
 
         test('Should limit results', async function() {
-            const res = await testDbUtils.findCoreEntity(TREES_COLLECTION_NAME, {}, false, true, {limit: 5, offset: 0});
+            const mockDbServLimit = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        _key: 'categories',
+                        _id: 'core_trees/categories',
+                        _rev: '_Wm_Qdtu--_',
+                        label: {
+                            fr: 'Arbre des catégories'
+                        },
+                        libraries: ['categories'],
+                        system: false
+                    }
+                ])
+            };
+            const testDbUtilsLimit = dbUtils(mockDbServLimit, null, {lang: {available: ['fr', 'en']}});
+            const res = await testDbUtilsLimit.findCoreEntity({
+                collectionName: TREES_COLLECTION_NAME,
+                withCount: true,
+                pagination: {limit: 5, offset: 0}
+            });
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/LIMIT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatch(/LIMIT/);
+            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServLimit.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
         });
 
         test('Should return an empty array if no results', async function() {
@@ -130,7 +156,7 @@ describe('dbUtils', () => {
             testDbUtils.convertToDoc = jest.fn();
 
             mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const res = await testDbUtils.findCoreEntity<ITree>(TREES_COLLECTION_NAME);
+            const res = await testDbUtils.findCoreEntity<ITree>({collectionName: TREES_COLLECTION_NAME});
 
             expect(res.list).toBeInstanceOf(Array);
             expect(res.list.length).toBe(0);
