@@ -45,7 +45,7 @@ export default function(
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
-                        versions_conf: valuesversions_conf
+                        versions_conf: ValuesVersionsConf
                     }
 
                     input AttributeInput {
@@ -59,7 +59,7 @@ export default function(
                         actions_list: ActionsListConfigurationInput,
                         permissions_conf: Treepermissions_confInput,
                         multiple_values: Boolean,
-                        versions_conf: valuesversions_confInput
+                        versions_conf: ValuesVersionsConfInput
                     }
 
                     type EmbeddedAttribute {
@@ -78,13 +78,13 @@ export default function(
                         embedded_fields: [EmbeddedAttributeInput]
                     }
 
-                    type valuesversions_conf {
+                    type ValuesVersionsConf {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
                         trees: [String!]
                     }
 
-                    input valuesversions_confInput {
+                    input ValuesVersionsConfInput {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
                         trees: [String!]
