@@ -144,7 +144,8 @@ export default function(
                     extend type Query {
                         ${libQueryName}(
                             filters: [${libTypeName}Filter],
-                            version: [ValueVersionInput]
+                            version: [ValueVersionInput],
+                            pagination: Pagination,
                         ): [${libTypeName}!]
                     }
                 `;
@@ -175,7 +176,12 @@ export default function(
                               }, {})
                             : null;
 
-                    return recordDomain.find(lib.id, filters, queryFields, {version: formattedVersion});
+                    return recordDomain.find({
+                        library: lib.id,
+                        filters,
+                        fields: queryFields,
+                        options: {version: formattedVersion}
+                    });
                 };
                 baseSchema.resolvers[libTypeName] = {
                     library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null),

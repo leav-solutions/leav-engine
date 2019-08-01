@@ -2,7 +2,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import * as moment from 'moment';
-import {IValue, IValuesOptions, IValueVersion} from '_types/value';
+import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {RecordPermissionsActions} from '../../_types/permissions';
@@ -17,6 +17,13 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
  */
 export interface IRecordFiltersLight {
     [attrId: string]: string;
+}
+
+export interface IFindRecordParams {
+    library: string;
+    filters?: IRecordFiltersLight;
+    fields?: IQueryField[];
+    options?: IValuesOptions;
 }
 
 export interface IRecordDomain {
@@ -54,12 +61,7 @@ export interface IRecordDomain {
      * @param filters Filters to apply on records selection
      * @param fields Fields to retrieve on each records
      */
-    find(
-        library: string,
-        filters?: IRecordFiltersLight,
-        fields?: IQueryField[],
-        options?: IValuesOptions
-    ): Promise<IRecord[]>;
+    find(params: IFindRecordParams): Promise<IRecord[]>;
 
     /**
      * Add values for requested fields on the record. Values can be of any types here.
@@ -220,12 +222,8 @@ export default function(
 
             return recordRepo.deleteRecord(library, id);
         },
-        async find(
-            library: string,
-            filters?: IRecordFiltersLight,
-            fields?: IQueryField[],
-            version?: IValueVersion
-        ): Promise<IRecord[]> {
+        async find(params: IFindRecordParams): Promise<IRecord[]> {
+            const {library, fields, filters, options} = params;
             const fullFilters: IRecordFilterOption[] = [];
 
             // Hydrate filters with attribute properties and cast filters values if needed
@@ -247,7 +245,7 @@ export default function(
             // Populate records with requested fields
             if (typeof fields !== 'undefined' && fields.length) {
                 records = await Promise.all(
-                    records.map(record => this.populateRecordFields(library, record, fields, version))
+                    records.map(record => this.populateRecordFields(library, record, fields, options))
                 );
             }
 

@@ -115,8 +115,11 @@ export default function(
     }
 
     async function _treeElementExists(treeElement: ITreeElement) {
-        const record = await recordDomain.find(treeElement.library, {
-            id: `${treeElement.id}`
+        const record = await recordDomain.find({
+            library: treeElement.library,
+            filters: {
+                id: `${treeElement.id}`
+            }
         });
 
         return !!record.length;

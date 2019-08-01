@@ -106,7 +106,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain(recRepo as IRecordRepo, null);
 
-            const findRes = await recDomain.find('test_lib');
+            const findRes = await recDomain.find({library: 'test_lib'});
 
             expect(recRepo.find.mock.calls.length).toBe(1);
             expect(findRes).toEqual([
