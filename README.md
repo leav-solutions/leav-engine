@@ -19,7 +19,7 @@ The process will ask for your username / password for Gitlab.
 
 ### Installing the dependencies
 
-leav_core is based on Node.js. we recommend using the version 10.16.0.
+leav_core is based on Node.js. The version shall be 8.0 or above.
 
 Be sure to have Node and npm installed on your machine.
 
@@ -39,7 +39,7 @@ leav_core uses ArangoDB Community Edition as it's database.
 
 If ArangoDB in not installed on your machine, you'll have to install ArangoDB.
 
-Instruction can be found on their [website](https://www.arangodb.com/docs/stable/installation-mac-osx.html)
+Instruction can be found on their [website](https://www.arangodb.com/docs/stable/installation.html)
 
 
 ###### ArangoDb settings:
@@ -54,7 +54,7 @@ For local development, the user is 'root', and no password is set.
 
 While migrating the Database, leav_core will try and log the process output. We need to set some local variables to make it work properly.
 
-Create a file in the `config` folder, named `locale.js`. It will hold some local variables, and will be ignored by git.
+Create a file in the `config` folder, named `local.js`. It will hold some local variables, and will be ignored by git.
 
 The content of this file:
 ```javascript
@@ -79,7 +79,7 @@ module.exports = {
 
 ###### In case you prefer to file up the logs:
 
-You'll need to create a `LOGS` folder, and modify the file `locale.js`.
+You'll need to create a `LOGS` folder, and modify the file `local.js`.
 
 ```javascript
 module.exports = {
