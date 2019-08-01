@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import {merge} from 'lodash';
+import {assign} from 'lodash';
 import * as path from 'path';
 import {env as appEnv} from './env';
 
@@ -32,7 +32,7 @@ const _getConfigByEnv = async function(env: string): Promise<{}> {
 const _getCombinedConfig = async function(): Promise<{}> {
     const definedEnv: string = appEnv || '';
 
-    return merge(await _getConfigByEnv('default'), await _getConfigByEnv(definedEnv), await _getConfigByEnv('local'), {
+    return assign(await _getConfigByEnv('default'), await _getConfigByEnv(definedEnv), await _getConfigByEnv('local'), {
         env: definedEnv
     });
 };

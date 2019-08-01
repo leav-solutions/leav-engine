@@ -19,8 +19,8 @@ module.exports = {
     },
     logs: {
         level: 'info',
-        transport: ['console'], // Array containing one or more of : console, file
-        // destinationFile: '/var/log/leav.log' // If logging in file
+        transport: ['console', 'file'], // Array containing one or more of : console, file
+        destinationFile: '/var/log/leav.log' // If logging in file
     },
     permissions: {default: true}
 };
