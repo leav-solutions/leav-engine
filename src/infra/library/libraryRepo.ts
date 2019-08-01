@@ -18,7 +18,7 @@ export interface ILibraryRepo {
      * @param filters                   Filters libraries returned
      * @return Promise<Array<object>>   All libraries data
      */
-    getLibraries(params: IGetCoreEntitiesParams): Promise<IList<ILibrary>>;
+    getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>>;
 
     /**
      * Create new library
@@ -58,26 +58,20 @@ export interface ILibraryRepo {
 export default function(
     dbService: IDbService | null = null,
     dbUtils: IDbUtils | null = null,
-    attributeRepo: IAttributeRepo | null = null,
-    config = null
+    attributeRepo: IAttributeRepo | null = null
 ): ILibraryRepo {
     return {
-        async getLibraries(params: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
+        async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
                 withCount: false,
-                pagination: null
+                pagination: null,
+                sort: null
             };
 
-            const {filters, strictFilters, withCount, pagination} = {...defaultParams, ...params};
-            return dbUtils.findCoreEntity<ILibrary>({
-                collectionName: LIB_COLLECTION_NAME,
-                filters,
-                strictFilters,
-                withCount,
-                pagination
-            });
+            const initializedParams = {...defaultParams, ...params};
+            return dbUtils.findCoreEntity<ILibrary>({...initializedParams, collectionName: LIB_COLLECTION_NAME});
         },
         async createLibrary(libData: ILibrary): Promise<ILibrary> {
             const defaultParams = {_key: '', system: false, label: {fr: '', en: ''}};

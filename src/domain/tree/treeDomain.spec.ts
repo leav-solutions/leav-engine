@@ -242,6 +242,17 @@ describe('treeDomain', () => {
             expect(treeRepo.getTrees.mock.calls[0][0].filters).toMatchObject({id: 'test'});
             expect(trees.list.length).toBe(2);
         });
+
+        test('Should return a list of trees', async () => {
+            const treeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
+            };
+            const domain = treeDomain(treeRepo as ITreeRepo);
+
+            const trees = await domain.getTrees({filters: {id: 'test'}});
+
+            expect(treeRepo.getTrees.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
+        });
     });
 
     describe('addElement', () => {

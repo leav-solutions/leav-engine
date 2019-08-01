@@ -1,6 +1,6 @@
 import {IAttributeFilterOptions} from './attribute';
 import {ILibraryFilterOptions} from './library';
-import {IPaginationParams} from './list';
+import {IPaginationParams, ISortParams} from './list';
 import {ITreeFilterOptions} from './tree';
 
 export interface IGetCoreEntitiesParams {
@@ -8,4 +8,5 @@ export interface IGetCoreEntitiesParams {
     strictFilters?: boolean;
     withCount?: boolean;
     pagination?: IPaginationParams;
+    sort?: ISortParams;
 }

@@ -8,7 +8,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {IList} from '../../_types/list';
+import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -231,7 +231,12 @@ export default function(
             return props;
         },
         async getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
-            return attributeRepo.getAttributes(params);
+            const initializedParams = {...params};
+            if (typeof initializedParams.sort === 'undefined') {
+                initializedParams.sort = {field: 'id', order: SortOrder.ASC};
+            }
+
+            return attributeRepo.getAttributes(initializedParams);
         },
         async saveAttribute(attrData: IAttribute, infos: IQueryInfos): Promise<IAttribute> {
             // TODO: Validate attribute data (linked library, linked tree...)

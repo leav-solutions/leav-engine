@@ -36,18 +36,12 @@ export default function(
                 filters: null,
                 strictFilters: false,
                 withCount: false,
-                pagination: null
+                pagination: null,
+                sort: null
             };
+            const initializedParams = {...defaultParams, ...params};
 
-            const {filters, strictFilters, withCount, pagination} = {...defaultParams, ...params};
-
-            return dbUtils.findCoreEntity<IAttribute>({
-                collectionName: ATTRIB_COLLECTION_NAME,
-                filters,
-                strictFilters,
-                withCount,
-                pagination
-            });
+            return dbUtils.findCoreEntity<IAttribute>({...initializedParams, collectionName: ATTRIB_COLLECTION_NAME});
         },
         async updateAttribute(attrData: IAttribute): Promise<IAttribute> {
             const defaultParams = {

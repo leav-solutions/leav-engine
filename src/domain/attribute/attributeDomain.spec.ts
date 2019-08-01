@@ -25,6 +25,17 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
             expect(attr.list.length).toBe(2);
         });
+
+        test('Should add default sort', async function() {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
+            };
+
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attr = await attrDomain.getAttributes();
+
+            expect(mockAttrRepo.getAttributes.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
+        });
     });
 
     describe('getAttributeProperties', () => {

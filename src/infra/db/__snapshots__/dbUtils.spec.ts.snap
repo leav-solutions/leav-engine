@@ -47,3 +47,13 @@ Object {
   "value2": 5,
 }
 `;
+
+exports[`dbUtils findCoreEntity Should sort results 1`] = `"FOR el IN @@value0 SORT el.@value1 @value2 RETURN el"`;
+
+exports[`dbUtils findCoreEntity Should sort results 2`] = `
+Object {
+  "@value0": "core_trees",
+  "value1": "system",
+  "value2": "asc",
+}
+`;

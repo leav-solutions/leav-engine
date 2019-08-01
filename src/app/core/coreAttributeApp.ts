@@ -105,10 +105,25 @@ export default function(
                         list: [Attribute!]!
                     }
 
+                    enum AttributesSortableFields {
+                        id
+                        type
+                        format
+                        linked_library
+                        linked_tree
+                        multiple_values
+                    }
+
+                    input SortAttributes {
+                        field: AttributesSortableFields!
+                        order: SortOrder
+                    }
+
                     extend type Query {
                         attributes(
                             filters: AttributesFiltersInput,
-                            pagination: Pagination
+                            pagination: Pagination,
+                            sort: SortAttributes
                         ): AttributesList
                     }
 
@@ -119,8 +134,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async attributes(parent, {filters, pagination}) {
-                            return attributeDomain.getAttributes({filters, withCount: true, pagination});
+                        async attributes(parent, {filters, pagination, sort}) {
+                            return attributeDomain.getAttributes({filters, withCount: true, pagination, sort});
                         }
                     },
                     Mutation: {

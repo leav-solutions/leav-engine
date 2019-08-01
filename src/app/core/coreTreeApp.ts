@@ -81,10 +81,21 @@ export default function(
                         list: [Tree!]!
                     }
 
+                    enum TreesSortableFields {
+                        id
+                        system
+                    }
+
+                    input SortTrees {
+                        field: TreesSortableFields!
+                        order: SortOrder
+                    }
+
                     extend type Query {
                         trees(
                             filters: TreesFiltersInput,
-                            pagination: Pagination
+                            pagination: Pagination,
+                            sort: SortTrees
                         ): TreesList
 
                         # Retrieve tree content.
@@ -117,8 +128,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async trees(parent, {filters, pagination}) {
-                            return treeDomain.getTrees({filters, withCount: true, pagination});
+                        async trees(parent, {filters, pagination, sort}) {
+                            return treeDomain.getTrees({filters, withCount: true, pagination, sort});
                         },
                         async treeContent(_, {treeId, startAt}, ctx, info) {
                             ctx.treeId = treeId;

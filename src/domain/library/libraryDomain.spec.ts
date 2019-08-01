@@ -41,6 +41,18 @@ describe('LibraryDomain', () => {
 
             expect(lib.list[0].attributes).toBeDefined();
         });
+
+        test('Should add default sort', async function() {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2}),
+                getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}]))
+            };
+
+            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const lib = await libDomain.getLibraries({withCount: true});
+
+            expect(mockLibRepo.getLibraries.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
+        });
     });
 
     describe('getLibraryProperties', () => {

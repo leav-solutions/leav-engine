@@ -54,10 +54,21 @@ export default function(
                         list: [Library!]!
                     }
 
+                    enum LibrariesSortableFields {
+                        id
+                        system
+                    }
+
+                    input SortLibraries {
+                        field: LibrariesSortableFields!
+                        order: SortOrder
+                    }
+
                     type Query {
                         libraries(
                             filters: LibrariesFiltersInput,
-                            pagination: Pagination
+                            pagination: Pagination,
+                            sort: SortLibraries
                         ): LibrariesList
                     }
 
@@ -65,12 +76,11 @@ export default function(
                         saveLibrary(library: LibraryInput): Library!
                         deleteLibrary(id: ID): Library!
                     }
-
                 `,
                 resolvers: {
                     Query: {
-                        async libraries(parent, {filters, pagination}, ctx) {
-                            return libraryDomain.getLibraries({filters, withCount: true, pagination});
+                        async libraries(parent, {filters, pagination, sort}, ctx) {
+                            return libraryDomain.getLibraries({filters, withCount: true, pagination, sort});
                         }
                     },
                     Mutation: {

@@ -7,7 +7,7 @@ import {isArray} from 'util';
 import * as winston from 'winston';
 import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
-import {IList, IPaginationParams} from '_types/list';
+import {IList, IPaginationParams, ISortParams} from '_types/list';
 import {ITree, ITreeFilterOptions} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
@@ -20,6 +20,7 @@ export interface IFindCoreEntityParams {
     strictFilters?: boolean;
     withCount?: boolean;
     pagination?: IPaginationParams;
+    sort?: ISortParams;
 }
 
 export interface IDbUtils {
@@ -199,10 +200,11 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
                 filters: null,
                 strictFilters: false,
                 withCount: false,
-                pagination: null
+                pagination: null,
+                sort: null
             };
 
-            const {collectionName, filters, strictFilters, withCount, pagination} = {...defaultParams, ...params};
+            const {collectionName, filters, strictFilters, withCount, pagination, sort} = {...defaultParams, ...params};
 
             const collec = dbService.db.collection(collectionName);
             const queryParts = [aql`FOR el IN ${collec}`];
@@ -216,6 +218,11 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
                     const conds = _getFilterCondition(filterKey, filterVal, strictFilters);
                     queryParts.push(aql`FILTER`, conds);
                 }
+            }
+
+            if (!!sort) {
+                const field = sort.field === 'id' ? '_key' : sort.field;
+                queryParts.push(aql`SORT el.${field} ${sort.order}`);
             }
 
             if (!!pagination) {

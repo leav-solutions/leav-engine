@@ -1,11 +1,11 @@
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
-import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
 import {ITree, ITreeElement, ITreeNode} from '../../_types/tree';
@@ -175,7 +175,12 @@ export default function(
             return treeRepo.deleteTree(id);
         },
         async getTrees(params?: IGetCoreEntitiesParams): Promise<IList<ITree>> {
-            return treeRepo.getTrees(params);
+            const initializedParams = {...params};
+            if (typeof initializedParams.sort === 'undefined') {
+                initializedParams.sort = {field: 'id', order: SortOrder.ASC};
+            }
+
+            return treeRepo.getTrees(initializedParams);
         },
         async addElement(
             treeId: string,

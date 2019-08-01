@@ -7,7 +7,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ILibrary} from '../../_types/library';
-import {IList} from '../../_types/list';
+import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -28,7 +28,12 @@ export default function(
 ): ILibraryDomain {
     return {
         async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
-            const libsList = await libraryRepo.getLibraries(params);
+            const initializedParams = {...params};
+            if (typeof initializedParams.sort === 'undefined') {
+                initializedParams.sort = {field: 'id', order: SortOrder.ASC};
+            }
+
+            const libsList = await libraryRepo.getLibraries(initializedParams);
 
             const libs = await Promise.all(
                 libsList.list.map(async lib => {

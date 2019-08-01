@@ -1,6 +1,7 @@
 import {Database} from 'arangojs';
 import {ITree} from '_types/tree';
 import {TREES_COLLECTION_NAME} from '../../infra/tree/treeRepo';
+import {SortOrder} from '../../_types/list';
 import dbUtils, {IDbUtils} from './dbUtils';
 
 describe('dbUtils', () => {
@@ -147,6 +148,66 @@ describe('dbUtils', () => {
             expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatch(/LIMIT/);
             expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatchSnapshot();
             expect(mockDbServLimit.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+        });
+
+        test('Should sort results', async function() {
+            const mockDbServLimit = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        _key: 'categories',
+                        _id: 'core_trees/categories',
+                        _rev: '_Wm_Qdtu--_',
+                        label: {
+                            fr: 'Arbre des catégories'
+                        },
+                        libraries: ['categories'],
+                        system: false
+                    }
+                ])
+            };
+            const testDbUtilsLimit = dbUtils(mockDbServLimit, null, {lang: {available: ['fr', 'en']}});
+            const res = await testDbUtilsLimit.findCoreEntity({
+                collectionName: TREES_COLLECTION_NAME,
+                withCount: true,
+                sort: {
+                    field: 'system',
+                    order: SortOrder.ASC
+                }
+            });
+
+            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatch(/SORT/);
+            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServLimit.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+        });
+
+        test('Should convert ID key when sorting', async function() {
+            const mockDbServLimit = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        _key: 'categories',
+                        _id: 'core_trees/categories',
+                        _rev: '_Wm_Qdtu--_',
+                        label: {
+                            fr: 'Arbre des catégories'
+                        },
+                        libraries: ['categories'],
+                        system: false
+                    }
+                ])
+            };
+            const testDbUtilsLimit = dbUtils(mockDbServLimit, null, {lang: {available: ['fr', 'en']}});
+            const res = await testDbUtilsLimit.findCoreEntity({
+                collectionName: TREES_COLLECTION_NAME,
+                withCount: true,
+                sort: {
+                    field: 'id',
+                    order: SortOrder.ASC
+                }
+            });
+
+            expect(mockDbServLimit.execute.mock.calls[0][0].bindVars.value1).toBe('_key');
         });
 
         test('Should return an empty array if no results', async function() {

@@ -135,18 +135,12 @@ export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
                 filters: null,
                 strictFilters: false,
                 withCount: false,
-                pagination: null
+                pagination: null,
+                sort: null
             };
+            const initializedParams = {...defaultParams, ...params};
 
-            const {filters, strictFilters, withCount, pagination} = {...defaultParams, ...params};
-
-            return dbUtils.findCoreEntity<ITree>({
-                collectionName: TREES_COLLECTION_NAME,
-                filters,
-                strictFilters,
-                withCount,
-                pagination
-            });
+            return dbUtils.findCoreEntity<ITree>({...initializedParams, collectionName: TREES_COLLECTION_NAME});
         },
         async deleteTree(id: string): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);

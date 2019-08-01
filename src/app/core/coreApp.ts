@@ -36,6 +36,11 @@ export default function(
                         offset: Int!
                     }
 
+                    enum SortOrder {
+                        asc
+                        desc
+                    }
+
                     input SystemTranslationInput {
                         ${config.lang.available.map(l => `${l}: String${l === config.lang.default ? '!' : ''}`)}
                     }
