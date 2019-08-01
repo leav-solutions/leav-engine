@@ -1,22 +1,6 @@
 
 # Installation
 
-### Cloning the repo
-
-In terminal pointing to the containing folder;
-
-Via ssh:
-```
-git clone git@gitlab.cacom.fr:dev/leav/leav_core.git
-```
-
-Via https:
-```
-git clone https://gitlab.cacom.fr/dev/leav/leav_core.git
-```
-The process will ask for your username / password for Gitlab.
-
-
 ### Installing the dependencies
 
 leav_core is based on Node.js. The version shall be 8.0 or above.
@@ -52,23 +36,24 @@ For local development, the user is 'root', and no password is set.
 
 ### Create and set the local environment.
 
-While migrating the Database, leav_core will try and log the process output. We need to set some local variables to make it work properly.
+leav_core depends on some variables such as the port for the server, the address of the database, the auth scheme... Those different configurations can be found in the `config` folder.
 
-Create a file in the `config` folder, named `local.js`. It will hold some local variables, and will be ignored by git.
+You can overwrite the variables using your own `local.js` file in the `config` folder. Any variable described in the `local.js` file will overwrite the default variables.
 
-The content of this file:
+Here below is an exemple of a `local.js` file:
+
 ```javascript
 module.exports = {
     db: {
-        url: 'http://root@localhost:8529', // <db_username>@localhost:<port>
+        url: 'http://root@localhost:8529', // the url of the arangoDB instance
         name: 'leav_core' // the name of the database
     },
     logs: {
-        level: 'silly',
+        level: 'silly', // set the level (verbosity) of the logs
         transport: ['console'] // Tell to pipe the logs to the console.
     },
     auth: {
-        scheme: 'jwt',
+        scheme: 'jwt', // set the auth scheme between the serv er and client app.
         key: 'mysecretkey',
         algorithm: 'HS256',
         tokenExpiration: '7d',
@@ -79,18 +64,18 @@ module.exports = {
 
 ###### In case you prefer to file up the logs:
 
-You'll need to create a `LOGS` folder, and modify the file `local.js`.
+You'll need to create a log file, and set the destination of that file in `local.js`.
 
 ```javascript
 module.exports = {
     db: {
-        url: 'http://root@localhost:8529', // <db_username>@localhost:<port>
+        url: 'http://root@localhost:8529', // the url of the arangoDB instance
         name: 'leav_core' // the name of the database
     },
     logs: {
         level: 'silly',
         transport: ['console', 'file'], // The logs will be sent to the console AND a file
-        destinationFile: '/Users/<username>/<Path-to>/LOGS/node.log' // Path to your node.log file
+        destinationFile: '/Users/<username>/<Path-to>/node.log' // Path to your node.log file
     },
     auth: {
         scheme: 'jwt',
