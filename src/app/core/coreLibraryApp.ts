@@ -1,5 +1,8 @@
+import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {IUtils} from 'utils/utils';
 import {ILibrary} from '../../_types/library';
 import {IRecord} from '../../_types/record';
@@ -17,7 +20,10 @@ export default function(
     coreAttributeApp: ICoreAttributeApp,
     graphqlApp: IGraphqlApp,
     utils: IUtils,
-    coreApp: ICoreApp
+    coreApp: ICoreApp,
+    valueDomain: IValueDomain,
+    attributeDomain: IAttributeDomain,
+    actionsListDomain: IActionsListDomain
 ): ICoreLibraryApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -176,6 +182,8 @@ export default function(
                               }, {})
                             : null;
 
+                    context.version = formattedVersion;
+
                     return recordDomain.find({
                         library: lib.id,
                         filters,
@@ -187,6 +195,13 @@ export default function(
                     library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null),
                     whoAmI: recordDomain.getRecordIdentity
                 };
+
+                for (const libAttr of lib.attributes) {
+                    baseSchema.resolvers[libTypeName][libAttr.id] = async (parent, args, ctx, info) =>
+                        recordDomain.getRecordFieldValue(lib.id, parent, libAttr.id, {
+                            version: ctx.version
+                        });
+                }
             }
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};

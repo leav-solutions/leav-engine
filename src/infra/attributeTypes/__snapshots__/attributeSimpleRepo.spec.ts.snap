@@ -15,7 +15,7 @@ exports[`AttributeIndexRepo getValues Should return values for index attribute 1
 exports[`AttributeIndexRepo getValues Should return values for index attribute 2`] = `
 Object {
   "@value0": "test_lib",
-  "value1": 123456,
+  "value1": "123456",
   "value2": "test_attr",
 }
 `;

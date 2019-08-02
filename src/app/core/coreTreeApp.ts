@@ -166,11 +166,6 @@ export default function(
                         }
                     },
                     TreeNode: {
-                        record: async (parent, args, ctx, info) => {
-                            const queryFields = graphqlApp.getQueryFields(info);
-
-                            return recordDomain.populateRecordFields(parent.record.library, parent.record, queryFields);
-                        },
                         children: async (parent, args, ctx, info) => {
                             if (typeof parent.children !== 'undefined') {
                                 return parent.children;
@@ -226,11 +221,7 @@ export default function(
                                 element
                             );
 
-                            return Promise.all(
-                                records.map(record =>
-                                    recordDomain.populateRecordFields(record.library, record, queryFields)
-                                )
-                            );
+                            return records;
                         }
                     }
                 }

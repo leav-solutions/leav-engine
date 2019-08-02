@@ -44,11 +44,12 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             return _saveValue(library, recordId, attribute, {...value, value: null});
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
-            const res = await dbService.execute(aql`
+            const query = aql`
                 FOR r IN ${dbService.db.collection(library)}
-                    FILTER r._key == ${recordId}
+                    FILTER r._key == ${String(recordId)}
                     RETURN r.${attribute.id}
-            `);
+            `;
+            const res = await dbService.execute(query);
 
             return [
                 {

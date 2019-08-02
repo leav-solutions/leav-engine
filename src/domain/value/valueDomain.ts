@@ -159,12 +159,13 @@ export default function(
 
             const attr = await attributeDomain.getAttributeProperties(attribute);
 
+            let values: IValue[];
             if (
                 !attr.versions_conf ||
                 !attr.versions_conf.versionable ||
                 attr.versions_conf.mode === ValueVersionMode.SIMPLE
             ) {
-                return valueRepo.getValues(library, recordId, attr, false, options);
+                values = await valueRepo.getValues(library, recordId, attr, false, options);
             } else {
                 // Get all values, no matter the version.
                 const allValues: IValue[] = await valueRepo.getValues(library, recordId, attr, true, options);
@@ -184,8 +185,10 @@ export default function(
                 );
 
                 // Retrieve appropriate value among all values
-                return _findValue(trees, allValues);
+                values = _findValue(trees, allValues);
             }
+
+            return values;
         },
         async saveValue(
             library: string,

@@ -175,7 +175,7 @@ export default function(
      * @param attrData
      */
     function _validateInputType(attrData: IAttribute): void {
-        if (!attrData.actions_list) {
+        if (!attrData.actions_list || !attrData.actions_list[ActionsListEvents.SAVE_VALUE]) {
             return;
         }
 
@@ -208,7 +208,11 @@ export default function(
         const missingActions = [];
         for (const event of Object.keys(defaultActions)) {
             for (const defAction of defaultActions[event]) {
-                if (defAction.is_system && !attrData.actions_list[event].find(a => a.name === defAction.name)) {
+                if (
+                    defAction.is_system &&
+                    (!attrData.actions_list[event] ||
+                        !attrData.actions_list[event].find(a => a.name === defAction.name))
+                ) {
                     missingActions.push(`${event} => ${defAction.name}`);
                 }
             }
