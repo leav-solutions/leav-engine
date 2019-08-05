@@ -1,4 +1,9 @@
-import ApolloClient, {InMemoryCache, IntrospectionFragmentMatcher, IntrospectionResultData} from 'apollo-boost';
+import {ApolloClient} from 'apollo-client';
+import {InMemoryCache, IntrospectionFragmentMatcher, IntrospectionResultData} from 'apollo-cache-inmemory';
+import {HttpLink} from 'apollo-link-http';
+import {onError} from 'apollo-link-error';
+import {ApolloLink} from 'apollo-link';
+
 import React from 'react';
 import {ApolloProvider} from 'react-apollo';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
@@ -42,10 +47,17 @@ class App extends React.Component<IAppProps, IAppState> {
         }
 
         const gqlClient = new ApolloClient({
-            uri: process.env.REACT_APP_API_URL,
-            headers: {
-                Authorization: token
-            },
+            link: ApolloLink.from([
+                onError(err => {
+                    this._handleApolloError(err);
+                }),
+                new HttpLink({
+                    uri: process.env.REACT_APP_API_URL,
+                    headers: {
+                        Authorization: token
+                    }
+                })
+            ]),
             cache: new InMemoryCache({fragmentMatcher})
         });
 
@@ -144,6 +156,18 @@ class App extends React.Component<IAppProps, IAppState> {
                 introspectionQueryResultData: resData
             })
         });
+    }
+
+    private _handleApolloError = err => {
+        const {graphQLErrors, networkError} = err;
+        if (graphQLErrors) {
+            graphQLErrors.map(({message, locations, path}) =>
+                console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+            );
+        }
+        if (networkError) {
+            console.log(`[Network error]: ${networkError}`);
+        }
     }
 }
 
