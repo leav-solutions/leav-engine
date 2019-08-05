@@ -7,10 +7,20 @@ import './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
+const deleteToken = () => {
+    window.sessionStorage.removeItem('accessToken');
+    ReactDOM.render(<Login onSuccess={setToken} message="login.error.session_expired" />, document.getElementById(
+        'root'
+    ) as HTMLElement);
+};
+
 const setToken = (tokenStr: string) => {
     window.sessionStorage.setItem('accessToken', tokenStr);
-    ReactDOM.render(<App token={tokenStr} />, document.getElementById('root') as HTMLElement);
+    ReactDOM.render(<App token={tokenStr} onTokenInvalid={deleteToken} />, document.getElementById(
+        'root'
+    ) as HTMLElement);
 };
+
 const token = window.sessionStorage.accessToken || '';
 
 window.sessionStorage.accessToken = token;
@@ -18,7 +28,7 @@ if (token === '' || token === undefined || token === 'undefined') {
     // window.location.replace(`${authAppUrl}?referer=${window.location}`);
     ReactDOM.render(<Login onSuccess={setToken} />, document.getElementById('root') as HTMLElement);
 } else {
-    ReactDOM.render(<App token={token} />, document.getElementById('root') as HTMLElement);
+    ReactDOM.render(<App token={token} onTokenInvalid={deleteToken} />, document.getElementById('root') as HTMLElement);
 }
 
 registerServiceWorker();

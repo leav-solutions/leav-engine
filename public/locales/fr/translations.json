@@ -121,8 +121,9 @@
         },
         "error": {
             "bad_credentials" : "Paramètres d'authentification incorrects.",
-            "no_server_response": "Le serveur ne répond pas."
-        }
+            "no_server_response": "Le serveur ne répond pas.",
+            "session_expired": "Votre session a expiré."
+        }   
     },
     "navigator": {
         "title": "Navigateur"

@@ -57,10 +57,12 @@ function Login({i18n: i18next, t, onSuccess, message}: ILoginProps): JSX.Element
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
+    const [warning, setWarning] = useState(message ? message : '');
     const authUrl = process.env.REACT_APP_AUTH_URL || '';
     const proceedAuth = useCallback(() => {
         setIsLoading(true);
         setLoginError('');
+        setWarning('');
         setTimeout(() => {
             processLogin(authUrl, login, password, setIsLoading, onSuccess, setLoginError);
         }, 2000);
@@ -135,13 +137,12 @@ function Login({i18n: i18next, t, onSuccess, message}: ILoginProps): JSX.Element
                             </div>
                         </div>
                     ) : null}
-                    {message ? (
+                    {warning ? (
                         <div className="ui icon message orange">
                             <i className="lock icon" />
                             <div className="content">
-                                {/* <div className="header">{t('login.apologize_header')}</div> */}
                                 <p>{t('login.apologize')}</p>
-                                <p>{t(message)}</p>
+                                <p>{t(warning)}</p>
                             </div>
                         </div>
                     ) : null}

@@ -23,6 +23,7 @@ interface IAppState {
 
 interface IAppProps extends WithNamespaces {
     token: string;
+    onTokenInvalid: () => void;
 }
 
 class App extends React.Component<IAppProps, IAppState> {
@@ -149,15 +150,23 @@ class App extends React.Component<IAppProps, IAppState> {
         });
 
         const resData: IntrospectionResultData = (await res.json()).data;
-        resData.__schema.types = resData.__schema.types.filter(t => t.possibleTypes !== null);
 
-        this.setState({
-            fragmentMatcher: new IntrospectionFragmentMatcher({
-                introspectionQueryResultData: resData
-            })
-        });
+        // If the server sends a 401, resData will not contain the shema.
+        // The try and catch allows to handle the situation.
+        try {
+            resData.__schema.types = resData.__schema.types.filter(t => t.possibleTypes !== null);
+
+            this.setState({
+                fragmentMatcher: new IntrospectionFragmentMatcher({
+                    introspectionQueryResultData: resData
+                })
+            });
+        } catch (error) {
+            this.props.onTokenInvalid();
+        }
     }
 
+    // This function will catch the errors from the exchange between Apollo Client and the server.
     private _handleApolloError = err => {
         const {graphQLErrors, networkError} = err;
         if (graphQLErrors) {
@@ -167,6 +176,9 @@ class App extends React.Component<IAppProps, IAppState> {
         }
         if (networkError) {
             console.log(`[Network error]: ${networkError}`);
+            if (networkError.statusCode) {
+                this.props.onTokenInvalid();
+            }
         }
     }
 }
