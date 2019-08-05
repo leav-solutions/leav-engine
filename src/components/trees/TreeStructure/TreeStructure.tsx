@@ -1,4 +1,4 @@
-import {ApolloClient} from 'apollo-boost';
+import {ApolloClient} from 'apollo-client';
 import React from 'react';
 import {ApolloConsumer} from 'react-apollo';
 import {withNamespaces, WithNamespaces} from 'react-i18next';

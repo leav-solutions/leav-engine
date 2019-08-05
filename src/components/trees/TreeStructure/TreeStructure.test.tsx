@@ -1,4 +1,4 @@
-import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-boost';
+import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-cache-inmemory';
 import {render} from 'enzyme';
 import React from 'react';
 import {MockedProvider} from 'react-apollo/test-utils';
