@@ -63,10 +63,10 @@ function EditAttributeForm({
     }
 
     return (
-        <React.Fragment>
+        <>
             <Header className="no-grow">{headerLabel}</Header>
             <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col height100" />
-        </React.Fragment>
+        </>
     );
 }
 

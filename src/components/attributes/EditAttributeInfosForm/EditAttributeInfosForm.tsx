@@ -87,7 +87,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
     const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(formValues.type);
 
     return (
-        <React.Fragment>
+        <>
             {errors && errors.extensions.code === ErrorTypes.PERMISSION_ERROR && (
                 <Message negative>
                     <Message.Header>
@@ -218,7 +218,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                             />
                         </FormFieldWrapper>
                         {isVersionable && (
-                            <React.Fragment>
+                            <>
                                 <FormFieldWrapper error={!!fieldsErrors ? fieldsErrors.versions_conf : ''}>
                                     <Form.Select
                                         label={t('attributes.versions_mode')}
@@ -258,7 +258,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                                         filters={{type: [AttributeType.tree]}}
                                     />
                                 </FormFieldWrapper>
-                            </React.Fragment>
+                            </>
                         )}
                     </Form.Group>
                 )}
@@ -268,7 +268,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     </Form.Group>
                 )}
             </Form>
-        </React.Fragment>
+        </>
     );
 }
 

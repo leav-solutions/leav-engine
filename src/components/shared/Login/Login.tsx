@@ -66,7 +66,7 @@ function Login({i18n: i18next, t, onSuccess}: ILoginProps): JSX.Element {
     }, [onSuccess, authUrl, login, password]);
 
     return (
-        <React.Fragment>
+        <>
             <div className={styles.loginBackground} />
             <div className={`ui middle aligned center aligned grid ${styles.loginContainer}`}>
                 <div className={`column ${styles.loginBlock}`}>
@@ -136,7 +136,7 @@ function Login({i18n: i18next, t, onSuccess}: ILoginProps): JSX.Element {
                     ) : null}
                 </div>
             </div>
-        </React.Fragment>
+        </>
     );
 }
 export default withNamespaces()(Login);

@@ -33,7 +33,7 @@ function DefinePermissionsViewLoadTree({
                 const treeData = data.trees.list[0];
 
                 return (
-                    <React.Fragment>
+                    <>
                         <Header as="h4">{localizedLabel(treeData.label, i18n)}</Header>
                         <TreeStructure
                             key={treeData.id}
@@ -43,7 +43,7 @@ function DefinePermissionsViewLoadTree({
                             readOnly
                             withFakeRoot
                         />
-                    </React.Fragment>
+                    </>
                 );
             }}
         </TreesQuery>

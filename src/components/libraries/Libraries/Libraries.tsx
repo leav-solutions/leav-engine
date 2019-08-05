@@ -34,7 +34,7 @@ function Libraries({t, history}: ILibrariesProps): JSX.Element {
     };
 
     return (
-        <React.Fragment>
+        <>
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Header size="large">
@@ -70,7 +70,7 @@ function Libraries({t, history}: ILibrariesProps): JSX.Element {
                     );
                 }}
             </LibrariesQuery>
-        </React.Fragment>
+        </>
     );
 }
 
