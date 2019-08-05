@@ -1,7 +1,8 @@
 import {aql} from 'arangojs';
+import {IList, IPaginationParams} from '_types/list';
 import {IRecord, IRecordFilterOption} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
-import {IDbService} from '../db/dbService';
+import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -26,38 +27,45 @@ export interface IRecordRepo {
      */
     deleteRecord(library: string, id: number): Promise<IRecord>;
 
-    find(library: string, filters?: IRecordFilterOption[]): Promise<IRecord[]>;
+    find(library: string, filters?: IRecordFilterOption[], pagination?: IPaginationParams): Promise<IList<IRecord>>;
 }
 
 export default function(
-    dbService: IDbService | any,
+    dbService: IDbService,
     dbUtils: IDbUtils,
     attributeTypesRepo: IAttributeTypesRepo | null = null
 ): IRecordRepo {
     return {
-        async find(library: string, filters?: IRecordFilterOption[]): Promise<IRecord[]> {
+        async find(
+            library: string,
+            filters?: IRecordFilterOption[],
+            pagination?: IPaginationParams
+        ): Promise<IList<IRecord>> {
             const queryParts = [];
-            let bindVars = {};
 
-            queryParts.push('FOR r IN @@collection');
-            bindVars['@collection'] = library;
+            const coll = dbService.db.collection(library);
+            queryParts.push(aql`FOR r IN ${coll}`);
 
             if (typeof filters !== 'undefined' && filters.length) {
-                let i = 0;
-                for (const filter of filters) {
+                for (const [i, filter] of filters.entries()) {
                     const typeRepo = attributeTypesRepo.getTypeRepo(filter.attribute);
                     const filterQueryPart = typeRepo.filterQueryPart(filter.attribute.id, i, filter.value);
-                    queryParts.push(filterQueryPart.query);
-                    bindVars = {...bindVars, ...filterQueryPart.bindVars};
-                    i++;
+                    queryParts.push(filterQueryPart);
                 }
             }
 
-            queryParts.push(`RETURN MERGE(r, {library: '${library}'})`);
+            if (!!pagination) {
+                queryParts.push(aql`LIMIT ${pagination.offset || 0}, ${pagination.limit}`);
+            }
 
-            const records = await dbService.execute({query: queryParts.join(' '), bindVars});
+            queryParts.push(aql`RETURN MERGE(r, {library: ${library}})`);
 
-            return records.map(dbUtils.cleanup);
+            const records = await dbService.execute<IExecuteWithCount>(aql.join(queryParts, '\n'), true);
+
+            return {
+                totalCount: records.totalCount,
+                list: records.results.map(dbUtils.cleanup)
+            };
         },
         async createRecord(library: string, recordData: IRecord): Promise<IRecord> {
             const collection = dbService.db.collection(library);
@@ -81,7 +89,7 @@ export default function(
             `);
 
             // Delete record
-            const deletedRecord = await collection.remove({_key: id});
+            const deletedRecord = await collection.remove({_key: String(id)});
 
             deletedRecord.library = deletedRecord._id.split('/')[0];
             return dbUtils.cleanup(deletedRecord);

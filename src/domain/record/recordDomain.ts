@@ -2,6 +2,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import * as moment from 'moment';
+import {IList, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
@@ -24,6 +25,7 @@ export interface IFindRecordParams {
     filters?: IRecordFiltersLight;
     fields?: IQueryField[];
     options?: IValuesOptions;
+    pagination?: IPaginationParams;
 }
 
 export interface IRecordDomain {
@@ -61,7 +63,7 @@ export interface IRecordDomain {
      * @param filters Filters to apply on records selection
      * @param fields Fields to retrieve on each records
      */
-    find(params: IFindRecordParams): Promise<IRecord[]>;
+    find(params: IFindRecordParams): Promise<IList<IRecord>>;
 
     getRecordFieldValue(
         library: string,
@@ -229,8 +231,8 @@ export default function(
 
             return recordRepo.deleteRecord(library, id);
         },
-        async find(params: IFindRecordParams): Promise<IRecord[]> {
-            const {library, fields, filters, options} = params;
+        async find(params: IFindRecordParams): Promise<IList<IRecord>> {
+            const {library, fields, filters, options, pagination} = params;
             const fullFilters: IRecordFilterOption[] = [];
 
             // Hydrate filters with attribute properties and cast filters values if needed
@@ -247,7 +249,7 @@ export default function(
                 }
             }
 
-            const records = await recordRepo.find(library, fullFilters);
+            const records = await recordRepo.find(library, fullFilters, pagination);
 
             return records;
         },

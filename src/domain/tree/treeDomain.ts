@@ -122,7 +122,7 @@ export default function(
             }
         });
 
-        return !!record.length;
+        return !!record.list.length;
     }
 
     return {

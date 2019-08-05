@@ -30,7 +30,8 @@ describe('RecordRepo', () => {
                 document: global.__mockPromise(createdRecordData)
             };
 
-            const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};
+            const mockDb = new Database();
+            mockDb.collection = jest.fn().mockReturnValue(mockDbCollec);
 
             const mockDbServ = {db: mockDb};
 
@@ -144,7 +145,7 @@ describe('RecordRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
-            expect(mockDbCollec.remove).toBeCalledWith({_key: recordData.id});
+            expect(mockDbCollec.remove).toBeCalledWith({_key: String(recordData.id)});
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
 
@@ -154,25 +155,28 @@ describe('RecordRepo', () => {
 
     describe('find', () => {
         test('Should find records', async function() {
-            const mockQueryRes = [
-                {
-                    _key: '222536283',
-                    _id: 'ubs/222536283',
-                    _rev: '_WgM_51a--_',
-                    created_at: 1520931427,
-                    modified_at: 1520931427,
-                    ean: '9876543219999999',
-                    visual_simple: '222713677'
-                },
-                {
-                    _key: '222536515',
-                    _id: 'ubs/222536515',
-                    _rev: '_WgFARB6--_',
-                    created_at: 1520931648,
-                    modified_at: 1520931648,
-                    ean: '9876543219999999'
-                }
-            ];
+            const mockQueryRes = {
+                totalCount: 2,
+                results: [
+                    {
+                        _key: '222536283',
+                        _id: 'ubs/222536283',
+                        _rev: '_WgM_51a--_',
+                        created_at: 1520931427,
+                        modified_at: 1520931427,
+                        ean: '9876543219999999',
+                        visual_simple: '222713677'
+                    },
+                    {
+                        _key: '222536515',
+                        _id: 'ubs/222536515',
+                        _rev: '_WgFARB6--_',
+                        created_at: 1520931648,
+                        modified_at: 1520931648,
+                        ean: '9876543219999999'
+                    }
+                ]
+            };
 
             const mockDbServ = {
                 db: new Database(),
@@ -209,7 +213,7 @@ describe('RecordRepo', () => {
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
 
-            expect(records).toEqual(mockCleanupRes);
+            expect(records).toEqual({totalCount: 2, list: mockCleanupRes});
         });
     });
 
@@ -234,16 +238,19 @@ describe('RecordRepo', () => {
         test('Should filter records - simple', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([
-                    {
-                        _key: '222536515',
-                        _id: 'test_lib/222536515',
-                        _rev: '_WgM_51a--_',
-                        created_at: 1520931427,
-                        modified_at: 1520931427,
-                        test_attr: 'test'
-                    }
-                ])
+                execute: global.__mockPromise({
+                    totalCount: 1,
+                    results: [
+                        {
+                            _key: '222536515',
+                            _id: 'test_lib/222536515',
+                            _rev: '_WgM_51a--_',
+                            created_at: 1520931427,
+                            modified_at: 1520931427,
+                            test_attr: 'test'
+                        }
+                    ]
+                })
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
@@ -288,14 +295,17 @@ describe('RecordRepo', () => {
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
             expect(mockAttrSimpleRepo.filterQueryPart).toBeCalled();
-            expect(records).toEqual([
-                {
-                    id: '222536515',
-                    created_at: 1520931427,
-                    modified_at: 1520931427,
-                    test_attr: 'test'
-                }
-            ]);
+            expect(records).toEqual({
+                totalCount: 1,
+                list: [
+                    {
+                        id: '222536515',
+                        created_at: 1520931427,
+                        modified_at: 1520931427,
+                        test_attr: 'test'
+                    }
+                ]
+            });
         });
     });
 });

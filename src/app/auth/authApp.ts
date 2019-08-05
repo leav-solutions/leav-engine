@@ -40,7 +40,7 @@ export default function(
                                 fields: queryFields
                             });
 
-                            return users[0];
+                            return users.list[0];
                         }
                     }
                 }
@@ -59,7 +59,7 @@ export default function(
                     try {
                         const users = await recordDomain.find({library: 'users', filters: {login}});
 
-                        if (!users.length) {
+                        if (!users.list.length) {
                             return unauthorized('Invalid credentials');
                         }
 
@@ -115,7 +115,7 @@ export default function(
                 return false;
             }
             const users = await recordDomain.find({library: 'users', filters: {id: tokenPayload.userId}});
-            return !!users.length;
+            return !!users.list.length;
         }
     };
 }

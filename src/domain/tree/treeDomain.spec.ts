@@ -257,7 +257,7 @@ describe('treeDomain', () => {
 
     describe('addElement', () => {
         const mockRecordDomain: Mockify<IRecordDomain> = {
-            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+            find: global.__mockPromise({list: [{id: 1345, library: 'test_lib'}], totalCount: 1})
         };
 
         test('Should an element to a tree', async () => {
@@ -295,7 +295,7 @@ describe('treeDomain', () => {
             };
 
             const recordDomain: Mockify<IRecordDomain> = {
-                find: global.__mockPromise([])
+                find: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
@@ -308,7 +308,7 @@ describe('treeDomain', () => {
 
     describe('moveElement', () => {
         const mockRecordDomain = {
-            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+            find: global.__mockPromise({list: [{id: 1345, library: 'test_lib'}], totalCount: 1})
         };
 
         test('Should move an element in a tree', async () => {
@@ -337,7 +337,7 @@ describe('treeDomain', () => {
             };
 
             const recordDomain = {
-                find: global.__mockPromise([])
+                find: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
@@ -350,7 +350,7 @@ describe('treeDomain', () => {
 
     describe('deleteElement', () => {
         const mockRecordDomain = {
-            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+            find: global.__mockPromise({list: [{id: 1345, library: 'test_lib'}], totalCount: 1})
         };
 
         test('Should move an element in a tree', async () => {
@@ -373,7 +373,7 @@ describe('treeDomain', () => {
             };
 
             const recordDomain = {
-                find: global.__mockPromise([])
+                find: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);

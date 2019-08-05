@@ -2,16 +2,17 @@
 
 exports[`AttributeStandardRepo filterQueryPart Should return simple filter 1`] = `
 Object {
+  "_source": [Function],
   "bindVars": Object {
-    "@linkCollection": "core_edge_values_links",
-    "filterField0": "label",
-    "filterValue0": "%MyLabel%",
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "%MyLabel%",
   },
   "query": "LET filterField0 = (
                 FOR v, e IN 1 OUTBOUND r._id
-                @@linkCollection
-                FILTER e.attribute == @filterField0 RETURN v.value
-            ) FILTER filterField0 LIKE @filterValue0",
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.value
+            ) FILTER filterField0 LIKE @value2",
 }
 `;
 

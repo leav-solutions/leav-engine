@@ -4,6 +4,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IUtils} from 'utils/utils';
+import {IList} from '_types/list';
 import {ILibrary} from '../../_types/library';
 import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -138,6 +139,11 @@ export default function(
                         )}
                     }
 
+                    type ${libTypeName}List {
+                        totalCount: Int!,
+                        list: [${libTypeName}!]!
+                    }
+
                     enum ${libTypeName}SearchableFields {
                         ${lib.attributes.map(attr => attr.id).join(' ')}
                     }
@@ -152,16 +158,16 @@ export default function(
                             filters: [${libTypeName}Filter],
                             version: [ValueVersionInput],
                             pagination: Pagination,
-                        ): [${libTypeName}!]
+                        ): ${libTypeName}List!
                     }
                 `;
 
                 baseSchema.resolvers.Query[libQueryName] = async (
                     parent,
-                    {filters, version},
+                    {filters, version, pagination},
                     context,
                     info
-                ): Promise<IRecord[]> => {
+                ): Promise<IList<IRecord>> => {
                     const queryFields = graphqlApp.getQueryFields(info);
 
                     if (typeof filters !== 'undefined') {
@@ -188,6 +194,7 @@ export default function(
                         library: lib.id,
                         filters,
                         fields: queryFields,
+                        pagination,
                         options: {version: formattedVersion}
                     });
                 };
