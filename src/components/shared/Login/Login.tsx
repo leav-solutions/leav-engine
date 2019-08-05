@@ -4,6 +4,7 @@ import {Button} from 'semantic-ui-react';
 import styles from './login.module.css';
 interface ILoginProps extends WithNamespaces {
     onSuccess: (token: string) => void;
+    message?: string;
 }
 
 const extractValueFromEventAndThen = next => event => {
@@ -51,7 +52,7 @@ const processLogin = (
         });
 };
 
-function Login({i18n: i18next, t, onSuccess}: ILoginProps): JSX.Element {
+function Login({i18n: i18next, t, onSuccess, message}: ILoginProps): JSX.Element {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -131,6 +132,16 @@ function Login({i18n: i18next, t, onSuccess}: ILoginProps): JSX.Element {
                                 <div className="header">{t('login.apologize_header')}</div>
                                 <p>{t('login.apologize')}</p>
                                 <p>{t('login.error.' + loginError)}</p>
+                            </div>
+                        </div>
+                    ) : null}
+                    {message ? (
+                        <div className="ui icon message orange">
+                            <i className="lock icon" />
+                            <div className="content">
+                                {/* <div className="header">{t('login.apologize_header')}</div> */}
+                                <p>{t('login.apologize')}</p>
+                                <p>{t(message)}</p>
                             </div>
                         </div>
                     ) : null}
