@@ -176,7 +176,7 @@ class App extends React.Component<IAppProps, IAppState> {
         }
         if (networkError) {
             console.log(`[Network error]: ${networkError}`);
-            if (networkError.statusCode) {
+            if (networkError.statusCode === 401) {
                 this.props.onTokenInvalid();
             }
         }
