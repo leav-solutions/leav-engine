@@ -77,10 +77,10 @@ class EditLibraryForm extends React.Component<IEditLibraryFormProps, any> {
         }
 
         return (
-            <React.Fragment>
+            <>
                 <Header className="no-grow">{label}</Header>
                 <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col height100" />
-            </React.Fragment>
+            </>
         );
     }
 }

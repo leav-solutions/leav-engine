@@ -42,10 +42,10 @@ function EditTreeForm({tree, onSubmit, readOnly, t, i18n: i18next}: IEditTreeFor
     }
 
     return (
-        <React.Fragment>
+        <>
             <Header className="no-grow">{label}</Header>
             <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col" />
-        </React.Fragment>
+        </>
     );
 }
 

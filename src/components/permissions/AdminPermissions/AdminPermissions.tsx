@@ -98,10 +98,10 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
     }
 
     return (
-        <React.Fragment>
+        <>
             <Header className="no-grow">{t('permissions.title')}</Header>
             <ColumnsDisplay columnsNumber={2} columnsContent={cols} />
-        </React.Fragment>
+        </>
     );
 }
 

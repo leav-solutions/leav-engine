@@ -35,7 +35,7 @@ function LibrariesList({
     };
 
     return (
-        <React.Fragment>
+        <>
             <Table selectable striped>
                 <Table.Header>
                     <Table.Row>
@@ -109,7 +109,7 @@ function LibrariesList({
                     )}
                 </Table.Body>
             </Table>
-        </React.Fragment>
+        </>
     );
 }
 
