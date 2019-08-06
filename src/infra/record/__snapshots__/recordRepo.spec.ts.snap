@@ -70,7 +70,6 @@ Object {
   "@value2": "test",
   "value0": 222435651,
   "value1": Object {
-    "id": 222435651,
     "modified_at": 1519303348,
   },
 }

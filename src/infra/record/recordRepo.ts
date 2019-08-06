@@ -164,9 +164,11 @@ export default function(
         },
         async updateRecord(library: string, recordData: IRecord): Promise<IRecord> {
             const collection = dbService.db.collection(library);
+            const dataToSave = {...recordData};
+            delete dataToSave.id; // Don't save ID
 
             const updateRes = await dbService.execute(aql`
-                UPDATE {_key: ${recordData.id}} WITH ${recordData} IN ${collection}
+                UPDATE {_key: ${recordData.id}} WITH ${dataToSave} IN ${collection}
                 RETURN NEW
             `);
 
