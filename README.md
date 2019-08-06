@@ -107,4 +107,6 @@ npm run start:watch
 
 If you're stuck in the migration / installation phase, try to remove the `package-lock.json`file, and type in Terminal: `npm i`.
 
+If you find a Gremlin in the system, keep calm, get out, and call 911.
+
 
