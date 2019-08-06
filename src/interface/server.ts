@@ -23,6 +23,7 @@ export default function(
     const _handleError = (err: GraphQLError) => {
         const origErr: any = err.originalError;
 
+        const isGraphlValidationError = err.extensions && err.extensions.code === 'GRAPHQL_VALIDATION_FAILED';
         const errorType = (!!origErr && origErr.type) || ErrorTypes.INTERNAL_ERROR;
         const errorFields = (!!origErr && origErr.fields) || {};
         const errorAction = (!!origErr && origErr.action) || null;
@@ -31,7 +32,11 @@ export default function(
         err.extensions.fields = errorFields;
         err.extensions.action = errorAction;
 
-        if (errorType === ErrorTypes.VALIDATION_ERROR || errorType === ErrorTypes.PERMISSION_ERROR) {
+        if (
+            errorType === ErrorTypes.VALIDATION_ERROR ||
+            errorType === ErrorTypes.PERMISSION_ERROR ||
+            isGraphlValidationError
+        ) {
             return err;
         }
 
