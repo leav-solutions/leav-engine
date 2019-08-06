@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import {assign} from 'lodash';
 import * as path from 'path';
 import {env as appEnv} from './env';
 
@@ -20,6 +19,37 @@ const _getConfigByEnv = async function(env: string): Promise<{}> {
     return {};
 };
 
+const _isObject = item => {
+    return item && typeof item === 'object' && !Array.isArray(item);
+};
+
+/**
+ * Deep merge two objects.
+ * @param target
+ * @param ...sources
+ */
+const _mergeDeep = (target, ...sources) => {
+    if (!sources.length) {
+        return target;
+    }
+    const source = sources.shift();
+
+    if (_isObject(target) && _isObject(source)) {
+        for (const key in source) {
+            if (_isObject(source[key])) {
+                if (!target[key]) {
+                    Object.assign(target, {[key]: {}});
+                }
+                _mergeDeep(target[key], source[key]);
+            } else {
+                Object.assign(target, {[key]: source[key]});
+            }
+        }
+    }
+
+    return _mergeDeep(target, ...sources);
+};
+
 /**
  * Load appropriate config based on application environment.
  * We first load default config, then env specified config (production, development...).
@@ -32,9 +62,15 @@ const _getConfigByEnv = async function(env: string): Promise<{}> {
 const _getCombinedConfig = async function(): Promise<{}> {
     const definedEnv: string = appEnv || '';
 
-    return assign(await _getConfigByEnv('default'), await _getConfigByEnv(definedEnv), await _getConfigByEnv('local'), {
-        env: definedEnv
-    });
+    const merged = _mergeDeep(
+        await _getConfigByEnv('default'),
+        await _getConfigByEnv(definedEnv),
+        await _getConfigByEnv('local'),
+        {
+            env: definedEnv
+        }
+    );
+    return merged;
 };
 
 export const config: {} = _getCombinedConfig();
