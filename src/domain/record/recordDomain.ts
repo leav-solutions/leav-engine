@@ -34,7 +34,7 @@ export interface IRecordDomain {
      *
      * @param library       Library ID
      */
-    createRecord(library: string): Promise<IRecord>;
+    createRecord(library: string, infos: IQueryInfos): Promise<IRecord>;
 
     /**
      * Update record
@@ -184,8 +184,13 @@ export default function(
     };
 
     const ret = {
-        async createRecord(library: string): Promise<IRecord> {
-            const recordData = {created_at: moment().unix(), modified_at: moment().unix()};
+        async createRecord(library: string, infos: IQueryInfos): Promise<IRecord> {
+            const recordData = {
+                created_at: moment().unix(),
+                created_by: infos.userId,
+                modified_at: moment().unix(),
+                modified_by: infos.userId
+            };
 
             return recordRepo.createRecord(library, recordData);
         },

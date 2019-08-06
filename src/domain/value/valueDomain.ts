@@ -279,7 +279,11 @@ export default function(
                 ? await valueRepo.updateValue(library, recordId, attrData, valueToSave)
                 : await valueRepo.createValue(library, recordId, attrData, valueToSave);
 
-            const updatedRecord = await recordRepo.updateRecord(library, {id: recordId, modified_at: moment().unix()});
+            await recordRepo.updateRecord(library, {
+                id: recordId,
+                modified_at: moment().unix(),
+                modified_by: infos.userId
+            });
 
             return savedVal;
         },

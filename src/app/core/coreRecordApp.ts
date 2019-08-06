@@ -68,8 +68,8 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                         }
                     },
                     Mutation: {
-                        async createRecord(parent, {library}): Promise<IRecord> {
-                            const newRec = await recordDomain.createRecord(library);
+                        async createRecord(parent, {library}, ctx): Promise<IRecord> {
+                            const newRec = await recordDomain.createRecord(library, {userId: ctx.auth.userId});
 
                             return newRec;
                         },

@@ -1,9 +1,9 @@
-import {IAttributeRepo} from '../../attribute/attributeRepo';
-import {IMigration} from '../dbUtils';
-import {ILibraryRepo} from '../../library/libraryRepo';
 import * as moment from 'moment';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
-import {IDbService, collectionTypes} from '../dbService';
+import {IAttributeRepo} from '../../attribute/attributeRepo';
+import {ILibraryRepo} from '../../library/libraryRepo';
+import {collectionTypes, IDbService} from '../dbService';
+import {IMigration} from '../dbUtils';
 
 export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attributeRepo: IAttributeRepo): IMigration {
     return {
@@ -21,6 +21,7 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
 
                 await attributeRepo.createAttribute({
                     id: 'created_by',
+                    linked_library: 'users',
                     system: true,
                     type: AttributeTypes.SIMPLE_LINK,
                     label: {fr: 'Créé par', en: 'Created by'}
@@ -36,6 +37,7 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
 
                 await attributeRepo.createAttribute({
                     id: 'modified_by',
+                    linked_library: 'users',
                     system: true,
                     type: AttributeTypes.SIMPLE_LINK,
                     label: {fr: 'Modifié par', en: 'Modified by'}

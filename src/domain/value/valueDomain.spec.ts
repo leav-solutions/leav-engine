@@ -283,7 +283,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should update record modif date', async function() {
+        test('Should update record modif date and user', async function() {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -322,6 +322,7 @@ describe('ValueDomain', () => {
             expect(mockRecRepo.updateRecord).toBeCalled();
             expect(mockRecRepo.updateRecord.mock.calls[0][1].modified_at).toBeDefined();
             expect(Number.isInteger(mockRecRepo.updateRecord.mock.calls[0][1].modified_at)).toBe(true);
+            expect(mockRecRepo.updateRecord.mock.calls[0][1].modified_by).toBe(1);
 
             expect(savedValue).toMatchObject(savedValueData);
         });

@@ -29,10 +29,12 @@ describe('RecordDomain', () => {
                 mockRecordPermDomain as IRecordPermissionDomain
             );
 
-            const createdRecord = await recDomain.createRecord('test');
+            const createdRecord = await recDomain.createRecord('test', {userId: 1});
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
             expect(Number.isInteger(recRepo.createRecord.mock.calls[0][1].created_at)).toBe(true);
             expect(Number.isInteger(recRepo.createRecord.mock.calls[0][1].modified_at)).toBe(true);
+            expect(recRepo.createRecord.mock.calls[0][1].created_by).toBe(1);
+            expect(recRepo.createRecord.mock.calls[0][1].modified_by).toBe(1);
 
             expect(createdRecord).toMatchObject(createdRecordData);
         });

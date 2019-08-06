@@ -72,7 +72,7 @@ export default function(
         );
     };
 
-    const _processRecords = async (records): Promise<{[key: number]: number}> => {
+    const _processRecords = async (records, infos): Promise<{[key: number]: number}> => {
         const recordsMapping = {};
         const recordsToImport = [];
         for (const libName of Object.keys(records)) {
@@ -89,7 +89,7 @@ export default function(
 
         await Promise.all(
             recordsToImport.map(async r => {
-                const createdRecord = await recordDomain.createRecord(r.library);
+                const createdRecord = await recordDomain.createRecord(r.library, infos);
                 recordsMapping[r.library] = recordsMapping[r.library] || {};
 
                 recordsMapping[r.library][r.key] = createdRecord.id;
@@ -245,7 +245,7 @@ export default function(
 
             // Create records
             console.info('Processing records...');
-            const recordsMapping = await _processRecords(data.records);
+            const recordsMapping = await _processRecords(data.records, infos);
             const recordsCount = Object.keys(recordsMapping).reduce((count, libName) => {
                 count = count + Object.keys(recordsMapping[libName]).length;
                 return count;
