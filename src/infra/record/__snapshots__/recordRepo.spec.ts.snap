@@ -24,6 +24,7 @@ Object {
     "value1": "test_lib",
   },
   "query": "FOR r IN @@value0
+SORT r._key ASC
 RETURN MERGE(r, {library: @value1})",
 }
 `;
@@ -52,6 +53,7 @@ Object {
   "query": "FOR r IN @@value0
 @value1
 @value2
+SORT r._key ASC
 RETURN MERGE(r, {library: @value3})",
 }
 `;

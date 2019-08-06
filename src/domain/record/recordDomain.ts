@@ -2,13 +2,13 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import * as moment from 'moment';
-import {IList, IPaginationParams} from '_types/list';
+import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IQueryField, IRecord, IRecordFilterOption, IRecordIdentity} from '../../_types/record';
+import {IRecord, IRecordFilterOption, IRecordIdentity} from '../../_types/record';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -23,9 +23,9 @@ export interface IRecordFiltersLight {
 export interface IFindRecordParams {
     library: string;
     filters?: IRecordFiltersLight;
-    fields?: IQueryField[];
     options?: IValuesOptions;
-    pagination?: IPaginationParams;
+    pagination?: IPaginationParams | ICursorPaginationParams;
+    withCount?: boolean;
 }
 
 export interface IRecordDomain {
@@ -63,7 +63,7 @@ export interface IRecordDomain {
      * @param filters Filters to apply on records selection
      * @param fields Fields to retrieve on each records
      */
-    find(params: IFindRecordParams): Promise<IList<IRecord>>;
+    find(params: IFindRecordParams): Promise<IListWithCursor<IRecord>>;
 
     getRecordFieldValue(
         library: string,
@@ -231,8 +231,8 @@ export default function(
 
             return recordRepo.deleteRecord(library, id);
         },
-        async find(params: IFindRecordParams): Promise<IList<IRecord>> {
-            const {library, fields, filters, options, pagination} = params;
+        async find(params: IFindRecordParams): Promise<IListWithCursor<IRecord>> {
+            const {library, filters, options, pagination, withCount} = params;
             const fullFilters: IRecordFilterOption[] = [];
 
             // Hydrate filters with attribute properties and cast filters values if needed
@@ -249,7 +249,7 @@ export default function(
                 }
             }
 
-            const records = await recordRepo.find(library, fullFilters, pagination);
+            const records = await recordRepo.find(library, fullFilters, pagination, withCount);
 
             return records;
         },

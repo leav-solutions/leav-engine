@@ -5,6 +5,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IUtils} from 'utils/utils';
 import {IList} from '_types/list';
+import ValidationError from '../../errors/ValidationError';
 import {ILibrary} from '../../_types/library';
 import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -140,7 +141,8 @@ export default function(
                     }
 
                     type ${libTypeName}List {
-                        totalCount: Int!,
+                        totalCount: Int,
+                        cursor: RecordsListCursor,
                         list: [${libTypeName}!]!
                     }
 
@@ -157,7 +159,7 @@ export default function(
                         ${libQueryName}(
                             filters: [${libTypeName}Filter],
                             version: [ValueVersionInput],
-                            pagination: Pagination,
+                            pagination: RecordsPagination,
                         ): ${libTypeName}List!
                     }
                 `;
@@ -168,7 +170,14 @@ export default function(
                     context,
                     info
                 ): Promise<IList<IRecord>> => {
-                    const queryFields = graphqlApp.getQueryFields(info);
+                    const fields = graphqlApp.getQueryFields(info).map(f => f.name);
+                    if (
+                        pagination &&
+                        typeof pagination.offset !== 'undefined' &&
+                        typeof pagination.cursor !== 'undefined'
+                    ) {
+                        throw new ValidationError({pagination: 'Cannot use offset and cursor at the same time'});
+                    }
 
                     if (typeof filters !== 'undefined') {
                         filters = filters.reduce((allFilters, filter) => {
@@ -193,9 +202,9 @@ export default function(
                     return recordDomain.find({
                         library: lib.id,
                         filters,
-                        fields: queryFields,
                         pagination,
-                        options: {version: formattedVersion}
+                        options: {version: formattedVersion},
+                        withCount: fields.includes('totalCount')
                     });
                 };
                 baseSchema.resolvers[libTypeName] = {

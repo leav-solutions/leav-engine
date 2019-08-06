@@ -208,12 +208,140 @@ describe('RecordRepo', () => {
 
             const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
 
-            const records = await recRepo.find('test_lib');
+            const records = await recRepo.find('test_lib', [], null, true);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
 
-            expect(records).toEqual({totalCount: 2, list: mockCleanupRes});
+            expect(records).toEqual({
+                cursor: null,
+                totalCount: 2,
+                list: mockCleanupRes
+            });
+        });
+
+        test('Should paginate with offset', async function() {
+            const mockQueryRes = {
+                totalCount: 5,
+                results: [
+                    {
+                        _key: '222536283',
+                        _id: 'ubs/222536283',
+                        _rev: '_WgM_51a--_',
+                        created_at: 1520931427,
+                        modified_at: 1520931427,
+                        ean: '9876543219999999',
+                        visual_simple: '222713677'
+                    },
+                    {
+                        _key: '222536515',
+                        _id: 'ubs/222536515',
+                        _rev: '_WgFARB6--_',
+                        created_at: 1520931648,
+                        modified_at: 1520931648,
+                        ean: '9876543219999999'
+                    }
+                ]
+            };
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(mockQueryRes)
+            };
+
+            const mockCleanupRes = [
+                {
+                    id: '222536283',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                },
+                {
+                    id: '222536515',
+                    created_at: 1520931648,
+                    modified_at: 1520931648,
+                    ean: '9876543219999999'
+                }
+            ];
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest
+                    .fn()
+                    .mockReturnValueOnce(mockCleanupRes[0])
+                    .mockReturnValueOnce(mockCleanupRes[1])
+            };
+
+            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+
+            const records = await recRepo.find('test_lib', [], {limit: 2, offset: 0}, true);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT');
+
+            expect(records.totalCount).toBe(5);
+            expect(records.list.length).toBe(2);
+        });
+
+        test('Should paginate with cursor', async function() {
+            const mockQueryRes = [
+                {
+                    _key: '222536283',
+                    _id: 'ubs/222536283',
+                    _rev: '_WgM_51a--_',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                },
+                {
+                    _key: '222536515',
+                    _id: 'ubs/222536515',
+                    _rev: '_WgFARB6--_',
+                    created_at: 1520931648,
+                    modified_at: 1520931648,
+                    ean: '9876543219999999'
+                }
+            ];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(mockQueryRes)
+            };
+
+            const mockCleanupRes = [
+                {
+                    id: '222536283',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                },
+                {
+                    id: '222536515',
+                    created_at: 1520931648,
+                    modified_at: 1520931648,
+                    ean: '9876543219999999'
+                }
+            ];
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest
+                    .fn()
+                    .mockReturnValueOnce(mockCleanupRes[0])
+                    .mockReturnValueOnce(mockCleanupRes[1])
+            };
+
+            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+
+            const records = await recRepo.find('test_lib', [], {limit: 2, cursor: 'bmV4dDoyOjEzNDYzNDQ0'});
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT');
+            expect(mockDbServ.execute.mock.calls[0][1]).toBe(false); // No count
+
+            expect(records.list.length).toBe(2);
+            expect(records.cursor.next).toBeTruthy();
         });
     });
 
@@ -291,11 +419,12 @@ describe('RecordRepo', () => {
             filters[0].attribute.type = AttributeTypes.SIMPLE;
             filters[1].attribute.type = AttributeTypes.SIMPLE;
 
-            const records = await recRepo.find('test_lib', filters);
+            const records = await recRepo.find('test_lib', filters, null, true);
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
             expect(mockAttrSimpleRepo.filterQueryPart).toBeCalled();
             expect(records).toEqual({
+                cursor: null,
                 totalCount: 1,
                 list: [
                     {

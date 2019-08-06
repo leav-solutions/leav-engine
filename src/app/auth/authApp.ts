@@ -37,7 +37,7 @@ export default function(
                             const users = await recordDomain.find({
                                 library: 'users',
                                 filters: {id: auth.userId},
-                                fields: queryFields
+                                withCount: false
                             });
 
                             return users.list[0];

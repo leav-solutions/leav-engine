@@ -1,5 +1,11 @@
 import {aql} from 'arangojs';
-import {IList, IPaginationParams} from '_types/list';
+import {
+    CursorDirection,
+    ICursorPaginationParams,
+    IListWithCursor,
+    IPaginationCursors,
+    IPaginationParams
+} from '../../_types/list';
 import {IRecord, IRecordFilterOption} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
@@ -27,7 +33,12 @@ export interface IRecordRepo {
      */
     deleteRecord(library: string, id: number): Promise<IRecord>;
 
-    find(library: string, filters?: IRecordFilterOption[], pagination?: IPaginationParams): Promise<IList<IRecord>>;
+    find(
+        library: string,
+        filters?: IRecordFilterOption[],
+        pagination?: IPaginationParams | ICursorPaginationParams,
+        withCount?: boolean
+    ): Promise<IListWithCursor<IRecord>>;
 }
 
 export default function(
@@ -35,13 +46,35 @@ export default function(
     dbUtils: IDbUtils,
     attributeTypesRepo: IAttributeTypesRepo | null = null
 ): IRecordRepo {
+    const _generateCursor = (from: number, direction: CursorDirection): string =>
+        Buffer.from(`${direction}:${from}`).toString('base64');
+
+    const _parseCursor = (
+        cursor: string
+    ): {
+        direction: string;
+        from: string;
+    } => {
+        const s = Buffer.from(cursor, 'base64').toString();
+        const [direction, from] = s.split(':');
+
+        return {
+            direction,
+            from
+        };
+    };
+
     return {
         async find(
             library: string,
             filters?: IRecordFilterOption[],
-            pagination?: IPaginationParams
-        ): Promise<IList<IRecord>> {
+            pagination?: IPaginationParams | ICursorPaginationParams,
+            withCount: boolean = false
+        ): Promise<IListWithCursor<IRecord>> {
             const queryParts = [];
+            const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
+            // Force disbaling count on cursor pagination as it's pointless
+            const countResults = withCount && !withCursorPagination;
 
             const coll = dbService.db.collection(library);
             queryParts.push(aql`FOR r IN ${coll}`);
@@ -54,18 +87,53 @@ export default function(
                 }
             }
 
-            if (!!pagination) {
-                queryParts.push(aql`LIMIT ${pagination.offset || 0}, ${pagination.limit}`);
+            if (pagination) {
+                if (!(pagination as IPaginationParams).offset && !(pagination as ICursorPaginationParams).cursor) {
+                    (pagination as IPaginationParams).offset = 0;
+                }
+
+                if (typeof (pagination as IPaginationParams).offset !== 'undefined') {
+                    queryParts.push(aql`LIMIT ${(pagination as IPaginationParams).offset}, ${pagination.limit}`);
+                } else if ((pagination as ICursorPaginationParams).cursor) {
+                    const {direction, from} = _parseCursor((pagination as ICursorPaginationParams).cursor);
+                    const operator = direction === CursorDirection.NEXT ? '>' : '<';
+
+                    // When looking for previous records, first sort in reverse order to get the last records
+                    if (direction === CursorDirection.PREV) {
+                        queryParts.push(aql`SORT r._key DESC`);
+                    }
+
+                    queryParts.push(aql`FILTER r._key ${aql.literal(operator)} ${from}`);
+                    queryParts.push(aql`LIMIT ${pagination.limit}`);
+                }
             }
 
+            // Force sorting on ID
+            queryParts.push(aql`SORT r._key ASC`);
             queryParts.push(aql`RETURN MERGE(r, {library: ${library}})`);
 
-            const records = await dbService.execute<IExecuteWithCount>(aql.join(queryParts, '\n'), true);
+            const records = await dbService.execute<IExecuteWithCount | any[]>(
+                aql.join(queryParts, '\n'),
+                countResults
+            );
 
-            return {
-                totalCount: records.totalCount,
-                list: records.results.map(dbUtils.cleanup)
+            const list: any[] = countResults ? (records as IExecuteWithCount).results : (records as any[]);
+            const totalCount = countResults ? (records as IExecuteWithCount).totalCount : null;
+
+            // TODO: detect if we reach end/begining of the list and should not provide a cursor
+            const cursor: IPaginationCursors = pagination
+                ? {
+                      prev: list.length ? _generateCursor(list[0]._key, CursorDirection.PREV) : null,
+                      next: list.length ? _generateCursor(list.slice(-1)[0]._key, CursorDirection.NEXT) : null
+                  }
+                : null;
+
+            const returnVal = {
+                totalCount,
+                list: list.map(dbUtils.cleanup),
+                cursor
             };
+            return returnVal;
         },
         async createRecord(library: string, recordData: IRecord): Promise<IRecord> {
             const collection = dbService.db.collection(library);
