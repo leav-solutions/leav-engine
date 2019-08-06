@@ -103,18 +103,20 @@ describe('Versions', () => {
                     value: {library: "${treeElementLibName}", id: "${treeElement2}"}
                 }
             ) {
-                ${attrAdvName} {
-                    value
-                    version
+                list {
+                    ${attrAdvName} {
+                        value
+                        version
+                    }
                 }
             }
         }`);
 
         expect(resGetValues.status).toBe(200);
         expect(resGetValues.data.errors).toBeUndefined();
-        expect(resGetValues.data.data.r[0][attrAdvName].version).toBeDefined();
-        expect(resGetValues.data.data.r[0][attrAdvName].version[treeName]).toBeDefined();
-        expect(resGetValues.data.data.r[0][attrAdvName].version[treeName].id).toBe(Number(treeElement2));
-        expect(resGetValues.data.data.r[0][attrAdvName].version[treeName].library).toBe(treeElementLibName);
+        expect(resGetValues.data.data.r.list[0][attrAdvName].version).toBeDefined();
+        expect(resGetValues.data.data.r.list[0][attrAdvName].version[treeName]).toBeDefined();
+        expect(resGetValues.data.data.r.list[0][attrAdvName].version[treeName].id).toBe(Number(treeElement2));
+        expect(resGetValues.data.data.r.list[0][attrAdvName].version[treeName].library).toBe(treeElementLibName);
     });
 });

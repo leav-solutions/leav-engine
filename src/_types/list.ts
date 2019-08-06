@@ -3,7 +3,36 @@ export interface IList<T> {
     list: T[];
 }
 
+export enum CursorDirection {
+    PREV = 'prev',
+    NEXT = 'next'
+}
+
+export interface IPaginationCursors {
+    prev?: string;
+    next?: string;
+}
+
+export interface IListWithCursor<T> extends IList<T> {
+    cursor: IPaginationCursors;
+}
+
 export interface IPaginationParams {
     limit: number;
     offset: number;
+}
+
+export interface ICursorPaginationParams {
+    limit: number;
+    cursor: string;
+}
+
+export enum SortOrder {
+    ASC = 'asc',
+    DESC = 'desc'
+}
+
+export interface ISortParams {
+    field: string;
+    order: SortOrder;
 }

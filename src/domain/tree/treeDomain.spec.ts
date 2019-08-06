@@ -237,16 +237,27 @@ describe('treeDomain', () => {
             };
             const domain = treeDomain(treeRepo as ITreeRepo);
 
-            const trees = await domain.getTrees({id: 'test'});
+            const trees = await domain.getTrees({filters: {id: 'test'}});
 
-            expect(treeRepo.getTrees.mock.calls[0][0]).toMatchObject({id: 'test'});
+            expect(treeRepo.getTrees.mock.calls[0][0].filters).toMatchObject({id: 'test'});
             expect(trees.list.length).toBe(2);
+        });
+
+        test('Should return a list of trees', async () => {
+            const treeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
+            };
+            const domain = treeDomain(treeRepo as ITreeRepo);
+
+            const trees = await domain.getTrees({filters: {id: 'test'}});
+
+            expect(treeRepo.getTrees.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });
 
     describe('addElement', () => {
         const mockRecordDomain: Mockify<IRecordDomain> = {
-            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+            find: global.__mockPromise({list: [{id: 1345, library: 'test_lib'}], totalCount: 1})
         };
 
         test('Should an element to a tree', async () => {
@@ -284,7 +295,7 @@ describe('treeDomain', () => {
             };
 
             const recordDomain: Mockify<IRecordDomain> = {
-                find: global.__mockPromise([])
+                find: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
@@ -297,7 +308,7 @@ describe('treeDomain', () => {
 
     describe('moveElement', () => {
         const mockRecordDomain = {
-            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+            find: global.__mockPromise({list: [{id: 1345, library: 'test_lib'}], totalCount: 1})
         };
 
         test('Should move an element in a tree', async () => {
@@ -326,7 +337,7 @@ describe('treeDomain', () => {
             };
 
             const recordDomain = {
-                find: global.__mockPromise([])
+                find: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
@@ -339,7 +350,7 @@ describe('treeDomain', () => {
 
     describe('deleteElement', () => {
         const mockRecordDomain = {
-            find: global.__mockPromise([{id: 1345, library: 'test_lib'}])
+            find: global.__mockPromise({list: [{id: 1345, library: 'test_lib'}], totalCount: 1})
         };
 
         test('Should move an element in a tree', async () => {
@@ -362,7 +373,7 @@ describe('treeDomain', () => {
             };
 
             const recordDomain = {
-                find: global.__mockPromise([])
+                find: global.__mockPromise({list: [], totalCount: 0})
             };
 
             const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);

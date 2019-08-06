@@ -2,21 +2,18 @@ import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
-import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
+import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ILibrary, ILibraryFilterOptions} from '../../_types/library';
+import {ILibrary} from '../../_types/library';
+import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 
 export interface ILibraryDomain {
-    getLibraries(
-        filters?: ILibraryFilterOptions,
-        withCount?: boolean,
-        pagination?: IPaginationParams
-    ): Promise<IList<ILibrary>>;
+    getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>>;
     saveLibrary(library: ILibrary, infos: IQueryInfos): Promise<ILibrary>;
     deleteLibrary(id: string, infos: IQueryInfos): Promise<ILibrary>;
     getLibraryProperties(id: string): Promise<ILibrary>;
@@ -30,12 +27,13 @@ export default function(
     utils: IUtils = null
 ): ILibraryDomain {
     return {
-        async getLibraries(
-            filters?: ILibraryFilterOptions,
-            withCount: boolean = false,
-            pagination?: IPaginationParams
-        ): Promise<IList<ILibrary>> {
-            const libsList = await libraryRepo.getLibraries(filters, false, withCount, pagination);
+        async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
+            const initializedParams = {...params};
+            if (typeof initializedParams.sort === 'undefined') {
+                initializedParams.sort = {field: 'id', order: SortOrder.ASC};
+            }
+
+            const libsList = await libraryRepo.getLibraries(initializedParams);
 
             const libs = await Promise.all(
                 libsList.list.map(async lib => {
@@ -55,7 +53,7 @@ export default function(
                 throw new ValidationError({id: 'Missing library ID'});
             }
 
-            const libs = await libraryRepo.getLibraries({id});
+            const libs = await libraryRepo.getLibraries({filters: {id}, strictFilters: true});
 
             if (!libs.list.length) {
                 throw new ValidationError({id: 'Unknown library ' + id});
@@ -66,7 +64,7 @@ export default function(
             return props;
         },
         async getLibraryAttributes(id: string): Promise<IAttribute[]> {
-            const libs = await libraryRepo.getLibraries({id});
+            const libs = await libraryRepo.getLibraries({filters: {id}});
 
             if (!libs.list.length) {
                 throw new ValidationError({id: 'Unknown library ' + id});
@@ -76,7 +74,7 @@ export default function(
         },
         async saveLibrary(libData: ILibrary, infos: IQueryInfos): Promise<ILibrary> {
             const dataToSave = {...libData};
-            const libs = await libraryRepo.getLibraries({id: dataToSave.id});
+            const libs = await libraryRepo.getLibraries({filters: {id: dataToSave.id}});
             const existingLib = !!libs.list.length;
             const errors = {} as any;
 
@@ -164,7 +162,7 @@ export default function(
             }
 
             // Get library
-            const lib = await this.getLibraries({id});
+            const lib = await this.getLibraries({filters: {id}});
 
             // Check if exists and can delete
             if (!lib.list.length) {

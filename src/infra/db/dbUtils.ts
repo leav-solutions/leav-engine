@@ -7,25 +7,28 @@ import {isArray} from 'util';
 import * as winston from 'winston';
 import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
-import {IList, IPaginationParams} from '_types/list';
+import {IList, IPaginationParams, ISortParams} from '_types/list';
 import {ITree, ITreeFilterOptions} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
 
 const COLLECTION_NAME = 'core_db_migrations';
 
+export interface IFindCoreEntityParams {
+    collectionName: string;
+    filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions;
+    strictFilters?: boolean;
+    withCount?: boolean;
+    pagination?: IPaginationParams;
+    sort?: ISortParams;
+}
+
 export interface IDbUtils {
     migrate?(depsManager: AwilixContainer): Promise<void>;
     cleanup?(record: {}): any;
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
-    findCoreEntity?<T extends ITree | ILibrary | IAttribute>(
-        collectionName: string,
-        filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
-        strictFilters?: boolean,
-        withCount?: boolean,
-        pagination?: IPaginationParams
-    ): Promise<IList<T>>;
+    findCoreEntity?<T extends ITree | ILibrary | IAttribute>(params: IFindCoreEntityParams): Promise<IList<T>>;
     convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
     convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
     clearDatabase(): Promise<void>;
@@ -190,16 +193,23 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
          * @param strictFilters
          */
         async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
-            collectionName: string,
-            filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions,
-            strictFilters?: boolean,
-            withCount: boolean = false,
-            pagination?: IPaginationParams
+            params: IFindCoreEntityParams
         ): Promise<IList<T>> {
+            const defaultParams: IFindCoreEntityParams = {
+                collectionName: null,
+                filters: null,
+                strictFilters: false,
+                withCount: false,
+                pagination: null,
+                sort: null
+            };
+
+            const {collectionName, filters, strictFilters, withCount, pagination, sort} = {...defaultParams, ...params};
+
             const collec = dbService.db.collection(collectionName);
             const queryParts = [aql`FOR el IN ${collec}`];
 
-            if (typeof filters !== 'undefined') {
+            if (filters !== null) {
                 const dbFilters = ret.convertToDoc(filters);
                 const filtersKeys = Object.keys(dbFilters);
 
@@ -208,6 +218,11 @@ export default function(dbService: IDbService = null, logger: winston.Winston = 
                     const conds = _getFilterCondition(filterKey, filterVal, strictFilters);
                     queryParts.push(aql`FILTER`, conds);
                 }
+            }
+
+            if (!!sort) {
+                const field = sort.field === 'id' ? '_key' : sort.field;
+                queryParts.push(aql`SORT el.${field} ${sort.order}`);
             }
 
             if (!!pagination) {

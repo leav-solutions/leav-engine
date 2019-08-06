@@ -4,6 +4,17 @@ exports[`AttributeIndexRepo clearAllValues Should delete field of given attribut
 
 exports[`AttributeIndexRepo clearAllValues Should delete field of given attribute 2`] = `undefined`;
 
+exports[`AttributeIndexRepo filterQueryPart Should return simple filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "value0": "_key",
+    "value1": "123456",
+  },
+  "query": "FILTER r.@value0 == @value1",
+}
+`;
+
 exports[`AttributeIndexRepo getValues Should return values for index attribute 1`] = `
 "
                 FOR r IN @@value0
@@ -15,7 +26,7 @@ exports[`AttributeIndexRepo getValues Should return values for index attribute 1
 exports[`AttributeIndexRepo getValues Should return values for index attribute 2`] = `
 Object {
   "@value0": "test_lib",
-  "value1": 123456,
+  "value1": "123456",
   "value2": "test_attr",
 }
 `;

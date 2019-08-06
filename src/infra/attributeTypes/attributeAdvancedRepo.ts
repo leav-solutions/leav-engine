@@ -178,19 +178,15 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
             };
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
-            const query = `LET filterField0 = (
+            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const filterName = aql.literal('filterField' + index);
+            const query = aql`LET ${filterName} = (
                 FOR v, e IN 1 OUTBOUND r._id
-                @@linkCollection
-                FILTER e.attribute == @filterField0 RETURN v.value
-            ) FILTER filterField0 LIKE @filterValue0`;
+                ${collec}
+                FILTER e.attribute == ${fieldName} RETURN v.value
+            ) FILTER ${filterName} LIKE ${'%' + value + '%'}`;
 
-            const bindVars = {
-                ['@linkCollection']: VALUES_LINKS_COLLECTION,
-                ['filterField' + index]: fieldName,
-                ['filterValue' + index]: '%' + value + '%'
-            };
-
-            return {query, bindVars};
+            return query;
         },
         async clearAllValues(attribute: IAttribute): Promise<boolean> {
             return true;

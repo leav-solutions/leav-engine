@@ -2,12 +2,13 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import * as moment from 'moment';
-import {IValue, IValuesOptions, IValueVersion} from '_types/value';
+import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
+import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IQueryField, IRecord, IRecordFilterOption, IRecordIdentity} from '../../_types/record';
+import {IRecord, IRecordFilterOption, IRecordIdentity} from '../../_types/record';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -17,6 +18,14 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
  */
 export interface IRecordFiltersLight {
     [attrId: string]: string;
+}
+
+export interface IFindRecordParams {
+    library: string;
+    filters?: IRecordFiltersLight;
+    options?: IValuesOptions;
+    pagination?: IPaginationParams | ICursorPaginationParams;
+    withCount?: boolean;
 }
 
 export interface IRecordDomain {
@@ -54,26 +63,14 @@ export interface IRecordDomain {
      * @param filters Filters to apply on records selection
      * @param fields Fields to retrieve on each records
      */
-    find(
-        library: string,
-        filters?: IRecordFiltersLight,
-        fields?: IQueryField[],
-        options?: IValuesOptions
-    ): Promise<IRecord[]>;
+    find(params: IFindRecordParams): Promise<IListWithCursor<IRecord>>;
 
-    /**
-     * Add values for requested fields on the record. Values can be of any types here.
-     *
-     * @param library
-     * @param record
-     * @param queryFields Fields to retrieve
-     */
-    populateRecordFields(
+    getRecordFieldValue(
         library: string,
         record: IRecord,
-        queryFields: IQueryField[],
+        attributeId: string,
         options?: IValuesOptions
-    ): Promise<IRecord>;
+    ): Promise<IValue | IValue[]>;
 
     /**
      * Return record identity values
@@ -92,52 +89,6 @@ export default function(
     libraryDomain: ILibraryDomain = null
 ): IRecordDomain {
     /**
-     * Recursively populate fields on a link attribute
-     *
-     * @param attrProps
-     * @param field
-     * @param fieldValue
-     */
-    const _populateFieldsLinkAttribute = async (
-        attrProps: IAttribute,
-        field: IQueryField,
-        fieldValue: IValue
-    ): Promise<IValue> => {
-        if (field.fields.length) {
-            const _processFieldValue = (record: IRecord, valueFields: IQueryField[]): Promise<IRecord> => {
-                const linkedLibrary = attrProps.linked_library || record.library;
-                return ret.populateRecordFields(linkedLibrary, record, valueFields);
-            };
-
-            const linkFields = field.fields;
-            // "value" is the linked record,
-            // so retrieve fields requested for this record through the "value" field
-            const valueLinkFields = linkFields.reduce((acc, linkField) => {
-                if (linkField.name === 'value') {
-                    acc = acc.concat(linkField.fields);
-                } else if (linkField.name !== 'id_value') {
-                    acc.push(linkField);
-                }
-                return acc;
-            }, []);
-            // If value is an array (like in tree values), populate recursively all elements
-            if (Array.isArray(fieldValue.value)) {
-                fieldValue.value = await Promise.all(
-                    fieldValue.value.map(val => _processFieldValue(val, valueLinkFields))
-                );
-            } else {
-                fieldValue.value = await _processFieldValue(fieldValue.value, valueLinkFields);
-            }
-            // Add library on linked record to help determine which type is the record
-            if (attrProps.linked_library) {
-                fieldValue.value.library = attrProps.linked_library;
-            }
-        }
-
-        return fieldValue;
-    };
-
-    /**
      * Run actions list on a value
      *
      * @param isLinkAttribute
@@ -152,22 +103,82 @@ export default function(
         attrProps: IAttribute,
         record: IRecord,
         library: string
-    ) => {
-        let processedValue: IValue;
-        if (!isLinkAttribute && value !== null) {
-            processedValue =
-                !!attrProps.actions_list && !!attrProps.actions_list.getValue
-                    ? await actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
-                          attribute: attrProps,
-                          recordId: record.id,
-                          library,
-                          value
-                      })
-                    : value;
-            processedValue.raw_value = value.value;
+    ) =>
+        !isLinkAttribute && value !== null && !!attrProps.actions_list && !!attrProps.actions_list.getValue
+            ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
+                  attribute: attrProps,
+                  recordId: record.id,
+                  library,
+                  value
+              })
+            : value;
+
+    /**
+     * Extract value from record if it's available (attribute simple), or fetch it from DB
+     *
+     * @param record
+     * @param attribute
+     * @param library
+     * @param options
+     */
+    const _extractRecordValue = async (
+        record: IRecord,
+        attribute: IAttribute,
+        library: string,
+        options: IValuesOptions
+    ): Promise<IValue[]> => {
+        let values;
+        if (typeof record[attribute.id] !== 'undefined') {
+            // Format attribute field into simple value
+            values = [
+                {
+                    value: record[attribute.id]
+                }
+            ];
         } else {
-            processedValue = value;
+            values = await valueDomain.getValues(library, record.id, attribute.id, options);
         }
+        return values;
+    };
+
+    /**
+     * Format value: add a few informations for link attributes, run actions list
+     *
+     * @param attribute
+     * @param value
+     * @param record
+     * @param library
+     */
+    const _formatRecordValue = async (attribute: IAttribute, value: IValue, record: IRecord, library: string) => {
+        let val = {...value}; // Don't mutate given value
+        if (attribute.id === 'id') {
+            return val.value;
+        }
+
+        const isLinkAttribute =
+            attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
+
+        if (isLinkAttribute && attribute.linked_library) {
+            if (typeof val.value === 'number') {
+                val.value = {
+                    id: val.value
+                };
+            }
+
+            const linkValue = {...val.value, library: attribute.linked_library};
+            val = {...value, value: linkValue};
+        }
+
+        const processedValue: IValue =
+            !isLinkAttribute &&
+            val !== null &&
+            attribute.id !== 'id' &&
+            !!attribute.actions_list &&
+            !!attribute.actions_list.getValue
+                ? await _runActionsList(isLinkAttribute, val, attribute, record, library)
+                : val;
+
+        processedValue.raw_value = val.value;
 
         return processedValue;
     };
@@ -220,12 +231,8 @@ export default function(
 
             return recordRepo.deleteRecord(library, id);
         },
-        async find(
-            library: string,
-            filters?: IRecordFiltersLight,
-            fields?: IQueryField[],
-            version?: IValueVersion
-        ): Promise<IRecord[]> {
+        async find(params: IFindRecordParams): Promise<IListWithCursor<IRecord>> {
+            const {library, filters, options, pagination, withCount} = params;
             const fullFilters: IRecordFilterOption[] = [];
 
             // Hydrate filters with attribute properties and cast filters values if needed
@@ -242,85 +249,9 @@ export default function(
                 }
             }
 
-            let records = await recordRepo.find(library, fullFilters);
-
-            // Populate records with requested fields
-            if (typeof fields !== 'undefined' && fields.length) {
-                records = await Promise.all(
-                    records.map(record => this.populateRecordFields(library, record, fields, version))
-                );
-            }
+            const records = await recordRepo.find(library, fullFilters, pagination, withCount);
 
             return records;
-        },
-        async populateRecordFields(
-            library: string,
-            record: IRecord,
-            queryFields: IQueryField[],
-            options?: IValuesOptions
-        ): Promise<IRecord> {
-            const fieldsProps: {[attrName: string]: IAttribute} = {};
-
-            for (const field of queryFields) {
-                // Library has its own resolver, just ignore it
-                if (field.name === 'library' || field.name === 'whoAmI') {
-                    continue;
-                }
-
-                // Retrieve field properties
-                if (typeof fieldsProps[field.name] === 'undefined') {
-                    fieldsProps[field.name] = await attributeDomain.getAttributeProperties(field.name);
-                }
-
-                const isLinkAttribute =
-                    fieldsProps[field.name].type === AttributeTypes.SIMPLE_LINK ||
-                    fieldsProps[field.name].type === AttributeTypes.ADVANCED_LINK;
-
-                // Get field value
-                if (
-                    typeof record[field.name] === 'undefined' ||
-                    fieldsProps[field.name].type !== AttributeTypes.SIMPLE
-                ) {
-                    // We haven't retrieved this value yet (straight from query for example),
-                    // so let's get it from DB now
-                    const fieldOpts = {...options, ...field.arguments};
-                    const fieldValues = await valueDomain.getValues(library, record.id, field.name, fieldOpts);
-
-                    if (fieldValues !== null && fieldValues.length) {
-                        const values = await Promise.all(
-                            fieldValues.map(async fieldValue => {
-                                // If value is a linked record, recursively populate fields on this record
-                                if (isLinkAttribute) {
-                                    fieldValue = await _populateFieldsLinkAttribute(
-                                        fieldsProps[field.name],
-                                        field,
-                                        fieldValue
-                                    );
-                                }
-
-                                fieldValue = await _runActionsList(
-                                    isLinkAttribute,
-                                    fieldValue,
-                                    fieldsProps[field.name],
-                                    record,
-                                    library
-                                );
-
-                                return fieldValue;
-                            })
-                        );
-
-                        record[field.name] = fieldsProps[field.name].multiple_values ? values : values[0];
-                    }
-                } else if (field.name !== 'id') {
-                    // Format attribute field into simple value
-                    record[field.name] = {
-                        value: record[field.name]
-                    };
-                }
-            }
-
-            return record;
         },
         async getRecordIdentity(record: IRecord): Promise<IRecordIdentity> {
             const lib = await libraryDomain.getLibraryProperties(record.library);
@@ -335,8 +266,22 @@ export default function(
                     ? (await valueDomain.getValues(lib.id, record.id, conf.preview)).pop().value
                     : null
             };
+        },
+        async getRecordFieldValue(
+            library: string,
+            record: IRecord,
+            attributeId: string,
+            options?: IValuesOptions
+        ): Promise<IValue | IValue[]> {
+            const attrProps = await attributeDomain.getAttributeProperties(attributeId);
+            const values = await _extractRecordValue(record, attrProps, library, options);
+
+            const formattedValues = await Promise.all(
+                values.map(v => _formatRecordValue(attrProps, v, record, library))
+            );
+
+            return attrProps.multiple_values ? formattedValues : formattedValues[0];
         }
     };
-
     return ret;
 }

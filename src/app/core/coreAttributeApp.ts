@@ -45,7 +45,7 @@ export default function(
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
-                        versions_conf: valuesversions_conf
+                        versions_conf: ValuesVersionsConf
                     }
 
                     input AttributeInput {
@@ -59,7 +59,7 @@ export default function(
                         actions_list: ActionsListConfigurationInput,
                         permissions_conf: Treepermissions_confInput,
                         multiple_values: Boolean,
-                        versions_conf: valuesversions_confInput
+                        versions_conf: ValuesVersionsConfInput
                     }
 
                     type EmbeddedAttribute {
@@ -78,13 +78,13 @@ export default function(
                         embedded_fields: [EmbeddedAttributeInput]
                     }
 
-                    type valuesversions_conf {
+                    type ValuesVersionsConf {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
                         trees: [String!]
                     }
 
-                    input valuesversions_confInput {
+                    input ValuesVersionsConfInput {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
                         trees: [String!]
@@ -105,10 +105,25 @@ export default function(
                         list: [Attribute!]!
                     }
 
+                    enum AttributesSortableFields {
+                        id
+                        type
+                        format
+                        linked_library
+                        linked_tree
+                        multiple_values
+                    }
+
+                    input SortAttributes {
+                        field: AttributesSortableFields!
+                        order: SortOrder
+                    }
+
                     extend type Query {
                         attributes(
                             filters: AttributesFiltersInput,
-                            pagination: Pagination
+                            pagination: Pagination,
+                            sort: SortAttributes
                         ): AttributesList
                     }
 
@@ -119,8 +134,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async attributes(parent, {filters, pagination}) {
-                            return attributeDomain.getAttributes(filters, true, pagination);
+                        async attributes(parent, {filters, pagination, sort}) {
+                            return attributeDomain.getAttributes({filters, withCount: true, pagination, sort});
                         }
                     },
                     Mutation: {

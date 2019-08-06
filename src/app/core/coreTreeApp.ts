@@ -81,10 +81,21 @@ export default function(
                         list: [Tree!]!
                     }
 
+                    enum TreesSortableFields {
+                        id
+                        system
+                    }
+
+                    input SortTrees {
+                        field: TreesSortableFields!
+                        order: SortOrder
+                    }
+
                     extend type Query {
                         trees(
                             filters: TreesFiltersInput,
-                            pagination: Pagination
+                            pagination: Pagination,
+                            sort: SortTrees
                         ): TreesList
 
                         # Retrieve tree content.
@@ -117,8 +128,8 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        async trees(parent, {filters, pagination}) {
-                            return treeDomain.getTrees(filters, true, pagination);
+                        async trees(parent, {filters, pagination, sort}) {
+                            return treeDomain.getTrees({filters, withCount: true, pagination, sort});
                         },
                         async treeContent(_, {treeId, startAt}, ctx, info) {
                             ctx.treeId = treeId;
@@ -155,11 +166,6 @@ export default function(
                         }
                     },
                     TreeNode: {
-                        record: async (parent, args, ctx, info) => {
-                            const queryFields = graphqlApp.getQueryFields(info);
-
-                            return recordDomain.populateRecordFields(parent.record.library, parent.record, queryFields);
-                        },
                         children: async (parent, args, ctx, info) => {
                             if (typeof parent.children !== 'undefined') {
                                 return parent.children;
@@ -215,11 +221,7 @@ export default function(
                                 element
                             );
 
-                            return Promise.all(
-                                records.map(record =>
-                                    recordDomain.populateRecordFields(record.library, record, queryFields)
-                                )
-                            );
+                            return records;
                         }
                     }
                 }

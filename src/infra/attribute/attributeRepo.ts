@@ -1,6 +1,7 @@
 import {aql} from 'arangojs';
-import {IList, IPaginationParams} from '_types/list';
-import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
+import {IList} from '_types/list';
+import {IGetCoreEntitiesParams} from '_types/shared';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {ILibrary} from '../../_types/library';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -8,12 +9,7 @@ import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
-    getAttributes(
-        filters?: IAttributeFilterOptions,
-        strictFilters?: boolean,
-        withCount?: boolean,
-        pagination?: IPaginationParams
-    ): Promise<IList<IAttribute>>;
+    getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>>;
     updateAttribute(attrData: IAttribute): Promise<IAttribute>;
     createAttribute(attrData: IAttribute): Promise<IAttribute>;
     deleteAttribute(attrData: IAttribute): Promise<IAttribute>;
@@ -35,19 +31,17 @@ export default function(
     config = null
 ): IAttributeRepo {
     return {
-        async getAttributes(
-            filters?: IAttributeFilterOptions,
-            strictFilters: boolean = false,
-            withCount: boolean = false,
-            pagination?: IPaginationParams
-        ): Promise<IList<IAttribute>> {
-            return dbUtils.findCoreEntity<IAttribute>(
-                ATTRIB_COLLECTION_NAME,
-                filters,
-                strictFilters,
-                withCount,
-                pagination
-            );
+        async getAttributes(params: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
+            const defaultParams: IGetCoreEntitiesParams = {
+                filters: null,
+                strictFilters: false,
+                withCount: false,
+                pagination: null,
+                sort: null
+            };
+            const initializedParams = {...defaultParams, ...params};
+
+            return dbUtils.findCoreEntity<IAttribute>({...initializedParams, collectionName: ATTRIB_COLLECTION_NAME});
         },
         async updateAttribute(attrData: IAttribute): Promise<IAttribute> {
             const defaultParams = {

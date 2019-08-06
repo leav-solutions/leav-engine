@@ -108,13 +108,8 @@ describe('AttributeIndexRepo', () => {
             const attrRepo = attributeSimpleRepo(null);
             const filter = attrRepo.filterQueryPart('id', 0, '123456');
 
-            expect(filter).toMatchObject({
-                query: 'FILTER r.@filterField0 == @filterValue0',
-                bindVars: {
-                    filterField0: '_key',
-                    filterValue0: '123456'
-                }
-            });
+            expect(filter.query).toMatch(/^FILTER/);
+            expect(filter).toMatchSnapshot();
         });
     });
 

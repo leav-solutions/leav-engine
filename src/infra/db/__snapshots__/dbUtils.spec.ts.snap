@@ -38,19 +38,22 @@ Object {
 }
 `;
 
-exports[`dbUtils findCoreEntity Should limit results 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) LIMIT @value8, @value9 RETURN el"`;
+exports[`dbUtils findCoreEntity Should limit results 1`] = `"FOR el IN @@value0 LIMIT @value1, @value2 RETURN el"`;
 
 exports[`dbUtils findCoreEntity Should limit results 2`] = `
 Object {
   "@value0": "core_trees",
-  "value1": "_key",
-  "value2": "categories",
-  "value3": "system",
-  "value4": false,
-  "value5": "fr",
-  "value6": "Arbre des catégories",
-  "value7": "en",
-  "value8": 0,
-  "value9": 5,
+  "value1": 0,
+  "value2": 5,
+}
+`;
+
+exports[`dbUtils findCoreEntity Should sort results 1`] = `"FOR el IN @@value0 SORT el.@value1 @value2 RETURN el"`;
+
+exports[`dbUtils findCoreEntity Should sort results 2`] = `
+Object {
+  "@value0": "core_trees",
+  "value1": "system",
+  "value2": "asc",
 }
 `;

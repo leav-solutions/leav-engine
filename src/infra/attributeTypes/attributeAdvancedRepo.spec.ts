@@ -630,7 +630,10 @@ describe('AttributeStandardRepo', () => {
 
     describe('filterQueryPart', () => {
         test('Should return simple filter', () => {
-            const attrRepo = attributeAdvancedRepo(null);
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeAdvancedRepo(mockDbServ);
             const filter = attrRepo.filterQueryPart('label', 0, 'MyLabel');
 
             expect(filter).toMatchSnapshot();

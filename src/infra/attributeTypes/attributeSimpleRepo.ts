@@ -44,11 +44,12 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             return _saveValue(library, recordId, attribute, {...value, value: null});
         },
         async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
-            const res = await dbService.execute(aql`
+            const query = aql`
                 FOR r IN ${dbService.db.collection(library)}
-                    FILTER r._key == ${recordId}
+                    FILTER r._key == ${String(recordId)}
                     RETURN r.${attribute.id}
-            `);
+            `;
+            const res = await dbService.execute(query);
 
             return [
                 {
@@ -61,16 +62,10 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
             return null;
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
-            const query = `FILTER r.@filterField${index} == @filterValue${index}`;
+            const fieldToUse = fieldName === 'id' ? '_key' : fieldName;
+            const query = aql`FILTER r.${fieldToUse} == ${value}`;
 
-            fieldName = fieldName === 'id' ? '_key' : fieldName;
-
-            const bindVars = {
-                ['filterField' + index]: fieldName,
-                ['filterValue' + index]: value
-            };
-
-            return {query, bindVars};
+            return query;
         },
         async clearAllValues(attribute: IAttribute): Promise<boolean> {
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);

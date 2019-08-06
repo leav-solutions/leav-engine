@@ -1,7 +1,14 @@
 import {aql} from 'arangojs';
+import {
+    CursorDirection,
+    ICursorPaginationParams,
+    IListWithCursor,
+    IPaginationCursors,
+    IPaginationParams
+} from '../../_types/list';
 import {IRecord, IRecordFilterOption} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
-import {IDbService} from '../db/dbService';
+import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -26,38 +33,107 @@ export interface IRecordRepo {
      */
     deleteRecord(library: string, id: number): Promise<IRecord>;
 
-    find(library: string, filters?: IRecordFilterOption[]): Promise<IRecord[]>;
+    find(
+        library: string,
+        filters?: IRecordFilterOption[],
+        pagination?: IPaginationParams | ICursorPaginationParams,
+        withCount?: boolean
+    ): Promise<IListWithCursor<IRecord>>;
 }
 
 export default function(
-    dbService: IDbService | any,
+    dbService: IDbService,
     dbUtils: IDbUtils,
     attributeTypesRepo: IAttributeTypesRepo | null = null
 ): IRecordRepo {
-    return {
-        async find(library: string, filters?: IRecordFilterOption[]): Promise<IRecord[]> {
-            const queryParts = [];
-            let bindVars = {};
+    const _generateCursor = (from: number, direction: CursorDirection): string =>
+        Buffer.from(`${direction}:${from}`).toString('base64');
 
-            queryParts.push('FOR r IN @@collection');
-            bindVars['@collection'] = library;
+    const _parseCursor = (
+        cursor: string
+    ): {
+        direction: string;
+        from: string;
+    } => {
+        const s = Buffer.from(cursor, 'base64').toString();
+        const [direction, from] = s.split(':');
+
+        return {
+            direction,
+            from
+        };
+    };
+
+    return {
+        async find(
+            library: string,
+            filters?: IRecordFilterOption[],
+            pagination?: IPaginationParams | ICursorPaginationParams,
+            withCount: boolean = false
+        ): Promise<IListWithCursor<IRecord>> {
+            const queryParts = [];
+            const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
+            // Force disbaling count on cursor pagination as it's pointless
+            const countResults = withCount && !withCursorPagination;
+
+            const coll = dbService.db.collection(library);
+            queryParts.push(aql`FOR r IN ${coll}`);
 
             if (typeof filters !== 'undefined' && filters.length) {
-                let i = 0;
-                for (const filter of filters) {
+                for (const [i, filter] of filters.entries()) {
                     const typeRepo = attributeTypesRepo.getTypeRepo(filter.attribute);
                     const filterQueryPart = typeRepo.filterQueryPart(filter.attribute.id, i, filter.value);
-                    queryParts.push(filterQueryPart.query);
-                    bindVars = {...bindVars, ...filterQueryPart.bindVars};
-                    i++;
+                    queryParts.push(filterQueryPart);
                 }
             }
 
-            queryParts.push(`RETURN MERGE(r, {library: '${library}'})`);
+            if (pagination) {
+                if (!(pagination as IPaginationParams).offset && !(pagination as ICursorPaginationParams).cursor) {
+                    (pagination as IPaginationParams).offset = 0;
+                }
 
-            const records = await dbService.execute({query: queryParts.join(' '), bindVars});
+                if (typeof (pagination as IPaginationParams).offset !== 'undefined') {
+                    queryParts.push(aql`LIMIT ${(pagination as IPaginationParams).offset}, ${pagination.limit}`);
+                } else if ((pagination as ICursorPaginationParams).cursor) {
+                    const {direction, from} = _parseCursor((pagination as ICursorPaginationParams).cursor);
+                    const operator = direction === CursorDirection.NEXT ? '>' : '<';
 
-            return records.map(dbUtils.cleanup);
+                    // When looking for previous records, first sort in reverse order to get the last records
+                    if (direction === CursorDirection.PREV) {
+                        queryParts.push(aql`SORT r._key DESC`);
+                    }
+
+                    queryParts.push(aql`FILTER r._key ${aql.literal(operator)} ${from}`);
+                    queryParts.push(aql`LIMIT ${pagination.limit}`);
+                }
+            }
+
+            // Force sorting on ID
+            queryParts.push(aql`SORT r._key ASC`);
+            queryParts.push(aql`RETURN MERGE(r, {library: ${library}})`);
+
+            const records = await dbService.execute<IExecuteWithCount | any[]>(
+                aql.join(queryParts, '\n'),
+                countResults
+            );
+
+            const list: any[] = countResults ? (records as IExecuteWithCount).results : (records as any[]);
+            const totalCount = countResults ? (records as IExecuteWithCount).totalCount : null;
+
+            // TODO: detect if we reach end/begining of the list and should not provide a cursor
+            const cursor: IPaginationCursors = pagination
+                ? {
+                      prev: list.length ? _generateCursor(list[0]._key, CursorDirection.PREV) : null,
+                      next: list.length ? _generateCursor(list.slice(-1)[0]._key, CursorDirection.NEXT) : null
+                  }
+                : null;
+
+            const returnVal = {
+                totalCount,
+                list: list.map(dbUtils.cleanup),
+                cursor
+            };
+            return returnVal;
         },
         async createRecord(library: string, recordData: IRecord): Promise<IRecord> {
             const collection = dbService.db.collection(library);
@@ -81,7 +157,7 @@ export default function(
             `);
 
             // Delete record
-            const deletedRecord = await collection.remove({_key: id});
+            const deletedRecord = await collection.remove({_key: String(id)});
 
             deletedRecord.library = deletedRecord._id.split('/')[0];
             return dbUtils.cleanup(deletedRecord);

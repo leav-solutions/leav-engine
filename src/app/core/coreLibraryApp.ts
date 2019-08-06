@@ -1,6 +1,11 @@
+import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {IUtils} from 'utils/utils';
+import {IList} from '_types/list';
+import ValidationError from '../../errors/ValidationError';
 import {ILibrary} from '../../_types/library';
 import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -17,7 +22,10 @@ export default function(
     coreAttributeApp: ICoreAttributeApp,
     graphqlApp: IGraphqlApp,
     utils: IUtils,
-    coreApp: ICoreApp
+    coreApp: ICoreApp,
+    valueDomain: IValueDomain,
+    attributeDomain: IAttributeDomain,
+    actionsListDomain: IActionsListDomain
 ): ICoreLibraryApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -54,10 +62,21 @@ export default function(
                         list: [Library!]!
                     }
 
+                    enum LibrariesSortableFields {
+                        id
+                        system
+                    }
+
+                    input SortLibraries {
+                        field: LibrariesSortableFields!
+                        order: SortOrder
+                    }
+
                     type Query {
                         libraries(
                             filters: LibrariesFiltersInput,
-                            pagination: Pagination
+                            pagination: Pagination,
+                            sort: SortLibraries
                         ): LibrariesList
                     }
 
@@ -65,12 +84,11 @@ export default function(
                         saveLibrary(library: LibraryInput): Library!
                         deleteLibrary(id: ID): Library!
                     }
-
                 `,
                 resolvers: {
                     Query: {
-                        async libraries(parent, {filters, pagination}, ctx) {
-                            return libraryDomain.getLibraries(filters, true, pagination);
+                        async libraries(parent, {filters, pagination, sort}, ctx) {
+                            return libraryDomain.getLibraries({filters, withCount: true, pagination, sort});
                         }
                     },
                     Mutation: {
@@ -122,6 +140,12 @@ export default function(
                         )}
                     }
 
+                    type ${libTypeName}List {
+                        totalCount: Int,
+                        cursor: RecordsListCursor,
+                        list: [${libTypeName}!]!
+                    }
+
                     enum ${libTypeName}SearchableFields {
                         ${lib.attributes.map(attr => attr.id).join(' ')}
                     }
@@ -134,18 +158,26 @@ export default function(
                     extend type Query {
                         ${libQueryName}(
                             filters: [${libTypeName}Filter],
-                            version: [ValueVersionInput]
-                        ): [${libTypeName}!]
+                            version: [ValueVersionInput],
+                            pagination: RecordsPagination,
+                        ): ${libTypeName}List!
                     }
                 `;
 
                 baseSchema.resolvers.Query[libQueryName] = async (
                     parent,
-                    {filters, version},
+                    {filters, version, pagination},
                     context,
                     info
-                ): Promise<IRecord[]> => {
-                    const queryFields = graphqlApp.getQueryFields(info);
+                ): Promise<IList<IRecord>> => {
+                    const fields = graphqlApp.getQueryFields(info).map(f => f.name);
+                    if (
+                        pagination &&
+                        typeof pagination.offset !== 'undefined' &&
+                        typeof pagination.cursor !== 'undefined'
+                    ) {
+                        throw new ValidationError({pagination: 'Cannot use offset and cursor at the same time'});
+                    }
 
                     if (typeof filters !== 'undefined') {
                         filters = filters.reduce((allFilters, filter) => {
@@ -165,12 +197,27 @@ export default function(
                               }, {})
                             : null;
 
-                    return recordDomain.find(lib.id, filters, queryFields, {version: formattedVersion});
+                    context.version = formattedVersion;
+
+                    return recordDomain.find({
+                        library: lib.id,
+                        filters,
+                        pagination,
+                        options: {version: formattedVersion},
+                        withCount: fields.includes('totalCount')
+                    });
                 };
                 baseSchema.resolvers[libTypeName] = {
                     library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null),
                     whoAmI: recordDomain.getRecordIdentity
                 };
+
+                for (const libAttr of lib.attributes) {
+                    baseSchema.resolvers[libTypeName][libAttr.id] = async (parent, args, ctx, info) =>
+                        recordDomain.getRecordFieldValue(lib.id, parent, libAttr.id, {
+                            version: ctx.version
+                        });
+                }
             }
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};

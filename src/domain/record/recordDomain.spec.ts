@@ -1,10 +1,13 @@
+import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {isArray} from 'util';
+import {IRecord} from '_types/record';
+import {IValue} from '_types/value';
+import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
-import {mockAttrAdvMultiVal, mockAttrAdvVersionable, mockAttrId} from '../../__tests__/mocks/attribute';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
 
@@ -106,7 +109,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain(recRepo as IRecordRepo, null);
 
-            const findRes = await recDomain.find('test_lib');
+            const findRes = await recDomain.find({library: 'test_lib'});
 
             expect(recRepo.find.mock.calls.length).toBe(1);
             expect(findRes).toEqual([
@@ -117,314 +120,6 @@ describe('RecordDomain', () => {
                     ean: '9876543219999999'
                 }
             ]);
-        });
-    });
-
-    describe('populateRecordFields', () => {
-        test('Should populate record fields', async function() {
-            const record = {
-                id: 222536283,
-                created_at: 1520931427,
-                modified_at: 1520931427,
-                ean: '9876543219999999',
-                visual_simple: '222713677'
-            };
-
-            const recRepo: Mockify<IRecordRepo> = {};
-
-            const mockValDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([
-                    {
-                        id: '222827150',
-                        value: 'MyLabel'
-                    }
-                ])
-            };
-
-            const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementation(attribute => {
-                    let type;
-                    switch (attribute) {
-                        case 'id':
-                            type = AttributeTypes.SIMPLE;
-                            break;
-                        case 'label':
-                            type = AttributeTypes.ADVANCED;
-                            break;
-                    }
-
-                    return Promise.resolve({id: attribute, type, actions_list: {getValue: [{name: 'formatAttr'}]}});
-                })
-            };
-
-            const mockALDomain: Mockify<IActionsListDomain> = {
-                runActionsList: global.__mockPromise({
-                    id: '222827150',
-                    value: 'MyLabelProcessed'
-                })
-            };
-
-            const recDomain = recordDomain(
-                recRepo as IRecordRepo,
-                mockAttributeDomain as IAttributeDomain,
-                mockValDomain as IValueDomain,
-                mockALDomain as IActionsListDomain
-            );
-
-            const findRes = await recDomain.populateRecordFields('test_lib', record, [
-                {
-                    name: 'label',
-                    fields: [{name: 'id', fields: [], arguments: []}, {name: 'value', fields: [], arguments: []}],
-                    arguments: []
-                }
-            ]);
-
-            expect(mockValDomain.getValues).toBeCalledWith('test_lib', 222536283, 'label', {});
-            expect(findRes).toEqual({
-                ...record,
-                label: {
-                    id: '222827150',
-                    value: 'MyLabelProcessed',
-                    raw_value: 'MyLabel'
-                }
-            });
-        });
-
-        test('Should populate record fields on multiple values', async function() {
-            const record = {
-                id: 222536283,
-                created_at: 1520931427,
-                modified_at: 1520931427,
-                ean: '9876543219999999',
-                visual_simple: '222713677'
-            };
-
-            const recRepo: Mockify<IRecordRepo> = {};
-
-            const mockValDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([
-                    {
-                        id: '1',
-                        value: 'MyLabel'
-                    },
-                    {
-                        id: '2',
-                        value: 'MyOtherLabel'
-                    }
-                ])
-            };
-
-            const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementation(attributeName => {
-                    const attribute = attributeName === 'id' ? mockAttrId : mockAttrAdvMultiVal;
-
-                    return Promise.resolve(attribute);
-                })
-            };
-
-            const mockALDomain: Mockify<IActionsListDomain> = {
-                runActionsList: jest.fn()
-            };
-
-            const recDomain = recordDomain(
-                recRepo as IRecordRepo,
-                mockAttributeDomain as IAttributeDomain,
-                mockValDomain as IValueDomain,
-                mockALDomain as IActionsListDomain
-            );
-
-            const findRes = await recDomain.populateRecordFields('test_lib', record, [
-                {
-                    name: 'label',
-                    fields: [{name: 'id', fields: [], arguments: []}, {name: 'value', fields: [], arguments: []}],
-                    arguments: []
-                }
-            ]);
-
-            expect(findRes).toEqual({
-                ...record,
-                label: [
-                    {
-                        id: '1',
-                        value: 'MyLabel',
-                        raw_value: 'MyLabel'
-                    },
-                    {
-                        id: '2',
-                        value: 'MyOtherLabel',
-                        raw_value: 'MyOtherLabel'
-                    }
-                ]
-            });
-        });
-
-        test('Should populate record fields recursively', async function() {
-            const record = {
-                id: 222536283,
-                created_at: 1520931427,
-                modified_at: 1520931427,
-                ean: '9876543219999999',
-                visual_simple: '222713677'
-            };
-
-            const recRepo: Mockify<IRecordRepo> = {};
-
-            const mockValDomain: Mockify<IValueDomain> = {
-                getValues: jest
-                    .fn()
-                    .mockReturnValueOnce([
-                        {
-                            id: null,
-                            value: {
-                                id: '222827150',
-                                library: 'linked_library'
-                            }
-                        }
-                    ])
-                    .mockReturnValueOnce([
-                        {
-                            id: '222827150',
-                            value: 'MyLabel'
-                        }
-                    ])
-            };
-
-            const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementation(attribute => {
-                    let type;
-                    switch (attribute) {
-                        case 'id':
-                            type = AttributeTypes.SIMPLE;
-                            break;
-                        case 'label':
-                            type = AttributeTypes.ADVANCED;
-                            break;
-                        case 'linkedElem':
-                            type = AttributeTypes.SIMPLE_LINK;
-                            break;
-                    }
-
-                    return Promise.resolve({
-                        id: attribute,
-                        type
-                    });
-                })
-            };
-
-            const recDomain = recordDomain(
-                recRepo as IRecordRepo,
-                mockAttributeDomain as IAttributeDomain,
-                mockValDomain as IValueDomain
-            );
-
-            const findRes = await recDomain.populateRecordFields('test_lib', record, [
-                {name: 'id', fields: [], arguments: []},
-                {
-                    name: 'linkedElem',
-                    fields: [
-                        {name: 'id', fields: [], arguments: []},
-                        {
-                            name: 'value',
-                            fields: [
-                                {name: 'id', fields: [], arguments: []},
-                                {
-                                    name: 'label',
-                                    fields: [
-                                        {name: 'id', fields: [], arguments: []},
-                                        {name: 'value', fields: [], arguments: []}
-                                    ],
-                                    arguments: []
-                                }
-                            ],
-                            arguments: []
-                        }
-                    ],
-                    arguments: []
-                }
-            ]);
-
-            expect(mockValDomain.getValues).toBeCalledWith('test_lib', 222536283, 'linkedElem', {});
-            expect(findRes).toEqual({
-                ...record,
-                linkedElem: {
-                    id: null,
-                    value: {
-                        id: '222827150',
-                        library: 'linked_library',
-                        label: {
-                            id: '222827150',
-                            value: 'MyLabel',
-                            raw_value: 'MyLabel'
-                        }
-                    }
-                }
-            });
-        });
-
-        test('Should populate record fields with version', async function() {
-            const record = {
-                id: 222536283,
-                created_at: 1520931427,
-                modified_at: 1520931427,
-                ean: '9876543219999999',
-                visual_simple: '222713677'
-            };
-
-            const recRepo: Mockify<IRecordRepo> = {};
-
-            const mockValDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([
-                    {
-                        id: '222827150',
-                        value: 'MyLabel',
-                        version: {
-                            my_tree: {library: 'my_lib', id: 123456789}
-                        }
-                    }
-                ])
-            };
-
-            const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
-            };
-
-            const recDomain = recordDomain(
-                recRepo as IRecordRepo,
-                mockAttributeDomain as IAttributeDomain,
-                mockValDomain as IValueDomain,
-                null
-            );
-
-            const findRes = await recDomain.populateRecordFields(
-                'test_lib',
-                record,
-                [
-                    {
-                        name: 'label',
-                        fields: [
-                            {name: 'id_value', fields: [], arguments: []},
-                            {name: 'value', fields: [], arguments: []},
-                            {name: 'version', fields: [], arguments: []}
-                        ],
-                        arguments: []
-                    }
-                ],
-                {
-                    my_tree: {library: 'my_lib', id: 123456789}
-                }
-            );
-
-            expect(findRes).toEqual({
-                ...record,
-                label: {
-                    id: '222827150',
-                    value: 'MyLabel',
-                    raw_value: 'MyLabel',
-                    version: {
-                        my_tree: {library: 'my_lib', id: 123456789}
-                    }
-                }
-            });
         });
     });
 
@@ -528,6 +223,100 @@ describe('RecordDomain', () => {
             expect(res.label).toBe(null);
             expect(res.color).toBe(null);
             expect(res.preview).toBe(null);
+        });
+    });
+
+    describe('getRecordFieldValue', () => {
+        const mockRecord: IRecord = {
+            id: 12345,
+            library: 'test_lib',
+            created_at: 2119477320,
+            created_by: 42
+        };
+
+        test('Return a value present on record', async () => {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    id: 'created_at',
+                    type: AttributeTypes.SIMPLE,
+                    multiple_values: false
+                })
+            };
+            const recDomain = recordDomain(null, mockAttrDomain as IAttributeDomain);
+
+            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at');
+
+            expect((value as IValue).value).toBe(2119477320);
+        });
+
+        test('Return a value not present on record', async () => {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    id: 'label',
+                    type: AttributeTypes.ADVANCED,
+                    multiple_values: true
+                })
+            };
+
+            const mockValDomain: Mockify<IValueDomain> = {
+                getValues: global.__mockPromise([
+                    {
+                        id_value: 12345,
+                        value: 'MyLabel'
+                    }
+                ])
+            };
+            const recDomain = recordDomain(null, mockAttrDomain as IAttributeDomain, mockValDomain as IValueDomain);
+
+            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'label');
+
+            expect(isArray(value)).toBe(true);
+            expect(value[0].value).toBe('MyLabel');
+        });
+
+        test('Return a formatted value', async () => {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    id: 'created_at',
+                    type: AttributeTypes.SIMPLE,
+                    multiple_values: false,
+                    actions_list: {
+                        [ActionsListEvents.GET_VALUE]: [{name: 'formatDate', params: [{format: 'D/M/YY HH:mm'}]}]
+                    }
+                })
+            };
+
+            const mockALDomain: Mockify<IActionsListDomain> = {
+                runActionsList: global.__mockPromise({value: '1/3/37 00:42'})
+            };
+            const recDomain = recordDomain(
+                null,
+                mockAttrDomain as IAttributeDomain,
+                null,
+                mockALDomain as IActionsListDomain
+            );
+
+            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at');
+
+            expect((value as IValue).value).toBe('1/3/37 00:42');
+            expect((value as IValue).raw_value).toBe(2119477320);
+        });
+
+        test('Return a link value', async () => {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    id: 'created_by',
+                    type: AttributeTypes.SIMPLE_LINK,
+                    linked_library: 'users',
+                    multiple_values: false
+                })
+            };
+            const recDomain = recordDomain(null, mockAttrDomain as IAttributeDomain);
+
+            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_by');
+
+            expect((value as IValue).value.id).toBe(42);
+            expect((value as IValue).value.library).toBe('users');
         });
     });
 });

@@ -1,11 +1,11 @@
-import {IRecord} from '_types/record';
-import * as bcrypt from 'bcrypt';
 import {badData, unauthorized} from '@hapi/boom';
+import {Server} from '@hapi/hapi';
+import * as bcrypt from 'bcrypt';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {Server} from '@hapi/hapi';
 import * as jwt from 'jsonwebtoken';
 import * as winston from 'winston';
+import {IRecord} from '_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface IAuthApp {
@@ -34,9 +34,13 @@ export default function(
                         async me(parent, args, {auth}, info): Promise<IRecord> {
                             const queryFields = graphqlApp.getQueryFields(info);
 
-                            const users = await recordDomain.find('users', {id: auth.userId}, queryFields);
+                            const users = await recordDomain.find({
+                                library: 'users',
+                                filters: {id: auth.userId},
+                                withCount: false
+                            });
 
-                            return users[0];
+                            return users.list[0];
                         }
                     }
                 }
@@ -53,9 +57,9 @@ export default function(
                     }
                     // Get user id
                     try {
-                        const users = await recordDomain.find('users', {login});
+                        const users = await recordDomain.find({library: 'users', filters: {login}});
 
-                        if (!users.length) {
+                        if (!users.list.length) {
                             return unauthorized('Invalid credentials');
                         }
 
@@ -110,8 +114,8 @@ export default function(
             if (!tokenPayload.userId) {
                 return false;
             }
-            const users = await recordDomain.find('users', {id: tokenPayload.userId});
-            return !!users.length;
+            const users = await recordDomain.find({library: 'users', filters: {id: tokenPayload.userId}});
+            return !!users.list.length;
         }
     };
 }

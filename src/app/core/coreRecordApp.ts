@@ -40,6 +40,22 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                         preview: ID
                     }
 
+                    # Records support on both offset and cursor. Cannot use both at the same time.
+                    # If none is supplied, it will apply an offset 0. Cursors are always returned along the results
+                    # ⚠️Sorting is disallowed when using cursor pagination
+                    input RecordsPagination {
+                        limit: Int!,
+                        cursor: String,
+                        offset: Int
+                    }
+
+                    # Cursors to use for navigation among a record list.
+                    # If one a the cursors is null, it means there's nothing more to see in this direction
+                    type RecordsListCursor {
+                        prev: String,
+                        next: String
+                    }
+
                     extend type Mutation {
                         createRecord(library: ID): Record!
                         deleteRecord(library: ID, id: ID): Record!
