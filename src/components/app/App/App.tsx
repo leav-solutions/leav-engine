@@ -18,22 +18,19 @@ import Home from '../Home';
 
 interface IAppState {
     fragmentMatcher: IntrospectionFragmentMatcher | null;
-    token: string;
 }
 
 interface IAppProps extends WithNamespaces {
     token: string;
-    onTokenInvalid: () => void;
+    onTokenInvalid: (message?: string) => void;
 }
 
 class App extends React.Component<IAppProps, IAppState> {
-    // TODO: handle auth token properly
     constructor(props) {
         super(props);
 
         this.state = {
-            fragmentMatcher: null,
-            token: props.token
+            fragmentMatcher: null
         };
 
         this._getFragmentMatcher();
@@ -41,7 +38,8 @@ class App extends React.Component<IAppProps, IAppState> {
 
     public render() {
         const {i18n} = this.props;
-        const {fragmentMatcher, token} = this.state;
+        const {fragmentMatcher} = this.state;
+        const {token} = this.props;
 
         if (!fragmentMatcher) {
             return <Loading />;
@@ -125,7 +123,7 @@ class App extends React.Component<IAppProps, IAppState> {
      * More info: https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
      */
     private _getFragmentMatcher = async () => {
-        const {token} = this.state;
+        const {token} = this.props;
         const res = await fetch(process.env.REACT_APP_API_URL || '', {
             method: 'POST',
             headers: {
@@ -162,7 +160,7 @@ class App extends React.Component<IAppProps, IAppState> {
                 })
             });
         } catch (error) {
-            this.props.onTokenInvalid();
+            this.props.onTokenInvalid('login.error.session_expired');
         }
     }
 
@@ -177,7 +175,7 @@ class App extends React.Component<IAppProps, IAppState> {
         if (networkError) {
             console.log(`[Network error]: ${networkError}`);
             if (networkError.statusCode === 401) {
-                this.props.onTokenInvalid();
+                this.props.onTokenInvalid('login.error.session_expired');
             }
         }
     }
