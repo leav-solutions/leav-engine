@@ -1,5 +1,5 @@
 import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {difference} from 'lodash';
+import {difference, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
@@ -77,6 +77,7 @@ export default function(
             const libs = await libraryRepo.getLibraries({filters: {id: dataToSave.id}});
             const existingLib = !!libs.list.length;
             const errors = {} as any;
+            const defaultAttributes = ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
 
             // Check permissions
             const action = existingLib ? AdminPermissionsActions.EDIT_LIBRARY : AdminPermissionsActions.CREATE_LIBRARY;
@@ -103,20 +104,17 @@ export default function(
             }
 
             // New library? Link default attributes. Otherwise, save given attributes if any
-            const libAttributes = existingLib
-                ? typeof dataToSave.attributes !== 'undefined'
-                    ? dataToSave.attributes.map(attr => attr.id)
-                    : null
-                : ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
+            const attributesToSave =
+                typeof dataToSave.attributes !== 'undefined' ? dataToSave.attributes.map(attr => attr.id) : [];
 
-            if (libAttributes !== null) {
+            const libAttributes = existingLib ? attributesToSave : union(defaultAttributes, attributesToSave);
+
+            if (libAttributes.length) {
                 const availableAttributes = await attributeDomain.getAttributes();
                 const unknownAttrs = difference(libAttributes, availableAttributes.list.map(attr => attr.id));
 
                 if (unknownAttrs.length) {
                     errors.attributes = `Unknown attributes: ${unknownAttrs.join(', ')}`;
-                } else {
-                    await libraryRepo.saveLibraryAttributes(dataToSave.id, libAttributes);
                 }
             }
 
@@ -149,6 +147,10 @@ export default function(
             const lib = existingLib
                 ? await libraryRepo.updateLibrary(dataToSave)
                 : await libraryRepo.createLibrary(dataToSave);
+
+            if (libAttributes.length) {
+                await libraryRepo.saveLibraryAttributes(dataToSave.id, libAttributes);
+            }
 
             return lib;
         },

@@ -154,11 +154,19 @@ describe('LibraryDomain', () => {
                 mockUtils as IUtils
             );
 
-            const newLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
+            const newLib = await libDomain.saveLibrary(
+                {
+                    id: 'test',
+                    attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}, {id: 'attr2', type: AttributeTypes.SIMPLE}]
+                },
+                queryInfos
+            );
 
             expect(mockLibRepo.createLibrary.mock.calls.length).toBe(1);
             expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
             expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
+            expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr1')).toBe(true);
+            expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr2')).toBe(true);
 
             expect(newLib).toMatchObject({id: 'test', system: false});
 
