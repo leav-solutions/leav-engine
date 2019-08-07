@@ -64,7 +64,7 @@ export default function(
                         }
 
                         // Check password
-                        const user = users[0];
+                        const user = users.list[0];
                         const userPwd = await valueDomain.getValues('users', user.id, 'password');
                         const isValidPwd = await bcrypt.compare(password, userPwd[0].value);
 
