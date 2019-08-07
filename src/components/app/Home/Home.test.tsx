@@ -1,6 +1,6 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {shallow} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import Home from './Home';
 

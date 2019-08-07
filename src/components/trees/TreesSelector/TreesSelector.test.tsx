@@ -1,6 +1,7 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
+import {act} from 'react-test-renderer';
 import sleep from 'sleep-promise';
 import TreesSelector from '.';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
@@ -35,11 +36,14 @@ describe('TreesSelector', () => {
             }
         ];
 
-        const comp = mount(
-            <MockedProvider mocks={mocks} addTypename>
-                <TreesSelector />
-            </MockedProvider>
-        );
+        let comp;
+        act(() => {
+            comp = mount(
+                <MockedProvider mocks={mocks} addTypename>
+                    <TreesSelector />
+                </MockedProvider>
+            );
+        });
 
         await sleep(0);
         comp.update();

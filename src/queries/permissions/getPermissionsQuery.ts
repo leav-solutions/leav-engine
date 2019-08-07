@@ -1,5 +1,5 @@
+import {Query} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {Query} from 'react-apollo';
 import {GET_PERMISSIONS, GET_PERMISSIONSVariables} from '../../_gqlTypes/GET_PERMISSIONS';
 
 export const getPermissionsQuery = gql`
@@ -33,4 +33,5 @@ export const getPermissionsQuery = gql`
     }
 `;
 
-export class PermissionsQuery extends Query<GET_PERMISSIONS, GET_PERMISSIONSVariables> {}
+/* tslint:disable-next-line:variable-name */
+export const PermissionsQuery = p => Query<GET_PERMISSIONS, GET_PERMISSIONSVariables>(p);

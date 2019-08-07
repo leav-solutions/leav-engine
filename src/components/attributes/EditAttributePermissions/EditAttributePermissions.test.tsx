@@ -1,6 +1,7 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
+import {act} from 'react-test-renderer';
 import sleep from 'sleep-promise';
 import EditAttributePermissions from '.';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
@@ -68,8 +69,10 @@ describe('EditAttributePermissions', () => {
                 <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
             </MockedProvider>
         );
-        await sleep(0);
-        comp.update();
+
+        act(() => {
+            comp.update();
+        });
 
         expect(comp.find('input[name="relation"]')).toHaveLength(0);
     });

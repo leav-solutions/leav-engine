@@ -1,7 +1,7 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-cache-inmemory';
 import {render} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
 import sleep from 'sleep-promise';
 import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
 import TreeStructure from './TreeStructure';

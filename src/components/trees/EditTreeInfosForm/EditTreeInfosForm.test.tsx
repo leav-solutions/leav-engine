@@ -1,6 +1,6 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {shallow} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
 import {act, create} from 'react-test-renderer';
 import EditTreeInfosForm from './EditTreeInfosForm';
 

@@ -1,14 +1,14 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsRelation} from '../../../_gqlTypes/globalTypes';
 import {Mockify} from '../../../_types//Mockify';
 import EditLibraryPermissions from './EditLibraryPermissions';
 
 describe('EditLibraryPermissions', () => {
     test('Hide relation if 1 tree selected', async () => {
-        const lib: Mockify<GET_LIBRARIES_libraries> = {
+        const lib: Mockify<GET_LIBRARIES_libraries_list> = {
             id: 'test_lib',
             permissions_conf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}}],
@@ -22,7 +22,7 @@ describe('EditLibraryPermissions', () => {
             <MockedProvider>
                 <EditLibraryPermissions
                     readOnly={false}
-                    library={lib as GET_LIBRARIES_libraries}
+                    library={lib as GET_LIBRARIES_libraries_list}
                     onSubmitSettings={onSubmit}
                 />
             </MockedProvider>
@@ -32,7 +32,7 @@ describe('EditLibraryPermissions', () => {
     });
 
     test('Show relation if more than 1 tree selected', async () => {
-        const lib: Mockify<GET_LIBRARIES_libraries> = {
+        const lib: Mockify<GET_LIBRARIES_libraries_list> = {
             id: 'test_lib',
             permissions_conf: {
                 permissionTreeAttributes: [
@@ -53,7 +53,7 @@ describe('EditLibraryPermissions', () => {
             <MockedProvider>
                 <EditLibraryPermissions
                     readOnly={false}
-                    library={lib as GET_LIBRARIES_libraries}
+                    library={lib as GET_LIBRARIES_libraries_list}
                     onSubmitSettings={onSubmit}
                 />
             </MockedProvider>
@@ -63,7 +63,7 @@ describe('EditLibraryPermissions', () => {
     });
 
     test('Call submit function on submit', async () => {
-        const lib: Mockify<GET_LIBRARIES_libraries> = {
+        const lib: Mockify<GET_LIBRARIES_libraries_list> = {
             id: 'test_lib',
             permissions_conf: {
                 permissionTreeAttributes: [{id: 'test_tree_attr', linked_tree: 'some_tree', label: {fr: 'Test'}}],
@@ -77,7 +77,7 @@ describe('EditLibraryPermissions', () => {
             <MockedProvider>
                 <EditLibraryPermissions
                     readOnly={false}
-                    library={lib as GET_LIBRARIES_libraries}
+                    library={lib as GET_LIBRARIES_libraries_list}
                     onSubmitSettings={onSubmit}
                 />
             </MockedProvider>

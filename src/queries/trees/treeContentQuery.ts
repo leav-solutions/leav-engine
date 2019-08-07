@@ -1,9 +1,10 @@
+import {Query} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {Query} from 'react-apollo';
 import {TREE_CONTENT, TREE_CONTENTVariables} from '../../_gqlTypes/TREE_CONTENT';
 import {recordIdentityFragment} from '../libraries/recordIdentityFragment';
 
-export class TreeContentQuery extends Query<TREE_CONTENT, TREE_CONTENTVariables> {}
+/* tslint:disable-next-line:variable-name */
+export const TreeContentQuery = p => Query<TREE_CONTENT, TREE_CONTENTVariables>(p);
 
 export const getTreeContentQuery = gql`
     ${recordIdentityFragment}

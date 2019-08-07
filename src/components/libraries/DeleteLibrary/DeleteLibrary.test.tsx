@@ -1,14 +1,14 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {render} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_LIBRARIES_libraries} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {Mockify} from '../../../_types//Mockify';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import DeleteLibrary from './DeleteLibrary';
 
 describe('DeleteLibrary', () => {
     test('Disable button on system lib', async () => {
-        const library: Mockify<GET_LIBRARIES_libraries> = {
+        const library: Mockify<GET_LIBRARIES_libraries_list> = {
             id: 'test',
             label: {fr: 'Test', en: null},
             system: true
@@ -16,7 +16,7 @@ describe('DeleteLibrary', () => {
         const comp = render(
             <MockedProvider>
                 <MockedUserContextProvider>
-                    <DeleteLibrary library={library as GET_LIBRARIES_libraries} />
+                    <DeleteLibrary library={library as GET_LIBRARIES_libraries_list} />
                 </MockedUserContextProvider>
             </MockedProvider>
         );
