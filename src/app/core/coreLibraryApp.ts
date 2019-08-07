@@ -126,6 +126,13 @@ export default function(
             };
 
             for (const lib of libraries.list) {
+                // If library has no attribute at all, it means it's being created and we're just between library
+                // creation and attributes linking. So just ignore it now, everyting will be ok when it's fully created.
+                // Otherwise it will just break schema generation
+                if (!lib.attributes.length) {
+                    continue;
+                }
+
                 const libQueryName = utils.libNameToQueryName(lib.id);
                 const libTypeName = utils.libNameToTypeName(lib.id);
 
