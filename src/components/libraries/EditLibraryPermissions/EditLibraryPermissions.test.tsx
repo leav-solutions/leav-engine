@@ -1,6 +1,7 @@
 import {MockedProvider} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsRelation} from '../../../_gqlTypes/globalTypes';
 import {Mockify} from '../../../_types//Mockify';
@@ -18,15 +19,18 @@ describe('EditLibraryPermissions', () => {
 
         const onSubmit = jest.fn();
 
-        const comp = mount(
-            <MockedProvider>
-                <EditLibraryPermissions
-                    readOnly={false}
-                    library={lib as GET_LIBRARIES_libraries_list}
-                    onSubmitSettings={onSubmit}
-                />
-            </MockedProvider>
-        );
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider>
+                    <EditLibraryPermissions
+                        readOnly={false}
+                        library={lib as GET_LIBRARIES_libraries_list}
+                        onSubmitSettings={onSubmit}
+                    />
+                </MockedProvider>
+            );
+        });
 
         expect(comp.find('input[name="relation"]')).toHaveLength(0);
     });
@@ -49,15 +53,18 @@ describe('EditLibraryPermissions', () => {
 
         const onSubmit = jest.fn();
 
-        const comp = mount(
-            <MockedProvider>
-                <EditLibraryPermissions
-                    readOnly={false}
-                    library={lib as GET_LIBRARIES_libraries_list}
-                    onSubmitSettings={onSubmit}
-                />
-            </MockedProvider>
-        );
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider>
+                    <EditLibraryPermissions
+                        readOnly={false}
+                        library={lib as GET_LIBRARIES_libraries_list}
+                        onSubmitSettings={onSubmit}
+                    />
+                </MockedProvider>
+            );
+        });
 
         expect(comp.find('input[name="relation"]')).toHaveLength(2);
     });
@@ -73,15 +80,18 @@ describe('EditLibraryPermissions', () => {
 
         const onSubmit = jest.fn();
 
-        const comp = mount(
-            <MockedProvider>
-                <EditLibraryPermissions
-                    readOnly={false}
-                    library={lib as GET_LIBRARIES_libraries_list}
-                    onSubmitSettings={onSubmit}
-                />
-            </MockedProvider>
-        );
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider>
+                    <EditLibraryPermissions
+                        readOnly={false}
+                        library={lib as GET_LIBRARIES_libraries_list}
+                        onSubmitSettings={onSubmit}
+                    />
+                </MockedProvider>
+            );
+        });
         comp.find('form').simulate('submit');
 
         expect(onSubmit).toBeCalled();

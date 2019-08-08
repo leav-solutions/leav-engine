@@ -1,6 +1,7 @@
+import {useQuery} from '@apollo/react-hooks';
 import React from 'react';
 import {FormDropdownProps} from 'semantic-ui-react';
-import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
+import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import TreesSelectorField from '../TreesSelectorField';
 
@@ -9,19 +10,8 @@ interface IAttributesSelectorProps extends FormDropdownProps {
 }
 
 function TreesSelector({filters, ...fieldProps}: IAttributesSelectorProps): JSX.Element {
-    return (
-        <TreesQuery query={getTreesQuery} variables={filters}>
-            {({loading, error, data}) => {
-                return (
-                    <TreesSelectorField
-                        {...fieldProps}
-                        loading={loading}
-                        trees={!!data && data.trees ? data.trees.list : []}
-                    />
-                );
-            }}
-        </TreesQuery>
-    );
+    const {loading, data} = useQuery(getTreesQuery, {variables: filters});
+    return <TreesSelectorField {...fieldProps} loading={loading} trees={!!data && data.trees ? data.trees.list : []} />;
 }
 
 export default TreesSelector;

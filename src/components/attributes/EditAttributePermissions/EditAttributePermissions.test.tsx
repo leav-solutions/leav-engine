@@ -1,7 +1,7 @@
 import {MockedProvider} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-test-renderer';
+import {act} from 'react-dom/test-utils';
 import sleep from 'sleep-promise';
 import EditAttributePermissions from '.';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
@@ -64,11 +64,14 @@ describe('EditAttributePermissions', () => {
         };
         const onSubmit = jest.fn();
 
-        const comp = mount(
-            <MockedProvider mocks={mocks} addTypename>
-                <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
-            </MockedProvider>
-        );
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks} addTypename>
+                    <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
+                </MockedProvider>
+            );
+        });
 
         act(() => {
             comp.update();
@@ -90,11 +93,14 @@ describe('EditAttributePermissions', () => {
         };
         const onSubmit = jest.fn();
 
-        const comp = mount(
-            <MockedProvider mocks={mocks} addTypename>
-                <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
-            </MockedProvider>
-        );
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks} addTypename>
+                    <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
+                </MockedProvider>
+            );
+        });
         await sleep(0);
         comp.update();
 
@@ -111,11 +117,14 @@ describe('EditAttributePermissions', () => {
         };
         const onSubmit = jest.fn();
 
-        const comp = mount(
-            <MockedProvider mocks={mocks} addTypename>
-                <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
-            </MockedProvider>
-        );
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks} addTypename>
+                    <EditAttributePermissions readOnly={false} attribute={attr} onSubmitSettings={onSubmit} />
+                </MockedProvider>
+            );
+        });
         await sleep(0);
         comp.update();
 
