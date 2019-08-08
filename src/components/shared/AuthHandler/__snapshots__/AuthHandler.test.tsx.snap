@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AuthHandler Snapshot test 1`] = `
+exports[`Snapshot test 1`] = `
 initialize {
   "0": Object {
     "attribs": Object {
