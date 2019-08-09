@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AttributeFormat, AttributeType, AvailableLanguage, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES

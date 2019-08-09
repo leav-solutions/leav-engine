@@ -111,7 +111,7 @@ export interface AttributeInput {
     actions_list?: ActionsListConfigurationInput | null;
     permissions_conf?: Treepermissions_confInput | null;
     multiple_values?: boolean | null;
-    versions_conf?: valuesversions_confInput | null;
+    versions_conf?: ValuesVersionsConfInput | null;
 }
 
 export interface EmbeddedAttributeInput {
@@ -193,7 +193,7 @@ export interface Treepermissions_confInput {
     relation: PermissionsRelation;
 }
 
-export interface valuesversions_confInput {
+export interface ValuesVersionsConfInput {
     versionable: boolean;
     mode?: ValueVersionMode | null;
     trees?: string[] | null;
