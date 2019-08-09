@@ -27,7 +27,83 @@
   <noscript>
     You need to enable JavaScript to run this app.
   </noscript>
-  <div id="root" class="height100"></div>
+  <div id="root" class="height100">
+      <style>
+        svg {
+            position:fixed;
+            top:50%;
+            left:50%;
+            margin-top:-75px;
+            margin-left:-50px;
+            overflow: visible;
+            width: 100px;
+            height: 150px;
+        }
+        svg g {
+            animation: slide 2s linear infinite;
+        }
+            svg g:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        svg g:nth-child(2) path {
+            animation-delay: 0.5s;
+            stroke-dasharray: 0px 158px;
+            stroke-dashoffset: 1px;
+        }
+        svg path {
+            stroke: url(#gradient);
+            stroke-width: 20px;
+            stroke-linecap: round;
+            fill: none;
+            stroke-dasharray: 0 157px;
+            stroke-dashoffset: 0;
+            animation: escalade 2s cubic-bezier(0.8, 0, 0.2, 1) infinite;
+        }
+        svg text{
+            fill: url(#gradient);
+            font-size:1.5em;
+            text-anchor: middle;
+        }
+
+        @keyframes slide {
+            0% {
+                transform: translateY(-50px);
+            }
+            100% {
+                transform: translateY(50px);
+            }
+        }
+        @keyframes escalade {
+            0% {
+                stroke-dasharray: 0 157px;
+                stroke-dashoffset: 0;
+            }
+            50% {
+                stroke-dasharray: 156px 157px;
+                stroke-dashoffset: 0;
+            }
+            100% {
+                stroke-dasharray: 156px 157px;
+                stroke-dashoffset: -156px;
+            }
+        }
+      </style>
+      <svg>
+            <g>
+                <path d="M 50,100 A 1,1 0 0 1 50,0"></path>
+            </g>
+            <g>
+                <path d="M 50,75 A 1,1 0 0 0 50,-25"></path>
+            </g>
+            <text x="50" y="160">Loading ...</text>
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#00aabf;stop-opacity:1"></stop>
+                    <stop offset="100%" style="stop-color:#21ba45;stop-opacity:1"></stop>
+                </linearGradient>
+            </defs>
+        </svg>
+  </div>
   <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
