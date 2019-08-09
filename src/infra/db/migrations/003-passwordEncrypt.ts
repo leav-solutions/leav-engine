@@ -1,6 +1,5 @@
 import {aql} from 'arangojs';
 import {IDbService} from '../dbService';
-
 import {IMigration} from '../dbUtils';
 
 export default function(dbService: IDbService): IMigration {
@@ -11,7 +10,8 @@ export default function(dbService: IDbService): IMigration {
                 actions_list: {
                     saveValue: [
                         {
-                            name: 'encrypt'
+                            name: 'encrypt',
+                            is_system: true
                         }
                     ]
                 }
