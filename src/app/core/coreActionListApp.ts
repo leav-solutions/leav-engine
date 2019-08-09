@@ -28,7 +28,9 @@ export default function(actionsListDomain: IActionsListDomain): ICoreAttributeAp
                     type ActionParam {
                         name: String!,
                         type: String!,
-                        description: String
+                        description: String,
+                        required: Boolean,
+                        default_value: String
                     }
 
                     type Action {

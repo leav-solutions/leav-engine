@@ -14,7 +14,7 @@ export default function(actionsListDomain: IActionsListDomain): IActionsListFunc
         description: 'Check if value is a string matching given regex',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
-        params: [{name: 'regex', type: 'string', description: 'Validation regex'}],
+        params: [{name: 'regex', type: 'string', description: 'Validation regex', required: true, default_value: ''}],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): ActionsListValueType => {
             let schema = Joi.string();
 

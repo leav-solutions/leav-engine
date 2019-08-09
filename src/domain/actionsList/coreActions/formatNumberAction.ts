@@ -30,27 +30,37 @@ export default function(): IActionsListFunction {
             {
                 name: 'decimals',
                 type: 'number',
-                description: 'Number of decimals'
+                description: 'Number of decimals',
+                required: true,
+                default_value: '2'
             },
             {
                 name: 'thousandsSeparator',
                 type: 'string',
-                description: 'Thousands separator'
+                description: 'Thousands separator',
+                required: false,
+                default_value: ' '
             },
             {
                 name: 'decimalSeparator',
                 type: 'string',
-                description: 'Decimals separator'
+                description: 'Decimals separator',
+                required: false,
+                default_value: ','
             },
             {
                 name: 'prefix',
                 type: 'string',
-                description: 'Number prefix'
+                description: 'Number prefix',
+                required: false,
+                default_value: ''
             },
             {
                 name: 'suffix',
                 type: 'string',
-                description: 'Number suffix'
+                description: 'Number suffix',
+                required: false,
+                default_value: ''
             }
         ],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {

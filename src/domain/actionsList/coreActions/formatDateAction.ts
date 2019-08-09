@@ -16,7 +16,9 @@ export default function(): IActionsListFunction {
             {
                 name: 'format',
                 type: 'string',
-                description: 'Date format. Available format: https://momentjs.com/docs/#/displaying/format/'
+                description: 'Date format. Available format: https://momentjs.com/docs/#/displaying/format/',
+                required: true,
+                default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {

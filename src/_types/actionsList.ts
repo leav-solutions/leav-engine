@@ -32,12 +32,20 @@ export interface IActionsListParams {
     [name: string]: any;
 }
 
+export interface IActionsListParamsConfig {
+    name: string;
+    type: string;
+    description: string;
+    required: boolean;
+    default_value: string;
+}
+
 export interface IActionsListFunction {
     name: string;
     description: string;
     input_types: ActionsListIOTypes[];
     output_types: ActionsListIOTypes[];
-    params?: Array<{name: string; type: string; description: string}>;
+    params?: IActionsListParamsConfig[];
     action: (value: ActionsListValueType, params: IActionsListParams, ctx: IActionsListContext) => ActionsListValueType;
 }
 
