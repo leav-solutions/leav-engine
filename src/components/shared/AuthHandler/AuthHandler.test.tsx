@@ -1,30 +1,52 @@
 import React from 'react';
-import {render, mount} from 'enzyme';
+import {shallow} from 'enzyme';
+import {act} from 'react-test-renderer';
 import AuthHandler from './AuthHandler';
 
-import Login from '../Login';
-import App from '../../app/App';
+const storageGen = () => {
+    let store = {};
 
-const globalAny: any = global;
-
-const localStorageMock = {
-    setItem: jest.fn()
+    return {
+        key: nbr => {
+            return nbr.toString;
+        },
+        length: 1,
+        setItem: (key, value) => {
+            key = key;
+            store[key] = value;
+        },
+        removeItem: key => {
+            if (store[key]) {
+                store[key] = undefined;
+            }
+        },
+        getItem: key => {
+            return store[key];
+        },
+        clear: () => {
+            store = {};
+        }
+    };
 };
 
-globalAny.localStorage = localStorageMock;
+describe('AuthHandler', () => {
+    test('renders login if no token in local storage, app otherwise', async () => {
+        let wrapper;
+        let storage;
 
-test('Snapshot test', async () => {
-    const comp = render(<AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} />);
-    expect(comp).toMatchSnapshot();
-});
+        act(() => {
+            storage = storageGen();
+            wrapper = shallow(<AuthHandler url={''} storage={storage} />);
+        });
 
-test('renders login if no token in local storage, app otherwise', async () => {
-    globalAny.localStorage.clear();
-    const wrapper = mount(<AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} />);
-    const loginComp = render(<Login />);
-    const app = render(<App />);
-    expect(wrapper.childAt(0).contains(loginComp));
-    globalAny.localStorage.setItem('accessToken', '1');
-    wrapper.update();
-    expect(wrapper.childAt(0).contains(app));
+        expect(wrapper.find('Login')).toHaveLength(1);
+
+        act(() => {
+            const successFunc: any = wrapper.find('Login').prop('onSuccess');
+            successFunc('2');
+            wrapper = shallow(<AuthHandler url={''} storage={storage} />);
+        });
+
+        expect(wrapper.find('App')).toHaveLength(1);
+    });
 });
