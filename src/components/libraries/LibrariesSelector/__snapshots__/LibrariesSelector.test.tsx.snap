@@ -28,6 +28,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Object {
               "attribs": Object {
+                "aria-atomic": "true",
                 "aria-live": "polite",
                 "class": "text",
                 "role": "alert",
@@ -107,11 +108,13 @@ initialize {
               "prev": [Circular],
               "type": "tag",
               "x-attribsNamespace": Object {
+                "aria-atomic": undefined,
                 "aria-live": undefined,
                 "class": undefined,
                 "role": undefined,
               },
               "x-attribsPrefix": Object {
+                "aria-atomic": undefined,
                 "aria-live": undefined,
                 "class": undefined,
                 "role": undefined,
@@ -139,6 +142,7 @@ initialize {
           },
           Object {
             "attribs": Object {
+              "aria-atomic": "true",
               "aria-live": "polite",
               "class": "text",
               "role": "alert",
@@ -250,11 +254,13 @@ initialize {
             },
             "type": "tag",
             "x-attribsNamespace": Object {
+              "aria-atomic": undefined,
               "aria-live": undefined,
               "class": undefined,
               "role": undefined,
             },
             "x-attribsPrefix": Object {
+              "aria-atomic": undefined,
               "aria-live": undefined,
               "class": undefined,
               "role": undefined,
@@ -319,6 +325,7 @@ initialize {
             "parent": [Circular],
             "prev": Object {
               "attribs": Object {
+                "aria-atomic": "true",
                 "aria-live": "polite",
                 "class": "text",
                 "role": "alert",
@@ -363,11 +370,13 @@ initialize {
               },
               "type": "tag",
               "x-attribsNamespace": Object {
+                "aria-atomic": undefined,
                 "aria-live": undefined,
                 "class": undefined,
                 "role": undefined,
               },
               "x-attribsPrefix": Object {
+                "aria-atomic": undefined,
                 "aria-live": undefined,
                 "class": undefined,
                 "role": undefined,
@@ -432,6 +441,7 @@ initialize {
               "parent": [Circular],
               "prev": Object {
                 "attribs": Object {
+                  "aria-atomic": "true",
                   "aria-live": "polite",
                   "class": "text",
                   "role": "alert",
@@ -476,11 +486,13 @@ initialize {
                 },
                 "type": "tag",
                 "x-attribsNamespace": Object {
+                  "aria-atomic": undefined,
                   "aria-live": undefined,
                   "class": undefined,
                   "role": undefined,
                 },
                 "x-attribsPrefix": Object {
+                  "aria-atomic": undefined,
                   "aria-live": undefined,
                   "class": undefined,
                   "role": undefined,

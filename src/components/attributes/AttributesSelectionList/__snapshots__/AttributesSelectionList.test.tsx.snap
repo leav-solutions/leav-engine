@@ -38,6 +38,7 @@ exports[`AttributesSelectionList Snapshot test 1`] = `
         <div
           className="ui fitted read-only checkbox"
           onChange={[Function]}
+          onClick={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
         >

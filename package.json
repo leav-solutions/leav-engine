@@ -28,7 +28,7 @@
     "react-sortable-tree": "2.3.0",
     "remove-accents": "0.4.2",
     "semantic-ui-css": "2.4.1",
-    "semantic-ui-react": "0.85.0",
+    "semantic-ui-react": "0.88.0",
     "sleep-promise": "8.0.1",
     "styled-components": "4.1.3"
   },
