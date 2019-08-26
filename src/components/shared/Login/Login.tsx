@@ -2,13 +2,17 @@ import React, {useCallback, useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
 import styles from './login.module.css';
+
 interface ILoginProps extends WithNamespaces {
+    url: string;
     onSuccess: (token: string) => void;
+    message?: string;
 }
 
 const extractValueFromEventAndThen = next => event => {
     next(event.target.value);
 };
+
 const processLogin = (
     authUrl: string,
     login: string,
@@ -51,12 +55,13 @@ const processLogin = (
         });
 };
 
-function Login({i18n: i18next, t, onSuccess}: ILoginProps): JSX.Element {
+function Login({i18n: i18next, t, onSuccess, message, url}: ILoginProps): JSX.Element {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
-    const authUrl = process.env.REACT_APP_AUTH_URL || '';
+    const authUrl = url;
+
     const proceedAuth = useCallback(() => {
         setIsLoading(true);
         setLoginError('');
@@ -131,6 +136,15 @@ function Login({i18n: i18next, t, onSuccess}: ILoginProps): JSX.Element {
                                 <div className="header">{t('login.apologize_header')}</div>
                                 <p>{t('login.apologize')}</p>
                                 <p>{t('login.error.' + loginError)}</p>
+                            </div>
+                        </div>
+                    ) : null}
+                    {message ? (
+                        <div className="ui icon message orange">
+                            <i className="lock icon" />
+                            <div className="content">
+                                <p>{t('login.apologize')}</p>
+                                <p>{t(message)}</p>
                             </div>
                         </div>
                     ) : null}

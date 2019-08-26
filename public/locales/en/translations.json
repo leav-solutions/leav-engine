@@ -122,7 +122,11 @@
         },
         "error": {
             "bad_credentials" : "Invalid credentials.",
-            "no_server_response": "The server does not respond."
+            "no_server_response": "The server does not respond.",
+            "session_expired": "Your session has expired."
         }
     },
+    "navigator": {
+        "title": "browser"
+    }
 }

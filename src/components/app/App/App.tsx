@@ -17,21 +17,19 @@ import Home from '../Home';
 
 interface IAppState {
     fragmentMatcher: IntrospectionFragmentMatcher | null;
-    token: string;
 }
 
 interface IAppProps extends WithNamespaces {
     token: string;
+    onTokenInvalid: (message?: string) => void;
 }
 
 class App extends React.Component<IAppProps, IAppState> {
-    // TODO: handle auth token properly
     constructor(props) {
         super(props);
 
         this.state = {
-            fragmentMatcher: null,
-            token: props.token
+            fragmentMatcher: null
         };
 
         this._getFragmentMatcher();
@@ -39,7 +37,8 @@ class App extends React.Component<IAppProps, IAppState> {
 
     public render() {
         const {i18n} = this.props;
-        const {fragmentMatcher, token} = this.state;
+        const {fragmentMatcher} = this.state;
+        const {token} = this.props;
 
         if (!fragmentMatcher) {
             return <Loading />;
@@ -123,7 +122,7 @@ class App extends React.Component<IAppProps, IAppState> {
      * More info: https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
      */
     private _getFragmentMatcher = async () => {
-        const {token} = this.state;
+        const {token} = this.props;
         const res = await fetch(process.env.REACT_APP_API_URL || '', {
             method: 'POST',
             headers: {
@@ -148,15 +147,23 @@ class App extends React.Component<IAppProps, IAppState> {
         });
 
         const resData: IntrospectionResultData = (await res.json()).data;
-        resData.__schema.types = resData.__schema.types.filter(t => t.possibleTypes !== null);
 
-        this.setState({
-            fragmentMatcher: new IntrospectionFragmentMatcher({
-                introspectionQueryResultData: resData
-            })
-        });
+        // If the server sends a 401, resData will not contain the shema.
+        // The try and catch allows to handle the situation.
+        try {
+            resData.__schema.types = resData.__schema.types.filter(t => t.possibleTypes !== null);
+
+            this.setState({
+                fragmentMatcher: new IntrospectionFragmentMatcher({
+                    introspectionQueryResultData: resData
+                })
+            });
+        } catch (error) {
+            this.props.onTokenInvalid('login.error.session_expired');
+        }
     }
 
+    // This function will catch the errors from the exchange between Apollo Client and the server.
     private _handleApolloError = err => {
         const {graphQLErrors, networkError} = err;
         if (graphQLErrors) {
@@ -166,6 +173,9 @@ class App extends React.Component<IAppProps, IAppState> {
         }
         if (networkError) {
             console.log(`[Network error]: ${networkError}`);
+            if (networkError.statusCode === 401) {
+                this.props.onTokenInvalid('login.error.session_expired');
+            }
         }
     }
 }
