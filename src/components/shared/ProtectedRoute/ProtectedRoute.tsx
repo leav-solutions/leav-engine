@@ -16,7 +16,8 @@ function ProtectedRoute({component: Component, permissions, ...rest}: IProtected
     const hasAccess =
         !permissions ||
         permissions.reduce(
-            (isAuthorized, permName) => isAuthorized && !!userData.permissions && userData.permissions[permName],
+            (isAuthorized: boolean, permName): boolean =>
+                isAuthorized && !!userData.permissions && userData.permissions[permName],
             true
         );
 

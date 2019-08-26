@@ -1,5 +1,5 @@
+import {Query} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {Query} from 'react-apollo';
 import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../_gqlTypes/GET_ATTRIBUTES';
 import {attributeDetailsFragment} from './attributeFragments';
 
@@ -38,4 +38,5 @@ export const getAttributesQuery = gql`
     }
 `;
 
-export class AttributesQuery extends Query<GET_ATTRIBUTES, GET_ATTRIBUTESVariables> {}
+/* tslint:disable-next-line:variable-name */
+export const AttributesQuery = p => Query<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(p);

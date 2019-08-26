@@ -1,5 +1,5 @@
+import {Query} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {Query} from 'react-apollo';
 import {ADMIN_PERMISSIONS} from '../../_gqlTypes/ADMIN_PERMISSIONS';
 
 export const adminPermissionsQuery = gql`
@@ -23,4 +23,5 @@ export const adminPermissionsQuery = gql`
     }
 `;
 
-export class AdminPermissionsQuery extends Query<ADMIN_PERMISSIONS> {}
+/* tslint:disable-next-line:variable-name */
+export const AdminPermissionsQuery = p => Query<ADMIN_PERMISSIONS>(p);

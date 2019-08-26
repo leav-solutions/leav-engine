@@ -1,5 +1,5 @@
+import {Mutation} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {Mutation} from 'react-apollo';
 import {SAVE_PERMISSION, SAVE_PERMISSIONVariables} from '../../_gqlTypes/SAVE_PERMISSION';
 
 export const savePermissionsQuery = gql`
@@ -21,4 +21,5 @@ export const savePermissionsQuery = gql`
     }
 `;
 
-export class SavePermissionsMutation extends Mutation<SAVE_PERMISSION, SAVE_PERMISSIONVariables> {}
+/* tslint:disable-next-line:variable-name */
+export const SavePermissionsMutation = p => Mutation<SAVE_PERMISSION, SAVE_PERMISSIONVariables>(p);

@@ -1,13 +1,15 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import {mockAttrSimple} from '../../../__mocks__/attributes';
 import AttributesList from './AttributesList';
 
 describe('AttributesList', () => {
-    const attributes: GET_ATTRIBUTES_attributes[] = [
+    const attributes: GET_ATTRIBUTES_attributes_list[] = [
         {
+            ...mockAttrSimple,
             id: 'attr1',
             type: AttributeType.simple,
             format: AttributeFormat.text,
@@ -17,6 +19,7 @@ describe('AttributesList', () => {
             permissions_conf: null
         },
         {
+            ...mockAttrSimple,
             id: 'attr2',
             type: AttributeType.simple,
             format: AttributeFormat.text,
@@ -26,6 +29,7 @@ describe('AttributesList', () => {
             permissions_conf: null
         },
         {
+            ...mockAttrSimple,
             id: 'attr3',
             type: AttributeType.simple,
             format: AttributeFormat.text,

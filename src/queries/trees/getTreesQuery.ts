@@ -1,5 +1,5 @@
+import {Query} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {Query} from 'react-apollo';
 import {GET_TREES, GET_TREESVariables} from '../../_gqlTypes/GET_TREES';
 
 export const getTreesQueryName = 'GET_TREES';
@@ -18,4 +18,5 @@ export const getTreesQuery = gql`
     }
 `;
 
-export class TreesQuery extends Query<GET_TREES, GET_TREESVariables> {}
+/* tslint:disable-next-line:variable-name */
+export const TreesQuery = p => Query<GET_TREES, GET_TREESVariables>(p);

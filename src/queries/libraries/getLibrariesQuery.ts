@@ -1,5 +1,5 @@
+import {Query} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {Query} from 'react-apollo';
 import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../../_gqlTypes/GET_LIBRARIES';
 import {attributeDetailsFragment} from '../attributes/attributeFragments';
 
@@ -33,4 +33,5 @@ export const getLibsQuery = gql`
     }
 `;
 
-export class LibrariesQuery extends Query<GET_LIBRARIES, GET_LIBRARIESVariables> {}
+/* tslint:disable-next-line:variable-name */
+export const LibrariesQuery = p => Query<GET_LIBRARIES, GET_LIBRARIESVariables>(p);

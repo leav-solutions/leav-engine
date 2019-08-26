@@ -1,6 +1,6 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {shallow} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
 import {act, create} from 'react-test-renderer';
 import EditTreeInfosForm from './EditTreeInfosForm';
 
@@ -30,11 +30,14 @@ describe('EditTreeInfosForm', () => {
     });
 
     test('Autofill ID with label on new lib', async () => {
-        const comp = create(
-            <MockedProvider>
-                <EditTreeInfosForm onSubmit={onSubmit} tree={null} readOnly={false} />
-            </MockedProvider>
-        );
+        let comp;
+        await act(async () => {
+            comp = create(
+                <MockedProvider>
+                    <EditTreeInfosForm onSubmit={onSubmit} tree={null} readOnly={false} />
+                </MockedProvider>
+            );
+        });
 
         act(() => {
             comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {

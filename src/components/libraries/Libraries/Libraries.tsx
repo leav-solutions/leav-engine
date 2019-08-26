@@ -1,3 +1,4 @@
+import {useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
@@ -5,8 +6,9 @@ import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
-import {getLibsQuery, LibrariesQuery} from '../../../queries/libraries/getLibrariesQuery';
+import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {addWildcardToFilters} from '../../../utils/utils';
+import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import LibrariesList from '../LibrariesList';
 
@@ -18,6 +20,9 @@ function Libraries({t, history}: ILibrariesProps): JSX.Element {
     const {lang} = useLang();
     const userData = useUserData();
     const [filters, setFilters] = useState<any>({});
+    const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
+        variables: {...addWildcardToFilters(filters), lang}
+    });
 
     const _onFiltersUpdate = (filterElem: any) => {
         const newElemState =
@@ -32,6 +37,7 @@ function Libraries({t, history}: ILibrariesProps): JSX.Element {
             [filterElem.name]: newElemState
         });
     };
+    const onRowClick = library => history.push('/libraries/edit/' + library.id);
 
     return (
         <>
@@ -51,25 +57,17 @@ function Libraries({t, history}: ILibrariesProps): JSX.Element {
                     </Grid.Column>
                 )}
             </Grid>
-            <LibrariesQuery query={getLibsQuery} variables={{...addWildcardToFilters(filters), lang}}>
-                {({loading, error, data}) => {
-                    if (typeof error !== 'undefined') {
-                        return <p>Error: {error.message}</p>;
-                    }
-
-                    const onRowClick = library => history.push('/libraries/edit/' + library.id);
-
-                    return (
-                        <LibrariesList
-                            loading={loading || !data}
-                            libraries={data && data.libraries ? data.libraries.list : []}
-                            onRowClick={onRowClick}
-                            onFiltersUpdate={_onFiltersUpdate}
-                            filters={filters}
-                        />
-                    );
-                }}
-            </LibrariesQuery>
+            {typeof error !== 'undefined' ? (
+                <p>Error: {error.message}</p>
+            ) : (
+                <LibrariesList
+                    loading={loading || !data}
+                    libraries={data && data.libraries ? data.libraries.list : []}
+                    onRowClick={onRowClick}
+                    onFiltersUpdate={_onFiltersUpdate}
+                    filters={filters}
+                />
+            )}
         </>
     );
 }

@@ -1,13 +1,12 @@
-import {ApolloClient} from 'apollo-client';
+import {ApolloProvider} from '@apollo/react-common';
 import {InMemoryCache, IntrospectionFragmentMatcher, IntrospectionResultData} from 'apollo-cache-inmemory';
-import {HttpLink} from 'apollo-link-http';
-import {onError} from 'apollo-link-error';
+import {ApolloClient} from 'apollo-client';
 import {ApolloLink} from 'apollo-link';
-
+import {onError} from 'apollo-link-error';
+import {HttpLink} from 'apollo-link-http';
 import React from 'react';
-import {ApolloProvider} from 'react-apollo';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import {IsAllowedQuery, isAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
+import {isAllowedQuery, IsAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import LangContext from '../../shared/LangContext';

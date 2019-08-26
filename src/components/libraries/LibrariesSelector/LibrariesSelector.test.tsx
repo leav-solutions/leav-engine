@@ -1,6 +1,6 @@
+import {MockedProvider} from '@apollo/react-testing';
 import {render} from 'enzyme';
 import React from 'react';
-import {MockedProvider} from 'react-apollo/test-utils';
 import {AvailableLanguage} from '../../../_gqlTypes/globalTypes';
 import LibrariesSelector from './LibrariesSelector';
 
