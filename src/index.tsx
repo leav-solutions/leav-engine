@@ -6,8 +6,9 @@ import './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} />, document.getElementById(
-    'root'
-) as HTMLElement);
+ReactDOM.render(
+    <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} storage={window.sessionStorage} />,
+    document.getElementById('root') as HTMLElement
+);
 
 registerServiceWorker();
