@@ -1,0 +1,38 @@
+import React, {useState} from 'react';
+
+import App from '../../app/App';
+import Login from '../Login';
+
+interface IAuthHandlerProps {
+    url: string;
+    storage: Storage;
+}
+
+function AuthHandler({url, storage = window.sessionStorage}: IAuthHandlerProps): JSX.Element {
+    const [token, setToken] = useState(storage.getItem('accessToken') || '');
+    const [internalMessage, setInternalMessage] = useState('');
+
+    // to be passed to Login
+    const recordToken = (tokenStr: string) => {
+        storage.setItem('accessToken', tokenStr);
+        setToken(tokenStr);
+    };
+
+    // to be passed to App, allowing to handle the expiration of the token
+    // and error handling
+    const deleteToken = (message?: string) => {
+        storage.removeItem('accessToken');
+        setToken('');
+        if (message) {
+            setInternalMessage(message);
+        }
+    };
+
+    if (token) {
+        return <App token={token} onTokenInvalid={deleteToken} />;
+    } else {
+        return <Login onSuccess={recordToken} message={internalMessage} url={url} />;
+    }
+}
+
+export default AuthHandler;
