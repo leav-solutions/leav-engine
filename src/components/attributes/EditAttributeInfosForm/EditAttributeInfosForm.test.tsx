@@ -1,7 +1,7 @@
-import {shallow} from 'enzyme';
+import {render} from 'enzyme';
 import React from 'react';
 import renderer from 'react-test-renderer';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 import EditAttributeInfosForm from './EditAttributeInfosForm';
@@ -13,45 +13,32 @@ jest.mock('../../../utils/utils', () => ({
 }));
 
 describe('EditAttributeInfosForm', () => {
-    const attribute: GET_ATTRIBUTES_attributes = {
+    const attribute: GET_ATTRIBUTES_attributes_list = {
         ...mockAttrSimple,
         label: {fr: 'Test 1', en: null}
     };
     const onSubmit = jest.fn();
-
     test('Render form for existing attribute', async () => {
-        const comp = shallow(
+        const comp = render(
             <MockedLangContextProvider>
                 <EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} readOnly={false} />
             </MockedLangContextProvider>
         );
 
-        expect(
-            comp
-                .find('Header')
-                .shallow()
-                .text()
-        ).toBe('Test 1');
-        expect(comp.find('FormInput[name="id"]').props().disabled).toBe(true);
+        expect(comp.find('input[name="id"]').prop('disabled')).toBe(true);
     });
 
     test('Render form for new attribute', async () => {
-        const comp = shallow(
+        const comp = render(
             <MockedLangContextProvider>
                 <EditAttributeInfosForm attribute={null} onSubmit={onSubmit} readOnly={false} />
             </MockedLangContextProvider>
         );
 
-        expect(
-            comp
-                .find('Header')
-                .shallow()
-                .text()
-        ).toBe('attributes.new');
-        expect(comp.find('FormInput[name="id"]').props().disabled).toBe(false);
+        expect(comp.find('input[name="id"]').prop('disabled')).toBe(false);
     });
 
-    test.only('Autofill ID with label on new attribute', async () => {
+    test('Autofill ID with label on new attribute', async () => {
         const comp = renderer.create(
             <MockedLangContextProvider>
                 <EditAttributeInfosForm attribute={null} onSubmit={onSubmit} readOnly={false} />
@@ -59,24 +46,13 @@ describe('EditAttributeInfosForm', () => {
         );
 
         renderer.act(() => {
-            comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {
+            comp.root.findByProps({name: 'label.fr'}).props.onChange(null, {
                 type: 'text',
-                name: 'label/fr',
+                name: 'label.fr',
                 value: 'labelfr'
             });
         });
 
         expect(comp.root.findByProps({name: 'id'}).props.value).toBe('labelfr');
-    });
-
-    test('Call submit function on submit', async () => {
-        const comp = shallow(
-            <MockedLangContextProvider>
-                <EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} readOnly={false} />
-            </MockedLangContextProvider>
-        );
-        comp.find('Form').simulate('submit');
-
-        expect(onSubmit).toBeCalled();
     });
 });
