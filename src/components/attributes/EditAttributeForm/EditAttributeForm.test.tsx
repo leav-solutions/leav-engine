@@ -1,7 +1,6 @@
 import {shallow} from 'enzyme';
 import React from 'react';
-import renderer from 'react-test-renderer';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 import EditAttributeForm from './EditAttributeForm';
@@ -13,7 +12,7 @@ jest.mock('../../../utils/utils', () => ({
 }));
 
 describe('EditAttributeForm', () => {
-    const attribute: GET_ATTRIBUTES_attributes = {
+    const attribute: GET_ATTRIBUTES_attributes_list = {
         ...mockAttrSimple
     };
     const onSubmit = jest.fn();
@@ -33,11 +32,12 @@ describe('EditAttributeForm', () => {
 
         expect(
             comp
+                .find('EditAttributeForm')
+                .shallow()
                 .find('Header')
                 .shallow()
                 .text()
         ).toBe('Mon Attribut');
-        expect(comp.find('FormInput[name="id"]').props().disabled).toBe(true);
     });
 
     test('Render form for new attribute', async () => {
@@ -54,49 +54,11 @@ describe('EditAttributeForm', () => {
 
         expect(
             comp
+                .find('EditAttributeForm')
+                .shallow()
                 .find('Header')
                 .shallow()
                 .text()
         ).toBe('attributes.new');
-        expect(comp.find('FormInput[name="id"]').props().disabled).toBe(false);
-    });
-
-    test.only('Autofill ID with label on new attribute', async () => {
-        const comp = renderer.create(
-            <MockedLangContextProvider>
-                <EditAttributeForm
-                    attribute={null}
-                    onSubmit={onSubmit}
-                    onPermsSettingsSubmit={onPermsSettingsSubmit}
-                    readOnly={false}
-                />
-            </MockedLangContextProvider>
-        );
-
-        renderer.act(() => {
-            comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {
-                type: 'text',
-                name: 'label/fr',
-                value: 'labelfr'
-            });
-        });
-
-        expect(comp.root.findByProps({name: 'id'}).props.value).toBe('labelfr');
-    });
-
-    test('Call submit function on submit', async () => {
-        const comp = shallow(
-            <MockedLangContextProvider>
-                <EditAttributeForm
-                    attribute={attribute}
-                    onSubmit={onSubmit}
-                    onPermsSettingsSubmit={onPermsSettingsSubmit}
-                    readOnly={false}
-                />
-            </MockedLangContextProvider>
-        );
-        comp.find('Form').simulate('submit');
-
-        expect(onSubmit).toBeCalled();
     });
 });

@@ -1,4 +1,4 @@
-import {mount, shallow} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
@@ -18,7 +18,7 @@ describe('ProtectedRoute', () => {
         }
     };
 
-    test.only('Render normally if no permissions specified', async () => {
+    test('Render normally if no permissions specified', async () => {
         const comp = mount(
             <UserContext.Provider value={defaultContext}>
                 <Router>
@@ -31,7 +31,7 @@ describe('ProtectedRoute', () => {
     });
 
     test('Render normally if permission granted', async () => {
-        const comp = shallow(
+        const comp = mount(
             <UserContext.Provider value={defaultContext}>
                 <Router>
                     <ProtectedRoute
@@ -46,7 +46,7 @@ describe('ProtectedRoute', () => {
     });
 
     test('Render forbidden if not allowed', async () => {
-        const comp = shallow(
+        const comp = mount(
             <UserContext.Provider
                 value={{...defaultContext, permissions: {[PermissionsActions.admin_access_attributes]: false}}}
             >
@@ -63,7 +63,7 @@ describe('ProtectedRoute', () => {
     });
 
     test('Works with multiple permissions', async () => {
-        const comp = shallow(
+        const comp = mount(
             <UserContext.Provider
                 value={{
                     ...defaultContext,
