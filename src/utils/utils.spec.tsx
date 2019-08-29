@@ -6,6 +6,7 @@ import {Mockify} from '../_types//Mockify';
 import {
     addWildcardToFilters,
     formatIDString,
+    getFieldError,
     getInvertColor,
     getRandomColor,
     getTreeNodeKey,
@@ -148,6 +149,24 @@ describe('utils', () => {
                 access: true,
                 edit: false
             });
+        });
+    });
+
+    describe('getFieldError', () => {
+        test('Return server error', async () => {
+            const res = getFieldError('my_field', {my_field: false}, {my_field: 'ERROR'}, {});
+
+            expect(res).toBe('ERROR');
+        });
+        test('Return field error', async () => {
+            const res = getFieldError('my_field', {my_field: true}, {}, {my_field: 'ERROR'});
+
+            expect(res).toBe('ERROR');
+        });
+        test("Return no error if field hasn't been touched", async () => {
+            const res = getFieldError('my_field', {my_field: false}, {}, {my_field: 'ERROR'});
+
+            expect(res).toBe('');
         });
     });
 });

@@ -1,8 +1,11 @@
+import {FormikErrors, FormikTouched} from 'formik';
 import {i18n} from 'i18next';
+import {get} from 'lodash';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
 import {AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
+import {IErrorByField} from '../_types/errors';
 
 /**
  * Return label matching user language (or default language) from an object containing all languages labels
@@ -76,3 +79,22 @@ export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: strin
         return allPerms;
     }, {});
 };
+
+export function getFieldError<T>(
+    fieldName: string,
+    touchedFields: FormikTouched<T>,
+    serverErrors: IErrorByField,
+    inputErrors: FormikErrors<T>
+): string {
+    let inputFieldError = '';
+    let serverFieldError = '';
+    if (get(touchedFields, fieldName)) {
+        inputFieldError = get(inputErrors, fieldName, '');
+    }
+
+    if (!!serverErrors) {
+        serverFieldError = get(serverErrors, fieldName, '');
+    }
+
+    return inputFieldError || serverFieldError;
+}

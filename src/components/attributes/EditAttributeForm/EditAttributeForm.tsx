@@ -11,6 +11,7 @@ interface IEditAttributeFormProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes_list | null;
     onSubmit: (formData: any) => void;
     onPermsSettingsSubmit: (formData: any) => void;
+    onCheckIdExists: (val: string) => Promise<boolean>;
     errors?: IFormError;
     readOnly: boolean;
 }
@@ -22,7 +23,8 @@ function EditAttributeForm({
     onSubmit,
     onPermsSettingsSubmit,
     errors,
-    readOnly
+    readOnly,
+    onCheckIdExists
 }: IEditAttributeFormProps) {
     const headerLabel =
         attribute !== null && attribute.label ? localizedLabel(attribute.label, i18next) : t('attributes.new');
@@ -38,6 +40,7 @@ function EditAttributeForm({
                         onSubmit={onSubmit}
                         errors={errors}
                         readOnly={readOnly}
+                        onCheckIdExists={onCheckIdExists}
                     />
                 </Tab.Pane>
             )

@@ -5,7 +5,12 @@
         "cancel": "Cancel",
         "loading": "Loading...",
         "any_record": "Any {libLabel}",
-        "forbidden_route": "Access denied"
+        "forbidden_route": "Access denied",
+        "validation_errors": {
+            "required": "Field required",
+            "matches": "Invalid format",
+            "id_exists": "This ID already exists"
+        }
     },
     "libraries": {
         "title": "Libraries",

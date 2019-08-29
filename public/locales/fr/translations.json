@@ -4,7 +4,12 @@
         "submit": "Valider",
         "cancel": "Annuler",
         "loading": "Chargement...",
-        "forbidden_route": "Accès interdit"
+        "forbidden_route": "Accès interdit",
+        "validation_errors": {
+            "required": "Ce champ est requis",
+            "matches": "Format invalide",
+            "id_exists": "Cet identifiant est déjà utilisé"
+        }
     },
     "libraries": {
         "title": "Bibliothèques",
@@ -123,7 +128,7 @@
             "bad_credentials" : "Paramètres d'authentification incorrects.",
             "no_server_response": "Le serveur ne répond pas.",
             "session_expired": "Votre session a expiré."
-        }   
+        }
     },
     "navigator": {
         "title": "Navigateur"

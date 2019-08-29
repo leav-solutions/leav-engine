@@ -17,6 +17,7 @@ describe('EditAttributeForm', () => {
     };
     const onSubmit = jest.fn();
     const onPermsSettingsSubmit = jest.fn();
+    const onCheckIdExists = jest.fn().mockReturnValue(false);
 
     test('Render form for existing attribute', async () => {
         const comp = shallow(
@@ -26,6 +27,7 @@ describe('EditAttributeForm', () => {
                     onSubmit={onSubmit}
                     onPermsSettingsSubmit={onPermsSettingsSubmit}
                     readOnly={false}
+                    onCheckIdExists={onCheckIdExists}
                 />
             </MockedLangContextProvider>
         );
@@ -48,6 +50,7 @@ describe('EditAttributeForm', () => {
                     onSubmit={onSubmit}
                     onPermsSettingsSubmit={onPermsSettingsSubmit}
                     readOnly={false}
+                    onCheckIdExists={onCheckIdExists}
                 />
             </MockedLangContextProvider>
         );

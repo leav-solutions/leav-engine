@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from '@apollo/react-hooks';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import React from 'react';
 import {match} from 'react-router';
@@ -35,6 +35,15 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
         variables: {id: '' + attrId}
     });
     const [saveAttribute, {loading: loadingSave, error: errorSave}] = useMutation(saveAttributeQuery);
+    const [getAttrById, {data: dataAttrById}] = useLazyQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(
+        getAttributesQuery
+    );
+
+    const _isIdUnique = async val => {
+        await getAttrById({variables: {id: val}});
+
+        return !!dataAttrById && !!dataAttrById.attributes && !dataAttrById.attributes.list.length;
+    };
 
     const _getEditAttributeForm = (attrToEdit: GET_ATTRIBUTES_attributes_list | null): JSX.Element => {
         const onFormSubmit = async attrData => {
@@ -104,6 +113,7 @@ function EditAttribute({match: routeMatch, attributeId, afterSubmit, history}: I
                     errors={formErrors}
                     onPermsSettingsSubmit={onPermsSettingsSubmit}
                     readOnly={readOnly}
+                    onCheckIdExists={_isIdUnique}
                 />
             </Dimmer.Dimmable>
         );

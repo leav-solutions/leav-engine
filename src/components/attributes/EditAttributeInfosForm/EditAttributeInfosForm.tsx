@@ -2,8 +2,9 @@ import {Formik, FormikProps} from 'formik';
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
+import * as yup from 'yup';
 import useLang from '../../../hooks/useLang';
-import {formatIDString} from '../../../utils/utils';
+import {formatIDString, getFieldError} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types//errors';
@@ -16,12 +17,20 @@ interface IEditAttributeInfosFormProps extends WithNamespaces {
     onSubmit: (formData: any) => void;
     errors?: IFormError;
     readOnly: boolean;
+    onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
 const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
 const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
-function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEditAttributeInfosFormProps) {
+function EditAttributeInfosForm({
+    t,
+    errors,
+    attribute,
+    onSubmit,
+    readOnly,
+    onCheckIdExists
+}: IEditAttributeInfosFormProps) {
     const defaultAttribute: GET_ATTRIBUTES_attributes_list = {
         id: '',
         system: false,
@@ -54,13 +63,33 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
     const serverValidationErrors =
         errors && errors.extensions.code === ErrorTypes.VALIDATION_ERROR ? errors.extensions.fields : {};
 
+    let idValidator = yup
+        .string()
+        .required()
+        .matches(/^[a-z0-9_]+$/);
+
+    if (!existingAttr) {
+        // TODO: ID unicity validation is not debounced. As it's not trivial to implement, check future implementation
+        // in formik (https://github.com/jaredpalmer/formik/pull/1597)
+        idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
+    }
+
+    const validationSchema: yup.ObjectSchema<Partial<GET_ATTRIBUTES_attributes_list>> = yup.object().shape({
+        label: yup.object().shape({
+            fr: yup.string().required()
+        }),
+        id: idValidator,
+        type: yup.string().required(),
+        format: yup.string()
+    });
+
     const _renderForm = ({
         handleSubmit,
-        handleChange,
         handleBlur,
         setFieldValue,
         errors: inputErrors,
-        values
+        values,
+        touched
     }: FormikProps<GET_ATTRIBUTES_attributes_list>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
@@ -91,20 +120,25 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
         const isVersionable = !!values.versions_conf && values.versions_conf.versionable;
         const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(values.type);
 
-        const allErrors = {...serverValidationErrors, ...inputErrors};
+        const _getErrorByField = (fieldName: string): string =>
+            getFieldError<GET_ATTRIBUTES_attributes_list>(
+                fieldName,
+                touched,
+                serverValidationErrors || {},
+                inputErrors
+            );
 
         return (
             <Form onSubmit={handleSubmit}>
                 <Form.Group grouped>
                     <label>{t('attributes.label')}</label>
                     {langs.map(lang => (
-                        <FormFieldWrapper key={lang} error={allErrors && allErrors.label ? allErrors.label[lang] : ''}>
+                        <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
                             <Form.Input
-                                label={lang}
+                                label={`${lang} ${lang === defaultLang ? '*' : ''}`}
                                 width="4"
                                 name={`label.${lang}`}
                                 disabled={readOnly}
-                                required={lang === defaultLang}
                                 onChange={_handleLabelChange}
                                 onBlur={handleBlur}
                                 value={values.label[lang]}
@@ -112,18 +146,18 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                         </FormFieldWrapper>
                     ))}
                 </Form.Group>
-                <FormFieldWrapper error={!!allErrors ? allErrors.id : ''}>
+                <FormFieldWrapper error={_getErrorByField('id')}>
                     <Form.Input
                         label={t('attributes.ID')}
                         width="4"
                         disabled={existingAttr || readOnly}
                         name="id"
-                        onChange={handleChange}
+                        onChange={_handleChange}
                         onBlur={handleBlur}
                         value={values.id}
                     />
                 </FormFieldWrapper>
-                <FormFieldWrapper error={!!allErrors ? allErrors.type : ''}>
+                <FormFieldWrapper error={_getErrorByField('type')}>
                     <Form.Select
                         label={t('attributes.type')}
                         width="4"
@@ -140,7 +174,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     />
                 </FormFieldWrapper>
                 {allowFormat && (
-                    <FormFieldWrapper error={!!allErrors ? allErrors.format : ''}>
+                    <FormFieldWrapper error={_getErrorByField('format')}>
                         <Form.Select
                             label={t('attributes.format')}
                             disabled={values.system || readOnly}
@@ -156,7 +190,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     </FormFieldWrapper>
                 )}
                 {isLinkAttribute && (
-                    <FormFieldWrapper>
+                    <FormFieldWrapper error={_getErrorByField('linked_library')}>
                         <LibrariesSelector
                             disabled={values.system || readOnly}
                             lang={userLang}
@@ -173,7 +207,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     </FormFieldWrapper>
                 )}
                 {values.type === AttributeType.tree && (
-                    <FormFieldWrapper error={!!allErrors ? allErrors.versions_conf : ''}>
+                    <FormFieldWrapper error={_getErrorByField('versions_conf')}>
                         <TreesSelector
                             fluid
                             selection
@@ -188,7 +222,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     </FormFieldWrapper>
                 )}
                 {allowMultipleValues && (
-                    <FormFieldWrapper error={!!allErrors ? allErrors.multiple_values : ''}>
+                    <FormFieldWrapper error={_getErrorByField('multiple_values')}>
                         <Form.Checkbox
                             label={t('attributes.allow_multiple_values')}
                             disabled={values.system || readOnly}
@@ -203,7 +237,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                 {allowVersionable && (
                     <Form.Group grouped>
                         <label>{t('attributes.values_versions')}</label>
-                        <FormFieldWrapper error={!!allErrors ? allErrors.versions_conf : ''}>
+                        <FormFieldWrapper error={_getErrorByField('versions_conf')}>
                             <Form.Checkbox
                                 label={t('attributes.versionable')}
                                 disabled={values.system || readOnly}
@@ -216,7 +250,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                         </FormFieldWrapper>
                         {isVersionable && (
                             <>
-                                <FormFieldWrapper error={!!allErrors ? allErrors.versions_conf : ''}>
+                                <FormFieldWrapper error={_getErrorByField('versions_conf.mode')}>
                                     <Form.Select
                                         label={t('attributes.versions_mode')}
                                         disabled={values.system || readOnly}
@@ -240,7 +274,7 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                                         }
                                     />
                                 </FormFieldWrapper>
-                                <FormFieldWrapper error={!!allErrors ? allErrors.versions_conf : ''}>
+                                <FormFieldWrapper error={_getErrorByField('versions_conf.trees')}>
                                     <TreesSelector
                                         fluid
                                         selection
@@ -277,7 +311,13 @@ function EditAttributeInfosForm({t, errors, attribute, onSubmit, readOnly}: IEdi
                     </Message.Header>
                 </Message>
             )}
-            <Formik initialValues={initialValues} onSubmit={_handleSubmit} render={_renderForm} validateOnChange />
+            <Formik
+                initialValues={initialValues}
+                onSubmit={_handleSubmit}
+                render={_renderForm}
+                validateOnChange
+                validationSchema={validationSchema}
+            />
         </>
     );
 }

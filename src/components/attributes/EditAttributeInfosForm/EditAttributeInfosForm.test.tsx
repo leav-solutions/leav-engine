@@ -1,4 +1,5 @@
-import {render} from 'enzyme';
+import {wait} from '@apollo/react-testing';
+import {mount, render} from 'enzyme';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
@@ -9,7 +10,8 @@ import EditAttributeInfosForm from './EditAttributeInfosForm';
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr),
-    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr', 'fr'])
+    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr', 'fr']),
+    getFieldError: jest.fn().mockReturnValue('')
 }));
 
 describe('EditAttributeInfosForm', () => {
@@ -18,10 +20,16 @@ describe('EditAttributeInfosForm', () => {
         label: {fr: 'Test 1', en: null}
     };
     const onSubmit = jest.fn();
+    const onCheckIdExists = jest.fn().mockReturnValue(false);
     test('Render form for existing attribute', async () => {
         const comp = render(
             <MockedLangContextProvider>
-                <EditAttributeInfosForm attribute={attribute} onSubmit={onSubmit} readOnly={false} />
+                <EditAttributeInfosForm
+                    attribute={attribute}
+                    onSubmit={onSubmit}
+                    readOnly={false}
+                    onCheckIdExists={onCheckIdExists}
+                />
             </MockedLangContextProvider>
         );
 
@@ -31,7 +39,12 @@ describe('EditAttributeInfosForm', () => {
     test('Render form for new attribute', async () => {
         const comp = render(
             <MockedLangContextProvider>
-                <EditAttributeInfosForm attribute={null} onSubmit={onSubmit} readOnly={false} />
+                <EditAttributeInfosForm
+                    attribute={null}
+                    onSubmit={onSubmit}
+                    readOnly={false}
+                    onCheckIdExists={onCheckIdExists}
+                />
             </MockedLangContextProvider>
         );
 
@@ -41,7 +54,12 @@ describe('EditAttributeInfosForm', () => {
     test('Autofill ID with label on new attribute', async () => {
         const comp = renderer.create(
             <MockedLangContextProvider>
-                <EditAttributeInfosForm attribute={null} onSubmit={onSubmit} readOnly={false} />
+                <EditAttributeInfosForm
+                    attribute={null}
+                    onSubmit={onSubmit}
+                    readOnly={false}
+                    onCheckIdExists={onCheckIdExists}
+                />
             </MockedLangContextProvider>
         );
 
@@ -54,5 +72,29 @@ describe('EditAttributeInfosForm', () => {
         });
 
         expect(comp.root.findByProps({name: 'id'}).props.value).toBe('labelfr');
+    });
+
+    test('Validate ID unicity', async () => {
+        const _idNotUnique = jest.fn().mockResolvedValue(false);
+
+        const comp = mount(
+            <MockedLangContextProvider>
+                <EditAttributeInfosForm
+                    attribute={null}
+                    onSubmit={onSubmit}
+                    readOnly={false}
+                    onCheckIdExists={_idNotUnique}
+                />
+            </MockedLangContextProvider>
+        );
+
+        renderer.act(() => {
+            comp.find('input[name="id"]').simulate('change', {target: {value: 'test'}});
+        });
+
+        await wait(0);
+        comp.update();
+
+        expect(_idNotUnique).toBeCalled();
     });
 });

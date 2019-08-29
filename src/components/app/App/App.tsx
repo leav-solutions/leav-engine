@@ -6,6 +6,7 @@ import {onError} from 'apollo-link-error';
 import {HttpLink} from 'apollo-link-http';
 import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
+import * as yup from 'yup';
 import {isAllowedQuery, IsAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
@@ -36,7 +37,7 @@ class App extends React.Component<IAppProps, IAppState> {
     }
 
     public render() {
-        const {i18n} = this.props;
+        const {i18n, t} = this.props;
         const {fragmentMatcher} = this.state;
         const {token} = this.props;
 
@@ -57,6 +58,14 @@ class App extends React.Component<IAppProps, IAppState> {
                 })
             ]),
             cache: new InMemoryCache({fragmentMatcher})
+        });
+
+        // Load yup messages translations
+        yup.setLocale({
+            string: {matches: t('admin.validation_errors.matches')},
+            mixed: {
+                required: t('admin.validation_errors.required')
+            }
         });
 
         return (
