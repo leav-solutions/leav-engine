@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import {Formik, FormikProps} from 'formik';
+import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -20,30 +21,26 @@ function EditLibraryInfosForm({library, onSubmit, readonly, t, i18n}: IEditLibra
     const existingLib = library !== null;
     const langs = ['fr', 'en'];
 
-    const libraryToEdit: GET_LIBRARIES_libraries_list =
-        library === null
-            ? {
-                  id: '',
-                  system: false,
-                  label: {
-                      fr: '',
-                      en: ''
-                  },
-                  attributes: [],
-                  permissions_conf: null,
-                  recordIdentityConf: {
-                      label: null,
-                      color: null,
-                      preview: null
-                  }
-              }
-            : library;
+    const defaultLibrary: GET_LIBRARIES_libraries_list = {
+        id: '',
+        system: false,
+        label: {
+            fr: '',
+            en: ''
+        },
+        attributes: [],
+        permissions_conf: null,
+        recordIdentityConf: {
+            label: null,
+            color: null,
+            preview: null
+        }
+    };
 
-    const [libData, setLibData] = useState<GET_LIBRARIES_libraries_list>(libraryToEdit);
-    const {id, label, attributes, recordIdentityConf} = libData;
+    const initialValues: GET_LIBRARIES_libraries_list = library === null ? defaultLibrary : library;
 
-    const libAttributesOptions = attributes
-        ? attributes.map(a => ({
+    const libAttributesOptions = initialValues.attributes
+        ? initialValues.attributes.map(a => ({
               key: a.id,
               value: a.id,
               text: localizedLabel(a.label, i18n) || a.id
@@ -51,97 +48,113 @@ function EditLibraryInfosForm({library, onSubmit, readonly, t, i18n}: IEditLibra
         : [];
     libAttributesOptions.unshift({key: '', value: '', text: ''});
 
-    const _handleChange = (event, data) => {
-        const value = data.type === 'checkbox' ? data.checked : data.value;
-        const name: string = data.name;
-        const stateUpdate: Partial<GET_LIBRARIES_libraries_list> = {};
+    const _handleSubmit = values => {
+        onSubmit(values);
+    };
 
-        if (name.indexOf('/') !== -1) {
-            const [field, subField] = name.split('/');
-            stateUpdate[field] = {...libData[field]};
-            stateUpdate[field][subField] = value;
+    const _renderForm = ({
+        handleSubmit,
+        handleBlur,
+        setFieldValue,
+        errors: inputErrors,
+        values,
+        touched
+    }: FormikProps<GET_LIBRARIES_libraries_list>) => {
+        const _handleLabelChange = (e, data) => {
+            _handleChange(e, data);
 
-            // On new library, automatically generate an ID based on label
-            if (!existingLib && field === 'label' && subField === process.env.REACT_APP_DEFAULT_LANG) {
-                stateUpdate.id = formatIDString(value);
+            const {name, value} = data;
+            const [field, subfield] = name.split('.');
+
+            // On new attribute, automatically generate an ID based on label
+            if (!existingLib && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
+                setFieldValue('id', formatIDString(value));
             }
-        } else {
-            stateUpdate[name] = value;
-        }
+        };
 
-        setLibData({...libData, ...stateUpdate});
-    };
+        const _handleChange = (e, data) => {
+            const value = data.type === 'checkbox' ? data.checked : data.value;
+            const name: string = data.name;
 
-    const _handleSubmit = e => {
-        onSubmit(libData);
-    };
+            setFieldValue(name, value);
+        };
 
-    return (
-        <Form onSubmit={_handleSubmit}>
-            <Form.Group grouped>
-                <label>{t('libraries.label')}</label>
-                {langs.map(lang => (
-                    <Form.Field key={lang}>
-                        <label>{lang}</label>
-                        <Form.Input
-                            name={'label/' + lang}
+        const {id, label, recordIdentityConf} = values;
+
+        return (
+            <Form onSubmit={handleSubmit}>
+                <Form.Group grouped>
+                    <label>{t('libraries.label')}</label>
+                    {langs.map(lang => (
+                        <Form.Field key={lang}>
+                            <label>{lang}</label>
+                            <Form.Input
+                                name={'label.' + lang}
+                                disabled={readonly}
+                                value={label[lang]}
+                                onChange={_handleLabelChange}
+                            />
+                        </Form.Field>
+                    ))}
+                </Form.Group>
+                <Form.Field>
+                    <Form.Input
+                        label={t('attributes.ID')}
+                        disabled={existingLib || readonly}
+                        name="id"
+                        onChange={_handleChange}
+                        onBlur={handleBlur}
+                        value={id}
+                    />
+                </Form.Field>
+                <Form.Group grouped>
+                    <label>{t('libraries.record_identity')}</label>
+                    <Form.Field>
+                        <Form.Dropdown
+                            search
+                            selection
+                            options={libAttributesOptions}
+                            name="recordIdentityConf.label"
                             disabled={readonly}
-                            value={label ? label[lang] || '' : ''}
+                            label={t('libraries.record_identity_label')}
+                            value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
                             onChange={_handleChange}
                         />
                     </Form.Field>
-                ))}
-            </Form.Group>
-            <Form.Field>
-                <label>{t('libraries.ID')}</label>
-                <Form.Input disabled={existingLib || readonly} name="id" onChange={_handleChange} value={id || ''} />
-            </Form.Field>
-            <Form.Group grouped>
-                <label>{t('libraries.record_identity')}</label>
-                <Form.Field>
-                    <Form.Dropdown
-                        search
-                        selection
-                        options={libAttributesOptions}
-                        name="recordIdentityConf/label"
-                        disabled={readonly}
-                        label={t('libraries.record_identity_label')}
-                        value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
-                        onChange={_handleChange}
-                    />
-                </Form.Field>
-                <Form.Field>
-                    <Form.Dropdown
-                        search
-                        selection
-                        options={libAttributesOptions}
-                        name="recordIdentityConf/color"
-                        disabled={readonly}
-                        label={t('libraries.record_identity_color')}
-                        value={recordIdentityConf && recordIdentityConf.color ? recordIdentityConf.color : ''}
-                        onChange={_handleChange}
-                    />
-                </Form.Field>
-                <Form.Field>
-                    <Form.Dropdown
-                        search
-                        selection
-                        options={libAttributesOptions}
-                        name="recordIdentityConf/preview"
-                        disabled={readonly}
-                        label={t('libraries.record_identity_preview')}
-                        value={recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''}
-                        onChange={_handleChange}
-                    />
-                </Form.Field>
-            </Form.Group>
-            {!readonly && (
-                <FormGroupWithMargin>
-                    <Form.Button>{t('admin.submit')}</Form.Button>
-                </FormGroupWithMargin>
-            )}
-        </Form>
-    );
+                    <Form.Field>
+                        <Form.Dropdown
+                            search
+                            selection
+                            options={libAttributesOptions}
+                            name="recordIdentityConf.color"
+                            disabled={readonly}
+                            label={t('libraries.record_identity_color')}
+                            value={recordIdentityConf && recordIdentityConf.color ? recordIdentityConf.color : ''}
+                            onChange={_handleChange}
+                        />
+                    </Form.Field>
+                    <Form.Field>
+                        <Form.Dropdown
+                            search
+                            selection
+                            options={libAttributesOptions}
+                            name="recordIdentityConf.preview"
+                            disabled={readonly}
+                            label={t('libraries.record_identity_preview')}
+                            value={recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''}
+                            onChange={_handleChange}
+                        />
+                    </Form.Field>
+                </Form.Group>
+                {!readonly && (
+                    <FormGroupWithMargin>
+                        <Form.Button>{t('admin.submit')}</Form.Button>
+                    </FormGroupWithMargin>
+                )}
+            </Form>
+        );
+    };
+    return <Formik initialValues={initialValues} onSubmit={_handleSubmit} render={_renderForm} />;
 }
 
 export default withNamespaces()(EditLibraryInfosForm);
