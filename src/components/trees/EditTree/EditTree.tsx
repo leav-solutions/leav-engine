@@ -2,7 +2,6 @@ import {useMutation, useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
-import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {saveTreeQuery} from '../../../queries/trees/saveTreeMutation';
@@ -18,11 +17,10 @@ interface IEditTreeProps extends WithNamespaces {
 
 function EditTree({match, history}: IEditTreeProps): JSX.Element {
     const treeId = match.params.id;
-    const {lang} = useLang();
     const userData = useUserData();
 
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
-        variables: {id: treeId, lang}
+        variables: {id: treeId}
     });
     const [saveTree] = useMutation(saveTreeQuery);
 

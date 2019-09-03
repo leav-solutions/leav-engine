@@ -1,5 +1,5 @@
 import {MockedProvider} from '@apollo/react-testing';
-import {shallow} from 'enzyme';
+import {render} from 'enzyme';
 import React from 'react';
 import {act, create} from 'react-test-renderer';
 import EditTreeInfosForm from './EditTreeInfosForm';
@@ -20,13 +20,21 @@ describe('EditTreeInfosForm', () => {
     const onSubmit = jest.fn();
 
     test('Render form for existing tree', async () => {
-        const comp = shallow(<EditTreeInfosForm tree={mockTree} onSubmit={onSubmit} readOnly={false} />);
-        expect(comp.find('FormInput[name="id"]').props().disabled).toBe(true);
+        const comp = render(
+            <MockedProvider>
+                <EditTreeInfosForm tree={mockTree} onSubmit={onSubmit} readOnly={false} />
+            </MockedProvider>
+        );
+        expect(comp.find('input[name="id"]').prop('disabled')).toBe(true);
     });
 
     test('Render form for new tree', async () => {
-        const comp = shallow(<EditTreeInfosForm tree={null} onSubmit={onSubmit} readOnly={false} />);
-        expect(comp.find('FormInput[name="id"]').props().disabled).toBe(false);
+        const comp = render(
+            <MockedProvider>
+                <EditTreeInfosForm tree={null} onSubmit={onSubmit} readOnly={false} />
+            </MockedProvider>
+        );
+        expect(comp.find('input[name="id"]').prop('disabled')).toBe(false);
     });
 
     test('Autofill ID with label on new lib', async () => {
@@ -40,20 +48,13 @@ describe('EditTreeInfosForm', () => {
         });
 
         act(() => {
-            comp.root.findByProps({name: 'label/fr'}).props.onChange(null, {
+            comp.root.findByProps({name: 'label.fr'}).props.onChange(null, {
                 type: 'text',
-                name: 'label/fr',
+                name: 'label.fr',
                 value: 'labelfr'
             });
         });
 
         expect(comp.root.findByProps({name: 'id'}).props.value).toBe('labelfr');
-    });
-
-    test('Call submit function on submit', async () => {
-        const comp = shallow(<EditTreeInfosForm onSubmit={onSubmit} tree={mockTree} readOnly={false} />);
-        comp.find('Form').simulate('submit');
-
-        expect(onSubmit).toBeCalled();
     });
 });
