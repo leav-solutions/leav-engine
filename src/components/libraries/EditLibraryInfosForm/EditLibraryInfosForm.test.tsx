@@ -8,7 +8,8 @@ import EditLibraryInfosForm from './EditLibraryInfosForm';
 
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr)
+    localizedLabel: jest.fn().mockImplementation(l => l.fr),
+    getFieldError: jest.fn().mockReturnValue('')
 }));
 
 describe('EditLibraryInfosForm', () => {
@@ -19,6 +20,7 @@ describe('EditLibraryInfosForm', () => {
         attributes: [{...mockAttrSimple, id: 'test_attr', label: {fr: 'Test', en: 'Test'}}]
     };
     const onSubmit = jest.fn();
+    const onCheckIdExists = jest.fn().mockReturnValue(false);
 
     test('Render form for existing library', async () => {
         const comp = render(
@@ -26,18 +28,33 @@ describe('EditLibraryInfosForm', () => {
                 onSubmit={onSubmit}
                 library={library as GET_LIBRARIES_libraries_list}
                 readonly={false}
+                onCheckIdExists={onCheckIdExists}
             />
         );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(true);
     });
 
     test('Render form for new library', async () => {
-        const comp = render(<EditLibraryInfosForm onSubmit={onSubmit} library={null} readonly={false} />);
+        const comp = render(
+            <EditLibraryInfosForm
+                onSubmit={onSubmit}
+                library={null}
+                readonly={false}
+                onCheckIdExists={onCheckIdExists}
+            />
+        );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(false);
     });
 
     test('Autofill ID with label on new lib', async () => {
-        const comp = create(<EditLibraryInfosForm onSubmit={onSubmit} library={null} readonly={false} />);
+        const comp = create(
+            <EditLibraryInfosForm
+                onSubmit={onSubmit}
+                library={null}
+                readonly={false}
+                onCheckIdExists={onCheckIdExists}
+            />
+        );
 
         act(() => {
             comp.root.findByProps({name: 'label.fr'}).props.onChange(null, {

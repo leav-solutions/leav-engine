@@ -2,6 +2,7 @@ import React from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {Header, Tab} from 'semantic-ui-react';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
+import {IFormError} from '../../../_types/errors';
 import EditLibraryAttributes from '../EditLibraryAttributes';
 import EditLibraryInfosForm from '../EditLibraryInfosForm';
 import EditLibraryPermissions from '../EditLibraryPermissions';
@@ -11,9 +12,19 @@ interface IEditLibraryFormProps extends WithNamespaces {
     onSubmit: (formData: any) => void;
     onPermsSettingsSubmit: (formData: any) => void;
     readOnly: boolean;
+    errors?: IFormError;
+    onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-function EditLibraryForm({library, onSubmit, onPermsSettingsSubmit, readOnly, t}: IEditLibraryFormProps) {
+function EditLibraryForm({
+    library,
+    onSubmit,
+    onPermsSettingsSubmit,
+    readOnly,
+    t,
+    errors,
+    onCheckIdExists
+}: IEditLibraryFormProps) {
     const label =
         library === null
             ? t('libraries.new')
@@ -27,7 +38,13 @@ function EditLibraryForm({library, onSubmit, onPermsSettingsSubmit, readOnly, t}
             menuItem: t('libraries.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <EditLibraryInfosForm library={library} onSubmit={onSubmit} readonly={readOnly} />
+                    <EditLibraryInfosForm
+                        library={library}
+                        onSubmit={onSubmit}
+                        readonly={readOnly}
+                        errors={errors}
+                        onCheckIdExists={onCheckIdExists}
+                    />
                 </Tab.Pane>
             )
         }

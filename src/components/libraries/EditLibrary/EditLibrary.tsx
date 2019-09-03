@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from '@apollo/react-hooks';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import {i18n} from 'i18next';
 import React from 'react';
@@ -27,8 +27,15 @@ function EditLibrary({match, history}: IEditLibraryProps) {
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
         variables: {id: libraryId, lang}
     });
-    const [saveLibrary] = useMutation(saveLibQuery);
+    const [saveLibrary, {error: errorSave}] = useMutation(saveLibQuery);
 
+    const [getLibById, {data: dataLibById}] = useLazyQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery);
+
+    const _isIdUnique = async val => {
+        await getLibById({variables: {id: val}});
+
+        return !!dataLibById && !!dataLibById.libraries && !dataLibById.libraries.list.length;
+    };
     /**
      * Retrieve EditLibraryForm, wrapped by mutation component
      * @param libToEdit
@@ -60,6 +67,8 @@ function EditLibrary({match, history}: IEditLibraryProps) {
             history.replace({pathname: '/libraries/edit/' + libData.id});
         };
 
+        const formErrors = errorSave && errorSave.graphQLErrors.length ? errorSave.graphQLErrors[0] : null;
+
         const onPermissionsFormSubmit = async libData => {
             await saveLibrary({
                 variables: {
@@ -74,12 +83,15 @@ function EditLibrary({match, history}: IEditLibraryProps) {
                 refetchQueries: [{query: getLibsQuery, variables: {id: libData.id}}]
             });
         };
+
         return (
             <EditLibraryForm
                 library={libToEdit}
                 onSubmit={onFormSubmit}
+                errors={formErrors}
                 onPermsSettingsSubmit={onPermissionsFormSubmit}
                 readOnly={readOnly}
+                onCheckIdExists={_isIdUnique}
             />
         );
     };
