@@ -3,6 +3,7 @@ import {render} from 'enzyme';
 import {History} from 'history';
 import React from 'react';
 import {Mockify} from '../../../_types//Mockify';
+import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import EditTree from './EditTree';
 
@@ -13,9 +14,11 @@ describe('EditTree', () => {
 
         const comp = render(
             <MockedProvider>
-                <MockedUserContextProvider>
-                    <EditTree match={mockMatch} history={mockHistory as History} />
-                </MockedUserContextProvider>
+                <MockedLangContextProvider>
+                    <MockedUserContextProvider>
+                        <EditTree match={mockMatch} history={mockHistory as History} />
+                    </MockedUserContextProvider>
+                </MockedLangContextProvider>
             </MockedProvider>
         );
 
