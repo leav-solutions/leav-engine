@@ -6,7 +6,8 @@ import EditTreeInfosForm from './EditTreeInfosForm';
 
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr)
+    localizedLabel: jest.fn().mockImplementation(l => l.fr),
+    getFieldError: jest.fn().mockReturnValue('')
 }));
 jest.mock('../../../hooks/useLang', () => jest.fn().mockReturnValue(['fr']));
 
@@ -18,11 +19,17 @@ describe('EditTreeInfosForm', () => {
         libraries: ['test_lib']
     };
     const onSubmit = jest.fn();
+    const onCheckIdExists = jest.fn().mockReturnValue(false);
 
     test('Render form for existing tree', async () => {
         const comp = render(
             <MockedProvider>
-                <EditTreeInfosForm tree={mockTree} onSubmit={onSubmit} readOnly={false} />
+                <EditTreeInfosForm
+                    tree={mockTree}
+                    onSubmit={onSubmit}
+                    readOnly={false}
+                    onCheckIdExists={onCheckIdExists}
+                />
             </MockedProvider>
         );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(true);
@@ -31,7 +38,7 @@ describe('EditTreeInfosForm', () => {
     test('Render form for new tree', async () => {
         const comp = render(
             <MockedProvider>
-                <EditTreeInfosForm tree={null} onSubmit={onSubmit} readOnly={false} />
+                <EditTreeInfosForm tree={null} onSubmit={onSubmit} readOnly={false} onCheckIdExists={onCheckIdExists} />
             </MockedProvider>
         );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(false);
@@ -42,7 +49,12 @@ describe('EditTreeInfosForm', () => {
         await act(async () => {
             comp = create(
                 <MockedProvider>
-                    <EditTreeInfosForm onSubmit={onSubmit} tree={null} readOnly={false} />
+                    <EditTreeInfosForm
+                        onSubmit={onSubmit}
+                        tree={null}
+                        readOnly={false}
+                        onCheckIdExists={onCheckIdExists}
+                    />
                 </MockedProvider>
             );
         });

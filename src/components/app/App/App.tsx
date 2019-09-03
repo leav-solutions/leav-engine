@@ -63,6 +63,9 @@ class App extends React.Component<IAppProps, IAppState> {
         // Load yup messages translations
         yup.setLocale({
             string: {matches: t('admin.validation_errors.matches')},
+            array: {
+                min: t('admin.validation_errors.min')
+            },
             mixed: {
                 required: t('admin.validation_errors.required')
             }

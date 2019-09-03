@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from '@apollo/react-hooks';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import React from 'react';
 import {WithNamespaces, withNamespaces} from 'react-i18next';
@@ -22,7 +22,14 @@ function EditTree({match, history}: IEditTreeProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
         variables: {id: treeId}
     });
-    const [saveTree] = useMutation(saveTreeQuery);
+    const [saveTree, {error: errorSave}] = useMutation(saveTreeQuery);
+    const [getTreeById, {data: dataTreeById}] = useLazyQuery<GET_TREES, GET_TREESVariables>(getTreesQuery);
+
+    const _isIdUnique = async val => {
+        await getTreeById({variables: {id: val}});
+
+        return !!dataTreeById && !!dataTreeById.trees && !dataTreeById.trees.list.length;
+    };
 
     const _getEditTreeForm = (treeToEdit: GET_TREES_trees_list | null) => {
         const readOnly = !userData.permissions[PermissionsActions.admin_edit_tree];
@@ -43,7 +50,17 @@ function EditTree({match, history}: IEditTreeProps): JSX.Element {
             }
         };
 
-        return <EditTreeForm tree={treeToEdit} onSubmit={onFormSubmit} readOnly={readOnly} />;
+        const formErrors = errorSave && errorSave.graphQLErrors.length ? errorSave.graphQLErrors[0] : null;
+
+        return (
+            <EditTreeForm
+                tree={treeToEdit}
+                onSubmit={onFormSubmit}
+                readOnly={readOnly}
+                errors={formErrors}
+                onCheckIdExists={_isIdUnique}
+            />
+        );
     };
 
     if (!treeId) {
