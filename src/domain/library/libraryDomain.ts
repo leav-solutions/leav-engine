@@ -119,8 +119,9 @@ export default function(
             }
 
             if (dataToSave.recordIdentityConf) {
-                const allowedAttributes =
-                    libAttributes || (await libraryRepo.getLibraryAttributes(dataToSave.id)).map(a => a.id);
+                const allowedAttributes = libAttributes.length
+                    ? libAttributes
+                    : (await libraryRepo.getLibraryAttributes(dataToSave.id)).map(a => a.id);
 
                 const unbindedAttrs = [];
                 for (const identitiyField of Object.keys(dataToSave.recordIdentityConf)) {
