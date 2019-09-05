@@ -27,12 +27,25 @@ export default function(
     attributeDomain: IAttributeDomain,
     actionsListDomain: IActionsListDomain
 ): ICoreLibraryApp {
+    const _getLibGqlFilterType = libTypeName => libTypeName + 'Filter';
+    const _getLibGqlListType = libTypeName => libTypeName + 'List';
+    const _getLibGqlSearchableFieldsType = libTypeName => libTypeName + 'SearchableFields';
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const libraries = await libraryDomain.getLibraries();
 
             const baseSchema = {
                 typeDefs: `
+                    # Specific names generated to query this library on GraphQL
+                    type LibraryGraphqlNames {
+                        query: String!,
+                        type: String!,
+                        list: String!,
+                        searchableFields: String!,
+                        filter: String!
+                    }
+
                     # Application Library
                     type Library {
                         id: ID!,
@@ -40,7 +53,8 @@ export default function(
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         attributes: [Attribute!],
                         permissions_conf: Treepermissions_conf,
-                        recordIdentityConf: RecordIdentityConf
+                        recordIdentityConf: RecordIdentityConf,
+                        gqlNames: LibraryGraphqlNames
                     }
 
                     input LibraryInput {
@@ -120,6 +134,18 @@ export default function(
                          */
                         label: async (libData, args) => {
                             return coreApp.filterSysTranslationField(libData.label, args.lang || []);
+                        },
+                        gqlNames: parent => {
+                            const libId = parent.id;
+                            const libQueryName = utils.libNameToQueryName(libId);
+                            const libTypeName = utils.libNameToTypeName(libId);
+                            return {
+                                query: libQueryName,
+                                type: libTypeName,
+                                list: _getLibGqlListType(libTypeName),
+                                searchableFields: _getLibGqlSearchableFieldsType(libTypeName),
+                                filter: _getLibGqlFilterType(libTypeName)
+                            };
                         }
                     }
                 }
@@ -147,27 +173,27 @@ export default function(
                         )}
                     }
 
-                    type ${libTypeName}List {
+                    type ${_getLibGqlListType(libTypeName)} {
                         totalCount: Int,
                         cursor: RecordsListCursor,
                         list: [${libTypeName}!]!
                     }
 
-                    enum ${libTypeName}SearchableFields {
+                    enum ${_getLibGqlSearchableFieldsType(libTypeName)} {
                         ${lib.attributes.map(attr => attr.id).join(' ')}
                     }
 
                     input ${libTypeName}Filter {
-                        field: ${libTypeName}SearchableFields!,
+                        field: ${_getLibGqlSearchableFieldsType(libTypeName)}!,
                         value: String!
                     }
 
                     extend type Query {
                         ${libQueryName}(
-                            filters: [${libTypeName}Filter],
+                            filters: [${_getLibGqlFilterType(libTypeName)}],
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
-                        ): ${libTypeName}List!
+                        ): ${_getLibGqlListType(libTypeName)}!
                     }
                 `;
 
