@@ -3,10 +3,13 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {isEqual} from 'lodash';
 import * as moment from 'moment';
+import {IUtils} from 'utils/utils';
+import {IRecord} from '_types/record';
 import {ITreeNode} from '_types/tree';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {AttributeTypes, ValueVersionMode} from '../../_types/attribute';
+import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
+import {ErrorTypes} from '../../_types/errors';
 import {AttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IValue, IValuesOptions} from '../../_types/value';
@@ -16,9 +19,45 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 
+export interface ISaveBatchValueError {
+    type: string;
+    message: string;
+    input: string;
+    attribute: string;
+}
+
+export interface ISaveBatchValueResult {
+    values: IValue[];
+    errors: ISaveBatchValueError[];
+}
+
 export interface IValueDomain {
     getValues(library: string, recordId: number, attribute: string, options?: IValuesOptions): Promise<IValue[]>;
+    /**
+     * Save a value
+     * @param library
+     * @param recordId
+     * @param attribute
+     * @param value
+     * @param infos
+     */
     saveValue(library: string, recordId: number, attribute: string, value: IValue, infos: IQueryInfos): Promise<IValue>;
+
+    /**
+     * Save multiple values independantly (possibly different attributes or versions).
+     * If one of the value must not be saved (invalid value or user doesn't have permissions), no value is saved at all
+     *
+     * @param library
+     * @param recordId
+     * @param values
+     * @param infos
+     */
+    saveValueBatch(
+        library: string,
+        recordId: number,
+        values: IValue[],
+        infos: IQueryInfos
+    ): Promise<ISaveBatchValueResult>;
     deleteValue(
         library: string,
         recordId: number,
@@ -42,7 +81,8 @@ export default function(
     actionsListDomain: IActionsListDomain = null,
     recordPermissionDomain: IRecordPermissionDomain = null,
     attributePermissionDomain: IAttributePermissionDomain = null,
-    treeRepo: ITreeRepo = null
+    treeRepo: ITreeRepo = null,
+    utils: IUtils = null
 ): IValueDomain {
     const _validateVersion = async (value: IValue): Promise<string[]> => {
         const trees = Object.keys(value.version);
@@ -142,6 +182,119 @@ export default function(
         return [];
     };
 
+    const _validateLibrary = async (library: string): Promise<void> => {
+        const lib = await libraryDomain.getLibraries({filters: {id: library}});
+        // Check if exists and can delete
+        if (!lib.list.length) {
+            throw new ValidationError({id: 'Unknown library'});
+        }
+    };
+
+    const _doesValueExist = (value: IValue, attributeProps: IAttribute): boolean =>
+        !!(value.id_value && attributeProps.type !== AttributeTypes.SIMPLE);
+
+    async function _validateAndPrepareValue(
+        attributeProps: IAttribute,
+        value: IValue,
+        infos: IQueryInfos,
+        library: string,
+        recordId: number
+    ): Promise<IValue> {
+        const valueExists = _doesValueExist(value, attributeProps);
+
+        // Check permission
+        const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
+            RecordPermissionsActions.EDIT,
+            infos.userId,
+            library,
+            recordId
+        );
+
+        if (!canUpdateRecord) {
+            throw new PermissionError(RecordPermissionsActions.EDIT);
+        }
+
+        const permToCheck = valueExists
+            ? AttributePermissionsActions.EDIT_VALUE
+            : AttributePermissionsActions.CREATE_VALUE;
+
+        const canSaveValue = await attributePermissionDomain.getAttributePermission(
+            permToCheck,
+            infos.userId,
+            attributeProps.id,
+            library,
+            recordId
+        );
+
+        if (!canSaveValue) {
+            throw new PermissionError(permToCheck);
+        }
+
+        // Check if value ID actually exists
+        if (valueExists) {
+            const existingVal = await valueRepo.getValueById(library, recordId, attributeProps, value);
+            if (existingVal === null) {
+                throw new ValidationError({id: 'Unknown value'});
+            }
+        }
+
+        if ((!attributeProps.versions_conf || !attributeProps.versions_conf.versionable) && !!value.version) {
+            delete value.version;
+        }
+
+        if (!!value.version) {
+            const badElements = await _validateVersion(value);
+            if (badElements.length) {
+                throw new ValidationError({version: badElements.join('. ')});
+            }
+        }
+
+        // Execute actions list. Output value might be different from input value
+        const actionsListRes =
+            !!attributeProps.actions_list && !!attributeProps.actions_list.saveValue
+                ? await actionsListDomain.runActionsList(attributeProps.actions_list.saveValue, value, {
+                      attribute: attributeProps,
+                      recordId,
+                      library
+                  })
+                : value;
+
+        return actionsListRes;
+    }
+
+    const _saveOneValue = async (
+        library: string,
+        recordId: number,
+        attributeProps: IAttribute,
+        value: IValue,
+        infos: IQueryInfos
+    ): Promise<IValue> => {
+        const valueExists = _doesValueExist(value, attributeProps);
+
+        const valueToSave = {
+            ...value,
+            modified_at: moment().unix()
+        };
+
+        if (!valueExists) {
+            valueToSave.created_at = moment().unix();
+        }
+
+        const savedVal = valueExists
+            ? await valueRepo.updateValue(library, recordId, attributeProps, valueToSave)
+            : await valueRepo.createValue(library, recordId, attributeProps, valueToSave);
+
+        return {...savedVal, attribute: attributeProps.id};
+    };
+
+    const _updateRecordLastModif = (library: string, recordId: number, infos: IQueryInfos): Promise<IRecord> => {
+        return recordRepo.updateRecord(library, {
+            id: recordId,
+            modified_at: moment().unix(),
+            modified_by: infos.userId
+        });
+    };
+
     return {
         async getValues(
             library: string,
@@ -197,95 +350,72 @@ export default function(
             value: IValue,
             infos: IQueryInfos
         ): Promise<IValue> {
-            // Get library
-            const lib = await libraryDomain.getLibraries({filters: {id: library}});
-            const attrData = await attributeDomain.getAttributeProperties(attribute);
-            const valueExists = value.id_value && attrData.type !== AttributeTypes.SIMPLE;
+            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
 
-            // Check if exists and can delete
-            if (!lib.list.length) {
-                throw new ValidationError({id: 'Unknown library'});
-            }
+            await _validateLibrary(library);
 
-            // Check permission
-            const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.EDIT,
-                infos.userId,
-                library,
-                recordId
-            );
+            const valueToSave = await _validateAndPrepareValue(attributeProps, value, infos, library, recordId);
 
-            if (!canUpdateRecord) {
-                throw new PermissionError(RecordPermissionsActions.EDIT);
-            }
+            const savedVal = await _saveOneValue(library, recordId, attributeProps, valueToSave, infos);
 
-            const permToCheck = valueExists
-                ? AttributePermissionsActions.EDIT_VALUE
-                : AttributePermissionsActions.CREATE_VALUE;
-
-            const canSaveValue = await attributePermissionDomain.getAttributePermission(
-                permToCheck,
-                infos.userId,
-                attribute,
-                library,
-                recordId
-            );
-
-            if (!canSaveValue) {
-                throw new PermissionError(permToCheck);
-            }
-
-            // Check if value ID actually exists
-            if (valueExists) {
-                const existingVal = await valueRepo.getValueById(library, recordId, attrData, value);
-
-                if (existingVal === null) {
-                    throw new ValidationError({id: 'Unknown value'});
-                }
-            }
-
-            if ((!attrData.versions_conf || !attrData.versions_conf.versionable) && !!value.version) {
-                delete value.version;
-            }
-
-            if (!!value.version) {
-                const badElements = await _validateVersion(value);
-
-                if (badElements.length) {
-                    throw new ValidationError({version: badElements.join('. ')});
-                }
-            }
-
-            // Execute actions list. Output value might be different from input value
-            const actionsListRes =
-                !!attrData.actions_list && !!attrData.actions_list.saveValue
-                    ? await actionsListDomain.runActionsList(attrData.actions_list.saveValue, value, {
-                          attribute: attrData,
-                          recordId,
-                          library
-                      })
-                    : value;
-
-            const valueToSave = {
-                ...actionsListRes,
-                modified_at: moment().unix()
-            };
-
-            if (!value.id_value) {
-                valueToSave.created_at = moment().unix();
-            }
-
-            const savedVal = valueExists
-                ? await valueRepo.updateValue(library, recordId, attrData, valueToSave)
-                : await valueRepo.createValue(library, recordId, attrData, valueToSave);
-
-            await recordRepo.updateRecord(library, {
-                id: recordId,
-                modified_at: moment().unix(),
-                modified_by: infos.userId
-            });
+            await _updateRecordLastModif(library, recordId, infos);
 
             return savedVal;
+        },
+        async saveValueBatch(
+            library: string,
+            recordId: number,
+            values: IValue[],
+            infos: IQueryInfos
+        ): Promise<ISaveBatchValueResult> {
+            await _validateLibrary(library);
+
+            const saveRes: ISaveBatchValueResult = await values.reduce(
+                async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
+                    const prevRes = await promPrevRes;
+                    try {
+                        const attributeProps = await attributeDomain.getAttributeProperties(value.attribute);
+                        const validValue = await _validateAndPrepareValue(
+                            attributeProps,
+                            value,
+                            infos,
+                            library,
+                            recordId
+                        );
+
+                        const savedVal = await _saveOneValue(library, recordId, attributeProps, value, infos);
+
+                        prevRes.values.push({...savedVal, attribute: value.attribute});
+                    } catch (e) {
+                        if (
+                            !e.type ||
+                            (e.type !== ErrorTypes.VALIDATION_ERROR && e.type !== ErrorTypes.PERMISSION_ERROR)
+                        ) {
+                            utils.rethrow(e);
+                        }
+
+                        if (!Array.isArray(prevRes.errors)) {
+                            prevRes.errors = [];
+                        }
+
+                        prevRes.errors.push({
+                            type: e.type,
+                            message: e.fields && e.fields[value.attribute] ? e.fields[value.attribute] : e.message,
+                            input: value.value,
+                            attribute: value.attribute
+                        });
+                    }
+
+                    return prevRes;
+                },
+                Promise.resolve({values: [], errors: null})
+            );
+
+            if (saveRes.values.length) {
+                await _updateRecordLastModif(library, recordId, infos);
+            }
+
+            return saveRes;
         },
         async deleteValue(
             library: string,

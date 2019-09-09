@@ -1,6 +1,7 @@
 import {IValueDomain} from 'domain/value/valueDomain';
 import {GraphQLScalarType} from 'graphql';
-import {IValue} from '_types/value';
+import {IQueryInfos} from '_types/queryInfos';
+import {IValue, IValueVersion} from '_types/value';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreValueApp {
@@ -8,6 +9,47 @@ export interface ICoreValueApp {
 }
 
 export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICoreValueApp {
+    const _convertVersionToGqlFormat = (version: IValueVersion) => {
+        const versionsNames = Object.keys(version);
+        const formattedVersion = [];
+
+        for (const versName of versionsNames) {
+            formattedVersion.push({
+                name: versName,
+                value: {
+                    library: version[versName].library,
+                    id: Number(version[versName].id)
+                }
+            });
+        }
+
+        return formattedVersion;
+    };
+
+    const _convertVersionFromGqlFormat = (version: any): IValueVersion => {
+        return !!version
+            ? version.reduce((formattedVers, valVers) => {
+                  formattedVers[valVers.name] = valVers.value;
+
+                  return formattedVers;
+              }, {})
+            : null;
+    };
+
+    const _executeSaveValue = async (
+        library: string,
+        recordId: number,
+        attribute: string,
+        value: IValue,
+        infos: IQueryInfos
+    ) => {
+        const savedVal = await valueDomain.saveValue(library, recordId, attribute, value, infos);
+
+        const formattedVersion: any = savedVal.version ? _convertVersionToGqlFormat(savedVal.version) : null;
+
+        return {...savedVal, version: formattedVersion};
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -25,7 +67,20 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                         raw_value: String,
                         modified_at: Int,
                         created_at: Int,
-                        version: ValueVersion
+                        version: ValueVersion,
+                        attribute: ID
+                    }
+
+                    type saveValueBatchResult {
+                        values: [Value!],
+                        errors: [ValueBatchError!]
+                    }
+
+                    type ValueBatchError {
+                        type: String!,
+                        attribute: String!,
+                        input: String,
+                        message: String!
                     }
 
                     type linkValue {
@@ -33,7 +88,8 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                         value: Record!,
                         modified_at: Int,
                         created_at: Int,
-                        version: ValueVersion
+                        version: ValueVersion,
+                        attribute: ID
                     }
 
                     type treeValue {
@@ -41,7 +97,8 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                         modified_at: Int!,
                         created_at: Int!
                         value: TreeNode!,
-                        version: ValueVersion
+                        version: ValueVersion,
+                        attribute: ID
                     }
 
                     input ValueInput {
@@ -50,48 +107,68 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                         version: [ValueVersionInput]
                     }
 
+                    input ValueBatchInput {
+                        attribute: ID,
+                        id_value: ID,
+                        value: String
+                    }
+
                     extend type Mutation {
+                        # Save one value
                         saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value!
+                        # Save values for several attributes at once
+                        saveValueBatch(
+                            library: ID,
+                            recordId: ID,
+                            version: [ValueVersionInput],
+                            values: [ValueBatchInput]
+                        ): saveValueBatchResult!
                         deleteValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value!
                     }
                 `,
                 resolvers: {
                     Mutation: {
                         async saveValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
-                            // Convert version
-                            if (!!value.version) {
-                                value.version = value.version.reduce((formattedVers, valVers) => {
-                                    formattedVers[valVers.name] = valVers.value;
-
-                                    return formattedVers;
-                                }, {});
-                            }
+                            const valToSave = {...value, version: _convertVersionFromGqlFormat(value.version)};
 
                             const savedVal = await valueDomain.saveValue(
                                 library,
                                 recordId,
                                 attribute,
-                                value,
+                                valToSave,
                                 graphqlApp.ctxToQueryInfos(ctx)
                             );
 
-                            let formattedVersion = null;
-                            if (savedVal.version) {
-                                const versionsNames = Object.keys(savedVal.version);
-                                formattedVersion = [];
-
-                                for (const versName of versionsNames) {
-                                    formattedVersion.push({
-                                        name: versName,
-                                        value: {
-                                            library: savedVal.version[versName].library,
-                                            id: Number(savedVal.version[versName].id)
-                                        }
-                                    });
-                                }
-                            }
+                            const formattedVersion: any = savedVal.version
+                                ? _convertVersionToGqlFormat(savedVal.version)
+                                : null;
 
                             return {...savedVal, version: formattedVersion};
+                        },
+                        async saveValueBatch(parent, {library, recordId, version, values}, ctx) {
+                            // Convert version
+                            const versionToUse = _convertVersionFromGqlFormat(version);
+                            const convertedValues = values.map(val => ({
+                                ...val,
+                                version: versionToUse
+                            }));
+
+                            const savedValues = await valueDomain.saveValueBatch(
+                                library,
+                                recordId,
+                                convertedValues,
+                                graphqlApp.ctxToQueryInfos(ctx)
+                            );
+
+                            const res = {
+                                ...savedValues,
+                                values: savedValues.values.map(val => ({
+                                    ...val,
+                                    version: val.version ? _convertVersionToGqlFormat(val.version) : null
+                                }))
+                            };
+
+                            return res;
                         },
                         async deleteValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
                             return valueDomain.deleteValue(

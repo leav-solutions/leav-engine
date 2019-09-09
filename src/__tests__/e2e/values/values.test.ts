@@ -9,6 +9,7 @@ describe('Values', () => {
     const attrAdvancedLinkName = 'values_attribute_test_adv_link';
 
     let recordId;
+    let recordIdBatch;
     let recordIdLinked;
     let advValueId;
 
@@ -137,9 +138,13 @@ describe('Values', () => {
         await makeGraphQlCall(`mutation { refreshSchema }`);
 
         // Create record
-        const resRecord = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { id } }`);
+        const resRecord = await makeGraphQlCall(`mutation {
+            c1: createRecord(library: "${testLibName}") { id },
+            c2: createRecord(library: "${testLibName}") { id }
+        }`);
 
-        recordId = resRecord.data.data.createRecord.id;
+        recordId = resRecord.data.data.c1.id;
+        recordIdBatch = resRecord.data.data.c2.id;
 
         const resRecordLinked = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { id } }`);
 
@@ -305,5 +310,36 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
+    });
+
+    test('Save value batch', async () => {
+        const res = await makeGraphQlCall(`mutation {
+            saveValueBatch(
+                library: "${testLibName}",
+                recordId: "${recordIdBatch}",
+                values: [
+                    {
+                      attribute: "${attrSimpleName}",
+                      value: "TEST"
+                    },
+                    {
+                      attribute: "${attrAdvancedName}",
+                      id_value: null,
+                      value: "some value"
+                    }
+                ]
+            ) {
+                values {
+                    id_value
+                    value
+                }
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.saveValueBatch.values).toHaveLength(2);
+        expect(res.data.data.saveValueBatch.values[1].id_value).toBeTruthy();
     });
 });

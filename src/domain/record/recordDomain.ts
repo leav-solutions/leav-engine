@@ -179,6 +179,7 @@ export default function(
                 : val;
 
         processedValue.raw_value = val.value;
+        processedValue.attribute = attribute.id;
 
         return processedValue;
     };
