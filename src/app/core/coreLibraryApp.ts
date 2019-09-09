@@ -54,7 +54,7 @@ export default function(
                         attributes: [Attribute!],
                         permissions_conf: Treepermissions_conf,
                         recordIdentityConf: RecordIdentityConf,
-                        gqlNames: LibraryGraphqlNames
+                        gqlNames: LibraryGraphqlNames!
                     }
 
                     input LibraryInput {
