@@ -244,11 +244,11 @@ export default function(
                 }
             }
 
-            if (!!value.version) {
-                if (!attrData.versions_conf.versionable) {
-                    throw new ValidationError({version: 'Attribute is not versionable'});
-                }
+            if ((!attrData.versions_conf || !attrData.versions_conf.versionable) && !!value.version) {
+                delete value.version;
+            }
 
+            if (!!value.version) {
                 const badElements = await _validateVersion(value);
 
                 if (badElements.length) {

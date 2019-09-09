@@ -386,7 +386,7 @@ describe('ValueDomain', () => {
             expect(savedValue.version).toBeTruthy();
         });
 
-        test('Should throw when saving version on a non versionable attribute', async () => {
+        test('Should ignore version when saving version on a non versionable attribute', async () => {
             const mockValRepo = {
                 createValue: global.__mockPromise({})
             };
@@ -410,23 +410,23 @@ describe('ValueDomain', () => {
                 mockTreeRepo as ITreeRepo
             );
 
-            await expect(
-                valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'test_attr',
-                    {
-                        value: 'test val',
-                        version: {
-                            my_tree: {
-                                id: 1,
-                                library: 'test_lib'
-                            }
+            const savedValue = await valDomain.saveValue(
+                'test_lib',
+                12345,
+                'test_attr',
+                {
+                    value: 'test val',
+                    version: {
+                        my_tree: {
+                            id: 1,
+                            library: 'test_lib'
                         }
-                    },
-                    {userId: 1}
-                )
-            ).rejects.toThrow(ValidationError);
+                    }
+                },
+                {userId: 1}
+            );
+
+            expect(savedValue.version).toBeUndefined();
         });
 
         test('Should throw if version is incorrect: unknown tree', async () => {
