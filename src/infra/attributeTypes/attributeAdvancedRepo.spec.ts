@@ -206,22 +206,10 @@ describe('AttributeStandardRepo', () => {
                 created_at: 400999999
             };
 
-            const mockDbCollec = {
-                update: global.__mockPromise(savedValueData),
-                document: global.__mockPromise(savedValueData)
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromiseMultiple([[savedValueData], [savedEdgeData]])
             };
-
-            const mockDbEdgeCollec = {
-                updateByExample: global.__mockPromise(),
-                firstExample: global.__mockPromise(savedEdgeData)
-            };
-
-            const mockDb = {
-                collection: jest.fn().mockReturnValue(mockDbCollec),
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
-            };
-
-            const mockDbServ = {db: mockDb};
 
             const attrRepo = attributeAdvancedRepo(mockDbServ);
 
@@ -231,22 +219,15 @@ describe('AttributeStandardRepo', () => {
                 modified_at: 500999999
             });
 
-            expect(mockDbCollec.update.mock.calls.length).toBe(1);
-            expect(mockDbCollec.update).toBeCalledWith({_key: 987654}, {value: 'test val'});
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
-            expect(mockDbEdgeCollec.updateByExample.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.updateByExample).toBeCalledWith(
-                {
-                    _from: 'test_lib/12345',
-                    _to: 'core_values/987654'
-                },
-                {
-                    _from: 'test_lib/12345',
-                    _to: 'core_values/987654',
-                    attribute: 'test_attr',
-                    modified_at: 500999999
-                }
-            );
+            expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
 
             expect(savedVal).toMatchObject(valueData);
         });
@@ -290,22 +271,10 @@ describe('AttributeStandardRepo', () => {
                 }
             };
 
-            const mockDbCollec = {
-                update: global.__mockPromise(savedValueData),
-                document: global.__mockPromise(savedValueData)
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromiseMultiple([[savedValueData], [savedEdgeData]])
             };
-
-            const mockDbEdgeCollec = {
-                updateByExample: global.__mockPromise(),
-                firstExample: global.__mockPromise(savedEdgeData)
-            };
-
-            const mockDb = {
-                collection: jest.fn().mockReturnValue(mockDbCollec),
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
-            };
-
-            const mockDbServ = {db: mockDb};
 
             const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
@@ -320,26 +289,6 @@ describe('AttributeStandardRepo', () => {
                     }
                 }
             });
-
-            expect(mockDbCollec.update.mock.calls.length).toBe(1);
-            expect(mockDbCollec.update).toBeCalledWith({_key: 987654}, {value: 'test val'});
-
-            expect(mockDbEdgeCollec.updateByExample.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.updateByExample).toBeCalledWith(
-                {
-                    _from: 'test_lib/12345',
-                    _to: 'core_values/987654'
-                },
-                {
-                    _from: 'test_lib/12345',
-                    _to: 'core_values/987654',
-                    attribute: 'test_attr',
-                    modified_at: 500999999,
-                    version: {
-                        my_tree: 'test_lib/1'
-                    }
-                }
-            );
 
             expect(savedVal).toMatchObject(valueData);
         });

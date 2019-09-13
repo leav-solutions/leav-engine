@@ -62,13 +62,20 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
             const valueData = {
                 value: value.value
             };
-            const savedVal = await valCollec.update({_key: value.id_value}, valueData);
-            const savedValDoc = await valCollec.document(savedVal);
+
+            const resVal = await dbService.execute(aql`
+                UPDATE ${{_key: value.id_value}}
+                WITH ${valueData}
+                IN ${valCollec}
+                RETURN NEW`);
+            const savedVal = resVal.length ? resVal[0] : {};
 
             // Update value's metadata on record<->value link
+            const edgeFrom = library + '/' + recordId;
+            const edgeTo = savedVal._id;
             const edgeData: any = {
-                _from: library + '/' + recordId,
-                _to: savedVal._id,
+                _from: edgeFrom,
+                _to: edgeTo,
                 attribute: attribute.id,
                 modified_at: value.modified_at,
                 created_at: value.created_at
@@ -78,13 +85,18 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
-            let savedEdge;
-            await edgeCollec.updateByExample({_from: edgeData._from, _to: edgeData._to}, edgeData);
-            savedEdge = await edgeCollec.firstExample({_from: edgeData._from, _to: edgeData._to});
+            const resEdge = await dbService.execute(aql`
+                FOR e IN ${edgeCollec}
+                FILTER e._from == ${edgeFrom} AND e._to == ${edgeTo}
+                UPDATE e
+                    WITH ${edgeData}
+                    IN ${edgeCollec}
+                RETURN NEW`);
+            const savedEdge = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
-                id_value: savedValDoc._key,
-                value: savedValDoc.value,
+                id_value: savedVal._key,
+                value: savedVal.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at

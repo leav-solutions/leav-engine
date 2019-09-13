@@ -21,14 +21,7 @@ describe('AttributeIndexRepo', () => {
                 value: 'test_val'
             };
 
-            const mockDbCollec = {
-                update: global.__mockPromise(updatedRecordData),
-                document: global.__mockPromise(updatedRecordData)
-            };
-
-            const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};
-
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
 
             const attrRepo = attributeSimpleRepo(mockDbServ);
 
@@ -36,8 +29,10 @@ describe('AttributeIndexRepo', () => {
                 value: 'test val'
             });
 
-            expect(mockDbCollec.update.mock.calls.length).toBe(1);
-            expect(mockDbCollec.update).toBeCalledWith({_key: 12345}, {test_attr: 'test val'}, {keepNull: false});
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject(updatedValueData);
         });
@@ -81,14 +76,7 @@ describe('AttributeIndexRepo', () => {
                 value: null
             };
 
-            const mockDbCollec = {
-                update: global.__mockPromise(updatedRecordData),
-                document: global.__mockPromise(updatedRecordData)
-            };
-
-            const mockDb = {collection: jest.fn().mockReturnValue(mockDbCollec)};
-
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
 
             const attrRepo = attributeSimpleRepo(mockDbServ);
 
@@ -96,8 +84,9 @@ describe('AttributeIndexRepo', () => {
                 value: 'test val'
             });
 
-            expect(mockDbCollec.update.mock.calls.length).toBe(1);
-            expect(mockDbCollec.update).toBeCalledWith({_key: 12345}, {test_attr: null}, {keepNull: false});
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(deletedVal).toMatchObject(deletedValueData);
         });

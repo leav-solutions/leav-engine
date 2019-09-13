@@ -59,3 +59,48 @@ Object {
   "value2": "test_attr",
 }
 `;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 1`] = `
+"
+                UPDATE @value0
+                WITH @value1
+                IN @@value2
+                RETURN NEW"
+`;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 2`] = `
+Object {
+  "@value2": "core_values",
+  "value0": Object {
+    "_key": 987654,
+  },
+  "value1": Object {
+    "value": "test val",
+  },
+}
+`;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 3`] = `
+"
+                FOR e IN @@value0
+                FILTER e._from == @value1 AND e._to == @value2
+                UPDATE e
+                    WITH @value3
+                    IN @@value0
+                RETURN NEW"
+`;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 4`] = `
+Object {
+  "@value0": "core_edge_values_links",
+  "value1": "test_lib/12345",
+  "value2": "core_values/987654",
+  "value3": Object {
+    "_from": "test_lib/12345",
+    "_to": "core_values/987654",
+    "attribute": "test_attr",
+    "created_at": undefined,
+    "modified_at": 500999999,
+  },
+}
+`;

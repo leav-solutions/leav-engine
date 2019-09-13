@@ -60,9 +60,12 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
-            let savedEdge;
-            await edgeCollec.updateByExample({_key: value.id_value}, edgeData);
-            savedEdge = await edgeCollec.firstExample({_key: value.id_value});
+            const resEdge = await dbService.execute(aql`
+                UPDATE ${{_key: value.id_value}}}
+                    WITH ${edgeData}
+                    IN ${edgeCollec}
+                RETURN NEW`);
+            const savedEdge = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
                 id_value: savedEdge._key,

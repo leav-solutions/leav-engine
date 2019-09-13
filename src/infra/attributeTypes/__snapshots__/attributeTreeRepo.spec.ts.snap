@@ -64,3 +64,29 @@ exports[`AttributeTreeRepo getValues Should return linked tree element filtered 
                 RETURN {linkedRecord, edge}
             "
 `;
+
+exports[`AttributeTreeRepo updateValue Should update a advanced link value 1`] = `
+"
+                UPDATE @value0}
+                    WITH @value1
+                    IN @@value2
+                RETURN NEW"
+`;
+
+exports[`AttributeTreeRepo updateValue Should update a advanced link value 2`] = `
+Object {
+  "@value2": "core_edge_values_links",
+  "value0": Object {
+    "_key": 987654,
+  },
+  "value1": Object {
+    "_from": "test_lib/12345",
+    "_to": "categories/123456",
+    "attribute": "test_tree_attr",
+    "modified_at": 400999999,
+    "version": Object {
+      "my_tree": "test_lib/1",
+    },
+  },
+}
+`;

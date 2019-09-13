@@ -16,21 +16,15 @@ export default function(dbService: IDbService | any): IAttributeTypeRepo {
     ): Promise<IValue> {
         const collec = dbService.db.collection(library);
 
-        const updatedDoc = await collec.update(
-            {
-                _key: recordId
-            },
-            {
-                [attribute.id]: value.value
-            },
-            {
-                keepNull: false
-            }
-        );
+        const res = await dbService.execute(aql`
+            UPDATE ${{_key: recordId}}
+            WITH ${{[attribute.id]: value.value}}
+            IN ${collec}
+            OPTIONS { keepNull: false }
+            RETURN NEW`);
+        const updatedDoc = res.length ? res[0] : {};
 
-        const docData = await collec.document(updatedDoc);
-
-        return {value: typeof docData[attribute.id] !== 'undefined' ? docData[attribute.id] : null};
+        return {value: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null};
     }
 
     return {
