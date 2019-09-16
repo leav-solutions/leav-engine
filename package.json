@@ -60,7 +60,7 @@
         "apollo-server": "^2.7.0",
         "apollo-server-core": "^2.7.0",
         "apollo-server-hapi": "^2.7.0",
-        "arangojs": "^6.10.0",
+        "arangojs": "^6.11.1",
         "awilix": "^3.0.8",
         "bcrypt": "^3.0.6",
         "commander": "^2.20.0",
