@@ -17,6 +17,8 @@ interface IEditLibraryInfosFormProps extends WithNamespaces {
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
+type LibraryFormValues = Omit<GET_LIBRARIES_libraries_list, 'gqlNames'>;
+
 /* tslint:disable-next-line:variable-name */
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
@@ -37,7 +39,7 @@ function EditLibraryInfosForm({
 }: IEditLibraryInfosFormProps) {
     const existingLib = library !== null;
 
-    const defaultLibrary: GET_LIBRARIES_libraries_list = {
+    const defaultLibrary: LibraryFormValues = {
         id: '',
         system: false,
         label: {
@@ -53,7 +55,7 @@ function EditLibraryInfosForm({
         }
     };
 
-    const initialValues: GET_LIBRARIES_libraries_list = library === null ? defaultLibrary : library;
+    const initialValues: LibraryFormValues = library === null ? defaultLibrary : library;
 
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
@@ -82,7 +84,7 @@ function EditLibraryInfosForm({
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
     }
 
-    const validationSchema: yup.ObjectSchema<Partial<GET_LIBRARIES_libraries_list>> = yup.object().shape({
+    const validationSchema: yup.ObjectSchema<Partial<LibraryFormValues>> = yup.object().shape({
         label: yup.object().shape({
             [defaultLang || langs[0]]: yup.string().required()
         }),
@@ -101,7 +103,7 @@ function EditLibraryInfosForm({
         errors: inputErrors,
         values,
         touched
-    }: FormikProps<GET_LIBRARIES_libraries_list>) => {
+    }: FormikProps<LibraryFormValues>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
 

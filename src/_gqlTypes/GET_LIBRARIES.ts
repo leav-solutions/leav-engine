@@ -55,6 +55,14 @@ export interface GET_LIBRARIES_libraries_list_recordIdentityConf {
     preview: string | null;
 }
 
+export interface GET_LIBRARIES_libraries_list_gqlNames {
+    query: string;
+    type: string;
+    list: string;
+    filter: string;
+    searchableFields: string;
+}
+
 export interface GET_LIBRARIES_libraries_list {
     id: string;
     system: boolean | null;
@@ -62,6 +70,7 @@ export interface GET_LIBRARIES_libraries_list {
     attributes: GET_LIBRARIES_libraries_list_attributes[] | null;
     permissions_conf: GET_LIBRARIES_libraries_list_permissions_conf | null;
     recordIdentityConf: GET_LIBRARIES_libraries_list_recordIdentityConf | null;
+    gqlNames: GET_LIBRARIES_libraries_list_gqlNames;
 }
 
 export interface GET_LIBRARIES_libraries {

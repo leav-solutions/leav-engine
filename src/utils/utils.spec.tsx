@@ -3,6 +3,7 @@ import {TreeNode} from 'react-sortable-tree';
 import {PermissionsActions} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {Mockify} from '../_types//Mockify';
+import {mockAttrAdv, mockAttrAdvLink, mockAttrSimpleLink, mockAttrTree} from '../__mocks__/attributes';
 import {
     addWildcardToFilters,
     formatIDString,
@@ -10,9 +11,11 @@ import {
     getInvertColor,
     getRandomColor,
     getTreeNodeKey,
+    isLinkAttribute,
     localizedLabel,
     permsArrayToObject,
-    stringToColor
+    stringToColor,
+    versionObjToGraphql
 } from './utils';
 
 describe('utils', () => {
@@ -188,6 +191,33 @@ describe('utils', () => {
             const res = getFieldError('my_field', {my_field: false}, {}, {my_field: 'ERROR'});
 
             expect(res).toBe('');
+        });
+    });
+
+    describe('versionObjToGraphql', () => {
+        test('Convert a version object to graphql array', async () => {
+            const res = versionObjToGraphql({
+                regions: {library: 'regions', id: '13586077'},
+                lang: {library: 'lang', id: '12345'}
+            });
+
+            expect(res).toStrictEqual([
+                {name: 'regions', value: {library: 'regions', id: '13586077'}},
+                {name: 'lang', value: {library: 'lang', id: '12345'}}
+            ]);
+        });
+    });
+
+    describe('isLinkAttribute', () => {
+        test('Check if is link attribute', async () => {
+            expect(isLinkAttribute(mockAttrAdv)).toBe(false);
+            expect(isLinkAttribute(mockAttrTree)).toBe(false);
+            expect(isLinkAttribute(mockAttrAdvLink)).toBe(true);
+            expect(isLinkAttribute(mockAttrSimpleLink)).toBe(true);
+        });
+
+        test('Include type tree if non-strict mode', async () => {
+            expect(isLinkAttribute(mockAttrTree, false)).toBe(true);
         });
     });
 });

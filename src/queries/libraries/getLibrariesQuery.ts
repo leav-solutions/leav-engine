@@ -28,6 +28,13 @@ export const getLibsQuery = gql`
                     color
                     preview
                 }
+                gqlNames {
+                    query
+                    type
+                    list
+                    filter
+                    searchableFields
+                }
             }
         }
     }

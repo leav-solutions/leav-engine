@@ -137,5 +137,14 @@
     },
     "navigator": {
         "title": "Navigateur"
+    },
+    "records": {
+        "add_value": "Ajouter une valeur",
+        "links_elements_count": "{{count}} éléments",
+        "select_record": "Sélectionner un élément",
+        "create_record": "Créer un élément",
+        "edit": "Éditer",
+        "delete_link": "Supprimer la liaison",
+        "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet élément?"
     }
 }

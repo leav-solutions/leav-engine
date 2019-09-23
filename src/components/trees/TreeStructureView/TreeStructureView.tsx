@@ -16,7 +16,7 @@ interface IEditTreeStructureViewProps extends WithNamespaces {
     onDeleteNode: (data: NodeData) => void;
     readOnly: boolean;
     onClickNode?: (nodeData: NodeData) => void;
-    selection?: [NodeData] | null;
+    selection?: NodeData[] | null;
 }
 
 /* tslint:disable-next-line:variable-name */
@@ -45,7 +45,7 @@ function TreeStructureView({
             onClickNode &&
             ((e: any) => {
                 if (e.target.className !== 'rst__expandButton' && e.target.className !== 'rst__collapseButton') {
-                    onClickNode(rowInfo);
+                    onClickNode({...rowInfo});
                 }
             });
 

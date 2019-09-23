@@ -5,7 +5,7 @@ import {Confirm} from 'semantic-ui-react';
 
 interface IConfirmedButtonProps extends WithNamespaces {
     actionButton?: React.ReactElement<any>;
-    action: () => void;
+    action: (param?: any) => void;
     confirmMessage: string;
     t: TranslationFunction;
     children: JSX.Element;

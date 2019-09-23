@@ -138,5 +138,14 @@
     },
     "navigator": {
         "title": "browser"
+    },
+    "records": {
+        "add_value": "Add value",
+        "links_elements_count": "{{count}} elements",
+        "select_record": "Select a record",
+        "create_record": "Create a record",
+        "edit": "Edit",
+        "delete_link": "Delete link",
+        "delete_confirm": "Do you really want to delete this element?"
     }
 }

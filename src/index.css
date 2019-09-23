@@ -20,3 +20,11 @@ body {
 .height100 {
   height: 100%;
 }
+
+
+/************************************/
+/***** Override Semantic styles *****/
+/************************************/
+.ui.form .field.disabled > label {
+  opacity: 1;
+}

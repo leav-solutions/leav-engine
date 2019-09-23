@@ -5,6 +5,7 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {
     changeNodeAtPath,
     ExtendedNodeData,
+    find,
     FullTree,
     getNodeAtPath,
     NodeData,
@@ -29,7 +30,7 @@ interface ITreeStructureProps extends WithNamespaces {
     treeId: string;
     readOnly?: boolean;
     onClickNode?: (nodeData: NodeData) => void;
-    selection?: [NodeData] | null;
+    selection?: NodeData[] | null;
     withFakeRoot?: boolean;
 }
 
@@ -80,6 +81,28 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
         const {treeId, readOnly, onClickNode, selection, withFakeRoot} = this.props;
         const {treeData, loaded} = this.state;
 
+        const _handleClickNode = treeItem => {
+            // Add all parents details on selected node
+            const hydratedPath = treeItem.path.map(k => {
+                // All we have is the parent key, so we need to find matching node in tree data
+                const findRes = find({
+                    treeData,
+                    getNodeKey: getTreeNodeKey,
+                    searchQuery: k,
+                    searchMethod: d => {
+                        const [lib, id] = k.split('/');
+                        return d.node.id === id && d.node.library.id === lib;
+                    }
+                });
+
+                return findRes.matches.length ? findRes.matches[0].node : null;
+            });
+
+            return onClickNode
+                ? onClickNode({...treeItem, node: {...treeItem.node, parents: hydratedPath}})
+                : undefined;
+        };
+
         return (
             <ApolloConsumer>
                 {client => {
@@ -114,7 +137,7 @@ class TreeStructure extends React.Component<ITreeStructureProps, ITreeStructureS
                             onVisibilityToggle={onVisibilityToggle}
                             onMoveNode={onMoveNode}
                             onDeleteNode={onDeleteNode}
-                            onClickNode={onClickNode}
+                            onClickNode={_handleClickNode}
                             selection={selection}
                         />
                     );

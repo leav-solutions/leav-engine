@@ -3,7 +3,8 @@ import {i18n} from 'i18next';
 import {get} from 'lodash';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
-import {AvailableLanguage} from '../_gqlTypes/globalTypes';
+import {GET_ATTRIBUTES_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeType, AvailableLanguage, TreeElementInput} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {IErrorByField} from '../_types/errors';
 
@@ -172,4 +173,25 @@ export function getFieldError<T>(
     }
 
     return inputFieldError || serverFieldError;
+}
+
+export function versionObjToGraphql(version: {
+    [treeName: string]: TreeElementInput;
+}): Array<{name: string; value: TreeElementInput}> {
+    const gqlVersions: Array<{name: string; value: TreeElementInput}> = [];
+    for (const versionName of Object.keys(version)) {
+        gqlVersions.push({name: versionName, value: version[versionName]});
+    }
+
+    return gqlVersions;
+}
+
+export function isLinkAttribute(attribute: GET_ATTRIBUTES_attributes_list, strict: boolean = true) {
+    const linkTypes = [AttributeType.advanced_link, AttributeType.simple_link];
+
+    if (!strict) {
+        linkTypes.push(AttributeType.tree);
+    }
+
+    return linkTypes.includes(attribute.type);
 }

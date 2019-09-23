@@ -193,6 +193,17 @@ export interface Treepermissions_confInput {
     relation: PermissionsRelation;
 }
 
+export interface ValueBatchInput {
+    attribute?: string | null;
+    id_value?: string | null;
+    value?: string | null;
+}
+
+export interface ValueVersionInput {
+    name: string;
+    value: TreeElementInput;
+}
+
 export interface ValuesVersionsConfInput {
     versionable: boolean;
     mode?: ValueVersionMode | null;
