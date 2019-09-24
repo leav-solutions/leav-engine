@@ -116,12 +116,14 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                     extend type Mutation {
                         # Save one value
                         saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value!
-                        # Save values for several attributes at once
+                        # Save values for several attributes at once.
+                        # If deleteEmpty is true, empty values will be deleted
                         saveValueBatch(
                             library: ID,
                             recordId: ID,
                             version: [ValueVersionInput],
-                            values: [ValueBatchInput]
+                            values: [ValueBatchInput],
+                            deleteEmpty: Boolean
                         ): saveValueBatchResult!
                         deleteValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value!
                     }
@@ -145,7 +147,7 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
 
                             return {...savedVal, version: formattedVersion};
                         },
-                        async saveValueBatch(parent, {library, recordId, version, values}, ctx) {
+                        async saveValueBatch(parent, {library, recordId, version, values, deleteEmpty}, ctx) {
                             // Convert version
                             const versionToUse = _convertVersionFromGqlFormat(version);
                             const convertedValues = values.map(val => ({
@@ -157,7 +159,8 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                                 library,
                                 recordId,
                                 convertedValues,
-                                graphqlApp.ctxToQueryInfos(ctx)
+                                graphqlApp.ctxToQueryInfos(ctx),
+                                deleteEmpty
                             );
 
                             const res = {

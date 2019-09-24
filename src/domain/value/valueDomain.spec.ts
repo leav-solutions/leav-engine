@@ -745,6 +745,90 @@ describe('ValueDomain', () => {
             expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
             expect(mockValRepo.createValue.mock.calls.length).toBe(0);
         });
+
+        test('Delete empty values', async () => {
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const values: IValue[] = [
+                {
+                    attribute: 'advanced_attribute',
+                    value: '',
+                    id_value: 987654
+                }
+            ];
+
+            const mockValRepo: Mockify<IValueRepo> = {
+                updateValue: jest.fn(),
+                createValue: jest.fn(),
+                deleteValue: jest.fn(),
+                getValueById: global.__mockPromise({
+                    id_value: 12345
+                })
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrAdv})
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain,
+                mockTreeRepo as ITreeRepo
+            );
+
+            const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, false);
+
+            expect(mockValRepo.deleteValue).toBeCalledTimes(1);
+        });
+
+        test("Don't delete empty values if keepEmpty true", async () => {
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const values: IValue[] = [
+                {
+                    attribute: 'advanced_attribute',
+                    value: '',
+                    id_value: 987654
+                }
+            ];
+
+            const mockValRepo: Mockify<IValueRepo> = {
+                updateValue: jest.fn(),
+                createValue: jest.fn(),
+                deleteValue: jest.fn(),
+                getValueById: global.__mockPromise({
+                    id_value: 12345
+                })
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrAdv})
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepo as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain,
+                mockTreeRepo as ITreeRepo
+            );
+
+            const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, true);
+
+            expect(mockValRepo.deleteValue).toBeCalledTimes(0);
+        });
     });
 
     describe('deleteValue', () => {

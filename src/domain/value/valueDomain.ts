@@ -51,12 +51,14 @@ export interface IValueDomain {
      * @param recordId
      * @param values
      * @param infos
+     * @param keepEmpty If false, empty values will be deleted (or not saved)
      */
     saveValueBatch(
         library: string,
         recordId: number,
         values: IValue[],
-        infos: IQueryInfos
+        infos: IQueryInfos,
+        keepEmpty?: boolean
     ): Promise<ISaveBatchValueResult>;
     deleteValue(
         library: string,
@@ -366,7 +368,8 @@ export default function(
             library: string,
             recordId: number,
             values: IValue[],
-            infos: IQueryInfos
+            infos: IQueryInfos,
+            keepEmpty: boolean = false
         ): Promise<ISaveBatchValueResult> {
             await _validateLibrary(library);
 
@@ -383,7 +386,10 @@ export default function(
                             recordId
                         );
 
-                        const savedVal = await _saveOneValue(library, recordId, attributeProps, value, infos);
+                        const savedVal =
+                            !keepEmpty && !value.value
+                                ? await valueRepo.deleteValue(library, recordId, attributeProps, value)
+                                : await _saveOneValue(library, recordId, attributeProps, value, infos);
 
                         prevRes.values.push({...savedVal, attribute: value.attribute});
                     } catch (e) {
