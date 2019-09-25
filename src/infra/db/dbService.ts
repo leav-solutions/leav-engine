@@ -102,6 +102,10 @@ export default function(db: Database, utils: IUtils): IDbService {
                 e.message += `\nQuery was: ${JSON.stringify(query).replace(/\\n/g, ' ')}`;
                 e.query = query;
 
+                // Response contains circular references which can cause an error when converted to JSON
+                // later on. It doesn't contains useful information anyway, so throw it away.
+                delete e.response;
+
                 utils.rethrow(e);
             }
         },
