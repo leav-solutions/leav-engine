@@ -67,16 +67,10 @@ describe('AttributeTreeRepo', () => {
 
     describe('createValue', () => {
         test('Should create a new advanced link value', async function() {
-            const mockDbEdgeCollec = {
-                save: global.__mockPromise(savedEdgeData),
-                firstExample: global.__mockPromise(savedEdgeData)
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([savedEdgeData])
             };
-
-            const mockDb = {
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
-            };
-
-            const mockDbServ = {db: mockDb};
 
             const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils as IDbUtils);
 
@@ -92,17 +86,10 @@ describe('AttributeTreeRepo', () => {
                 }
             });
 
-            expect(mockDbEdgeCollec.save.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.save).toBeCalledWith({
-                _from: 'test_lib/12345',
-                _to: 'categories/123456',
-                attribute: 'test_tree_attr',
-                modified_at: 400999999,
-                created_at: 400999999,
-                version: {
-                    my_tree: 'test_lib/1'
-                }
-            });
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject({
                 id_value: 978654321,

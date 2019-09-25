@@ -31,9 +31,11 @@ export default function(
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
-            let savedEdge;
-            savedEdge = await edgeCollec.save(edgeData);
-            savedEdge = await edgeCollec.firstExample(savedEdge);
+            const resEdge = await dbService.execute(aql`
+                INSERT ${edgeData}
+                    IN ${edgeCollec}
+                RETURN NEW`);
+            const savedEdge = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
                 id_value: savedEdge._key,

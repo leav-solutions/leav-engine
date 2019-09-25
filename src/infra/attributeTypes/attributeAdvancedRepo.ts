@@ -20,8 +20,11 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
                 value: value.value
             };
 
-            const savedVal = await valCollec.save(valueData);
-            const savedValDoc = await valCollec.document(savedVal);
+            const resVal = await dbService.execute(aql`
+                INSERT ${valueData}
+                IN ${valCollec}
+                RETURN NEW`);
+            const savedVal = resVal.length ? resVal[0] : {};
 
             // Create the link record<->value and add some metadata on it
             const edgeData: any = {
@@ -36,13 +39,15 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
-            let savedEdge;
-            savedEdge = await edgeCollec.save(edgeData);
-            savedEdge = await edgeCollec.firstExample(savedEdge);
+            const resEdge = await dbService.execute(aql`
+                INSERT ${edgeData}
+                IN ${edgeCollec}
+                RETURN NEW`);
+            const savedEdge = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
-                id_value: savedValDoc._key,
-                value: savedValDoc.value,
+                id_value: savedVal._key,
+                value: savedVal.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at

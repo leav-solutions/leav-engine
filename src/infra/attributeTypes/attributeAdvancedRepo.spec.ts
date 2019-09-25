@@ -49,22 +49,10 @@ describe('AttributeStandardRepo', () => {
                 created_at: 400999999
             };
 
-            const mockDbCollec = {
-                save: global.__mockPromise(createdValueData),
-                document: global.__mockPromise(createdValueData)
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromiseMultiple([[createdValueData], [createdEdgeData]])
             };
-
-            const mockDbEdgeCollec = {
-                save: global.__mockPromise(createdEdgeData),
-                firstExample: global.__mockPromise(createdEdgeData)
-            };
-
-            const mockDb = {
-                collection: jest.fn().mockReturnValue(mockDbCollec),
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
-            };
-
-            const mockDbServ = {db: mockDb};
 
             const attrRepo = attributeAdvancedRepo(mockDbServ);
 
@@ -74,17 +62,17 @@ describe('AttributeStandardRepo', () => {
                 created_at: 400999999
             });
 
-            expect(mockDbCollec.save.mock.calls.length).toBe(1);
-            expect(mockDbCollec.save).toBeCalledWith({value: 'test val'});
+            expect(mockDbServ.execute.mock.calls.length).toBe(2);
 
-            expect(mockDbEdgeCollec.save.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.save).toBeCalledWith({
-                _from: 'test_lib/12345',
-                _to: 'core_values/987654',
-                attribute: 'test_attr',
-                modified_at: 400999999,
-                created_at: 400999999
-            });
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+
+            expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/INSERT/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject(newValueData);
         });
@@ -128,22 +116,10 @@ describe('AttributeStandardRepo', () => {
                 }
             };
 
-            const mockDbCollec = {
-                save: global.__mockPromise(createdValueData),
-                document: global.__mockPromise(createdValueData)
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromiseMultiple([[createdValueData], [createdEdgeData]])
             };
-
-            const mockDbEdgeCollec = {
-                save: global.__mockPromise(createdEdgeData),
-                firstExample: global.__mockPromise(createdEdgeData)
-            };
-
-            const mockDb = {
-                collection: jest.fn().mockReturnValue(mockDbCollec),
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
-            };
-
-            const mockDbServ = {db: mockDb};
 
             const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
 
@@ -159,20 +135,10 @@ describe('AttributeStandardRepo', () => {
                 }
             });
 
-            expect(mockDbCollec.save.mock.calls.length).toBe(1);
-            expect(mockDbCollec.save).toBeCalledWith({value: 'test val'});
-
-            expect(mockDbEdgeCollec.save.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.save).toBeCalledWith({
-                _from: 'test_lib/12345',
-                _to: 'core_values/987654',
-                attribute: 'test_attr',
-                modified_at: 400999999,
-                created_at: 400999999,
-                version: {
-                    my_tree: 'test_lib/1'
-                }
-            });
+            expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/INSERT/);
+            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject(newValueData);
         });
