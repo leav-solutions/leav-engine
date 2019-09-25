@@ -11,7 +11,8 @@ import {
     getRandomColor,
     getTreeNodeKey,
     localizedLabel,
-    permsArrayToObject
+    permsArrayToObject,
+    stringToColor
 } from './utils';
 
 describe('utils', () => {
@@ -96,6 +97,26 @@ describe('utils', () => {
     describe('getRandomColor', () => {
         test('Generate random hexadecimal color', async () => {
             expect(getRandomColor()).toMatch(/^\#[0-9A-Fa-f]{6}$/);
+        });
+    });
+    describe('stringToColor', () => {
+        const str = 'mytest';
+        test('gets the same color if called twice', () => {
+            const res1 = stringToColor(str);
+            const res2 = stringToColor(str);
+            expect(res1).toEqual(res2);
+        });
+        test('gets hsl by default', () => {
+            const res = stringToColor(str);
+            expect(res).toMatch(/hsl\(-?(\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/g);
+        });
+        test('gets rgb if specified', () => {
+            const res = stringToColor(str, 'rgb');
+            expect(res).toMatch(/rgb\((\d+),\s*([\d]+),\s*([\d]+)\)/g);
+        });
+        test('gets hex if specified', () => {
+            const res = stringToColor(str, 'hex');
+            expect(res).toMatch(/^\#[0-9A-Fa-f]{6}$/);
         });
     });
 

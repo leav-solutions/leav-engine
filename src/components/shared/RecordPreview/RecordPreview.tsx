@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
-import {getInvertColor, getRandomColor} from '../../../utils/utils';
+import {getInvertColor, stringToColor} from '../../../utils/utils';
 
 interface IRecordPreviewProps {
     label: string;
@@ -40,7 +40,7 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
 
     const initial = label[0].toLocaleUpperCase();
 
-    const bgColor = color || getRandomColor();
+    const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 
     return (

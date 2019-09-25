@@ -5,7 +5,7 @@ import RecordPreview from './RecordPreview';
 
 jest.mock('../../../utils/utils', () => ({
     getInvertColor: jest.fn().mockImplementation(() => '#FFFFFF'),
-    getRandomColor: jest.fn().mockImplementation(() => '#000000')
+    stringToColor: jest.fn().mockImplementation(() => '#000000')
 }));
 
 describe('RecordPreview', () => {
