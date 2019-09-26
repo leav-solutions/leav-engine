@@ -112,7 +112,11 @@
         "admin_edit_tree": "Éditer un arbre",
         "admin_delete_tree": "Supprimer un arbre",
         "admin_access_permissions": "Accéder aux permissions",
-        "admin_edit_permission": "Éditer les permissions"
+        "admin_edit_permission": "Éditer les permissions",
+        "access_attribute": "Voir l'attribut",
+        "create_value": "Créer une valeur",
+        "edit_value": "Éditer une valeur",
+        "delete_value": "Supprimer une valeur"
     },
     "login": {
         "header": "Authentification",

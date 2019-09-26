@@ -13,13 +13,15 @@ interface IDefineTreePermissionsViewProps extends WithNamespaces {
     permissionType: PermissionTypes;
     applyTo: string;
     readOnly?: boolean;
+    actions: PermissionsActions[];
 }
 
 function DefineTreePermissionsView({
     treeAttribute: tree,
     permissionType,
     applyTo,
-    readOnly
+    readOnly,
+    actions
 }: IDefineTreePermissionsViewProps): JSX.Element {
     const usersGroupsTreeId = 'users_groups';
     const [selectedTreeNode, setSelectedTreeNode] = React.useState<NodeData | null>(null);
@@ -63,12 +65,7 @@ function DefineTreePermissionsView({
                         type: permissionType,
                         applyTo,
                         usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
-                        actions: [
-                            PermissionsActions.access,
-                            PermissionsActions.create,
-                            PermissionsActions.edit,
-                            PermissionsActions.delete
-                        ],
+                        actions,
                         permissionTreeTarget: {
                             tree: tree.linked_tree,
                             id: selectedTreeNode.node.id !== 'root' ? selectedTreeNode.node.id : null,

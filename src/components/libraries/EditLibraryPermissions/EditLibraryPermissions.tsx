@@ -4,7 +4,7 @@ import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
-import {AttributeType, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {AttributeType, PermissionsActions, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineLibPermissionsView from '../../permissions/DefineLibPermissionsView';
 import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
 
@@ -28,6 +28,13 @@ const FormGroupWithMargin = styled(Form.Group)`
 const AccordionWithMargin = styled(Accordion)`
     margin-bottom: 1em;
 `;
+
+const actions = [
+    PermissionsActions.access,
+    PermissionsActions.create,
+    PermissionsActions.edit,
+    PermissionsActions.delete
+];
 
 function EditLibraryPermissions({
     library,
@@ -79,6 +86,7 @@ function EditLibraryPermissions({
                         permissionType={PermissionTypes.record}
                         applyTo={library.id}
                         readOnly={readOnly}
+                        actions={actions}
                     />
                 ) : (
                     <p>Missing tree ID</p>

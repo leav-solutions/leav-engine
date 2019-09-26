@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeType, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {AttributeType, PermissionsActions, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
 import Loading from '../../shared/Loading';
 
@@ -14,6 +14,13 @@ interface IEditAttributePermissionsProps extends WithNamespaces {
     onSubmitSettings: (formData: any) => void;
     readOnly: boolean;
 }
+
+const actions = [
+    PermissionsActions.access_attribute,
+    PermissionsActions.create_value,
+    PermissionsActions.edit_value,
+    PermissionsActions.delete_value
+];
 
 function EditAttributePermissions({
     attribute,
@@ -82,6 +89,7 @@ function EditAttributePermissions({
                                         permissionType={PermissionTypes.attribute}
                                         applyTo={attribute.id}
                                         readOnly={readOnly}
+                                        actions={actions}
                                     />
                                 ) : (
                                     <p>Missing tree ID</p>

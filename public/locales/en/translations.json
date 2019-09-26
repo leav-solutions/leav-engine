@@ -113,7 +113,11 @@
         "admin_edit_tree": "Edit tree",
         "admin_delete_tree": "Delete tree",
         "admin_access_permissions": "Access permissions",
-        "admin_edit_permission": "Edit permission"
+        "admin_edit_permission": "Edit permission",
+        "access_attribute": "Access attribute",
+        "create_value": "Create value",
+        "edit_value": "Edit value",
+        "delete_value": "Delete value"
     },
     "login": {
         "header": "Authentification",
