@@ -223,7 +223,7 @@ export default function(
                     }
 
                     const formattedVersion =
-                        typeof version !== 'undefined'
+                        Array.isArray(version) && version.length
                             ? version.reduce((allVers, vers) => {
                                   allVers[vers.name] = vers.value;
                                   return allVers;

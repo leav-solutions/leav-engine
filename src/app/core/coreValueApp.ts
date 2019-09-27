@@ -27,7 +27,7 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
     };
 
     const _convertVersionFromGqlFormat = (version: any): IValueVersion => {
-        return !!version
+        return Array.isArray(version) && version.length
             ? version.reduce((formattedVers, valVers) => {
                   formattedVers[valVers.name] = valVers.value;
 
@@ -167,7 +167,10 @@ export default function(valueDomain: IValueDomain, graphqlApp: IGraphqlApp): ICo
                                 ...savedValues,
                                 values: savedValues.values.map(val => ({
                                     ...val,
-                                    version: val.version ? _convertVersionToGqlFormat(val.version) : null
+                                    version:
+                                        Array.isArray(val.version) && val.version.length
+                                            ? _convertVersionToGqlFormat(val.version)
+                                            : null
                                 }))
                             };
 
