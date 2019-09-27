@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import SortableTree, {ExtendedNodeData, NodeData, TreeItem} from 'react-sortable-tree';
 import {Button, Loader} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getTreeNodeKey} from '../../../utils/utils';
+import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
+import EditRecordModal from '../../records/EditRecordModal';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import Loading from '../../shared/Loading';
 import './rstOverride.css';
@@ -39,6 +41,21 @@ function TreeStructureView({
     readOnly,
     t
 }: IEditTreeStructureViewProps) {
+    const [editRecordModalOpen, setEditRecordModalOpen] = useState<boolean>(false);
+    const [editedRecordId, setEditedRecordId] = useState<string>('');
+    const [editedLibraryId, setEditedLIbraryId] = useState<string>('');
+
+    // TODO: handle versions
+    const [editedVersion] = useState<{[treeName: string]: TreeElementInput}>();
+
+    const _openEditRecordModal = (record: TreeItem) => () => {
+        setEditRecordModalOpen(true);
+        setEditedRecordId(record.id);
+        setEditedLIbraryId(record.library.id);
+    };
+
+    const _closeEditRecordModal = () => setEditRecordModalOpen(false);
+
     const _genNodeProps = (rowInfo: ExtendedNodeData) => {
         const onDelete = () => onDeleteNode(rowInfo);
         const onClick =
@@ -58,6 +75,9 @@ function TreeStructureView({
         return {
             buttons: [
                 rowInfo.node.loading && <Loader key="loader_spinner" size="mini" active inline />,
+                !readOnly && (
+                    <InlineBtn key="edit_record_btn" icon="edit" onClick={_openEditRecordModal(rowInfo.node)} />
+                ),
                 !readOnly && (
                     <ConfirmedButton
                         key="delete_btn"
@@ -88,6 +108,13 @@ function TreeStructureView({
                     onMoveNode={onMoveNode}
                 />
             )}
+            <EditRecordModal
+                open={editRecordModalOpen}
+                onClose={_closeEditRecordModal}
+                recordId={editedRecordId}
+                library={editedLibraryId}
+                version={editedVersion}
+            />
         </div>
     );
 }
