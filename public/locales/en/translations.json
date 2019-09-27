@@ -150,7 +150,9 @@
         }
     },
     "navigator": {
-        "title": "browser"
+        "title": "browser",
+        "select_root": "Please select a library in the list aside.",
+        "edit_filters": "Edit filters"
     },
     "records": {
         "add_value": "Add value",
