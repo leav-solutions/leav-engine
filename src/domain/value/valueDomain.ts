@@ -200,7 +200,8 @@ export default function(
         value: IValue,
         infos: IQueryInfos,
         library: string,
-        recordId: number
+        recordId: number,
+        keepEmpty: boolean = false
     ): Promise<IValue> {
         const valueExists = _doesValueExist(value, attributeProps);
 
@@ -216,9 +217,12 @@ export default function(
             throw new PermissionError(RecordPermissionsActions.EDIT);
         }
 
-        const permToCheck = valueExists
-            ? AttributePermissionsActions.EDIT_VALUE
-            : AttributePermissionsActions.CREATE_VALUE;
+        const permToCheck =
+            !keepEmpty && !value.value
+                ? AttributePermissionsActions.DELETE_VALUE
+                : valueExists
+                ? AttributePermissionsActions.EDIT_VALUE
+                : AttributePermissionsActions.CREATE_VALUE;
 
         const canSaveValue = await attributePermissionDomain.getAttributePermission(
             permToCheck,
