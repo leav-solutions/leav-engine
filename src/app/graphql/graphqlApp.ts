@@ -126,7 +126,7 @@ export default function(
         ctxToQueryInfos(ctx: any): IQueryInfos {
             const infos: IQueryInfos = {};
 
-            infos.userId = !!ctx.auth && ctx.auth.userId ? ctx.auth.userId : null;
+            infos.userId = !!ctx.auth && ctx.auth.userId ? Number(ctx.auth.userId) : null;
 
             return infos;
         }

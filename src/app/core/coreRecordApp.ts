@@ -1,13 +1,13 @@
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {IRecord} from '../../_types/record';
-import {IAppGraphQLSchema} from '../graphql/graphqlApp';
+import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecordApp {
+export default function(recordDomain: IRecordDomain, utils: IUtils, graphqlApp: IGraphqlApp = null): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -69,12 +69,12 @@ export default function(recordDomain: IRecordDomain, utils: IUtils): ICoreRecord
                     },
                     Mutation: {
                         async createRecord(parent, {library}, ctx): Promise<IRecord> {
-                            const newRec = await recordDomain.createRecord(library, {userId: ctx.auth.userId});
+                            const newRec = await recordDomain.createRecord(library, graphqlApp.ctxToQueryInfos(ctx));
 
                             return newRec;
                         },
                         async deleteRecord(parent, {library, id}, ctx): Promise<IRecord> {
-                            return recordDomain.deleteRecord(library, id, {userId: ctx.auth.userId});
+                            return recordDomain.deleteRecord(library, id, graphqlApp.ctxToQueryInfos(ctx));
                         }
                     }
                 }
