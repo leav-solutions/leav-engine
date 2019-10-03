@@ -391,7 +391,7 @@ export default function(
                         );
 
                         const savedVal =
-                            !keepEmpty && !value.value
+                            !keepEmpty && !value.value && value.id_value
                                 ? await valueRepo.deleteValue(library, recordId, attributeProps, value)
                                 : await _saveOneValue(library, recordId, attributeProps, value, infos);
 
