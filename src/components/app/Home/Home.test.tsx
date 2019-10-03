@@ -12,8 +12,11 @@ describe('Home', () => {
                     <Home />
                 </MockedUserContextProvider>
             </MockedProvider>
-        ).html();
+        )
+            .find('Home')
+            .shallow();
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find('MainMenu')).toHaveLength(1);
+        expect(comp.find('ProtectedRoute')).toHaveLength(7);
     });
 });
