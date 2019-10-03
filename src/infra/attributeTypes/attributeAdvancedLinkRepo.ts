@@ -63,7 +63,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
             }
 
             const resEdge = await dbService.execute(aql`
-                UPDATE ${{_key: value.id_value}}}
+                UPDATE ${{_key: value.id_value}}
                     WITH ${edgeData}
                     IN ${edgeCollec}
                 RETURN NEW`);

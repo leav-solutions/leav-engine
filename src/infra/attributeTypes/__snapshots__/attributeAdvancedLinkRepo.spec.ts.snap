@@ -110,7 +110,7 @@ Object {
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 1`] = `
 "
-                UPDATE @value0}
+                UPDATE @value0
                     WITH @value1
                     IN @@value2
                 RETURN NEW"
