@@ -2,6 +2,12 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import TreeStructureView from './TreeStructureView';
 
+jest.mock('react-sortable-tree', () => {
+    return function SortableTree() {
+        return <div>MOCK TestComponent</div>;
+    };
+});
+
 describe('TreeStructureView', () => {
     test('Render loading if no data', async () => {
         const onTreeChange = jest.fn();
@@ -42,6 +48,6 @@ describe('TreeStructureView', () => {
         );
 
         expect(comp.find('Loading')).toHaveLength(0);
-        expect(comp.find('DragDropContext(ReactSortableTree)')).toHaveLength(1);
+        expect(comp.find('SortableTree')).toHaveLength(1);
     });
 });
