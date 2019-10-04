@@ -39,7 +39,7 @@ module.exports = {
     withNamespaces: () => Component => {
         Component.defaultProps = {
             ...Component.defaultProps,
-            t: arg => arg,
+            t: (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`,
             i18n: mockI18n
         };
         return Component;
