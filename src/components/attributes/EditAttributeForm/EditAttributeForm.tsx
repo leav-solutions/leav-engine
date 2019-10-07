@@ -6,6 +6,7 @@ import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES'
 import {IFormError} from '../../../_types//errors';
 import EditAttributeInfosForm from '../EditAttributeInfosForm';
 import EditAttributePermissions from '../EditAttributePermissions';
+import ActionListConfigurer from '../ActionListConfigurer';
 
 interface IEditAttributeFormProps extends WithNamespaces {
     attribute: GET_ATTRIBUTES_attributes_list | null;
@@ -48,21 +49,34 @@ function EditAttributeForm({
     ];
 
     if (attribute !== null) {
-        panes.push({
-            key: 'permissions',
-            menuItem: t('attributes.permissions'),
-            render: () => {
-                return (
-                    <Tab.Pane key="permissions" className="grow flex-col height100">
-                        <EditAttributePermissions
-                            attribute={attribute}
-                            onSubmitSettings={onPermsSettingsSubmit}
-                            readOnly={readOnly}
-                        />
-                    </Tab.Pane>
-                );
+        panes.push(
+            {
+                key: 'permissions',
+                menuItem: t('attributes.permissions'),
+                render: () => {
+                    return (
+                        <Tab.Pane key="permissions" className="grow flex-col height100">
+                            <EditAttributePermissions
+                                attribute={attribute}
+                                onSubmitSettings={onPermsSettingsSubmit}
+                                readOnly={readOnly}
+                            />
+                        </Tab.Pane>
+                    );
+                }
+            },
+            {
+                key: 'configurer',
+                menuItem: t('attributes.action_list'),
+                render: () => {
+                    return (
+                        <Tab.Pane key="configurer" className="grow flex-col height100">
+                            <ActionListConfigurer attribute={attribute} />
+                        </Tab.Pane>
+                    );
+                }
             }
-        });
+        );
     }
 
     return (

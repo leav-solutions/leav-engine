@@ -6,6 +6,13 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ActionIOTypes {
+    boolean = 'boolean',
+    number = 'number',
+    object = 'object',
+    string = 'string'
+}
+
 export enum AttributeFormat {
     boolean = 'boolean',
     date = 'date',
@@ -27,6 +34,7 @@ export enum AvailableActionsName {
     encrypt = 'encrypt',
     formatDate = 'formatDate',
     formatNumber = 'formatNumber',
+    maskValue = 'maskValue',
     parseJSON = 'parseJSON',
     toBoolean = 'toBoolean',
     toJSON = 'toJSON',
@@ -102,7 +110,7 @@ export interface ActionsListConfigurationInput {
 
 export interface AttributeInput {
     id: string;
-    type: AttributeType;
+    type?: AttributeType | null;
     format?: AttributeFormat | null;
     label?: SystemTranslationInput | null;
     linked_library?: string | null;
