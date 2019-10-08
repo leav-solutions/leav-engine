@@ -1,0 +1,22 @@
+{
+  "name": "automate-scan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.cacom.fr/dev/leav/automate-scan.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.5.5",
+    "chokidar": "^3.2.1",
+    "jshint": "^2.10.2"
+  }
+}
