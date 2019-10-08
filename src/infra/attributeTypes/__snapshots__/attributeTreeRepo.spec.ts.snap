@@ -90,7 +90,7 @@ exports[`AttributeTreeRepo getValues Should return linked tree element filtered 
 
 exports[`AttributeTreeRepo updateValue Should update a advanced link value 1`] = `
 "
-                UPDATE @value0}
+                UPDATE @value0
                     WITH @value1
                     IN @@value2
                 RETURN NEW"
