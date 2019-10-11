@@ -1,4 +1,5 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {isNumber} from 'util';
@@ -15,7 +16,8 @@ export default function(
     attributeDomain: IAttributeDomain,
     recordDomain: IRecordDomain,
     graphqlApp: IGraphqlApp,
-    coreApp: ICoreApp
+    coreApp: ICoreApp,
+    libraryDomain: ILibraryDomain
 ): ITreeAttributeApp {
     /**
      * Retrieve parent tree attribute by recursively getting up on GraphQL query path.
@@ -42,7 +44,7 @@ export default function(
                     type Tree {
                         id: ID!,
                         system: Boolean!,
-                        libraries: [String!]!,
+                        libraries: [Library!]!,
                         label(lang: [AvailableLanguage!]): SystemTranslation
                     }
 
@@ -163,6 +165,17 @@ export default function(
                          */
                         label: async (treeData, args) => {
                             return coreApp.filterSysTranslationField(treeData.label, args.lang || []);
+                        },
+                        libraries: async (treeData, args) => {
+                            return Promise.all(
+                                treeData.libraries.map(async libId => {
+                                    const lib = await libraryDomain.getLibraries({
+                                        filters: {id: libId},
+                                        strictFilters: true
+                                    });
+                                    return lib.list[0];
+                                })
+                            );
                         }
                     },
                     TreeNode: {
