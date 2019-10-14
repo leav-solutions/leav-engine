@@ -3,9 +3,9 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IOTypes} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
-import {mockAttrAdvVersionable, mockAttrTree} from '../../__tests__/mocks/attribute';
+import {mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import attributeDomain from './attributeDomain';
@@ -407,6 +407,50 @@ describe('attributeDomain', () => {
             attrDomain.getAttributes = global.__mockPromise({list: [], totalCount: 0});
 
             await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow(PermissionError);
+        });
+    });
+
+    describe('getInputType', () => {
+        const attrDomain = attributeDomain();
+        test('Return input type by format', async () => {
+            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.TEXT})).toBe(IOTypes.STRING);
+            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.DATE})).toBe(IOTypes.STRING);
+            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toBe(
+                IOTypes.STRING
+            );
+
+            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toBe(IOTypes.NUMBER);
+
+            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toBe(
+                IOTypes.BOOLEAN
+            );
+
+            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toBe(
+                IOTypes.OBJECT
+            );
+        });
+    });
+
+    describe('getOutputType', () => {
+        const attrDomain = attributeDomain();
+        test('Return input type by format', async () => {
+            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.TEXT})).toBe(IOTypes.STRING);
+            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.DATE})).toBe(IOTypes.STRING);
+            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toBe(
+                IOTypes.STRING
+            );
+
+            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toBe(
+                IOTypes.NUMBER
+            );
+
+            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toBe(
+                IOTypes.BOOLEAN
+            );
+
+            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toBe(
+                IOTypes.OBJECT
+            );
         });
     });
 });

@@ -7,7 +7,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute, IOTypes} from '../../_types/attribute';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
@@ -45,6 +45,10 @@ export interface IAttributeDomain {
      * @param id
      */
     deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute>;
+
+    getInputType(attrData: IAttribute): IOTypes;
+
+    getOutputType(attrData: IAttribute): IOTypes;
 }
 
 export default function(
@@ -223,6 +227,19 @@ export default function(
         }
     }
 
+    function _getIOType(attrData: IAttribute): IOTypes {
+        switch (attrData.format) {
+            case AttributeFormats.NUMERIC:
+                return IOTypes.NUMBER;
+            case AttributeFormats.BOOLEAN:
+                return IOTypes.BOOLEAN;
+            case AttributeFormats.EXTENDED:
+                return IOTypes.OBJECT;
+            default:
+                return IOTypes.STRING;
+        }
+    }
+
     return {
         async getAttributeProperties(id: string): Promise<IAttribute> {
             const attrs = await attributeRepo.getAttributes({filters: {id}, strictFilters: true});
@@ -304,6 +321,12 @@ export default function(
             }
 
             return attributeRepo.deleteAttribute(attrProps);
+        },
+        getInputType(attrData: IAttribute): IOTypes {
+            return _getIOType(attrData);
+        },
+        getOutputType(attrData: IAttribute): IOTypes {
+            return _getIOType(attrData);
         }
     };
 }

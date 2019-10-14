@@ -65,3 +65,10 @@ export enum AttributeFormats {
     BOOLEAN = 'boolean',
     EXTENDED = 'extended'
 }
+
+export enum IOTypes {
+    STRING = 'string',
+    NUMBER = 'number',
+    BOOLEAN = 'boolean',
+    OBJECT = 'object'
+}
