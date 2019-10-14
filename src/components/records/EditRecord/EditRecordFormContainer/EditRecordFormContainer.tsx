@@ -55,7 +55,7 @@ const _extractValueToSave = (value: IGenericValue, attribute: GET_LIBRARIES_libr
                     : null;
             break;
         default:
-            extractedValue = (value as IValue).value;
+            extractedValue = (value as ITreeLinkValue) !== null ? (value as IValue).value : null;
             break;
     }
 
