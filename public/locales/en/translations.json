@@ -88,7 +88,8 @@
         "delete": "Delete",
         "confirm_delete": "Do you really want to delete tree {{treeLabel}}?",
         "confirm_delete_element": "Do you really want to detach this element?",
-        "add_element": "Add element"
+        "add_element": "Add element",
+        "select_tree_node": "Select an element"
     },
     "permissions": {
         "title": "Admin Permissions",
