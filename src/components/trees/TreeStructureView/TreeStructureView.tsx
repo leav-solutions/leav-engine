@@ -136,30 +136,35 @@ function TreeStructureView({
         }
 
         const _handleClickDelete = () => _handleOpenDeleteConfirm(rowInfo);
+        const isFakeRoot = rowInfo.node.isFakeRoot;
         return {
-            canDrag: !rowInfo.node.isFakeRoot,
+            canDrag: !readOnly && !isFakeRoot,
             buttons: [
                 rowInfo.node.loading && <Loader key="loader_spinner" size="mini" active inline />,
                 !readOnly && (
                     <Dropdown pointing={false} basic compact icon="ellipsis vertical">
                         <Dropdown.Menu>
-                            <Dropdown.Item
-                                key="edit_record_btn_item"
-                                text={t('records.edit')}
-                                icon="edit outline"
-                                onClick={_openEditRecordModal({
-                                    parent: rowInfo.parentNode,
-                                    library: rowInfo.node.library.id,
-                                    recordId: rowInfo.node.id
-                                })}
-                            />
-                            <Dropdown.Item
-                                key="delete_record_btn_item"
-                                text={t('trees.delete')}
-                                icon="alternate trash outline"
-                                onClick={_handleClickDelete}
-                            />
-                            <Dropdown.Divider />
+                            {!isFakeRoot && (
+                                <>
+                                    <Dropdown.Item
+                                        key="edit_record_btn_item"
+                                        text={t('records.edit')}
+                                        icon="edit outline"
+                                        onClick={_openEditRecordModal({
+                                            parent: rowInfo.parentNode,
+                                            library: rowInfo.node.library.id,
+                                            recordId: rowInfo.node.id
+                                        })}
+                                    />
+                                    <Dropdown.Item
+                                        key="delete_record_btn_item"
+                                        text={t('trees.delete')}
+                                        icon="alternate trash outline"
+                                        onClick={_handleClickDelete}
+                                    />
+                                    <Dropdown.Divider />
+                                </>
+                            )}
                             <Dropdown.Header icon="plus square outline" content={t('trees.add_element')} />
                             {treeSettings.libraries.map(lib => (
                                 <Dropdown.Item
