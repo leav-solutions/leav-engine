@@ -32,7 +32,8 @@ export interface SAVE_VALUE_BATCH_saveValueBatch {
 
 export interface SAVE_VALUE_BATCH {
     /**
-     * Save values for several attributes at once
+     * Save values for several attributes at once.
+     * If deleteEmpty is true, empty values will be deleted
      */
     saveValueBatch: SAVE_VALUE_BATCH_saveValueBatch;
 }

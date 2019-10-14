@@ -11,7 +11,10 @@ export const saveTreeQuery = gql`
             id
             system
             label
-            libraries
+            libraries {
+                id
+                label
+            }
         }
     }
 `;

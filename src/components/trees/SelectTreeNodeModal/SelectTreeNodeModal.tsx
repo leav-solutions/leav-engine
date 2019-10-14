@@ -1,7 +1,11 @@
+import {useQuery} from '@apollo/react-hooks';
 import React, {useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {NodeData, TreeItem} from 'react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
+import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
+import {GET_TREES, GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';
+import Loading from '../../shared/Loading';
 import TreeStructure from '../TreeStructure';
 
 interface ISelectTreeNodeModalProps extends WithNamespaces {
@@ -13,6 +17,11 @@ interface ISelectTreeNodeModalProps extends WithNamespaces {
 
 function SelectTreeNodeModal({open, tree, onSelect, onClose, t}: ISelectTreeNodeModalProps): JSX.Element {
     const [currentSelection, setCurrentSelection] = useState<NodeData[] | null>(null);
+    const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
+        variables: {
+            id: tree
+        }
+    });
 
     const _handleNodeSelection = (node: NodeData) => setCurrentSelection([node]);
     const _handleSubmit = () => {
@@ -21,11 +30,30 @@ function SelectTreeNodeModal({open, tree, onSelect, onClose, t}: ISelectTreeNode
         return onSelect(selectedNode);
     };
 
+    if (loading) {
+        return <Loading />;
+    }
+
+    if (error) {
+        return <p>ERROR {error}</p>;
+    }
+
+    if (!data || !data.trees || !data.trees.list.length) {
+        return <p>Unknown tree</p>;
+    }
+
+    const treeSettings = data.trees.list[0];
+
     return (
         <Modal open={open} onClose={onClose} closeIcon>
             <Modal.Header>{t('trees.select_tree_node')}</Modal.Header>
             <Modal.Content style={{height: '80vh'}}>
-                <TreeStructure treeId={tree} onClickNode={_handleNodeSelection} readOnly selection={currentSelection} />
+                <TreeStructure
+                    tree={treeSettings}
+                    onClickNode={_handleNodeSelection}
+                    readOnly
+                    selection={currentSelection}
+                />
             </Modal.Content>
             <Modal.Actions>
                 <Button

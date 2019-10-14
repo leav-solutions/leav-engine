@@ -26,7 +26,7 @@ describe('TreesSelector', () => {
                                         en: 'TestTree',
                                         fr: 'TestTree'
                                     },
-                                    libraries: ['test_lib']
+                                    libraries: [{id: 'test_lib', label: {fr: 'My Lib'}, __typename: 'Library'}]
                                 }
                             ]
                         }

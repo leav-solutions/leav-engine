@@ -148,7 +148,7 @@ function EditTreeInfosForm({
                         width="4"
                         name="libraries"
                         onChange={_handleChange}
-                        value={libraries}
+                        value={libraries.map(l => l.id)}
                     />
                 </FormFieldWrapper>
                 {!readOnly && (

@@ -4,6 +4,7 @@ import {render} from 'enzyme';
 import React from 'react';
 import sleep from 'sleep-promise';
 import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
+import {mockTree} from '../../../__mocks__/trees';
 import TreeStructure from './TreeStructure';
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
@@ -61,7 +62,7 @@ describe('EditTreeStructure', () => {
 
         const comp = render(
             <MockedProvider mocks={mocks} addTypename cache={new InMemoryCache({fragmentMatcher})}>
-                <TreeStructure treeId={'test_tree'} />
+                <TreeStructure tree={mockTree} />
             </MockedProvider>
         );
 

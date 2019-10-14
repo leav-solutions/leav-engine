@@ -8,11 +8,16 @@ import {AvailableLanguage} from './globalTypes';
 // GraphQL query operation: GET_TREES
 // ====================================================
 
+export interface GET_TREES_trees_list_libraries {
+    id: string;
+    label: any | null;
+}
+
 export interface GET_TREES_trees_list {
     id: string;
     label: any | null;
     system: boolean;
-    libraries: string[];
+    libraries: GET_TREES_trees_list_libraries[];
 }
 
 export interface GET_TREES_trees {

@@ -51,7 +51,7 @@ function EditTreeForm({
             render: () => (
                 <Tab.Pane key="structure" className="grow">
                     <div className="flex-col height100">
-                        <TreeStructure treeId={tree.id} readOnly={readOnly} />
+                        <TreeStructure tree={tree} readOnly={readOnly} withFakeRoot fakeRootLabel={label} />
                     </div>
                 </Tab.Pane>
             )

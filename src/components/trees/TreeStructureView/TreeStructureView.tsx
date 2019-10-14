@@ -1,16 +1,19 @@
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import SortableTree, {ExtendedNodeData, NodeData, TreeItem} from 'react-sortable-tree';
-import {Button, Loader} from 'semantic-ui-react';
+import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {getTreeNodeKey} from '../../../utils/utils';
+import {getTreeNodeKey, localizedLabel, stringToColor} from '../../../utils/utils';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import EditRecordModal from '../../records/EditRecordModal';
-import ConfirmedButton from '../../shared/ConfirmedButton';
+import SelectRecordModal from '../../records/SelectRecordModal';
 import Loading from '../../shared/Loading';
 import './rstOverride.css';
 
 interface IEditTreeStructureViewProps extends WithNamespaces {
+    treeSettings: GET_TREES_trees_list;
     treeData: TreeItem[];
     onTreeChange: (treeData) => void;
     onVisibilityToggle: (data) => void;
@@ -19,18 +22,31 @@ interface IEditTreeStructureViewProps extends WithNamespaces {
     readOnly: boolean;
     onClickNode?: (nodeData: NodeData) => void;
     selection?: NodeData[] | null;
+    onAddElement?: (record: RecordIdentity_whoAmI, parent: TreeItem) => void;
+}
+
+interface IEditionState {
+    recordId?: string;
+    library: string;
+    parent: TreeItem | null;
 }
 
 /* tslint:disable-next-line:variable-name */
-const InlineBtn = styled(Button)`
-    /* Trick to override more specific CSS rules */
-    &&& {
-        background: none;
-        padding: 0;
-    }
+const LibIconLabel = styled(Label)`
+    background-color: ${props => props.bgcolor};
 `;
 
+const initialEditionState: IEditionState = {
+    library: '',
+    parent: null
+};
+
+const editionReducer = (prevState: IEditionState | undefined, newState: IEditionState): IEditionState => {
+    return {...newState};
+};
+
 function TreeStructureView({
+    treeSettings,
     treeData,
     onTreeChange,
     onVisibilityToggle,
@@ -39,25 +55,72 @@ function TreeStructureView({
     onClickNode,
     selection,
     readOnly,
-    t
+    t,
+    i18n,
+    onAddElement
 }: IEditTreeStructureViewProps) {
     const [editRecordModalOpen, setEditRecordModalOpen] = useState<boolean>(false);
-    const [editedRecordId, setEditedRecordId] = useState<string>('');
-    const [editedLibraryId, setEditedLIbraryId] = useState<string>('');
+    const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
+    const [openAddElementModal, setOpenAddElementModal] = useState<boolean>(false);
+    const [openSelectRecordModal, setOpenSelectRecordModal] = useState<boolean>(false);
+    const [nodeToDelete, setNodeToDelete] = useState<NodeData>();
+
+    const [editionState, editionDispatch] = useReducer(editionReducer, initialEditionState);
+
+    const _handleOpenDeleteConfirm = (node: NodeData) => {
+        setNodeToDelete(node);
+        setOpenDeleteConfirm(true);
+    };
+
+    const _handleCloseDeleteConfirm = () => setOpenDeleteConfirm(false);
+
+    const _handleOpenAddElementModal = (parent: TreeItem, library: string, recordId?: string) => () => {
+        setOpenAddElementModal(true);
+        editionDispatch({
+            parent,
+            library
+        });
+    };
+    const _handleCloseAddElementModal = () => setOpenAddElementModal(false);
+
+    const _handleOpenSelectRecordModal = () => {
+        _handleCloseAddElementModal();
+        setOpenSelectRecordModal(true);
+    };
+    const _handleCloseSelectRecordModal = () => setOpenSelectRecordModal(false);
+    const _handleSelectElement = (record: RecordIdentity_whoAmI) => {
+        if (!editionState.parent || !onAddElement) {
+            return;
+        }
+
+        onAddElement(record, editionState.parent!);
+        _handleCloseSelectRecordModal();
+    };
 
     // TODO: handle versions
     const [editedVersion] = useState<{[treeName: string]: TreeElementInput}>();
 
-    const _openEditRecordModal = (record: TreeItem) => () => {
+    const _openEditRecordModal = (params?: {parent: TreeItem; library: string; recordId?: string}) => () => {
+        setOpenAddElementModal(false);
         setEditRecordModalOpen(true);
-        setEditedRecordId(record.id);
-        setEditedLIbraryId(record.library.id);
+        if (!!params) {
+            editionDispatch(params);
+        }
     };
 
-    const _closeEditRecordModal = () => setEditRecordModalOpen(false);
+    const _handleEditRecordPostSave = (record: RecordIdentity_whoAmI | undefined) => {
+        setEditRecordModalOpen(false);
+        if (record && !editionState.recordId && editionState.parent && !!onAddElement) {
+            return onAddElement(record, editionState.parent);
+        }
+    };
+
+    const _handleDelete = () => {
+        _handleCloseDeleteConfirm();
+        return nodeToDelete && onDeleteNode(nodeToDelete);
+    };
 
     const _genNodeProps = (rowInfo: ExtendedNodeData) => {
-        const onDelete = () => onDeleteNode(rowInfo);
         const onClick =
             onClickNode &&
             ((e: any) => {
@@ -72,26 +135,56 @@ function TreeStructureView({
             nodeClasses.push('selected');
         }
 
+        const _handleClickDelete = () => _handleOpenDeleteConfirm(rowInfo);
         return {
+            canDrag: !rowInfo.node.isFakeRoot,
             buttons: [
                 rowInfo.node.loading && <Loader key="loader_spinner" size="mini" active inline />,
                 !readOnly && (
-                    <InlineBtn key="edit_record_btn" icon="edit" onClick={_openEditRecordModal(rowInfo.node)} />
-                ),
-                !readOnly && (
-                    <ConfirmedButton
-                        key="delete_btn"
-                        action={onDelete}
-                        confirmMessage={t('trees.confirm_delete_element')}
-                    >
-                        <InlineBtn icon="delete" />
-                    </ConfirmedButton>
+                    <Dropdown pointing={false} basic compact icon="ellipsis vertical">
+                        <Dropdown.Menu>
+                            <Dropdown.Item
+                                key="edit_record_btn_item"
+                                text={t('records.edit')}
+                                icon="edit outline"
+                                onClick={_openEditRecordModal({
+                                    parent: rowInfo.parentNode,
+                                    library: rowInfo.node.library.id,
+                                    recordId: rowInfo.node.id
+                                })}
+                            />
+                            <Dropdown.Item
+                                key="delete_record_btn_item"
+                                text={t('trees.delete')}
+                                icon="alternate trash outline"
+                                onClick={_handleClickDelete}
+                            />
+                            <Dropdown.Divider />
+                            <Dropdown.Header icon="plus square outline" content={t('trees.add_element')} />
+                            {treeSettings.libraries.map(lib => (
+                                <Dropdown.Item
+                                    key={`add_record_btn_item_${lib.id}`}
+                                    text={localizedLabel(lib.label, i18n)}
+                                    onClick={_handleOpenAddElementModal(rowInfo.node, lib.id)}
+                                    label={
+                                        <LibIconLabel
+                                            circular
+                                            bgcolor={stringToColor(lib.id)}
+                                            content={lib.id[0].toUpperCase()}
+                                        />
+                                    }
+                                />
+                            ))}
+                        </Dropdown.Menu>
+                    </Dropdown>
                 )
             ],
             className: nodeClasses.join(' '),
             onClick
         };
     };
+
+    const canDrop = d => d.nextParent !== null;
 
     return (
         <div className="grow height100">
@@ -100,6 +193,7 @@ function TreeStructureView({
             ) : (
                 <SortableTree
                     canDrag={!readOnly}
+                    canDrop={canDrop}
                     treeData={treeData}
                     onChange={onTreeChange}
                     onVisibilityToggle={onVisibilityToggle}
@@ -110,11 +204,47 @@ function TreeStructureView({
             )}
             <EditRecordModal
                 open={editRecordModalOpen}
-                onClose={_closeEditRecordModal}
-                recordId={editedRecordId}
-                library={editedLibraryId}
+                onClose={_handleEditRecordPostSave}
+                recordId={editionState.recordId}
+                library={editionState.library}
                 version={editedVersion}
             />
+            {!readOnly && (
+                <>
+                    <Confirm
+                        data-test-id="delete_confirm_modal"
+                        open={openDeleteConfirm}
+                        onCancel={_handleCloseDeleteConfirm}
+                        onConfirm={_handleDelete}
+                        content={t('records.delete_confirm')}
+                    />
+                    <Modal open={openAddElementModal} onClose={_handleCloseAddElementModal} closeIcon>
+                        <Modal.Header>
+                            <Icon name="plus square outline" />
+                            {t('trees.add_element')}
+                        </Modal.Header>
+                        <Modal.Content style={{textAlign: 'center'}}>
+                            <Button.Group size="large">
+                                <Button type="button" onClick={_openEditRecordModal()}>
+                                    <Icon name="plus circle" />
+                                    {t('records.create_record')}
+                                </Button>
+                                <Button.Or text={t('admin.or')} />
+                                <Button type="button" onClick={_handleOpenSelectRecordModal}>
+                                    <Icon name="search" />
+                                    {t('records.select_record')}
+                                </Button>
+                            </Button.Group>
+                        </Modal.Content>
+                    </Modal>
+                    <SelectRecordModal
+                        open={openSelectRecordModal}
+                        library={editionState.library}
+                        onClose={_handleCloseSelectRecordModal}
+                        onSelect={_handleSelectElement}
+                    />
+                </>
+            )}
         </div>
     );
 }

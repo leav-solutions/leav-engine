@@ -36,7 +36,7 @@ function EditRecordModal({open, recordId, library, version, onClose, t}: IEditRe
             dimmer
         >
             <Modal.Header style={{fontSize: '1.3em'}}>
-                {recordIdentity && <RecordCard record={recordIdentity} />}
+                {recordId && recordIdentity && <RecordCard record={recordIdentity} />}
             </Modal.Header>
             <Modal.Content>
                 <EditRecordComp

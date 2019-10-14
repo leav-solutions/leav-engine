@@ -12,7 +12,10 @@ export const getTreesQuery = gql`
                 id
                 label(lang: $lang)
                 system
-                libraries
+                libraries {
+                    id
+                    label
+                }
             }
         }
     }

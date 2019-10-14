@@ -11,7 +11,8 @@
             "matches": "Invalid format",
             "id_exists": "This ID already exists",
             "min": "Please select at least ${min} elements"
-        }
+        },
+        "or": "or"
     },
     "libraries": {
         "title": "Libraries",
@@ -84,8 +85,10 @@
         "informations": "Informations",
         "structure": "Structure",
         "libraries": "Binded libraries",
+        "delete": "Delete",
         "confirm_delete": "Do you really want to delete tree {{treeLabel}}?",
-        "confirm_delete_element": "Do you really want to detach this element?"
+        "confirm_delete_element": "Do you really want to detach this element?",
+        "add_element": "Add element"
     },
     "permissions": {
         "title": "Admin Permissions",

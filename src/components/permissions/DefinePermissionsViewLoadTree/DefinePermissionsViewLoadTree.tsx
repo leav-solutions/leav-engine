@@ -17,7 +17,8 @@ function DefinePermissionsViewLoadTree({
     treeId,
     onClick,
     selectedNode,
-    i18n
+    i18n,
+    t
 }: IDefinePermissionsViewLoadTreeProps): JSX.Element {
     return (
         <TreesQuery query={getTreesQuery} variables={{id: treeId}}>
@@ -37,11 +38,12 @@ function DefinePermissionsViewLoadTree({
                         <Header as="h4">{localizedLabel(treeData.label, i18n)}</Header>
                         <TreeStructure
                             key={treeData.id}
-                            treeId={treeData.id}
+                            tree={treeData}
                             onClickNode={onClick}
                             selection={selectedNode ? [selectedNode] : null}
                             readOnly
                             withFakeRoot
+                            fakeRootLabel={t('permissions.any_record')}
                         />
                     </>
                 );
