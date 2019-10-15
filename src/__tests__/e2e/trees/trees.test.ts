@@ -30,7 +30,7 @@ describe('Trees', () => {
     });
 
     test('Get Trees list', async () => {
-        const res = await makeGraphQlCall('{ trees { list{id libraries} } }');
+        const res = await makeGraphQlCall('{ trees { list{id libraries { id }} } }');
 
         expect(res.status).toBe(200);
         expect(res.data.data.trees.list.length).toBeGreaterThanOrEqual(2);
@@ -38,7 +38,7 @@ describe('Trees', () => {
     });
 
     test('Get Tree by ID', async () => {
-        const res = await makeGraphQlCall(`{ trees(filters: {id: "${testTreeName}"}) { list {id libraries} } }`);
+        const res = await makeGraphQlCall(`{ trees(filters: {id: "${testTreeName}"}) { list {id libraries { id }} } }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.trees.list.length).toBe(1);
