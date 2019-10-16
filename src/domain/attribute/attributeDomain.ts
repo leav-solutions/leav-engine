@@ -73,6 +73,12 @@ export default function(
                             name: 'validateFormat',
                             is_system: true
                         }
+                    ],
+                    [ActionsListEvents.GET_VALUE]: [
+                        {
+                            name: 'formatDate',
+                            is_system: false
+                        }
                     ]
                 };
             case AttributeFormats.ENCRYPTED:
