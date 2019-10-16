@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import {ActionsListEvents} from '_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {IAttributeRepo} from '../../attribute/attributeRepo';
 import {ILibraryRepo} from '../../library/libraryRepo';
@@ -32,7 +33,15 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                     system: true,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.NUMERIC,
-                    label: {fr: 'Date de création', en: 'Creation date'}
+                    label: {fr: 'Date de création', en: 'Creation date'},
+                    actions_list: {
+                        [ActionsListEvents.GET_VALUE]: [
+                            {
+                                name: 'formatDate',
+                                is_system: false
+                            }
+                        ]
+                    }
                 });
 
                 await attributeRepo.createAttribute({
@@ -48,7 +57,15 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                     system: true,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.NUMERIC,
-                    label: {fr: 'Date de modification', en: 'Modification date'}
+                    label: {fr: 'Date de modification', en: 'Modification date'},
+                    actions_list: {
+                        [ActionsListEvents.GET_VALUE]: [
+                            {
+                                name: 'formatDate',
+                                is_system: false
+                            }
+                        ]
+                    }
                 });
 
                 await attributeRepo.createAttribute({
@@ -64,7 +81,15 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                     system: true,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.ENCRYPTED,
-                    label: {fr: 'Mot de passe', en: 'Password'}
+                    label: {fr: 'Mot de passe', en: 'Password'},
+                    actions_list: {
+                        [ActionsListEvents.SAVE_VALUE]: [
+                            {
+                                name: 'encrypt',
+                                is_system: true
+                            }
+                        ]
+                    }
                 });
             }
 
