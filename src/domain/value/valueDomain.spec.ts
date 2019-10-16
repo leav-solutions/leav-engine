@@ -6,9 +6,11 @@ import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {
     mockAttrAdv,
+    mockAttrAdvLink,
     mockAttrAdvVersionable,
     mockAttrAdvVersionableSimple,
-    mockAttrSimple
+    mockAttrSimple,
+    mockAttrTree
 } from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
@@ -526,6 +528,91 @@ describe('ValueDomain', () => {
                     },
                     {userId: 1}
                 )
+            ).rejects.toThrow(ValidationError);
+        });
+
+        test("Should throw if linked record doesn't exist", async () => {
+            const savedValueData = {
+                id_value: '1337',
+                value: '123465',
+                attribute: mockAttrAdvLink.id,
+                modified_at: 123456,
+                created_at: 123456
+            };
+
+            const mockValRepo = {
+                createValue: global.__mockPromise(savedValueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrAdvLink})
+            };
+
+            const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
+                find: global.__mockPromise({totalCount: 0, list: []})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepoNotfound as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain,
+                mockTreeRepo as ITreeRepo
+            );
+
+            await expect(
+                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+            ).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if linked record not in tree', async () => {
+            const savedValueData = {
+                id_value: '1337',
+                value: 'lib1/123456',
+                attribute: mockAttrTree.id,
+                modified_at: 123456,
+                created_at: 123456
+            };
+
+            const mockValRepo: Mockify<IValueRepo> = {};
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrTree})
+            };
+
+            const mockRecordRepoWithFind: Mockify<IRecordRepo> = {
+                find: global.__mockPromise({totalCount: 1, list: [{id: '123456'}]})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const mockTreeRepoNotPresent: Mockify<ITreeRepo> = {
+                isElementPresent: global.__mockPromise(false),
+                getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
+            };
+
+            const valDomain = valueDomain(
+                mockAttrDomain as IAttributeDomain,
+                mockLibDomain as ILibraryDomain,
+                mockValRepo as IValueRepo,
+                mockRecordRepoWithFind as IRecordRepo,
+                mockActionsListDomain as IActionsListDomain,
+                mockRecordPermDomain as IRecordPermissionDomain,
+                mockAttrPermDomain as IAttributePermissionDomain,
+                mockTreeRepoNotPresent as ITreeRepo
+            );
+
+            await expect(
+                valDomain.saveValue('test_lib', 12345, mockAttrTree.id, {value: 'lib1/123456'}, {userId: 1})
             ).rejects.toThrow(ValidationError);
         });
     });

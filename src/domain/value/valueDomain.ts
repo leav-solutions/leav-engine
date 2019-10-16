@@ -75,6 +75,11 @@ interface IFindValueTree {
     elements: ITreeNode[];
 }
 
+interface ILinkRecordValidationResult {
+    isValid: boolean;
+    reason?: string;
+}
+
 export default function(
     attributeDomain: IAttributeDomain = null,
     libraryDomain: ILibraryDomain = null,
@@ -120,6 +125,12 @@ export default function(
      */
     const _getValuesForVersion = (version, values): IValue[] => {
         return values.filter(v => isEqual(v.version, version));
+    };
+
+    const _mustCheckLinkedRecord = (attribute: IAttribute): boolean => {
+        const linkTypes = [AttributeTypes.ADVANCED_LINK, AttributeTypes.SIMPLE_LINK, AttributeTypes.TREE];
+
+        return linkTypes.includes(attribute.type);
     };
 
     /**
@@ -195,14 +206,57 @@ export default function(
     const _doesValueExist = (value: IValue, attributeProps: IAttribute): boolean =>
         !!(value.id_value && attributeProps.type !== AttributeTypes.SIMPLE);
 
-    async function _validateAndPrepareValue(
+    const _validateLinkedRecord = async (
+        value: IValue,
+        attribute: IAttribute
+    ): Promise<ILinkRecordValidationResult> => {
+        const idAttrProps = await attributeDomain.getAttributeProperties('id');
+        const records = await recordRepo.find(attribute.linked_library, [
+            {
+                attribute: idAttrProps,
+                value: value.value
+            }
+        ]);
+
+        return records.list.length
+            ? {isValid: true}
+            : {isValid: false, reason: `Unknown record ${value.value} in library ${attribute.linked_library}`};
+    };
+
+    const _validateTreeLinkedRecord = async (
+        value: IValue,
+        attribute: IAttribute
+    ): Promise<ILinkRecordValidationResult> => {
+        const idAttrProps = await attributeDomain.getAttributeProperties('id');
+        const [library, recordId] = value.value.split('/');
+        const records = await recordRepo.find(library, [
+            {
+                attribute: idAttrProps,
+                value: recordId
+            }
+        ]);
+
+        if (!records.list.length) {
+            return {isValid: false, reason: `Unknown record ${recordId} in library ${library}`};
+        }
+
+        const isElementInTree = await treeRepo.isElementPresent(attribute.linked_tree, {library, id: recordId});
+
+        if (!isElementInTree) {
+            return {isValid: false, reason: `Element ${value.value} is not in tree ${attribute.linked_tree}`};
+        }
+
+        return {isValid: true};
+    };
+
+    const _validateAndPrepareValue = async (
         attributeProps: IAttribute,
         value: IValue,
         infos: IQueryInfos,
         library: string,
         recordId: number,
         keepEmpty: boolean = false
-    ): Promise<IValue> {
+    ): Promise<IValue> => {
         const valueExists = _doesValueExist(value, attributeProps);
 
         // Check permission
@@ -255,6 +309,22 @@ export default function(
             }
         }
 
+        if (_mustCheckLinkedRecord(attributeProps)) {
+            const linkedRecordValidationHandler: {
+                [type: string]: (value: IValue, attribute: IAttribute) => Promise<ILinkRecordValidationResult>;
+            } = {
+                [AttributeTypes.SIMPLE_LINK]: _validateLinkedRecord,
+                [AttributeTypes.ADVANCED_LINK]: _validateLinkedRecord,
+                [AttributeTypes.TREE]: _validateTreeLinkedRecord
+            };
+
+            const isValidLink = await linkedRecordValidationHandler[attributeProps.type](value, attributeProps);
+
+            if (!isValidLink.isValid) {
+                throw new ValidationError({[attributeProps.id]: isValidLink.reason});
+            }
+        }
+
         // Execute actions list. Output value might be different from input value
         const actionsListRes =
             !!attributeProps.actions_list && !!attributeProps.actions_list.saveValue
@@ -266,7 +336,7 @@ export default function(
                 : value;
 
         return actionsListRes;
-    }
+    };
 
     const _saveOneValue = async (
         library: string,

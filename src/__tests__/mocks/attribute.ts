@@ -34,10 +34,15 @@ export const mockAttrAdvVersionableSimple = {
 
 export const mockAttrSimpleLink = {...base, id: 'simple_link_attribute', type: AttributeTypes.SIMPLE_LINK};
 
-export const mockAttrAdvLink = {...base, id: 'adv_link_attribute', type: AttributeTypes.ADVANCED_LINK};
+export const mockAttrAdvLink = {
+    ...base,
+    id: 'adv_link_attribute',
+    type: AttributeTypes.ADVANCED_LINK,
+    linked_library: 'test_lib'
+};
 export const mockAttrAdvLinkMultiVal = {...mockAttrAdvLink, multiple_values: true};
 
-export const mockAttrTree = {...base, id: 'tree_attribute', type: AttributeTypes.TREE};
+export const mockAttrTree = {...base, id: 'tree_attribute', type: AttributeTypes.TREE, linked_tree: 'my_tree'};
 export const mockAttrTreeVersionable = {
     ...mockAttrTree,
     versions_conf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
