@@ -53,8 +53,8 @@ export default function(
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
                         versions_conf: ValuesVersionsConf
-                        inputType: IOTypes
-                        outputType: IOTypes
+                        input_type: IOTypes
+                        output_type: IOTypes
                     }
 
                     input AttributeInput {
@@ -174,8 +174,8 @@ export default function(
                         label: async (attributeData, args) => {
                             return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
                         },
-                        inputType: attributeData => attributeDomain.getInputType(attributeData),
-                        outputType: attributeData => attributeDomain.getOutputType(attributeData)
+                        input_type: attributeData => attributeDomain.getInputType(attributeData),
+                        output_type: attributeData => attributeDomain.getOutputType(attributeData)
                     }
                 }
             };
