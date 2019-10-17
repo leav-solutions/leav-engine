@@ -77,7 +77,8 @@ describe('Permissions', () => {
             saveAttribute(attribute: {
                 id: "${testLibAttrId}",
                 type: tree,
-                linked_tree: "${permTreeName}"
+                linked_tree: "${permTreeName}",
+                label: {fr: "Test"}
             }) {
                 id
             },
@@ -224,6 +225,7 @@ describe('Permissions', () => {
                 saveAttribute(attribute: {
                     id: "${testPermAttrId}",
                     type: simple,
+                    format: text,
                     label: {fr: "Permissions Test Attribute"},
                     permissions_conf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
                 }) {

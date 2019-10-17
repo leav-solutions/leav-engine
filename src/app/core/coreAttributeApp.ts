@@ -59,7 +59,7 @@ export default function(
 
                     input AttributeInput {
                         id: ID!
-                        type: AttributeType!
+                        type: AttributeType
                         format: AttributeFormat
                         label: SystemTranslationInput,
                         linked_library: String,

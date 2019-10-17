@@ -4,7 +4,7 @@ import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListIOTypes} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
@@ -13,6 +13,11 @@ import attributeDomain from './attributeDomain';
 
 describe('attributeDomain', () => {
     const queryInfos = {userId: 1};
+    const mockConf = {
+        lang: {
+            default: 'fr'
+        }
+    };
 
     describe('getAttributes', () => {
         test('Should return a list of attributes', async function() {
@@ -20,7 +25,7 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
             const attr = await attrDomain.getAttributes();
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
@@ -32,7 +37,7 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
             const attr = await attrDomain.getAttributes();
 
             expect(mockAttrRepo.getAttributes.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
@@ -45,7 +50,7 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
             const attr = await attrDomain.getAttributeProperties('test');
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
@@ -58,7 +63,7 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
 
             await expect(attrDomain.getAttributeProperties('test')).rejects.toThrow();
         });
@@ -102,7 +107,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
@@ -111,7 +118,8 @@ describe('attributeDomain', () => {
                 {
                     id: 'test',
                     type: AttributeTypes.ADVANCED,
-                    format: AttributeFormats.TEXT
+                    format: AttributeFormats.TEXT,
+                    label: {fr: 'Test'}
                 },
                 queryInfos
             );
@@ -144,7 +152,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -153,7 +163,9 @@ describe('attributeDomain', () => {
                 {
                     id: 'test',
                     type: AttributeTypes.ADVANCED,
-                    actions_list: {saveValue: [{is_system: true, name: 'validateFormat'}]}
+                    format: AttributeFormats.TEXT,
+                    actions_list: {saveValue: [{is_system: true, name: 'validateFormat'}]},
+                    label: {fr: 'Test'}
                 },
                 queryInfos
             );
@@ -186,7 +198,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([attrData]);
@@ -235,7 +249,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -245,7 +261,8 @@ describe('attributeDomain', () => {
                 type: AttributeTypes.ADVANCED,
                 actions_list: {
                     saveValue: [{is_system: true, name: 'validateFormat'}, {is_system: false, name: 'toNumber'}]
-                }
+                },
+                label: {fr: 'Test'}
             };
 
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
@@ -270,7 +287,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -278,7 +297,8 @@ describe('attributeDomain', () => {
             const attrToSave = {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
-                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]}
+                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]},
+                label: {fr: 'Test'}
             };
 
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
@@ -299,7 +319,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -307,6 +329,8 @@ describe('attributeDomain', () => {
             const attrToSave = {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
+                format: AttributeFormats.TEXT,
+                label: {fr: 'Test'},
                 actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]}
             };
 
@@ -328,7 +352,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -336,7 +362,9 @@ describe('attributeDomain', () => {
             const attrToSave = {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
-                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]}
+                format: AttributeFormats.TEXT,
+                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]},
+                label: {fr: 'Test'}
             };
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(PermissionError);
         });
@@ -356,7 +384,9 @@ describe('attributeDomain', () => {
                 mockAttrRepo as IAttributeRepo,
                 null,
                 mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
+                mockUtils as IUtils,
+                null,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
@@ -364,7 +394,7 @@ describe('attributeDomain', () => {
             const attrToSaveSimple = {
                 id: 'test',
                 type: AttributeTypes.SIMPLE,
-                format: AttributeFormats.TEXT,
+                label: {fr: 'Test'},
                 multiple_values: true
             };
             await expect(attrDomain.saveAttribute(attrToSaveSimple, queryInfos)).rejects.toThrow(ValidationError);
@@ -372,7 +402,7 @@ describe('attributeDomain', () => {
             const attrToSaveSimpleLink = {
                 id: 'test',
                 type: AttributeTypes.SIMPLE_LINK,
-                format: AttributeFormats.TEXT,
+                label: {fr: 'Test'},
                 multiple_values: true
             };
             await expect(attrDomain.saveAttribute(attrToSaveSimpleLink, queryInfos)).rejects.toThrow(ValidationError);
@@ -401,12 +431,82 @@ describe('attributeDomain', () => {
                 mockALDomain as IActionsListDomain,
                 mockPermDomain as IPermissionDomain,
                 mockUtils as IUtils,
-                mockTreeRepo as ITreeRepo
+                mockTreeRepo as ITreeRepo,
+                mockConf
             );
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
             await expect(attrDomain.saveAttribute(mockAttrAdvVersionable, queryInfos)).rejects.toThrow(ValidationError);
+        });
+
+        test('Check required fields at creation', async () => {
+            const mockPermDomain: Mockify<IPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise({list: [], totalCount: 0})
+            };
+
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise({list: [], totalCount: 0})
+            };
+
+            const attrDomain = attributeDomain(
+                mockAttrRepo as IAttributeRepo,
+                mockALDomain as IActionsListDomain,
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils,
+                mockTreeRepo as ITreeRepo,
+                mockConf
+            );
+
+            const attrWithNoType: Partial<IAttribute> = {
+                id: 'test_attr',
+                format: AttributeFormats.TEXT,
+                label: {fr: 'Test'}
+            };
+            await expect(attrDomain.saveAttribute(attrWithNoType as IAttribute, queryInfos)).rejects.toThrow(
+                ValidationError
+            );
+
+            const attrWithNoFormat: Partial<IAttribute> = {
+                id: 'test_attr',
+                type: AttributeTypes.SIMPLE,
+                label: {fr: 'Test'}
+            };
+            await expect(attrDomain.saveAttribute(attrWithNoFormat as IAttribute, queryInfos)).rejects.toThrow(
+                ValidationError
+            );
+
+            const attrWithNoLabel: Partial<IAttribute> = {
+                id: 'test_attr',
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.TEXT,
+                label: {en: 'Test'}
+            };
+            await expect(attrDomain.saveAttribute(attrWithNoLabel as IAttribute, queryInfos)).rejects.toThrow(
+                ValidationError
+            );
+
+            const attrWithNoLinkedLibrary: Partial<IAttribute> = {
+                id: 'test_attr',
+                type: AttributeTypes.SIMPLE_LINK,
+                label: {fr: 'Test'}
+            };
+            await expect(attrDomain.saveAttribute(attrWithNoLinkedLibrary as IAttribute, queryInfos)).rejects.toThrow(
+                ValidationError
+            );
+
+            const attrWithNoLinkedTree: Partial<IAttribute> = {
+                id: 'test_attr',
+                type: AttributeTypes.TREE,
+                label: {fr: 'Test'}
+            };
+            await expect(attrDomain.saveAttribute(attrWithNoLinkedTree as IAttribute, queryInfos)).rejects.toThrow(
+                ValidationError
+            );
         });
     });
 

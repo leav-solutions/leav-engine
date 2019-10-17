@@ -5,7 +5,7 @@ import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
-import ValidationError from '../../errors/ValidationError';
+import ValidationError, {IValidationErrorFieldDetail} from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IList, SortOrder} from '../../_types/list';
@@ -56,7 +56,8 @@ export default function(
     actionsListDomain: IActionsListDomain = null,
     permissionDomain: IPermissionDomain = null,
     utils: IUtils = null,
-    treeRepo: ITreeRepo = null
+    treeRepo: ITreeRepo = null,
+    config = null
 ): IAttributeDomain {
     function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
         if (attribute.type !== AttributeTypes.SIMPLE && attribute.type !== AttributeTypes.ADVANCED) {
@@ -257,8 +258,42 @@ export default function(
 
             const attrs = await attributeRepo.getAttributes({filters: {id: attrData.id}, strictFilters: true});
             const isExistingAttr = !!attrs.list.length;
+
             const attrProps = isExistingAttr ? attrs.list[0] : {};
             const attrToSave = {...attrProps, ...attrData};
+
+            // Check required fields
+            const requiredFieldsErrors: IValidationErrorFieldDetail = {};
+            if (!attrToSave.type) {
+                requiredFieldsErrors.type = "Attribute's type must be specified";
+            }
+
+            if (
+                (attrToSave.type === AttributeTypes.SIMPLE || attrToSave.type === AttributeTypes.ADVANCED) &&
+                !attrToSave.format
+            ) {
+                requiredFieldsErrors.format = "Attribute's format must be specified";
+            }
+
+            if (!attrToSave.label[config.lang.default]) {
+                requiredFieldsErrors.label = `Attribute's label for default language
+                    (${config.lang.default}) must be specified`;
+            }
+
+            if (
+                (attrToSave.type === AttributeTypes.SIMPLE_LINK || attrToSave.type === AttributeTypes.ADVANCED_LINK) &&
+                !attrToSave.linked_library
+            ) {
+                requiredFieldsErrors.linked_library = `Attribute's linked library must be specified`;
+            }
+
+            if (attrToSave.type === AttributeTypes.TREE && !attrToSave.linked_tree) {
+                requiredFieldsErrors.linked_tree = `Attribute's linked tree must be specified`;
+            }
+
+            if (Object.keys(requiredFieldsErrors).length) {
+                throw new ValidationError(requiredFieldsErrors);
+            }
 
             // Check permissions
             const action = isExistingAttr
