@@ -88,6 +88,12 @@ export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attrib
                                 name: 'encrypt',
                                 is_system: true
                             }
+                        ],
+                        [ActionsListEvents.GET_VALUE]: [
+                            {
+                                name: 'maskValue',
+                                is_system: true
+                            }
                         ]
                     }
                 });
