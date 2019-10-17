@@ -118,7 +118,8 @@ export default function(dbService: IDbService): IMigration {
                     _key: userGroupsAttrKey,
                     system: true,
                     label: {fr: "Groupes de l'utilisateur", en: 'User groups'},
-                    type: AttributeTypes.TREE
+                    type: AttributeTypes.TREE,
+                    linked_tree: userGroupsTreeKey
                 };
 
                 // Insert in libraries collection
