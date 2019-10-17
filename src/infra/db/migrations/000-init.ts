@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import {ActionsListEvents} from '_types/actionsList';
+import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {IAttributeRepo} from '../../attribute/attributeRepo';
 import {ILibraryRepo} from '../../library/libraryRepo';

@@ -98,6 +98,7 @@ describe('Values', () => {
                         id: "${attrSimpleLinkName}",
                         type: simple_link,
                         format: text,
+                        linked_library: "${testLibName}",
                         label: {fr: "Test attr simple link"}
                     }
                 ) { id }
@@ -109,6 +110,7 @@ describe('Values', () => {
                         id: "${attrAdvancedLinkName}",
                         type: advanced_link,
                         format: text,
+                        linked_library: "${testLibName}",
                         label: {fr: "Test attr advanced link"}
                     }
                 ) { id }
