@@ -59,7 +59,9 @@ export default function(
     treeRepo: ITreeRepo = null
 ): IAttributeDomain {
     function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
-        // TODO: save defaults action on attribute creation
+        if (attribute.type !== AttributeTypes.SIMPLE && attribute.type !== AttributeTypes.ADVANCED) {
+            return {};
+        }
 
         switch (attribute.format) {
             case AttributeFormats.DATE:
@@ -255,7 +257,8 @@ export default function(
 
             const attrs = await attributeRepo.getAttributes({filters: {id: attrData.id}, strictFilters: true});
             const isExistingAttr = !!attrs.list.length;
-            const attrToSave = {...attrData};
+            const attrProps = isExistingAttr ? attrs.list[0] : {};
+            const attrToSave = {...attrProps, ...attrData};
 
             // Check permissions
             const action = isExistingAttr
@@ -268,15 +271,16 @@ export default function(
             }
 
             // Add default actions list on new attribute
-            attrToSave.actions_list =
-                !isExistingAttr && typeof attrToSave.actions_list === 'undefined'
-                    ? _getDefaultActionsList(attrData)
-                    : typeof attrToSave.actions_list !== 'undefined'
-                    ? attrToSave.actions_list
-                    : null;
+            attrToSave.actions_list = !isExistingAttr
+                ? utils.mergeConcat(_getDefaultActionsList(attrToSave), attrToSave.actions_list)
+                : attrToSave.actions_list;
+
+            if (!attrToSave.actions_list || !Object.keys(attrToSave.actions_list).length) {
+                attrToSave.actions_list = null;
+            }
 
             // Check settings validity
-            const validationErrors = await _validateAttributeData(attrData);
+            const validationErrors = await _validateAttributeData(attrToSave);
 
             if (Object.keys(validationErrors).length) {
                 throw new ValidationError(validationErrors);

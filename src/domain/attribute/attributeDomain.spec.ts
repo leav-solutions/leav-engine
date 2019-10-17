@@ -83,7 +83,8 @@ describe('attributeDomain', () => {
         };
 
         const mockUtils: Mockify<IUtils> = {
-            validateID: jest.fn().mockReturnValue(true)
+            validateID: jest.fn().mockReturnValue(true),
+            mergeConcat: jest.fn().mockImplementation(o => o)
         };
 
         test('Should save a new attribute', async function() {
@@ -163,6 +164,60 @@ describe('attributeDomain', () => {
             expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_ATTRIBUTE);
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
+        });
+
+        test('Should read data from DB for fields not specified in save', async function() {
+            const mockPermDomain = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const attrData = {...mockAttrAdvVersionable};
+
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise({
+                    list: [attrData],
+                    totalCount: 1
+                }),
+                createAttribute: jest.fn(),
+                updateAttribute: global.__mockPromise(attrData)
+            };
+
+            const attrDomain = attributeDomain(
+                mockAttrRepo as IAttributeRepo,
+                mockALDomain as IActionsListDomain,
+                mockPermDomain as IPermissionDomain,
+                mockUtils as IUtils
+            );
+
+            attrDomain.getAttributes = global.__mockPromise([attrData]);
+
+            const updatedAttr = await attrDomain.saveAttribute(
+                {
+                    id: mockAttrAdvVersionable.id,
+                    type: AttributeTypes.ADVANCED,
+                    format: AttributeFormats.NUMERIC,
+                    versions_conf: null
+                },
+                queryInfos
+            );
+
+            expect(mockAttrRepo.updateAttribute).toBeCalledWith({
+                id: 'advanced_attribute',
+                label: {
+                    fr: 'Mon Attribut',
+                    en: 'My Attribute'
+                },
+                type: 'advanced',
+                format: 'numeric',
+                multiple_values: false,
+                system: false,
+                linked_library: null,
+                linked_tree: null,
+                embedded_fields: null,
+                actions_list: null,
+                permissions_conf: null,
+                versions_conf: null
+            });
         });
 
         test('Should throw if actions list type is invalid', async function() {

@@ -73,4 +73,25 @@ describe('Utils', () => {
             expect(utilsModule.validateID(undefined)).toEqual(false);
         });
     });
+
+    describe('mergeConcat', () => {
+        test('Merge objects, concat their arrays', async () => {
+            const utilsModule = utils();
+            const o1 = {
+                val1: 'toto',
+                val2: ['a', 'b']
+            };
+
+            const o2 = {
+                val2: ['c', 'd'],
+                val3: 'tata'
+            };
+
+            expect(utilsModule.mergeConcat(o1, o2)).toEqual({
+                val1: 'toto',
+                val2: ['a', 'b', 'c', 'd'],
+                val3: 'tata'
+            });
+        });
+    });
 });

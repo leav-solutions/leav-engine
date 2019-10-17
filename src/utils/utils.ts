@@ -1,4 +1,4 @@
-import {camelCase, flow, partialRight, trimEnd, upperFirst} from 'lodash';
+import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -21,6 +21,8 @@ export interface IUtils {
     rethrow(err: Error, message?: string): void;
 
     pipe(...fns: any[]): any;
+
+    mergeConcat(object: {}, sources: {}): {};
 }
 
 export default function(): IUtils {
@@ -48,6 +50,15 @@ export default function(): IUtils {
         pipe(...fns: any[]): any {
             const _pipe = (f, g) => async (...args) => g(await f(...args));
             return fns.length ? fns.reduce(_pipe) : () => null;
+        },
+        mergeConcat(object: {}, sources: {}): {} {
+            const customizer = (oVal, srcVal) => {
+                if (Array.isArray(oVal)) {
+                    return oVal.concat(srcVal);
+                }
+            };
+
+            return mergeWith(object, sources, customizer);
         }
     };
 }
