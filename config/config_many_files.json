@@ -1,0 +1,19 @@
+{
+  "rootPath": "/Users/smarzykmathieu/Data/test_automate_nb_files",
+  "rootKey": "1234abd",
+  "amqp": {
+    "protocol": "amqp",
+    "hostname": "localhost",
+    "port": 15672,
+    "username": "guest",
+    "password": "guest",
+    "queue": "log"
+  },
+  "watcher": {
+    "awaitWriteFinish": {
+      "stabilityThreshold": 2000,
+      "pollInterval": 100
+    }
+  },
+  "verbose": true
+}

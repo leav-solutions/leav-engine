@@ -1,0 +1,19 @@
+{
+  "rootPath": "./folder_to_watch",
+  "rootKey": "1234abc",
+  "amqp": {
+    "protocol": "amqp",
+    "hostname": "localhost",
+    "port": 15672,
+    "username": "guest",
+    "password": "guest",
+    "queue": "log"
+  },
+  "watcher": {
+    "awaitWriteFinish": {
+      "stabilityThreshold": 2000,
+      "pollInterval": 100
+    }
+  },
+  "verbose": true
+}
