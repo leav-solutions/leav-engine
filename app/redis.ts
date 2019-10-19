@@ -11,10 +11,6 @@ client.on("error", err => {
   console.log(err);
 });
 
-export const getClient = () => {
-  return client;
-};
-
 export const initRedis = (path: string, inode: number) => {
   return client.set(path, inode.toString());
 };

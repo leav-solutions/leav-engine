@@ -9,17 +9,17 @@ const timers: { [i: number]: any } = {};
 
 const inits: { path: string; inode: number }[] = [];
 
-const timeout = 2500;
 let watcher: chokidar.FSWatcher,
   channel: Channel | undefined,
-  ready = false,
   verbose = false;
 
 export const start = (
   rootPathProps: string,
   channelProps?: Channel,
   verboseProps = false,
+  timeout = 2500,
 ) => {
+  let ready = false;
   const watcherConfig =
     (config && config.watcher && config.watcher.awaitWriteFinish) || false;
 
@@ -35,7 +35,7 @@ export const start = (
   });
 
   watcher.on("all", (event: string, path: string, stats: any) => {
-    checkEvent(event, path, stats);
+    checkEvent(event, path, stats, ready, timeout);
   });
 
   watcher.on("ready", () => (ready = true));
@@ -43,7 +43,13 @@ export const start = (
   return watcher;
 };
 
-export const checkEvent = async (event: string, path: string, stats: any) => {
+export const checkEvent = async (
+  event: string,
+  path: string,
+  stats: any,
+  ready: boolean,
+  timeout: number,
+) => {
   let inode: number;
 
   if (stats) {
@@ -61,8 +67,23 @@ export const checkEvent = async (event: string, path: string, stats: any) => {
     handleEvent("move", path, inode, inodes[inode]);
   } else {
     inodes[inode] = path;
-    timers[inode] = setTimeout(() => handleEvent(event, path, inode), timeout);
+    await delayHandleEvent(event, path, inode, timeout);
   }
+};
+
+const delayHandleEvent = async (
+  event: string,
+  path: string,
+  inode: number,
+  timeout: number,
+) => {
+  return new Promise(
+    r =>
+      (timers[inode] = setTimeout(
+        () => r(handleEvent(event, path, inode)),
+        timeout,
+      )),
+  );
 };
 
 export const handleEvent = async (
@@ -96,8 +117,6 @@ export const handleEvent = async (
   clearTimeout(timers[inode]);
   delete timers[inode];
   delete inodes[inode];
-  if (inode) {
-  }
 };
 
 export const handleCreate = async (path: string, inode: number) => {

@@ -24,7 +24,7 @@ interface Config {
 }
 
 const configPathArg = process.argv[2];
-const configPath = configPathArg ? configPathArg : "./config/config_many_files.json";
+const configPath = configPathArg ? configPathArg : "./config/config.json";
 
 const rawConfig = fs.readFileSync(configPath);
 export const config: Config = JSON.parse(rawConfig.toString());
