@@ -1,22 +1,25 @@
 import chokidar from "chokidar";
 import { Channel } from "amqplib";
-import { initRedis, updateData, deleteData, getInode } from "./redis";
-import { log } from "./log";
-import { config } from "./index";
+import { initRedis, updateData, deleteData, getInode } from "../redis/redis";
+import { log } from "../log/log";
+import { config } from "../index";
+
+interface AmqpParams {
+  channel?: Channel;
+  queue?: string;
+}
 
 const inodes: { [i: number]: string } = {};
 const timers: { [i: number]: any } = {};
 
 const inits: { path: string; inode: number }[] = [];
 
-let watcher: chokidar.FSWatcher,
-  channel: Channel | undefined,
-  verbose = false;
+let verbose = false;
 
 export const start = (
   rootPathProps: string,
-  channelProps?: Channel,
   verboseProps = false,
+  amqpParams: AmqpParams,
   timeout = 2500,
 ) => {
   let ready = false;
@@ -24,9 +27,10 @@ export const start = (
     (config && config.watcher && config.watcher.awaitWriteFinish) || false;
 
   verbose = verboseProps;
-  channel = channelProps;
 
-  watcher = chokidar.watch(rootPathProps, {
+  const channel = amqpParams.channel;
+  const queue = amqpParams.queue;
+  const watcher = chokidar.watch(rootPathProps, {
     ignored: /(^|[\/\\])\../, //ignore dot file
     ignoreInitial: false, //use init for redis
     alwaysStat: true, //always give stats for add and update event
@@ -35,10 +39,12 @@ export const start = (
   });
 
   watcher.on("all", (event: string, path: string, stats: any) => {
-    checkEvent(event, path, stats, ready, timeout);
+    checkEvent(event, path, stats, ready, timeout, { channel, queue });
   });
 
-  watcher.on("ready", () => (ready = true));
+  watcher.on("ready", () => {
+    ready = true;
+  });
 
   return watcher;
 };
@@ -49,6 +55,7 @@ export const checkEvent = async (
   stats: any,
   ready: boolean,
   timeout: number,
+  amqpParams: AmqpParams,
 ) => {
   let inode: number;
 
@@ -64,10 +71,10 @@ export const checkEvent = async (
   }
 
   if (inodes[inode] && path !== inodes[inode]) {
-    handleEvent("move", path, inode, inodes[inode]);
+    handleEvent(amqpParams, "move", path, inode, inodes[inode]);
   } else {
     inodes[inode] = path;
-    await delayHandleEvent(event, path, inode, timeout);
+    await delayHandleEvent(event, path, inode, timeout, amqpParams);
   }
 };
 
@@ -76,17 +83,19 @@ const delayHandleEvent = async (
   path: string,
   inode: number,
   timeout: number,
+  amqpParams: AmqpParams,
 ) => {
   return new Promise(
     r =>
       (timers[inode] = setTimeout(
-        () => r(handleEvent(event, path, inode)),
+        () => r(handleEvent(amqpParams, event, path, inode)),
         timeout,
       )),
   );
 };
 
 export const handleEvent = async (
+  amqpParams: AmqpParams,
   event: string,
   path: string,
   inode: number,
@@ -95,18 +104,18 @@ export const handleEvent = async (
   switch (event) {
     case "add":
     case "addDir":
-      await handleCreate(path, inode);
+      await handleCreate(path, inode, amqpParams);
       break;
     case "unlink":
     case "unlinkDir":
-      await handleDelete(path, inode);
+      await handleDelete(path, inode, amqpParams);
       break;
     case "change":
-      await handleUpdate(path, inode);
+      await handleUpdate(path, inode, amqpParams);
       break;
     case "move":
       if (oldPath) {
-        await handleMove(oldPath, path, inode);
+        await handleMove(oldPath, path, inode, amqpParams);
       }
       break;
     default:
@@ -119,10 +128,13 @@ export const handleEvent = async (
   delete inodes[inode];
 };
 
-export const handleCreate = async (path: string, inode: number) => {
+export const handleCreate = async (
+  path: string,
+  inode: number,
+  amqpParams: AmqpParams,
+) => {
   await updateData(path, inode);
   log(
-    channel,
     JSON.stringify({
       event: "create",
       time: Date.now(),
@@ -131,16 +143,21 @@ export const handleCreate = async (path: string, inode: number) => {
       inode: inode,
       rootKey: config.rootKey,
     }),
+    amqpParams.channel,
+    amqpParams.queue,
   );
   if (verbose) {
     console.info("create", path);
   }
 };
 
-export const handleDelete = async (path: string, inode: number) => {
+export const handleDelete = async (
+  path: string,
+  inode: number,
+  amqpParams: AmqpParams,
+) => {
   await deleteData(path);
   log(
-    channel,
     JSON.stringify({
       event: "delete",
       time: Date.now(),
@@ -149,16 +166,21 @@ export const handleDelete = async (path: string, inode: number) => {
       inode: inode,
       rootKey: config.rootKey,
     }),
+    amqpParams.channel,
+    amqpParams.queue,
   );
   if (verbose) {
     console.info("delete", path);
   }
 };
 
-export const handleUpdate = async (path: string, inode: number) => {
+export const handleUpdate = async (
+  path: string,
+  inode: number,
+  amqpParams: AmqpParams,
+) => {
   await updateData(path, inode);
   log(
-    channel,
     JSON.stringify({
       event: "update",
       time: Date.now(),
@@ -167,6 +189,8 @@ export const handleUpdate = async (path: string, inode: number) => {
       inode: inode,
       rootKey: config.rootKey,
     }),
+    amqpParams.channel,
+    amqpParams.queue,
   );
   if (verbose) {
     console.info("update", path);
@@ -177,10 +201,10 @@ export const handleMove = async (
   pathBefore: string,
   pathAfter: string,
   inode: number,
+  amqpParams: AmqpParams,
 ) => {
   await updateData(pathAfter, inode, pathBefore);
   log(
-    channel,
     JSON.stringify({
       event: "move",
       time: Date.now(),
@@ -189,6 +213,8 @@ export const handleMove = async (
       inode: inode,
       rootKey: config.rootKey,
     }),
+    amqpParams.channel,
+    amqpParams.queue,
   );
   if (verbose) {
     console.info("move", pathBefore, pathAfter);

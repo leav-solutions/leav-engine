@@ -1,10 +1,11 @@
-import { initRedis, updateData, deleteData, getInode } from "../app/redis";
+import { initRedis, updateData, deleteData, getInode } from "./redis";
 import { Tedis } from "redis-typescript";
 
 let path = "./test",
   inode = 1234;
 
 jest.mock("redis-typescript");
+jest.mock("../index");
 
 describe("test redis functions", () => {
   test("initRedis", async () => {

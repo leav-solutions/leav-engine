@@ -1,7 +1,7 @@
 import fs from "fs";
 import amqp from "amqplib/callback_api";
 import { Options, Connection, Channel } from "amqplib";
-import { start } from "./watch";
+import { start } from "./watch/watch";
 
 interface Config {
   rootPath: string;
@@ -37,6 +37,8 @@ if (config.amqp) {
     password: config.amqp.password,
   };
 
+  const queue = config.amqp.queue;
+
   amqp.connect(
     amqpConfig,
     async (error0: any, connection: Connection | any) => {
@@ -46,9 +48,9 @@ if (config.amqp) {
       }
 
       const channel: Channel = await connection.createChannel();
-      start(config.rootPath, channel, config.verbose);
+      start(config.rootPath, config.verbose, { channel, queue });
     },
   );
 } else {
-  start(config.rootPath, undefined, config.verbose);
+  start(config.rootPath, config.verbose, {});
 }
