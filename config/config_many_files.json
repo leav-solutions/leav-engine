@@ -7,7 +7,7 @@
     "port": 15672,
     "username": "guest",
     "password": "guest",
-    "queue": "log"
+    "queue": "logs"
   },
   "watcher": {
     "awaitWriteFinish": {

@@ -1,16 +1,12 @@
+import { ParamsHandleEvent } from "./../types";
 import chokidar from "chokidar";
-import { Channel } from "amqplib";
+import { sendToRabbitMQ, generateMsgRabbitMQ } from "../rabbitmq/rabbitmq";
 import { initRedis, updateData, deleteData, getInode } from "../redis/redis";
-import { log } from "../log/log";
-import { config } from "../index";
+import { AmqpParams, WatcherParams, Params, ParamsCheckEvent } from "../types";
 
-interface AmqpParams {
-  channel?: Channel;
-  queue?: string;
-}
-
-const inodes: { [i: number]: string } = {};
-const timers: { [i: number]: any } = {};
+const inodesTmp: { [i: number]: string } = {};
+const timeoutRefs: { [i: number]: any } = {};
+const pathsTmp: { [i: string]: any } = {};
 
 const inits: { path: string; inode: number }[] = [];
 
@@ -19,27 +15,30 @@ let verbose = false;
 export const start = (
   rootPathProps: string,
   verboseProps = false,
-  amqpParams: AmqpParams,
-  timeout = 2500,
+  rootKey: string,
+  amqpParams?: AmqpParams,
+  watchParams?: WatcherParams,
 ) => {
-  let ready = false;
-  const watcherConfig =
-    (config && config.watcher && config.watcher.awaitWriteFinish) || false;
-
   verbose = verboseProps;
 
-  const channel = amqpParams.channel;
-  const queue = amqpParams.queue;
+  let ready = false;
+  const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
+  const timeout = (watchParams && watchParams.timeout) || 2500;
+
   const watcher = chokidar.watch(rootPathProps, {
     ignored: /(^|[\/\\])\../, //ignore dot file
     ignoreInitial: false, //use init for redis
     alwaysStat: true, //always give stats for add and update event
-    cwd: ".", //start path
     awaitWriteFinish: watcherConfig, //wait for copy to finish before trigger event
   });
 
   watcher.on("all", (event: string, path: string, stats: any) => {
-    checkEvent(event, path, stats, ready, timeout, { channel, queue });
+    checkEvent(event, path, stats, {
+      ready,
+      timeout,
+      rootKey,
+      amqp: amqpParams,
+    });
   });
 
   watcher.on("ready", () => {
@@ -53,28 +52,52 @@ export const checkEvent = async (
   event: string,
   path: string,
   stats: any,
-  ready: boolean,
-  timeout: number,
-  amqpParams: AmqpParams,
+  params: ParamsCheckEvent,
 ) => {
+  const amqp = params.amqp || {};
   let inode: number;
 
   if (stats) {
     inode = stats.ino;
+  } else if (pathsTmp[path]) {
+    inode = pathsTmp[path];
   } else {
     inode = await getInode(path);
   }
 
-  if (!ready) {
+  if (!params.ready) {
     handleInit(path, inode);
     return;
   }
 
-  if (inodes[inode] && path !== inodes[inode]) {
-    handleEvent(amqpParams, "move", path, inode, inodes[inode]);
+  if (inodesTmp[inode] && path !== inodesTmp[inode]) {
+    //keep the inode
+    const oldInode = inodesTmp[inode];
+
+    //cancel other event
+    clearTimeout(timeoutRefs[inode]);
+
+    //delay on move event to keep the order of the event
+    setTimeout(() => {
+      handleEvent(
+        "move",
+        path,
+        inode,
+        {
+          rootKey: params.rootKey,
+          amqp,
+        },
+        oldInode,
+      );
+    }, params.timeout);
   } else {
-    inodes[inode] = path;
-    await delayHandleEvent(event, path, inode, timeout, amqpParams);
+    inodesTmp[inode] = path;
+    pathsTmp[path] = inode;
+    await delayHandleEvent(event, path, inode, {
+      timeout: params.timeout,
+      rootKey: params.rootKey,
+      amqp,
+    });
   }
 };
 
@@ -82,69 +105,79 @@ const delayHandleEvent = async (
   event: string,
   path: string,
   inode: number,
-  timeout: number,
-  amqpParams: AmqpParams,
+  params: ParamsHandleEvent,
 ) => {
   return new Promise(
     r =>
-      (timers[inode] = setTimeout(
-        () => r(handleEvent(amqpParams, event, path, inode)),
-        timeout,
+      (timeoutRefs[inode] = setTimeout(
+        () =>
+          r(
+            handleEvent(event, path, inode, {
+              rootKey: params.rootKey,
+              amqp: params.amqp,
+            }),
+          ),
+        params.timeout,
       )),
   );
 };
 
 export const handleEvent = async (
-  amqpParams: AmqpParams,
   event: string,
   path: string,
   inode: number,
+  params: Params,
   oldPath?: string,
 ) => {
   switch (event) {
     case "add":
     case "addDir":
-      await handleCreate(path, inode, amqpParams);
+      await handleCreate(path, inode, {
+        amqp: params.amqp,
+        rootKey: params.rootKey,
+      });
       break;
     case "unlink":
     case "unlinkDir":
-      await handleDelete(path, inode, amqpParams);
+      await handleDelete(path, inode, {
+        amqp: params.amqp,
+        rootKey: params.rootKey,
+      });
       break;
     case "change":
-      await handleUpdate(path, inode, amqpParams);
+      await handleUpdate(path, inode, {
+        amqp: params.amqp,
+        rootKey: params.rootKey,
+      });
       break;
     case "move":
       if (oldPath) {
-        await handleMove(oldPath, path, inode, amqpParams);
+        await handleMove(oldPath, path, inode, {
+          amqp: params.amqp,
+          rootKey: params.rootKey,
+        });
       }
       break;
     default:
-      console.error("event not manage : " + event);
+      console.error("event not managed : " + event);
       break;
   }
 
-  clearTimeout(timers[inode]);
-  delete timers[inode];
-  delete inodes[inode];
+  clearTimeout(timeoutRefs[inode]);
+  delete timeoutRefs[inode];
+  delete inodesTmp[inode];
+  delete pathsTmp[path];
 };
 
 export const handleCreate = async (
   path: string,
   inode: number,
-  amqpParams: AmqpParams,
+  params: Params,
 ) => {
   await updateData(path, inode);
-  log(
-    JSON.stringify({
-      event: "create",
-      time: Date.now(),
-      pathAfter: path,
-      pathBefore: null,
-      inode: inode,
-      rootKey: config.rootKey,
-    }),
-    amqpParams.channel,
-    amqpParams.queue,
+  sendToRabbitMQ(
+    generateMsgRabbitMQ("create", null, path, inode, params.rootKey),
+    params.amqp,
   );
   if (verbose) {
     console.info("create", path);
@@ -154,20 +187,12 @@ export const handleCreate = async (
 export const handleDelete = async (
   path: string,
   inode: number,
-  amqpParams: AmqpParams,
+  params: Params,
 ) => {
   await deleteData(path);
-  log(
-    JSON.stringify({
-      event: "delete",
-      time: Date.now(),
-      pathAfter: null,
-      pathBefore: path,
-      inode: inode,
-      rootKey: config.rootKey,
-    }),
-    amqpParams.channel,
-    amqpParams.queue,
+  sendToRabbitMQ(
+    generateMsgRabbitMQ("delete", path, null, inode, params.rootKey),
+    params.amqp,
   );
   if (verbose) {
     console.info("delete", path);
@@ -177,20 +202,12 @@ export const handleDelete = async (
 export const handleUpdate = async (
   path: string,
   inode: number,
-  amqpParams: AmqpParams,
+  params: Params,
 ) => {
   await updateData(path, inode);
-  log(
-    JSON.stringify({
-      event: "update",
-      time: Date.now(),
-      pathAfter: path,
-      pathBefore: null,
-      inode: inode,
-      rootKey: config.rootKey,
-    }),
-    amqpParams.channel,
-    amqpParams.queue,
+  sendToRabbitMQ(
+    generateMsgRabbitMQ("update", path, path, inode, params.rootKey),
+    params.amqp,
   );
   if (verbose) {
     console.info("update", path);
@@ -201,20 +218,12 @@ export const handleMove = async (
   pathBefore: string,
   pathAfter: string,
   inode: number,
-  amqpParams: AmqpParams,
+  params: Params,
 ) => {
   await updateData(pathAfter, inode, pathBefore);
-  log(
-    JSON.stringify({
-      event: "move",
-      time: Date.now(),
-      pathAfter: pathAfter,
-      pathBefore: pathBefore,
-      inode: inode,
-      rootKey: config.rootKey,
-    }),
-    amqpParams.channel,
-    amqpParams.queue,
+  sendToRabbitMQ(
+    generateMsgRabbitMQ("move", pathBefore, pathAfter, inode, params.rootKey),
+    params.amqp,
   );
   if (verbose) {
     console.info("move", pathBefore, pathAfter);
@@ -227,7 +236,7 @@ const handleInit = async (path: string, inode: number) => {
   manageRedisInit();
 };
 
-export const manageRedisInit = async () => {
+const manageRedisInit = async () => {
   if (!working) {
     working = true;
     while (inits.length > 0) {

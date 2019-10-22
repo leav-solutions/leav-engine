@@ -1,12 +1,12 @@
 import { Options } from "amqplib";
-import { log } from "./log";
+import { sendToRabbitMQ } from "./rabbitmq";
 
 jest.mock("../index");
 
-describe("test log", () => {
+describe("test sendToRabbitMQ", () => {
   test("check if display msg", () => {
     console.info = jest.fn();
-    log(
+    sendToRabbitMQ(
       JSON.stringify({
         event: "create",
         time: Date.now(),
@@ -22,9 +22,6 @@ describe("test log", () => {
 
   test("check if send to rabbitmq", () => {
     const channelMock: any = {
-      assertQueue: jest.fn(
-        (queue: string, options?: Options.AssertQueue) => {},
-      ),
       sendToQueue: jest.fn((queue: string, content: Buffer) => {}),
     };
 
@@ -37,11 +34,10 @@ describe("test log", () => {
       rootKey: "config.rootKey",
     });
 
-    const queue = "log";
+    const queue = "sendToRabbitMQ";
 
-    log(msg, channelMock, queue);
+    sendToRabbitMQ(msg, channelMock, queue);
 
-    expect(channelMock.assertQueue).toBeCalledWith(queue, { durable: false });
     expect(channelMock.sendToQueue).toBeCalledWith(queue, Buffer.from(msg));
   });
 });

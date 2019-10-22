@@ -1,33 +1,21 @@
 import fs from "fs";
+import Crypto from "crypto";
 import amqp from "amqplib/callback_api";
 import { Options, Connection, Channel } from "amqplib";
 import { start } from "./watch/watch";
-
-interface Config {
-  rootPath: string;
-  rootKey?: string;
-  amqp?: {
-    protocol: string;
-    hostname: string;
-    port: number;
-    username: string;
-    password: string;
-    queue: string;
-  };
-  watcher?: {
-    awaitWriteFinish: {
-      stabilityThreshold: number;
-      pollIntervak: number;
-    };
-  };
-  verbose?: boolean;
-}
+import { Config } from "./types";
 
 const configPathArg = process.argv[2];
 const configPath = configPathArg ? configPathArg : "./config/config.json";
 
 const rawConfig = fs.readFileSync(configPath);
-export const config: Config = JSON.parse(rawConfig.toString());
+const config: Config = JSON.parse(rawConfig.toString());
+
+const rootKey =
+  config.rootKey ||
+  Crypto.createHash("md5")
+    .update(config.rootPath)
+    .digest("hex");
 
 if (config.amqp) {
   const amqpConfig: Options.Connect = {
@@ -37,7 +25,9 @@ if (config.amqp) {
     password: config.amqp.password,
   };
 
+  const exchange = config.amqp.exchange;
   const queue = config.amqp.queue;
+  const routingKey = config.amqp.routingKey;
 
   amqp.connect(
     amqpConfig,
@@ -47,10 +37,35 @@ if (config.amqp) {
         throw error0;
       }
 
-      const channel: Channel = await connection.createChannel();
-      start(config.rootPath, config.verbose, { channel, queue });
+      try {
+        const channel: Channel = await connection.createChannel();
+
+        await channel.assertExchange(exchange, "direct", { durable: true });
+        await channel.assertQueue(queue, { durable: true });
+
+        await channel.bindQueue(queue, exchange, routingKey);
+
+        let watchParams = {};
+        if (config.watcher && config.watcher.awaitWriteFinish) {
+          watchParams = config.watcher.awaitWriteFinish;
+        }
+
+        start(
+          config.rootPath,
+          config.verbose,
+          rootKey,
+          {
+            channel,
+            exchange,
+            routingKey,
+          },
+          watchParams,
+        );
+      } catch (e) {
+        process.exit(1);
+      }
     },
   );
 } else {
-  start(config.rootPath, config.verbose, {});
+  start(config.rootPath, config.verbose, rootKey);
 }
