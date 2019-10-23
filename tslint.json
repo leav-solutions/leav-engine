@@ -1,0 +1,35 @@
+{
+    "defaultSeverity": "error",
+    "extends": ["tslint:latest", "tslint-eslint-rules"],
+    "rules": {
+        "ter-indent": [
+            false
+        ],
+        "linebreak-style": [true, "LF"],
+        "semicolon": [true, "always"],
+        "no-console": false,
+        "curly": true,
+        "triple-equals": true,
+        "array-bracket-spacing": [
+            true,
+            "never",
+            {"singleValue": false, "objectsInArrays": false, "arraysInArrays": false}
+        ],
+        "trailing-comma": [true, "never"],
+        "brace-style": [true, "1tbs"],
+        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+        "ter-func-call-spacing": [true, "never"],
+        "no-consecutive-blank-lines": true,
+        "no-trailing-whitespace": true,
+        "object-curly-spacing": [true, "never"],
+        "whitespace": true,
+        "quotemark": [true, "single", "avoid-escape"],
+        "only-arrow-functions": false,
+        "object-literal-sort-keys": false,
+        "no-implicit-dependencies": false,
+        "no-submodule-imports": false,
+        "ordered-imports": false,
+        "arrow-parens": [true, "ban-single-arg-parens"],
+        "no-namespace": [true, "allow-declarations"]
+    }
+}
