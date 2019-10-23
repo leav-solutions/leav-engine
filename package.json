@@ -1,5 +1,5 @@
 {
-  "name": "leav_backend_boilerplate",
+  "name": "automate-scan",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
@@ -8,6 +8,7 @@
     "start:dev": "ts-node --type-check src/",
     "build": "tsc",
     "test": "jest -c jest-unit-config.json --watch",
+    "test:commit": "jest -c jest-unit-config.json",
     "test:integration": "jest -c jest-integration-config.json",
     "lint": "tslint --fix -p .",
     "prettier": "prettier --write 'src/**/*.ts'"
@@ -49,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && npm test"
+      "pre-commit": "lint-staged && npm run test:commit"
     }
   }
 }
