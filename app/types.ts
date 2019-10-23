@@ -12,11 +12,16 @@ export interface WatcherParams {
     pollInterval: 100;
   };
   timeout?: number;
+  verbose?: boolean;
 }
 
 export interface Config {
   rootPath: string;
   rootKey?: string;
+  redis: {
+    host: string;
+    port: number;
+  };
   amqp?: {
     protocol: string;
     hostname: string;
@@ -38,13 +43,11 @@ export interface Config {
 
 export interface Params {
   rootKey: string;
+  verbose: boolean;
   amqp?: AmqpParams;
 }
 
-export interface ParamsHandleEvent extends Params {
-  timeout: number;
-}
-
-export interface ParamsCheckEvent extends ParamsHandleEvent {
-  ready: boolean;
+export interface ParamsExtends extends Params {
+  timeout?: number;
+  ready?: boolean;
 }

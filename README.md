@@ -11,6 +11,10 @@ By default, the script take the file in `./config/config.json`
 {
   "rootPath": "./folder_to_watch", // path to the folder to watch
   "rootKey": "1234abc", // key of the folder to watch
+  "redis": { 
+    "host": "127.0.0.1",
+    "port": 6379
+  },
   "amqp": { // parameters for rabbitmq configuration
     "protocol": "amqp", // protocol rabbitmq
     "hostname": "localhost", // hostname rabbitmq

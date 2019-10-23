@@ -1,15 +1,21 @@
 import { Tedis } from "redis-typescript";
 
-const client = new Tedis({
-  port: 6379,
-  host: "127.0.0.1",
-});
+let client: Tedis;
 
-client.on("connect", () => {});
+export const createClient = (host: string, port: number) => {
+  client = new Tedis({
+    host: host,
+    port: port,
+  });
 
-client.on("error", err => {
-  console.log(err);
-});
+  client.on("connect", () => {});
+
+  client.on("error", err => {
+    console.log(err);
+  });
+
+  return client;
+};
 
 export const initRedis = (path: string, inode: number) => {
   return client.set(path, inode.toString());

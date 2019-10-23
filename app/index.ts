@@ -1,3 +1,4 @@
+import { createClient } from "./redis/redis";
 import fs from "fs";
 import Crypto from "crypto";
 import amqp from "amqplib/callback_api";
@@ -16,6 +17,8 @@ const rootKey =
   Crypto.createHash("md5")
     .update(config.rootPath)
     .digest("hex");
+
+createClient(config.redis.host, config.redis.port);
 
 if (config.amqp) {
   const amqpConfig: Options.Connect = {
@@ -47,25 +50,23 @@ if (config.amqp) {
 
         let watchParams = {};
         if (config.watcher && config.watcher.awaitWriteFinish) {
-          watchParams = config.watcher.awaitWriteFinish;
+          watchParams = {
+            ...config.watcher.awaitWriteFinish,
+            verbose: config.verbose,
+          };
         }
 
-        start(
-          config.rootPath,
-          config.verbose,
-          rootKey,
-          {
-            channel,
-            exchange,
-            routingKey,
-          },
-          watchParams,
-        );
+        start(config.rootPath, rootKey, watchParams, {
+          channel,
+          exchange,
+          routingKey,
+        });
       } catch (e) {
         process.exit(1);
       }
     },
   );
 } else {
-  start(config.rootPath, config.verbose, rootKey);
+  const watchParams = { verbose: config.verbose };
+  start(config.rootPath, rootKey, watchParams);
 }

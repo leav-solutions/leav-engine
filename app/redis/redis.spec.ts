@@ -1,13 +1,26 @@
-import { initRedis, updateData, deleteData, getInode } from "./redis";
+import {
+  createClient,
+  initRedis,
+  updateData,
+  deleteData,
+  getInode,
+} from "./redis";
 import { Tedis } from "redis-typescript";
 
 let path = "./test",
   inode = 1234;
 
 jest.mock("redis-typescript");
-jest.mock("../index");
 
 describe("test redis functions", () => {
+  test("createClient", () => {
+    const host = "127.0.0.1";
+    const port = 6379;
+    const client = createClient(host, port);
+
+    expect(client).not.toBeUndefined();
+  });
+
   test("initRedis", async () => {
     const spy = jest.spyOn(Tedis.prototype, "set");
 

@@ -1,8 +1,7 @@
-import { ParamsHandleEvent } from "./../types";
 import chokidar from "chokidar";
-import { sendToRabbitMQ, generateMsgRabbitMQ } from "../rabbitmq/rabbitmq";
-import { initRedis, updateData, deleteData, getInode } from "../redis/redis";
-import { AmqpParams, WatcherParams, Params, ParamsCheckEvent } from "../types";
+import { initRedis, getInode } from "../redis/redis";
+import { AmqpParams, WatcherParams, Params, ParamsExtends } from "../types";
+import { handleCreate, handleDelete, handleUpdate, handleMove } from "./events";
 
 const inodesTmp: { [i: number]: string } = {};
 const timeoutRefs: { [i: number]: any } = {};
@@ -10,16 +9,13 @@ const pathsTmp: { [i: string]: any } = {};
 
 const inits: { path: string; inode: number }[] = [];
 
-let verbose = false;
-
 export const start = (
   rootPathProps: string,
-  verboseProps = false,
   rootKey: string,
-  amqpParams?: AmqpParams,
   watchParams?: WatcherParams,
+  amqpParams?: AmqpParams,
 ) => {
-  verbose = verboseProps;
+  const verbose = (watchParams && watchParams.verbose) || false;
 
   let ready = false;
   const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
@@ -37,6 +33,7 @@ export const start = (
       ready,
       timeout,
       rootKey,
+      verbose,
       amqp: amqpParams,
     });
   });
@@ -52,7 +49,7 @@ export const checkEvent = async (
   event: string,
   path: string,
   stats: any,
-  params: ParamsCheckEvent,
+  params: ParamsExtends,
 ) => {
   const amqp = params.amqp || {};
   let inode: number;
@@ -66,7 +63,7 @@ export const checkEvent = async (
   }
 
   if (!params.ready) {
-    handleInit(path, inode);
+    handleInit(path, inode, params.verbose);
     return;
   }
 
@@ -86,6 +83,7 @@ export const checkEvent = async (
         {
           rootKey: params.rootKey,
           amqp,
+          verbose: params.verbose,
         },
         oldInode,
       );
@@ -96,6 +94,7 @@ export const checkEvent = async (
     await delayHandleEvent(event, path, inode, {
       timeout: params.timeout,
       rootKey: params.rootKey,
+      verbose: params.verbose,
       amqp,
     });
   }
@@ -105,7 +104,7 @@ const delayHandleEvent = async (
   event: string,
   path: string,
   inode: number,
-  params: ParamsHandleEvent,
+  params: ParamsExtends,
 ) => {
   return new Promise(
     r =>
@@ -114,6 +113,7 @@ const delayHandleEvent = async (
           r(
             handleEvent(event, path, inode, {
               rootKey: params.rootKey,
+              verbose: params.verbose,
               amqp: params.amqp,
             }),
           ),
@@ -129,33 +129,27 @@ export const handleEvent = async (
   params: Params,
   oldPath?: string,
 ) => {
+  const amqp = {
+    rootKey: params.rootKey,
+    verbose: params.verbose,
+    amqp: params.amqp,
+  };
+
   switch (event) {
     case "add":
     case "addDir":
-      await handleCreate(path, inode, {
-        amqp: params.amqp,
-        rootKey: params.rootKey,
-      });
+      await handleCreate(path, inode, amqp);
       break;
     case "unlink":
     case "unlinkDir":
-      await handleDelete(path, inode, {
-        amqp: params.amqp,
-        rootKey: params.rootKey,
-      });
+      await handleDelete(path, inode, amqp);
       break;
     case "change":
-      await handleUpdate(path, inode, {
-        amqp: params.amqp,
-        rootKey: params.rootKey,
-      });
+      await handleUpdate(path, inode, amqp);
       break;
     case "move":
       if (oldPath) {
-        await handleMove(oldPath, path, inode, {
-          amqp: params.amqp,
-          rootKey: params.rootKey,
-        });
+        await handleMove(oldPath, path, inode, amqp);
       }
       break;
     default:
@@ -169,74 +163,13 @@ export const handleEvent = async (
   delete pathsTmp[path];
 };
 
-export const handleCreate = async (
-  path: string,
-  inode: number,
-  params: Params,
-) => {
-  await updateData(path, inode);
-  sendToRabbitMQ(
-    generateMsgRabbitMQ("create", null, path, inode, params.rootKey),
-    params.amqp,
-  );
-  if (verbose) {
-    console.info("create", path);
-  }
-};
-
-export const handleDelete = async (
-  path: string,
-  inode: number,
-  params: Params,
-) => {
-  await deleteData(path);
-  sendToRabbitMQ(
-    generateMsgRabbitMQ("delete", path, null, inode, params.rootKey),
-    params.amqp,
-  );
-  if (verbose) {
-    console.info("delete", path);
-  }
-};
-
-export const handleUpdate = async (
-  path: string,
-  inode: number,
-  params: Params,
-) => {
-  await updateData(path, inode);
-  sendToRabbitMQ(
-    generateMsgRabbitMQ("update", path, path, inode, params.rootKey),
-    params.amqp,
-  );
-  if (verbose) {
-    console.info("update", path);
-  }
-};
-
-export const handleMove = async (
-  pathBefore: string,
-  pathAfter: string,
-  inode: number,
-  params: Params,
-) => {
-  await updateData(pathAfter, inode, pathBefore);
-  sendToRabbitMQ(
-    generateMsgRabbitMQ("move", pathBefore, pathAfter, inode, params.rootKey),
-    params.amqp,
-  );
-  if (verbose) {
-    console.info("move", pathBefore, pathAfter);
-  }
-};
-
 let working = false;
-const handleInit = async (path: string, inode: number) => {
+const handleInit = async (path: string, inode: number, verbose: boolean) => {
   inits.push({ path, inode });
-  manageRedisInit();
+  manageRedisInit(verbose);
 };
 
-const manageRedisInit = async () => {
+const manageRedisInit = async (verbose: boolean) => {
   if (!working) {
     working = true;
     while (inits.length > 0) {
