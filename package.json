@@ -7,8 +7,8 @@
     "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
     "start:dev": "ts-node --type-check src/",
     "build": "tsc",
-    "test": "jest -c jest-unit-config.json --watch",
-    "test:commit": "jest -c jest-unit-config.json",
+    "test:watch": "jest -c jest-unit-config.json --watch",
+    "test": "jest -c jest-unit-config.json",
     "test:integration": "jest -c jest-integration-config.json",
     "lint": "tslint --fix -p .",
     "prettier": "prettier --write 'src/**/*.ts'"
@@ -50,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && npm run test:commit"
+      "pre-commit": "lint-staged && npm test"
     }
   }
 }
