@@ -136,28 +136,34 @@ export default function(
             applyTo: string = null,
             permissionTreeTarget: IPermissionsTreeTarget = null
         ): Promise<boolean | null> {
-            const userPerms = await Promise.all(
-                userGroupsPaths.map(async groupPath => {
-                    for (const group of groupPath.slice().reverse()) {
-                        const perm = await ret.getSimplePermission(
-                            type,
-                            applyTo,
-                            action,
-                            group.record.id,
-                            permissionTreeTarget
-                        );
+            const _getRootPermission = () => ret.getSimplePermission(type, applyTo, action, null, permissionTreeTarget);
 
-                        if (perm !== null) {
-                            return perm;
-                        }
-                    }
+            // Retrieve permission for each user group.
+            // If user has no group, retrieve permission for root level ("all users")
+            const userPerms = userGroupsPaths.length
+                ? await Promise.all(
+                      userGroupsPaths.map(async groupPath => {
+                          for (const group of groupPath.slice().reverse()) {
+                              const perm = await ret.getSimplePermission(
+                                  type,
+                                  applyTo,
+                                  action,
+                                  group.record.id,
+                                  permissionTreeTarget
+                              );
 
-                    // Nothing found in tree, check on root level
-                    const rootPerm = await ret.getSimplePermission(type, applyTo, action, null, permissionTreeTarget);
+                              if (perm !== null) {
+                                  return perm;
+                              }
+                          }
 
-                    return rootPerm;
-                })
-            );
+                          // Nothing found in tree, check on root level
+                          const rootPerm = await _getRootPermission();
+
+                          return rootPerm;
+                      })
+                  )
+                : [await _getRootPermission()];
 
             // If user is allowed at least once among all his groups (whether a defined permission or default config)
             //    => return true
