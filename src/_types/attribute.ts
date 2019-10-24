@@ -1,4 +1,4 @@
-import {IActionsListConfig} from './actionsList';
+import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
 import {ISystemTranslation} from './systemTranslation';
 
@@ -48,6 +48,10 @@ export interface IAttributeFilterOptions {
     linked_library?: string;
     multiple_values?: boolean;
 }
+
+export type IOAllowedTypes = {
+    [eventName in ActionsListEvents]: ActionsListIOTypes[];
+};
 
 export enum AttributeTypes {
     SIMPLE = 'simple',

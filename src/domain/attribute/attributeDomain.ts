@@ -1,13 +1,13 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {difference} from 'lodash';
+import {difference, intersection} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError, {IValidationErrorFieldDetail} from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute, IOAllowedTypes} from '../../_types/attribute';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
@@ -46,9 +46,9 @@ export interface IAttributeDomain {
      */
     deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute>;
 
-    getInputType(attrData: IAttribute): ActionsListIOTypes;
+    getInputTypes(attrData: IAttribute): IOAllowedTypes;
 
-    getOutputType(attrData: IAttribute): ActionsListIOTypes;
+    getOutputTypes(attrData: IAttribute): IOAllowedTypes;
 }
 
 export default function(
@@ -132,16 +132,62 @@ export default function(
         }
     }
 
-    function _getAllowedInputType(attribute: IAttribute): ActionsListIOTypes {
+    function _getAllowedInputTypes(attribute: IAttribute): IOAllowedTypes {
+        let inputTypes;
         switch (attribute.format) {
             case AttributeFormats.NUMERIC:
             case AttributeFormats.DATE:
-                return ActionsListIOTypes.NUMBER;
+                inputTypes = {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                    [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+                };
+                break;
             case AttributeFormats.BOOLEAN:
-                return ActionsListIOTypes.BOOLEAN;
+                inputTypes = {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                    [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
+                };
+                break;
             default:
-                return ActionsListIOTypes.STRING;
+                inputTypes = {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                };
+                break;
         }
+
+        return inputTypes;
+    }
+
+    function _getAllowedOutputTypes(attribute: IAttribute): IOAllowedTypes {
+        let outputTypes;
+        switch (attribute.format) {
+            case AttributeFormats.NUMERIC:
+            case AttributeFormats.DATE:
+                outputTypes = {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+                };
+                break;
+            case AttributeFormats.BOOLEAN:
+                outputTypes = {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
+                };
+                break;
+            default:
+                outputTypes = {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                };
+                break;
+        }
+        outputTypes[ActionsListEvents.GET_VALUE] = Object.values(ActionsListIOTypes);
+
+        return outputTypes;
     }
 
     async function _validateAttributeData(attrData: IAttribute): Promise<{}> {
@@ -186,22 +232,32 @@ export default function(
      * @param attrData
      */
     function _validateInputType(attrData: IAttribute): void {
-        if (!attrData.actions_list || !attrData.actions_list[ActionsListEvents.SAVE_VALUE]) {
+        if (!attrData.actions_list) {
             return;
         }
 
         const availableActions = actionsListDomain.getAvailableActions();
-        const saveValueActions = attrData.actions_list[ActionsListEvents.SAVE_VALUE];
-        const lastAction = saveValueActions.slice(-1)[0];
-        const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
-        const allowedInputType = _getAllowedInputType(attrData);
+        const allowedInputTypes = _getAllowedInputTypes(attrData);
+        const errors: IValidationErrorFieldDetail = {};
+        for (const event of Object.values(ActionsListEvents)) {
+            if (!attrData.actions_list[event] || !attrData.actions_list[event].length) {
+                continue;
+            }
 
-        if (lastActionDetails.output_types.indexOf(allowedInputType) === -1) {
-            throw new ValidationError({
-                'actions_list.saveValue': `Last action is invalid:
-                    expected action with ouptput types including ${allowedInputType},
-                    received ${lastActionDetails.output_types}`
-            });
+            const eventActions = attrData.actions_list[event];
+            const lastAction = eventActions.slice(-1)[0];
+            const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
+
+            if (!intersection(lastActionDetails.output_types, allowedInputTypes[event]).length) {
+                // if (lastActionDetails.output_types.indexOf(allowedInputType) === -1) {
+                errors[`actions_list.${event}`] = `Last action is invalid:
+                        expected action with ouptput types including ${allowedInputTypes[event]},
+                        received ${lastActionDetails.output_types}`;
+            }
+        }
+
+        if (Object.keys(errors).length) {
+            throw new ValidationError(errors);
         }
     }
 
@@ -352,11 +408,11 @@ export default function(
 
             return attributeRepo.deleteAttribute(attrProps);
         },
-        getInputType(attrData: IAttribute): ActionsListIOTypes {
-            return _getAllowedInputType(attrData);
+        getInputTypes(attrData: IAttribute): IOAllowedTypes {
+            return _getAllowedInputTypes(attrData);
         },
-        getOutputType(attrData: IAttribute): ActionsListIOTypes {
-            return _getAllowedInputType(attrData);
+        getOutputTypes(attrData: IAttribute): IOAllowedTypes {
+            return _getAllowedOutputTypes(attrData);
         }
     };
 }

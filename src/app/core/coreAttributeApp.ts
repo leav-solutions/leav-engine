@@ -1,4 +1,5 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreApp} from './coreApp';
@@ -39,6 +40,10 @@ export default function(
                         object
                     }
 
+                    type ActionListIOTypes {
+                        ${Object.values(ActionsListEvents).map(event => `${event}: [IOTypes]`)}
+                    }
+
                     # Application Attribute
                     type Attribute {
                         id: ID!,
@@ -53,8 +58,8 @@ export default function(
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
                         versions_conf: ValuesVersionsConf
-                        input_type: IOTypes
-                        output_type: IOTypes
+                        input_types: ActionListIOTypes
+                        output_types: ActionListIOTypes
                     }
 
                     input AttributeInput {
@@ -174,8 +179,8 @@ export default function(
                         label: async (attributeData, args) => {
                             return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
                         },
-                        input_type: attributeData => attributeDomain.getInputType(attributeData),
-                        output_type: attributeData => attributeDomain.getOutputType(attributeData)
+                        input_types: attributeData => attributeDomain.getInputTypes(attributeData),
+                        output_types: attributeData => attributeDomain.getOutputTypes(attributeData)
                     }
                 }
             };

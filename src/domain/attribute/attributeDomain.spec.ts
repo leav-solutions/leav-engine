@@ -3,7 +3,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ActionsListIOTypes} from '../../_types/actionsList';
+import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
@@ -569,53 +569,111 @@ describe('attributeDomain', () => {
     describe('getInputType', () => {
         const attrDomain = attributeDomain();
         test('Return input type by format', async () => {
-            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.TEXT})).toBe(
-                ActionsListIOTypes.STRING
-            );
-            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.DATE})).toBe(
-                ActionsListIOTypes.NUMBER
-            );
-            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toBe(
-                ActionsListIOTypes.STRING
-            );
+            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.TEXT})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+            });
+            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.DATE})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+            });
+            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+            });
 
-            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toBe(
-                ActionsListIOTypes.NUMBER
-            );
+            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+            });
 
-            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toBe(
-                ActionsListIOTypes.BOOLEAN
-            );
+            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
+            });
 
-            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toBe(
-                ActionsListIOTypes.STRING // json
+            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toEqual(
+                {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                } // json
             );
         });
     });
 
     describe('getOutputType', () => {
         const attrDomain = attributeDomain();
-        test('Return input type by format', async () => {
-            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.TEXT})).toBe(
-                ActionsListIOTypes.STRING
-            );
-            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.DATE})).toBe(
-                ActionsListIOTypes.NUMBER
-            );
-            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toBe(
-                ActionsListIOTypes.STRING
-            );
+        test('Return output type by format', async () => {
+            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.TEXT})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.GET_VALUE]: [
+                    ActionsListIOTypes.STRING,
+                    ActionsListIOTypes.NUMBER,
+                    ActionsListIOTypes.OBJECT,
+                    ActionsListIOTypes.BOOLEAN
+                ],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+            });
+            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.DATE})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.GET_VALUE]: [
+                    ActionsListIOTypes.STRING,
+                    ActionsListIOTypes.NUMBER,
+                    ActionsListIOTypes.OBJECT,
+                    ActionsListIOTypes.BOOLEAN
+                ],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+            });
+            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.GET_VALUE]: [
+                    ActionsListIOTypes.STRING,
+                    ActionsListIOTypes.NUMBER,
+                    ActionsListIOTypes.OBJECT,
+                    ActionsListIOTypes.BOOLEAN
+                ],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+            });
 
-            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toBe(
-                ActionsListIOTypes.NUMBER
-            );
+            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.GET_VALUE]: [
+                    ActionsListIOTypes.STRING,
+                    ActionsListIOTypes.NUMBER,
+                    ActionsListIOTypes.OBJECT,
+                    ActionsListIOTypes.BOOLEAN
+                ],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+            });
 
-            expect(attrDomain.getOutputType({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toBe(
-                ActionsListIOTypes.BOOLEAN
-            );
+            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.GET_VALUE]: [
+                    ActionsListIOTypes.STRING,
+                    ActionsListIOTypes.NUMBER,
+                    ActionsListIOTypes.OBJECT,
+                    ActionsListIOTypes.BOOLEAN
+                ],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
+            });
 
-            expect(attrDomain.getInputType({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toBe(
-                ActionsListIOTypes.STRING // json
+            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toEqual(
+                {
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.GET_VALUE]: [
+                        ActionsListIOTypes.STRING,
+                        ActionsListIOTypes.NUMBER,
+                        ActionsListIOTypes.OBJECT,
+                        ActionsListIOTypes.BOOLEAN
+                    ],
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                } // json
             );
         });
     });
