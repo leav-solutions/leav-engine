@@ -6,6 +6,7 @@
   "scripts": {
     "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
     "start:dev": "ts-node --type-check src/",
+    "dev": "npm run start:watch",
     "build": "tsc",
     "test:watch": "jest -c jest-unit-config.json --watch",
     "test": "jest -c jest-unit-config.json",

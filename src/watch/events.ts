@@ -8,6 +8,7 @@ export const handleCreate = async (path: string, inode: number, params: IParams)
     if (params.verbose) {
         console.info('create', path);
     }
+    return true;
 };
 
 export const handleDelete = async (path: string, inode: number, params: IParams) => {
@@ -16,6 +17,7 @@ export const handleDelete = async (path: string, inode: number, params: IParams)
     if (params.verbose) {
         console.info('delete', path);
     }
+    return true;
 };
 
 export const handleUpdate = async (path: string, inode: number, params: IParams) => {
@@ -24,6 +26,7 @@ export const handleUpdate = async (path: string, inode: number, params: IParams)
     if (params.verbose) {
         console.info('update', path);
     }
+    return true;
 };
 
 export const handleMove = async (pathBefore: string, pathAfter: string, inode: number, params: IParams) => {
@@ -32,4 +35,5 @@ export const handleMove = async (pathBefore: string, pathAfter: string, inode: n
     if (params.verbose) {
         console.info('move', pathBefore, pathAfter);
     }
+    return true;
 };

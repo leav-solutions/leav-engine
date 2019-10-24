@@ -6,12 +6,34 @@ import {Options, Connection, Channel} from 'amqplib';
 import {start} from './watch/watch';
 import {IConfig} from './types';
 
+process.on('exit', code => {
+    console.info('Process exit event with code:', code);
+});
+
+process.on('uncaughtException', err => {
+    console.error('There was an uncaught error', err);
+    process.exit(1); // mandatory (as per the Node.js docs)
+});
+
+process.on('SIGINT', () => {
+    console.info();
+    console.info('User stop the app');
+    process.exit(0);
+});
+
 const configPathArg = process.argv[2];
 const configPath = configPathArg ? configPathArg : './config/config.json';
 
 const rawConfig = fs.readFileSync(configPath);
 const config: IConfig = JSON.parse(rawConfig.toString());
 
+// Check if path exist
+if (!fs.existsSync(config.rootPath)) {
+    console.error('rootPath folder not found');
+    process.exit(2);
+}
+
+// We take the rootKey from the config file or we create a hash of the rootPath if no rootKey
 const rootKey =
     config.rootKey ||
     Crypto.createHash('md5')
@@ -34,15 +56,21 @@ if (config.amqp) {
 
     amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
         if (error0) {
-            throw error0;
+            console.error("Can't connect to rabbitMQ");
+            process.exit(101);
         }
 
         const channel: Channel = await connection.createChannel();
 
-        await channel.assertExchange(exchange, 'direct', {durable: true});
-        await channel.assertQueue(queue, {durable: true});
+        try {
+            await channel.assertExchange(exchange, 'direct', {durable: true});
+            await channel.assertQueue(queue, {durable: true});
 
-        await channel.bindQueue(queue, exchange, routingKey);
+            await channel.bindQueue(queue, exchange, routingKey);
+        } catch (e) {
+            console.error('Error when create exchange or channel', e.message);
+            process.exit(102);
+        }
 
         let watchParams = {};
         if (config.watcher && config.watcher.awaitWriteFinish) {

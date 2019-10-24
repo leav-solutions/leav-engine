@@ -19,17 +19,18 @@ export const start = (
 
     let ready = false;
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
-    const timeout = (watchParams && watchParams.timeout) || 2500;
+    const timeout = (watchParams && watchParams.timeout) || 1000;
 
     const watcher = chokidar.watch(rootPathProps, {
         ignored: /(^|[\/\\])\../, // ignore dot file
         ignoreInitial: false, // use init for redis
         alwaysStat: true, // always give stats for add and update event
-        awaitWriteFinish: watcherConfig // wait for copy to finish before trigger event
+        awaitWriteFinish: watcherConfig, // wait for copy to finish before trigger event
+        cwd: rootPathProps
     });
 
-    watcher.on('all', (event: string, path: string, stats: any) => {
-        checkEvent(event, path, stats, {
+    watcher.on('all', async (event: string, path: string, stats: any) => {
+        await checkEvent(event, path, stats, {
             ready,
             timeout,
             rootKey,
@@ -70,8 +71,8 @@ export const checkEvent = async (event: string, path: string, stats: any, params
         clearTimeout(timeoutRefs[inode]);
 
         // delay on move event to keep the order of the event
-        setTimeout(() => {
-            handleEvent(
+        setTimeout(async () => {
+            await handleEvent(
                 'move',
                 path,
                 inode,
@@ -99,9 +100,9 @@ const delayHandleEvent = async (event: string, path: string, inode: number, para
     return new Promise(
         r =>
             (timeoutRefs[inode] = setTimeout(
-                () =>
+                async () =>
                     r(
-                        handleEvent(event, path, inode, {
+                        await handleEvent(event, path, inode, {
                             rootKey: params.rootKey,
                             verbose: params.verbose,
                             amqp: params.amqp
