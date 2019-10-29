@@ -1,0 +1,25 @@
+{
+    "rootPath": "/Users/smarzykmathieu/Dev/automate-scan/folder_to_watch",
+    "rootKey": "1234abc",
+    "redis": {
+        "host": "127.0.0.1",
+        "port": 6379
+    },
+    "amqp": {
+        "protocol": "amqp",
+        "hostname": "localhost",
+        "port": 15672,
+        "username": "guest",
+        "password": "guest",
+        "queue": "test",
+        "exchange": "test",
+        "routingKey": "test"
+    },
+    "watcher": {
+        "awaitWriteFinish": {
+        "stabilityThreshold": 2000,
+        "pollInterval": 100
+        }
+    },
+    "verbose": true
+}

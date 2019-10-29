@@ -65,7 +65,7 @@ describe('test checkEvent', () => {
                 expect.stringContaining(file) &&
                 expect.stringContaining(inode.toString()) &&
                 expect.stringContaining(rootKey),
-            {}
+            undefined
         );
     });
 
@@ -86,7 +86,7 @@ describe('test checkEvent', () => {
                 expect.stringContaining(file) &&
                 expect.stringContaining(inode.toString()) &&
                 expect.stringContaining(rootKey),
-            {}
+            undefined
         );
     });
 
@@ -107,7 +107,7 @@ describe('test checkEvent', () => {
                 expect.stringContaining(file) &&
                 expect.stringContaining(inode.toString()) &&
                 expect.stringContaining(rootKey),
-            {}
+            undefined
         );
     });
 
@@ -128,7 +128,7 @@ describe('test checkEvent', () => {
                 expect.stringContaining(file) &&
                 expect.stringContaining(inode.toString()) &&
                 expect.stringContaining(rootKey),
-            {}
+            undefined
         );
     });
 
@@ -149,7 +149,7 @@ describe('test checkEvent', () => {
                 expect.stringContaining(file) &&
                 expect.stringContaining(inode.toString()) &&
                 expect.stringContaining(rootKey),
-            {}
+            undefined
         );
     });
 
@@ -171,7 +171,7 @@ describe('test checkEvent', () => {
                 expect.stringContaining(file) &&
                 expect.stringContaining(inode.toString()) &&
                 expect.stringContaining(rootKey),
-            {}
+            undefined
         );
     });
 });

@@ -1,5 +1,5 @@
 {
-  "rootPath": "/Users/smarzykmathieu/Data/test_automate_100000_files",
+  "rootPath": "/Users/smarzykmathieu/Data/test_automate_nb_files",
   "rootKey": "1234abd",
   "redis": {
     "port": 6379,

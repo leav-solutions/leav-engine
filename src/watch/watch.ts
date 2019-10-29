@@ -6,10 +6,9 @@ import {handleCreate, handleDelete, handleUpdate, handleMove} from './events';
 const inodesTmp: {[i: number]: string} = {};
 const timeoutRefs: {[i: number]: any} = {};
 const pathsTmp: {[i: string]: any} = {};
-
 const inits: Array<{path: string; inode: number}> = [];
 
-export const start = (
+export const start = async (
     rootPathProps: string,
     rootKey: string,
     watchParams?: IWatcherParams,
@@ -19,25 +18,27 @@ export const start = (
 
     let ready = false;
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
-    const timeout = (watchParams && watchParams.timeout) || 1000;
+    const timeout = (watchParams && watchParams.timeout) || 100;
+
+    const cwd = rootPathProps ? rootPathProps : '.'; // if absolute path given,
 
     const watcher = chokidar.watch(rootPathProps, {
         ignored: /(^|[\/\\])\../, // ignore dot file
         ignoreInitial: false, // use init for redis
         alwaysStat: true, // always give stats for add and update event
         awaitWriteFinish: watcherConfig, // wait for copy to finish before trigger event
-        cwd: rootPathProps
+        cwd
     });
 
-    watcher.on('all', async (event: string, path: string, stats: any) => {
-        await checkEvent(event, path, stats, {
+    watcher.on('all', async (event: string, path: string, stats: any) =>
+        checkEvent(event, path, stats, {
             ready,
             timeout,
             rootKey,
             verbose,
             amqp: amqpParams
-        });
-    });
+        })
+    );
 
     watcher.on('ready', () => {
         ready = true;
@@ -47,7 +48,19 @@ export const start = (
 };
 
 export const checkEvent = async (event: string, path: string, stats: any, params: IParamsExtends) => {
-    const amqp = params.amqp || {};
+    if (params.ready) {
+        await manageInode(event, path, stats, {
+            ready: params.ready,
+            timeout: params.timeout,
+            rootKey: params.rootKey,
+            verbose: params.verbose,
+            amqp: params.amqp
+        });
+    } else {
+        handleInit(path, stats.ino, params.verbose);
+    }
+};
+export const manageInode = async (event: string, path: string, stats: any, params: IParamsExtends) => {
     let inode: number;
 
     if (stats) {
@@ -58,18 +71,21 @@ export const checkEvent = async (event: string, path: string, stats: any, params
         inode = await getInode(path);
     }
 
-    if (!params.ready) {
-        handleInit(path, inode, params.verbose);
-        return;
-    }
+    await checkMove(event, path, stats, inode, params);
+};
+
+const checkMove = async (event: string, path: string, stats: any, inode: any, params: IParamsExtends) => {
+    const amqp = params.amqp || {};
 
     if (inodesTmp[inode] && path !== inodesTmp[inode]) {
         // keep the inode
         const oldInode = inodesTmp[inode];
 
-        // cancel other event
-        clearTimeout(timeoutRefs[inode]);
+        // save the inode if the next unlink arrive before the create finish to stock data in redis
+        pathsTmp[path] = inode;
 
+        // cancel other event
+        clearTmp(path, inode);
         // delay on move event to keep the order of the event
         setTimeout(async () => {
             await handleEvent(
@@ -87,30 +103,22 @@ export const checkEvent = async (event: string, path: string, stats: any, params
     } else {
         inodesTmp[inode] = path;
         pathsTmp[path] = inode;
-        await delayHandleEvent(event, path, inode, {
-            timeout: params.timeout,
-            rootKey: params.rootKey,
-            verbose: params.verbose,
-            amqp
-        });
-    }
-};
 
-const delayHandleEvent = async (event: string, path: string, inode: number, params: IParamsExtends) => {
-    return new Promise(
-        r =>
-            (timeoutRefs[inode] = setTimeout(
-                async () =>
-                    r(
-                        await handleEvent(event, path, inode, {
-                            rootKey: params.rootKey,
-                            verbose: params.verbose,
-                            amqp: params.amqp
-                        })
-                    ),
-                params.timeout
-            ))
-    );
+        await new Promise(
+            resolve =>
+                (timeoutRefs[inode] = setTimeout(
+                    async () =>
+                        resolve(
+                            handleEvent(event, path, inode, {
+                                rootKey: params.rootKey,
+                                verbose: params.verbose,
+                                amqp: params.amqp
+                            })
+                        ),
+                    params.timeout
+                ))
+        );
+    }
 };
 
 export const handleEvent = async (event: string, path: string, inode: number, params: IParams, oldPath?: string) => {
@@ -142,25 +150,25 @@ export const handleEvent = async (event: string, path: string, inode: number, pa
             break;
     }
 
-    clearTimeout(timeoutRefs[inode]);
-    delete timeoutRefs[inode];
-    delete inodesTmp[inode];
-    delete pathsTmp[path];
+    clearTmp(path, inode);
 };
 
-let working = false;
+let working = false; // flag to check if already sending inits to redis
 const handleInit = async (path: string, inode: number, verbose: boolean) => {
-    inits.push({path, inode});
+    inits.push({path, inode}); // add init infos to queue
     manageRedisInit(verbose);
 };
 
 const manageRedisInit = async (verbose: boolean) => {
+    // if not already working, shit
     if (!working) {
         working = true;
+
+        // while the array of inits is not empty
         while (inits.length > 0) {
             const init = inits.shift();
             if (init) {
-                await initRedis(init.path, init.inode);
+                await initRedis(init.path, init.inode); // set data in redis and wait until finish
                 if (verbose) {
                     console.info('init', init.path);
                 }
@@ -168,4 +176,11 @@ const manageRedisInit = async (verbose: boolean) => {
         }
         working = false;
     }
+};
+
+const clearTmp = (path: string, inode: number) => {
+    clearTimeout(timeoutRefs[inode]);
+    delete timeoutRefs[inode];
+    delete inodesTmp[inode];
+    delete pathsTmp[path];
 };

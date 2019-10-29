@@ -14,7 +14,7 @@ export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
             process.exit(105);
         }
     } else {
-        // else just console.log the infos
+        // else just display the infos
         console.info(msg);
     }
 };
