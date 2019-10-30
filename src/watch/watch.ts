@@ -6,7 +6,6 @@ import {handleCreate, handleDelete, handleUpdate, handleMove} from './events';
 const inodesTmp: {[i: number]: string} = {};
 const timeoutRefs: {[i: number]: any} = {};
 const pathsTmp: {[i: string]: any} = {};
-const inits: Array<{path: string; inode: number}> = [];
 
 export const start = async (
     rootPathProps: string,
@@ -20,7 +19,8 @@ export const start = async (
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
     const timeout = (watchParams && watchParams.timeout) || 100;
 
-    const cwd = rootPathProps ? rootPathProps : '.'; // if absolute path given,
+    // if absolute path given, we use it here to not display the name of the root folder in message
+    const cwd = rootPathProps.charAt(0).indexOf('/') === 0 ? rootPathProps : '.';
 
     const watcher = chokidar.watch(rootPathProps, {
         ignored: /(^|[\/\\])\../, // ignore dot file
@@ -64,10 +64,13 @@ export const manageInode = async (event: string, path: string, stats: any, param
     let inode: number;
 
     if (stats) {
+        // Get the inode from the stats (events: add, addDir, Change)
         inode = stats.ino;
     } else if (pathsTmp[path]) {
+        // Get the inode from array that keep temporary the inode the time,
         inode = pathsTmp[path];
     } else {
+        // Get the inode from redis database
         inode = await getInode(path);
     }
 
@@ -153,7 +156,11 @@ export const handleEvent = async (event: string, path: string, inode: number, pa
     clearTmp(path, inode);
 };
 
-let working = false; // flag to check if already sending inits to redis
+// Flag to check if already sending inits to redis
+let working = false;
+// Temporary array of the infos to set in redis at init
+const inits: Array<{path: string; inode: number}> = [];
+
 const handleInit = async (path: string, inode: number, verbose: boolean) => {
     inits.push({path, inode}); // add init infos to queue
     manageRedisInit(verbose);

@@ -1,5 +1,5 @@
 {
-  "rootPath": "/Users/smarzykmathieu/Dev/automate-scan/folder_to_watch",
+  "rootPath": "./folder_to_watch",
   "rootKey": "1234abc",
   "redis": {
     "host": "127.0.0.1",
