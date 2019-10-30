@@ -5,14 +5,14 @@ process.on('exit', code => {
 });
 
 process.on('uncaughtException', err => {
-    console.error('There was an uncaught error', err);
+    console.error('1 - There was an uncaught error', err);
     process.exit(1); // mandatory (as per the Node.js docs)
 });
 
 // handle CTRL + C
 process.on('SIGINT', () => {
     console.info();
-    console.info('User stop the app');
+    console.info('0 - User stop the app');
     process.exit(0);
 });
 

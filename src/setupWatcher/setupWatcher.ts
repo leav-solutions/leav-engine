@@ -19,7 +19,7 @@ export const startWatch = async (configPathArg?: string) => {
 
     // Check if rootPath exist
     if (!fs.existsSync(config.rootPath)) {
-        console.error('rootPath folder not found');
+        console.error('2 - rootPath folder not found');
         process.exit(2);
     }
 
@@ -48,7 +48,7 @@ export const startWatch = async (configPathArg?: string) => {
         const channel: Channel = await new Promise(resolve =>
             amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
                 if (error0) {
-                    console.error("Can't connect to rabbitMQ");
+                    console.error("101 - Can't connect to rabbitMQ");
                     process.exit(101);
                 }
 
@@ -57,21 +57,21 @@ export const startWatch = async (configPathArg?: string) => {
                 try {
                     await ch.assertExchange(exchange, 'direct', {durable: true});
                 } catch (e) {
-                    console.error('Error when assert exchange', e.message);
+                    console.error('102 - Error when assert exchange', e.message);
                     process.exit(102);
                 }
 
                 try {
                     await ch.assertQueue(queue, {durable: true});
                 } catch (e) {
-                    console.error('Error when assert queue', e.message);
+                    console.error('103 - Error when assert queue', e.message);
                     process.exit(103);
                 }
 
                 try {
                     await ch.bindQueue(queue, exchange, routingKey);
                 } catch (e) {
-                    console.error('Error when bind queue', e.message);
+                    console.error('104 - Error when bind queue', e.message);
                     process.exit(104);
                 }
 

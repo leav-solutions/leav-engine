@@ -17,8 +17,8 @@
     },
     "watcher": {
         "awaitWriteFinish": {
-        "stabilityThreshold": 2000,
-        "pollInterval": 100
+            "stabilityThreshold": 2000,
+            "pollInterval": 100
         }
     },
     "verbose": true

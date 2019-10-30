@@ -11,7 +11,7 @@ export const createClient = (host: string, port: number) => {
     client.on('connect', () => undefined);
 
     client.on('error', err => {
-        console.error('Error with redis', err);
+        console.error('201 - Error with redis', err);
         process.exit(201);
     });
 

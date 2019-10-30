@@ -10,7 +10,7 @@ export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
                 persistent: true
             });
         } catch (e) {
-            console.error("Can't publish to rabbitMQ");
+            console.error("105 - Can't publish to rabbitMQ");
             process.exit(105);
         }
     } else {

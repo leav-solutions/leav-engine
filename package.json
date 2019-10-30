@@ -11,7 +11,6 @@
     "test": "jest -c jest-unit-config.json",
     "test:watch": "jest -c jest-unit-config.json --watch",
     "test:integration": "jest -c jest-integration-config.json",
-    "test:integration:watch": "jest -c jest-integration-config-watch.json --watch",
     "lint": "tslint --fix -p .",
     "prettier": "prettier --write 'src/**/*.ts'"
   },
