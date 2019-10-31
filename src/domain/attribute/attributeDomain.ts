@@ -237,7 +237,7 @@ export default function(
         }
 
         const availableActions = actionsListDomain.getAvailableActions();
-        const allowedInputTypes = _getAllowedInputTypes(attrData);
+        const allowedInputTypes = _getAllowedOutputTypes(attrData);
         const errors: IValidationErrorFieldDetail = {};
         for (const event of Object.values(ActionsListEvents)) {
             if (!attrData.actions_list[event] || !attrData.actions_list[event].length) {
@@ -249,7 +249,6 @@ export default function(
             const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
 
             if (!intersection(lastActionDetails.output_types, allowedInputTypes[event]).length) {
-                // if (lastActionDetails.output_types.indexOf(allowedInputType) === -1) {
                 errors[`actions_list.${event}`] = `Last action is invalid:
                         expected action with ouptput types including ${allowedInputTypes[event]},
                         received ${lastActionDetails.output_types}`;
