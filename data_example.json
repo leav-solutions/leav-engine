@@ -48,6 +48,7 @@
         {
             "id": "name",
             "type": "simple",
+            "format": "text",
             "label": { "fr": "Nom" },
             "multiple_values": false
         },
@@ -61,6 +62,7 @@
         {
             "id": "price",
             "type": "advanced",
+            "format": "numeric",
             "label": { "fr": "Prix" },
             "multiple_values": false,
             "versions_conf": {
