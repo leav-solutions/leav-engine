@@ -80,14 +80,23 @@ export interface IRecordDomain {
     getRecordIdentity(record: IRecord): Promise<IRecordIdentity>;
 }
 
-export default function(
-    recordRepo: IRecordRepo | null = null,
-    attributeDomain: IAttributeDomain | null = null,
-    valueDomain: IValueDomain = null,
-    actionsListDomain: IActionsListDomain = null,
-    recordPermissionDomain: IRecordPermissionDomain = null,
-    libraryDomain: ILibraryDomain = null
-): IRecordDomain {
+interface IDeps {
+    'core.infra.record'?: IRecordRepo;
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.value'?: IValueDomain;
+    'core.domain.actionsList'?: IActionsListDomain;
+    'core.domain.permission.recordPermission'?: IRecordPermissionDomain;
+    'core.domain.library'?: ILibraryDomain;
+}
+
+export default function({
+    'core.infra.record': recordRepo = null,
+    'core.domain.attribute': attributeDomain = null,
+    'core.domain.value': valueDomain = null,
+    'core.domain.actionsList': actionsListDomain = null,
+    'core.domain.permission.recordPermission': recordPermissionDomain = null,
+    'core.domain.library': libraryDomain = null
+}: IDeps = {}): IRecordDomain {
     /**
      * Run actions list on a value
      *

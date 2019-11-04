@@ -36,13 +36,21 @@ interface IBenchmarkActionStat {
     min: number;
 }
 
-export default function(
-    importerApp: IImporterApp = null,
-    dbUtils: IDbUtils,
-    depsManager: AwilixContainer,
-    graphqlApp: IGraphqlApp,
-    config: any
-) {
+interface IDeps {
+    'core.app.importer'?: IImporterApp;
+    'core.infra.db.dbUtils'?: IDbUtils;
+    'core.app.graphql'?: IGraphqlApp;
+    'core.depsManager'?: AwilixContainer;
+    config?: any;
+}
+
+export default function({
+    'core.app.importer': importerApp = null,
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.app.graphql': graphqlApp = null,
+    'core.depsManager': depsManager = null,
+    config = null
+}: IDeps = {}): IBenchmarkApp {
     let server: ApolloServerBase;
     let runQuery;
     let runMutation;

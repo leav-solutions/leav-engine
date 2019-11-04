@@ -37,7 +37,18 @@ export interface IDbUtils {
 export interface IMigration {
     run(): Promise<void>;
 }
-export default function(dbService: IDbService = null, logger: winston.Winston = null, config: any = null): IDbUtils {
+
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.utils.logger'?: winston.Winston;
+    config?: any;
+}
+
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.utils.logger': logger = null,
+    config = null
+}: IDeps = {}): IDbUtils {
     /**
      * Create the collections used to managed db migrations
      * This can't be in a migration file because we do have to initialize it somewhere

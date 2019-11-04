@@ -2,7 +2,11 @@ import {aql} from 'arangojs';
 import {IDbService} from '../dbService';
 import {IMigration} from '../dbUtils';
 
-export default function(dbService: IDbService): IMigration {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+}
+
+export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
         async run() {
             const docToUpdate = {

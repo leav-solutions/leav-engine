@@ -1,11 +1,11 @@
-import {AwilixContainer} from 'awilix';
 import * as Joi from '@hapi/joi';
-import {IActionsListFunction, IActionsListSavedAction, IActionsListParams} from '../../_types/actionsList';
-import {IAttribute} from '../../_types/attribute';
-import {IValidationErrorFieldDetail} from '../../errors/ValidationError';
-import {IValue} from '../../_types/value';
-import {IUtils} from '../../utils/utils';
+import {AwilixContainer} from 'awilix';
 import {partialRight} from 'lodash';
+import {IValidationErrorFieldDetail} from '../../errors/ValidationError';
+import {IUtils} from '../../utils/utils';
+import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
+import {IAttribute} from '../../_types/attribute';
+import {IValue} from '../../_types/value';
 
 export interface IActionsListDomain {
     /**
@@ -34,11 +34,19 @@ export interface IActionsListDomain {
     runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue>;
 }
 
-export default function(depsManager: AwilixContainer = null, utils: IUtils = null): IActionsListDomain {
+interface IDeps {
+    'core.depsManager'?: AwilixContainer;
+    'core.utils'?: IUtils;
+}
+
+export default function({
+    'core.depsManager': depsManager = null,
+    'core.utils': utils = null
+}: IDeps = {}): IActionsListDomain {
     return {
         getAvailableActions(): IActionsListFunction[] {
             const actions = Object.keys(depsManager.registrations)
-                .filter(modName => modName.match(/Action$/))
+                .filter(modName => modName.match(/^core\.domain\.actions\./))
                 .map(modName => depsManager.cradle[modName]);
 
             return actions;

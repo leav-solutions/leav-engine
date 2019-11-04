@@ -9,7 +9,14 @@ import {IAttributeTypeRepo} from './attributeTypesRepo';
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
-export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): IAttributeTypeRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+}
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null
+}: IDeps = {}): IAttributeTypeRepo {
     return {
         async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
@@ -117,7 +124,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const deletedVal = await valCollec.remove({_key: value.id_value});
+            const deletedVal = await valCollec.remove({_key: String(value.id_value)});
 
             // Delete the link record<->value and add some metadata on it
             const edgeData = {
@@ -178,7 +185,7 @@ export default function(dbService: IDbService | any, dbUtils: IDbUtils = null): 
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const values = await valCollec.lookupByKeys([value.id_value]);
+            const values = await valCollec.lookupByKeys([String(value.id_value)]);
 
             if (!values.length) {
                 return null;

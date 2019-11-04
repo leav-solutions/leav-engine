@@ -32,7 +32,7 @@ describe('AttributeIndexRepo', () => {
                 updateValue: global.__mockPromise(updatedValueData)
             };
 
-            const attrRepo = attributeSimpleLinkRepo(null, attrSimpleRepo, null);
+            const attrRepo = attributeSimpleLinkRepo({'core.infra.attributeTypes.attributeSimple': attrSimpleRepo});
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 123456
@@ -58,7 +58,7 @@ describe('AttributeIndexRepo', () => {
                 deleteValue: global.__mockPromise(deletedValueData)
             };
 
-            const attrRepo = attributeSimpleLinkRepo(null, attrSimpleRepo, null);
+            const attrRepo = attributeSimpleLinkRepo({'core.infra.attributeTypes.attributeSimple': attrSimpleRepo});
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
                 value: 123456
@@ -107,7 +107,10 @@ describe('AttributeIndexRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeSimpleLinkRepo(mockDbServ, null, mockDbUtils as IDbUtils);
+            const attrRepo = attributeSimpleLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 

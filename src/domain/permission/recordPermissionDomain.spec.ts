@@ -74,13 +74,13 @@ describe('recordPermissionDomain', () => {
         };
 
         test('Return tree permission', async () => {
-            const recordPermDomain = recordPermissionDomain(
-                mockPermDomain as IPermissionDomain,
-                mockTreePermDomain as ITreePermissionDomain,
-                mockLibDomain as ILibraryDomain,
-                mockAttrDomain as IAttributeDomain,
-                mockValueRepo as IValueRepo
-            );
+            const recordPermDomain = recordPermissionDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.treePermission': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
 
             const perm = await recordPermDomain.getRecordPermission(
                 RecordPermissionsActions.ACCESS,
@@ -102,13 +102,13 @@ describe('recordPermissionDomain', () => {
                 })
             };
 
-            const recordPermDomain = recordPermissionDomain(
-                mockPermDomain as IPermissionDomain,
-                mockTreePermDomain as ITreePermissionDomain,
-                mockLibNoPermsDomain as ILibraryDomain,
-                mockAttrDomain as IAttributeDomain,
-                mockValueRepo as IValueRepo
-            );
+            const recordPermDomain = recordPermissionDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.treePermission': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.library': mockLibNoPermsDomain as ILibraryDomain,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
 
             const perm = await recordPermDomain.getRecordPermission(
                 RecordPermissionsActions.ACCESS,
@@ -132,13 +132,10 @@ describe('recordPermissionDomain', () => {
                 getHeritedTreePermission: global.__mockPromise(true)
             };
 
-            const recordPermDomain = recordPermissionDomain(
-                mockPermDomain as IPermissionDomain,
-                mockTreePermDomain as ITreePermissionDomain,
-                null,
-                null,
-                null
-            );
+            const recordPermDomain = recordPermissionDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.treePermission': mockTreePermDomain as ITreePermissionDomain
+            });
 
             const perm = await recordPermDomain.getHeritedRecordPermission(
                 RecordPermissionsActions.ACCESS,

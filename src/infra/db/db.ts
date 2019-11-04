@@ -1,6 +1,10 @@
 import {Database} from 'arangojs';
 
-export default function(config: any): Database {
+interface IDeps {
+    config?: any;
+}
+
+export default function({config}: IDeps = {}): Database {
     const db = new Database({
         url: config.db.url
     });

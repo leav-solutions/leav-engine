@@ -89,13 +89,21 @@ export interface IAttributeTypeRepo {
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
 
-export default function(
-    attributeSimpleRepo: IAttributeTypeRepo | null = null,
-    attributeSimpleLinkRepo: IAttributeTypeRepo | null = null,
-    attributeAdvancedRepo: IAttributeTypeRepo | null = null,
-    attributeAdvancedLinkRepo: IAttributeTypeRepo | null = null,
-    attributeTreeRepo: IAttributeTypeRepo | null = null
-): IAttributeTypesRepo {
+interface IDeps {
+    'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.attributeAdvanced'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.attributeAdvancedLink'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.attributeTree'?: IAttributeTypeRepo;
+}
+
+export default function({
+    'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
+    'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
+    'core.infra.attributeTypes.attributeAdvanced': attributeAdvancedRepo = null,
+    'core.infra.attributeTypes.attributeAdvancedLink': attributeAdvancedLinkRepo = null,
+    'core.infra.attributeTypes.attributeTree': attributeTreeRepo = null
+}: IDeps = {}): IAttributeTypesRepo {
     return {
         getTypeRepo(attribute) {
             let attrTypeRepo: IAttributeTypeRepo;

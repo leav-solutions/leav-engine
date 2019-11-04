@@ -6,7 +6,17 @@ import {ILibraryRepo} from '../../library/libraryRepo';
 import {collectionTypes, IDbService} from '../dbService';
 import {IMigration} from '../dbUtils';
 
-export default function(dbService: IDbService, libraryRepo: ILibraryRepo, attributeRepo: IAttributeRepo): IMigration {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.library'?: ILibraryRepo;
+    'core.infra.attribute'?: IAttributeRepo;
+}
+
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.library': libraryRepo = null,
+    'core.infra.attribute': attributeRepo = null
+}: IDeps = {}): IMigration {
     return {
         async run() {
             if (!(await dbService.collectionExists('core_attributes'))) {

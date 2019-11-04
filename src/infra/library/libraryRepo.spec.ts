@@ -20,7 +20,10 @@ describe('LibraryRepo', () => {
                 ])
             };
 
-            const repo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = libraryRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const trees = await repo.getLibraries();
 
@@ -61,7 +64,10 @@ describe('LibraryRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const libRepo = libraryRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const createdLib = await libRepo.createLibrary(libData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -91,7 +97,10 @@ describe('LibraryRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const libRepo = libraryRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const updatedLib = await libRepo.updateLibrary(libData);
 
@@ -132,16 +141,19 @@ describe('LibraryRepo', () => {
                 execute: global.__mockPromiseMultiple([[], [docLibData]])
             };
 
-            const mockCleanupRes = libData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(libData),
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils, mockAttrRepo as IAttributeRepo);
+            const libRepo = libraryRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo
+            });
             libRepo.getLibraries = global.__mockPromise([libData]);
 
-            const deleteRes = await libRepo.deleteLibrary(libData.id);
+            await libRepo.deleteLibrary(libData.id);
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(2);
@@ -178,7 +190,7 @@ describe('LibraryRepo', () => {
                 execute: global.__mockPromise(mockQueryRes)
             };
 
-            const libRepo = libraryRepo(mockDbServ, null);
+            const libRepo = libraryRepo({'core.infra.db.dbService': mockDbServ});
             libRepo.getLibraryAttributes = global.__mockPromise([
                 {
                     id: 'id',
@@ -274,7 +286,10 @@ describe('LibraryRepo', () => {
                     .mockReturnValueOnce(mockCleanupRes[1])
             };
 
-            const libRepo = libraryRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const libRepo = libraryRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const libAttrs = await libRepo.getLibraryAttributes('users');
             expect(mockDbServ.execute.mock.calls.length).toBe(1);

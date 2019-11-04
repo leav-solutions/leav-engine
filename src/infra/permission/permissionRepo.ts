@@ -21,7 +21,14 @@ interface IDbPermissionsTreeTarget {
 const PERM_COLLECTION_NAME = 'core_permissions';
 const USERS_GROUP_LIB_NAME = 'users_groups';
 
-export default function(dbService: IDbService, dbUtils: IDbUtils = null): IPermissionRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+}
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null
+}: IDeps = {}): IPermissionRepo {
     function _toDbTreeTarget(treeTarget: IPermissionsTreeTarget): IDbPermissionsTreeTarget {
         if (treeTarget === null) {
             return null;

@@ -24,12 +24,17 @@ export interface IAttributeRepo {
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
 
-export default function(
-    dbService: IDbService | null = null,
-    dbUtils: IDbUtils | null = null,
-    valueRepo: IValueRepo | null = null,
-    config = null
-): IAttributeRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.value'?: IValueRepo;
+}
+
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.infra.value': valueRepo = null
+}: IDeps = {}): IAttributeRepo {
     return {
         async getAttributes(params: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
             const defaultParams: IGetCoreEntitiesParams = {

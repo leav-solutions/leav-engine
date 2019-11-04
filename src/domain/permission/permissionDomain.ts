@@ -69,13 +69,21 @@ export interface IPermissionDomain {
     ): Promise<boolean>;
 }
 
-export default function(
-    permissionRepo: IPermissionRepo = null,
-    attributeRepo: IAttributeRepo = null,
-    valueRepo: IValueRepo = null,
-    treeRepo: ITreeRepo = null,
-    config: any = null
-): IPermissionDomain {
+interface IDeps {
+    'core.infra.permission'?: IPermissionRepo;
+    'core.infra.attribute'?: IAttributeRepo;
+    'core.infra.value'?: IValueRepo;
+    'core.infra.tree'?: ITreeRepo;
+    config?: any;
+}
+
+export default function({
+    'core.infra.permission': permissionRepo = null,
+    'core.infra.attribute': attributeRepo = null,
+    'core.infra.value': valueRepo = null,
+    'core.infra.tree': treeRepo = null,
+    config = null
+}: IDeps = {}): IPermissionDomain {
     const ret = {
         async savePermission(permData: IPermission, infos: IQueryInfos): Promise<IPermission> {
             // Does user have the permission to save permissions?

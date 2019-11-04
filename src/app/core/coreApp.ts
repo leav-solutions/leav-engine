@@ -1,8 +1,3 @@
-import {AwilixContainer} from 'awilix';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
 import {GraphQLScalarType} from 'graphql';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -12,15 +7,12 @@ export interface ICoreApp {
     filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[]): ISystemTranslation;
 }
 
-export default function(
-    libraryDomain: ILibraryDomain = null,
-    attributeDomain: IAttributeDomain = null,
-    recordDomain: IRecordDomain = null,
-    valueDomain: IValueDomain = null,
-    depsManager: AwilixContainer = null,
-    graphqlApp: IGraphqlApp = null,
-    config: any = null
-): ICoreApp {
+interface IDeps {
+    'core.app.graphql'?: IGraphqlApp;
+    config?: any;
+}
+
+export default function({'core.app.graphql': graphqlApp = null, config = null}: IDeps = ({} = {})): ICoreApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

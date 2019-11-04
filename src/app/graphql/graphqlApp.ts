@@ -22,12 +22,14 @@ export interface IAppGraphQLSchema {
     resolvers: any;
 }
 
-export default function(
-    depsManager: AwilixContainer,
-    logger: winston.Winston,
-    utils: IUtils,
-    config: any
-): IGraphqlApp {
+interface IDeps {
+    'core.depsManager'?: AwilixContainer;
+    'core.utils.logger'?: winston.Winston;
+    'core.utils'?: IUtils;
+    config?: any;
+}
+
+export default function({'core.depsManager': depsManager = null, 'core.utils': utils = null}: IDeps = {}): IGraphqlApp {
     let _fullSchema: GraphQLSchema;
 
     const schemaUpdateEmitter = new EventEmitter();
@@ -42,7 +44,7 @@ export default function(
         async generateSchema(): Promise<void> {
             try {
                 const appSchema = {typeDefs: [], resolvers: {}};
-                const modules = Object.keys(depsManager.registrations).filter(modName => modName.indexOf('App') !== -1);
+                const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
 
                 for (const modName of modules) {
                     const appModule = depsManager.cradle[modName];

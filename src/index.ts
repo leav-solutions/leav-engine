@@ -2,9 +2,9 @@ import {init as initDI} from './depsManager';
 
 (async function() {
     const container = await initDI();
-    const server = container.cradle.server;
-    const dbUtils = container.cradle.dbUtils;
-    const cli = container.cradle.cli;
+    const server = container.cradle['core.interface.server'];
+    const dbUtils = container.cradle['core.infra.db.dbUtils'];
+    const cli = container.cradle['core.interface.cli'];
 
     try {
         const opt = process.argv[2];

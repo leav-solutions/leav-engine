@@ -55,11 +55,17 @@ export interface ILibraryRepo {
     getLibraryAttributes(libId: string): Promise<IAttribute[]>;
 }
 
-export default function(
-    dbService: IDbService | null = null,
-    dbUtils: IDbUtils | null = null,
-    attributeRepo: IAttributeRepo | null = null
-): ILibraryRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.attribute'?: IAttributeRepo;
+}
+
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.infra.attribute': attributeRepo = null
+}: IDeps = {}): ILibraryRepo {
     return {
         async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
             const defaultParams: IGetCoreEntitiesParams = {

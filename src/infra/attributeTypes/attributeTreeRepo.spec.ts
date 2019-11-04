@@ -72,7 +72,10 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise([savedEdgeData])
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'categories/123456',
@@ -114,7 +117,10 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise([savedEdgeData])
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
@@ -155,9 +161,9 @@ describe('AttributeTreeRepo', () => {
                 edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {db: (mockDb as unknown) as Database};
 
-            const attrRepo = attributeTreeRepo(mockDbServ, null);
+            const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
                 id_value: 445566,
@@ -213,7 +219,10 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -245,7 +254,7 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, null);
+            const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -322,7 +331,10 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -402,7 +414,10 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrTreeVersionableSimple, false, {
                 version: {
                     my_tree: {library: 'my_lib', id: 1345}
@@ -437,7 +452,10 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 
@@ -479,7 +497,10 @@ describe('AttributeTreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeTreeRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal, true);
 

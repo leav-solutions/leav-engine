@@ -18,7 +18,9 @@ describe('HeritedPermissionDomain', () => {
                 getHeritedRecordPermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(mockRecordPermDomain as IRecordPermissionDomain, null);
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
+            });
 
             const perm = await permsHelperDomain.getHeritedPermissions(
                 PermissionTypes.RECORD,
@@ -37,7 +39,9 @@ describe('HeritedPermissionDomain', () => {
                 getHeritedLibraryPermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(null, mockPermDomain as IPermissionDomain);
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
 
             const perm = await permsHelperDomain.getHeritedPermissions(
                 PermissionTypes.LIBRARY,
@@ -55,7 +59,9 @@ describe('HeritedPermissionDomain', () => {
                 getHeritedAdminPermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(null, mockPermDomain as IPermissionDomain);
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
 
             const perm = await permsHelperDomain.getHeritedPermissions(
                 PermissionTypes.ADMIN,
@@ -75,7 +81,9 @@ describe('HeritedPermissionDomain', () => {
                 getAdminPermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(null, mockPermDomain as IPermissionDomain);
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
 
             const perm = await permsHelperDomain.isAllowed(
                 PermissionTypes.ADMIN,
@@ -92,7 +100,9 @@ describe('HeritedPermissionDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(null, mockPermDomain as IPermissionDomain);
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
 
             const perm = await permsHelperDomain.isAllowed(
                 PermissionTypes.LIBRARY,
@@ -110,7 +120,9 @@ describe('HeritedPermissionDomain', () => {
                 getRecordPermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(mockRecordPermDomain as IRecordPermissionDomain);
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
+            });
 
             const perm = await permsHelperDomain.isAllowed(
                 PermissionTypes.RECORD,
@@ -131,7 +143,9 @@ describe('HeritedPermissionDomain', () => {
                 getRecordPermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(mockRecordPermDomain as IRecordPermissionDomain);
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
+            });
 
             // No target at all
             await expect(
@@ -160,12 +174,9 @@ describe('HeritedPermissionDomain', () => {
                 getAttributePermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(
-                null,
-                null,
-                null,
-                mockAttrPermDomain as IAttributePermissionDomain
-            );
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain
+            });
 
             const perm = await permsHelperDomain.isAllowed(
                 PermissionTypes.ATTRIBUTE,
@@ -187,12 +198,9 @@ describe('HeritedPermissionDomain', () => {
                 getAttributePermission: global.__mockPromise(true)
             };
 
-            const permsHelperDomain = permissionsHelperDomain(
-                null,
-                null,
-                null,
-                mockAttrPermDomain as IAttributePermissionDomain
-            );
+            const permsHelperDomain = permissionsHelperDomain({
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain
+            });
 
             // No target at all
             await expect(

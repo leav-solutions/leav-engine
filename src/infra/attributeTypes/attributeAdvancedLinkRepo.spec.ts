@@ -1,4 +1,4 @@
-import {Database} from 'arangojs';
+import {Database, EdgeCollection} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
@@ -54,7 +54,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([savedEdgeData])
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 987654,
@@ -95,7 +98,11 @@ describe('AttributeAdvancedLinkRepo', () => {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
             };
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtils as IDbUtils);
+
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
@@ -136,17 +143,17 @@ describe('AttributeAdvancedLinkRepo', () => {
                 _key: 978654321
             };
 
-            const mockDbEdgeCollec = {
+            const mockDbEdgeCollec: Mockify<EdgeCollection> = {
                 removeByExample: global.__mockPromise(deletedEdgeData)
             };
 
-            const mockDb = {
+            const mockDb: Mockify<Database> = {
                 edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {db: (mockDb as unknown) as Database};
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
+            const attrRepo = attributeAdvancedLinkRepo({'core.infra.db.dbService': mockDbServ});
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
                 id_value: 445566,
@@ -202,7 +209,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -234,7 +244,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, null);
+            const attrRepo = attributeAdvancedLinkRepo({'core.infra.db.dbService': mockDbServ});
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 112233,
@@ -310,7 +320,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
@@ -386,7 +399,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute, false, {
                 version: {
@@ -422,7 +438,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 multiple_values: false
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
 
@@ -470,7 +489,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const attrRepo = attributeAdvancedLinkRepo(mockDbServ, mockDbUtilsWithCleanup as IDbUtils);
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+            });
 
             const mockAttrNotMultival = {
                 ...mockAttribute,

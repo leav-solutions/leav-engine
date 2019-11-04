@@ -32,7 +32,7 @@ describe('LibraryDomain', () => {
                 getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}]))
             };
 
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             const lib = await libDomain.getLibraries({withCount: true});
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
@@ -48,7 +48,7 @@ describe('LibraryDomain', () => {
                 getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}]))
             };
 
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             const lib = await libDomain.getLibraries({withCount: true});
 
             expect(mockLibRepo.getLibraries.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
@@ -61,7 +61,7 @@ describe('LibraryDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
             };
 
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             const lib = await libDomain.getLibraryProperties('test');
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
@@ -74,7 +74,7 @@ describe('LibraryDomain', () => {
                 getLibraries: global.__mockPromise([])
             };
 
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
 
             await expect(libDomain.getLibraryProperties('test')).rejects.toThrow();
         });
@@ -111,7 +111,7 @@ describe('LibraryDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
             };
 
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             const libAttrs = await libDomain.getLibraryAttributes('test');
 
             expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(1);
@@ -124,7 +124,7 @@ describe('LibraryDomain', () => {
                 getLibraries: global.__mockPromise([])
             };
 
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
 
             await expect(libDomain.getLibraryAttributes('test')).rejects.toThrow();
         });
@@ -147,12 +147,12 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             const newLib = await libDomain.saveLibrary(
                 {
@@ -188,12 +188,12 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             const updatedLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
 
@@ -219,12 +219,12 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             const updatedLib = await libDomain.saveLibrary(
                 {
@@ -257,12 +257,12 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             await expect(
                 libDomain.saveLibrary(
@@ -293,12 +293,12 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             await expect(
                 libDomain.saveLibrary(
@@ -330,12 +330,12 @@ describe('LibraryDomain', () => {
                 getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             await expect(
                 libDomain.saveLibrary(
@@ -362,12 +362,12 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(PermissionError);
         });
@@ -388,12 +388,12 @@ describe('LibraryDomain', () => {
                 saveLibraryAttributes: jest.fn()
             };
 
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockAdminPermDomain as IPermissionDomain,
-                mockUtilsInvalidID as IUtils
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.utils': mockUtilsInvalidID as IUtils
+            });
 
             await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(ValidationError);
         });
@@ -408,11 +408,10 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                null,
-                mockAdminPermDomain as IPermissionDomain
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+            });
             libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
 
             const deleteRes = await libDomain.deleteLibrary(libData.id, queryInfos);
@@ -427,7 +426,7 @@ describe('LibraryDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             libDomain.getLibraries = global.__mockPromise([]);
 
             await expect(libDomain.deleteLibrary(libData.id, queryInfos)).rejects.toThrow();
@@ -435,7 +434,7 @@ describe('LibraryDomain', () => {
 
         test('Should throw if system library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
-            const libDomain = libraryDomain(mockLibRepo as ILibraryRepo);
+            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             libDomain.getLibraries = global.__mockPromise([{system: true}]);
 
             await expect(libDomain.deleteLibrary(libData.id, queryInfos)).rejects.toThrow();
@@ -447,11 +446,10 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
-            const libDomain = libraryDomain(
-                mockLibRepo as ILibraryRepo,
-                null,
-                mockAdminPermDomain as IPermissionDomain
-            );
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+            });
             libDomain.getLibraries = global.__mockPromise([libData]);
 
             await expect(libDomain.deleteLibrary(libData.id, queryInfos)).rejects.toThrow(PermissionError);

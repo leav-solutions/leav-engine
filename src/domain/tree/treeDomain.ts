@@ -100,14 +100,22 @@ export interface ITreeDomain {
     getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]>;
 }
 
-export default function(
-    treeRepo: ITreeRepo = null,
-    libraryDomain: ILibraryDomain = null,
-    recordDomain: IRecordDomain = null,
-    attributeDomain: IAttributeDomain = null,
-    permissionDomain: IPermissionDomain = null,
-    utils: IUtils = null
-): ITreeDomain {
+interface IDeps {
+    'core.infra.tree'?: ITreeRepo;
+    'core.domain.library'?: ILibraryDomain;
+    'core.domain.record'?: IRecordDomain;
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.permission'?: IPermissionDomain;
+    'core.utils'?: IUtils;
+}
+export default function({
+    'core.infra.tree': treeRepo = null,
+    'core.domain.library': libraryDomain = null,
+    'core.domain.record': recordDomain = null,
+    'core.domain.attribute': attributeDomain = null,
+    'core.domain.permission': permissionDomain = null,
+    'core.utils': utils = null
+}: IDeps = {}): ITreeDomain {
     async function _treeExists(treeId: string): Promise<boolean> {
         const trees = await treeRepo.getTrees({filters: {id: treeId}});
 

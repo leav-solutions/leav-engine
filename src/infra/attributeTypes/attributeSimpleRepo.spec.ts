@@ -23,7 +23,7 @@ describe('AttributeIndexRepo', () => {
 
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
 
-            const attrRepo = attributeSimpleRepo(mockDbServ);
+            const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'test val'
@@ -47,7 +47,7 @@ describe('AttributeIndexRepo', () => {
                 execute: global.__mockPromise(queryRes)
             };
 
-            const attrRepo = attributeSimpleRepo(mockDbServ);
+            const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
@@ -78,7 +78,7 @@ describe('AttributeIndexRepo', () => {
 
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
 
-            const attrRepo = attributeSimpleRepo(mockDbServ);
+            const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
                 value: 'test val'
@@ -94,7 +94,7 @@ describe('AttributeIndexRepo', () => {
 
     describe('filterQueryPart', () => {
         test('Should return simple filter', () => {
-            const attrRepo = attributeSimpleRepo(null);
+            const attrRepo = attributeSimpleRepo();
             const filter = attrRepo.filterQueryPart('id', 0, '123456');
 
             expect(filter.query).toMatch(/^FILTER/);
@@ -126,7 +126,7 @@ describe('AttributeIndexRepo', () => {
                     .mockReturnValueOnce([])
             };
 
-            const attrTypeRepo = attributeSimpleRepo(mockDbServ);
+            const attrTypeRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
             const res = await attrTypeRepo.clearAllValues({id: 'test_attr', type: AttributeTypes.SIMPLE});
 
             expect(res).toEqual(true);

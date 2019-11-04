@@ -9,23 +9,31 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {now} from 'moment';
 import {isArray} from 'util';
 import {IQueryInfos} from '_types/queryInfos';
-import {IDbService} from '../../infra/db/dbService';
 import {AttributeTypes} from '../../_types/attribute';
 
 export interface IImporterApp {
     import(filepath: string, clear: boolean): Promise<void>;
 }
 
-export default function(
-    libraryDomain: ILibraryDomain,
-    treeDomain: ITreeDomain,
-    attributeDomain: IAttributeDomain,
-    recordDomain: IRecordDomain,
-    valueDomain: IValueDomain,
-    depsManager: AwilixContainer,
-    dbUtils: IDbUtils,
-    dbService: IDbService
-): IImporterApp {
+interface IDeps {
+    'core.domain.library'?: ILibraryDomain;
+    'core.domain.tree'?: ITreeDomain;
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.record'?: IRecordDomain;
+    'core.domain.value'?: IValueDomain;
+    'core.depsManager'?: AwilixContainer;
+    'core.infra.db.dbUtils'?: IDbUtils;
+}
+
+export default function({
+    'core.domain.library': libraryDomain = null,
+    'core.domain.tree': treeDomain = null,
+    'core.domain.attribute': attributeDomain = null,
+    'core.domain.record': recordDomain = null,
+    'core.domain.value': valueDomain = null,
+    'core.depsManager': depsManager = null,
+    'core.infra.db.dbUtils': dbUtils = null
+}: IDeps = {}): IImporterApp {
     const _processLibraries = (libraries, infos: IQueryInfos): Promise<any[]> => {
         return Promise.all(
             libraries.map(lib => {

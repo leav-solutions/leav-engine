@@ -80,17 +80,29 @@ interface ILinkRecordValidationResult {
     reason?: string;
 }
 
-export default function(
-    attributeDomain: IAttributeDomain = null,
-    libraryDomain: ILibraryDomain = null,
-    valueRepo: IValueRepo = null,
-    recordRepo: IRecordRepo = null,
-    actionsListDomain: IActionsListDomain = null,
-    recordPermissionDomain: IRecordPermissionDomain = null,
-    attributePermissionDomain: IAttributePermissionDomain = null,
-    treeRepo: ITreeRepo = null,
-    utils: IUtils = null
-): IValueDomain {
+interface IDeps {
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.library'?: ILibraryDomain;
+    'core.infra.value'?: IValueRepo;
+    'core.infra.record'?: IRecordRepo;
+    'core.domain.actionsList'?: IActionsListDomain;
+    'core.domain.permission.recordPermission'?: IRecordPermissionDomain;
+    'core.domain.permission.attributePermission'?: IAttributePermissionDomain;
+    'core.infra.tree'?: ITreeRepo;
+    'core.utils'?: IUtils;
+}
+
+export default function({
+    'core.domain.attribute': attributeDomain = null,
+    'core.domain.library': libraryDomain = null,
+    'core.infra.value': valueRepo = null,
+    'core.infra.record': recordRepo = null,
+    'core.domain.actionsList': actionsListDomain = null,
+    'core.domain.permission.recordPermission': recordPermissionDomain = null,
+    'core.domain.permission.attributePermission': attributePermissionDomain = null,
+    'core.infra.tree': treeRepo = null,
+    'core.utils': utils = null
+}: IDeps = {}): IValueDomain {
     const _validateVersion = async (value: IValue): Promise<string[]> => {
         const trees = Object.keys(value.version);
         const existingTrees = await treeRepo.getTrees();

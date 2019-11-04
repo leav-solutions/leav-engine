@@ -29,7 +29,10 @@ describe('TreeRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docTreeData)
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const createdTree = await repo.createTree({
                 id: 'test_tree',
@@ -61,7 +64,10 @@ describe('TreeRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docTreeData)
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const updatedTree = await repo.updateTree({
                 id: 'test_tree',
@@ -95,7 +101,10 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const trees = await repo.getTrees();
 
@@ -125,7 +134,10 @@ describe('TreeRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docTreeData)
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const deletedTree = await repo.deleteTree('test_tree');
 
@@ -145,7 +157,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const repo = treeRepo(mockDbServ, null);
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
             const addedElement = await repo.addElement('test_tree', {id: 13445, library: 'test_lib'}, null);
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -161,7 +173,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const repo = treeRepo(mockDbServ, null);
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
             const addedElement = await repo.addElement(
                 'test_tree',
@@ -185,7 +197,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const repo = treeRepo(mockDbServ, null);
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
             const addedElement = await repo.moveElement(
                 'test_tree',
                 {id: 13445, library: 'test_lib'},
@@ -211,7 +223,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const repo = treeRepo(mockDbServ, null);
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
             const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, true);
 
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/REMOVE/);
@@ -246,7 +258,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo(mockDbServ, null) as any;
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ}) as any;
             repo.moveElement = global.__mockPromise([]);
 
             const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, false);
@@ -280,7 +292,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo(mockDbServ, null);
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
             const isPresent = await repo.isElementPresent('test_tree', {id: 13445, library: 'test_lib'});
 
@@ -296,7 +308,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const repo = treeRepo(mockDbServ, null);
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
             const isPresent = await repo.isElementPresent('test_tree', {id: 13445, library: 'test_lib'});
 
@@ -390,10 +402,13 @@ describe('TreeRepo', () => {
             };
 
             const mockDbUtils = {
-                cleanup: dbUtils(null, null).cleanup
+                cleanup: dbUtils().cleanup
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const treeContent = await repo.getTreeContent('test_tree');
 
@@ -468,7 +483,10 @@ describe('TreeRepo', () => {
                 cleanup: jest.fn()
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
             const treeContent = await repo.getTreeContent('test_tree', {id: 223588185, library: 'categories'});
 
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
@@ -530,7 +548,10 @@ describe('TreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const values = await repo.getElementChildren('test_tree', {id: 123458, library: 'images'});
 
@@ -618,7 +639,10 @@ describe('TreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const values = await repo.getElementAncestors('test_tree', {id: 123458, library: 'images'});
 
@@ -706,7 +730,10 @@ describe('TreeRepo', () => {
                 cleanup: mockCleanupRes
             };
 
-            const repo = treeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const values = await repo.getLinkedRecords('test_tree', 'test_attr', {id: 123458, library: 'images'});
 

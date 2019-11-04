@@ -7,7 +7,7 @@ describe('dbService', () => {
             const mockDb = new Database();
             mockDb.listCollections = jest.fn().mockReturnValue(Promise.resolve([{name: 'test'}]));
 
-            const dbServ = dbService(mockDb, null);
+            const dbServ = dbService({'core.infra.db': mockDb});
 
             expect(await dbServ.collectionExists('test')).toBe(true);
             expect(await dbServ.collectionExists('dontExists')).toBe(false);
@@ -29,7 +29,7 @@ describe('dbService', () => {
 
             mockDb.query = global.__mockPromise({all: jest.fn()});
 
-            const dbServ = dbService(mockDb, mockUtils as IUtils);
+            const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
 
             const res = await dbServ.execute('FOR e in elems RETURN e');
 
@@ -55,7 +55,7 @@ describe('dbService', () => {
                 })
                 .mockImplementationOnce(q => mockDbCursor);
 
-            const dbServ = dbService(mockDb, mockUtils as IUtils);
+            const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
 
             const res = await dbServ.execute('FOR e in elems RETURN e');
 
@@ -75,7 +75,7 @@ describe('dbService', () => {
                 throw {isArangoError: true, errorNum: 1200};
             });
 
-            const dbServ = dbService(mockDb, mockUtils as IUtils);
+            const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
 
             await expect(dbServ.execute('FOR e in elems RETURN e')).rejects.toThrow();
             expect(mockDb.query).toBeCalledTimes(11);

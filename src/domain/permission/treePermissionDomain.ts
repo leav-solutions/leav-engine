@@ -42,12 +42,19 @@ export interface IGetHeritedTreePermissionParams {
     getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
 }
 
-export default function(
-    permissionDomain: IPermissionDomain,
-    treeRepo: ITreeRepo,
-    attributeDomain: IAttributeDomain,
-    valueRepo: IValueRepo
-): ITreePermissionDomain {
+interface IDeps {
+    'core.domain.permission'?: IPermissionDomain;
+    'core.infra.tree'?: ITreeRepo;
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.infra.value'?: IValueRepo;
+}
+
+export default function({
+    'core.domain.permission': permissionDomain = null,
+    'core.infra.tree': treeRepo = null,
+    'core.domain.attribute': attributeDomain = null,
+    'core.infra.value': valueRepo = null
+}: IDeps = {}): ITreePermissionDomain {
     /**
      * Return permission for given permission tree attribute.
      * Get record's value on this tree attribute, then run through its ancestors to look for any permission defined

@@ -1,6 +1,6 @@
+import {Database} from 'arangojs';
 import {config} from '../../config';
 import {init as initDI} from '../../depsManager';
-import {Database} from 'arangojs';
 
 export async function setup() {
     try {
@@ -21,11 +21,11 @@ export async function setup() {
         await db.createDatabase(conf.db.name);
 
         const container = await initDI();
-        const dbUtils = container.cradle.dbUtils;
+        const dbUtils = container.cradle['core.infra.db.dbUtils'];
 
         await dbUtils.migrate(container);
 
-        const server = container.cradle.server;
+        const server = container.cradle['core.interface.server'];
         await server.init();
     } catch (e) {
         console.error(e);

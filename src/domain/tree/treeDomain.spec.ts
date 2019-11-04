@@ -36,14 +36,12 @@ describe('treeDomain', () => {
                 updateTree: jest.fn(),
                 getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
-            const domain = treeDomain(
-                treeRepo as ITreeRepo,
-                mockLibDomain as ILibraryDomain,
-                null,
-                null,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             const newTree = await domain.saveTree(mockTree, queryInfos);
 
@@ -66,14 +64,12 @@ describe('treeDomain', () => {
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
-            const domain = treeDomain(
-                treeRepo as ITreeRepo,
-                mockLibDomain as ILibraryDomain,
-                null,
-                null,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             const newTree = await domain.saveTree(mockTree, queryInfos);
 
@@ -101,14 +97,12 @@ describe('treeDomain', () => {
                 libraries: ['test_lib', 'unexisting_lib']
             };
 
-            const domain = treeDomain(
-                treeRepo as ITreeRepo,
-                mockLibDomain as ILibraryDomain,
-                null,
-                null,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             await expect(domain.saveTree(treeData, queryInfos)).rejects.toThrow(ValidationError);
         });
@@ -123,14 +117,12 @@ describe('treeDomain', () => {
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
-            const domain = treeDomain(
-                treeRepo as ITreeRepo,
-                mockLibDomain as ILibraryDomain,
-                null,
-                null,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils
-            );
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             await expect(domain.saveTree(mockTree, queryInfos)).rejects.toThrow(PermissionError);
         });
@@ -149,14 +141,12 @@ describe('treeDomain', () => {
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
-            const domain = treeDomain(
-                treeRepo as ITreeRepo,
-                mockLibDomain as ILibraryDomain,
-                null,
-                null,
-                mockPermDomain as IPermissionDomain,
-                mockUtilsInvalidID as IUtils
-            );
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtilsInvalidID as IUtils
+            });
 
             await expect(domain.saveTree(mockTree, queryInfos)).rejects.toThrow(ValidationError);
         });
@@ -172,7 +162,10 @@ describe('treeDomain', () => {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, null, null, mockPermDomain as IPermissionDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
             domain.getTrees = global.__mockPromise({list: [mockTree], totalCount: 1});
 
             const deleteRes = await domain.deleteTree(mockTree.id, queryInfos);
@@ -192,7 +185,10 @@ describe('treeDomain', () => {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, null, null, mockPermDomain as IPermissionDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
             domain.getTrees = global.__mockPromise({list: [], totalCount: 0});
             await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(ValidationError);
         });
@@ -208,7 +204,10 @@ describe('treeDomain', () => {
                 deleteTree: global.__mockPromise(treeData)
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, null, null, mockPermDomain as IPermissionDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
             domain.getTrees = global.__mockPromise({list: [treeData], totalCount: 1});
             await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(ValidationError);
         });
@@ -224,7 +223,10 @@ describe('treeDomain', () => {
                 deleteTree: global.__mockPromise(treeData)
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, null, null, mockPermDomain as IPermissionDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
             domain.getTrees = global.__mockPromise([treeData]);
             await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(PermissionError);
         });
@@ -235,7 +237,7 @@ describe('treeDomain', () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
             };
-            const domain = treeDomain(treeRepo as ITreeRepo);
+            const domain = treeDomain({'core.infra.tree': treeRepo as ITreeRepo});
 
             const trees = await domain.getTrees({filters: {id: 'test'}});
 
@@ -247,7 +249,7 @@ describe('treeDomain', () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
             };
-            const domain = treeDomain(treeRepo as ITreeRepo);
+            const domain = treeDomain({'core.infra.tree': treeRepo as ITreeRepo});
 
             const trees = await domain.getTrees({filters: {id: 'test'}});
 
@@ -266,7 +268,10 @@ describe('treeDomain', () => {
                 isElementPresent: global.__mockPromise(false),
                 getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 0})
             };
-            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': mockRecordDomain as IRecordDomain
+            });
 
             const addedElement = await domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, null);
 
@@ -280,7 +285,10 @@ describe('treeDomain', () => {
                 getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': mockRecordDomain as IRecordDomain
+            });
 
             const rej = await expect(
                 domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
@@ -298,7 +306,10 @@ describe('treeDomain', () => {
                 find: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': recordDomain as IRecordDomain
+            });
 
             const rej = await expect(
                 domain.addElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
@@ -316,7 +327,10 @@ describe('treeDomain', () => {
                 moveElement: global.__mockPromise({id: 1345, library: 'test_lib'}),
                 getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 0})
             };
-            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': mockRecordDomain as IRecordDomain
+            });
 
             const addedElement = await domain.moveElement(
                 'test_tree',
@@ -340,7 +354,10 @@ describe('treeDomain', () => {
                 find: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': recordDomain as IRecordDomain
+            });
 
             const rej = await expect(
                 domain.moveElement('test_tree', {id: 1345, library: 'test_lib'}, {id: 999, library: 'other_lib'})
@@ -359,7 +376,10 @@ describe('treeDomain', () => {
                 getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 0})
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, mockRecordDomain as IRecordDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': mockRecordDomain as IRecordDomain
+            });
 
             const addedElement = await domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, true);
 
@@ -376,7 +396,10 @@ describe('treeDomain', () => {
                 find: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const domain = treeDomain(treeRepo as ITreeRepo, null, recordDomain as IRecordDomain);
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': recordDomain as IRecordDomain
+            });
 
             const rej = await expect(
                 domain.deleteElement('test_tree', {id: 1345, library: 'test_lib'}, true)
@@ -449,12 +472,12 @@ describe('treeDomain', () => {
                 find: jest.fn()
             };
 
-            const domain = treeDomain(
-                treeRepo as ITreeRepo,
-                mockLibDomain as ILibraryDomain,
-                mockRecordDomain as IRecordDomain,
-                mockAttributesDomain as IAttributeDomain
-            );
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.attribute': mockAttributesDomain as IAttributeDomain
+            });
 
             const treeContent = await domain.getTreeContent('test_tree');
 
@@ -475,12 +498,11 @@ describe('treeDomain', () => {
                 getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const domain = treeDomain(
-                treeRepo as ITreeRepo,
-                mockLibDomain as ILibraryDomain,
-                null,
-                mockAttributesDomain as IAttributeDomain
-            );
+            const domain = treeDomain({
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.attribute': mockAttributesDomain as IAttributeDomain
+            });
 
             const rej = await expect(domain.getTreeContent('test_tree')).rejects.toThrow(ValidationError);
         });
@@ -492,7 +514,10 @@ describe('treeDomain', () => {
                 isElementPresent: global.__mockPromise(true)
             };
 
-            const domain = treeDomain(mockTreeRepo as ITreeRepo, mockLibDomain as ILibraryDomain, null, null);
+            const domain = treeDomain({
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.library': mockLibDomain as ILibraryDomain
+            });
 
             const isPresent = await domain.isElementPresent('test_tree', {id: 12345, library: 'test_lib'});
 

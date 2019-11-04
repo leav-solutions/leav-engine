@@ -7,7 +7,11 @@ import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
-export default function(dbService: IDbService | any): IAttributeTypeRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+}
+
+export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
         recordId: number,

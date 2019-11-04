@@ -13,13 +13,21 @@ export interface IServer {
     init(): Promise<void>;
 }
 
-export default function(
-    config: any,
-    graphqlApp: IGraphqlApp,
-    authApp: IAuthApp,
-    logger: winston.Winston,
-    utils: IUtils | null = null
-): IServer {
+interface IDeps {
+    config?: any;
+    'core.app.graphql'?: IGraphqlApp;
+    'core.app.auth'?: IAuthApp;
+    'core.utils.logger'?: winston.Winston;
+    'core.utils'?: IUtils;
+}
+
+export default function({
+    config: config = null,
+    'core.app.graphql': graphqlApp = null,
+    'core.app.auth': authApp = null,
+    'core.utils.logger': logger = null,
+    'core.utils': utils = null
+}: IDeps = {}): IServer {
     const _handleError = (err: GraphQLError) => {
         const origErr: any = err.originalError;
 

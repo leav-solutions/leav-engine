@@ -66,16 +66,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const savedValue = await valDomain.saveValue(
                 'test_lib',
@@ -111,16 +111,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const savedValue = await valDomain.saveValue(
                 'test_lib',
@@ -165,16 +165,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const savedValue = await valDomain.saveValue(
                 'test_lib',
@@ -211,16 +211,14 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {};
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                null,
-                null,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
@@ -238,16 +236,14 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {};
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                null,
-                null,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
@@ -265,16 +261,14 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {};
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                null,
-                null,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             await expect(
                 valDomain.saveValue(
@@ -307,16 +301,16 @@ describe('ValueDomain', () => {
 
             const mockRecRepo = {updateRecord: global.__mockPromise({})};
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const savedValue = await valDomain.saveValue(
                 'test_lib',
@@ -361,16 +355,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const savedValue = await valDomain.saveValue(
                 'test_lib',
@@ -406,16 +400,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const savedValue = await valDomain.saveValue(
                 'test_lib',
@@ -453,16 +447,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepoNoTree as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepoNoTree as ITreeRepo
+            });
 
             await expect(
                 valDomain.saveValue(
@@ -501,16 +495,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepoNotPresent as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo
+            });
 
             await expect(
                 valDomain.saveValue(
@@ -556,16 +550,16 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepoNotfound as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
@@ -600,16 +594,16 @@ describe('ValueDomain', () => {
                 getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepoWithFind as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepoNotPresent as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepoWithFind as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo
+            });
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, mockAttrTree.id, {value: 'lib1/123456'}, {userId: 1})
@@ -675,16 +669,16 @@ describe('ValueDomain', () => {
                 })
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1});
 
@@ -749,16 +743,16 @@ describe('ValueDomain', () => {
                 })
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomainInvalid as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomainInvalid as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1});
 
@@ -804,20 +798,20 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise({...mockAttribute})
             };
 
-            const mockAttrPermDomainNotEditable: Mockify<IAttributePermissionDomain> = {
+            const mockAttrPermDomainNoEdit: Mockify<IAttributePermissionDomain> = {
                 getAttributePermission: global.__mockPromise(false)
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomainNotEditable as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomainNoEdit as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1});
 
@@ -859,16 +853,16 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise({...mockAttrAdv})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, false);
 
@@ -901,16 +895,16 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise({...mockAttrAdv})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, true);
 
@@ -934,15 +928,14 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                null,
-                mockRecordPermDomain as IRecordPermissionDomain,
-                mockAttrPermDomain as IAttributePermissionDomain
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain
+            });
 
             const deletedValue = await valDomain.deleteValue(
                 'test_lib',
@@ -967,7 +960,10 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain
+            });
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
@@ -983,7 +979,10 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain
+            });
 
             await expect(
                 valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
@@ -999,7 +998,10 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(mockAttrDomain as IAttributeDomain, mockLibDomain as ILibraryDomain);
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain
+            });
 
             await expect(
                 valDomain.saveValue(
@@ -1032,13 +1034,13 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain
+            });
 
             const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr');
 
@@ -1066,13 +1068,13 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain
+            });
 
             const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
 
@@ -1135,16 +1137,14 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                null,
-                null,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const version: IValueVersion = {
                 my_tree: {id: 9, library: 'my_lib'}
@@ -1292,16 +1292,14 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                null,
-                null,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const version: IValueVersion = {
                 my_tree: {id: 9, library: 'my_lib'},
@@ -1377,16 +1375,14 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo,
-                mockRecordRepo as IRecordRepo,
-                mockActionsListDomain as IActionsListDomain,
-                null,
-                null,
-                mockTreeRepo as ITreeRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const version: IValueVersion = {
                 my_tree: {id: 9, library: 'my_lib'}
@@ -1410,11 +1406,11 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {};
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo
+            });
 
             await expect(valDomain.getValues('test_lib', 12345, 'test_attr')).rejects.toThrow();
         });
@@ -1430,11 +1426,11 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {};
 
-            const valDomain = valueDomain(
-                mockAttrDomain as IAttributeDomain,
-                mockLibDomain as ILibraryDomain,
-                mockValRepo as IValueRepo
-            );
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo
+            });
 
             await expect(valDomain.getValues('test_lib', 12345, 'test_attr')).rejects.toThrow();
         });

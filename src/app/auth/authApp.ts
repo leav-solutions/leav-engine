@@ -14,13 +14,21 @@ export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
 }
 
-export default function(
-    valueDomain: IValueDomain,
-    recordDomain: IRecordDomain,
-    graphqlApp: IGraphqlApp,
-    logger: winston.Winston,
-    config: any
-): IAuthApp {
+interface IDeps {
+    'core.domain.value'?: IValueDomain;
+    'core.domain.record'?: IRecordDomain;
+    'core.app.graphql'?: IGraphqlApp;
+    'core.utils.logger'?: winston.Winston;
+    config?: any;
+}
+
+export default function({
+    'core.domain.value': valueDomain = null,
+    'core.domain.record': recordDomain = null,
+    'core.app.graphql': graphqlApp = null,
+    'core.utils.logger': logger = null,
+    config = null
+}: IDeps = {}): IAuthApp {
     return {
         getGraphQLSchema(): IAppGraphQLSchema {
             return {

@@ -13,7 +13,7 @@ import graphqlApp from './graphqlApp';
 
 describe('GraphqlApp', () => {
     describe('getQueryFields', () => {
-        const gqlApp = graphqlApp(null, null, null, null);
+        const gqlApp = graphqlApp();
 
         const mockInfo: GraphQLResolveInfo = {
             fieldName: null,
@@ -489,7 +489,7 @@ describe('GraphqlApp', () => {
 
     describe('ctxToQueryInfos', () => {
         test("Convert graphql's query context to app query infos", async () => {
-            const gqlApp = graphqlApp(null, null, null, null);
+            const gqlApp = graphqlApp();
 
             const qInfos = gqlApp.ctxToQueryInfos({auth: {userId: 42}});
 
@@ -497,7 +497,7 @@ describe('GraphqlApp', () => {
         });
 
         test('Set userId to null if not found in context', async () => {
-            const gqlApp = graphqlApp(null, null, null, null);
+            const gqlApp = graphqlApp();
 
             const qInfos = gqlApp.ctxToQueryInfos({});
 

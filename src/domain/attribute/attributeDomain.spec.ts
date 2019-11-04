@@ -25,7 +25,10 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                config: mockConf
+            });
             const attr = await attrDomain.getAttributes();
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
@@ -37,7 +40,10 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                config: mockConf
+            });
             const attr = await attrDomain.getAttributes();
 
             expect(mockAttrRepo.getAttributes.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
@@ -50,7 +56,10 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                config: mockConf
+            });
             const attr = await attrDomain.getAttributeProperties('test');
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
@@ -63,7 +72,10 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo, null, null, null, null, mockConf);
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                config: mockConf
+            });
 
             await expect(attrDomain.getAttributeProperties('test')).rejects.toThrow();
         });
@@ -103,14 +115,13 @@ describe('attributeDomain', () => {
                 updateAttribute: jest.fn()
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
@@ -148,14 +159,13 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
@@ -194,14 +204,13 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise(attrData)
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([attrData]);
 
@@ -245,14 +254,13 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
@@ -283,14 +291,13 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
@@ -315,14 +322,13 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
@@ -348,14 +354,13 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
@@ -380,14 +385,12 @@ describe('attributeDomain', () => {
                 updateAttribute: jest.fn()
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                null,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                null,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
@@ -426,14 +429,14 @@ describe('attributeDomain', () => {
                 getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                mockTreeRepo as ITreeRepo,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                config: mockConf
+            });
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
@@ -453,14 +456,14 @@ describe('attributeDomain', () => {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                mockALDomain as IActionsListDomain,
-                mockPermDomain as IPermissionDomain,
-                mockUtils as IUtils,
-                mockTreeRepo as ITreeRepo,
-                mockConf
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                config: mockConf
+            });
 
             const attrWithNoType: Partial<IAttribute> = {
                 id: 'test_attr',
@@ -519,11 +522,10 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise(attrData)};
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                null,
-                mockPermDomain as IPermissionDomain
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
             attrDomain.getAttributes = global.__mockPromise({list: [attrData], totalCount: 1});
 
             const deleteRes = await attrDomain.deleteAttribute(attrData.id, queryInfos);
@@ -535,7 +537,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if unknown attribute', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise([]);
 
             await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow();
@@ -543,7 +545,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if system attribute', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
-            const attrDomain = attributeDomain(mockAttrRepo as IAttributeRepo);
+            const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise({list: [{system: true}], totalCount: 1});
 
             await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow();
@@ -555,11 +557,10 @@ describe('attributeDomain', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
-            const attrDomain = attributeDomain(
-                mockAttrRepo as IAttributeRepo,
-                null,
-                mockPermDomain as IPermissionDomain
-            );
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.permission': mockPermDomain as IPermissionDomain
+            });
             attrDomain.getAttributes = global.__mockPromise({list: [], totalCount: 0});
 
             await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow(PermissionError);

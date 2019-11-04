@@ -51,14 +51,23 @@ export interface IAttributeDomain {
     getOutputTypes(attrData: IAttribute): IOAllowedTypes;
 }
 
-export default function(
-    attributeRepo: IAttributeRepo = null,
-    actionsListDomain: IActionsListDomain = null,
-    permissionDomain: IPermissionDomain = null,
-    utils: IUtils = null,
-    treeRepo: ITreeRepo = null,
+interface IDeps {
+    'core.infra.attribute'?: IAttributeRepo;
+    'core.domain.actionsList'?: IActionsListDomain;
+    'core.domain.permission'?: IPermissionDomain;
+    'core.utils'?: IUtils;
+    'core.infra.tree'?: ITreeRepo;
+    config?: any;
+}
+
+export default function({
+    'core.infra.attribute': attributeRepo = null,
+    'core.domain.actionsList': actionsListDomain = null,
+    'core.domain.permission': permissionDomain = null,
+    'core.utils': utils = null,
+    'core.infra.tree': treeRepo = null,
     config = null
-): IAttributeDomain {
+}: IDeps = {}): IAttributeDomain {
     function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
         if (attribute.type !== AttributeTypes.SIMPLE && attribute.type !== AttributeTypes.ADVANCED) {
             return {};

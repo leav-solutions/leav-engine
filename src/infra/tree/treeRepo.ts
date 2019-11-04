@@ -99,7 +99,14 @@ export const TREES_COLLECTION_NAME = 'core_trees';
 const EDGE_COLLEC_PREFIX = 'core_edge_tree_';
 const MAX_TREE_DEPTH = 1000;
 
-export default function(dbService: IDbService, dbUtils: IDbUtils): ITreeRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+}
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null
+}: IDeps = {}): ITreeRepo {
     function _getRootId(treeId: string): string {
         return `${TREES_COLLECTION_NAME}/${treeId}`;
     }

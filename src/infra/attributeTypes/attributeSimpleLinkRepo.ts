@@ -7,11 +7,17 @@ import {IDbUtils} from '../db/dbUtils';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
-export default function(
-    dbService: IDbService | any,
-    attributeSimpleRepo: IAttributeTypeRepo,
-    dbUtils: IDbUtils
-): IAttributeTypeRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
+}
+
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null
+}: IDeps = {}): IAttributeTypeRepo {
     return {
         async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             return attributeSimpleRepo.createValue(library, recordId, attribute, value);

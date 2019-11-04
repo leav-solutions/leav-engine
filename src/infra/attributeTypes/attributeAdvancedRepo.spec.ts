@@ -54,7 +54,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[createdValueData], [createdEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'test val',
@@ -121,7 +121,10 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[createdValueData], [createdEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'test val',
@@ -177,7 +180,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[savedValueData], [savedEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
@@ -242,7 +245,10 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[savedValueData], [savedEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
@@ -300,9 +306,9 @@ describe('AttributeStandardRepo', () => {
                 edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {db: (mockDb as unknown) as Database};
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
             const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
                 id_value: 123456789,
@@ -312,7 +318,7 @@ describe('AttributeStandardRepo', () => {
             });
 
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
-            expect(mockDbCollec.remove).toBeCalledWith({_key: 123456789});
+            expect(mockDbCollec.remove).toBeCalledWith({_key: '123456789'});
 
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
             expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({
@@ -356,9 +362,9 @@ describe('AttributeStandardRepo', () => {
                 edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {db: (mockDb as unknown) as Database};
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 132465,
@@ -390,9 +396,9 @@ describe('AttributeStandardRepo', () => {
                 edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: mockDb};
+            const mockDbServ = {db: (mockDb as unknown) as Database};
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
             const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
                 id_value: 132465,
@@ -441,7 +447,10 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
 
@@ -466,7 +475,10 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise([traversalRes[0]])
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
@@ -511,7 +523,10 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalResWithVers)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const values = await attrRepo.getValues('test_lib', 123456, mockAttrAdvVersionableSimple, false, {
                 version: {my_tree: {library: 'my_lib', id: 1345}}
@@ -529,7 +544,10 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const attrRepo = attributeAdvancedRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const mockAttrNotMultival = {
                 ...mockAttribute,
@@ -548,7 +566,7 @@ describe('AttributeStandardRepo', () => {
             const mockDbServ = {
                 db: new Database()
             };
-            const attrRepo = attributeAdvancedRepo(mockDbServ);
+            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.filterQueryPart('label', 0, 'MyLabel');
 
             expect(filter).toMatchSnapshot();

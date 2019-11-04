@@ -16,12 +16,12 @@ describe('AttributeTypesRepo', () => {
             const mockAttrAdvRepo = {...mockAttrTypeRepo};
             const mockAttrAdvLinkRepo = {...mockAttrTypeRepo};
 
-            const attrRepo = attributeTypesRepo(
-                mockAttrSimpleRepo as IAttributeTypeRepo,
-                mockAttrSimpleLinkRepo as IAttributeTypeRepo,
-                mockAttrAdvRepo as IAttributeTypeRepo,
-                mockAttrAdvLinkRepo as IAttributeTypeRepo
-            );
+            const attrRepo = attributeTypesRepo({
+                'core.infra.attributeTypes.attributeSimple': mockAttrSimpleRepo as IAttributeTypeRepo,
+                'core.infra.attributeTypes.attributeSimpleLink': mockAttrSimpleLinkRepo as IAttributeTypeRepo,
+                'core.infra.attributeTypes.attributeAdvanced': mockAttrAdvRepo as IAttributeTypeRepo,
+                'core.infra.attributeTypes.attributeAdvancedLink': mockAttrAdvLinkRepo as IAttributeTypeRepo
+            });
 
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE})).toBe(mockAttrSimpleRepo);
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE_LINK})).toBe(

@@ -56,7 +56,12 @@ export enum collectionTypes {
     EDGE = 'edge'
 }
 
-export default function(db: Database, utils: IUtils): IDbService {
+interface IDeps {
+    'core.infra.db'?: Database;
+    'core.utils'?: IUtils;
+}
+
+export default function({'core.infra.db': db = null, 'core.utils': utils = null}: IDeps = {}): IDbService {
     const collectionExists = async function(name: string): Promise<boolean> {
         const collections = await db.listCollections();
 

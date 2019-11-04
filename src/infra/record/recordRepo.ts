@@ -41,11 +41,17 @@ export interface IRecordRepo {
     ): Promise<IListWithCursor<IRecord>>;
 }
 
-export default function(
-    dbService: IDbService,
-    dbUtils: IDbUtils,
-    attributeTypesRepo: IAttributeTypesRepo | null = null
-): IRecordRepo {
+interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.attributeTypes'?: IAttributeTypesRepo;
+}
+
+export default function({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.infra.attributeTypes': attributeTypesRepo = null
+}: IDeps = {}): IRecordRepo {
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
 

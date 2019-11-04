@@ -35,7 +35,7 @@ describe('runActionsList', () => {
             pipe: jest.fn().mockReturnValue(global.__mockPromise('test_val'))
         };
 
-        const domain = actionListDomain(null, mockUtils as IUtils);
+        const domain = actionListDomain({'core.utils': mockUtils as IUtils});
         const availActions = [
             {
                 name: 'validate',
@@ -74,7 +74,7 @@ describe('runActionsList', () => {
             )
         };
 
-        const domain = actionListDomain(null, mockUtils as IUtils);
+        const domain = actionListDomain({'core.utils': mockUtils as IUtils});
         const availActions = [
             {
                 name: 'validate',

@@ -46,7 +46,10 @@ describe('PermissionRepo', () => {
                 cleanup: jest.fn().mockReturnValue(permDataClean)
             };
 
-            const permRepo = permissionRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const permRepo = permissionRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const savedPerm = await permRepo.savePermission(permDataClean);
 
@@ -99,7 +102,10 @@ describe('PermissionRepo', () => {
                 cleanup: jest.fn().mockReturnValue(permDataClean)
             };
 
-            const permRepo = permissionRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const permRepo = permissionRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const savedPerm = await permRepo.savePermission(permDataClean);
 
@@ -151,7 +157,10 @@ describe('PermissionRepo', () => {
                 cleanup: jest.fn().mockReturnValue(permDataClean)
             };
 
-            const permRepo = permissionRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const permRepo = permissionRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const savedPerm = await permRepo.savePermission(permDataClean);
 
@@ -189,7 +198,7 @@ describe('PermissionRepo', () => {
                     }
                 ])
             };
-            const permRepo = permissionRepo(mockDbServ);
+            const permRepo = permissionRepo({'core.infra.db.dbService': mockDbServ});
 
             const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 'test_lib', 12345, {
                 id: '123',
@@ -206,7 +215,7 @@ describe('PermissionRepo', () => {
 
         test('Should return null if no permissions', async () => {
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
-            const permRepo = permissionRepo(mockDbServ);
+            const permRepo = permissionRepo({'core.infra.db.dbService': mockDbServ});
 
             const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 'test_lib', 12345, {
                 id: '123',

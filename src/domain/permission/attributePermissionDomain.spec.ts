@@ -70,12 +70,12 @@ describe('AttributePermissionDomain', () => {
         };
 
         test('Return permission', async () => {
-            const attrDomain = attributePermissionDomain(
-                mockPermDomain as IPermissionDomain,
-                mockTreePermDomain as ITreePermissionDomain,
-                mockAttributeDomain as IAttributeDomain,
-                mockValueRepo as IValueRepo
-            );
+            const attrDomain = attributePermissionDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.treePermission': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
 
             const perm = await attrDomain.getAttributePermission(
                 AttributePermissionsActions.EDIT_VALUE,
@@ -97,12 +97,12 @@ describe('AttributePermissionDomain', () => {
                 })
             };
 
-            const attrDomain = attributePermissionDomain(
-                mockPermDomain as IPermissionDomain,
-                mockTreePermDomain as ITreePermissionDomain,
-                mockAttrNoPermsDomain as IAttributeDomain,
-                mockValueRepo as IValueRepo
-            );
+            const attrDomain = attributePermissionDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.treePermission': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
 
             const perm = await attrDomain.getAttributePermission(
                 AttributePermissionsActions.EDIT_VALUE,

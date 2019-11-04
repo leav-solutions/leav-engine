@@ -2,7 +2,15 @@ import {IBenchmarkApp} from 'app/benchmark/benchmarkApp';
 import {IImporterApp} from 'app/importer/importerApp';
 import * as program from 'commander';
 
-export default function(importerApp: IImporterApp = null, benchmarkApp: IBenchmarkApp) {
+interface IDeps {
+    'core.app.importer'?: IImporterApp;
+    'core.app.benchmark'?: IBenchmarkApp;
+}
+
+export default function({
+    'core.app.importer': importerApp = null,
+    'core.app.benchmark': benchmarkApp = null
+}: IDeps = {}) {
     return {
         run(args) {
             program

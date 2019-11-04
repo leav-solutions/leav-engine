@@ -20,12 +20,19 @@ export interface ILibraryDomain {
     getLibraryAttributes(id: string): Promise<IAttribute[]>;
 }
 
-export default function(
-    libraryRepo: ILibraryRepo,
-    attributeDomain: IAttributeDomain = null,
-    permissionDomain: IPermissionDomain = null,
-    utils: IUtils = null
-): ILibraryDomain {
+interface IDeps {
+    'core.infra.library'?: ILibraryRepo;
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.permission'?: IPermissionDomain;
+    'core.utils'?: IUtils;
+}
+
+export default function({
+    'core.infra.library': libraryRepo = null,
+    'core.domain.attribute': attributeDomain = null,
+    'core.domain.permission': permissionDomain = null,
+    'core.utils': utils = null
+}: IDeps = {}): ILibraryDomain {
     return {
         async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
             const initializedParams = {...params};

@@ -266,12 +266,12 @@ describe('TreePermissionDomain', () => {
         };
 
         test('1 tree / 1 user group with heritage', async () => {
-            const treePermDomain = treePermissionDomain(
-                mockPermDomain as IPermissionDomain,
-                mockTreeRepo as ITreeRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockValueRepo as IValueRepo
-            );
+            const treePermDomain = treePermissionDomain({
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
 
             const perm = await treePermDomain.getTreePermission(params);
 
@@ -287,12 +287,12 @@ describe('TreePermissionDomain', () => {
                 getSimplePermission: global.__mockPromise(null)
             };
 
-            const treePermDomain = treePermissionDomain(
-                mockPermDomainNoVal as IPermissionDomain,
-                mockTreeRepo as ITreeRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockValueRepo as IValueRepo
-            );
+            const treePermDomain = treePermissionDomain({
+                'core.domain.permission': mockPermDomainNoVal as IPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
 
             const perm = await treePermDomain.getTreePermission(params);
 
@@ -310,12 +310,12 @@ describe('TreePermissionDomain', () => {
                 getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
             };
 
-            const treePermDomain = treePermissionDomain(
-                mockRootLevelPermDomain as IPermissionDomain,
-                mockTreeRepo as ITreeRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockValueRepo as IValueRepo
-            );
+            const treePermDomain = treePermissionDomain({
+                'core.domain.permission': mockRootLevelPermDomain as IPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
 
             const perm = await treePermDomain.getTreePermission({
                 ...params
@@ -352,12 +352,12 @@ describe('TreePermissionDomain', () => {
                 })
             };
 
-            const treePermDomain = treePermissionDomain(
-                mockNoValPermDomain as IPermissionDomain,
-                mockTreeRepo as ITreeRepo,
-                mockAttrDomain as IAttributeDomain,
-                mockValueNoCatRepo as IValueRepo
-            );
+            const treePermDomain = treePermissionDomain({
+                'core.domain.permission': mockNoValPermDomain as IPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValueNoCatRepo as IValueRepo
+            });
 
             const perm = await treePermDomain.getTreePermission({
                 ...params,
@@ -370,12 +370,12 @@ describe('TreePermissionDomain', () => {
         });
 
         test('n permissions trees with AND', async () => {
-            const treePermDomain = treePermissionDomain(
-                mockPermMultipleDomain as IPermissionDomain,
-                mockTreeMultipleRepo as ITreeRepo,
-                mockAttrMultipleDomain as IAttributeDomain,
-                mockValueMultipleRepo as IValueRepo
-            );
+            const treePermDomain = treePermissionDomain({
+                'core.domain.permission': mockPermMultipleDomain as IPermissionDomain,
+                'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
+                'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
+                'core.infra.value': mockValueMultipleRepo as IValueRepo
+            });
 
             const perm = await treePermDomain.getTreePermission({
                 ...params,
@@ -408,12 +408,12 @@ describe('TreePermissionDomain', () => {
             expect(mockPermMultipleDomain.getPermissionByUserGroups.mock.calls.length).toBe(2);
         });
         test('n permissions trees with OR', async () => {
-            const treePermDomain = treePermissionDomain(
-                mockPermMultipleDomain as IPermissionDomain,
-                mockTreeMultipleRepo as ITreeRepo,
-                mockAttrMultipleDomain as IAttributeDomain,
-                mockValueMultipleRepo as IValueRepo
-            );
+            const treePermDomain = treePermissionDomain({
+                'core.domain.permission': mockPermMultipleDomain as IPermissionDomain,
+                'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
+                'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
+                'core.infra.value': mockValueMultipleRepo as IValueRepo
+            });
 
             const perm = await treePermDomain.getTreePermission({
                 ...params,

@@ -21,13 +21,21 @@ export interface IRecordPermissionDomain {
     ): Promise<boolean>;
 }
 
-export default function(
-    permissionDomain: IPermissionDomain,
-    treePermissionDomain: ITreePermissionDomain,
-    libraryDomain: ILibraryDomain,
-    attributeDomain: IAttributeDomain,
-    valueRepo: IValueRepo
-): IRecordPermissionDomain {
+interface IDeps {
+    'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.treePermission'?: ITreePermissionDomain;
+    'core.domain.library'?: ILibraryDomain;
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.infra.value'?: IValueRepo;
+}
+
+export default function({
+    'core.domain.permission': permissionDomain = null,
+    'core.domain.permission.treePermission': treePermissionDomain = null,
+    'core.domain.library': libraryDomain = null,
+    'core.domain.attribute': attributeDomain = null,
+    'core.infra.value': valueRepo = null
+}: IDeps = {}): IRecordPermissionDomain {
     return {
         async getRecordPermission(
             action: RecordPermissionsActions,

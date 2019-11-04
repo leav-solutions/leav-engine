@@ -5,9 +5,11 @@ import {SortOrder} from '../../_types/list';
 import dbUtils, {IDbUtils} from './dbUtils';
 
 describe('dbUtils', () => {
+    const mockConf = {lang: {available: ['fr', 'en']}};
+
     describe('cleanupSystemKeys', () => {
         test('Should remove all system keys', () => {
-            const testDbUtils = dbUtils(null, null);
+            const testDbUtils = dbUtils();
 
             const testObj = {
                 _key: 'testKey',
@@ -23,7 +25,7 @@ describe('dbUtils', () => {
         });
 
         test('Should return null if param is null', () => {
-            const testDbUtils = dbUtils(null, null);
+            const testDbUtils = dbUtils();
 
             const res = testDbUtils.cleanup(null);
 
@@ -33,7 +35,7 @@ describe('dbUtils', () => {
 
     describe('convertToDoc', () => {
         test('Should add needed system keys', () => {
-            const testDbUtils = dbUtils(null, null);
+            const testDbUtils = dbUtils();
 
             const testObj = {
                 id: 'testId',
@@ -65,7 +67,7 @@ describe('dbUtils', () => {
                     }
                 ])
             };
-            testDbUtils = dbUtils(mockDbServ, null, {lang: {available: ['fr', 'en']}});
+            testDbUtils = dbUtils({'core.infra.db.dbService': mockDbServ, config: mockConf});
             testDbUtils.cleanup = jest.fn().mockReturnValue({
                 id: 'categories',
                 system: false,
@@ -138,7 +140,7 @@ describe('dbUtils', () => {
                     }
                 ])
             };
-            const testDbUtilsLimit = dbUtils(mockDbServLimit, null, {lang: {available: ['fr', 'en']}});
+            const testDbUtilsLimit = dbUtils({'core.infra.db.dbService': mockDbServLimit, config: mockConf});
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
@@ -166,7 +168,7 @@ describe('dbUtils', () => {
                     }
                 ])
             };
-            const testDbUtilsLimit = dbUtils(mockDbServLimit, null, {lang: {available: ['fr', 'en']}});
+            const testDbUtilsLimit = dbUtils({'core.infra.db.dbService': mockDbServLimit, config: mockConf});
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
@@ -197,7 +199,7 @@ describe('dbUtils', () => {
                     }
                 ])
             };
-            const testDbUtilsLimit = dbUtils(mockDbServLimit, null, {lang: {available: ['fr', 'en']}});
+            const testDbUtilsLimit = dbUtils({'core.infra.db.dbService': mockDbServLimit, config: mockConf});
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
@@ -212,7 +214,7 @@ describe('dbUtils', () => {
 
         test('Should return an empty array if no results', async function() {
             mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
-            testDbUtils = dbUtils(mockDbServ, null, {lang: {available: ['fr', 'en']}});
+            testDbUtils = dbUtils({'core.infra.db.dbService': mockDbServ, config: mockConf});
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn();
 
@@ -226,7 +228,7 @@ describe('dbUtils', () => {
 
     describe('convertValueVersionToDb', () => {
         test('Should convert value version to DB format', async () => {
-            const testDbUtils = dbUtils(null, null);
+            const testDbUtils = dbUtils();
 
             const res = testDbUtils.convertValueVersionToDb({
                 my_tree: {id: 12345, library: 'my_lib'},
@@ -238,7 +240,7 @@ describe('dbUtils', () => {
     });
     describe('convertValueVersionFromDb', () => {
         test('Should convert value version from DB format', async () => {
-            const testDbUtils = dbUtils(null, null);
+            const testDbUtils = dbUtils();
 
             const res = testDbUtils.convertValueVersionFromDb({my_tree: 'my_lib/12345', other_tree: 'other_lib/6789'});
 

@@ -20,7 +20,10 @@ describe('AttributeRepo', () => {
                 ])
             };
 
-            const repo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const repo = attributeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const trees = await repo.getAttributes();
 
@@ -66,7 +69,10 @@ describe('AttributeRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docAttrData)
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const updatedAttr = await attrRepo.updateAttribute(attrData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -101,7 +107,10 @@ describe('AttributeRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docAttrData)
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const attrRepo = attributeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const createdAttr = await attrRepo.createAttribute(attrData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -152,7 +161,11 @@ describe('AttributeRepo', () => {
                 clearAllValues: jest.fn()
             };
 
-            const attrRepo = attributeRepo(mockDbServ, mockDbUtils as IDbUtils, mockValueRepo as IValueRepo);
+            const attrRepo = attributeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
             attrRepo.getAttributes = global.__mockPromise([attrData]);
 
             const deleteRes = await attrRepo.deleteAttribute(attrData);

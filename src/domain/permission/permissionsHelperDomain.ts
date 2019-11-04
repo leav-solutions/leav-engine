@@ -45,12 +45,19 @@ export interface IPermissionsHelperDomain {
     ): Promise<boolean>;
 }
 
-export default function(
-    recordPermissionDomain: IRecordPermissionDomain = null,
-    permissionDomain: IPermissionDomain = null,
-    treePermissionDomain: ITreePermissionDomain = null,
-    attributePermissionDomain: IAttributePermissionDomain = null
-): IPermissionsHelperDomain {
+interface IDeps {
+    'core.domain.permission.recordPermission'?: IRecordPermissionDomain;
+    'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.treePermission'?: ITreePermissionDomain;
+    'core.domain.permission.attributePermission'?: IAttributePermissionDomain;
+}
+
+export default function({
+    'core.domain.permission.recordPermission': recordPermissionDomain = null,
+    'core.domain.permission': permissionDomain = null,
+    'core.domain.permission.treePermission': treePermissionDomain = null,
+    'core.domain.permission.attributePermission': attributePermissionDomain = null
+}: IDeps = {}): IPermissionsHelperDomain {
     return {
         async getHeritedPermissions(
             type: PermissionTypes,

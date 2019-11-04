@@ -39,7 +39,10 @@ describe('RecordRepo', () => {
                 cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData)
             };
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const createdRecord = await recRepo.createRecord('test', recordData);
             expect(mockDbCollec.save.mock.calls.length).toBe(1);
@@ -76,7 +79,10 @@ describe('RecordRepo', () => {
                 cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData)
             };
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const updatedRecord = await recRepo.updateRecord('test', recordData);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -134,7 +140,10 @@ describe('RecordRepo', () => {
 
             const mockDbUtils: Mockify<IDbUtils> = {cleanup: jest.fn().mockReturnValue(recordData)};
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const deleteRes = await recRepo.deleteRecord('users', recordData.id);
 
@@ -206,7 +215,10 @@ describe('RecordRepo', () => {
                     .mockReturnValueOnce(mockCleanupRes[1])
             };
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const records = await recRepo.find('test_lib', [], null, true);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -272,7 +284,10 @@ describe('RecordRepo', () => {
                     .mockReturnValueOnce(mockCleanupRes[1])
             };
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const records = await recRepo.find('test_lib', [], {limit: 2, offset: 0}, true);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -332,7 +347,10 @@ describe('RecordRepo', () => {
                     .mockReturnValueOnce(mockCleanupRes[1])
             };
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils);
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
 
             const records = await recRepo.find('test_lib', [], {limit: 2, cursor: 'bmV4dDoyOjEzNDYzNDQ0'});
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -413,7 +431,11 @@ describe('RecordRepo', () => {
                 getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo)
             };
 
-            const recRepo = recordRepo(mockDbServ, mockDbUtils as IDbUtils, mockAttrRepo as IAttributeTypesRepo);
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.infra.attributeTypes': mockAttrRepo as IAttributeTypesRepo
+            });
 
             const filters = cloneDeep(mockFilters);
             filters[0].attribute.type = AttributeTypes.SIMPLE;

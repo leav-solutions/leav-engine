@@ -21,13 +21,10 @@ describe('RecordDomain', () => {
             const createdRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
             const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
 
-            const recDomain = recordDomain(
-                recRepo as IRecordRepo,
-                null,
-                null,
-                null,
-                mockRecordPermDomain as IRecordPermissionDomain
-            );
+            const recDomain = recordDomain({
+                'core.infra.record': recRepo as IRecordRepo,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
+            });
 
             const createdRecord = await recDomain.createRecord('test', {userId: 1});
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
@@ -45,13 +42,10 @@ describe('RecordDomain', () => {
             const updatedRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 987654321};
             const recRepo: Mockify<IRecordRepo> = {updateRecord: global.__mockPromise(updatedRecordData)};
 
-            const recDomain = recordDomain(
-                recRepo as IRecordRepo,
-                null,
-                null,
-                null,
-                mockRecordPermDomain as IRecordPermissionDomain
-            );
+            const recDomain = recordDomain({
+                'core.infra.record': recRepo as IRecordRepo,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
+            });
 
             const updatedRecord = await recDomain.updateRecord(
                 'test',
@@ -74,13 +68,10 @@ describe('RecordDomain', () => {
             const recordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
             };
-            const recDomain = recordDomain(
-                recRepo as IRecordRepo,
-                null,
-                null,
-                null,
-                recordPermDomain as IRecordPermissionDomain
-            );
+            const recDomain = recordDomain({
+                'core.infra.record': recRepo as IRecordRepo,
+                'core.domain.permission.recordPermission': recordPermDomain as IRecordPermissionDomain
+            });
 
             const deleteRes = await recDomain.deleteRecord('test', recordData.id, {userId: 1});
 
@@ -109,7 +100,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
-            const recDomain = recordDomain(recRepo as IRecordRepo, null);
+            const recDomain = recordDomain({'core.infra.record': recRepo as IRecordRepo});
 
             const findRes = await recDomain.find({library: 'test_lib'});
 
@@ -169,14 +160,10 @@ describe('RecordDomain', () => {
                 ])
             };
 
-            const recDomain = recordDomain(
-                null,
-                null,
-                mockValDomain as IValueDomain,
-                null,
-                null,
-                mockLibDomain as ILibraryDomain
-            );
+            const recDomain = recordDomain({
+                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain
+            });
 
             const res = await recDomain.getRecordIdentity(record);
 
@@ -209,14 +196,10 @@ describe('RecordDomain', () => {
                 getValues: jest.fn()
             };
 
-            const recDomain = recordDomain(
-                null,
-                null,
-                mockValDomain as IValueDomain,
-                null,
-                null,
-                mockLibDomain as ILibraryDomain
-            );
+            const recDomain = recordDomain({
+                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain
+            });
 
             const res = await recDomain.getRecordIdentity(record);
 
@@ -244,7 +227,7 @@ describe('RecordDomain', () => {
                     multiple_values: false
                 })
             };
-            const recDomain = recordDomain(null, mockAttrDomain as IAttributeDomain);
+            const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
 
             const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at');
 
@@ -268,7 +251,10 @@ describe('RecordDomain', () => {
                     }
                 ])
             };
-            const recDomain = recordDomain(null, mockAttrDomain as IAttributeDomain, mockValDomain as IValueDomain);
+            const recDomain = recordDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.value': mockValDomain as IValueDomain
+            });
 
             const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'label');
 
@@ -291,12 +277,10 @@ describe('RecordDomain', () => {
             const mockALDomain: Mockify<IActionsListDomain> = {
                 runActionsList: global.__mockPromise({value: '1/3/37 00:42'})
             };
-            const recDomain = recordDomain(
-                null,
-                mockAttrDomain as IAttributeDomain,
-                null,
-                mockALDomain as IActionsListDomain
-            );
+            const recDomain = recordDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain
+            });
 
             const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at');
 
@@ -313,7 +297,7 @@ describe('RecordDomain', () => {
                     multiple_values: false
                 })
             };
-            const recDomain = recordDomain(null, mockAttrDomain as IAttributeDomain);
+            const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
 
             const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_by');
 

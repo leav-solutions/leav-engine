@@ -64,7 +64,11 @@ export interface IValueRepo {
     clearAllValues(attribute: IAttribute): Promise<boolean>;
 }
 
-export default function(attributeTypesRepo: IAttributeTypesRepo | null = null): IValueRepo {
+interface IDeps {
+    'core.infra.attributeTypes'?: IAttributeTypesRepo;
+}
+
+export default function({'core.infra.attributeTypes': attributeTypesRepo = null}: IDeps = {}): IValueRepo {
     return {
         createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
