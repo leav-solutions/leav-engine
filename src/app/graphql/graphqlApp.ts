@@ -5,10 +5,11 @@ import {GraphQLResolveInfo, GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
 import * as winston from 'winston';
+import {IAppModule} from '_types/shared';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IQueryField} from '../../_types/record';
 
-export interface IGraphqlApp {
+export interface IGraphqlApp extends IAppModule {
     schema: GraphQLSchema;
     schemaUpdateEmitter: EventEmitter;
     SCHEMA_UPDATE_EVENT: string;
@@ -31,6 +32,7 @@ interface IDeps {
 
 export default function({'core.depsManager': depsManager = null, 'core.utils': utils = null}: IDeps = {}): IGraphqlApp {
     let _fullSchema: GraphQLSchema;
+    const _pluginsSchema: IAppGraphQLSchema[] = [];
 
     const schemaUpdateEmitter = new EventEmitter();
     const SCHEMA_UPDATE_EVENT = 'schemaUpdate';
@@ -55,6 +57,11 @@ export default function({'core.depsManager': depsManager = null, 'core.utils': u
                         appSchema.typeDefs.push(schemaToAdd.typeDefs);
                         appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);
                     }
+                }
+
+                for (const schemaPart of _pluginsSchema) {
+                    appSchema.typeDefs.push(schemaPart.typeDefs);
+                    appSchema.resolvers = merge(appSchema.resolvers, schemaPart.resolvers);
                 }
 
                 // Put together a schema
@@ -131,6 +138,15 @@ export default function({'core.depsManager': depsManager = null, 'core.utils': u
             infos.userId = !!ctx.auth && ctx.auth.userId ? Number(ctx.auth.userId) : null;
 
             return infos;
+        },
+        extensionPoints: {
+            registerGraphQLSchema: (schemaPart: IAppGraphQLSchema) => {
+                if (typeof schemaPart.typeDefs !== 'string' || typeof schemaPart.resolvers !== 'object') {
+                    throw new Error(`Invalid GraphQL Schema to register: ${schemaPart}`);
+                }
+
+                _pluginsSchema.push(schemaPart);
+            }
         }
     };
 }

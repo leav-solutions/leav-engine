@@ -1,10 +1,14 @@
 import {init as initDI} from './depsManager';
+import {initPlugins} from './pluginsLoader';
 
 (async function() {
-    const container = await initDI();
-    const server = container.cradle['core.interface.server'];
-    const dbUtils = container.cradle['core.infra.db.dbUtils'];
-    const cli = container.cradle['core.interface.cli'];
+    const {coreContainer, pluginsContainer} = await initDI();
+
+    const server = coreContainer.cradle['core.interface.server'];
+    const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+    const cli = coreContainer.cradle['core.interface.cli'];
+
+    await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 
     try {
         const opt = process.argv[2];
@@ -12,7 +16,7 @@ import {init as initDI} from './depsManager';
             await server.init();
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
-            await dbUtils.migrate(container);
+            await dbUtils.migrate(coreContainer);
         } else {
             await cli.run();
         }

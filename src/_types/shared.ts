@@ -10,3 +10,11 @@ export interface IGetCoreEntitiesParams {
     pagination?: IPaginationParams;
     sort?: ISortParams;
 }
+
+export interface IExtensionPoints {
+    [name: string]: (...args: any[]) => void;
+}
+
+export interface IAppModule {
+    extensionPoints?: IExtensionPoints;
+}

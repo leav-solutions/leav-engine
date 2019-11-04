@@ -20,12 +20,12 @@ export async function setup() {
 
         await db.createDatabase(conf.db.name);
 
-        const container = await initDI();
-        const dbUtils = container.cradle['core.infra.db.dbUtils'];
+        const {coreContainer} = await initDI();
+        const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
-        await dbUtils.migrate(container);
+        await dbUtils.migrate(coreContainer);
 
-        const server = container.cradle['core.interface.server'];
+        const server = coreContainer.cradle['core.interface.server'];
         await server.init();
     } catch (e) {
         console.error(e);
