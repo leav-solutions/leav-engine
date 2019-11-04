@@ -35,6 +35,7 @@
         "no-submodule-imports": false,
         "ordered-imports": false,
         "arrow-parens": [true, "ban-single-arg-parens"],
-        "no-namespace": [true, "allow-declarations"]
+        "no-namespace": [true, "allow-declarations"],
+        "object-literal-key-quotes": [true, "as-needed"]
     }
 }
