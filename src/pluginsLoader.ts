@@ -1,13 +1,16 @@
+import {ICorePluginsApp} from 'app/core/pluginsApp';
 import {AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import {IAppModule, IExtensionPoints} from '_types/shared';
 
-export const initPlugins = async (folder: string, pluginsDepsManager: AwilixContainer) => {
+export const initPlugins = async (folder: string, depsManager: AwilixContainer) => {
+    const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];
+
     // Retrieve extensions points accross all core app files
     // They will be passed to each plugin in init function
-    const appModules: IAppModule[] = Object.keys(pluginsDepsManager.registrations)
+    const appModules: IAppModule[] = Object.keys(depsManager.registrations)
         .filter(modName => modName.match(/^core\.app\./))
-        .map(modName => pluginsDepsManager.cradle[modName]);
+        .map(modName => depsManager.cradle[modName]);
 
     const extensionPoints: IExtensionPoints = appModules.reduce(
         (allExtPoints: IExtensionPoints, mod: IAppModule): IExtensionPoints => {
@@ -35,8 +38,17 @@ export const initPlugins = async (folder: string, pluginsDepsManager: AwilixCont
         // Default export must be a function that takes deps as the only parameter
         if (typeof defaultExport === 'function') {
             // Manually inject ours deps
-            const injectedIndex = defaultExport(pluginsDepsManager.cradle);
-            injectedIndex.init(extensionPoints);
+            const injectedIndex = defaultExport(depsManager.cradle);
+            await injectedIndex.init(extensionPoints);
         }
+
+        // Read plugins informations in package.json to register it
+        const packageInfos = await import(folder + '/' + pluginName + '/package.json');
+        pluginsApp.registerPlugin({
+            name: packageInfos.name,
+            description: packageInfos.description,
+            version: packageInfos.version,
+            author: packageInfos.author
+        });
     }
 };
