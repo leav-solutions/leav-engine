@@ -39,32 +39,32 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                     type Action {
                         name: AvailableActionsName!,
                         description: String,
-                        input_types: [ActionIOTypes]!,
-                        output_types: [ActionIOTypes]!,
-                        params: [ActionParam]
+                        input_types: [ActionIOTypes!]!,
+                        output_types: [ActionIOTypes!]!,
+                        params: [ActionParam!]
                     }
 
                     type ActionConfiguration {
                         name: String!,
                         is_system: Boolean!,
-                        params: [ActionConfigurationParam]
+                        params: [ActionConfigurationParam!]
                     }
 
                     type ActionsListConfiguration {
-                        ${ActionsListEvents.SAVE_VALUE}: [ActionConfiguration]
-                        ${ActionsListEvents.GET_VALUE}: [ActionConfiguration]
-                        ${ActionsListEvents.DELETE_VALUE}: [ActionConfiguration]
+                        ${ActionsListEvents.SAVE_VALUE}: [ActionConfiguration!]
+                        ${ActionsListEvents.GET_VALUE}: [ActionConfiguration!]
+                        ${ActionsListEvents.DELETE_VALUE}: [ActionConfiguration!]
                     }
 
                     input ActionsListConfigurationInput {
-                        ${ActionsListEvents.SAVE_VALUE}: [ActionConfigurationInput]
-                        ${ActionsListEvents.GET_VALUE}: [ActionConfigurationInput]
-                        ${ActionsListEvents.DELETE_VALUE}: [ActionConfigurationInput]
+                        ${ActionsListEvents.SAVE_VALUE}: [ActionConfigurationInput!]
+                        ${ActionsListEvents.GET_VALUE}: [ActionConfigurationInput!]
+                        ${ActionsListEvents.DELETE_VALUE}: [ActionConfigurationInput!]
                     }
 
                     input ActionConfigurationInput {
                         name: AvailableActionsName!,
-                        params: [ActionConfigurationParamInput]
+                        params: [ActionConfigurationParamInput!]
                     }
 
                     type ActionConfigurationParam {
