@@ -6,7 +6,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
-import {mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
+import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import attributeDomain from './attributeDomain';
@@ -86,7 +86,7 @@ describe('attributeDomain', () => {
             getAvailableActions: jest.fn().mockReturnValue([
                 {
                     name: 'validateFormat',
-                    output_types: ['string']
+                    output_types: ['string', 'number']
                 },
                 {
                     name: 'toNumber',
@@ -240,6 +240,69 @@ describe('attributeDomain', () => {
                 actions_list: null,
                 permissions_conf: null,
                 versions_conf: null
+            });
+        });
+
+        test('When saving actions list, keep saved system actions', async () => {
+            const mockPermDomain = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const attrData = {
+                ...mockAttrAdv,
+                actions_list: {
+                    [ActionsListEvents.SAVE_VALUE]: [
+                        {name: 'validateFormat', is_system: true},
+                        {name: 'toNumber', is_system: false}
+                    ],
+                    [ActionsListEvents.GET_VALUE]: [{name: 'toNumber', is_system: true}],
+                    [ActionsListEvents.DELETE_VALUE]: []
+                }
+            };
+
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise({
+                    list: [attrData],
+                    totalCount: 1
+                }),
+                createAttribute: jest.fn(),
+                updateAttribute: global.__mockPromise(attrData)
+            };
+
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
+
+            attrDomain.getAttributes = global.__mockPromise([attrData]);
+
+            const updatedAttr = await attrDomain.saveAttribute(
+                {
+                    id: mockAttrAdvVersionable.id,
+                    type: AttributeTypes.ADVANCED,
+                    format: AttributeFormats.NUMERIC,
+                    actions_list: {
+                        [ActionsListEvents.SAVE_VALUE]: [
+                            {name: 'toJSON'},
+                            {name: 'validateFormat', params: [{name: 'myParam', value: 'param_value'}]}
+                        ],
+                        [ActionsListEvents.GET_VALUE]: [{name: 'toNumber'}],
+                        [ActionsListEvents.DELETE_VALUE]: []
+                    }
+                },
+                queryInfos
+            );
+
+            expect(mockAttrRepo.updateAttribute.mock.calls[0][0].actions_list).toEqual({
+                [ActionsListEvents.SAVE_VALUE]: [
+                    {name: 'toJSON', is_system: false},
+                    {name: 'validateFormat', is_system: true, params: [{name: 'myParam', value: 'param_value'}]}
+                ],
+                [ActionsListEvents.GET_VALUE]: [{name: 'toNumber', is_system: true}],
+                [ActionsListEvents.DELETE_VALUE]: []
             });
         });
 

@@ -369,14 +369,42 @@ export default function({
                 throw new PermissionError(action);
             }
 
-            // Add default actions list on new attribute
-            attrToSave.actions_list = !isExistingAttr
-                ? utils.mergeConcat(_getDefaultActionsList(attrToSave), attrToSave.actions_list)
-                : attrToSave.actions_list;
+            let alToSave = null;
+            if (isExistingAttr) {
+                if (attrToSave.actions_list) {
+                    // We need to merge actions list to save with existing actions list to make sure we keep
+                    // the is_system flag to true on system actions
+                    const existingAL = (attrProps as IAttribute).actions_list || {
+                        [ActionsListEvents.SAVE_VALUE]: [],
+                        [ActionsListEvents.GET_VALUE]: [],
+                        [ActionsListEvents.DELETE_VALUE]: []
+                    };
 
-            if (!attrToSave.actions_list || !Object.keys(attrToSave.actions_list).length) {
-                attrToSave.actions_list = null;
+                    alToSave = Object.values(ActionsListEvents).reduce((allALs, evName): IActionsListConfig => {
+                        // Merge each action with existing system action. If there's no matching system action, we force
+                        // the flag to false
+                        allALs[evName] = attrToSave.actions_list[evName]
+                            ? attrToSave.actions_list[evName].map(actionToSave => {
+                                  const sysActionIndex = existingAL[evName].findIndex(
+                                      al => al.name === actionToSave.name && al.is_system
+                                  );
+                                  return {
+                                      ...{is_system: false},
+                                      ...existingAL[evName][sysActionIndex],
+                                      ...actionToSave
+                                  };
+                              })
+                            : [];
+
+                        return allALs;
+                    }, {});
+                }
+            } else {
+                alToSave = utils.mergeConcat(_getDefaultActionsList(attrToSave), attrToSave.actions_list);
             }
+
+            // Add default actions list on new attribute
+            attrToSave.actions_list = alToSave;
 
             // Check settings validity
             const validationErrors = await _validateAttributeData(attrToSave);

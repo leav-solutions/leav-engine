@@ -51,6 +51,6 @@ export interface IActionsListFunction {
 
 export interface IActionsListSavedAction {
     name: string;
-    is_system: boolean;
+    is_system?: boolean;
     params?: [{name: string; value: string}];
 }
