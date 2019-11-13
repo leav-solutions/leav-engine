@@ -31,7 +31,7 @@ jest.mock('react-dnd-cjs', () => ({
 }));
 
 describe('ALCCard', () => {
-    test('Snapshot test', async () => {
+    test('it shows the correct action name', async () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <ALCCard
@@ -51,6 +51,7 @@ describe('ALCCard', () => {
                 />
             </DndProvider>
         );
-        expect(comp).toMatchSnapshot();
+        const header = comp.find('h3');
+        expect(header.text()).toBe('action');
     });
 });
