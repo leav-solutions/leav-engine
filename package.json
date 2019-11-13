@@ -6,7 +6,7 @@
     "scripts": {
         "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
         "start:dev": "ts-node --type-check src/ --server",
-        "start:build": "tsc && node . --server",
+        "start:build": "npm run build && node . --server",
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",
         "test:e2e": "jest -c jest-e2e-config.json",
@@ -17,7 +17,8 @@
         "precommit": "lint-staged && npm test",
         "db:migrate": "tsc && node . --migrate",
         "import": "ts-node src/ import --clear",
-        "benchmark": "ts-node src/ benchmark"
+        "benchmark": "ts-node src/ benchmark",
+        "build": "scripts/build.js"
     },
     "repository": {
         "type": "git",
