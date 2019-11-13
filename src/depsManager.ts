@@ -58,7 +58,7 @@ const _registerModules = async (
 
 export async function init(): Promise<{coreContainer: AwilixContainer; pluginsContainer: AwilixContainer}> {
     const srcFolder = __dirname;
-    const pluginsFolder = realpathSync(__dirname + '/../plugins');
+    const pluginsFolder = realpathSync(__dirname + '/plugins');
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
     const pluginsModulesGlob = `!(core)/${modulesGlob}`;
 
