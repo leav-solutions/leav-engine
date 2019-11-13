@@ -1,3 +1,4 @@
+import * as rootPath from 'app-root-path';
 import * as fs from 'fs';
 import * as path from 'path';
 import {env as appEnv} from './env';
@@ -9,7 +10,7 @@ import {env as appEnv} from './env';
  * @return {Promise<{}>}
  */
 const _getConfigByEnv = async function(env: string): Promise<{}> {
-    const envFile = path.resolve(path.join(__dirname, `../config/${env}.js`));
+    const envFile = path.resolve(path.join(rootPath.path, `/config/${env}.js`));
 
     if (env && fs.existsSync(envFile)) {
         const envConf = await import(envFile);
