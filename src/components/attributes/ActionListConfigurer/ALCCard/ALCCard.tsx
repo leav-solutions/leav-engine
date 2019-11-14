@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {useDrag, useDrop} from 'react-dnd-cjs';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import itemTypes from '../ItemTypes';
 import Param from './ActionContent/Param';
@@ -14,7 +15,7 @@ import {Icon, Card, Button} from 'semantic-ui-react';
 
 //////////////////// INTERFACES
 
-export interface ICardProps {
+export interface ICardProps extends WithNamespaces {
     id: string;
     action: IAction;
     moveCard?: (id: string, isOver: boolean, to: number) => void;
@@ -46,11 +47,14 @@ function ALCCard({
     colorTypeDictionnary,
     changeParam,
     index,
-    dragging
+    dragging,
+    i18n,
+    t
 }: ICardProps) {
     const container = useRef(null);
     const [internalWidth, setWidth] = useState(null);
     const [paramOpen, toggleParams] = useState(false);
+    const [blockedCard, setBlockCard] = useState(false);
 
     //////////////////// DRAG AND DROP
 
@@ -76,7 +80,10 @@ function ALCCard({
         },
         collect: monitor => ({
             isDragging: !!monitor.isDragging()
-        })
+        }),
+        canDrag: monitor => {
+            return !blockedCard;
+        }
     });
 
     const [{isOver}, drop] = useDrop({
@@ -147,11 +154,7 @@ function ALCCard({
                 isDragging={dragging}
             >
                 <Card fluid>
-                    <Connector
-                        inputs={inputs}
-                        dictionnary={colorTypeDictionnary}
-                        isDragging={dragging}
-                    />
+                    <Connector inputs={inputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
                     <Card.Content>
                         <h3>{listAction.name}</h3>
                         <p>{listAction.description}</p>
@@ -182,8 +185,8 @@ function ALCCard({
                         {listAction.params && listAction.params.length > 0 && (
                             <div style={{textAlign: 'right'}} onClick={handleToggleParams}>
                                 <Card.Meta>
-                                    {paramOpen ? 'Hide Params' : 'Display Params'}
-                                    <Icon name={paramOpen ? 'triangle down' : 'triangle left'} />
+                                    {paramOpen ? t('attributes.hide_params') : t('attributes.display_params')}
+                                    <Icon name={paramOpen ? 'triangle down' : 'triangle right'} />
                                 </Card.Meta>
                             </div>
                         )}
@@ -200,26 +203,19 @@ function ALCCard({
                                             actionId={listAction.id !== undefined ? listAction.id : -1}
                                             param={param}
                                             changeParam={changeParam}
+                                            setBlockCard={setBlockCard}
                                         />
                                     ))}
                             </div>
                         </Card.Content>
                     )}
-                    <Connector
-                        inputs={outputs}
-                        dictionnary={colorTypeDictionnary}
-                        isDragging={dragging}
-                    />
+                    <Connector inputs={outputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
                 </Card>
             </ActionRow>
         );
     }
 
-    return (
-        <div ref={container}>
-            {renderListCard(action)}
-        </div>
-    );
+    return <div ref={container}>{renderListCard(action)}</div>;
 }
 
-export default ALCCard;
+export default withNamespaces()(ALCCard);

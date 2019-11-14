@@ -1,9 +1,6 @@
 import React, {useState} from 'react';
-// import styled from 'styled-components';
-import { Input } from 'semantic-ui-react';
+import {Input} from 'semantic-ui-react';
 import {IParam, IParamInput} from '../../../interfaces/interfaces';
-
-/* tslint:disable-next-line:variable-name */
 
 //////////////////// INTERFACES
 
@@ -12,6 +9,7 @@ interface IParamProps {
     param: IParam | null;
     actionId: number;
     changeParam?: (param: IParamInput) => void;
+    setBlockCard: (to: boolean) => void;
 }
 
 interface ICorrespondences {
@@ -20,7 +18,7 @@ interface ICorrespondences {
 
 //////////////////// COMPONENT
 
-function Param({param, actionId, changeParam, index}: IParamProps): JSX.Element {
+function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps): JSX.Element {
     const [currentValue, setCurrentValue] = useState(param ? (param.value ? param.value : param.default_value) : null);
 
     //////////////////// COMPONENT CONSTANTS
@@ -47,6 +45,14 @@ function Param({param, actionId, changeParam, index}: IParamProps): JSX.Element 
         event.stopPropagation();
     };
 
+    const _onFocus = () => {
+        setBlockCard(true);
+    };
+
+    const _onBlur = () => {
+        setBlockCard(false);
+    };
+
     //////////////////// RENDER
 
     return (
@@ -56,8 +62,8 @@ function Param({param, actionId, changeParam, index}: IParamProps): JSX.Element 
                     <Input
                         style={{marginBottom: '3px'}}
                         fluid
-                        label={{ basic: true, content: `${param.name}:`}}
-                        labelPosition='left'
+                        label={{basic: true, content: `${param.name}:`}}
+                        labelPosition="left"
                         type={correspondences[param.type]}
                         name={param.name}
                         placeholder={param.default_value}
@@ -68,6 +74,8 @@ function Param({param, actionId, changeParam, index}: IParamProps): JSX.Element 
                                 : false
                         }
                         onChange={_onChange}
+                        onFocus={_onFocus}
+                        onBlur={_onBlur}
                     />
                 </>
             )}

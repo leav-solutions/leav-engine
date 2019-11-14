@@ -2,11 +2,12 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useDrag} from 'react-dnd-cjs';
 import {Icon, Card, Button} from 'semantic-ui-react';
 import {IAction, IColorDic, IParamInput} from '../interfaces/interfaces';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import itemTypes from '../ItemTypes';
 import TypeTag from '../ALCTypeTag';
 
-interface IALCReserveCardProps {
+interface IALCReserveCardProps extends WithNamespaces {
     id: string;
     action: IAction;
     moveCard?: (id: string, isOver: boolean, to: number) => void;
@@ -33,13 +34,14 @@ function ALCReserveCard({
     removeActionFromList,
     setCurrentIndex,
     connectionState,
-    colorTypeDictionnary
+    colorTypeDictionnary,
+    i18n,
+    t
 }: IALCReserveCardProps): JSX.Element {
-
     const container = useRef(null);
     const [typesOpen, toggleTypes] = useState(false);
     const [internalWidth, setWidth] = useState(null);
-    
+
     const [, drag, preview] = useDrag({
         item: {
             type: itemTypes.ACTION,
@@ -88,7 +90,7 @@ function ALCReserveCard({
 
     const inputs = action.input_types;
     const outputs = action.output_types;
-        
+
     return (
         <div ref={container}>
             <div ref={node => drag(node)} style={{paddingBottom: '5px'}}>
@@ -97,16 +99,16 @@ function ALCReserveCard({
                         <Card.Header>{action.name}</Card.Header>
                         <Card.Description>{action.description}</Card.Description>
                         <Button
-                                style={{
-                                    position: 'absolute',
-                                    right: '2px',
-                                    top: '5px',
-                                    fontSize: '0.8em'
-                                }}
-                                circular
-                                icon="add"
-                                onClick={onAddButtonClicked}
-                            />
+                            style={{
+                                position: 'absolute',
+                                right: '2px',
+                                top: '5px',
+                                fontSize: '0.8em'
+                            }}
+                            circular
+                            icon="add"
+                            onClick={onAddButtonClicked}
+                        />
                         <div
                             style={{
                                 textAlign: 'right'
@@ -114,8 +116,8 @@ function ALCReserveCard({
                             onClick={handleToggleTypes}
                         >
                             <Card.Meta>
-                                {typesOpen ? 'Hide Types' : 'Display Types'}
-                                <Icon name={typesOpen ? 'triangle down' : 'triangle left'} />
+                                {typesOpen ? t('attributes.hide_types') : t('attributes.display_types')}
+                                <Icon name={typesOpen ? 'triangle down' : 'triangle right'} />
                             </Card.Meta>
                         </div>
                     </Card.Content>
@@ -123,7 +125,7 @@ function ALCReserveCard({
                         <Card.Content extra>
                             <div style={{padding: 0}}>
                                 <Icon name="triangle right" />
-                                <span>Input Types: </span>
+                                <span>{t('attributes.input_types')}: </span>
                                 {inputs &&
                                     colorTypeDictionnary[inputs[0]] &&
                                     inputs.map((input, i) => (
@@ -132,7 +134,7 @@ function ALCReserveCard({
                             </div>
                             <div style={{marginTop: '5px'}}>
                                 <Icon name="triangle left" />
-                                <span>Output Types: </span>
+                                <span>{t('attributes.output_types')}: </span>
                                 {outputs &&
                                     colorTypeDictionnary[outputs[0]] &&
                                     outputs.map((output, i) => (
@@ -142,9 +144,9 @@ function ALCReserveCard({
                         </Card.Content>
                     )}
                 </Card>
-            </div>            
+            </div>
         </div>
-        );
+    );
 }
 
-export default ALCReserveCard;
+export default withNamespaces()(ALCReserveCard);

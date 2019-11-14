@@ -91,11 +91,11 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "Display Types",
+                                  "data": "attributes.display_types",
                                   "next": Object {
                                     "attribs": Object {
                                       "aria-hidden": "true",
-                                      "class": "triangle left icon",
+                                      "class": "triangle right icon",
                                     },
                                     "children": Array [],
                                     "name": "i",
@@ -120,7 +120,7 @@ initialize {
                                 Object {
                                   "attribs": Object {
                                     "aria-hidden": "true",
-                                    "class": "triangle left icon",
+                                    "class": "triangle right icon",
                                   },
                                   "children": Array [],
                                   "name": "i",
@@ -128,7 +128,7 @@ initialize {
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": Object {
-                                    "data": "Display Types",
+                                    "data": "attributes.display_types",
                                     "next": [Circular],
                                     "parent": [Circular],
                                     "prev": null,
@@ -260,11 +260,11 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "Display Types",
+                                "data": "attributes.display_types",
                                 "next": Object {
                                   "attribs": Object {
                                     "aria-hidden": "true",
-                                    "class": "triangle left icon",
+                                    "class": "triangle right icon",
                                   },
                                   "children": Array [],
                                   "name": "i",
@@ -289,7 +289,7 @@ initialize {
                               Object {
                                 "attribs": Object {
                                   "aria-hidden": "true",
-                                  "class": "triangle left icon",
+                                  "class": "triangle right icon",
                                 },
                                 "children": Array [],
                                 "name": "i",
@@ -297,7 +297,7 @@ initialize {
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": Object {
-                                  "data": "Display Types",
+                                  "data": "attributes.display_types",
                                   "next": [Circular],
                                   "parent": [Circular],
                                   "prev": null,
@@ -429,11 +429,11 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "Display Types",
+                              "data": "attributes.display_types",
                               "next": Object {
                                 "attribs": Object {
                                   "aria-hidden": "true",
-                                  "class": "triangle left icon",
+                                  "class": "triangle right icon",
                                 },
                                 "children": Array [],
                                 "name": "i",
@@ -458,7 +458,7 @@ initialize {
                             Object {
                               "attribs": Object {
                                 "aria-hidden": "true",
-                                "class": "triangle left icon",
+                                "class": "triangle right icon",
                               },
                               "children": Array [],
                               "name": "i",
@@ -466,7 +466,7 @@ initialize {
                               "next": null,
                               "parent": [Circular],
                               "prev": Object {
-                                "data": "Display Types",
+                                "data": "attributes.display_types",
                                 "next": [Circular],
                                 "parent": [Circular],
                                 "prev": null,
@@ -583,11 +583,11 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "Display Types",
+                            "data": "attributes.display_types",
                             "next": Object {
                               "attribs": Object {
                                 "aria-hidden": "true",
-                                "class": "triangle left icon",
+                                "class": "triangle right icon",
                               },
                               "children": Array [],
                               "name": "i",
@@ -612,7 +612,7 @@ initialize {
                           Object {
                             "attribs": Object {
                               "aria-hidden": "true",
-                              "class": "triangle left icon",
+                              "class": "triangle right icon",
                             },
                             "children": Array [],
                             "name": "i",
@@ -620,7 +620,7 @@ initialize {
                             "next": null,
                             "parent": [Circular],
                             "prev": Object {
-                              "data": "Display Types",
+                              "data": "attributes.display_types",
                               "next": [Circular],
                               "parent": [Circular],
                               "prev": null,
