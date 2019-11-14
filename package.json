@@ -52,7 +52,7 @@
         "ts-node": "^6.2.0",
         "tslint": "^5.11.0",
         "tslint-eslint-rules": "^5.3.1",
-        "typescript": "^3.5.1",
+        "typescript": "^3.7.2",
         "watch": "^1.0.2"
     },
     "dependencies": {
