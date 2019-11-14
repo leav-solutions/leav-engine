@@ -15,7 +15,7 @@ if (fs.existsSync(buildFolder)) {
 
 // Run transpilation
 try {
-    execSync('tsc').toString();
+    execSync('tsc -p tsconfig.build.json').toString();
 } catch (e) {
     console.error(e.stderr.toString(), e.stdout.toString());
     process.exit(1);
