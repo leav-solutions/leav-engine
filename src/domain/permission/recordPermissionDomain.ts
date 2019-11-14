@@ -46,7 +46,10 @@ export default function({
             const lib = await libraryDomain.getLibraryProperties(recordLibrary);
             if (typeof lib.permissions_conf === 'undefined') {
                 // Check if action is present in library permissions
-                const isLibAction = Object.values(LibraryPermissionsActions).indexOf(action) !== -1;
+                const isLibAction =
+                    Object.values(LibraryPermissionsActions).indexOf(
+                        (action as unknown) as LibraryPermissionsActions
+                    ) !== -1;
 
                 return isLibAction
                     ? permissionDomain.getLibraryPermission(
