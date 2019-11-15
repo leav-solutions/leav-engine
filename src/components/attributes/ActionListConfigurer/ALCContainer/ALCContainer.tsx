@@ -11,9 +11,9 @@ import {cloneDeep} from 'lodash';
 
 import {getActionListQuery} from '../../../../queries/attributes/getActionListQuery';
 import {saveAttributeActionsListMutation} from '../../../../queries/attributes/saveAttributeActionsListMutation';
-import { GET_ACTIONS_LIST_QUERY } from '../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
+import {GET_ACTIONS_LIST_QUERY} from '../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 
-import {actionListNames, getCurrentList, getCurrentListOrder, getColorDictionnary } from '../utils/actionsManipulations';
+import {actionListNames, getCurrentList, getCurrentListOrder, getColorDictionnary} from '../utils/actionsManipulations';
 import {ExternalContainer, ReserveContainer, ListsContainer} from '../stylesComps';
 
 import {
@@ -247,7 +247,7 @@ function ALCContainer({availableActions = [], attribute, inType, outType, i18n, 
                     ) : (
                         <ALCList
                             actions={currentActionList}
-                            cardOrder={currentActionListOrder[currentActionListName]}
+                            cardOrder={currentActionListOrder}
                             moveCard={moveCard}
                             findCard={findCard}
                             addActionToList={addActionToList}
