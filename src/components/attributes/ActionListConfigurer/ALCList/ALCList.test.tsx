@@ -1,5 +1,7 @@
 import React from 'react';
-import {render, shallow, mount} from 'enzyme';
+import {mount} from 'enzyme';
+import {wait} from '@apollo/react-testing';
+import {act} from 'react-dom/test-utils';
 import ALCList from './ALCList';
 import {DndProvider} from 'react-dnd-cjs';
 import TestBackend from 'react-dnd-test-backend-cjs';
@@ -211,11 +213,11 @@ describe('ALCList', () => {
                     addActionToList={placeholder}
                     removeActionFromList={placeholder}
                     getNewId={numPlaceholder}
-                    currentIndex={0}
+                    currentIndex={-1}
                     setCurrentIndex={placeholder}
                     inType={['number']}
                     outType={['number']}
-                    colorTypeDictionnary={{number: [255, 255, 255]}}
+                    colorTypeDictionnary={{number: [0, 255, 255], string: [255, 0, 255], object: [255, 255, 0]}}
                     changeParam={placeholder}
                     cardOrder={{saveValue: [0, 1]}}
                     onSave={mockOnSave}
@@ -229,5 +231,45 @@ describe('ALCList', () => {
         container.unmount();
     });
 
-    // test("onSave function don't give back anything if type chain is broken", async () => {})
+    test('onSave button is disabled if type chain is broken', async () => {
+        // the button should not be displayed
+        const mockSave: any = [];
+        const mockOnSave = () => {
+            mockSave.push(1);
+            return true;
+        };
+        const container = await mount(
+            <DndProvider backend={TestBackend}>
+                <ALCList
+                    actions={twoIncompatibleActionsMock}
+                    moveCard={placeholder}
+                    findCard={numPlaceholder}
+                    addActionToList={placeholder}
+                    removeActionFromList={placeholder}
+                    getNewId={numPlaceholder}
+                    currentIndex={0}
+                    setCurrentIndex={placeholder}
+                    inType={['number']}
+                    outType={['number']}
+                    colorTypeDictionnary={{number: [255, 255, 255]}}
+                    changeParam={placeholder}
+                    cardOrder={{saveValue: [0, 1], getValue: [], deleteValue: []}}
+                    onSave={mockOnSave}
+                    currentActionListName="saveValue"
+                    onSelectorChange={onSelectorChangeMock}
+                />
+            </DndProvider>
+        );
+
+        await act(async () => {
+            await wait(0);
+            container.update();
+        });
+
+        const button = container.find('button');
+
+        expect(button.props().disabled).toBe(true);
+
+        container.unmount();
+    });
 });
