@@ -10,7 +10,7 @@ import ALCListSelector from '../ALCListSelector';
 import {Button, Header} from 'semantic-ui-react';
 
 import {IColorDic, IParamInput, IDragObject, IAllActionLists} from '../interfaces/interfaces';
-import { ALCPlaceholder, ListContainer, ListContent, HiddenDiv} from '../stylesComps';
+import {ALCPlaceholder, ListContainer, ListContent, HiddenDiv} from '../stylesComps';
 
 //////////////////// INTERFACES
 
@@ -29,7 +29,7 @@ interface IALCListProps extends WithNamespaces {
     onSelectorChange: (event: any) => void;
     currentActionListName: string;
     changeParam?: (input: IParamInput) => void;
-    cardOrder: number[];
+    cardOrder: any;
     onSave: () => void;
 }
 
@@ -54,8 +54,7 @@ function ALCList({
     onSave,
     t
 }: IALCListProps) {
-
-    const specificCardOrder = cardOrder;
+    const specificCardOrder = cardOrder[currentActionListName];
     const cards = actions[currentActionListName];
 
     const [connectionFailures, setConnectionFailures] = useState<any[]>([]);
@@ -116,6 +115,9 @@ function ALCList({
                 for (let i = 0; i < actionIdList.length; i++) {
                     const actionId = actionIdList[i];
                     const action = list[actionId];
+                    if (!action) {
+                        return;
+                    }
                     const preceedingConnector = i === 0 ? inType : list[actionIdList[i - 1]].output_types;
                     const followingConnector =
                         i >= actionIdList.length - 1 ? outType : list[actionIdList[i + 1]].input_types;
@@ -176,7 +178,7 @@ function ALCList({
                 />
             );
         } else {
-            return <ALCPlaceholder key="placeholder">Slide Actions Here</ALCPlaceholder>
+            return <ALCPlaceholder key="placeholder">Slide Actions Here</ALCPlaceholder>;
         }
     };
 
@@ -195,7 +197,7 @@ function ALCList({
                 {specificCardOrder && specificCardOrder.length ? (
                     specificCardOrder.map((actionId, i) => renderAction(actionId, i))
                 ) : (
-                    <ALCPlaceholder >Slide Actions Here</ALCPlaceholder>
+                    <ALCPlaceholder>Slide Actions Here</ALCPlaceholder>
                 )}
                 <HiddenDiv ref={dropOut} extend={currentIndex === -1} hover={collectedProps.hovered} />
                 {currentActionListName === 'saveValue' && (

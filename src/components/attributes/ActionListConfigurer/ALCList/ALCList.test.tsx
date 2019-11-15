@@ -156,7 +156,7 @@ describe('ALCList', () => {
                     outType={['number']}
                     colorTypeDictionnary={{int: [255, 255, 255]}}
                     changeParam={placeholder}
-                    cardOrder={[0]}
+                    cardOrder={{saveValue: [0]}}
                     onSave={placeholder}
                     currentActionListName="saveValue"
                     onSelectorChange={onSelectorChangeMock}
@@ -184,7 +184,7 @@ describe('ALCList', () => {
                     outType={['number']}
                     colorTypeDictionnary={{int: [255, 255, 255]}}
                     changeParam={placeholder}
-                    cardOrder={[0, 1]}
+                    cardOrder={{saveValue: [0, 1]}}
                     onSave={placeholder}
                     currentActionListName="saveValue"
                     onSelectorChange={onSelectorChangeMock}
@@ -199,7 +199,7 @@ describe('ALCList', () => {
     test('onSave function gives back an actionConfig when called', async () => {
         const mockSave: any = [];
         const mockOnSave = () => {
-            mockSave.push(1)
+            mockSave.push(1);
             return true;
         };
         const container = await mount(
@@ -217,7 +217,7 @@ describe('ALCList', () => {
                     outType={['number']}
                     colorTypeDictionnary={{number: [255, 255, 255]}}
                     changeParam={placeholder}
-                    cardOrder={[0, 1]}
+                    cardOrder={{saveValue: [0, 1]}}
                     onSave={mockOnSave}
                     currentActionListName="saveValue"
                     onSelectorChange={onSelectorChangeMock}
