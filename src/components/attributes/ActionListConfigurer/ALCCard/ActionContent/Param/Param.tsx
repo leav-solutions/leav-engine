@@ -45,7 +45,7 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
         event.stopPropagation();
     };
 
-    const _onFocus = () => {
+    const _onFocus = e => {
         setBlockCard(true);
     };
 

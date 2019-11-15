@@ -147,7 +147,15 @@ function ALCCard({
     function renderListCard(listAction: IAction) {
         return (
             <ActionRow
-                ref={node => drag(drop(node))}
+                ref={node => {
+                    // if the card is blocked, meaning an input field is being focused on,
+                    // return the node without crag and drop context to allow
+                    // text selection in Firefox
+                    if (blockedCard) {
+                        return node;
+                    }
+                    return drag(drop(node));
+                }}
                 opacity={opacity}
                 marginTop={marginTop}
                 index={index}
