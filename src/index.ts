@@ -1,7 +1,13 @@
+import {config} from './config';
 import {init as initDI} from './depsManager';
+import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 
 (async function() {
+    const conf: any = await config;
+
+    await initDb(conf);
+
     const {coreContainer, pluginsContainer} = await initDI();
 
     const server = coreContainer.cradle['core.interface.server'];
