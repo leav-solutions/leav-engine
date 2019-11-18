@@ -1,6 +1,6 @@
 import {badData, unauthorized} from '@hapi/boom';
 import {Server} from '@hapi/hapi';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import * as jwt from 'jsonwebtoken';
