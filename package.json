@@ -15,7 +15,7 @@
         "prettier": "prettier --write 'src/**/*.ts'",
         "dev": "run-p lint:watch start:watch test:watch",
         "precommit": "lint-staged && npm test",
-        "db:migrate": "tsc && node . --migrate",
+        "db:migrate": "ts-node src/ --migrate",
         "import": "ts-node src/ import --clear",
         "benchmark": "ts-node src/ benchmark",
         "build": "scripts/build.js"
