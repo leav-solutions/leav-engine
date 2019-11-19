@@ -9,5 +9,6 @@ module.exports = {
     },
     auth: {
         tokenExpiration: '99y'
-    }
+    },
+    debug: true
 };

@@ -22,5 +22,6 @@ module.exports = {
         transport: ['console', 'file'], // Array containing one or more of : console, file
         destinationFile: '/var/log/leav.log' // If logging in file
     },
-    permissions: {default: true}
+    permissions: {default: true},
+    debug: false
 };

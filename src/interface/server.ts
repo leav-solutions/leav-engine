@@ -92,7 +92,7 @@ export default function({
                 await graphqlApp.generateSchema();
 
                 const apolloServ = new ApolloServer({
-                    debug: config.env === 'development',
+                    debug: config.debug,
                     formatError: _handleError,
                     tracing: true,
                     cacheControl: false,
