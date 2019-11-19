@@ -50,7 +50,14 @@ export default function({
                                 name: 'formatDate',
                                 is_system: false
                             }
-                        ]
+                        ],
+                        [ActionsListEvents.SAVE_VALUE]: [
+                            {
+                                name: 'validateFormat',
+                                is_system: true
+                            }
+                        ],
+                        [ActionsListEvents.DELETE_VALUE]: []
                     }
                 });
 
@@ -74,7 +81,14 @@ export default function({
                                 name: 'formatDate',
                                 is_system: false
                             }
-                        ]
+                        ],
+                        [ActionsListEvents.SAVE_VALUE]: [
+                            {
+                                name: 'validateFormat',
+                                is_system: true
+                            }
+                        ],
+                        [ActionsListEvents.DELETE_VALUE]: []
                     }
                 });
 
@@ -83,7 +97,17 @@ export default function({
                     system: true,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
-                    label: {fr: 'Login', en: 'Login'}
+                    label: {fr: 'Login', en: 'Login'},
+                    actions_list: {
+                        [ActionsListEvents.GET_VALUE]: [],
+                        [ActionsListEvents.SAVE_VALUE]: [
+                            {
+                                name: 'validateFormat',
+                                is_system: true
+                            }
+                        ],
+                        [ActionsListEvents.DELETE_VALUE]: []
+                    }
                 });
 
                 await attributeRepo.createAttribute({
@@ -95,6 +119,10 @@ export default function({
                     actions_list: {
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
+                                name: 'validateFormat',
+                                is_system: true
+                            },
+                            {
                                 name: 'encrypt',
                                 is_system: true
                             }
@@ -104,7 +132,8 @@ export default function({
                                 name: 'maskValue',
                                 is_system: true
                             }
-                        ]
+                        ],
+                        [ActionsListEvents.DELETE_VALUE]: []
                     }
                 });
             }

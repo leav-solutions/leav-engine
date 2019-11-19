@@ -73,9 +73,10 @@ export default function({
             return {};
         }
 
+        let defaultActions = {};
         switch (attribute.format) {
             case AttributeFormats.DATE:
-                return {
+                defaultActions = {
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'toNumber',
@@ -94,7 +95,7 @@ export default function({
                     ]
                 };
             case AttributeFormats.ENCRYPTED:
-                return {
+                defaultActions = {
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'validateFormat',
@@ -113,7 +114,7 @@ export default function({
                     ]
                 };
             case AttributeFormats.EXTENDED:
-                return {
+                defaultActions = {
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'parseJSON',
@@ -130,7 +131,7 @@ export default function({
                     ]
                 };
             default:
-                return {
+                defaultActions = {
                     [ActionsListEvents.SAVE_VALUE]: [
                         {
                             name: 'validateFormat',
@@ -139,6 +140,13 @@ export default function({
                     ]
                 };
         }
+
+        return {
+            [ActionsListEvents.GET_VALUE]: [],
+            [ActionsListEvents.SAVE_VALUE]: [],
+            [ActionsListEvents.DELETE_VALUE]: [],
+            ...defaultActions
+        };
     }
 
     function _getAllowedInputTypes(attribute: IAttribute): IOAllowedTypes {

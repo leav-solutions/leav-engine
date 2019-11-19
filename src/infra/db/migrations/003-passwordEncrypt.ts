@@ -14,6 +14,10 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                 actions_list: {
                     saveValue: [
                         {
+                            name: 'validateFormat',
+                            is_system: true
+                        },
+                        {
                             name: 'encrypt',
                             is_system: true
                         }
