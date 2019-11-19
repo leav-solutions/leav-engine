@@ -7,6 +7,7 @@ import EditAttributePermissions from '.';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {AttributeType, PermissionsRelation} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple, mockAttrTree} from '../../../__mocks__/attributes';
+import {async} from 'q';
 
 describe('EditAttributePermissions', () => {
     const mocks = [
@@ -65,6 +66,7 @@ describe('EditAttributePermissions', () => {
         const onSubmit = jest.fn();
 
         let comp;
+
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocks} addTypename>
@@ -73,7 +75,8 @@ describe('EditAttributePermissions', () => {
             );
         });
 
-        act(() => {
+        await act(async () => {
+            await sleep(0);
             comp.update();
         });
 
@@ -101,8 +104,10 @@ describe('EditAttributePermissions', () => {
                 </MockedProvider>
             );
         });
-        await sleep(0);
-        comp.update();
+        await act(async () => {
+            await sleep(0);
+            comp.update();
+        });
 
         expect(comp.find('input[name="relation"]')).toHaveLength(2);
     });
@@ -118,6 +123,7 @@ describe('EditAttributePermissions', () => {
         const onSubmit = jest.fn();
 
         let comp;
+
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocks} addTypename>
@@ -125,8 +131,11 @@ describe('EditAttributePermissions', () => {
                 </MockedProvider>
             );
         });
-        await sleep(0);
-        comp.update();
+
+        await act(async () => {
+            await sleep(0);
+            comp.update();
+        });
 
         comp.find('form').simulate('submit');
 
