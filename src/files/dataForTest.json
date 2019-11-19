@@ -1,0 +1,42 @@
+[
+    {
+        "input": "./images_jpg/jpg-with-clippping-path.jpg",
+        "output": "./images_generate/jpg.png",
+        "sizes": [
+            {
+                "width": 800,
+                "height": 600
+            }
+        ]
+    },
+    {
+        "input": "./images_psd/3.psd",
+        "output": "./images_generate/gateaux.png",
+        "sizes": [
+            {
+                "width": 1600,
+                "height": 1600
+            }
+        ]
+    },
+    {
+        "input": "./images_pdf/sample.pdf",
+        "output": "./images_generate/sample.png",
+        "sizes": [
+            {
+                "width": 400,
+                "height": 400
+            }
+        ]
+    },
+    {
+        "input": "./images_png/120106427143_1.png",
+        "output": "./images_generate/cookie.png",
+        "sizes": [
+            {
+                "width": 800,
+                "height": 800
+            }
+        ]
+    }
+]

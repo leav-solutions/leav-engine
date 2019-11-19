@@ -1,0 +1,10 @@
+version: "3"
+services:
+  thumbnail:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - /Users/smarzykmathieu/Dev/thumbnail:/app
+      - /Users/smarzykmathieu/Data/:/data
+    network_mode: host

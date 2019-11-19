@@ -1,0 +1,21 @@
+{
+    "rootPath": "/data/",
+    "ICCPath": "/app/profile/",
+    "amqp": {
+        "protocol": "amqp",
+        "hostname": "host.docker.internal",
+        "port": 15672,
+        "username": "guest",
+        "password": "guest",
+        "consume": {
+            "queue": "thumbnail",
+            "exchange": "preview",
+            "routingKey": "thumbnail"
+        },
+        "publish": {
+            "queue": "thumbnail_response",
+            "exchange": "preview",
+            "routingKey": "thumbnail_response"
+        }
+    }
+}
