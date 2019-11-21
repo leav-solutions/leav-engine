@@ -3,6 +3,8 @@ import {render} from 'enzyme';
 import React from 'react';
 import DefinePermissionsViewLoadTree from './DefinePermissionsViewLoadTree';
 
+jest.mock('../../../hooks/useLang');
+
 describe('DefinePermissionsViewLoadTree', () => {
     test('Snapshot test', async () => {
         const onClick = jest.fn();

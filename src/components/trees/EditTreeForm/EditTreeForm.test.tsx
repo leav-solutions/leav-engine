@@ -4,8 +4,12 @@ import EditTreeForm from './EditTreeForm';
 
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr)
+    localizedLabel: jest.fn().mockImplementation(l => l.fr),
+    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr'])
 }));
+
+jest.mock('../../../hooks/useLang');
+
 describe('EditTreeForm', () => {
     test('Render form for existing tree', async () => {
         const tree = {

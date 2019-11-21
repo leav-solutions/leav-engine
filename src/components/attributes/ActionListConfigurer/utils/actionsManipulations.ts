@@ -16,8 +16,10 @@ export enum actionListNames {
     deleteValue = 'deleteValue'
 }
 
-export const getCurrentList = (sourceConfigs: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list, availableActions: IReserveAction[] | null) => {
-
+export const getCurrentList = (
+    sourceConfigs: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list,
+    availableActions: IReserveAction[] | null
+) => {
     const currentList: any = {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}};
 
     if (sourceConfigs && Object.keys(sourceConfigs).length > 0) {
@@ -96,12 +98,12 @@ export const getTypeFromFormat = (format: string) => {
     switch (format) {
         case 'encrypted':
         case 'text':
-            return 'string'
+            return 'string';
         case 'extended':
-            return 'object'
+            return 'object';
         case 'numeric':
-            return 'number'
+            return 'number';
         default:
-            return format
+            return format;
     }
-}
+};

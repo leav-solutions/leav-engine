@@ -1,17 +1,21 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {DropdownProps, Form} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import Loading from '../../shared/Loading';
 
-interface IAttributesSelectorFieldProps extends DropdownProps, WithNamespaces {
+interface IAttributesSelectorFieldProps extends DropdownProps {
     loading?: boolean;
     trees: GET_TREES_trees_list[] | null;
 }
 
-function TreesSelectorField({loading, trees, i18n, ...fieldProps}: IAttributesSelectorFieldProps): JSX.Element {
-    const options = !!trees ? trees.map(a => ({key: a.id, value: a.id, text: localizedLabel(a.label, i18n)})) : [];
+/* tslint:disable-next-line:variable-name */
+const TreesSelectorField = ({loading, trees, ...fieldProps}: IAttributesSelectorFieldProps): JSX.Element => {
+    const availableLanguages = useLang().lang;
+    const options = !!trees
+        ? trees.map(a => ({key: a.id, value: a.id, text: localizedLabel(a.label, availableLanguages)}))
+        : [];
 
     delete fieldProps.t;
     delete fieldProps.tReady;
@@ -20,6 +24,6 @@ function TreesSelectorField({loading, trees, i18n, ...fieldProps}: IAttributesSe
     delete fieldProps.reportNS;
 
     return loading ? <Loading /> : <Form.Dropdown {...fieldProps} search options={options} />;
-}
+};
 
-export default withNamespaces()(TreesSelectorField);
+export default TreesSelectorField;

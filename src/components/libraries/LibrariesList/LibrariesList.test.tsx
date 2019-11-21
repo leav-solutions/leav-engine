@@ -5,6 +5,8 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import LibrariesList from './LibrariesList';
 
+jest.mock('../../../hooks/useLang');
+
 describe('LibrariesList', () => {
     const libraries = [
         {

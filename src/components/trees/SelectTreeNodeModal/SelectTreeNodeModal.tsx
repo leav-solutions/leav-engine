@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/react-hooks';
 import React, {useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {NodeData, TreeItem} from 'react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
@@ -8,14 +8,16 @@ import {GET_TREES, GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';
 import Loading from '../../shared/Loading';
 import TreeStructure from '../TreeStructure';
 
-interface ISelectTreeNodeModalProps extends WithNamespaces {
+interface ISelectTreeNodeModalProps {
     tree: string;
     onSelect: (node: TreeItem) => void;
     open: boolean;
     onClose: () => void;
 }
 
-function SelectTreeNodeModal({open, tree, onSelect, onClose, t}: ISelectTreeNodeModalProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeModalProps): JSX.Element => {
+    const {t} = useTranslation();
     const [currentSelection, setCurrentSelection] = useState<NodeData[] | null>(null);
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
         variables: {
@@ -75,6 +77,6 @@ function SelectTreeNodeModal({open, tree, onSelect, onClose, t}: ISelectTreeNode
             </Modal.Actions>
         </Modal>
     );
-}
+};
 
-export default withNamespaces()(SelectTreeNodeModal);
+export default SelectTreeNodeModal;

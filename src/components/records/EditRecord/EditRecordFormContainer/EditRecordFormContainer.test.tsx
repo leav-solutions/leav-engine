@@ -17,6 +17,8 @@ jest.mock('../../../../utils/utils', () => ({
     isLinkAttribute: jest.fn().mockImplementation(a => ['advanced_link', 'simple_link'].includes(a.type))
 }));
 
+jest.mock('../../../../hooks/useLang');
+
 jest.mock(
     './EditRecordForm',
     () =>
@@ -161,7 +163,7 @@ describe('EditRecordFormContainer', () => {
 
     let cache;
     beforeEach(() => {
-        // Set a new cache for each test to avoid fetching data in cache and not in provided mocls
+        // Set a new cache for each test to avoid fetching data in cache and not in provided mocks
         cache = new InMemoryCache({fragmentMatcher});
     });
 
@@ -171,7 +173,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: () => {
                     recordDataQueryCalled = true;
@@ -181,6 +183,7 @@ describe('EditRecordFormContainer', () => {
         ];
 
         let comp;
+
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocks} addTypename cache={cache}>
@@ -207,7 +210,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: () => {
                     recordDataQueryCalled = true;
@@ -242,7 +245,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 error: new Error('Boom!')
             }
@@ -272,7 +275,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: () => {
                     fetchRecordDataCount++;
@@ -282,7 +285,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: () => {
                     fetchRecordDataCount++;
@@ -339,7 +342,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: () => {
                     fetchRecordDataCount++;
@@ -426,7 +429,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: {
                     data: {
@@ -469,7 +472,7 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: {
                     data: {
@@ -606,14 +609,14 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: mockQueryRecordDataResult
             },
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: mockQueryRecordDataResult
             },
@@ -667,14 +670,14 @@ describe('EditRecordFormContainer', () => {
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: mockQueryRecordDataResult
             },
             {
                 request: {
                     query: mockQuery,
-                    variables: {id: '12345', version: null, lang: ['fr']}
+                    variables: {id: '12345', version: null, lang: ['fr', 'en']}
                 },
                 result: mockQueryRecordDataResult
             },

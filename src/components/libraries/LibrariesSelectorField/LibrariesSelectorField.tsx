@@ -1,17 +1,19 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {DropdownProps, Form} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 
-interface ILibrariesSelectorFieldProps extends DropdownProps, WithNamespaces {
+interface ILibrariesSelectorFieldProps extends DropdownProps {
     loading?: boolean;
     libraries: GET_LIBRARIES_libraries_list[] | null;
 }
 
-function LibrariesSelectorField({loading, libraries, i18n, ...fieldProps}: ILibrariesSelectorFieldProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const LibrariesSelectorField = ({loading, libraries, ...fieldProps}: ILibrariesSelectorFieldProps): JSX.Element => {
+    const availableLanguages = useLang().lang;
     const options = !!libraries
-        ? libraries.map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, i18n)}))
+        ? libraries.map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, availableLanguages)}))
         : [];
 
     // TODO: find a cleaner way to remove props from i18n
@@ -22,11 +24,11 @@ function LibrariesSelectorField({loading, libraries, i18n, ...fieldProps}: ILibr
     delete fieldProps.reportNS;
 
     return <Form.Dropdown {...fieldProps} search options={options} />;
-}
+};
 
 LibrariesSelectorField.defaultProps = {
     loading: false,
     libraries: []
 };
 
-export default withNamespaces()(LibrariesSelectorField);
+export default LibrariesSelectorField;

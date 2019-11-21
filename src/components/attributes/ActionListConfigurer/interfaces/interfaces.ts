@@ -45,9 +45,9 @@ export interface IParamInput {
 }
 
 export interface ICurrActionListOrder {
-        saveValue: number[],
-        getValue: number[],
-        deleteValue: number[]
+    saveValue: number[];
+    getValue: number[];
+    deleteValue: number[];
 }
 
 export interface IDragObject {

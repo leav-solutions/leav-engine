@@ -1,5 +1,5 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {NodeData, TreeNode} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -15,7 +15,9 @@ const PermBlockWrapper = styled.div`
     margin-top: 1em;
 `;
 
-function AdminPermissions({t}: WithNamespaces): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const AdminPermissions = (): JSX.Element => {
+    const {t} = useTranslation();
     const usersGroupsTreeId = 'users_groups';
 
     const userData = useUserData();
@@ -103,6 +105,6 @@ function AdminPermissions({t}: WithNamespaces): JSX.Element {
             <ColumnsDisplay columnsNumber={2} columnsContent={cols} />
         </>
     );
-}
+};
 
-export default withNamespaces()(AdminPermissions);
+export default AdminPermissions;

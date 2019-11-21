@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {useDrag, useDrop} from 'react-dnd-cjs';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import itemTypes from '../ItemTypes';
 import Param from './ActionContent/Param';
@@ -15,7 +15,7 @@ import {Icon, Card, Button} from 'semantic-ui-react';
 
 //////////////////// INTERFACES
 
-export interface ICardProps extends WithNamespaces {
+export interface ICardProps {
     id: string;
     action: IAction;
     moveCard?: (id: string, isOver: boolean, to: number) => void;
@@ -47,10 +47,9 @@ function ALCCard({
     colorTypeDictionnary,
     changeParam,
     index,
-    dragging,
-    i18n,
-    t
+    dragging
 }: ICardProps) {
+    const {t} = useTranslation();
     const container = useRef(null);
     const [internalWidth, setWidth] = useState(null);
     const [paramOpen, toggleParams] = useState(false);
@@ -226,4 +225,4 @@ function ALCCard({
     return <div ref={container}>{renderListCard(action)}</div>;
 }
 
-export default withNamespaces()(ALCCard);
+export default ALCCard;

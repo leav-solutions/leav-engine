@@ -1,7 +1,8 @@
 import {Formik} from 'formik';
 import React, {useEffect, useRef} from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
+import useLang from '../../../../../hooks/useLang';
 import {isLinkAttribute, localizedLabel} from '../../../../../utils/utils';
 import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../_gqlTypes/GET_LIBRARIES';
 import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
@@ -16,7 +17,7 @@ import {
 import FormFieldWrapper from '../../../../shared/FormFieldWrapper';
 import EditRecordFormLinks from './EditRecordFormLinks';
 
-interface IEditRecordFormProps extends WithNamespaces {
+interface IEditRecordFormProps {
     attributes: GET_LIBRARIES_libraries_list_attributes[];
     recordData: RecordData;
     errors?: IEditRecordFormError;
@@ -29,16 +30,17 @@ export interface IEditRecordFormError {
     [fieldName: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
 }
 
-function EditRecordForm({
+/* tslint:disable-next-line:variable-name */
+const EditRecordForm = ({
     onSave,
     attributes,
     recordData,
-    t,
-    i18n,
     setSubmitFuncRef,
     errors = {},
     inModal = false
-}: IEditRecordFormProps): JSX.Element {
+}: IEditRecordFormProps): JSX.Element => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const _isAttributeReadOnly = (attribute: GET_LIBRARIES_libraries_list_attributes): boolean => {
         return attribute.system;
     };
@@ -133,7 +135,7 @@ function EditRecordForm({
                 />
             );
 
-            const attributeLabel = localizedLabel(attr.label, i18n);
+            const attributeLabel = localizedLabel(attr.label, availableLanguages);
 
             if (!readOnly && fieldValues && Array.isArray(fieldValues)) {
                 const fieldLabel = (
@@ -188,6 +190,6 @@ function EditRecordForm({
     };
 
     return <Formik render={_renderForm} initialValues={recordData} onSubmit={onSave} enableReinitialize />;
-}
+};
 
-export default withNamespaces()(EditRecordForm);
+export default EditRecordForm;

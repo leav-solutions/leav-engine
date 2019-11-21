@@ -1,9 +1,9 @@
 import React, {useCallback, useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
 import styles from './login.module.css';
 
-interface ILoginProps extends WithNamespaces {
+interface ILoginProps {
     url: string;
     onSuccess: (token: string) => void;
     message?: string;
@@ -55,7 +55,9 @@ const processLogin = (
         });
 };
 
-function Login({i18n: i18next, t, onSuccess, message, url}: ILoginProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
+    const {t} = useTranslation();
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -152,5 +154,5 @@ function Login({i18n: i18next, t, onSuccess, message, url}: ILoginProps): JSX.El
             </div>
         </>
     );
-}
-export default withNamespaces()(Login);
+};
+export default Login;

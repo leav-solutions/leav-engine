@@ -22,7 +22,7 @@ import {
     RecordData,
     RecordEdition
 } from '../../../../_types/records';
-import useLang from '../../../../__mocks__/useLang';
+import useLang from '../../../../hooks/useLang';
 import Loading from '../../../shared/Loading';
 import EditRecordForm from './EditRecordForm';
 
@@ -80,7 +80,8 @@ function EditRecordFormContainer({
             }, {}),
         [attributes]
     );
-    const lang = useLang();
+
+    const lang = useLang().lang;
 
     const [recordId, setRecordId] = useState<string>(initialRecordId || '');
     const [savePending, setSavePending] = useState<boolean>(false);
@@ -182,6 +183,10 @@ function EditRecordFormContainer({
             onPostSave(_extractRecordIdentity(freshData.data));
         }
     };
+
+    // console.log("error: ", error)
+    // console.log("loading: ", loading)
+    // console.log("data: ", )
 
     if (error) {
         return <p className="error">ERROR</p>;

@@ -4,6 +4,8 @@ import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {mockTree} from '../../../__mocks__/trees';
 import TreesSelectorField from './TreesSelectorField';
 
+jest.mock('../../../hooks/useLang');
+
 describe('TreesSelectorField', () => {
     const trees: GET_TREES_trees_list[] = [
         {

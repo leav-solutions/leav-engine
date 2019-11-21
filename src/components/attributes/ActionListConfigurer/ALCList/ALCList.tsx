@@ -4,7 +4,7 @@ import ALCCard from '../ALCCard';
 import ItemTypes from '../ItemTypes';
 import {doArrayIntersect} from '../utils/doArrayIntersect';
 import Connector from '../ALCConnectors';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import ALCListSelector from '../ALCListSelector';
 
 import {Button, Header} from 'semantic-ui-react';
@@ -14,7 +14,7 @@ import {ALCPlaceholder, ListContainer, ListContent, HiddenDiv} from '../stylesCo
 
 //////////////////// INTERFACES
 
-interface IALCListProps extends WithNamespaces {
+interface IALCListProps {
     actions: IAllActionLists;
     moveCard: (id: string, isOver: boolean, to: number) => void;
     findCard: (id: string) => number;
@@ -51,9 +51,9 @@ function ALCList({
     cardOrder,
     onSelectorChange,
     currentActionListName,
-    onSave,
-    t
+    onSave
 }: IALCListProps) {
+    const {t} = useTranslation();
     const specificCardOrder = cardOrder[currentActionListName];
     const cards = actions[currentActionListName];
 
@@ -223,4 +223,4 @@ function ALCList({
     );
 }
 
-export default withNamespaces()(ALCList);
+export default ALCList;

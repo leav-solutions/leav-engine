@@ -4,6 +4,8 @@ import React from 'react';
 import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissionsView from './DefineTreePermissionsView';
 
+jest.mock('../../../hooks/useLang');
+
 describe('DefineTreePermissionsView', () => {
     test('Snapshot test', async () => {
         const mockTree = {

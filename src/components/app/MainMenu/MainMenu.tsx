@@ -1,10 +1,12 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import useUserData from '../../../hooks/useUserData';
 import AppMenu from '../AppMenu';
 
-function MainMenu({t}: WithNamespaces) {
+/* tslint:disable-next-line:variable-name */
+const MainMenu = (): JSX.Element => {
     const userData = useUserData();
+    const {t} = useTranslation();
 
     const menuItems = [
         {
@@ -30,6 +32,6 @@ function MainMenu({t}: WithNamespaces) {
         : [];
 
     return <AppMenu items={filteredItems} />;
-}
+};
 
-export default withNamespaces()(MainMenu);
+export default MainMenu;

@@ -8,8 +8,10 @@ import EditAttributeForm from './EditAttributeForm';
 jest.mock('../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr),
-    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr', 'fr'])
+    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr'])
 }));
+
+jest.mock('../../../hooks/useLang');
 
 describe('EditAttributeForm', () => {
     const attribute: GET_ATTRIBUTES_attributes_list = {

@@ -1,6 +1,6 @@
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
 import * as yup from 'yup';
 import useLang from '../../../hooks/useLang';
@@ -12,7 +12,7 @@ import LibrariesSelector from '../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 import TreesSelector from '../../trees/TreesSelector';
 
-interface IEditAttributeInfosFormProps extends WithNamespaces {
+interface IEditAttributeInfosFormProps {
     attribute: GET_ATTRIBUTES_attributes_list | null;
     onSubmit: (formData: any) => void;
     errors?: IFormError;
@@ -23,14 +23,15 @@ interface IEditAttributeInfosFormProps extends WithNamespaces {
 const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
 const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
-function EditAttributeInfosForm({
-    t,
+/* tslint:disable-next-line:variable-name */
+const EditAttributeInfosForm = ({
     errors,
     attribute,
     onSubmit,
     readOnly,
     onCheckIdExists
-}: IEditAttributeInfosFormProps) {
+}: IEditAttributeInfosFormProps): JSX.Element => {
+    const {t} = useTranslation();
     const defaultAttribute: GET_ATTRIBUTES_attributes_list = {
         id: '',
         system: false,
@@ -320,6 +321,6 @@ function EditAttributeInfosForm({
             />
         </>
     );
-}
+};
 
-export default withNamespaces()(EditAttributeInfosForm);
+export default EditAttributeInfosForm;

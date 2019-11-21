@@ -1,25 +1,27 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {NodeData} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
 import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import Loading from '../../shared/Loading';
 import TreeStructure from '../../trees/TreeStructure';
 
-interface IDefinePermissionsViewLoadTreeProps extends WithNamespaces {
+interface IDefinePermissionsViewLoadTreeProps {
     treeId: string;
     onClick: (nodeData: NodeData) => void;
     selectedNode: NodeData | null;
 }
 
-function DefinePermissionsViewLoadTree({
+/* tslint:disable-next-line:variable-name */
+const DefinePermissionsViewLoadTree = ({
     treeId,
     onClick,
-    selectedNode,
-    i18n,
-    t
-}: IDefinePermissionsViewLoadTreeProps): JSX.Element {
+    selectedNode
+}: IDefinePermissionsViewLoadTreeProps): JSX.Element => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     return (
         <TreesQuery query={getTreesQuery} variables={{id: treeId}}>
             {({loading, error, data}) => {
@@ -35,7 +37,7 @@ function DefinePermissionsViewLoadTree({
 
                 return (
                     <>
-                        <Header as="h4">{localizedLabel(treeData.label, i18n)}</Header>
+                        <Header as="h4">{localizedLabel(treeData.label, availableLanguages)}</Header>
                         <TreeStructure
                             key={treeData.id}
                             tree={treeData}
@@ -50,6 +52,6 @@ function DefinePermissionsViewLoadTree({
             }}
         </TreesQuery>
     );
-}
+};
 
-export default withNamespaces()(DefinePermissionsViewLoadTree);
+export default DefinePermissionsViewLoadTree;

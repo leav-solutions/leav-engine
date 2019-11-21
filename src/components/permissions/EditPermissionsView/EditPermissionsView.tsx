@@ -1,12 +1,12 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Icon, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_PERMISSIONS_heritPerm, GET_PERMISSIONS_perm} from '../../../_gqlTypes/GET_PERMISSIONS';
 import {SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PERMISSION';
 import PermissionSelector from '../PermissionSelector';
 
-interface IEditPermissionsViewProps extends WithNamespaces {
+interface IEditPermissionsViewProps {
     permissions: GET_PERMISSIONS_perm[];
     heritedPermissions: GET_PERMISSIONS_heritPerm[];
     onChange: (permToSave: SAVE_PERMISSION_savePermission_actions) => void;
@@ -33,16 +33,16 @@ const PermissionsHeader = styled.div`
     justify-content: space-between;
 `;
 
-function EditPermissionsView({
+/* tslint:disable-next-line:variable-name */
+const EditPermissionsView = ({
     permissions,
     heritedPermissions,
     onChange,
-    readOnly,
-    t
-}: IEditPermissionsViewProps): JSX.Element {
+    readOnly
+}: IEditPermissionsViewProps): JSX.Element => {
+    const {t} = useTranslation();
     const heritPermByName = heritedPermissions.reduce((heritPerms, p) => {
         heritPerms[p.name] = p.allowed;
-
         return heritPerms;
     }, {});
 
@@ -88,9 +88,10 @@ function EditPermissionsView({
             </Table.Body>
         </Table>
     );
-}
+};
+
 EditPermissionsView.defaultProps = {
     readOnly: false
 };
 
-export default withNamespaces()(EditPermissionsView);
+export default EditPermissionsView;

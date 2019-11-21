@@ -1,5 +1,4 @@
 import React from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
 import {NodeData, TreeNode} from 'react-sortable-tree';
 import {getTreeNodeKey} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes} from '../../../_gqlTypes/GET_LIBRARIES';
@@ -8,7 +7,7 @@ import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
 
-interface IDefineTreePermissionsViewProps extends WithNamespaces {
+interface IDefineTreePermissionsViewProps {
     treeAttribute: GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes;
     permissionType: PermissionTypes;
     applyTo: string;
@@ -16,13 +15,14 @@ interface IDefineTreePermissionsViewProps extends WithNamespaces {
     actions: PermissionsActions[];
 }
 
-function DefineTreePermissionsView({
+/* tslint:disable-next-line:variable-name */
+const DefineTreePermissionsView = ({
     treeAttribute: tree,
     permissionType,
     applyTo,
     readOnly,
     actions
-}: IDefineTreePermissionsViewProps): JSX.Element {
+}: IDefineTreePermissionsViewProps): JSX.Element => {
     const usersGroupsTreeId = 'users_groups';
     const [selectedTreeNode, setSelectedTreeNode] = React.useState<NodeData | null>(null);
     const [selectedGroupNode, setSelectedGroupNode] = React.useState<NodeData | null>(null);
@@ -80,9 +80,10 @@ function DefineTreePermissionsView({
     }
 
     return <ColumnsDisplay columnsNumber={3} columnsContent={cols} />;
-}
+};
+
 DefineTreePermissionsView.defaultProps = {
     readOnly: false
 };
 
-export default withNamespaces()(DefineTreePermissionsView);
+export default DefineTreePermissionsView;

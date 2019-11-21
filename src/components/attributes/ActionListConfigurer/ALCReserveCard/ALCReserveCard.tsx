@@ -2,12 +2,12 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useDrag} from 'react-dnd-cjs';
 import {Icon, Card, Button} from 'semantic-ui-react';
 import {IAction, IColorDic, IParamInput} from '../interfaces/interfaces';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import itemTypes from '../ItemTypes';
 import TypeTag from '../ALCTypeTag';
 
-interface IALCReserveCardProps extends WithNamespaces {
+interface IALCReserveCardProps {
     id: string;
     action: IAction;
     moveCard?: (id: string, isOver: boolean, to: number) => void;
@@ -34,10 +34,9 @@ function ALCReserveCard({
     removeActionFromList,
     setCurrentIndex,
     connectionState,
-    colorTypeDictionnary,
-    i18n,
-    t
+    colorTypeDictionnary
 }: IALCReserveCardProps): JSX.Element {
+    const {t} = useTranslation();
     const container = useRef(null);
     const [typesOpen, toggleTypes] = useState(false);
     const [internalWidth, setWidth] = useState(null);
@@ -149,4 +148,4 @@ function ALCReserveCard({
     );
 }
 
-export default withNamespaces()(ALCReserveCard);
+export default ALCReserveCard;

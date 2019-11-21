@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {RecordEdition} from '../../../_types/records';
@@ -7,12 +7,14 @@ import RecordCard from '../../shared/RecordCard';
 import EditRecordComp from '../EditRecord';
 import {IEditRecordProps} from '../EditRecord/EditRecord';
 
-interface IEditRecordModalProps extends IEditRecordProps, WithNamespaces {
+interface IEditRecordModalProps extends IEditRecordProps {
     open: boolean;
     onClose: (recordIdentity?: RecordIdentity_whoAmI) => void;
 }
 
-function EditRecordModal({open, recordId, library, version, onClose, t}: IEditRecordModalProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const EditRecordModal = ({open, recordId, library, version, onClose}: IEditRecordModalProps): JSX.Element => {
+    const {t} = useTranslation();
     const [recordIdentity, setRecordIdentity] = useState<RecordIdentity_whoAmI>();
     const [submitFuncRef, setSubmitFuncRef] = useState<RecordEdition.FuncRef | null>(null);
 
@@ -59,6 +61,6 @@ function EditRecordModal({open, recordId, library, version, onClose, t}: IEditRe
             </Modal.Actions>
         </Modal>
     );
-}
+};
 
-export default withNamespaces()(EditRecordModal);
+export default EditRecordModal;

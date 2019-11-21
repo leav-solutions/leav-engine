@@ -6,6 +6,8 @@ import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {Mockify} from '../../../_types//Mockify';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 
+jest.mock('../../../hooks/useLang');
+
 describe('DeleteTree', () => {
     test('Render button for system tree', async () => {
         const tree: Mockify<GET_TREES_trees_list> = {

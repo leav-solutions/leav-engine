@@ -4,6 +4,8 @@ import React from 'react';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import RecordCard from './RecordCard';
 
+jest.mock('../../../hooks/useLang');
+
 describe('RecordCard', () => {
     const mockRecord: RecordIdentity_whoAmI = {
         id: '12345',

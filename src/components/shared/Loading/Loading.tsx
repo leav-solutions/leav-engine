@@ -1,12 +1,14 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Dimmer, Loader} from 'semantic-ui-react';
 
-interface ILoadingProps extends WithNamespaces {
+interface ILoadingProps {
     withDimmer?: boolean;
 }
 
-function Loading({t, withDimmer}: ILoadingProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const Loading = ({withDimmer}: ILoadingProps): JSX.Element => {
+    const {t} = useTranslation();
     const loader = (
         <Loader active inline="centered">
             {t('admin.loading')}
@@ -20,10 +22,10 @@ function Loading({t, withDimmer}: ILoadingProps): JSX.Element {
     ) : (
         loader
     );
-}
+};
 
 Loading.defaultProps = {
     withDimmer: false
 };
 
-export default withNamespaces()(Loading);
+export default Loading;

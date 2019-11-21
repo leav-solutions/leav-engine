@@ -1,12 +1,13 @@
 import React from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Checkbox, Input, Table} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import Loading from '../../shared/Loading';
 import DeleteTree from '../DeleteTree';
 
-interface ITreesListProps extends WithNamespaces {
+interface ITreesListProps {
     trees: GET_TREES_trees_list[] | null;
     loading?: boolean;
     onRowClick: (tree: GET_TREES_trees_list) => void;
@@ -14,15 +15,10 @@ interface ITreesListProps extends WithNamespaces {
     filters?: any;
 }
 
-function TreesList({
-    trees,
-    t,
-    i18n: i18next,
-    loading,
-    filters,
-    onFiltersUpdate,
-    onRowClick
-}: ITreesListProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const TreesList = ({trees, loading, filters, onFiltersUpdate, onRowClick}: ITreesListProps): JSX.Element => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state
         if (d.type === 'checkbox' && filters.system === false && d.checked) {
@@ -86,7 +82,7 @@ function TreesList({
                 ) : (
                     trees &&
                     trees.map(tree => {
-                        const treeLabel = localizedLabel(tree.label, i18next);
+                        const treeLabel = localizedLabel(tree.label, availableLanguages);
                         const onClick = () => onRowClick(tree);
                         return (
                             <Table.Row key={tree.id} onClick={onClick}>
@@ -105,7 +101,7 @@ function TreesList({
             </Table.Body>
         </Table>
     );
-}
+};
 
 TreesList.defaultProps = {
     loading: false,
@@ -113,4 +109,4 @@ TreesList.defaultProps = {
     filters: {}
 };
 
-export default withNamespaces()(TreesList);
+export default TreesList;

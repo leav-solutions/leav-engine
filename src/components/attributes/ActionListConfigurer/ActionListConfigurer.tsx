@@ -1,5 +1,4 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import ALCContainer from './ALCContainer';
 import {useQuery} from '@apollo/react-hooks';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
@@ -12,11 +11,11 @@ import Loading from '../../shared/Loading';
 
 import {generateReserveActionFrom} from './utils/generatingFunction';
 
-interface IActionListConfigurerProps extends WithNamespaces {
+interface IActionListConfigurerProps {
     attribute: GET_ATTRIBUTES_attributes_list;
 }
 
-function ActionListConfigurer({attribute, i18n, t}: IActionListConfigurerProps): JSX.Element {
+function ActionListConfigurer({attribute}: IActionListConfigurerProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_AVAILABLE_ACTIONS, GET_ATTRIBUTES_attributes_list>(
         getAvailableActionsQuery
     );
@@ -28,7 +27,7 @@ function ActionListConfigurer({attribute, i18n, t}: IActionListConfigurerProps):
         return <p>Error: {error.message}</p>;
     }
     if (!data) {
-        return <></>
+        return <></>;
     }
 
     const actions: IReserveAction[] = [];
@@ -53,4 +52,4 @@ function ActionListConfigurer({attribute, i18n, t}: IActionListConfigurerProps):
     );
 }
 
-export default withNamespaces()(ActionListConfigurer);
+export default ActionListConfigurer;

@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import BinDragLayer from '../DragDrop/BinDragLayer';
 import {DndProvider} from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import ALCList from '../ALCList';
 import ALCReserve from '../ALCReserve';
 import {useQuery, useMutation} from '@apollo/react-hooks';
@@ -30,7 +29,7 @@ import {
 
 //////////////////// INTERFACES
 
-interface IALCContainerProps extends WithNamespaces {
+interface IALCContainerProps {
     availableActions: IReserveAction[] | null;
     attribute: any;
     inType: Array<string | null>;
@@ -39,7 +38,7 @@ interface IALCContainerProps extends WithNamespaces {
 
 //////////////////// COMPONENT
 
-function ALCContainer({availableActions = [], attribute, inType, outType, i18n, t}: IALCContainerProps): JSX.Element {
+function ALCContainer({availableActions = [], attribute, inType, outType}: IALCContainerProps): JSX.Element {
     // {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}}
     const [currentActionListName, setCurrentActionListName] = useState('saveValue');
 
@@ -270,4 +269,4 @@ function ALCContainer({availableActions = [], attribute, inType, outType, i18n, 
     );
 }
 
-export default withNamespaces()(ALCContainer);
+export default ALCContainer;

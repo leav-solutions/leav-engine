@@ -7,6 +7,8 @@ import {PermissionsRelation} from '../../../_gqlTypes/globalTypes';
 import {Mockify} from '../../../_types//Mockify';
 import EditLibraryPermissions from './EditLibraryPermissions';
 
+jest.mock('../../../hooks/useLang');
+
 describe('EditLibraryPermissions', () => {
     test('Hide relation if 1 tree selected', async () => {
         const lib: Mockify<GET_LIBRARIES_libraries_list> = {

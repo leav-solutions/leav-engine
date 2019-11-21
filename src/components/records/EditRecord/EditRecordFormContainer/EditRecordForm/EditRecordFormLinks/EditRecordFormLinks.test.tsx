@@ -15,6 +15,8 @@ jest.mock('./EditRecordFormLinksTreeElement', () => {
     };
 });
 
+jest.mock('../../../../../../hooks/useLang');
+
 describe('EditRecordFormLinks', () => {
     const linkValues = [
         {

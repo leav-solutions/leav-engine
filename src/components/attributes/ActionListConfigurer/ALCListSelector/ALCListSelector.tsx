@@ -1,5 +1,4 @@
 import React from 'react';
-// import styled from 'styled-components';
 import {Menu} from 'semantic-ui-react';
 
 interface IALCListSelectorProps {
@@ -27,12 +26,17 @@ function ALCListSelector({
         });
     }
 
-    // function handleCkick(e) {
-    //   return function doChangeSelectorTo(listName) {
-    //     changeSelectorTo(listName)
-    //   }
-    // }
+    const changeSelectorToSaveValue = () => {
+        changeSelectorTo('saveValue');
+    };
 
+    const changeSelectorToGetValue = () => {
+        changeSelectorTo('getValue');
+    };
+
+    const changeSelectorToDeleteValue = () => {
+        changeSelectorTo('deleteValue');
+    };
 
     return (
         <Menu pointing secondary>
@@ -40,19 +44,19 @@ function ALCListSelector({
                 name="saveValue"
                 style={listsWithConnectionsFailures.includes('saveValue') ? disconnectedStyle : {}}
                 active={currentActionListName === 'saveValue'}
-                onClick={() => changeSelectorTo('saveValue')}
+                onClick={changeSelectorToSaveValue}
             />
             <Menu.Item
                 name="getValue"
                 style={listsWithConnectionsFailures.includes('getValue') ? disconnectedStyle : {}}
                 active={currentActionListName === 'getValue'}
-                onClick={() => changeSelectorTo('getValue')}
+                onClick={changeSelectorToGetValue}
             />
             <Menu.Item
                 name="deleteValue"
                 style={listsWithConnectionsFailures.includes('deleteValue') ? disconnectedStyle : {}}
                 active={currentActionListName === 'deleteValue'}
-                onClick={() => changeSelectorTo('deleteValue')}
+                onClick={changeSelectorToDeleteValue}
             />
         </Menu>
     );

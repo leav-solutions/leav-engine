@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Confirm, Icon, Menu, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {ILinkValue} from '../../../../../../../_types/records';
 import RecordCard from '../../../../../../shared/RecordCard';
 import EditRecordModal from '../../../../../EditRecordModal';
 
-interface IEditRecordFormLinksElementProps extends WithNamespaces {
+interface IEditRecordFormLinksElementProps {
     value: ILinkValue;
     onDeleteLink: (value: ILinkValue) => void;
     readOnly?: boolean;
@@ -33,12 +33,13 @@ const HoverMenu = styled(Menu)`
     }
 `;
 
-function EditRecordFormLinksElement({
+/* tslint:disable-next-line:variable-name */
+const EditRecordFormLinksElement = ({
     value,
     onDeleteLink,
-    readOnly = false,
-    t
-}: IEditRecordFormLinksElementProps): JSX.Element {
+    readOnly = false
+}: IEditRecordFormLinksElementProps): JSX.Element => {
+    const {t} = useTranslation();
     const [isHovering, setIsHovering] = useState<boolean>(false);
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -107,6 +108,6 @@ function EditRecordFormLinksElement({
             )}
         </>
     );
-}
+};
 
-export default withNamespaces()(EditRecordFormLinksElement);
+export default EditRecordFormLinksElement;

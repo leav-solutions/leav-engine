@@ -7,6 +7,8 @@ import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
 import {mockTree} from '../../../__mocks__/trees';
 import TreeStructure from './TreeStructure';
 
+jest.mock('../../../hooks/useLang');
+
 const fragmentMatcher = new IntrospectionFragmentMatcher({
     introspectionQueryResultData: {
         __schema: {
