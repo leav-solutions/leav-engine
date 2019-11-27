@@ -9,6 +9,8 @@ jest.mock('react-sortable-tree', () => {
     };
 });
 
+jest.mock('../../../hooks/useLang');
+
 describe('TreeStructureView', () => {
     test('Render loading if no data', async () => {
         const onTreeChange = jest.fn();

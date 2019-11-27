@@ -1,5 +1,4 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {getPermissionsQuery, PermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
 import {SavePermissionsMutation, savePermissionsQuery} from '../../../queries/permissions/savePermissionMutation';
 import {GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
@@ -7,12 +6,13 @@ import {SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PE
 import Loading from '../../shared/Loading';
 import EditPermissionsView from '../EditPermissionsView';
 
-interface IEditPermissionsProps extends WithNamespaces {
+interface IEditPermissionsProps {
     permParams: GET_PERMISSIONSVariables;
     readOnly?: boolean;
 }
 
-function EditPermissions({permParams, readOnly, t}: IEditPermissionsProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const EditPermissions = ({permParams, readOnly}: IEditPermissionsProps): JSX.Element => {
     return (
         // Fetch policy is set to 'network only' to bypass the cache as it would be very challenging
         // to maintain the heritage values in the cache.
@@ -59,9 +59,9 @@ function EditPermissions({permParams, readOnly, t}: IEditPermissionsProps): JSX.
             }}
         </PermissionsQuery>
     );
-}
+};
 EditPermissions.defaultProps = {
     readOnly: false
 };
 
-export default withNamespaces()(EditPermissions);
+export default EditPermissions;

@@ -1,14 +1,15 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {AttributeType, PermissionsActions, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineLibPermissionsView from '../../permissions/DefineLibPermissionsView';
 import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
 
-interface IEditLibraryPermissionsProps extends WithNamespaces {
+interface IEditLibraryPermissionsProps {
     library: GET_LIBRARIES_libraries_list;
     onSubmitSettings: (formData: any) => void;
     readOnly: boolean;
@@ -36,13 +37,10 @@ const actions = [
     PermissionsActions.delete
 ];
 
-function EditLibraryPermissions({
-    library,
-    onSubmitSettings,
-    readOnly,
-    t,
-    i18n
-}: IEditLibraryPermissionsProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const EditLibraryPermissions = ({library, onSubmitSettings, readOnly}: IEditLibraryPermissionsProps): JSX.Element => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const defaultPermsConf = {permissionTreeAttributes: [], relation: PermissionsRelation.and};
     const [settingsExpanded, setSettingsExpanded] = React.useState(false);
     const [libPermsConf, setlibPermsConf] = React.useState<IEditLibraryPermissionsState>(
@@ -58,14 +56,13 @@ function EditLibraryPermissions({
     const _handleSubmit = (formData: any) => {
         onSubmitSettings({id: library.id, permissions_conf: libPermsConf});
     };
-
     const libTreeAttributesOptions = library.attributes
         ? library.attributes
               .filter(a => a.type === AttributeType.tree)
               .map(a => ({
                   key: a.id,
                   value: a.id,
-                  text: localizedLabel(a.label, i18n)
+                  text: localizedLabel(a.label, availableLanguages)
               }))
         : [];
 
@@ -76,7 +73,7 @@ function EditLibraryPermissions({
     const permsConf = library.permissions_conf || defaultPermsConf;
     const panes = permsConf.permissionTreeAttributes.map(a => ({
         key: a.id,
-        menuItem: localizedLabel(a.label, i18n),
+        menuItem: localizedLabel(a.label, availableLanguages),
         render: () => (
             <Tab.Pane key={a.id} className="grow flex-col height100">
                 {a.linked_tree ? (
@@ -165,5 +162,5 @@ function EditLibraryPermissions({
             <Tab panes={panes} className="grow flex-col height100" />
         </div>
     );
-}
-export default withNamespaces()(EditLibraryPermissions);
+};
+export default EditLibraryPermissions;

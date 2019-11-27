@@ -15,7 +15,8 @@ import {
     localizedLabel,
     permsArrayToObject,
     stringToColor,
-    versionObjToGraphql
+    versionObjToGraphql,
+    getSysTranslationQueryLanguage
 } from './utils';
 
 describe('utils', () => {
@@ -28,27 +29,32 @@ describe('utils', () => {
         };
 
         test('Return user lang label', async () => {
-            const label = localizedLabel({fr: 'LabelFR', en: 'LabelEN'}, mockI18n as i18n);
+            const availableLanguages = getSysTranslationQueryLanguage(mockI18n as i18n);
+            const label = localizedLabel({fr: 'LabelFR', en: 'LabelEN'}, availableLanguages);
             expect(label).toEqual('LabelFR');
         });
 
         test('Return fallback lang label when user lang empty', async () => {
-            const label = localizedLabel({fr: '', en: 'LabelEN'}, mockI18n as i18n);
+            const availableLanguages = getSysTranslationQueryLanguage(mockI18n as i18n);
+            const label = localizedLabel({fr: '', en: 'LabelEN'}, availableLanguages);
             expect(label).toEqual('LabelEN');
         });
 
         test('Return fallback lang label when user lang absent', async () => {
-            const label = localizedLabel({en: 'LabelEN'}, mockI18n as i18n);
+            const availableLanguages = getSysTranslationQueryLanguage(mockI18n as i18n);
+            const label = localizedLabel({en: 'LabelEN'}, availableLanguages);
             expect(label).toEqual('LabelEN');
         });
 
         test('Return first label found if nothing matches language settings', async () => {
-            const label = localizedLabel({es: 'LabelES', ru: 'LabelRU'}, mockI18n as i18n);
+            const availableLanguages = getSysTranslationQueryLanguage(mockI18n as i18n);
+            const label = localizedLabel({es: 'LabelES', ru: 'LabelRU'}, availableLanguages);
             expect(label).toEqual('LabelES');
         });
 
         test('Return empty string if no labels', async () => {
-            const label = localizedLabel(null, mockI18n as i18n);
+            const availableLanguages = getSysTranslationQueryLanguage(mockI18n as i18n);
+            const label = localizedLabel(null, availableLanguages);
             expect(label).toEqual('');
         });
     });

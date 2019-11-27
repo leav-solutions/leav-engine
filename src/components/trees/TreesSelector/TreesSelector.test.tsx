@@ -5,6 +5,8 @@ import {act} from 'react-dom/test-utils';
 import TreesSelector from '.';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 
+jest.mock('../../../hooks/useLang');
+
 describe('TreesSelector', () => {
     test('Snapshot test', async () => {
         const mocks = [

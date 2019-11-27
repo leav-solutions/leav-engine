@@ -1,5 +1,5 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';
 
@@ -8,11 +8,14 @@ export interface IAppMenuItem {
     label: string;
 }
 
-export interface IAppMenuProps extends WithNamespaces {
+export interface IAppMenuProps {
     items: IAppMenuItem[];
 }
 
-function AppMenu({items, t}: IAppMenuProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const AppMenu = (props: IAppMenuProps): JSX.Element => {
+    const {items} = props;
+    const {t} = useTranslation();
     return (
         <Menu vertical fluid inverted>
             <Menu.Item header position="left">
@@ -29,6 +32,6 @@ function AppMenu({items, t}: IAppMenuProps): JSX.Element {
             </Menu.Menu>
         </Menu>
     );
-}
+};
 
-export default withNamespaces()(AppMenu);
+export default AppMenu;

@@ -1,21 +1,17 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd-cjs';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {getEmptyImage} from 'react-dnd-html5-backend';
-import itemTypes from '../ItemTypes';
-import Param from './ActionContent/Param';
-
+import {useTranslation} from 'react-i18next';
+import {Button, Card, Icon} from 'semantic-ui-react';
 import Connector from '../ALCConnectors';
-
-import {ActionRow} from '../stylesComps';
-
 import {IAction, IColorDic, IParamInput} from '../interfaces/interfaces';
-
-import {Icon, Card, Button} from 'semantic-ui-react';
+import itemTypes from '../ItemTypes';
+import {ActionRow} from '../stylesComps';
+import Param from './ActionContent/Param';
 
 //////////////////// INTERFACES
 
-export interface ICardProps extends WithNamespaces {
+export interface ICardProps {
     id: string;
     action: IAction;
     moveCard?: (id: string, isOver: boolean, to: number) => void;
@@ -47,10 +43,9 @@ function ALCCard({
     colorTypeDictionnary,
     changeParam,
     index,
-    dragging,
-    i18n,
-    t
+    dragging
 }: ICardProps) {
+    const {t} = useTranslation();
     const container = useRef(null);
     const [internalWidth, setWidth] = useState(null);
     const [paramOpen, toggleParams] = useState(false);
@@ -226,4 +221,4 @@ function ALCCard({
     return <div ref={container}>{renderListCard(action)}</div>;
 }
 
-export default withNamespaces()(ALCCard);
+export default ALCCard;

@@ -36,13 +36,11 @@ const mockI18n = {
 
 module.exports = {
     // this mock makes sure any components using the translate HoC receive the t function as a prop
-    withNamespaces: () => Component => {
-        Component.defaultProps = {
-            ...Component.defaultProps,
+    useTranslation: () => {
+        return {
             t: (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`,
             i18n: mockI18n
-        };
-        return Component;
+        }
     },
     Trans: ({children}) => renderNodes(children),
     I18n: ({children}) =>

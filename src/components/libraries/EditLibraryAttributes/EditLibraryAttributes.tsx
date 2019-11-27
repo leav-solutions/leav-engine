@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
@@ -14,12 +14,14 @@ import AttributesSelectionModal from '../../attributes/AttributesSelectionModal'
 import EditAttribute from '../../attributes/EditAttribute';
 import UnlinkLibAttribute from '../UnlinkLibAttribute';
 
-interface IEditLibraryAttributesProps extends WithNamespaces {
+interface IEditLibraryAttributesProps {
     library: GET_LIBRARIES_libraries_list | null;
     readOnly: boolean;
 }
 
-function EditLibraryAttributes({library, readOnly, t}: IEditLibraryAttributesProps) {
+/* tslint:disable-next-line:variable-name */
+const EditLibraryAttributes = ({library, readOnly}: IEditLibraryAttributesProps): JSX.Element | null => {
+    const {t} = useTranslation();
     const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
     const onRowClick = () => null;
@@ -40,6 +42,7 @@ function EditLibraryAttributes({library, readOnly, t}: IEditLibraryAttributesPro
     const _closeAddExistingAttrModal = () => {
         setShowAddExistingAttrModal(false);
     };
+
     return (
         library && (
             <SaveLibAttributesMutation mutation={saveLibAttributesMutation}>
@@ -100,12 +103,14 @@ function EditLibraryAttributes({library, readOnly, t}: IEditLibraryAttributesPro
                                     onRowClick={onRowClick}
                                     withFilters={false}
                                 >
-                                    {!readOnly && (
+                                    {!readOnly ? (
                                         <UnlinkLibAttribute
                                             library={library}
                                             key="unlink_attr_btn"
                                             onUnlink={_onClickUnlink}
                                         />
+                                    ) : (
+                                        <></>
                                     )}
                                 </AttributesList>
 
@@ -118,13 +123,15 @@ function EditLibraryAttributes({library, readOnly, t}: IEditLibraryAttributesPro
                                     </Modal>
                                 )}
 
-                                {library.attributes && (
+                                {library.attributes ? (
                                     <AttributesSelectionModal
                                         openModal={showAddExistingAttrModal}
                                         onClose={_closeAddExistingAttrModal}
                                         onSubmit={onExistingAttrAdded}
                                         selection={library.attributes.map(a => a.id)}
                                     />
+                                ) : (
+                                    <></>
                                 )}
                             </div>
                         )
@@ -133,6 +140,6 @@ function EditLibraryAttributes({library, readOnly, t}: IEditLibraryAttributesPro
             </SaveLibAttributesMutation>
         )
     );
-}
+};
 
-export default withNamespaces()(EditLibraryAttributes);
+export default EditLibraryAttributes;

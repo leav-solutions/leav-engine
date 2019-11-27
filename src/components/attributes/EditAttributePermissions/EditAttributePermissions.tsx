@@ -1,15 +1,16 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, PermissionsActions, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
 import Loading from '../../shared/Loading';
 
-interface IEditAttributePermissionsProps extends WithNamespaces {
+interface IEditAttributePermissionsProps {
     attribute: GET_ATTRIBUTES_attributes_list;
     onSubmitSettings: (formData: any) => void;
     readOnly: boolean;
@@ -22,13 +23,14 @@ const actions = [
     PermissionsActions.delete_value
 ];
 
-function EditAttributePermissions({
+/* tslint:disable-next-line:variable-name */
+const EditAttributePermissions = ({
     attribute,
     onSubmitSettings,
-    readOnly,
-    i18n,
-    t
-}: IEditAttributePermissionsProps): JSX.Element {
+    readOnly
+}: IEditAttributePermissionsProps): JSX.Element => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const [permissionTreeAttributes, setPermissionTreeAttributes] = React.useState<string[]>(
         attribute.permissions_conf ? attribute.permissions_conf.permissionTreeAttributes.map(a => a.id) : []
     );
@@ -68,18 +70,17 @@ function EditAttributePermissions({
                 }
 
                 const treeAttributes = data && data.attributes ? data.attributes.list : [];
-
                 const treeAttributesOptions = treeAttributes.map(a => ({
                     key: a.id,
                     value: a.id,
-                    text: localizedLabel(a.label, i18n)
+                    text: localizedLabel(a.label, availableLanguages)
                 }));
 
                 const panes = treeAttributes
                     .filter(a => permissionTreeAttributes.indexOf(a.id) !== -1)
                     .map(a => ({
                         key: a.id,
-                        menuItem: localizedLabel(a.label, i18n),
+                        menuItem: localizedLabel(a.label, availableLanguages),
                         render: () => (
                             <Tab.Pane key={a.id} className="grow flex-col height100">
                                 {a.linked_tree ? (
@@ -161,6 +162,6 @@ function EditAttributePermissions({
             }}
         </AttributesQuery>
     );
-}
+};
 
-export default withNamespaces()(EditAttributePermissions);
+export default EditAttributePermissions;

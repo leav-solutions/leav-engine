@@ -1,8 +1,8 @@
-import React from 'react';
 import {render} from 'enzyme';
-import ALCReserveCard from './ALCReserveCard';
+import React from 'react';
 import {DndProvider} from 'react-dnd-cjs';
-import TestBackend from 'react-dnd-test-backend-cjs'
+import TestBackend from 'react-dnd-test-backend-cjs';
+import ALCReserveCard from './ALCReserveCard';
 
 function placeholder() {
     return undefined;
@@ -33,7 +33,7 @@ describe('ALCReserveCard', () => {
     test('Snapshot test', async () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
-                <ALCReserveCard 
+                <ALCReserveCard
                     id={'0'}
                     action={{
                         id: 0,
@@ -49,7 +49,7 @@ describe('ALCReserveCard', () => {
                     colorTypeDictionnary={{int: []}}
                 />
             </DndProvider>
-        ); 
+        );
 
         expect(comp).toMatchSnapshot();
     });

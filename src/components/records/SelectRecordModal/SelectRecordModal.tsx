@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/react-hooks';
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBRARIES';
@@ -8,7 +8,7 @@ import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import Loading from '../../shared/Loading';
 import SelectRecord from '../SelectRecord';
 
-interface IEditRecordFormSelectRecordProps extends WithNamespaces {
+interface IEditRecordFormSelectRecordProps {
     open: boolean;
     library: string;
     onSelect: (record: RecordIdentity_whoAmI) => void;
@@ -16,13 +16,14 @@ interface IEditRecordFormSelectRecordProps extends WithNamespaces {
 }
 
 // TODO: refactor this when navigtor is available
-function EditRecordFormSelectRecord({
+/* tslint:disable-next-line:variable-name */
+const EditRecordFormSelectRecord = ({
     library,
     open,
     onClose,
-    t,
     onSelect
-}: IEditRecordFormSelectRecordProps): JSX.Element {
+}: IEditRecordFormSelectRecordProps): JSX.Element => {
+    const {t} = useTranslation();
     // TODO: handle error
     const {data, loading, error} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
         variables: {id: library}
@@ -50,6 +51,6 @@ function EditRecordFormSelectRecord({
             </Modal.Actions>
         </Modal>
     );
-}
+};
 
-export default withNamespaces()(EditRecordFormSelectRecord);
+export default EditRecordFormSelectRecord;

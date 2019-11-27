@@ -2,7 +2,6 @@ import {useLazyQuery, useMutation, useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import {i18n} from 'i18next';
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
@@ -12,13 +11,14 @@ import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditLibraryForm from '../EditLibraryForm';
 
-interface IEditLibraryProps extends WithNamespaces {
+interface IEditLibraryProps {
     match: any;
     history: History;
     i18n: i18n;
 }
 
-function EditLibrary({match, history}: IEditLibraryProps) {
+/* tslint:disable-next-line:variable-name */
+const EditLibrary = ({match, history}: IEditLibraryProps): JSX.Element => {
     const libraryId = match.params.id;
     const {lang} = useLang();
     const userData = useUserData();
@@ -113,6 +113,6 @@ function EditLibrary({match, history}: IEditLibraryProps) {
     }
 
     return _getEditLibraryForm(data.libraries.list[0]);
-}
+};
 
-export default withNamespaces()(EditLibrary);
+export default EditLibrary;

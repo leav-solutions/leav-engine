@@ -1,72 +1,58 @@
-import {TranslationFunction} from 'i18next';
-import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Confirm} from 'semantic-ui-react';
 
-interface IConfirmedButtonProps extends WithNamespaces {
+interface IConfirmedButtonProps {
     actionButton?: React.ReactElement<any>;
     action: (param?: any) => void;
     confirmMessage: string;
-    t: TranslationFunction;
     children: JSX.Element;
 }
 
-interface IConfirmedButtonState {
-    showConfirm: boolean;
-}
+/* tslint:disable-next-line:variable-name */
+const ConfirmedButton = (props: IConfirmedButtonProps): JSX.Element => {
+    const {confirmMessage, children} = props;
+    const {t} = useTranslation();
+    const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
-class ConfirmedButton extends React.Component<IConfirmedButtonProps, IConfirmedButtonState> {
-    constructor(props: IConfirmedButtonProps) {
-        super(props);
-
-        this.state = {
-            showConfirm: false
-        };
-    }
-
-    public render() {
-        const {t, confirmMessage, children} = this.props;
-        const {showConfirm} = this.state;
-
-        const clickableButton = React.cloneElement(children, {onClick: this._openConfirm});
-
-        return (
-            <div onClick={this._disableClick}>
-                {clickableButton}
-                <Confirm
-                    open={showConfirm}
-                    content={confirmMessage}
-                    onCancel={this._closeConfirm}
-                    onConfirm={this._runAction}
-                    cancelButton={t('admin.cancel')}
-                    closeOnDocumentClick={false}
-                    closeOnDimmerClick={false}
-                />
-            </div>
-        );
-    }
-
-    private _disableClick = (e: React.SyntheticEvent) => {
+    const _disableClick = (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
-    }
+    };
 
-    private _openConfirm = (e: React.SyntheticEvent) => {
+    const _openConfirm = (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        this.setState({showConfirm: true});
-    }
+        setShowConfirm(true);
+    };
 
-    private _closeConfirm = (e: React.SyntheticEvent) => {
+    const _closeConfirm = (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        this.setState({showConfirm: false});
-    }
+        setShowConfirm(false);
+    };
 
-    private _runAction = (e: React.SyntheticEvent) => {
-        this._closeConfirm(e);
-        this.props.action();
-    }
-}
+    const _runAction = (e: React.SyntheticEvent) => {
+        _closeConfirm(e);
+        props.action();
+    };
 
-export default withNamespaces()(ConfirmedButton);
+    const clickableButton = React.cloneElement(children, {onClick: _openConfirm});
+
+    return (
+        <div onClick={_disableClick}>
+            {clickableButton}
+            <Confirm
+                open={showConfirm}
+                content={confirmMessage}
+                onCancel={_closeConfirm}
+                onConfirm={_runAction}
+                cancelButton={t('admin.cancel')}
+                closeOnDocumentClick={false}
+                closeOnDimmerClick={false}
+            />
+        </div>
+    );
+};
+
+export default ConfirmedButton;

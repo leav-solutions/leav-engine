@@ -1,6 +1,6 @@
 import {History} from 'history';
 import React, {useState} from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
@@ -11,11 +11,13 @@ import {GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
 
-interface ITreesProps extends WithNamespaces {
+interface ITreesProps {
     history: History;
 }
 
-function Trees({history, t}: ITreesProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const Trees = ({history}: ITreesProps): JSX.Element => {
+    const {t} = useTranslation();
     const {lang} = useLang();
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
     const userData = useUserData();
@@ -73,6 +75,6 @@ function Trees({history, t}: ITreesProps): JSX.Element {
             </TreesQuery>
         </>
     );
-}
+};
 
-export default withNamespaces()(Trees);
+export default Trees;

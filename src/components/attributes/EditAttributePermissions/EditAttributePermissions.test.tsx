@@ -7,7 +7,8 @@ import EditAttributePermissions from '.';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {AttributeType, PermissionsRelation} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple, mockAttrTree} from '../../../__mocks__/attributes';
-import {async} from 'q';
+
+jest.mock('../../../hooks/useLang');
 
 describe('EditAttributePermissions', () => {
     const mocks = [

@@ -1,15 +1,16 @@
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
+import useLang from '../../../hooks/useLang';
 import {formatIDString, getFieldError, localizedLabel} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {ErrorTypes, IFormError} from '../../../_types/errors';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 
-interface IEditLibraryInfosFormProps extends WithNamespaces {
+interface IEditLibraryInfosFormProps {
     library: GET_LIBRARIES_libraries_list | null;
     onSubmit: (formData: any) => void;
     readonly: boolean;
@@ -28,15 +29,16 @@ const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAIL
 const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
 // TODO: add validation, handle lang, getfielderror on attribute
-function EditLibraryInfosForm({
+/* tslint:disable-next-line:variable-name */
+const EditLibraryInfosForm = ({
     library,
     onSubmit,
     readonly,
-    t,
-    i18n,
     errors,
     onCheckIdExists
-}: IEditLibraryInfosFormProps) {
+}: IEditLibraryInfosFormProps): JSX.Element => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const existingLib = library !== null;
 
     const defaultLibrary: LibraryFormValues = {
@@ -56,12 +58,11 @@ function EditLibraryInfosForm({
     };
 
     const initialValues: LibraryFormValues = library === null ? defaultLibrary : library;
-
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
               key: a.id,
               value: a.id,
-              text: localizedLabel(a.label, i18n) || a.id
+              text: localizedLabel(a.label, availableLanguages) || a.id
           }))
         : [];
     libAttributesOptions.unshift({key: '', value: '', text: ''});
@@ -209,6 +210,6 @@ function EditLibraryInfosForm({
             validationSchema={validationSchema}
         />
     );
-}
+};
 
-export default withNamespaces()(EditLibraryInfosForm);
+export default EditLibraryInfosForm;

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-
+import React, {useState, Suspense} from 'react';
+// import Loader from '../Loading';
 import App from '../../app/App';
 import Login from '../Login';
 
@@ -29,9 +29,17 @@ function AuthHandler({url, storage = window.sessionStorage}: IAuthHandlerProps):
     };
 
     if (token) {
-        return <App token={token} onTokenInvalid={deleteToken} />;
+        return (
+            <Suspense fallback={'Loader'}>
+                <App token={token} onTokenInvalid={deleteToken} />
+            </Suspense>
+        );
     } else {
-        return <Login onSuccess={recordToken} message={internalMessage} url={url} />;
+        return (
+            <Suspense fallback={'Loader'}>
+                <Login onSuccess={recordToken} message={internalMessage} url={url} />
+            </Suspense>
+        );
     }
 }
 

@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Confirm, Dropdown, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {RecordIdentity_whoAmI} from '../../../../../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../../../../../../shared/RecordCard';
 import EditRecordModal from '../../../../../../EditRecordModal';
 
-interface IPathPartProps extends WithNamespaces {
+interface IPathPartProps {
     record: RecordIdentity_whoAmI;
     deletable?: boolean;
     onDelete?: (record: RecordIdentity_whoAmI) => void;
@@ -28,7 +28,9 @@ const HoverDropdown = styled(Dropdown)`
     }
 `;
 
-function PathPart({record, deletable = false, onDelete, t}: IPathPartProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const PathPart = ({record, deletable = false, onDelete}: IPathPartProps): JSX.Element => {
+    const {t} = useTranslation();
     const [isHovering, setIsHovering] = useState<boolean>(false);
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
     const [showEditRecordModal, setShowEditRecordModal] = useState<boolean>(false);
@@ -101,6 +103,6 @@ function PathPart({record, deletable = false, onDelete, t}: IPathPartProps): JSX
             )}
         </>
     );
-}
+};
 
-export default withNamespaces()(PathPart);
+export default PathPart;

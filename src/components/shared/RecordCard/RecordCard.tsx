@@ -1,11 +1,11 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import RecordPreview from '../RecordPreview';
 
-interface IRecordCardProps extends WithNamespaces {
+interface IRecordCardProps {
     record: RecordIdentity_whoAmI;
     style?: CSSObject;
 }
@@ -45,7 +45,9 @@ const LibLabel = styled.div`
 `;
 /* tslint:enable:variable-name */
 
-function RecordCard({record, style, i18n}: IRecordCardProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const RecordCard = ({record, style}: IRecordCardProps): JSX.Element => {
+    const availableLanguages = useLang().lang;
     return (
         <Wrapper recordColor={record.color} style={style} className="ui fluid">
             <PreviewWrapper className="ui">
@@ -53,10 +55,10 @@ function RecordCard({record, style, i18n}: IRecordCardProps): JSX.Element {
             </PreviewWrapper>
             <CardPart className="ui">
                 <RecordLabel>{record.label || record.id}</RecordLabel>
-                <LibLabel>{localizedLabel(record.library.label, i18n) || record.library.id}</LibLabel>
+                <LibLabel>{localizedLabel(record.library.label, availableLanguages) || record.library.id}</LibLabel>
             </CardPart>
         </Wrapper>
     );
-}
+};
 
-export default withNamespaces()(RecordCard);
+export default RecordCard;

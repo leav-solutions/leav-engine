@@ -1,7 +1,6 @@
 import {useLazyQuery, useMutation, useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import React from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {saveTreeQuery} from '../../../queries/trees/saveTreeMutation';
@@ -10,12 +9,13 @@ import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditTreeForm from '../EditTreeForm';
 
-interface IEditTreeProps extends WithNamespaces {
+interface IEditTreeProps {
     match: any;
     history: History;
 }
 
-function EditTree({match, history}: IEditTreeProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const EditTree = ({match, history}: IEditTreeProps): JSX.Element => {
     const treeId = match.params.id;
     const userData = useUserData();
 
@@ -80,5 +80,5 @@ function EditTree({match, history}: IEditTreeProps): JSX.Element {
     }
 
     return _getEditTreeForm(data.trees.list[0]);
-}
-export default withNamespaces()(EditTree);
+};
+export default EditTree;

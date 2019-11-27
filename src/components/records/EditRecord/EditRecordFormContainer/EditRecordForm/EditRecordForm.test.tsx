@@ -10,6 +10,8 @@ jest.mock('./EditRecordFormLinks', () => {
     };
 });
 
+jest.mock('../../../../../hooks/useLang');
+
 describe('EditRecordForm', () => {
     const onSave = jest.fn();
     const recordData = {

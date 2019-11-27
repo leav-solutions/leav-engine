@@ -1,13 +1,13 @@
 import React from 'react';
-import ALCCard from '../ALCReserveCard';
+import {useTranslation} from 'react-i18next';
 import {Header} from 'semantic-ui-react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
-import {IReserveAction, IColorDic, IAction} from '../interfaces/interfaces';
+import ALCCard from '../ALCReserveCard';
+import {IAction, IColorDic, IReserveAction} from '../interfaces/interfaces';
 import {AvailableActionsContainer} from '../stylesComps';
 
 //////////////////// INTERFACES
 
-interface IALCReserveProps extends WithNamespaces {
+interface IALCReserveProps {
     actions: IReserveAction[] | null;
     setCurrentIndex: (index: number) => void;
     colorTypeDictionnary: IColorDic;
@@ -16,13 +16,8 @@ interface IALCReserveProps extends WithNamespaces {
 
 //////////////////// COMPONENT
 
-function ALCReserve({
-    actions,
-    setCurrentIndex,
-    colorTypeDictionnary,
-    addActionToList,
-    t
-}: IALCReserveProps): JSX.Element {
+function ALCReserve({actions, setCurrentIndex, colorTypeDictionnary, addActionToList}: IALCReserveProps): JSX.Element {
+    const {t} = useTranslation();
     //////////////////// RENDER
 
     const renderActions = (action: IReserveAction, i: number) => {
@@ -53,4 +48,4 @@ function ALCReserve({
     );
 }
 
-export default withNamespaces()(ALCReserve);
+export default ALCReserve;

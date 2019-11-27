@@ -1,7 +1,6 @@
 import {ApolloConsumer} from '@apollo/react-common';
 import {ApolloClient} from 'apollo-client';
 import React, {useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {
     addNodeUnderParent,
     changeNodeAtPath,
@@ -31,7 +30,7 @@ import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../
 import RecordCard from '../../shared/RecordCard';
 import TreeStructureView from '../TreeStructureView';
 
-interface ITreeStructureProps extends WithNamespaces {
+interface ITreeStructureProps {
     tree: GET_TREES_trees_list;
     readOnly?: boolean;
     onClickNode?: (nodeData: NodeData) => void;
@@ -72,7 +71,8 @@ const RootElem = styled.div`
     justify-content: center;
 `;
 
-function TreeStructure({tree, readOnly, onClickNode, selection, withFakeRoot, fakeRootLabel, t}: ITreeStructureProps) {
+/* tslint:disable-next-line:variable-name */
+const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fakeRootLabel}: ITreeStructureProps) => {
     const fakeRootData = [
         {
             record: {
@@ -367,6 +367,6 @@ function TreeStructure({tree, readOnly, onClickNode, selection, withFakeRoot, fa
             }}
         </ApolloConsumer>
     );
-}
+};
 
-export default withNamespaces()(TreeStructure);
+export default TreeStructure;

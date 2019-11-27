@@ -6,6 +6,8 @@ import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import AttributesList from './AttributesList';
 
+jest.mock('../../../hooks/useLang');
+
 describe('AttributesList', () => {
     const attributes: GET_ATTRIBUTES_attributes_list[] = [
         {
@@ -50,12 +52,12 @@ describe('AttributesList', () => {
                     attributes={attributes}
                     onRowClick={onRowClick}
                     onFiltersUpdate={onFiltersUpdate}
+                    filters={['test', 'test2']}
                 />
             </MockedProvider>
         );
 
         const attrListComp = comp.find('AttributesList').shallow();
-
         expect(attrListComp.find('TableBody TableRow').length).toEqual(3);
         expect(attrListComp.find('TableRow.filters').length).toEqual(1);
     });

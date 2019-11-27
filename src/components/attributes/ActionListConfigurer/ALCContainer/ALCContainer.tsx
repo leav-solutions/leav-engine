@@ -1,36 +1,32 @@
-import React, {useState, useEffect} from 'react';
-import BinDragLayer from '../DragDrop/BinDragLayer';
+import {useMutation, useQuery} from '@apollo/react-hooks';
+import {cloneDeep} from 'lodash';
+import React, {useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
-import ALCList from '../ALCList';
-import ALCReserve from '../ALCReserve';
-import {useQuery, useMutation} from '@apollo/react-hooks';
-import Loading from '../../../shared/Loading';
-import {cloneDeep} from 'lodash';
-
 import {getActionListQuery} from '../../../../queries/attributes/getActionListQuery';
 import {saveAttributeActionsListMutation} from '../../../../queries/attributes/saveAttributeActionsListMutation';
 import {GET_ACTIONS_LIST_QUERY} from '../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
-
-import {actionListNames, getCurrentList, getCurrentListOrder, getColorDictionnary} from '../utils/actionsManipulations';
-import {ExternalContainer, ReserveContainer, ListsContainer} from '../stylesComps';
-
+import Loading from '../../../shared/Loading';
+import ALCList from '../ALCList';
+import ALCReserve from '../ALCReserve';
+import BinDragLayer from '../DragDrop/BinDragLayer';
 import {
     IAction,
     IActionConfig,
-    IParamConfig,
-    IReserveAction,
+    IAllActionLists,
+    IColorDic,
     ICurrActionListOrder,
     IParam,
-    IColorDic,
+    IParamConfig,
     IParamInput,
-    IAllActionLists
+    IReserveAction
 } from '../interfaces/interfaces';
+import {ExternalContainer, ListsContainer, ReserveContainer} from '../stylesComps';
+import {actionListNames, getColorDictionnary, getCurrentList, getCurrentListOrder} from '../utils/actionsManipulations';
 
 //////////////////// INTERFACES
 
-interface IALCContainerProps extends WithNamespaces {
+interface IALCContainerProps {
     availableActions: IReserveAction[] | null;
     attribute: any;
     inType: Array<string | null>;
@@ -39,7 +35,7 @@ interface IALCContainerProps extends WithNamespaces {
 
 //////////////////// COMPONENT
 
-function ALCContainer({availableActions = [], attribute, inType, outType, i18n, t}: IALCContainerProps): JSX.Element {
+function ALCContainer({availableActions = [], attribute, inType, outType}: IALCContainerProps): JSX.Element {
     // {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}}
     const [currentActionListName, setCurrentActionListName] = useState('saveValue');
 
@@ -270,4 +266,4 @@ function ALCContainer({availableActions = [], attribute, inType, outType, i18n, 
     );
 }
 
-export default withNamespaces()(ALCContainer);
+export default ALCContainer;

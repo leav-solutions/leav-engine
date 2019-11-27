@@ -40,9 +40,7 @@ function ALCConnectors({inputs, dictionnary, isDragging}: IALCConnectorsProps): 
     const renderInput = (input: string, i: number) => {
         if (inputs) {
             const color = inputs.includes(input) ? dictionnary[input] : [205, 205, 205];
-            return (
-                <Connector key={i} iColor={color} title={input}/>
-            );
+            return <Connector key={i} iColor={color} title={input} />;
         }
         return undefined;
     };

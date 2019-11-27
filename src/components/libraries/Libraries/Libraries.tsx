@@ -1,7 +1,7 @@
 import {useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import React, {useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
@@ -12,11 +12,13 @@ import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBR
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import LibrariesList from '../LibrariesList';
 
-interface ILibrariesProps extends WithNamespaces {
+interface ILibrariesProps {
     history: History;
 }
 
-function Libraries({t, history}: ILibrariesProps): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const Libraries = ({history}: ILibrariesProps): JSX.Element => {
+    const {t} = useTranslation();
     const {lang} = useLang();
     const userData = useUserData();
     const [filters, setFilters] = useState<any>({});
@@ -70,6 +72,6 @@ function Libraries({t, history}: ILibrariesProps): JSX.Element {
             )}
         </>
     );
-}
+};
 
-export default withNamespaces()(Libraries);
+export default Libraries;

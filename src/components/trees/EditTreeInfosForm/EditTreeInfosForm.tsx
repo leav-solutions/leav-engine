@@ -1,6 +1,6 @@
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
@@ -11,7 +11,7 @@ import {ErrorTypes, IFormError} from '../../../_types/errors';
 import LibrariesSelector from '../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 
-interface IEditTreeInfosFormProps extends WithNamespaces {
+interface IEditTreeInfosFormProps {
     tree: GET_TREES_trees_list | null;
     onSubmit: (formData: any) => void;
     readOnly: boolean;
@@ -24,14 +24,15 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-function EditTreeInfosForm({
+/* tslint:disable-next-line:variable-name */
+const EditTreeInfosForm = ({
     tree,
     onSubmit,
-    t,
     readOnly,
     errors,
     onCheckIdExists
-}: IEditTreeInfosFormProps): JSX.Element {
+}: IEditTreeInfosFormProps): JSX.Element => {
+    const {t} = useTranslation();
     const defaultTree = {
         id: '',
         label: {
@@ -168,6 +169,6 @@ function EditTreeInfosForm({
             validationSchema={validationSchema}
         />
     );
-}
+};
 
-export default withNamespaces()(EditTreeInfosForm);
+export default EditTreeInfosForm;

@@ -1,14 +1,16 @@
 import React from 'react';
-import {WithNamespaces, withNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Icon} from 'semantic-ui-react';
 
-function ForbiddenRoute({t}: WithNamespaces): JSX.Element {
+/* tslint:disable-next-line:variable-name */
+const ForbiddenRoute = (): JSX.Element => {
+    const {t} = useTranslation();
     return (
         <h3>
             <Icon name="ban" />
             {t('admin.forbidden_route')}
         </h3>
     );
-}
+};
 
-export default withNamespaces()(ForbiddenRoute);
+export default ForbiddenRoute;

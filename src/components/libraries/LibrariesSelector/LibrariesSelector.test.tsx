@@ -4,6 +4,8 @@ import React from 'react';
 import {AvailableLanguage} from '../../../_gqlTypes/globalTypes';
 import LibrariesSelector from './LibrariesSelector';
 
+jest.mock('../../../hooks/useLang');
+
 describe('LibrariesSelector', () => {
     test('Snapshot test', async () => {
         const comp = render(

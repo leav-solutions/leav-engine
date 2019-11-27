@@ -1,8 +1,9 @@
 import React, {useMemo, useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {TreeItem} from 'react-sortable-tree';
 import {Button, Dropdown, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
+import useLang from '../../../../../../hooks/useLang';
 import {isLinkAttribute, localizedLabel} from '../../../../../../utils/utils';
 import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../../_gqlTypes/GET_LIBRARIES';
 import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
@@ -14,7 +15,7 @@ import SelectRecordModal from '../../../../SelectRecordModal';
 import EditRecordFormLinksElement from './EditRecordFormLinksElement';
 import EditRecordFormLinksTreeElement from './EditRecordFormLinksTreeElement';
 
-interface IEditRecordFormLinksProps extends WithNamespaces {
+interface IEditRecordFormLinksProps {
     values: FormLinksAllowedValues | FormLinksAllowedValues[];
     attribute: GET_LIBRARIES_libraries_list_attributes;
     onChange: (value: ILinkValue | ITreeLinkValue) => void;
@@ -26,14 +27,9 @@ const ElementsCount = styled.div`
     float: right;
 `;
 
-function EditRecordFormLinks({
-    values,
-    attribute,
-    onChange,
-    readOnly = false,
-    i18n,
-    t
-}: IEditRecordFormLinksProps): JSX.Element {
+function EditRecordFormLinks({values, attribute, onChange, readOnly = false}: IEditRecordFormLinksProps): JSX.Element {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const [isOpenSelectRecordModal, setIsOpenSelectRecordModal] = useState<boolean>(false);
     const [isOpenAddRecordModal, setIsOpenAddRecordModal] = useState<boolean>(false);
     const [isOpenSelectTreeNodeModal, setIsOpenSelectTreeNodeModal] = useState<boolean>(false);
@@ -127,7 +123,7 @@ function EditRecordFormLinks({
 
     return (
         <>
-            <label>{localizedLabel(attribute.label, i18n)}</label>
+            <label>{localizedLabel(attribute.label, availableLanguages)}</label>
             <Table data-test-id="link_values" compact="very">
                 <Table.Header>
                     <Table.Row>
@@ -207,4 +203,4 @@ function EditRecordFormLinks({
     );
 }
 
-export default withNamespaces()(EditRecordFormLinks);
+export default EditRecordFormLinks;

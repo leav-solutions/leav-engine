@@ -1,8 +1,9 @@
 import React, {useReducer, useState} from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import SortableTree, {ExtendedNodeData, NodeData, TreeItem} from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
+import useLang from '../../../hooks/useLang';
 import {getTreeNodeKey, localizedLabel, stringToColor} from '../../../utils/utils';
 import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
@@ -12,7 +13,7 @@ import SelectRecordModal from '../../records/SelectRecordModal';
 import Loading from '../../shared/Loading';
 import './rstOverride.css';
 
-interface IEditTreeStructureViewProps extends WithNamespaces {
+interface IEditTreeStructureViewProps {
     treeSettings: GET_TREES_trees_list;
     treeData: TreeItem[];
     onTreeChange: (treeData) => void;
@@ -45,7 +46,8 @@ const editionReducer = (prevState: IEditionState | undefined, newState: IEdition
     return {...newState};
 };
 
-function TreeStructureView({
+/* tslint:disable-next-line:variable-name */
+const TreeStructureView = ({
     treeSettings,
     treeData,
     onTreeChange,
@@ -55,10 +57,10 @@ function TreeStructureView({
     onClickNode,
     selection,
     readOnly,
-    t,
-    i18n,
     onAddElement
-}: IEditTreeStructureViewProps) {
+}: IEditTreeStructureViewProps) => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const [editRecordModalOpen, setEditRecordModalOpen] = useState<boolean>(false);
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
     const [openAddElementModal, setOpenAddElementModal] = useState<boolean>(false);
@@ -169,7 +171,7 @@ function TreeStructureView({
                             {treeSettings.libraries.map(lib => (
                                 <Dropdown.Item
                                     key={`add_record_btn_item_${lib.id}`}
-                                    text={localizedLabel(lib.label, i18n)}
+                                    text={localizedLabel(lib.label, availableLanguages)}
                                     onClick={_handleOpenAddElementModal(rowInfo.node, lib.id)}
                                     label={
                                         <LibIconLabel
@@ -190,6 +192,7 @@ function TreeStructureView({
     };
 
     const canDrop = d => d.nextParent !== null;
+    const orTxt = t('admin.or');
 
     return (
         <div className="grow height100">
@@ -234,7 +237,7 @@ function TreeStructureView({
                                     <Icon name="plus circle" />
                                     {t('records.create_record')}
                                 </Button>
-                                <Button.Or text={t('admin.or')} />
+                                <Button.Or text={orTxt} />
                                 <Button type="button" onClick={_handleOpenSelectRecordModal}>
                                     <Icon name="search" />
                                     {t('records.select_record')}
@@ -252,5 +255,5 @@ function TreeStructureView({
             )}
         </div>
     );
-}
-export default withNamespaces()(TreeStructureView);
+};
+export default TreeStructureView;

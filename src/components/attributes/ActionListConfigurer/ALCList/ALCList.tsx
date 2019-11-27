@@ -1,20 +1,18 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDrop} from 'react-dnd-cjs';
-import ALCCard from '../ALCCard';
-import ItemTypes from '../ItemTypes';
-import {doArrayIntersect} from '../utils/doArrayIntersect';
-import Connector from '../ALCConnectors';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
-import ALCListSelector from '../ALCListSelector';
-
+import {useTranslation} from 'react-i18next';
 import {Button, Header} from 'semantic-ui-react';
-
-import {IColorDic, IParamInput, IDragObject, IAllActionLists} from '../interfaces/interfaces';
-import {ALCPlaceholder, ListContainer, ListContent, HiddenDiv} from '../stylesComps';
+import ALCCard from '../ALCCard';
+import Connector from '../ALCConnectors';
+import ALCListSelector from '../ALCListSelector';
+import {IAllActionLists, IColorDic, IDragObject, IParamInput} from '../interfaces/interfaces';
+import ItemTypes from '../ItemTypes';
+import {ALCPlaceholder, HiddenDiv, ListContainer, ListContent} from '../stylesComps';
+import {doArrayIntersect} from '../utils/doArrayIntersect';
 
 //////////////////// INTERFACES
 
-interface IALCListProps extends WithNamespaces {
+interface IALCListProps {
     actions: IAllActionLists;
     moveCard: (id: string, isOver: boolean, to: number) => void;
     findCard: (id: string) => number;
@@ -51,9 +49,9 @@ function ALCList({
     cardOrder,
     onSelectorChange,
     currentActionListName,
-    onSave,
-    t
+    onSave
 }: IALCListProps) {
+    const {t} = useTranslation();
     const specificCardOrder = cardOrder[currentActionListName];
     const cards = actions[currentActionListName];
 
@@ -223,4 +221,4 @@ function ALCList({
     );
 }
 
-export default withNamespaces()(ALCList);
+export default ALCList;

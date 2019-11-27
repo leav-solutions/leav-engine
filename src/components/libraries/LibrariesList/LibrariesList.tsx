@@ -1,27 +1,30 @@
 import React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {Checkbox, Icon, Input, Table} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import Loading from '../../shared/Loading';
 import DeleteLibrary from '../DeleteLibrary';
 
-interface ILibrariesListProps extends WithNamespaces {
+interface ILibrariesListProps {
     libraries: GET_LIBRARIES_libraries_list[] | null;
     onRowClick: (library: GET_LIBRARIES_libraries_list) => void;
     onFiltersUpdate?: (filters: any) => void;
     loading?: boolean;
     filters?: any;
 }
-function LibrariesList({
+
+/* tslint:disable-next-line:variable-name */
+const LibrariesList = ({
     libraries,
     onRowClick,
     onFiltersUpdate,
     loading,
-    filters,
-    t,
-    i18n: i18next
-}: ILibrariesListProps): JSX.Element {
+    filters
+}: ILibrariesListProps): JSX.Element => {
+    const {t} = useTranslation();
+    const availableLanguages = useLang().lang;
     const _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state
         if (d.type === 'checkbox' && filters.system === false && d.checked) {
@@ -88,7 +91,7 @@ function LibrariesList({
                     ) : (
                         libraries &&
                         libraries.map(l => {
-                            const libLabel = localizedLabel(l.label, i18next);
+                            const libLabel = localizedLabel(l.label, availableLanguages);
                             const onClick = () => onRowClick(l);
                             return (
                                 <Table.Row key={l.id} onClick={onClick}>
@@ -111,7 +114,7 @@ function LibrariesList({
             </Table>
         </>
     );
-}
+};
 
 LibrariesList.defaultProps = {
     loading: false,
@@ -119,4 +122,4 @@ LibrariesList.defaultProps = {
     filters: {}
 };
 
-export default withNamespaces()(LibrariesList);
+export default LibrariesList;
