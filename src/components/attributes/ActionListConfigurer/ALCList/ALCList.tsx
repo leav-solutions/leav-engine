@@ -213,8 +213,8 @@ function ALCList({
                     onClick={setConfig}
                 >
                     {connectionFailures && connectionFailures.length > 0
-                        ? "There's a connection problem"
-                        : 'Save Config'}
+                        ? t('attributes.connection_problem')
+                        : t('attributes.save_config')}
                 </Button>
             </div>
         </ListContainer>

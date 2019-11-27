@@ -52,6 +52,8 @@
         "hide_types": "Cacher les types",
         "display_params": "Montrer les paramètres",
         "hide_params": "Cacher les paramètres",
+        "connection_problem": "Il y a un problème de connection",
+        "save_config": "Sauve la configuration",
         "permissions": "Permissions",
         "permissions_settings_title": "Paramètres",
         "permissions_relation": "Relation",
