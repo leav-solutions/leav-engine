@@ -29,15 +29,18 @@ import {actionListNames, getColorDictionnary, getCurrentList, getCurrentListOrde
 interface IALCContainerProps {
     availableActions: IReserveAction[] | null;
     attribute: any;
-    inType: Array<string | null>;
-    outType: Array<string | null>;
 }
 
 //////////////////// COMPONENT
 
-function ALCContainer({availableActions = [], attribute, inType, outType}: IALCContainerProps): JSX.Element {
+function ALCContainer({availableActions = [], attribute}: IALCContainerProps): JSX.Element {
     // {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}}
     const [currentActionListName, setCurrentActionListName] = useState('saveValue');
+
+    const [attributeTypes, setAttributeTypes] = useState({
+        inTypes: {saveValue: [], getValue: [], deleteValue: []},
+        outTypes: {saveValue: [], getValue: [], deleteValue: []}
+    });
 
     const [currentActionList, setCurrentList] = useState<IAllActionLists>({
         saveValue: {higherId: 0},
@@ -64,6 +67,14 @@ function ALCContainer({availableActions = [], attribute, inType, outType}: IALCC
             data && data.attributes && data.attributes.list[0] && data.attributes.list[0].actions_list
                 ? data.attributes.list[0].actions_list
                 : {[actionListNames.saveValue]: [], [actionListNames.getValue]: [], [actionListNames.deleteValue]: []};
+        const attr = data && data.attributes && data.attributes.list[0];
+
+        if (attr) {
+            const inTypes = attr.input_types;
+            const outTypes = attr.output_types;
+            setAttributeTypes({inTypes, outTypes});
+        }
+
         setCurrentList(getCurrentList(currentConfig, availableActions));
         setcurrentActionListOrder(getCurrentListOrder(currentConfig));
         setColorTypeDictionnary(getColorDictionnary(availableActions));
@@ -157,10 +168,6 @@ function ALCContainer({availableActions = [], attribute, inType, outType}: IALCC
         }
     };
 
-    // const canDropItem = (dragObj) => {
-    //     return false;
-    // };
-
     /////////////// SAVE CONFIG FUNCTIONS
 
     const extractParamConfig = (param: IParam): IParamConfig => {
@@ -251,8 +258,8 @@ function ALCContainer({availableActions = [], attribute, inType, outType}: IALCC
                             getNewId={getNewId}
                             currentIndex={currentIndex}
                             setCurrentIndex={setCurrentIndex}
-                            inType={inType}
-                            outType={outType}
+                            inType={attributeTypes.inTypes}
+                            outType={attributeTypes.outTypes}
                             colorTypeDictionnary={colorTypeDictionnary}
                             changeParam={changeParam}
                             onSelectorChange={onSelectorChange}

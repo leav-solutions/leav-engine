@@ -47,6 +47,9 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list {
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list {
     id: string;
+    format: string;
+    input_types: any;
+    output_types: any;
     actions_list: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list | null;
 }
 

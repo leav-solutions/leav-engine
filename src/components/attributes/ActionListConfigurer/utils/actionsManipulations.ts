@@ -88,17 +88,3 @@ export const getColorDictionnary = (availableActions: IReserveAction[] | null) =
         return obj;
     }, {});
 };
-
-export const getTypeFromFormat = (format: string) => {
-    switch (format) {
-        case 'encrypted':
-        case 'text':
-            return 'string';
-        case 'extended':
-            return 'object';
-        case 'numeric':
-            return 'number';
-        default:
-            return format;
-    }
-};
