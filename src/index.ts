@@ -1,5 +1,4 @@
-import {getConfig} from './getConfig/getConfig';
-import {startConsume} from './amqp/startConsume';
+import {start} from './start';
 
 // show code when use process exit without error message
 process.on('exit', code => {
@@ -15,6 +14,4 @@ process.on('SIGINT', () => {
 
 const configPath = process.argv[2] || './config/config.json';
 
-const config = getConfig(configPath);
-
-startConsume(config);
+start(configPath);

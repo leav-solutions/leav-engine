@@ -1,12 +1,10 @@
+import {getConfig} from './../../getConfig/getConfig';
 import {getPsdArgs} from './getPsdArgs/getPsdArgs';
 import {getJpgArgs} from './getJpgArgs/getJpgArgs';
 import {IExec, IArgs} from './../../types';
 import {join} from 'path';
 
 export const getImageArgs = (ext: string, input: string, output: string, size: number, useProfile = false): IExec => {
-    // const config = getConfig();
-    const config = {ICCPath: '/app/profile'}; // temp
-
     const command = 'convert';
     const args = [
         input, // input path
@@ -18,6 +16,7 @@ export const getImageArgs = (ext: string, input: string, output: string, size: n
     ];
 
     if (useProfile) {
+        const config = getConfig();
         const profileArgs = [
             '-profile', // use profile option
             join(config.ICCPath, 'EuroscaleCoated.icc'), // profile value

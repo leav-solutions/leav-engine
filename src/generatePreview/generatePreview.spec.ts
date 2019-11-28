@@ -1,3 +1,4 @@
+import {getConfig} from './../getConfig/getConfig';
 import {execFileSync} from 'child_process';
 import {generatePreview} from './generatePreview';
 import {IMessageConsume} from './../types';
@@ -7,6 +8,7 @@ import * as config from '../../config/config_spec.json';
 describe('generatePreview', () => {
     console.info = jest.fn();
     (execFileSync as jest.FunctionLike) = jest.fn();
+    (getConfig as jest.FunctionLike) = jest.fn(() => config);
 
     const msgContent: IMessageConsume = {
         input: 'test.jpg',

@@ -1,6 +1,7 @@
+import {existsSync} from 'fs';
 import {Channel, Options} from 'amqplib';
+import {start} from './../../start';
 import {config} from '../../config';
-import {startConsume} from './../../amqp/startConsume';
 import {getChannel} from './../../amqp/getChannel/getChannel';
 
 import configSpec = require('../../../config/config_spec.json');
@@ -22,7 +23,7 @@ export async function setup() {
         await channel.assertQueue(configSpec.amqp.consume.queue, {durable: true});
         await new Promise(res => setImmediate(res));
 
-        await startConsume(configSpec);
+        await start('./config/config_spec.json');
     } catch (e) {
         console.error(e);
     }
