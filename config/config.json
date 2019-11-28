@@ -8,14 +8,14 @@
         "username": "guest",
         "password": "guest",
         "consume": {
-            "queue": "thumbnail",
+            "queue": "preview",
             "exchange": "preview",
-            "routingKey": "thumbnail"
+            "routingKey": "preview"
         },
         "publish": {
-            "queue": "thumbnail_response",
+            "queue": "preview_response",
             "exchange": "preview",
-            "routingKey": "thumbnail_response"
+            "routingKey": "preview_response"
         }
     }
 }

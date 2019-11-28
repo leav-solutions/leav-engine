@@ -1,8 +1,3 @@
-export interface ISize {
-    width: number;
-    height: number;
-}
-
 export interface IConfig {
     rootPath: string;
     ICCPath: string;
@@ -25,8 +20,58 @@ export interface IConfig {
     };
 }
 
+export interface IResult {
+    error: number;
+    params?: {
+        background?: true | false | string;
+        density?: number;
+        size: number;
+        output: string;
+    };
+}
+
 export interface IResponse {
-    error_code: number;
-    error: string | null;
-    output: string | null;
+    context: any;
+    results?: IResult[];
+}
+
+export interface IMessageConsume {
+    input: string;
+    context: any;
+    versions: IVersion[];
+}
+
+export interface IVersion {
+    background?: true | false | string;
+    density?: number;
+    sizes: ISize[];
+}
+
+export interface ISize {
+    size: number;
+    output: string;
+}
+
+export enum ErrorList {
+    "file doesn't exist" = 1,
+    'input is not a file' = 2,
+    'error when get file stats' = 3,
+    'file output must be a png' = 4,
+    'file type unknow' = 5,
+    "can't parse message" = 6,
+    'error in execImage' = 11,
+    'error in execImageWithClip' = 12,
+    'error in execPsd' = 13,
+    'error in execPsdWithClip' = 14,
+    'error in execVideo' = 15,
+}
+
+export interface IExec {
+    command: string;
+    args: string[];
+}
+
+export interface IArgs {
+    before: string[];
+    after: string[];
 }

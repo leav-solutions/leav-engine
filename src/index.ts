@@ -1,4 +1,3 @@
-import {jpgFiles, psdFiles, pngFiles} from './getFiles';
 import {getConfig} from './getConfig/getConfig';
 import {startConsume} from './amqp/startConsume';
 
@@ -19,7 +18,3 @@ const configPath = process.argv[2] || './config/config.json';
 const config = getConfig(configPath);
 
 startConsume(config);
-
-jpgFiles();
-// psdFiles();
-// pngFiles();

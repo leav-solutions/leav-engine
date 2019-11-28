@@ -1,21 +1,21 @@
 {
-    "rootPath": "/data/",
-    "ICCPath": "/app/profile/",
+    "rootPath": "/Users/smarzykmathieu/Dev/preview",
+    "ICCPath": "/Users/smarzykmathieu/Dev/preview/profile/",
     "amqp": {
         "protocol": "amqp",
-        "hostname": "host.docker.internal",
+        "hostname": "localhost",
         "port": 15672,
         "username": "guest",
         "password": "guest",
         "consume": {
-            "queue": "thumbnail",
+            "queue": "test_consume",
             "exchange": "preview",
-            "routingKey": "thumbnail"
+            "routingKey": "test_consume"
         },
         "publish": {
-            "queue": "thumbnail_response",
+            "queue": "test_response",
             "exchange": "preview",
-            "routingKey": "thumbnail_response"
+            "routingKey": "test_response"
         }
     }
 }

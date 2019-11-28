@@ -1,21 +1,17 @@
-import * as path from 'path';
 import {Channel, ConsumeMessage} from 'amqplib';
-import {IConfig, IResponse} from '../../types';
-import {checkFile} from '../../generate';
+import {IConfig} from '../../types';
 import {sendResponse} from '../publish/publish';
+import {processPreview} from './../../processPreview/processPreview';
 
 export const consume = async (channel: Channel, config: IConfig) =>
-    channel.consume(config.amqp.consume.queue, msg => handleMsg(msg, channel, config), {noAck: true});
+    channel.consume(config.amqp.consume.queue, msg => handleMsg(msg, channel, config), {noAck: false});
 
 export const handleMsg = async (msg: ConsumeMessage, channel: Channel, config: IConfig) => {
     if (msg.content) {
-        const {input, output, sizes} = JSON.parse(msg.content.toString());
+        const {results, context} = processPreview(msg, config);
 
-        // get the absolute path for input and output
-        [input, output].forEach(p => (p = path.join(config.rootPath, p)));
+        sendResponse(channel, results, config.amqp.publish, context);
 
-        const response: IResponse[] = checkFile(input, output, sizes);
-
-        sendResponse(channel, response, config.amqp.publish);
+        channel.ack(msg);
     }
 };

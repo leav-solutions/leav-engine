@@ -1,5 +1,5 @@
-import {IResponse} from './../../types';
-import {checkFile} from './../../generate';
+import {processPreview} from '../../processPreview/processPreview';
+import {IResult} from './../../types';
 import {Channel, ConsumeMessage} from 'amqplib';
 import {consume, handleMsg} from './consume';
 import {sendResponse} from './../publish/publish';
@@ -8,7 +8,7 @@ import * as config from '../../../config/config_spec.json';
 describe('test consume', () => {
     test('execution', async () => {
         const channel: Mockify<Channel> = {
-            consume: jest.fn()
+            consume: jest.fn(),
         };
 
         await consume(channel as Channel, config);
@@ -19,32 +19,44 @@ describe('test consume', () => {
 
 describe('test handleMsg', () => {
     test('call sendResponse', async () => {
-        const channel: Mockify<Channel> = {};
+        const context = 'context';
+
+        const channel: Mockify<Channel> = {
+            ack: jest.fn(),
+        };
+
         const msg: Mockify<ConsumeMessage> = {
             content: Buffer.from(
                 JSON.stringify({
                     input: 'test',
-                    output: 'test',
-                    sizes: [
+                    context,
+                    versions: [
                         {
-                            width: 600,
-                            height: 600
-                        }
-                    ]
-                })
-            )
+                            sizes: [
+                                {
+                                    size: 600,
+                                    output: 'test',
+                                },
+                            ],
+                        },
+                    ],
+                }),
+            ),
         };
 
-        const response: IResponse = {
-            error_code: 0,
-            error: null,
-            output: 'test'
+        const response: IResult = {
+            error: 0,
+            params: {
+                output: 'test',
+                size: 800,
+            },
         };
-        (checkFile as jest.FunctionLike) = jest.fn(() => response);
+
+        (processPreview as jest.FunctionLike) = jest.fn(() => ({results: response, context}));
         (sendResponse as jest.FunctionLike) = jest.fn();
 
         await handleMsg(msg as ConsumeMessage, channel as Channel, config);
 
-        expect(sendResponse).toBeCalledWith(channel, response, config.amqp.publish);
+        expect(sendResponse).toBeCalledWith(channel, response, config.amqp.publish, context);
     });
 });

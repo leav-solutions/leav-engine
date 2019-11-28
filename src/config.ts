@@ -67,8 +67,8 @@ const _getCombinedConfig = async function(): Promise<{}> {
         await _getConfigByEnv(definedEnv),
         await _getConfigByEnv('local'),
         {
-            env: definedEnv
-        }
+            env: definedEnv,
+        },
     );
     return merged;
 };

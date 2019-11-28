@@ -1,6 +1,7 @@
-import {startConsume, getChannel} from './startConsume';
+import {startConsume} from './startConsume';
 import {initAmqp} from './init/init';
 import {consume} from './consume/consume';
+import {getChannel} from './getChannel/getChannel';
 import * as config from '../../config/config_spec.json';
 
 describe('test startConsume', () => {

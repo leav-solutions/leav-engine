@@ -1,0 +1,4174 @@
+{
+    "123": {
+        "mime": "application/vnd.lotus-1-2-3",
+        "type": "application"
+    },
+    "ez": {
+        "mime": "application/andrew-inset",
+        "type": "application"
+    },
+    "aw": {
+        "mime": "application/applixware",
+        "type": "application"
+    },
+    "atom": {
+        "mime": "application/atom+xml",
+        "type": "application"
+    },
+    "atomcat": {
+        "mime": "application/atomcat+xml",
+        "type": "application"
+    },
+    "atomsvc": {
+        "mime": "application/atomsvc+xml",
+        "type": "application"
+    },
+    "bdoc": {
+        "mime": "application/x-bdoc",
+        "type": "application"
+    },
+    "ccxml": {
+        "mime": "application/ccxml+xml",
+        "type": "application"
+    },
+    "cdmia": {
+        "mime": "application/cdmi-capability",
+        "type": "application"
+    },
+    "cdmic": {
+        "mime": "application/cdmi-container",
+        "type": "application"
+    },
+    "cdmid": {
+        "mime": "application/cdmi-domain",
+        "type": "application"
+    },
+    "cdmio": {
+        "mime": "application/cdmi-object",
+        "type": "application"
+    },
+    "cdmiq": {
+        "mime": "application/cdmi-queue",
+        "type": "application"
+    },
+    "cu": {
+        "mime": "application/cu-seeme",
+        "type": "application"
+    },
+    "mdp": {
+        "mime": "application/dash+xml",
+        "type": "application"
+    },
+    "davmount": {
+        "mime": "application/davmount+xml",
+        "type": "application"
+    },
+    "dbk": {
+        "mime": "application/docbook+xml",
+        "type": "application"
+    },
+    "dssc": {
+        "mime": "application/dssc+der",
+        "type": "application"
+    },
+    "xdssc": {
+        "mime": "application/dssc+xml",
+        "type": "application"
+    },
+    "ecma": {
+        "mime": "application/ecmascript",
+        "type": "application"
+    },
+    "emma": {
+        "mime": "application/emma+xml",
+        "type": "application"
+    },
+    "epub": {
+        "mime": "application/epub+zip",
+        "type": "application"
+    },
+    "exi": {
+        "mime": "application/exi",
+        "type": "application"
+    },
+    "pfr": {
+        "mime": "application/font-tdpfr",
+        "type": "application"
+    },
+    "woff": {
+        "mime": "application/font-woff",
+        "type": "application"
+    },
+    "woff2": {
+        "mime": "application/font-woff2",
+        "type": "application"
+    },
+    "gml": {
+        "mime": "application/gml+xml",
+        "type": "application"
+    },
+    "gpx": {
+        "mime": "application/gpx+xml",
+        "type": "application"
+    },
+    "gxf": {
+        "mime": "application/gxf",
+        "type": "application"
+    },
+    "stk": {
+        "mime": "application/hyperstudio",
+        "type": "application"
+    },
+    "ink": {
+        "mime": "application/inkml+xml",
+        "type": "application"
+    },
+    "inkml": {
+        "mime": "application/inkml+xml",
+        "type": "application"
+    },
+    "ipfix": {
+        "mime": "application/ipfix",
+        "type": "application"
+    },
+    "jar": {
+        "mime": "application/java-archive",
+        "type": "application"
+    },
+    "war": {
+        "mime": "application/java-archive",
+        "type": "application"
+    },
+    "ear": {
+        "mime": "application/java-archive",
+        "type": "application"
+    },
+    "ser": {
+        "mime": "application/java-serialized-object",
+        "type": "application"
+    },
+    "class": {
+        "mime": "application/java-vm",
+        "type": "application"
+    },
+    "js": {
+        "mime": "application/javascript",
+        "type": "application"
+    },
+    "json": {
+        "mime": "application/json",
+        "type": "application"
+    },
+    "map": {
+        "mime": "application/json",
+        "type": "application"
+    },
+    "json5": {
+        "mime": "application/json5",
+        "type": "application"
+    },
+    "jsonml": {
+        "mime": "application/jsonml+json",
+        "type": "application"
+    },
+    "jsonld": {
+        "mime": "application/ld+json",
+        "type": "application"
+    },
+    "lostxml": {
+        "mime": "application/lost+xml",
+        "type": "application"
+    },
+    "hqx": {
+        "mime": "application/mac-binhex40",
+        "type": "application"
+    },
+    "cpt": {
+        "mime": "application/mac-compactpro",
+        "type": "application"
+    },
+    "mads": {
+        "mime": "application/mads+xml",
+        "type": "application"
+    },
+    "webmanifest": {
+        "mime": "application/manifest+json",
+        "type": "application"
+    },
+    "mrc": {
+        "mime": "application/marc",
+        "type": "application"
+    },
+    "mrcx": {
+        "mime": "application/marcxml+xml",
+        "type": "application"
+    },
+    "ma": {
+        "mime": "application/mathematica",
+        "type": "application"
+    },
+    "nb": {
+        "mime": "application/mathematica",
+        "type": "application"
+    },
+    "mb": {
+        "mime": "application/mathematica",
+        "type": "application"
+    },
+    "mathml": {
+        "mime": "application/mathml+xml",
+        "type": "application"
+    },
+    "mbox": {
+        "mime": "application/mbox",
+        "type": "application"
+    },
+    "mscml": {
+        "mime": "application/mediaservercontrol+xml",
+        "type": "application"
+    },
+    "metalink": {
+        "mime": "application/metalink+xml",
+        "type": "application"
+    },
+    "meta4": {
+        "mime": "application/metalink4+xml",
+        "type": "application"
+    },
+    "mets": {
+        "mime": "application/mets+xml",
+        "type": "application"
+    },
+    "mods": {
+        "mime": "application/mods+xml",
+        "type": "application"
+    },
+    "m21": {
+        "mime": "application/mp21",
+        "type": "application"
+    },
+    "mp21": {
+        "mime": "application/mp21",
+        "type": "application"
+    },
+    "mp4s": {
+        "mime": "application/mp4",
+        "type": "application"
+    },
+    "m4p": {
+        "mime": "application/mp4",
+        "type": "application"
+    },
+    "doc": {
+        "mime": "application/msword",
+        "type": "application"
+    },
+    "dot": {
+        "mime": "application/msword",
+        "type": "application"
+    },
+    "mxf": {
+        "mime": "application/mxf",
+        "type": "application"
+    },
+    "bin": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "dms": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "lrf": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "mar": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "so": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "dist": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "distz": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "pkg": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "bpk": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "dump": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "elc": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "deploy": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "exe": {
+        "mime": "application/x-msdownload",
+        "type": "application"
+    },
+    "dll": {
+        "mime": "application/x-msdownload",
+        "type": "application"
+    },
+    "deb": {
+        "mime": "application/x-debian-package",
+        "type": "application"
+    },
+    "dmg": {
+        "mime": "application/x-apple-diskimage",
+        "type": "application"
+    },
+    "iso": {
+        "mime": "application/x-iso9660-image",
+        "type": "application"
+    },
+    "img": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "msi": {
+        "mime": "application/x-msdownload",
+        "type": "application"
+    },
+    "msp": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "msm": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "buffer": {
+        "mime": "application/octet-stream",
+        "type": "application"
+    },
+    "oda": {
+        "mime": "application/oda",
+        "type": "application"
+    },
+    "opf": {
+        "mime": "application/oebps-package+xml",
+        "type": "application"
+    },
+    "ogx": {
+        "mime": "application/ogg",
+        "type": "application"
+    },
+    "omdoc": {
+        "mime": "application/omdoc+xml",
+        "type": "application"
+    },
+    "onetoc": {
+        "mime": "application/onenote",
+        "type": "application"
+    },
+    "onetoc2": {
+        "mime": "application/onenote",
+        "type": "application"
+    },
+    "onetmp": {
+        "mime": "application/onenote",
+        "type": "application"
+    },
+    "onepkg": {
+        "mime": "application/onenote",
+        "type": "application"
+    },
+    "oxps": {
+        "mime": "application/oxps",
+        "type": "application"
+    },
+    "xer": {
+        "mime": "application/patch-ops-error+xml",
+        "type": "application"
+    },
+    "pdf": {
+        "mime": "application/pdf",
+        "type": "image"
+    },
+    "pgp": {
+        "mime": "application/pgp-encrypted",
+        "type": "application"
+    },
+    "asc": {
+        "mime": "application/pgp-signature",
+        "type": "application"
+    },
+    "sig": {
+        "mime": "application/pgp-signature",
+        "type": "application"
+    },
+    "prf": {
+        "mime": "application/pics-rules",
+        "type": "application"
+    },
+    "p10": {
+        "mime": "application/pkcs10",
+        "type": "application"
+    },
+    "p7m": {
+        "mime": "application/pkcs7-mime",
+        "type": "application"
+    },
+    "p7c": {
+        "mime": "application/pkcs7-mime",
+        "type": "application"
+    },
+    "p7s": {
+        "mime": "application/pkcs7-signature",
+        "type": "application"
+    },
+    "p8": {
+        "mime": "application/pkcs8",
+        "type": "application"
+    },
+    "ac": {
+        "mime": "application/pkix-attr-cert",
+        "type": "application"
+    },
+    "cer": {
+        "mime": "application/pkix-cert",
+        "type": "application"
+    },
+    "crl": {
+        "mime": "application/pkix-crl",
+        "type": "application"
+    },
+    "pkipath": {
+        "mime": "application/pkix-pkipath",
+        "type": "application"
+    },
+    "pki": {
+        "mime": "application/pkixcmp",
+        "type": "application"
+    },
+    "pls": {
+        "mime": "application/pls+xml",
+        "type": "application"
+    },
+    "ai": {
+        "mime": "application/postscript",
+        "type": "application"
+    },
+    "eps": {
+        "mime": "application/postscript",
+        "type": "application"
+    },
+    "ps": {
+        "mime": "application/postscript",
+        "type": "application"
+    },
+    "cww": {
+        "mime": "application/prs.cww",
+        "type": "application"
+    },
+    "pskcxml": {
+        "mime": "application/pskc+xml",
+        "type": "application"
+    },
+    "rdf": {
+        "mime": "application/rdf+xml",
+        "type": "application"
+    },
+    "rif": {
+        "mime": "application/reginfo+xml",
+        "type": "application"
+    },
+    "rnc": {
+        "mime": "application/relax-ng-compact-syntax",
+        "type": "application"
+    },
+    "rl": {
+        "mime": "application/resource-lists+xml",
+        "type": "application"
+    },
+    "rld": {
+        "mime": "application/resource-lists-diff+xml",
+        "type": "application"
+    },
+    "rs": {
+        "mime": "application/rls-services+xml",
+        "type": "application"
+    },
+    "gbr": {
+        "mime": "application/rpki-ghostbusters",
+        "type": "application"
+    },
+    "mft": {
+        "mime": "application/rpki-manifest",
+        "type": "application"
+    },
+    "roa": {
+        "mime": "application/rpki-roa",
+        "type": "application"
+    },
+    "rsd": {
+        "mime": "application/rsd+xml",
+        "type": "application"
+    },
+    "rss": {
+        "mime": "application/rss+xml",
+        "type": "application"
+    },
+    "rtf": {
+        "mime": "text/rtf",
+        "type": "text"
+    },
+    "sbml": {
+        "mime": "application/sbml+xml",
+        "type": "application"
+    },
+    "scq": {
+        "mime": "application/scvp-cv-request",
+        "type": "application"
+    },
+    "scs": {
+        "mime": "application/scvp-cv-response",
+        "type": "application"
+    },
+    "spq": {
+        "mime": "application/scvp-vp-request",
+        "type": "application"
+    },
+    "spp": {
+        "mime": "application/scvp-vp-response",
+        "type": "application"
+    },
+    "sdp": {
+        "mime": "application/sdp",
+        "type": "application"
+    },
+    "setpay": {
+        "mime": "application/set-payment-initiation",
+        "type": "application"
+    },
+    "setreg": {
+        "mime": "application/set-registration-initiation",
+        "type": "application"
+    },
+    "shf": {
+        "mime": "application/shf+xml",
+        "type": "application"
+    },
+    "smi": {
+        "mime": "application/smil+xml",
+        "type": "application"
+    },
+    "smil": {
+        "mime": "application/smil+xml",
+        "type": "application"
+    },
+    "rq": {
+        "mime": "application/sparql-query",
+        "type": "application"
+    },
+    "srx": {
+        "mime": "application/sparql-results+xml",
+        "type": "application"
+    },
+    "gram": {
+        "mime": "application/srgs",
+        "type": "application"
+    },
+    "grxml": {
+        "mime": "application/srgs+xml",
+        "type": "application"
+    },
+    "sru": {
+        "mime": "application/sru+xml",
+        "type": "application"
+    },
+    "ssdl": {
+        "mime": "application/ssdl+xml",
+        "type": "application"
+    },
+    "ssml": {
+        "mime": "application/ssml+xml",
+        "type": "application"
+    },
+    "tei": {
+        "mime": "application/tei+xml",
+        "type": "application"
+    },
+    "teicorpus": {
+        "mime": "application/tei+xml",
+        "type": "application"
+    },
+    "tfi": {
+        "mime": "application/thraud+xml",
+        "type": "application"
+    },
+    "tsd": {
+        "mime": "application/timestamped-data",
+        "type": "application"
+    },
+    "plb": {
+        "mime": "application/vnd.3gpp.pic-bw-large",
+        "type": "application"
+    },
+    "pvb": {
+        "mime": "application/vnd.3gpp.pic-bw-var",
+        "type": "application"
+    },
+    "tcap": {
+        "mime": "application/vnd.3gpp2.tcap",
+        "type": "application"
+    },
+    "pwn": {
+        "mime": "application/vnd.3m.post-it-notes",
+        "type": "application"
+    },
+    "aso": {
+        "mime": "application/vnd.accpac.simply.aso",
+        "type": "application"
+    },
+    "imp": {
+        "mime": "application/vnd.accpac.simply.imp",
+        "type": "application"
+    },
+    "acu": {
+        "mime": "application/vnd.acucobol",
+        "type": "application"
+    },
+    "atc": {
+        "mime": "application/vnd.acucorp",
+        "type": "application"
+    },
+    "acutc": {
+        "mime": "application/vnd.acucorp",
+        "type": "application"
+    },
+    "air": {
+        "mime": "application/vnd.adobe.air-application-installer-package+zip",
+        "type": "application"
+    },
+    "fcdt": {
+        "mime": "application/vnd.adobe.formscentral.fcdt",
+        "type": "application"
+    },
+    "fxp": {
+        "mime": "application/vnd.adobe.fxp",
+        "type": "application"
+    },
+    "fxpl": {
+        "mime": "application/vnd.adobe.fxp",
+        "type": "application"
+    },
+    "xdp": {
+        "mime": "application/vnd.adobe.xdp+xml",
+        "type": "application"
+    },
+    "xfdf": {
+        "mime": "application/vnd.adobe.xfdf",
+        "type": "application"
+    },
+    "ahead": {
+        "mime": "application/vnd.ahead.space",
+        "type": "application"
+    },
+    "azf": {
+        "mime": "application/vnd.airzip.filesecure.azf",
+        "type": "application"
+    },
+    "azs": {
+        "mime": "application/vnd.airzip.filesecure.azs",
+        "type": "application"
+    },
+    "azw": {
+        "mime": "application/vnd.amazon.ebook",
+        "type": "application"
+    },
+    "acc": {
+        "mime": "application/vnd.americandynamics.acc",
+        "type": "application"
+    },
+    "ami": {
+        "mime": "application/vnd.amiga.ami",
+        "type": "application"
+    },
+    "apk": {
+        "mime": "application/vnd.android.package-archive",
+        "type": "application"
+    },
+    "cii": {
+        "mime": "application/vnd.anser-web-certificate-issue-initiation",
+        "type": "application"
+    },
+    "fti": {
+        "mime": "application/vnd.anser-web-funds-transfer-initiation",
+        "type": "application"
+    },
+    "atx": {
+        "mime": "application/vnd.antix.game-component",
+        "type": "application"
+    },
+    "mpkg": {
+        "mime": "application/vnd.apple.installer+xml",
+        "type": "application"
+    },
+    "m3u8": {
+        "mime": "application/vnd.apple.mpegurl",
+        "type": "application"
+    },
+    "pkpass": {
+        "mime": "application/vnd.apple.pkpass",
+        "type": "application"
+    },
+    "swi": {
+        "mime": "application/vnd.aristanetworks.swi",
+        "type": "application"
+    },
+    "iota": {
+        "mime": "application/vnd.astraea-software.iota",
+        "type": "application"
+    },
+    "aep": {
+        "mime": "application/vnd.audiograph",
+        "type": "application"
+    },
+    "mpm": {
+        "mime": "application/vnd.blueice.multipass",
+        "type": "application"
+    },
+    "bmi": {
+        "mime": "application/vnd.bmi",
+        "type": "application"
+    },
+    "rep": {
+        "mime": "application/vnd.businessobjects",
+        "type": "application"
+    },
+    "cdxml": {
+        "mime": "application/vnd.chemdraw+xml",
+        "type": "application"
+    },
+    "mmd": {
+        "mime": "application/vnd.chipnuts.karaoke-mmd",
+        "type": "application"
+    },
+    "cdy": {
+        "mime": "application/vnd.cinderella",
+        "type": "application"
+    },
+    "cla": {
+        "mime": "application/vnd.claymore",
+        "type": "application"
+    },
+    "rp9": {
+        "mime": "application/vnd.cloanto.rp9",
+        "type": "application"
+    },
+    "c4g": {
+        "mime": "application/vnd.clonk.c4group",
+        "type": "application"
+    },
+    "c4d": {
+        "mime": "application/vnd.clonk.c4group",
+        "type": "application"
+    },
+    "c4f": {
+        "mime": "application/vnd.clonk.c4group",
+        "type": "application"
+    },
+    "c4p": {
+        "mime": "application/vnd.clonk.c4group",
+        "type": "application"
+    },
+    "c4u": {
+        "mime": "application/vnd.clonk.c4group",
+        "type": "application"
+    },
+    "c11amc": {
+        "mime": "application/vnd.cluetrust.cartomobile-config",
+        "type": "application"
+    },
+    "c11amz": {
+        "mime": "application/vnd.cluetrust.cartomobile-config-pkg",
+        "type": "application"
+    },
+    "csp": {
+        "mime": "application/vnd.commonspace",
+        "type": "application"
+    },
+    "cdbcmsg": {
+        "mime": "application/vnd.contact.cmsg",
+        "type": "application"
+    },
+    "cmc": {
+        "mime": "application/vnd.cosmocaller",
+        "type": "application"
+    },
+    "clkx": {
+        "mime": "application/vnd.crick.clicker",
+        "type": "application"
+    },
+    "clkk": {
+        "mime": "application/vnd.crick.clicker.keyboard",
+        "type": "application"
+    },
+    "clkp": {
+        "mime": "application/vnd.crick.clicker.palette",
+        "type": "application"
+    },
+    "clkt": {
+        "mime": "application/vnd.crick.clicker.template",
+        "type": "application"
+    },
+    "clkw": {
+        "mime": "application/vnd.crick.clicker.wordbank",
+        "type": "application"
+    },
+    "wbs": {
+        "mime": "application/vnd.criticaltools.wbs+xml",
+        "type": "application"
+    },
+    "pml": {
+        "mime": "application/vnd.ctc-posml",
+        "type": "application"
+    },
+    "ppd": {
+        "mime": "application/vnd.cups-ppd",
+        "type": "application"
+    },
+    "car": {
+        "mime": "application/vnd.curl.car",
+        "type": "application"
+    },
+    "pcurl": {
+        "mime": "application/vnd.curl.pcurl",
+        "type": "application"
+    },
+    "dart": {
+        "mime": "application/vnd.dart",
+        "type": "application"
+    },
+    "rdz": {
+        "mime": "application/vnd.data-vision.rdz",
+        "type": "application"
+    },
+    "uvf": {
+        "mime": "application/vnd.dece.data",
+        "type": "application"
+    },
+    "uvvf": {
+        "mime": "application/vnd.dece.data",
+        "type": "application"
+    },
+    "uvd": {
+        "mime": "application/vnd.dece.data",
+        "type": "application"
+    },
+    "uvvd": {
+        "mime": "application/vnd.dece.data",
+        "type": "application"
+    },
+    "uvt": {
+        "mime": "application/vnd.dece.ttml+xml",
+        "type": "application"
+    },
+    "uvvt": {
+        "mime": "application/vnd.dece.ttml+xml",
+        "type": "application"
+    },
+    "uvx": {
+        "mime": "application/vnd.dece.unspecified",
+        "type": "application"
+    },
+    "uvvx": {
+        "mime": "application/vnd.dece.unspecified",
+        "type": "application"
+    },
+    "uvz": {
+        "mime": "application/vnd.dece.zip",
+        "type": "application"
+    },
+    "uvvz": {
+        "mime": "application/vnd.dece.zip",
+        "type": "application"
+    },
+    "fe_launch": {
+        "mime": "application/vnd.denovo.fcselayout-link",
+        "type": "application"
+    },
+    "dna": {
+        "mime": "application/vnd.dna",
+        "type": "application"
+    },
+    "mlp": {
+        "mime": "application/vnd.dolby.mlp",
+        "type": "application"
+    },
+    "dpg": {
+        "mime": "application/vnd.dpgraph",
+        "type": "application"
+    },
+    "dfac": {
+        "mime": "application/vnd.dreamfactory",
+        "type": "application"
+    },
+    "kpxx": {
+        "mime": "application/vnd.ds-keypoint",
+        "type": "application"
+    },
+    "ait": {
+        "mime": "application/vnd.dvb.ait",
+        "type": "application"
+    },
+    "svc": {
+        "mime": "application/vnd.dvb.service",
+        "type": "application"
+    },
+    "geo": {
+        "mime": "application/vnd.dynageo",
+        "type": "application"
+    },
+    "mag": {
+        "mime": "application/vnd.ecowin.chart",
+        "type": "application"
+    },
+    "nml": {
+        "mime": "application/vnd.enliven",
+        "type": "application"
+    },
+    "esf": {
+        "mime": "application/vnd.epson.esf",
+        "type": "application"
+    },
+    "msf": {
+        "mime": "application/vnd.epson.msf",
+        "type": "application"
+    },
+    "qam": {
+        "mime": "application/vnd.epson.quickanime",
+        "type": "application"
+    },
+    "slt": {
+        "mime": "application/vnd.epson.salt",
+        "type": "application"
+    },
+    "ssf": {
+        "mime": "application/vnd.epson.ssf",
+        "type": "application"
+    },
+    "es3": {
+        "mime": "application/vnd.eszigno3+xml",
+        "type": "application"
+    },
+    "et3": {
+        "mime": "application/vnd.eszigno3+xml",
+        "type": "application"
+    },
+    "ez2": {
+        "mime": "application/vnd.ezpix-album",
+        "type": "application"
+    },
+    "ez3": {
+        "mime": "application/vnd.ezpix-package",
+        "type": "application"
+    },
+    "fdf": {
+        "mime": "application/vnd.fdf",
+        "type": "application"
+    },
+    "mseed": {
+        "mime": "application/vnd.fdsn.mseed",
+        "type": "application"
+    },
+    "seed": {
+        "mime": "application/vnd.fdsn.seed",
+        "type": "application"
+    },
+    "dataless": {
+        "mime": "application/vnd.fdsn.seed",
+        "type": "application"
+    },
+    "gph": {
+        "mime": "application/vnd.flographit",
+        "type": "application"
+    },
+    "ftc": {
+        "mime": "application/vnd.fluxtime.clip",
+        "type": "application"
+    },
+    "fm": {
+        "mime": "application/vnd.framemaker",
+        "type": "application"
+    },
+    "frame": {
+        "mime": "application/vnd.framemaker",
+        "type": "application"
+    },
+    "maker": {
+        "mime": "application/vnd.framemaker",
+        "type": "application"
+    },
+    "book": {
+        "mime": "application/vnd.framemaker",
+        "type": "application"
+    },
+    "fnc": {
+        "mime": "application/vnd.frogans.fnc",
+        "type": "application"
+    },
+    "ltf": {
+        "mime": "application/vnd.frogans.ltf",
+        "type": "application"
+    },
+    "fsc": {
+        "mime": "application/vnd.fsc.weblaunch",
+        "type": "application"
+    },
+    "oas": {
+        "mime": "application/vnd.fujitsu.oasys",
+        "type": "application"
+    },
+    "oa2": {
+        "mime": "application/vnd.fujitsu.oasys2",
+        "type": "application"
+    },
+    "oa3": {
+        "mime": "application/vnd.fujitsu.oasys3",
+        "type": "application"
+    },
+    "fg5": {
+        "mime": "application/vnd.fujitsu.oasysgp",
+        "type": "application"
+    },
+    "bh2": {
+        "mime": "application/vnd.fujitsu.oasysprs",
+        "type": "application"
+    },
+    "ddd": {
+        "mime": "application/vnd.fujixerox.ddd",
+        "type": "application"
+    },
+    "xdw": {
+        "mime": "application/vnd.fujixerox.docuworks",
+        "type": "application"
+    },
+    "xbd": {
+        "mime": "application/vnd.fujixerox.docuworks.binder",
+        "type": "application"
+    },
+    "fzs": {
+        "mime": "application/vnd.fuzzysheet",
+        "type": "application"
+    },
+    "txd": {
+        "mime": "application/vnd.genomatix.tuxedo",
+        "type": "application"
+    },
+    "ggb": {
+        "mime": "application/vnd.geogebra.file",
+        "type": "application"
+    },
+    "ggt": {
+        "mime": "application/vnd.geogebra.tool",
+        "type": "application"
+    },
+    "gex": {
+        "mime": "application/vnd.geometry-explorer",
+        "type": "application"
+    },
+    "gre": {
+        "mime": "application/vnd.geometry-explorer",
+        "type": "application"
+    },
+    "gxt": {
+        "mime": "application/vnd.geonext",
+        "type": "application"
+    },
+    "g2w": {
+        "mime": "application/vnd.geoplan",
+        "type": "application"
+    },
+    "g3w": {
+        "mime": "application/vnd.geospace",
+        "type": "application"
+    },
+    "gmx": {
+        "mime": "application/vnd.gmx",
+        "type": "application"
+    },
+    "gdoc": {
+        "mime": "application/vnd.google-apps.document",
+        "type": "application"
+    },
+    "gslides": {
+        "mime": "application/vnd.google-apps.presentation",
+        "type": "application"
+    },
+    "gsheet": {
+        "mime": "application/vnd.google-apps.spreadsheet",
+        "type": "application"
+    },
+    "kml": {
+        "mime": "application/vnd.google-earth.kml+xml",
+        "type": "application"
+    },
+    "kmz": {
+        "mime": "application/vnd.google-earth.kmz",
+        "type": "application"
+    },
+    "gqf": {
+        "mime": "application/vnd.grafeq",
+        "type": "application"
+    },
+    "gqs": {
+        "mime": "application/vnd.grafeq",
+        "type": "application"
+    },
+    "gac": {
+        "mime": "application/vnd.groove-account",
+        "type": "application"
+    },
+    "ghf": {
+        "mime": "application/vnd.groove-help",
+        "type": "application"
+    },
+    "gim": {
+        "mime": "application/vnd.groove-identity-message",
+        "type": "application"
+    },
+    "grv": {
+        "mime": "application/vnd.groove-injector",
+        "type": "application"
+    },
+    "gtm": {
+        "mime": "application/vnd.groove-tool-message",
+        "type": "application"
+    },
+    "tpl": {
+        "mime": "application/vnd.groove-tool-template",
+        "type": "application"
+    },
+    "vcg": {
+        "mime": "application/vnd.groove-vcard",
+        "type": "application"
+    },
+    "hal": {
+        "mime": "application/vnd.hal+xml",
+        "type": "application"
+    },
+    "zmm": {
+        "mime": "application/vnd.handheld-entertainment+xml",
+        "type": "application"
+    },
+    "hbci": {
+        "mime": "application/vnd.hbci",
+        "type": "application"
+    },
+    "les": {
+        "mime": "application/vnd.hhe.lesson-player",
+        "type": "application"
+    },
+    "hpgl": {
+        "mime": "application/vnd.hp-hpgl",
+        "type": "application"
+    },
+    "hpid": {
+        "mime": "application/vnd.hp-hpid",
+        "type": "application"
+    },
+    "hps": {
+        "mime": "application/vnd.hp-hps",
+        "type": "application"
+    },
+    "jlt": {
+        "mime": "application/vnd.hp-jlyt",
+        "type": "application"
+    },
+    "pcl": {
+        "mime": "application/vnd.hp-pcl",
+        "type": "application"
+    },
+    "pclxl": {
+        "mime": "application/vnd.hp-pclxl",
+        "type": "application"
+    },
+    "sfd-hdstx": {
+        "mime": "application/vnd.hydrostatix.sof-data",
+        "type": "application"
+    },
+    "mpy": {
+        "mime": "application/vnd.ibm.minipay",
+        "type": "application"
+    },
+    "afp": {
+        "mime": "application/vnd.ibm.modcap",
+        "type": "application"
+    },
+    "listafp": {
+        "mime": "application/vnd.ibm.modcap",
+        "type": "application"
+    },
+    "list3820": {
+        "mime": "application/vnd.ibm.modcap",
+        "type": "application"
+    },
+    "irm": {
+        "mime": "application/vnd.ibm.rights-management",
+        "type": "application"
+    },
+    "sc": {
+        "mime": "application/vnd.ibm.secure-container",
+        "type": "application"
+    },
+    "icc": {
+        "mime": "application/vnd.iccprofile",
+        "type": "application"
+    },
+    "icm": {
+        "mime": "application/vnd.iccprofile",
+        "type": "application"
+    },
+    "igl": {
+        "mime": "application/vnd.igloader",
+        "type": "application"
+    },
+    "ivp": {
+        "mime": "application/vnd.immervision-ivp",
+        "type": "application"
+    },
+    "ivu": {
+        "mime": "application/vnd.immervision-ivu",
+        "type": "application"
+    },
+    "igm": {
+        "mime": "application/vnd.insors.igm",
+        "type": "application"
+    },
+    "xpw": {
+        "mime": "application/vnd.intercon.formnet",
+        "type": "application"
+    },
+    "xpx": {
+        "mime": "application/vnd.intercon.formnet",
+        "type": "application"
+    },
+    "i2g": {
+        "mime": "application/vnd.intergeo",
+        "type": "application"
+    },
+    "qbo": {
+        "mime": "application/vnd.intu.qbo",
+        "type": "application"
+    },
+    "qfx": {
+        "mime": "application/vnd.intu.qfx",
+        "type": "application"
+    },
+    "rcprofile": {
+        "mime": "application/vnd.ipunplugged.rcprofile",
+        "type": "application"
+    },
+    "irp": {
+        "mime": "application/vnd.irepository.package+xml",
+        "type": "application"
+    },
+    "xpr": {
+        "mime": "application/vnd.is-xpr",
+        "type": "application"
+    },
+    "fcs": {
+        "mime": "application/vnd.isac.fcs",
+        "type": "application"
+    },
+    "jam": {
+        "mime": "application/vnd.jam",
+        "type": "application"
+    },
+    "rms": {
+        "mime": "application/vnd.jcp.javame.midlet-rms",
+        "type": "application"
+    },
+    "jisp": {
+        "mime": "application/vnd.jisp",
+        "type": "application"
+    },
+    "joda": {
+        "mime": "application/vnd.joost.joda-archive",
+        "type": "application"
+    },
+    "ktz": {
+        "mime": "application/vnd.kahootz",
+        "type": "application"
+    },
+    "ktr": {
+        "mime": "application/vnd.kahootz",
+        "type": "application"
+    },
+    "karbon": {
+        "mime": "application/vnd.kde.karbon",
+        "type": "application"
+    },
+    "chrt": {
+        "mime": "application/vnd.kde.kchart",
+        "type": "application"
+    },
+    "kfo": {
+        "mime": "application/vnd.kde.kformula",
+        "type": "application"
+    },
+    "flw": {
+        "mime": "application/vnd.kde.kivio",
+        "type": "application"
+    },
+    "kon": {
+        "mime": "application/vnd.kde.kontour",
+        "type": "application"
+    },
+    "kpr": {
+        "mime": "application/vnd.kde.kpresenter",
+        "type": "application"
+    },
+    "kpt": {
+        "mime": "application/vnd.kde.kpresenter",
+        "type": "application"
+    },
+    "ksp": {
+        "mime": "application/vnd.kde.kspread",
+        "type": "application"
+    },
+    "kwd": {
+        "mime": "application/vnd.kde.kword",
+        "type": "application"
+    },
+    "kwt": {
+        "mime": "application/vnd.kde.kword",
+        "type": "application"
+    },
+    "htke": {
+        "mime": "application/vnd.kenameaapp",
+        "type": "application"
+    },
+    "kia": {
+        "mime": "application/vnd.kidspiration",
+        "type": "application"
+    },
+    "kne": {
+        "mime": "application/vnd.kinar",
+        "type": "application"
+    },
+    "knp": {
+        "mime": "application/vnd.kinar",
+        "type": "application"
+    },
+    "skp": {
+        "mime": "application/vnd.koan",
+        "type": "application"
+    },
+    "skd": {
+        "mime": "application/vnd.koan",
+        "type": "application"
+    },
+    "skt": {
+        "mime": "application/vnd.koan",
+        "type": "application"
+    },
+    "skm": {
+        "mime": "application/vnd.koan",
+        "type": "application"
+    },
+    "sse": {
+        "mime": "application/vnd.kodak-descriptor",
+        "type": "application"
+    },
+    "lasxml": {
+        "mime": "application/vnd.las.las+xml",
+        "type": "application"
+    },
+    "lbd": {
+        "mime": "application/vnd.llamagraphics.life-balance.desktop",
+        "type": "application"
+    },
+    "lbe": {
+        "mime": "application/vnd.llamagraphics.life-balance.exchange+xml",
+        "type": "application"
+    },
+    "apr": {
+        "mime": "application/vnd.lotus-approach",
+        "type": "application"
+    },
+    "pre": {
+        "mime": "application/vnd.lotus-freelance",
+        "type": "application"
+    },
+    "nsf": {
+        "mime": "application/vnd.lotus-notes",
+        "type": "application"
+    },
+    "org": {
+        "mime": "application/vnd.lotus-organizer",
+        "type": "application"
+    },
+    "scm": {
+        "mime": "application/vnd.lotus-screencam",
+        "type": "application"
+    },
+    "lwp": {
+        "mime": "application/vnd.lotus-wordpro",
+        "type": "application"
+    },
+    "portpkg": {
+        "mime": "application/vnd.macports.portpkg",
+        "type": "application"
+    },
+    "mcd": {
+        "mime": "application/vnd.mcd",
+        "type": "application"
+    },
+    "mc1": {
+        "mime": "application/vnd.medcalcdata",
+        "type": "application"
+    },
+    "cdkey": {
+        "mime": "application/vnd.mediastation.cdkey",
+        "type": "application"
+    },
+    "mwf": {
+        "mime": "application/vnd.mfer",
+        "type": "application"
+    },
+    "mfm": {
+        "mime": "application/vnd.mfmp",
+        "type": "application"
+    },
+    "flo": {
+        "mime": "application/vnd.micrografx.flo",
+        "type": "application"
+    },
+    "igx": {
+        "mime": "application/vnd.micrografx.igx",
+        "type": "application"
+    },
+    "mif": {
+        "mime": "application/vnd.mif",
+        "type": "application"
+    },
+    "daf": {
+        "mime": "application/vnd.mobius.daf",
+        "type": "application"
+    },
+    "dis": {
+        "mime": "application/vnd.mobius.dis",
+        "type": "application"
+    },
+    "mbk": {
+        "mime": "application/vnd.mobius.mbk",
+        "type": "application"
+    },
+    "mqy": {
+        "mime": "application/vnd.mobius.mqy",
+        "type": "application"
+    },
+    "msl": {
+        "mime": "application/vnd.mobius.msl",
+        "type": "application"
+    },
+    "plc": {
+        "mime": "application/vnd.mobius.plc",
+        "type": "application"
+    },
+    "txf": {
+        "mime": "application/vnd.mobius.txf",
+        "type": "application"
+    },
+    "mpn": {
+        "mime": "application/vnd.mophun.application",
+        "type": "application"
+    },
+    "mpc": {
+        "mime": "application/vnd.mophun.certificate",
+        "type": "application"
+    },
+    "xul": {
+        "mime": "application/vnd.mozilla.xul+xml",
+        "type": "application"
+    },
+    "cil": {
+        "mime": "application/vnd.ms-artgalry",
+        "type": "application"
+    },
+    "cab": {
+        "mime": "application/vnd.ms-cab-compressed",
+        "type": "application"
+    },
+    "xls": {
+        "mime": "application/vnd.ms-excel",
+        "type": "application"
+    },
+    "xlm": {
+        "mime": "application/vnd.ms-excel",
+        "type": "application"
+    },
+    "xla": {
+        "mime": "application/vnd.ms-excel",
+        "type": "application"
+    },
+    "xlc": {
+        "mime": "application/vnd.ms-excel",
+        "type": "application"
+    },
+    "xlt": {
+        "mime": "application/vnd.ms-excel",
+        "type": "application"
+    },
+    "xlw": {
+        "mime": "application/vnd.ms-excel",
+        "type": "application"
+    },
+    "xlam": {
+        "mime": "application/vnd.ms-excel.addin.macroenabled.12",
+        "type": "application"
+    },
+    "xlsb": {
+        "mime": "application/vnd.ms-excel.sheet.binary.macroenabled.12",
+        "type": "application"
+    },
+    "xlsm": {
+        "mime": "application/vnd.ms-excel.sheet.macroenabled.12",
+        "type": "application"
+    },
+    "xltm": {
+        "mime": "application/vnd.ms-excel.template.macroenabled.12",
+        "type": "application"
+    },
+    "eot": {
+        "mime": "application/vnd.ms-fontobject",
+        "type": "application"
+    },
+    "chm": {
+        "mime": "application/vnd.ms-htmlhelp",
+        "type": "application"
+    },
+    "ims": {
+        "mime": "application/vnd.ms-ims",
+        "type": "application"
+    },
+    "lrm": {
+        "mime": "application/vnd.ms-lrm",
+        "type": "application"
+    },
+    "thmx": {
+        "mime": "application/vnd.ms-officetheme",
+        "type": "application"
+    },
+    "cat": {
+        "mime": "application/vnd.ms-pki.seccat",
+        "type": "application"
+    },
+    "stl": {
+        "mime": "application/vnd.ms-pki.stl",
+        "type": "application"
+    },
+    "ppt": {
+        "mime": "application/vnd.ms-powerpoint",
+        "type": "application"
+    },
+    "pps": {
+        "mime": "application/vnd.ms-powerpoint",
+        "type": "application"
+    },
+    "pot": {
+        "mime": "application/vnd.ms-powerpoint",
+        "type": "application"
+    },
+    "ppam": {
+        "mime": "application/vnd.ms-powerpoint.addin.macroenabled.12",
+        "type": "application"
+    },
+    "pptm": {
+        "mime": "application/vnd.ms-powerpoint.presentation.macroenabled.12",
+        "type": "application"
+    },
+    "sldm": {
+        "mime": "application/vnd.ms-powerpoint.slide.macroenabled.12",
+        "type": "application"
+    },
+    "ppsm": {
+        "mime": "application/vnd.ms-powerpoint.slideshow.macroenabled.12",
+        "type": "application"
+    },
+    "potm": {
+        "mime": "application/vnd.ms-powerpoint.template.macroenabled.12",
+        "type": "application"
+    },
+    "mpp": {
+        "mime": "application/vnd.ms-project",
+        "type": "application"
+    },
+    "mpt": {
+        "mime": "application/vnd.ms-project",
+        "type": "application"
+    },
+    "docm": {
+        "mime": "application/vnd.ms-word.document.macroenabled.12",
+        "type": "application"
+    },
+    "dotm": {
+        "mime": "application/vnd.ms-word.template.macroenabled.12",
+        "type": "application"
+    },
+    "wps": {
+        "mime": "application/vnd.ms-works",
+        "type": "application"
+    },
+    "wks": {
+        "mime": "application/vnd.ms-works",
+        "type": "application"
+    },
+    "wcm": {
+        "mime": "application/vnd.ms-works",
+        "type": "application"
+    },
+    "wdb": {
+        "mime": "application/vnd.ms-works",
+        "type": "application"
+    },
+    "wpl": {
+        "mime": "application/vnd.ms-wpl",
+        "type": "application"
+    },
+    "xps": {
+        "mime": "application/vnd.ms-xpsdocument",
+        "type": "application"
+    },
+    "mseq": {
+        "mime": "application/vnd.mseq",
+        "type": "application"
+    },
+    "mus": {
+        "mime": "application/vnd.musician",
+        "type": "application"
+    },
+    "msty": {
+        "mime": "application/vnd.muvee.style",
+        "type": "application"
+    },
+    "taglet": {
+        "mime": "application/vnd.mynfc",
+        "type": "application"
+    },
+    "nlu": {
+        "mime": "application/vnd.neurolanguage.nlu",
+        "type": "application"
+    },
+    "ntf": {
+        "mime": "application/vnd.nitf",
+        "type": "application"
+    },
+    "nitf": {
+        "mime": "application/vnd.nitf",
+        "type": "application"
+    },
+    "nnd": {
+        "mime": "application/vnd.noblenet-directory",
+        "type": "application"
+    },
+    "nns": {
+        "mime": "application/vnd.noblenet-sealer",
+        "type": "application"
+    },
+    "nnw": {
+        "mime": "application/vnd.noblenet-web",
+        "type": "application"
+    },
+    "ngdat": {
+        "mime": "application/vnd.nokia.n-gage.data",
+        "type": "application"
+    },
+    "n-gage": {
+        "mime": "application/vnd.nokia.n-gage.symbian.install",
+        "type": "application"
+    },
+    "rpst": {
+        "mime": "application/vnd.nokia.radio-preset",
+        "type": "application"
+    },
+    "rpss": {
+        "mime": "application/vnd.nokia.radio-presets",
+        "type": "application"
+    },
+    "edm": {
+        "mime": "application/vnd.novadigm.edm",
+        "type": "application"
+    },
+    "edx": {
+        "mime": "application/vnd.novadigm.edx",
+        "type": "application"
+    },
+    "ext": {
+        "mime": "application/vnd.novadigm.ext",
+        "type": "application"
+    },
+    "odc": {
+        "mime": "application/vnd.oasis.opendocument.chart",
+        "type": "application"
+    },
+    "otc": {
+        "mime": "application/vnd.oasis.opendocument.chart-template",
+        "type": "application"
+    },
+    "odb": {
+        "mime": "application/vnd.oasis.opendocument.database",
+        "type": "application"
+    },
+    "odf": {
+        "mime": "application/vnd.oasis.opendocument.formula",
+        "type": "application"
+    },
+    "odft": {
+        "mime": "application/vnd.oasis.opendocument.formula-template",
+        "type": "application"
+    },
+    "odg": {
+        "mime": "application/vnd.oasis.opendocument.graphics",
+        "type": "application"
+    },
+    "otg": {
+        "mime": "application/vnd.oasis.opendocument.graphics-template",
+        "type": "application"
+    },
+    "odi": {
+        "mime": "application/vnd.oasis.opendocument.image",
+        "type": "application"
+    },
+    "oti": {
+        "mime": "application/vnd.oasis.opendocument.image-template",
+        "type": "application"
+    },
+    "odp": {
+        "mime": "application/vnd.oasis.opendocument.presentation",
+        "type": "application"
+    },
+    "otp": {
+        "mime": "application/vnd.oasis.opendocument.presentation-template",
+        "type": "application"
+    },
+    "ods": {
+        "mime": "application/vnd.oasis.opendocument.spreadsheet",
+        "type": "application"
+    },
+    "ots": {
+        "mime": "application/vnd.oasis.opendocument.spreadsheet-template",
+        "type": "application"
+    },
+    "odt": {
+        "mime": "application/vnd.oasis.opendocument.text",
+        "type": "application"
+    },
+    "odm": {
+        "mime": "application/vnd.oasis.opendocument.text-master",
+        "type": "application"
+    },
+    "ott": {
+        "mime": "application/vnd.oasis.opendocument.text-template",
+        "type": "application"
+    },
+    "oth": {
+        "mime": "application/vnd.oasis.opendocument.text-web",
+        "type": "application"
+    },
+    "xo": {
+        "mime": "application/vnd.olpc-sugar",
+        "type": "application"
+    },
+    "dd2": {
+        "mime": "application/vnd.oma.dd2+xml",
+        "type": "application"
+    },
+    "oxt": {
+        "mime": "application/vnd.openofficeorg.extension",
+        "type": "application"
+    },
+    "pptx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "type": "application"
+    },
+    "sldx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.slide",
+        "type": "application"
+    },
+    "ppsx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+        "type": "application"
+    },
+    "potx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.template",
+        "type": "application"
+    },
+    "xlsx": {
+        "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "type": "application"
+    },
+    "xltx": {
+        "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+        "type": "application"
+    },
+    "docx": {
+        "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "type": "application"
+    },
+    "dotx": {
+        "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "type": "application"
+    },
+    "mgp": {
+        "mime": "application/vnd.osgeo.mapguide.package",
+        "type": "application"
+    },
+    "dp": {
+        "mime": "application/vnd.osgi.dp",
+        "type": "application"
+    },
+    "esa": {
+        "mime": "application/vnd.osgi.subsystem",
+        "type": "application"
+    },
+    "pdb": {
+        "mime": "application/x-pilot",
+        "type": "application"
+    },
+    "pqa": {
+        "mime": "application/vnd.palm",
+        "type": "application"
+    },
+    "oprc": {
+        "mime": "application/vnd.palm",
+        "type": "application"
+    },
+    "paw": {
+        "mime": "application/vnd.pawaafile",
+        "type": "application"
+    },
+    "str": {
+        "mime": "application/vnd.pg.format",
+        "type": "application"
+    },
+    "ei6": {
+        "mime": "application/vnd.pg.osasli",
+        "type": "application"
+    },
+    "efif": {
+        "mime": "application/vnd.picsel",
+        "type": "application"
+    },
+    "wg": {
+        "mime": "application/vnd.pmi.widget",
+        "type": "application"
+    },
+    "plf": {
+        "mime": "application/vnd.pocketlearn",
+        "type": "application"
+    },
+    "pbd": {
+        "mime": "application/vnd.powerbuilder6",
+        "type": "application"
+    },
+    "box": {
+        "mime": "application/vnd.previewsystems.box",
+        "type": "application"
+    },
+    "mgz": {
+        "mime": "application/vnd.proteus.magazine",
+        "type": "application"
+    },
+    "qps": {
+        "mime": "application/vnd.publishare-delta-tree",
+        "type": "application"
+    },
+    "ptid": {
+        "mime": "application/vnd.pvi.ptid1",
+        "type": "application"
+    },
+    "qxd": {
+        "mime": "application/vnd.quark.quarkxpress",
+        "type": "application"
+    },
+    "qxt": {
+        "mime": "application/vnd.quark.quarkxpress",
+        "type": "application"
+    },
+    "qwd": {
+        "mime": "application/vnd.quark.quarkxpress",
+        "type": "application"
+    },
+    "qwt": {
+        "mime": "application/vnd.quark.quarkxpress",
+        "type": "application"
+    },
+    "qxl": {
+        "mime": "application/vnd.quark.quarkxpress",
+        "type": "application"
+    },
+    "qxb": {
+        "mime": "application/vnd.quark.quarkxpress",
+        "type": "application"
+    },
+    "bed": {
+        "mime": "application/vnd.realvnc.bed",
+        "type": "application"
+    },
+    "mxl": {
+        "mime": "application/vnd.recordare.musicxml",
+        "type": "application"
+    },
+    "musicxml": {
+        "mime": "application/vnd.recordare.musicxml+xml",
+        "type": "application"
+    },
+    "cryptonote": {
+        "mime": "application/vnd.rig.cryptonote",
+        "type": "application"
+    },
+    "cod": {
+        "mime": "application/vnd.rim.cod",
+        "type": "application"
+    },
+    "rm": {
+        "mime": "application/vnd.rn-realmedia",
+        "type": "application"
+    },
+    "rmvb": {
+        "mime": "application/vnd.rn-realmedia-vbr",
+        "type": "application"
+    },
+    "link66": {
+        "mime": "application/vnd.route66.link66+xml",
+        "type": "application"
+    },
+    "st": {
+        "mime": "application/vnd.sailingtracker.track",
+        "type": "application"
+    },
+    "see": {
+        "mime": "application/vnd.seemail",
+        "type": "application"
+    },
+    "sema": {
+        "mime": "application/vnd.sema",
+        "type": "application"
+    },
+    "semd": {
+        "mime": "application/vnd.semd",
+        "type": "application"
+    },
+    "semf": {
+        "mime": "application/vnd.semf",
+        "type": "application"
+    },
+    "ifm": {
+        "mime": "application/vnd.shana.informed.formdata",
+        "type": "application"
+    },
+    "itp": {
+        "mime": "application/vnd.shana.informed.formtemplate",
+        "type": "application"
+    },
+    "iif": {
+        "mime": "application/vnd.shana.informed.interchange",
+        "type": "application"
+    },
+    "ipk": {
+        "mime": "application/vnd.shana.informed.package",
+        "type": "application"
+    },
+    "twd": {
+        "mime": "application/vnd.simtech-mindmapper",
+        "type": "application"
+    },
+    "twds": {
+        "mime": "application/vnd.simtech-mindmapper",
+        "type": "application"
+    },
+    "mmf": {
+        "mime": "application/vnd.smaf",
+        "type": "application"
+    },
+    "teacher": {
+        "mime": "application/vnd.smart.teacher",
+        "type": "application"
+    },
+    "sdkm": {
+        "mime": "application/vnd.solent.sdkm+xml",
+        "type": "application"
+    },
+    "sdkd": {
+        "mime": "application/vnd.solent.sdkm+xml",
+        "type": "application"
+    },
+    "dxp": {
+        "mime": "application/vnd.spotfire.dxp",
+        "type": "application"
+    },
+    "sfs": {
+        "mime": "application/vnd.spotfire.sfs",
+        "type": "application"
+    },
+    "sdc": {
+        "mime": "application/vnd.stardivision.calc",
+        "type": "application"
+    },
+    "sda": {
+        "mime": "application/vnd.stardivision.draw",
+        "type": "application"
+    },
+    "sdd": {
+        "mime": "application/vnd.stardivision.impress",
+        "type": "application"
+    },
+    "smf": {
+        "mime": "application/vnd.stardivision.math",
+        "type": "application"
+    },
+    "sdw": {
+        "mime": "application/vnd.stardivision.writer",
+        "type": "application"
+    },
+    "vor": {
+        "mime": "application/vnd.stardivision.writer",
+        "type": "application"
+    },
+    "sgl": {
+        "mime": "application/vnd.stardivision.writer-global",
+        "type": "application"
+    },
+    "smzip": {
+        "mime": "application/vnd.stepmania.package",
+        "type": "application"
+    },
+    "sm": {
+        "mime": "application/vnd.stepmania.stepchart",
+        "type": "application"
+    },
+    "sxc": {
+        "mime": "application/vnd.sun.xml.calc",
+        "type": "application"
+    },
+    "stc": {
+        "mime": "application/vnd.sun.xml.calc.template",
+        "type": "application"
+    },
+    "sxd": {
+        "mime": "application/vnd.sun.xml.draw",
+        "type": "application"
+    },
+    "std": {
+        "mime": "application/vnd.sun.xml.draw.template",
+        "type": "application"
+    },
+    "sxi": {
+        "mime": "application/vnd.sun.xml.impress",
+        "type": "application"
+    },
+    "sti": {
+        "mime": "application/vnd.sun.xml.impress.template",
+        "type": "application"
+    },
+    "sxm": {
+        "mime": "application/vnd.sun.xml.math",
+        "type": "application"
+    },
+    "sxw": {
+        "mime": "application/vnd.sun.xml.writer",
+        "type": "application"
+    },
+    "sxg": {
+        "mime": "application/vnd.sun.xml.writer.global",
+        "type": "application"
+    },
+    "stw": {
+        "mime": "application/vnd.sun.xml.writer.template",
+        "type": "application"
+    },
+    "sus": {
+        "mime": "application/vnd.sus-calendar",
+        "type": "application"
+    },
+    "susp": {
+        "mime": "application/vnd.sus-calendar",
+        "type": "application"
+    },
+    "svd": {
+        "mime": "application/vnd.svd",
+        "type": "application"
+    },
+    "sis": {
+        "mime": "application/vnd.symbian.install",
+        "type": "application"
+    },
+    "sisx": {
+        "mime": "application/vnd.symbian.install",
+        "type": "application"
+    },
+    "xsm": {
+        "mime": "application/vnd.syncml+xml",
+        "type": "application"
+    },
+    "bdm": {
+        "mime": "application/vnd.syncml.dm+wbxml",
+        "type": "application"
+    },
+    "xdm": {
+        "mime": "application/vnd.syncml.dm+xml",
+        "type": "application"
+    },
+    "tao": {
+        "mime": "application/vnd.tao.intent-module-archive",
+        "type": "application"
+    },
+    "pcap": {
+        "mime": "application/vnd.tcpdump.pcap",
+        "type": "application"
+    },
+    "cap": {
+        "mime": "application/vnd.tcpdump.pcap",
+        "type": "application"
+    },
+    "dmp": {
+        "mime": "application/vnd.tcpdump.pcap",
+        "type": "application"
+    },
+    "tmo": {
+        "mime": "application/vnd.tmobile-livetv",
+        "type": "application"
+    },
+    "tpt": {
+        "mime": "application/vnd.trid.tpt",
+        "type": "application"
+    },
+    "mxs": {
+        "mime": "application/vnd.triscape.mxs",
+        "type": "application"
+    },
+    "tra": {
+        "mime": "application/vnd.trueapp",
+        "type": "application"
+    },
+    "ufd": {
+        "mime": "application/vnd.ufdl",
+        "type": "application"
+    },
+    "ufdl": {
+        "mime": "application/vnd.ufdl",
+        "type": "application"
+    },
+    "utz": {
+        "mime": "application/vnd.uiq.theme",
+        "type": "application"
+    },
+    "umj": {
+        "mime": "application/vnd.umajin",
+        "type": "application"
+    },
+    "unityweb": {
+        "mime": "application/vnd.unity",
+        "type": "application"
+    },
+    "uoml": {
+        "mime": "application/vnd.uoml+xml",
+        "type": "application"
+    },
+    "vcx": {
+        "mime": "application/vnd.vcx",
+        "type": "application"
+    },
+    "vsd": {
+        "mime": "application/vnd.visio",
+        "type": "application"
+    },
+    "vst": {
+        "mime": "application/vnd.visio",
+        "type": "application"
+    },
+    "vss": {
+        "mime": "application/vnd.visio",
+        "type": "application"
+    },
+    "vsw": {
+        "mime": "application/vnd.visio",
+        "type": "application"
+    },
+    "vis": {
+        "mime": "application/vnd.visionary",
+        "type": "application"
+    },
+    "vsf": {
+        "mime": "application/vnd.vsf",
+        "type": "application"
+    },
+    "wbxml": {
+        "mime": "application/vnd.wap.wbxml",
+        "type": "application"
+    },
+    "wmlc": {
+        "mime": "application/vnd.wap.wmlc",
+        "type": "application"
+    },
+    "wmlsc": {
+        "mime": "application/vnd.wap.wmlscriptc",
+        "type": "application"
+    },
+    "wtb": {
+        "mime": "application/vnd.webturbo",
+        "type": "application"
+    },
+    "nbp": {
+        "mime": "application/vnd.wolfram.player",
+        "type": "application"
+    },
+    "wpd": {
+        "mime": "application/vnd.wordperfect",
+        "type": "application"
+    },
+    "wqd": {
+        "mime": "application/vnd.wqd",
+        "type": "application"
+    },
+    "stf": {
+        "mime": "application/vnd.wt.stf",
+        "type": "application"
+    },
+    "xar": {
+        "mime": "application/vnd.xara",
+        "type": "application"
+    },
+    "xfdl": {
+        "mime": "application/vnd.xfdl",
+        "type": "application"
+    },
+    "hvd": {
+        "mime": "application/vnd.yamaha.hv-dic",
+        "type": "application"
+    },
+    "hvs": {
+        "mime": "application/vnd.yamaha.hv-script",
+        "type": "application"
+    },
+    "hvp": {
+        "mime": "application/vnd.yamaha.hv-voice",
+        "type": "application"
+    },
+    "osf": {
+        "mime": "application/vnd.yamaha.openscoreformat",
+        "type": "application"
+    },
+    "osfpvg": {
+        "mime": "application/vnd.yamaha.openscoreformat.osfpvg+xml",
+        "type": "application"
+    },
+    "saf": {
+        "mime": "application/vnd.yamaha.smaf-audio",
+        "type": "application"
+    },
+    "spf": {
+        "mime": "application/vnd.yamaha.smaf-phrase",
+        "type": "application"
+    },
+    "cmp": {
+        "mime": "application/vnd.yellowriver-custom-menu",
+        "type": "application"
+    },
+    "zir": {
+        "mime": "application/vnd.zul",
+        "type": "application"
+    },
+    "zirz": {
+        "mime": "application/vnd.zul",
+        "type": "application"
+    },
+    "zaz": {
+        "mime": "application/vnd.zzazz.deck+xml",
+        "type": "application"
+    },
+    "vxml": {
+        "mime": "application/voicexml+xml",
+        "type": "application"
+    },
+    "wgt": {
+        "mime": "application/widget",
+        "type": "application"
+    },
+    "hlp": {
+        "mime": "application/winhlp",
+        "type": "application"
+    },
+    "wsdl": {
+        "mime": "application/wsdl+xml",
+        "type": "application"
+    },
+    "wspolicy": {
+        "mime": "application/wspolicy+xml",
+        "type": "application"
+    },
+    "7z": {
+        "mime": "application/x-7z-compressed",
+        "type": "application"
+    },
+    "abw": {
+        "mime": "application/x-abiword",
+        "type": "application"
+    },
+    "ace": {
+        "mime": "application/x-ace-compressed",
+        "type": "application"
+    },
+    "aab": {
+        "mime": "application/x-authorware-bin",
+        "type": "application"
+    },
+    "x32": {
+        "mime": "application/x-authorware-bin",
+        "type": "application"
+    },
+    "u32": {
+        "mime": "application/x-authorware-bin",
+        "type": "application"
+    },
+    "vox": {
+        "mime": "application/x-authorware-bin",
+        "type": "application"
+    },
+    "aam": {
+        "mime": "application/x-authorware-map",
+        "type": "application"
+    },
+    "aas": {
+        "mime": "application/x-authorware-seg",
+        "type": "application"
+    },
+    "bcpio": {
+        "mime": "application/x-bcpio",
+        "type": "application"
+    },
+    "torrent": {
+        "mime": "application/x-bittorrent",
+        "type": "application"
+    },
+    "blb": {
+        "mime": "application/x-blorb",
+        "type": "application"
+    },
+    "blorb": {
+        "mime": "application/x-blorb",
+        "type": "application"
+    },
+    "bz": {
+        "mime": "application/x-bzip",
+        "type": "application"
+    },
+    "bz2": {
+        "mime": "application/x-bzip2",
+        "type": "application"
+    },
+    "boz": {
+        "mime": "application/x-bzip2",
+        "type": "application"
+    },
+    "cbr": {
+        "mime": "application/x-cbr",
+        "type": "application"
+    },
+    "cba": {
+        "mime": "application/x-cbr",
+        "type": "application"
+    },
+    "cbt": {
+        "mime": "application/x-cbr",
+        "type": "application"
+    },
+    "cbz": {
+        "mime": "application/x-cbr",
+        "type": "application"
+    },
+    "cb7": {
+        "mime": "application/x-cbr",
+        "type": "application"
+    },
+    "vcd": {
+        "mime": "application/x-cdlink",
+        "type": "application"
+    },
+    "cfs": {
+        "mime": "application/x-cfs-compressed",
+        "type": "application"
+    },
+    "chat": {
+        "mime": "application/x-chat",
+        "type": "application"
+    },
+    "pgn": {
+        "mime": "application/x-chess-pgn",
+        "type": "application"
+    },
+    "crx": {
+        "mime": "application/x-chrome-extension",
+        "type": "application"
+    },
+    "cco": {
+        "mime": "application/x-cocoa",
+        "type": "application"
+    },
+    "nsc": {
+        "mime": "application/x-conference",
+        "type": "application"
+    },
+    "cpio": {
+        "mime": "application/x-cpio",
+        "type": "application"
+    },
+    "csh": {
+        "mime": "application/x-csh",
+        "type": "application"
+    },
+    "udeb": {
+        "mime": "application/x-debian-package",
+        "type": "application"
+    },
+    "dgc": {
+        "mime": "application/x-dgc-compressed",
+        "type": "application"
+    },
+    "dir": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "dcr": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "dxr": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "cst": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "cct": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "cxt": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "w3d": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "fgd": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "swa": {
+        "mime": "application/x-director",
+        "type": "application"
+    },
+    "wad": {
+        "mime": "application/x-doom",
+        "type": "application"
+    },
+    "ncx": {
+        "mime": "application/x-dtbncx+xml",
+        "type": "application"
+    },
+    "dtb": {
+        "mime": "application/x-dtbook+xml",
+        "type": "application"
+    },
+    "res": {
+        "mime": "application/x-dtbresource+xml",
+        "type": "application"
+    },
+    "dvi": {
+        "mime": "application/x-dvi",
+        "type": "application"
+    },
+    "evy": {
+        "mime": "application/x-envoy",
+        "type": "application"
+    },
+    "eva": {
+        "mime": "application/x-eva",
+        "type": "application"
+    },
+    "bdf": {
+        "mime": "application/x-font-bdf",
+        "type": "application"
+    },
+    "gsf": {
+        "mime": "application/x-font-ghostscript",
+        "type": "application"
+    },
+    "psf": {
+        "mime": "application/x-font-linux-psf",
+        "type": "application"
+    },
+    "otf": {
+        "mime": "font/opentype",
+        "type": "font"
+    },
+    "pcf": {
+        "mime": "application/x-font-pcf",
+        "type": "application"
+    },
+    "snf": {
+        "mime": "application/x-font-snf",
+        "type": "application"
+    },
+    "ttf": {
+        "mime": "application/x-font-ttf",
+        "type": "application"
+    },
+    "ttc": {
+        "mime": "application/x-font-ttf",
+        "type": "application"
+    },
+    "pfa": {
+        "mime": "application/x-font-type1",
+        "type": "application"
+    },
+    "pfb": {
+        "mime": "application/x-font-type1",
+        "type": "application"
+    },
+    "pfm": {
+        "mime": "application/x-font-type1",
+        "type": "application"
+    },
+    "afm": {
+        "mime": "application/x-font-type1",
+        "type": "application"
+    },
+    "arc": {
+        "mime": "application/x-freearc",
+        "type": "application"
+    },
+    "spl": {
+        "mime": "application/x-futuresplash",
+        "type": "application"
+    },
+    "gca": {
+        "mime": "application/x-gca-compressed",
+        "type": "application"
+    },
+    "ulx": {
+        "mime": "application/x-glulx",
+        "type": "application"
+    },
+    "gnumeric": {
+        "mime": "application/x-gnumeric",
+        "type": "application"
+    },
+    "gramps": {
+        "mime": "application/x-gramps-xml",
+        "type": "application"
+    },
+    "gtar": {
+        "mime": "application/x-gtar",
+        "type": "application"
+    },
+    "hdf": {
+        "mime": "application/x-hdf",
+        "type": "application"
+    },
+    "php": {
+        "mime": "application/x-httpd-php",
+        "type": "application"
+    },
+    "install": {
+        "mime": "application/x-install-instructions",
+        "type": "application"
+    },
+    "jardiff": {
+        "mime": "application/x-java-archive-diff",
+        "type": "application"
+    },
+    "jnlp": {
+        "mime": "application/x-java-jnlp-file",
+        "type": "application"
+    },
+    "latex": {
+        "mime": "application/x-latex",
+        "type": "application"
+    },
+    "luac": {
+        "mime": "application/x-lua-bytecode",
+        "type": "application"
+    },
+    "lzh": {
+        "mime": "application/x-lzh-compressed",
+        "type": "application"
+    },
+    "lha": {
+        "mime": "application/x-lzh-compressed",
+        "type": "application"
+    },
+    "run": {
+        "mime": "application/x-makeself",
+        "type": "application"
+    },
+    "mie": {
+        "mime": "application/x-mie",
+        "type": "application"
+    },
+    "prc": {
+        "mime": "application/x-pilot",
+        "type": "application"
+    },
+    "mobi": {
+        "mime": "application/x-mobipocket-ebook",
+        "type": "application"
+    },
+    "application": {
+        "mime": "application/x-ms-application",
+        "type": "application"
+    },
+    "lnk": {
+        "mime": "application/x-ms-shortcut",
+        "type": "application"
+    },
+    "wmd": {
+        "mime": "application/x-ms-wmd",
+        "type": "application"
+    },
+    "wmz": {
+        "mime": "application/x-msmetafile",
+        "type": "application"
+    },
+    "xbap": {
+        "mime": "application/x-ms-xbap",
+        "type": "application"
+    },
+    "mdb": {
+        "mime": "application/x-msaccess",
+        "type": "application"
+    },
+    "obd": {
+        "mime": "application/x-msbinder",
+        "type": "application"
+    },
+    "crd": {
+        "mime": "application/x-mscardfile",
+        "type": "application"
+    },
+    "clp": {
+        "mime": "application/x-msclip",
+        "type": "application"
+    },
+    "com": {
+        "mime": "application/x-msdownload",
+        "type": "application"
+    },
+    "bat": {
+        "mime": "application/x-msdownload",
+        "type": "application"
+    },
+    "mvb": {
+        "mime": "application/x-msmediaview",
+        "type": "application"
+    },
+    "m13": {
+        "mime": "application/x-msmediaview",
+        "type": "application"
+    },
+    "m14": {
+        "mime": "application/x-msmediaview",
+        "type": "application"
+    },
+    "wmf": {
+        "mime": "application/x-msmetafile",
+        "type": "application"
+    },
+    "emf": {
+        "mime": "application/x-msmetafile",
+        "type": "application"
+    },
+    "emz": {
+        "mime": "application/x-msmetafile",
+        "type": "application"
+    },
+    "mny": {
+        "mime": "application/x-msmoney",
+        "type": "application"
+    },
+    "pub": {
+        "mime": "application/x-mspublisher",
+        "type": "application"
+    },
+    "scd": {
+        "mime": "application/x-msschedule",
+        "type": "application"
+    },
+    "trm": {
+        "mime": "application/x-msterminal",
+        "type": "application"
+    },
+    "wri": {
+        "mime": "application/x-mswrite",
+        "type": "application"
+    },
+    "nc": {
+        "mime": "application/x-netcdf",
+        "type": "application"
+    },
+    "cdf": {
+        "mime": "application/x-netcdf",
+        "type": "application"
+    },
+    "pac": {
+        "mime": "application/x-ns-proxy-autoconfig",
+        "type": "application"
+    },
+    "nzb": {
+        "mime": "application/x-nzb",
+        "type": "application"
+    },
+    "pl": {
+        "mime": "application/x-perl",
+        "type": "application"
+    },
+    "pm": {
+        "mime": "application/x-perl",
+        "type": "application"
+    },
+    "p12": {
+        "mime": "application/x-pkcs12",
+        "type": "application"
+    },
+    "pfx": {
+        "mime": "application/x-pkcs12",
+        "type": "application"
+    },
+    "p7b": {
+        "mime": "application/x-pkcs7-certificates",
+        "type": "application"
+    },
+    "spc": {
+        "mime": "application/x-pkcs7-certificates",
+        "type": "application"
+    },
+    "p7r": {
+        "mime": "application/x-pkcs7-certreqresp",
+        "type": "application"
+    },
+    "rar": {
+        "mime": "application/x-rar-compressed",
+        "type": "application"
+    },
+    "rpm": {
+        "mime": "application/x-redhat-package-manager",
+        "type": "application"
+    },
+    "ris": {
+        "mime": "application/x-research-info-systems",
+        "type": "application"
+    },
+    "sea": {
+        "mime": "application/x-sea",
+        "type": "application"
+    },
+    "sh": {
+        "mime": "application/x-sh",
+        "type": "application"
+    },
+    "shar": {
+        "mime": "application/x-shar",
+        "type": "application"
+    },
+    "swf": {
+        "mime": "application/x-shockwave-flash",
+        "type": "application"
+    },
+    "xap": {
+        "mime": "application/x-silverlight-app",
+        "type": "application"
+    },
+    "sql": {
+        "mime": "application/x-sql",
+        "type": "application"
+    },
+    "sit": {
+        "mime": "application/x-stuffit",
+        "type": "application"
+    },
+    "sitx": {
+        "mime": "application/x-stuffitx",
+        "type": "application"
+    },
+    "srt": {
+        "mime": "application/x-subrip",
+        "type": "application"
+    },
+    "sv4cpio": {
+        "mime": "application/x-sv4cpio",
+        "type": "application"
+    },
+    "sv4crc": {
+        "mime": "application/x-sv4crc",
+        "type": "application"
+    },
+    "t3": {
+        "mime": "application/x-t3vm-image",
+        "type": "application"
+    },
+    "gam": {
+        "mime": "application/x-tads",
+        "type": "application"
+    },
+    "tar": {
+        "mime": "application/x-tar",
+        "type": "application"
+    },
+    "tcl": {
+        "mime": "application/x-tcl",
+        "type": "application"
+    },
+    "tk": {
+        "mime": "application/x-tcl",
+        "type": "application"
+    },
+    "tex": {
+        "mime": "application/x-tex",
+        "type": "application"
+    },
+    "tfm": {
+        "mime": "application/x-tex-tfm",
+        "type": "application"
+    },
+    "texinfo": {
+        "mime": "application/x-texinfo",
+        "type": "application"
+    },
+    "texi": {
+        "mime": "application/x-texinfo",
+        "type": "application"
+    },
+    "obj": {
+        "mime": "application/x-tgif",
+        "type": "application"
+    },
+    "ustar": {
+        "mime": "application/x-ustar",
+        "type": "application"
+    },
+    "src": {
+        "mime": "application/x-wais-source",
+        "type": "application"
+    },
+    "webapp": {
+        "mime": "application/x-web-app-manifest+json",
+        "type": "application"
+    },
+    "der": {
+        "mime": "application/x-x509-ca-cert",
+        "type": "application"
+    },
+    "crt": {
+        "mime": "application/x-x509-ca-cert",
+        "type": "application"
+    },
+    "pem": {
+        "mime": "application/x-x509-ca-cert",
+        "type": "application"
+    },
+    "fig": {
+        "mime": "application/x-xfig",
+        "type": "application"
+    },
+    "xlf": {
+        "mime": "application/x-xliff+xml",
+        "type": "application"
+    },
+    "xpi": {
+        "mime": "application/x-xpinstall",
+        "type": "application"
+    },
+    "xz": {
+        "mime": "application/x-xz",
+        "type": "application"
+    },
+    "z1": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "z2": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "z3": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "z4": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "z5": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "z6": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "z7": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "z8": {
+        "mime": "application/x-zmachine",
+        "type": "application"
+    },
+    "xaml": {
+        "mime": "application/xaml+xml",
+        "type": "application"
+    },
+    "xdf": {
+        "mime": "application/xcap-diff+xml",
+        "type": "application"
+    },
+    "xenc": {
+        "mime": "application/xenc+xml",
+        "type": "application"
+    },
+    "xhtml": {
+        "mime": "application/xhtml+xml",
+        "type": "application"
+    },
+    "xht": {
+        "mime": "application/xhtml+xml",
+        "type": "application"
+    },
+    "xml": {
+        "mime": "text/xml",
+        "type": "text"
+    },
+    "xsl": {
+        "mime": "application/xml",
+        "type": "application"
+    },
+    "xsd": {
+        "mime": "application/xml",
+        "type": "application"
+    },
+    "dtd": {
+        "mime": "application/xml-dtd",
+        "type": "application"
+    },
+    "xop": {
+        "mime": "application/xop+xml",
+        "type": "application"
+    },
+    "xpl": {
+        "mime": "application/xproc+xml",
+        "type": "application"
+    },
+    "xslt": {
+        "mime": "application/xslt+xml",
+        "type": "application"
+    },
+    "xspf": {
+        "mime": "application/xspf+xml",
+        "type": "application"
+    },
+    "mxml": {
+        "mime": "application/xv+xml",
+        "type": "application"
+    },
+    "xhvml": {
+        "mime": "application/xv+xml",
+        "type": "application"
+    },
+    "xvml": {
+        "mime": "application/xv+xml",
+        "type": "application"
+    },
+    "xvm": {
+        "mime": "application/xv+xml",
+        "type": "application"
+    },
+    "yang": {
+        "mime": "application/yang",
+        "type": "application"
+    },
+    "yin": {
+        "mime": "application/yin+xml",
+        "type": "application"
+    },
+    "zip": {
+        "mime": "application/zip",
+        "type": "application"
+    },
+    "adp": {
+        "mime": "audio/adpcm",
+        "type": "audio"
+    },
+    "au": {
+        "mime": "audio/basic",
+        "type": "audio"
+    },
+    "snd": {
+        "mime": "audio/basic",
+        "type": "audio"
+    },
+    "mid": {
+        "mime": "audio/midi",
+        "type": "audio"
+    },
+    "midi": {
+        "mime": "audio/midi",
+        "type": "audio"
+    },
+    "kar": {
+        "mime": "audio/midi",
+        "type": "audio"
+    },
+    "rmi": {
+        "mime": "audio/midi",
+        "type": "audio"
+    },
+    "mp4a": {
+        "mime": "audio/mp4",
+        "type": "audio"
+    },
+    "m4a": {
+        "mime": "audio/x-m4a",
+        "type": "audio"
+    },
+    "mpga": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "mp2": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "mp2a": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "mp3": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "m2a": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "m3a": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "oga": {
+        "mime": "audio/ogg",
+        "type": "audio"
+    },
+    "ogg": {
+        "mime": "audio/ogg",
+        "type": "audio"
+    },
+    "spx": {
+        "mime": "audio/ogg",
+        "type": "audio"
+    },
+    "s3m": {
+        "mime": "audio/s3m",
+        "type": "audio"
+    },
+    "sil": {
+        "mime": "audio/silk",
+        "type": "audio"
+    },
+    "uva": {
+        "mime": "audio/vnd.dece.audio",
+        "type": "audio"
+    },
+    "uvva": {
+        "mime": "audio/vnd.dece.audio",
+        "type": "audio"
+    },
+    "eol": {
+        "mime": "audio/vnd.digital-winds",
+        "type": "audio"
+    },
+    "dra": {
+        "mime": "audio/vnd.dra",
+        "type": "audio"
+    },
+    "dts": {
+        "mime": "audio/vnd.dts",
+        "type": "audio"
+    },
+    "dtshd": {
+        "mime": "audio/vnd.dts.hd",
+        "type": "audio"
+    },
+    "lvp": {
+        "mime": "audio/vnd.lucent.voice",
+        "type": "audio"
+    },
+    "pya": {
+        "mime": "audio/vnd.ms-playready.media.pya",
+        "type": "audio"
+    },
+    "ecelp4800": {
+        "mime": "audio/vnd.nuera.ecelp4800",
+        "type": "audio"
+    },
+    "ecelp7470": {
+        "mime": "audio/vnd.nuera.ecelp7470",
+        "type": "audio"
+    },
+    "ecelp9600": {
+        "mime": "audio/vnd.nuera.ecelp9600",
+        "type": "audio"
+    },
+    "rip": {
+        "mime": "audio/vnd.rip",
+        "type": "audio"
+    },
+    "wav": {
+        "mime": "audio/x-wav",
+        "type": "audio"
+    },
+    "weba": {
+        "mime": "audio/webm",
+        "type": "audio"
+    },
+    "aac": {
+        "mime": "audio/x-aac",
+        "type": "audio"
+    },
+    "aif": {
+        "mime": "audio/x-aiff",
+        "type": "audio"
+    },
+    "aiff": {
+        "mime": "audio/x-aiff",
+        "type": "audio"
+    },
+    "aifc": {
+        "mime": "audio/x-aiff",
+        "type": "audio"
+    },
+    "caf": {
+        "mime": "audio/x-caf",
+        "type": "audio"
+    },
+    "flac": {
+        "mime": "audio/x-flac",
+        "type": "audio"
+    },
+    "mka": {
+        "mime": "audio/x-matroska",
+        "type": "audio"
+    },
+    "m3u": {
+        "mime": "audio/x-mpegurl",
+        "type": "audio"
+    },
+    "wax": {
+        "mime": "audio/x-ms-wax",
+        "type": "audio"
+    },
+    "wma": {
+        "mime": "audio/x-ms-wma",
+        "type": "audio"
+    },
+    "ram": {
+        "mime": "audio/x-pn-realaudio",
+        "type": "audio"
+    },
+    "ra": {
+        "mime": "audio/x-realaudio",
+        "type": "audio"
+    },
+    "rmp": {
+        "mime": "audio/x-pn-realaudio-plugin",
+        "type": "audio"
+    },
+    "xm": {
+        "mime": "audio/xm",
+        "type": "audio"
+    },
+    "cdx": {
+        "mime": "chemical/x-cdx",
+        "type": "chemical"
+    },
+    "cif": {
+        "mime": "chemical/x-cif",
+        "type": "chemical"
+    },
+    "cmdf": {
+        "mime": "chemical/x-cmdf",
+        "type": "chemical"
+    },
+    "cml": {
+        "mime": "chemical/x-cml",
+        "type": "chemical"
+    },
+    "csml": {
+        "mime": "chemical/x-csml",
+        "type": "chemical"
+    },
+    "xyz": {
+        "mime": "chemical/x-xyz",
+        "type": "chemical"
+    },
+    "psb": {
+        "mime": "image/vnd.3gpp.pic-bw-small",
+        "type": "image"
+    },
+    "bmp": {
+        "mime": "image/x-ms-bmp",
+        "type": "image"
+    },
+    "cgm": {
+        "mime": "image/cgm",
+        "type": "image"
+    },
+    "g3": {
+        "mime": "image/g3fax",
+        "type": "image"
+    },
+    "gif": {
+        "mime": "image/gif",
+        "type": "image"
+    },
+    "ief": {
+        "mime": "image/ief",
+        "type": "image"
+    },
+    "jpeg": {
+        "mime": "image/jpeg",
+        "type": "image"
+    },
+    "jpg": {
+        "mime": "image/jpeg",
+        "type": "image"
+    },
+    "jpe": {
+        "mime": "image/jpeg",
+        "type": "image"
+    },
+    "ktx": {
+        "mime": "image/ktx",
+        "type": "image"
+    },
+    "png": {
+        "mime": "image/png",
+        "type": "image"
+    },
+    "btif": {
+        "mime": "image/prs.btif",
+        "type": "image"
+    },
+    "sgi": {
+        "mime": "image/sgi",
+        "type": "image"
+    },
+    "svg": {
+        "mime": "image/svg+xml",
+        "type": "image"
+    },
+    "svgz": {
+        "mime": "image/svg+xml",
+        "type": "image"
+    },
+    "tiff": {
+        "mime": "image/tiff",
+        "type": "image"
+    },
+    "tif": {
+        "mime": "image/tiff",
+        "type": "image"
+    },
+    "psd": {
+        "mime": "image/vnd.adobe.photoshop",
+        "type": "image"
+    },
+    "uvi": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "uvvi": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "uvg": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "uvvg": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "djvu": {
+        "mime": "image/vnd.djvu",
+        "type": "image"
+    },
+    "djv": {
+        "mime": "image/vnd.djvu",
+        "type": "image"
+    },
+    "sub": {
+        "mime": "text/vnd.dvb.subtitle",
+        "type": "text"
+    },
+    "dwg": {
+        "mime": "image/vnd.dwg",
+        "type": "image"
+    },
+    "dxf": {
+        "mime": "image/vnd.dxf",
+        "type": "image"
+    },
+    "fbs": {
+        "mime": "image/vnd.fastbidsheet",
+        "type": "image"
+    },
+    "fpx": {
+        "mime": "image/vnd.fpx",
+        "type": "image"
+    },
+    "fst": {
+        "mime": "image/vnd.fst",
+        "type": "image"
+    },
+    "mmr": {
+        "mime": "image/vnd.fujixerox.edmics-mmr",
+        "type": "image"
+    },
+    "rlc": {
+        "mime": "image/vnd.fujixerox.edmics-rlc",
+        "type": "image"
+    },
+    "mdi": {
+        "mime": "image/vnd.ms-modi",
+        "type": "image"
+    },
+    "wdp": {
+        "mime": "image/vnd.ms-photo",
+        "type": "image"
+    },
+    "npx": {
+        "mime": "image/vnd.net-fpx",
+        "type": "image"
+    },
+    "wbmp": {
+        "mime": "image/vnd.wap.wbmp",
+        "type": "image"
+    },
+    "xif": {
+        "mime": "image/vnd.xiff",
+        "type": "image"
+    },
+    "webp": {
+        "mime": "image/webp",
+        "type": "image"
+    },
+    "3ds": {
+        "mime": "image/x-3ds",
+        "type": "image"
+    },
+    "ras": {
+        "mime": "image/x-cmu-raster",
+        "type": "image"
+    },
+    "cmx": {
+        "mime": "image/x-cmx",
+        "type": "image"
+    },
+    "fh": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fhc": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fh4": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fh5": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fh7": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "ico": {
+        "mime": "image/x-icon",
+        "type": "image"
+    },
+    "jng": {
+        "mime": "image/x-jng",
+        "type": "image"
+    },
+    "sid": {
+        "mime": "image/x-mrsid-image",
+        "type": "image"
+    },
+    "pcx": {
+        "mime": "image/x-pcx",
+        "type": "image"
+    },
+    "pic": {
+        "mime": "image/x-pict",
+        "type": "image"
+    },
+    "pct": {
+        "mime": "image/x-pict",
+        "type": "image"
+    },
+    "pnm": {
+        "mime": "image/x-portable-anymap",
+        "type": "image"
+    },
+    "pbm": {
+        "mime": "image/x-portable-bitmap",
+        "type": "image"
+    },
+    "pgm": {
+        "mime": "image/x-portable-graymap",
+        "type": "image"
+    },
+    "ppm": {
+        "mime": "image/x-portable-pixmap",
+        "type": "image"
+    },
+    "rgb": {
+        "mime": "image/x-rgb",
+        "type": "image"
+    },
+    "tga": {
+        "mime": "image/x-tga",
+        "type": "image"
+    },
+    "xbm": {
+        "mime": "image/x-xbitmap",
+        "type": "image"
+    },
+    "xpm": {
+        "mime": "image/x-xpixmap",
+        "type": "image"
+    },
+    "xwd": {
+        "mime": "image/x-xwindowdump",
+        "type": "image"
+    },
+    "eml": {
+        "mime": "message/rfc822",
+        "type": "message"
+    },
+    "mime": {
+        "mime": "message/rfc822",
+        "type": "message"
+    },
+    "igs": {
+        "mime": "model/iges",
+        "type": "model"
+    },
+    "iges": {
+        "mime": "model/iges",
+        "type": "model"
+    },
+    "msh": {
+        "mime": "model/mesh",
+        "type": "model"
+    },
+    "mesh": {
+        "mime": "model/mesh",
+        "type": "model"
+    },
+    "silo": {
+        "mime": "model/mesh",
+        "type": "model"
+    },
+    "dae": {
+        "mime": "model/vnd.collada+xml",
+        "type": "model"
+    },
+    "dwf": {
+        "mime": "model/vnd.dwf",
+        "type": "model"
+    },
+    "gdl": {
+        "mime": "model/vnd.gdl",
+        "type": "model"
+    },
+    "gtw": {
+        "mime": "model/vnd.gtw",
+        "type": "model"
+    },
+    "mts": {
+        "mime": "model/vnd.mts",
+        "type": "model"
+    },
+    "vtu": {
+        "mime": "model/vnd.vtu",
+        "type": "model"
+    },
+    "wrl": {
+        "mime": "model/vrml",
+        "type": "model"
+    },
+    "vrml": {
+        "mime": "model/vrml",
+        "type": "model"
+    },
+    "x3db": {
+        "mime": "model/x3d+binary",
+        "type": "model"
+    },
+    "x3dbz": {
+        "mime": "model/x3d+binary",
+        "type": "model"
+    },
+    "x3dv": {
+        "mime": "model/x3d+vrml",
+        "type": "model"
+    },
+    "x3dvz": {
+        "mime": "model/x3d+vrml",
+        "type": "model"
+    },
+    "x3d": {
+        "mime": "model/x3d+xml",
+        "type": "model"
+    },
+    "x3dz": {
+        "mime": "model/x3d+xml",
+        "type": "model"
+    },
+    "appcache": {
+        "mime": "text/cache-manifest",
+        "type": "text"
+    },
+    "manifest": {
+        "mime": "text/cache-manifest",
+        "type": "text"
+    },
+    "ics": {
+        "mime": "text/calendar",
+        "type": "text"
+    },
+    "ifb": {
+        "mime": "text/calendar",
+        "type": "text"
+    },
+    "coffee": {
+        "mime": "text/coffeescript",
+        "type": "text"
+    },
+    "litcoffee": {
+        "mime": "text/coffeescript",
+        "type": "text"
+    },
+    "css": {
+        "mime": "text/css",
+        "type": "text"
+    },
+    "csv": {
+        "mime": "text/csv",
+        "type": "text"
+    },
+    "hjson": {
+        "mime": "text/hjson",
+        "type": "text"
+    },
+    "html": {
+        "mime": "text/html",
+        "type": "text"
+    },
+    "htm": {
+        "mime": "text/html",
+        "type": "text"
+    },
+    "shtml": {
+        "mime": "text/html",
+        "type": "text"
+    },
+    "jade": {
+        "mime": "text/jade",
+        "type": "text"
+    },
+    "jsx": {
+        "mime": "text/jsx",
+        "type": "text"
+    },
+    "less": {
+        "mime": "text/less",
+        "type": "text"
+    },
+    "mml": {
+        "mime": "text/mathml",
+        "type": "text"
+    },
+    "n3": {
+        "mime": "text/n3",
+        "type": "text"
+    },
+    "txt": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "text": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "conf": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "def": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "list": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "log": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "in": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "ini": {
+        "mime": "text/plain",
+        "type": "text"
+    },
+    "dsc": {
+        "mime": "text/prs.lines.tag",
+        "type": "text"
+    },
+    "rtx": {
+        "mime": "text/richtext",
+        "type": "text"
+    },
+    "sgml": {
+        "mime": "text/sgml",
+        "type": "text"
+    },
+    "sgm": {
+        "mime": "text/sgml",
+        "type": "text"
+    },
+    "stylus": {
+        "mime": "text/stylus",
+        "type": "text"
+    },
+    "styl": {
+        "mime": "text/stylus",
+        "type": "text"
+    },
+    "tsv": {
+        "mime": "text/tab-separated-values",
+        "type": "text"
+    },
+    "t": {
+        "mime": "text/troff",
+        "type": "text"
+    },
+    "tr": {
+        "mime": "text/troff",
+        "type": "text"
+    },
+    "roff": {
+        "mime": "text/troff",
+        "type": "text"
+    },
+    "man": {
+        "mime": "text/troff",
+        "type": "text"
+    },
+    "me": {
+        "mime": "text/troff",
+        "type": "text"
+    },
+    "ms": {
+        "mime": "text/troff",
+        "type": "text"
+    },
+    "ttl": {
+        "mime": "text/turtle",
+        "type": "text"
+    },
+    "uri": {
+        "mime": "text/uri-list",
+        "type": "text"
+    },
+    "uris": {
+        "mime": "text/uri-list",
+        "type": "text"
+    },
+    "urls": {
+        "mime": "text/uri-list",
+        "type": "text"
+    },
+    "vcard": {
+        "mime": "text/vcard",
+        "type": "text"
+    },
+    "curl": {
+        "mime": "text/vnd.curl",
+        "type": "text"
+    },
+    "dcurl": {
+        "mime": "text/vnd.curl.dcurl",
+        "type": "text"
+    },
+    "mcurl": {
+        "mime": "text/vnd.curl.mcurl",
+        "type": "text"
+    },
+    "scurl": {
+        "mime": "text/vnd.curl.scurl",
+        "type": "text"
+    },
+    "fly": {
+        "mime": "text/vnd.fly",
+        "type": "text"
+    },
+    "flx": {
+        "mime": "text/vnd.fmi.flexstor",
+        "type": "text"
+    },
+    "gv": {
+        "mime": "text/vnd.graphviz",
+        "type": "text"
+    },
+    "3dml": {
+        "mime": "text/vnd.in3d.3dml",
+        "type": "text"
+    },
+    "spot": {
+        "mime": "text/vnd.in3d.spot",
+        "type": "text"
+    },
+    "jad": {
+        "mime": "text/vnd.sun.j2me.app-descriptor",
+        "type": "text"
+    },
+    "wml": {
+        "mime": "text/vnd.wap.wml",
+        "type": "text"
+    },
+    "wmls": {
+        "mime": "text/vnd.wap.wmlscript",
+        "type": "text"
+    },
+    "vtt": {
+        "mime": "text/vtt",
+        "type": "text"
+    },
+    "s": {
+        "mime": "text/x-asm",
+        "type": "text"
+    },
+    "asm": {
+        "mime": "text/x-asm",
+        "type": "text"
+    },
+    "c": {
+        "mime": "text/x-c",
+        "type": "text"
+    },
+    "cc": {
+        "mime": "text/x-c",
+        "type": "text"
+    },
+    "cxx": {
+        "mime": "text/x-c",
+        "type": "text"
+    },
+    "cpp": {
+        "mime": "text/x-c",
+        "type": "text"
+    },
+    "h": {
+        "mime": "text/x-c",
+        "type": "text"
+    },
+    "hh": {
+        "mime": "text/x-c",
+        "type": "text"
+    },
+    "dic": {
+        "mime": "text/x-c",
+        "type": "text"
+    },
+    "htc": {
+        "mime": "text/x-component",
+        "type": "text"
+    },
+    "f": {
+        "mime": "text/x-fortran",
+        "type": "text"
+    },
+    "for": {
+        "mime": "text/x-fortran",
+        "type": "text"
+    },
+    "f77": {
+        "mime": "text/x-fortran",
+        "type": "text"
+    },
+    "f90": {
+        "mime": "text/x-fortran",
+        "type": "text"
+    },
+    "hbs": {
+        "mime": "text/x-handlebars-template",
+        "type": "text"
+    },
+    "java": {
+        "mime": "text/x-java-source",
+        "type": "text"
+    },
+    "lua": {
+        "mime": "text/x-lua",
+        "type": "text"
+    },
+    "markdown": {
+        "mime": "text/x-markdown",
+        "type": "text"
+    },
+    "md": {
+        "mime": "text/x-markdown",
+        "type": "text"
+    },
+    "mkd": {
+        "mime": "text/x-markdown",
+        "type": "text"
+    },
+    "nfo": {
+        "mime": "text/x-nfo",
+        "type": "text"
+    },
+    "opml": {
+        "mime": "text/x-opml",
+        "type": "text"
+    },
+    "p": {
+        "mime": "text/x-pascal",
+        "type": "text"
+    },
+    "pas": {
+        "mime": "text/x-pascal",
+        "type": "text"
+    },
+    "pde": {
+        "mime": "text/x-processing",
+        "type": "text"
+    },
+    "sass": {
+        "mime": "text/x-sass",
+        "type": "text"
+    },
+    "scss": {
+        "mime": "text/x-scss",
+        "type": "text"
+    },
+    "etx": {
+        "mime": "text/x-setext",
+        "type": "text"
+    },
+    "sfv": {
+        "mime": "text/x-sfv",
+        "type": "text"
+    },
+    "ymp": {
+        "mime": "text/x-suse-ymp",
+        "type": "text"
+    },
+    "uu": {
+        "mime": "text/x-uuencode",
+        "type": "text"
+    },
+    "vcs": {
+        "mime": "text/x-vcalendar",
+        "type": "text"
+    },
+    "vcf": {
+        "mime": "text/x-vcard",
+        "type": "text"
+    },
+    "yaml": {
+        "mime": "text/yaml",
+        "type": "text"
+    },
+    "yml": {
+        "mime": "text/yaml",
+        "type": "text"
+    },
+    "3gp": {
+        "mime": "video/3gpp",
+        "type": "video"
+    },
+    "3gpp": {
+        "mime": "video/3gpp",
+        "type": "video"
+    },
+    "3g2": {
+        "mime": "video/3gpp2",
+        "type": "video"
+    },
+    "h261": {
+        "mime": "video/h261",
+        "type": "video"
+    },
+    "h263": {
+        "mime": "video/h263",
+        "type": "video"
+    },
+    "h264": {
+        "mime": "video/h264",
+        "type": "video"
+    },
+    "jpgv": {
+        "mime": "video/jpeg",
+        "type": "video"
+    },
+    "jpm": {
+        "mime": "video/jpm",
+        "type": "video"
+    },
+    "jpgm": {
+        "mime": "video/jpm",
+        "type": "video"
+    },
+    "mj2": {
+        "mime": "video/mj2",
+        "type": "video"
+    },
+    "mjp2": {
+        "mime": "video/mj2",
+        "type": "video"
+    },
+    "ts": {
+        "mime": "video/mp2t",
+        "type": "video"
+    },
+    "mp4": {
+        "mime": "video/mp4",
+        "type": "video"
+    },
+    "mp4v": {
+        "mime": "video/mp4",
+        "type": "video"
+    },
+    "mpg4": {
+        "mime": "video/mp4",
+        "type": "video"
+    },
+    "mpeg": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "mpg": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "mpe": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "m1v": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "m2v": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "ogv": {
+        "mime": "video/ogg",
+        "type": "video"
+    },
+    "qt": {
+        "mime": "video/quicktime",
+        "type": "video"
+    },
+    "mov": {
+        "mime": "video/quicktime",
+        "type": "video"
+    },
+    "uvh": {
+        "mime": "video/vnd.dece.hd",
+        "type": "video"
+    },
+    "uvvh": {
+        "mime": "video/vnd.dece.hd",
+        "type": "video"
+    },
+    "uvm": {
+        "mime": "video/vnd.dece.mobile",
+        "type": "video"
+    },
+    "uvvm": {
+        "mime": "video/vnd.dece.mobile",
+        "type": "video"
+    },
+    "uvp": {
+        "mime": "video/vnd.dece.pd",
+        "type": "video"
+    },
+    "uvvp": {
+        "mime": "video/vnd.dece.pd",
+        "type": "video"
+    },
+    "uvs": {
+        "mime": "video/vnd.dece.sd",
+        "type": "video"
+    },
+    "uvvs": {
+        "mime": "video/vnd.dece.sd",
+        "type": "video"
+    },
+    "uvv": {
+        "mime": "video/vnd.dece.video",
+        "type": "video"
+    },
+    "uvvv": {
+        "mime": "video/vnd.dece.video",
+        "type": "video"
+    },
+    "dvb": {
+        "mime": "video/vnd.dvb.file",
+        "type": "video"
+    },
+    "fvt": {
+        "mime": "video/vnd.fvt",
+        "type": "video"
+    },
+    "mxu": {
+        "mime": "video/vnd.mpegurl",
+        "type": "video"
+    },
+    "m4u": {
+        "mime": "video/vnd.mpegurl",
+        "type": "video"
+    },
+    "pyv": {
+        "mime": "video/vnd.ms-playready.media.pyv",
+        "type": "video"
+    },
+    "uvu": {
+        "mime": "video/vnd.uvvu.mp4",
+        "type": "video"
+    },
+    "uvvu": {
+        "mime": "video/vnd.uvvu.mp4",
+        "type": "video"
+    },
+    "viv": {
+        "mime": "video/vnd.vivo",
+        "type": "video"
+    },
+    "webm": {
+        "mime": "video/webm",
+        "type": "video"
+    },
+    "f4v": {
+        "mime": "video/x-f4v",
+        "type": "video"
+    },
+    "fli": {
+        "mime": "video/x-fli",
+        "type": "video"
+    },
+    "flv": {
+        "mime": "video/x-flv",
+        "type": "video"
+    },
+    "m4v": {
+        "mime": "video/x-m4v",
+        "type": "video"
+    },
+    "mkv": {
+        "mime": "video/x-matroska",
+        "type": "video"
+    },
+    "mk3d": {
+        "mime": "video/x-matroska",
+        "type": "video"
+    },
+    "mks": {
+        "mime": "video/x-matroska",
+        "type": "video"
+    },
+    "mng": {
+        "mime": "video/x-mng",
+        "type": "video"
+    },
+    "asf": {
+        "mime": "video/x-ms-asf",
+        "type": "video"
+    },
+    "asx": {
+        "mime": "video/x-ms-asf",
+        "type": "video"
+    },
+    "vob": {
+        "mime": "video/x-ms-vob",
+        "type": "video"
+    },
+    "wm": {
+        "mime": "video/x-ms-wm",
+        "type": "video"
+    },
+    "wmv": {
+        "mime": "video/x-ms-wmv",
+        "type": "video"
+    },
+    "wmx": {
+        "mime": "video/x-ms-wmx",
+        "type": "video"
+    },
+    "wvx": {
+        "mime": "video/x-ms-wvx",
+        "type": "video"
+    },
+    "avi": {
+        "mime": "video/x-msvideo",
+        "type": "video"
+    },
+    "movie": {
+        "mime": "video/x-sgi-movie",
+        "type": "video"
+    },
+    "smv": {
+        "mime": "video/x-smv",
+        "type": "video"
+    },
+    "ice": {
+        "mime": "x-conference/x-cooltalk",
+        "type": "x-conference"
+    }
+}

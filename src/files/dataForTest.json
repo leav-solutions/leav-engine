@@ -1,41 +1,75 @@
 [
     {
         "input": "./images_jpg/jpg-with-clippping-path.jpg",
-        "output": "./images_generate/jpg.png",
-        "sizes": [
+        "versions": [
             {
-                "width": 800,
-                "height": 600
+                "background": true,
+                "sizes": [
+                    {
+                        "size": 800,
+                        "output": "./images_generate/jpg.800.png"
+                    },
+                    {
+                        "size": 1200,
+                        "output": "./images_generate/jpg.1200.png"
+                    },
+                    {
+                        "size": 200,
+                        "output": "./images_generate/jpg.200.png"
+                    }
+                ]
             }
         ]
     },
     {
         "input": "./images_psd/3.psd",
-        "output": "./images_generate/gateaux.png",
-        "sizes": [
+        "versions": [
             {
-                "width": 1600,
-                "height": 1600
+                "sizes": [
+                    {
+                        "size": 1600,
+                        "output": "./images_generate/gateaux.png"
+                    }
+                ]
             }
         ]
     },
     {
-        "input": "./images_pdf/sample.pdf",
-        "output": "./images_generate/sample.png",
-        "sizes": [
+        "input": "./images_pdf/test.pdf",
+        "versions": [
             {
-                "width": 400,
-                "height": 400
+                "sizes": [
+                    {
+                        "size": 400,
+                        "output": "./images_generate/pdf.png"
+                    }
+                ]
             }
         ]
     },
     {
         "input": "./images_png/120106427143_1.png",
-        "output": "./images_generate/cookie.png",
-        "sizes": [
+        "versions": [
             {
-                "width": 800,
-                "height": 800
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./images_generate/cookie.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./docx/test.docx",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 1400,
+                        "output": "./images_generate/docx.png"
+                    }
+                ]
             }
         ]
     }

@@ -2,7 +2,9 @@ import * as fs from 'fs';
 import {getConfig} from './getConfig';
 
 describe('test getConfig', () => {
-    test('give config return config', () => {
+    afterAll(() => jest.resetAllMocks());
+
+    test('give config return config', async () => {
         const config = {
             rootPath: 'test',
             ICCPath: 'test',
@@ -14,8 +16,8 @@ describe('test getConfig', () => {
                 password: 'test',
                 queue: 'test',
                 exchange: 'test',
-                routingKey: 'test'
-            }
+                routingKey: 'test',
+            },
         };
 
         const configPath = './test.json';

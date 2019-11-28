@@ -3,7 +3,7 @@ tabWidth: 4
 useTabs: false
 semi: true
 singleQuote: true
-trailingComma: none
+trailingComma: all
 bracketSpacing: false
 arrowParens: 'avoid'
 printWidth: 120

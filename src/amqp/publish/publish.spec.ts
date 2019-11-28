@@ -1,24 +1,26 @@
 import {Channel} from 'amqplib';
-import {IResponse} from './../../types';
+import {IResult} from './../../types';
 import {sendResponse} from './publish';
 
 describe('test sendResponse', () => {
     const channel: Mockify<Channel> = {
-        publish: jest.fn()
+        publish: jest.fn(),
     };
 
-    const responses: IResponse[] = [
+    const responses: IResult[] = [
         {
-            error_code: 0,
-            error: null,
-            output: 'test'
-        }
+            error: 0,
+            params: {
+                output: 'test',
+                size: 800,
+            },
+        },
     ];
 
     const exchange = 'exchange';
     const routingKey = 'routingKey';
 
     test('use channel publish', async () => {
-        sendResponse(channel as Channel, responses, {exchange, routingKey});
+        sendResponse(channel as Channel, responses, {exchange, routingKey}, 'context');
     });
 });
