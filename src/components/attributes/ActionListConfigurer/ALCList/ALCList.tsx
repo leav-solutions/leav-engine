@@ -214,7 +214,7 @@ function ALCList({
                 >
                     {connectionFailures && connectionFailures.length > 0
                         ? t('attributes.connection_problem')
-                        : t('attributes.save_config')}
+                        : t('admin.submit')}
                 </Button>
             </div>
         </ListContainer>
