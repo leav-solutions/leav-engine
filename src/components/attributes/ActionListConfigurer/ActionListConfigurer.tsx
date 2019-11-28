@@ -6,7 +6,6 @@ import {GET_AVAILABLE_ACTIONS} from '../../../_gqlTypes/GET_AVAILABLE_ACTIONS';
 import Loading from '../../shared/Loading';
 import ALCContainer from './ALCContainer';
 import {IReserveAction} from './interfaces/interfaces';
-import {getTypeFromFormat} from './utils/actionsManipulations';
 import {generateReserveActionFrom} from './utils/generatingFunction';
 
 interface IActionListConfigurerProps {
@@ -29,7 +28,7 @@ function ActionListConfigurer({attribute}: IActionListConfigurerProps): JSX.Elem
     }
 
     const actions: IReserveAction[] = [];
-    const inType = attribute.format ? getTypeFromFormat(attribute.format) : '';
+    // const inType = attribute.format ? getTypeFromFormat(attribute.format) : '';
 
     if (data.availableActions) {
         data.availableActions.forEach(act => {
@@ -40,14 +39,7 @@ function ActionListConfigurer({attribute}: IActionListConfigurerProps): JSX.Elem
         });
     }
 
-    return (
-        <ALCContainer
-            availableActions={actions}
-            attribute={attribute}
-            inType={inType ? [inType] : []}
-            outType={inType ? [inType] : []}
-        />
-    );
+    return <ALCContainer availableActions={actions} attribute={attribute} />;
 }
 
 export default ActionListConfigurer;

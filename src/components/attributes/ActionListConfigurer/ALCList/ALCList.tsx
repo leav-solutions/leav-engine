@@ -21,8 +21,8 @@ interface IALCListProps {
     getNewId: () => number;
     currentIndex: number;
     setCurrentIndex: (index: number) => void;
-    inType: Array<string | null>;
-    outType: Array<string | null>;
+    inType: {saveValue: Array<string | null>; getValue: Array<string | null>; deleteValue: Array<string | null>};
+    outType: {saveValue: Array<string | null>; getValue: Array<string | null>; deleteValue: Array<string | null>};
     colorTypeDictionnary: IColorDic;
     onSelectorChange: (event: any) => void;
     currentActionListName: string;
@@ -116,12 +116,12 @@ function ALCList({
                     if (!action) {
                         return;
                     }
-                    const preceedingConnector = i === 0 ? inType : list[actionIdList[i - 1]].output_types;
+                    const preceedingConnector = i === 0 ? inType[listName] : list[actionIdList[i - 1]].output_types;
                     const followingConnector =
-                        i >= actionIdList.length - 1 ? outType : list[actionIdList[i + 1]].input_types;
+                        i >= actionIdList.length - 1 ? outType[listName] : list[actionIdList[i + 1]].input_types;
                     const topConnection = doArrayIntersect(preceedingConnector, action.input_types);
-                    const bottomConnection =
-                        listName === 'saveValue' ? doArrayIntersect(followingConnector, action.output_types) : true;
+                    const bottomConnection = doArrayIntersect(followingConnector, action.output_types);
+
                     if (!topConnection || !bottomConnection) {
                         connFailures.push({list: listName, id: actionId});
                     }
@@ -190,7 +190,7 @@ function ALCList({
             />
             <ListContent>
                 <div style={{width: '100%', padding: '0 1px'}}>
-                    <Connector inputs={inType} dictionnary={colorTypeDictionnary} />
+                    <Connector inputs={inType[currentActionListName]} dictionnary={colorTypeDictionnary} />
                 </div>
                 {specificCardOrder && specificCardOrder.length ? (
                     specificCardOrder.map((actionId, i) => renderAction(actionId, i))
@@ -198,11 +198,9 @@ function ALCList({
                     <ALCPlaceholder>Slide Actions Here</ALCPlaceholder>
                 )}
                 <HiddenDiv ref={dropOut} extend={currentIndex === -1} hover={collectedProps.hovered} />
-                {currentActionListName === 'saveValue' && (
-                    <div style={{width: '100%', padding: '0 1px'}}>
-                        <Connector inputs={outType} dictionnary={colorTypeDictionnary} />
-                    </div>
-                )}
+                <div style={{width: '100%', padding: '0 1px'}}>
+                    <Connector inputs={outType[currentActionListName]} dictionnary={colorTypeDictionnary} />
+                </div>
             </ListContent>
             <div style={{textAlign: 'right'}}>
                 <Button
@@ -213,8 +211,8 @@ function ALCList({
                     onClick={setConfig}
                 >
                     {connectionFailures && connectionFailures.length > 0
-                        ? "There's a connection problem"
-                        : 'Save Config'}
+                        ? t('attributes.connection_problem')
+                        : t('attributes.save_config')}
                 </Button>
             </div>
         </ListContainer>
