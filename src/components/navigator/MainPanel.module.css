@@ -1,0 +1,38 @@
+.TopPanelContainer {
+    height:200px;
+}
+.ListPanelContainer {
+    height:calc(100% - 200px);
+    overflow: auto;
+    padding:0 !important;
+    margin-top:0 !important;
+    border-top:none !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+.TopPanelHeader{
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    margin-top:0 !important;
+}
+.ListPanelTable {
+    border: none !important;
+}
+.ListPanelTableTh{
+    position:sticky !important;
+    top:0;
+    z-index: 10;
+}
+.ListPanelTableThFooter{
+    position:sticky !important;
+    bottom:0;
+    z-index: 10;
+    text-align:right !important;
+}
+.blurred {
+    filter: blur(5px);
+    transition: 350ms filter linear 350ms;
+}
+.clickable{
+    cursor:pointer;
+}

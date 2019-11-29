@@ -150,7 +150,9 @@
         }
     },
     "navigator": {
-        "title": "Navigateur"
+        "title": "Navigateur",
+        "select_root": "Veuillez sélectionner une bibliothèque dans la liste ci-contre.",
+        "edit_filters": "Modifier les filtres"
     },
     "records": {
         "add_value": "Ajouter une valeur",
@@ -160,5 +162,6 @@
         "edit": "Éditer",
         "delete_link": "Supprimer la liaison",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet élément?"
+
     }
 }

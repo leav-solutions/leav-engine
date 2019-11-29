@@ -11,6 +11,7 @@ import ProtectedRoute from '../../shared/ProtectedRoute';
 import EditTree from '../../trees/EditTree';
 import Trees from '../../trees/Trees';
 import MainMenu from '../MainMenu';
+import Navigator from '../../navigator';
 
 /* tslint:disable-next-line:variable-name */
 const LeftCol = styled.div`
@@ -77,6 +78,7 @@ function Home(): JSX.Element {
                         component={AdminPermissions}
                         exact
                     />
+                    <ProtectedRoute path="/navigator" component={Navigator} exact />
                 </Content>
             </div>
         </Router>
