@@ -85,7 +85,7 @@ const _validateInputType = (
     }
 
     const availableActions = deps.actionsListDomain.getAvailableActions();
-    const allowedInputTypes = getAllowedOutputTypes(attrData);
+    const allowedOutputTypes = getAllowedOutputTypes(attrData);
     for (const event of Object.values(ActionsListEvents)) {
         if (!attrData.actions_list[event] || !attrData.actions_list[event].length) {
             continue;
@@ -95,9 +95,9 @@ const _validateInputType = (
         const lastAction = eventActions.slice(-1)[0];
         const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
 
-        if (!intersection(lastActionDetails.output_types, allowedInputTypes[event]).length) {
+        if (!intersection(lastActionDetails.output_types, allowedOutputTypes[event]).length) {
             inputTypeErrors[`actions_list.${event}`] = `Last action is invalid:
-                        expected action with ouptput types including ${allowedInputTypes[event]},
+                        expected action with ouptput types including ${allowedOutputTypes[event]},
                         received ${lastActionDetails.output_types}`;
         }
     }
