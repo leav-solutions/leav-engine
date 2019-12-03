@@ -7,9 +7,9 @@ import {mockLibrary} from '../../../__mocks__/libraries';
 import SelectRecordModal from './SelectRecordModal';
 
 jest.mock(
-    '../SelectRecord',
+    '../../navigator',
     () =>
-        function SelectRecord() {
+        function Navigator() {
             return <div>Select record</div>;
         }
 );
@@ -51,14 +51,13 @@ describe('SelectRecordModal', () => {
 
         expect(comp.find('Modal')).toHaveLength(1);
         expect(comp.find('Modal').prop('open')).toBe(true);
-        expect(comp.find('Loading')).toHaveLength(1);
 
         await act(async () => {
             await wait(0);
             comp.update();
         });
 
-        expect(comp.find('SelectRecord')).toHaveLength(1);
+        expect(comp.find('Navigator')).toHaveLength(1);
     });
 
     test('Call on close', async () => {
