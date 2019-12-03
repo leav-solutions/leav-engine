@@ -261,11 +261,11 @@
     },
     "doc": {
         "mime": "application/msword",
-        "type": "application"
+        "type": "document"
     },
     "dot": {
         "mime": "application/msword",
-        "type": "application"
+        "type": "document"
     },
     "mxf": {
         "mime": "application/mxf",
@@ -1513,27 +1513,27 @@
     },
     "xls": {
         "mime": "application/vnd.ms-excel",
-        "type": "application"
+        "type": "document"
     },
     "xlm": {
         "mime": "application/vnd.ms-excel",
-        "type": "application"
+        "type": "document"
     },
     "xla": {
         "mime": "application/vnd.ms-excel",
-        "type": "application"
+        "type": "document"
     },
     "xlc": {
         "mime": "application/vnd.ms-excel",
-        "type": "application"
+        "type": "document"
     },
     "xlt": {
         "mime": "application/vnd.ms-excel",
-        "type": "application"
+        "type": "document"
     },
     "xlw": {
         "mime": "application/vnd.ms-excel",
-        "type": "application"
+        "type": "document"
     },
     "xlam": {
         "mime": "application/vnd.ms-excel.addin.macroenabled.12",
@@ -1581,15 +1581,15 @@
     },
     "ppt": {
         "mime": "application/vnd.ms-powerpoint",
-        "type": "application"
+        "type": "document"
     },
     "pps": {
         "mime": "application/vnd.ms-powerpoint",
-        "type": "application"
+        "type": "document"
     },
     "pot": {
         "mime": "application/vnd.ms-powerpoint",
-        "type": "application"
+        "type": "document"
     },
     "ppam": {
         "mime": "application/vnd.ms-powerpoint.addin.macroenabled.12",
@@ -1721,71 +1721,71 @@
     },
     "odc": {
         "mime": "application/vnd.oasis.opendocument.chart",
-        "type": "application"
+        "type": "document"
     },
     "otc": {
         "mime": "application/vnd.oasis.opendocument.chart-template",
-        "type": "application"
+        "type": "document"
     },
     "odb": {
         "mime": "application/vnd.oasis.opendocument.database",
-        "type": "application"
+        "type": "document"
     },
     "odf": {
         "mime": "application/vnd.oasis.opendocument.formula",
-        "type": "application"
+        "type": "document"
     },
     "odft": {
         "mime": "application/vnd.oasis.opendocument.formula-template",
-        "type": "application"
+        "type": "document"
     },
     "odg": {
         "mime": "application/vnd.oasis.opendocument.graphics",
-        "type": "application"
+        "type": "document"
     },
     "otg": {
         "mime": "application/vnd.oasis.opendocument.graphics-template",
-        "type": "application"
+        "type": "document"
     },
     "odi": {
         "mime": "application/vnd.oasis.opendocument.image",
-        "type": "application"
+        "type": "document"
     },
     "oti": {
         "mime": "application/vnd.oasis.opendocument.image-template",
-        "type": "application"
+        "type": "document"
     },
     "odp": {
         "mime": "application/vnd.oasis.opendocument.presentation",
-        "type": "application"
+        "type": "document"
     },
     "otp": {
         "mime": "application/vnd.oasis.opendocument.presentation-template",
-        "type": "application"
+        "type": "document"
     },
     "ods": {
         "mime": "application/vnd.oasis.opendocument.spreadsheet",
-        "type": "application"
+        "type": "document"
     },
     "ots": {
         "mime": "application/vnd.oasis.opendocument.spreadsheet-template",
-        "type": "application"
+        "type": "document"
     },
     "odt": {
         "mime": "application/vnd.oasis.opendocument.text",
-        "type": "application"
+        "type": "document"
     },
     "odm": {
         "mime": "application/vnd.oasis.opendocument.text-master",
-        "type": "application"
+        "type": "document"
     },
     "ott": {
         "mime": "application/vnd.oasis.opendocument.text-template",
-        "type": "application"
+        "type": "document"
     },
     "oth": {
         "mime": "application/vnd.oasis.opendocument.text-web",
-        "type": "application"
+        "type": "document"
     },
     "xo": {
         "mime": "application/vnd.olpc-sugar",
@@ -1801,35 +1801,35 @@
     },
     "pptx": {
         "mime": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "type": "application"
+        "type": "document"
     },
     "sldx": {
         "mime": "application/vnd.openxmlformats-officedocument.presentationml.slide",
-        "type": "application"
+        "type": "document"
     },
     "ppsx": {
         "mime": "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
-        "type": "application"
+        "type": "document"
     },
     "potx": {
         "mime": "application/vnd.openxmlformats-officedocument.presentationml.template",
-        "type": "application"
+        "type": "document"
     },
     "xlsx": {
         "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "type": "application"
+        "type": "document"
     },
     "xltx": {
         "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
-        "type": "application"
+        "type": "document"
     },
     "docx": {
         "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "type": "application"
+        "type": "document"
     },
     "dotx": {
         "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
-        "type": "application"
+        "type": "document"
     },
     "mgp": {
         "mime": "application/vnd.osgeo.mapguide.package",

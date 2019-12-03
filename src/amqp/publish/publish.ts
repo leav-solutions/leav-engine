@@ -12,6 +12,6 @@ export const sendResponse = async (
     {exchange, routingKey}: IProps,
     context: any,
 ) => {
-    const buffer = Buffer.from(JSON.stringify({...responses, context}));
+    const buffer = Buffer.from(JSON.stringify({responses, context}));
     return channel.publish(exchange, routingKey, buffer);
 };

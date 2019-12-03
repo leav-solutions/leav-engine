@@ -1,3 +1,4 @@
+import {getConfig} from './../../getConfig/getConfig';
 import {getJpgArgs} from './getJpgArgs/getJpgArgs';
 import {getImageArgs} from './getImageArgs';
 

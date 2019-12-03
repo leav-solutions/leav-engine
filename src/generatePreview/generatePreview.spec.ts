@@ -39,7 +39,7 @@ describe('generatePreview', () => {
 
     test('first results ', () => {
         const [firstResult] = results;
-        expect(firstResult.params.output).toBe('test.800.jpg');
+        expect(firstResult.params.output).toEqual(expect.stringContaining('test.800.jpg'));
     });
 
     test('results length and error', () => {

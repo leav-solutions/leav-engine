@@ -1,3 +1,4 @@
+import {getConfig} from './../getConfig/getConfig';
 import {startConsume} from './startConsume';
 import {initAmqp} from './init/init';
 import {consume} from './consume/consume';
@@ -9,6 +10,7 @@ describe('test startConsume', () => {
         (getChannel as jest.FunctionLike) = jest.fn(() => 'channel');
         (initAmqp as jest.FunctionLike) = jest.fn();
         (consume as jest.FunctionLike) = jest.fn();
+        (getConfig as jest.FunctionLike) = jest.fn(() => config);
 
         await startConsume(config);
 

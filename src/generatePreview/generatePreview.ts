@@ -1,7 +1,8 @@
+import {handleDocument} from './../getArgs/getImageArgs/getDocumentArgs/getDocumentArgs';
 import {join} from 'path';
 import {execFileSync} from 'child_process';
 import {getArgs} from './../getArgs/getArgs';
-import {IMessageConsume, IResult, ISize, IVersion, IConfig} from './../types';
+import {IMessageConsume, IResult, ISize, IVersion, IConfig, IExec} from './../types';
 
 export const generatePreview = (msgContent: IMessageConsume, type: string, config: IConfig): IResult[] => {
     const results: IResult[] = [];
@@ -40,14 +41,18 @@ const execute = ({rootPath, relativeInput, version, size, type, results, useProf
     const absInput = join(rootPath, relativeInput);
     const absOutput = join(rootPath, size.output);
 
-    const {command, args} = getArgs(type, absInput, absOutput, size.size, useProfile);
-
-    execFileSync(command, args);
+    if (type === 'document') {
+        handleDocument(absInput, absOutput, size.size);
+    } else {
+        const {command, args} = getArgs(type, absInput, absOutput, size.size, useProfile);
+        execFileSync(command, args, {stdio: 'pipe'});
+    }
 
     results.push({
         error: 0,
         params: {
-            ...size,
+            output: absOutput,
+            size: size.size,
             density: version.density,
             background: version.background,
         },

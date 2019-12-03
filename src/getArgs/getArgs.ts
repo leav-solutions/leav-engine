@@ -1,5 +1,5 @@
-import {IExec} from './../types';
 import {extname} from 'path';
+import {IExec} from './../types';
 import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
 

@@ -35,6 +35,9 @@ export const getImageArgs = (ext: string, input: string, output: string, size: n
         case 'jpeg':
             addTypeArgs(getJpgArgs, args, input);
             break;
+        case 'pdf':
+            args.splice(0, 1, `${input}[0]`);
+            break;
     }
 
     return {
