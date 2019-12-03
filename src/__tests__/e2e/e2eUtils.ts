@@ -63,7 +63,8 @@ export async function gqlSaveAttribute(
     type: AttributeTypes,
     label: string,
     format?: AttributeFormats,
-    versionsConf?: IAttributeVersionsConf
+    versionsConf?: IAttributeVersionsConf,
+    metadataFields?: string[]
 ) {
     const query = `mutation {
         saveAttribute(
@@ -72,6 +73,7 @@ export async function gqlSaveAttribute(
                 type: ${type},
                 format: ${format || 'text'},
                 label: {fr: "${label}"},
+                metadata_fields: ${metadataFields ? `[${metadataFields.map(t => `"${t}"`).join(', ')}]` : 'null'},
                 versions_conf: ${
                     versionsConf
                         ? `{versionable: ${
@@ -98,4 +100,15 @@ export async function gqlSaveTree(id: string, label: string, libraries: string[]
     }`);
 
     return saveTreeRes.data.data;
+}
+
+export async function gqlCreateRecord(library: string): Promise<number> {
+    const res = await makeGraphQlCall(`mutation {
+        c: createRecord(library: "${library}") {
+            id
+        }
+    }
+    `);
+
+    return res.data.data.c.id;
 }

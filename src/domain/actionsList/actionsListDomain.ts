@@ -1,10 +1,11 @@
 import * as Joi from '@hapi/joi';
 import {AwilixContainer} from 'awilix';
 import {partialRight} from 'lodash';
-import {IValidationErrorFieldDetail} from '../../errors/ValidationError';
+import {ErrorFieldDetail} from '../../errors/ValidationError';
 import {IUtils} from '../../utils/utils';
 import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
+import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 
 export interface IActionsListDomain {
@@ -21,7 +22,7 @@ export interface IActionsListDomain {
      * @param attribute
      * @param error
      */
-    handleJoiError(attribute: IAttribute, error: Joi.ValidationError): IValidationErrorFieldDetail;
+    handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord>;
 
     /**
      * Execute a list of actions.
@@ -51,7 +52,7 @@ export default function({
 
             return actions;
         },
-        handleJoiError(attribute: IAttribute, error: Joi.ValidationError): IValidationErrorFieldDetail {
+        handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord> {
             return {[attribute.id]: error.details.map(er => er.message).join('\n')};
         },
         async runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue> {
@@ -64,13 +65,12 @@ export default function({
 
                 // Convert params from an array of object with name and value properties
                 // to an object {name: value}
-                const params: IActionsListParams =
-                    typeof action.params !== 'undefined'
-                        ? action.params.reduce((all, p) => {
-                              all[p.name] = p.value;
-                              return all;
-                          }, {})
-                        : {};
+                const params: IActionsListParams = !!action.params
+                    ? action.params.reduce((all, p) => {
+                          all[p.name] = p.value;
+                          return all;
+                      }, {})
+                    : {};
 
                 // Create a new function with params and ctx applied to it
                 // This new function only takes value has an argument

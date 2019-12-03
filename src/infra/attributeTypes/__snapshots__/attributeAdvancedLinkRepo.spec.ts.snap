@@ -15,6 +15,9 @@ Object {
     "_to": "test_linked_lib/987654",
     "attribute": "test_adv_link_attr",
     "created_at": 400999999,
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
     "modified_at": 400999999,
     "version": Object {
       "my_tree": "test_lib/1",
@@ -126,6 +129,9 @@ Object {
     "_from": "test_lib/12345",
     "_to": "test_linked_lib/987654",
     "attribute": "test_adv_link_attr",
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
     "modified_at": 400999999,
     "version": Object {
       "my_tree": "test_lib/1",

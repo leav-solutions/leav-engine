@@ -38,7 +38,8 @@ describe('AttributeStandardRepo', () => {
                 _key: 978654321,
                 attribute: 'test_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                metadata: {my_attribute: 'metadata value'}
             };
 
             const newValueData = {
@@ -46,7 +47,8 @@ describe('AttributeStandardRepo', () => {
                 value: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                metadata: {my_attribute: 'metadata value'}
             };
 
             const mockDbServ = {
@@ -59,7 +61,8 @@ describe('AttributeStandardRepo', () => {
             const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
                 value: 'test val',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                metadata: {my_attribute: 'metadata value'}
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(2);
@@ -164,7 +167,8 @@ describe('AttributeStandardRepo', () => {
                 _key: 978654321,
                 attribute: 'test_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                metadata: {my_attribute: 'metadata value'}
             };
 
             const valueData = {
@@ -172,7 +176,8 @@ describe('AttributeStandardRepo', () => {
                 value: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                metadata: {my_attribute: 'metadata value'}
             };
 
             const mockDbServ = {
@@ -185,7 +190,8 @@ describe('AttributeStandardRepo', () => {
             const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
                 id_value: 987654,
                 value: 'test val',
-                modified_at: 500999999
+                modified_at: 500999999,
+                metadata: {my_attribute: 'metadata value'}
             });
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
@@ -423,7 +429,8 @@ describe('AttributeStandardRepo', () => {
                     _to: 'core_values/987654',
                     attribute: 'test_attr',
                     modified_at: 99999,
-                    created_at: 99999
+                    created_at: 99999,
+                    metadata: {my_attribute: 'metadata value'}
                 }
             },
             {
@@ -436,7 +443,8 @@ describe('AttributeStandardRepo', () => {
                     _to: 'core_values/987655',
                     attribute: 'test_attr',
                     modified_at: 99999,
-                    created_at: 99999
+                    created_at: 99999,
+                    metadata: {my_attribute: 'metadata value'}
                 }
             }
         ];
@@ -465,7 +473,8 @@ describe('AttributeStandardRepo', () => {
                 value: 'test val',
                 attribute: 'test_attr',
                 modified_at: 99999,
-                created_at: 99999
+                created_at: 99999,
+                metadata: {my_attribute: 'metadata value'}
             });
         });
 

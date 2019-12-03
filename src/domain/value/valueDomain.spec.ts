@@ -1,14 +1,18 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IUtils} from 'utils/utils';
 import {IValue, IValueVersion} from '_types/value';
+import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 import {
     mockAttrAdv,
     mockAttrAdvLink,
     mockAttrAdvVersionable,
     mockAttrAdvVersionableSimple,
+    mockAttrAdvWithMetadata,
     mockAttrSimple,
     mockAttrTree
 } from '../../__tests__/mocks/attribute';
@@ -22,7 +26,8 @@ import valueDomain from './valueDomain';
 
 describe('ValueDomain', () => {
     const mockRecordRepo: Mockify<IRecordRepo> = {
-        updateRecord: jest.fn()
+        updateRecord: jest.fn(),
+        find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]})
     };
 
     const mockActionsListDomain: Mockify<IActionsListDomain> = {
@@ -44,6 +49,10 @@ describe('ValueDomain', () => {
         },
         type: AttributeTypes.SIMPLE
     };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
 
     describe('saveValue', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
@@ -299,7 +308,10 @@ describe('ValueDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
             };
 
-            const mockRecRepo = {updateRecord: global.__mockPromise({})};
+            const mockRecRepo = {
+                updateRecord: global.__mockPromise({}),
+                find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]})
+            };
 
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -428,6 +440,47 @@ describe('ValueDomain', () => {
             );
 
             expect(savedValue.version).toBeUndefined();
+        });
+
+        test('Should throw if unknown record', async () => {
+            const savedValueData = {
+                id_value: '1337',
+                value: '123465',
+                attribute: mockAttrAdvLink.id,
+                modified_at: 123456,
+                created_at: 123456
+            };
+
+            const mockValRepo = {
+                createValue: global.__mockPromise(savedValueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrSimple})
+            };
+
+            const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
+                find: global.__mockPromise({totalCount: 0, list: []})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
+
+            await expect(
+                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+            ).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if version is incorrect: unknown tree', async () => {
@@ -608,6 +661,292 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue('test_lib', 12345, mockAttrTree.id, {value: 'lib1/123456'}, {userId: 1})
             ).rejects.toThrow(ValidationError);
+        });
+
+        describe('Metadata', () => {
+            test('Save metadata on value', async () => {
+                const savedValueData = {
+                    id_value: '1337',
+                    value: 'test val',
+                    attribute: 'advanced_attribute_with_meta',
+                    modified_at: 123456,
+                    created_at: 123456,
+                    metadata: {
+                        meta_attribute: 'metadata value'
+                    }
+                };
+
+                const mockValRepo = {
+                    createValue: global.__mockPromise(savedValueData)
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise({...mockAttrAdvWithMetadata})
+                };
+
+                const mockLibDomain = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                };
+
+                const valDomain = valueDomain({
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.library': mockLibDomain as ILibraryDomain,
+                    'core.infra.value': mockValRepo as IValueRepo,
+                    'core.infra.record': mockRecordRepo as IRecordRepo,
+                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                    'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                });
+
+                const savedValue = await valDomain.saveValue(
+                    'test_lib',
+                    12345,
+                    'advanced_attribute_with_meta',
+                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    {userId: 1}
+                );
+
+                expect(mockValRepo.createValue.mock.calls.length).toBe(1);
+                expect(mockValRepo.createValue.mock.calls[0][3].metadata).toMatchObject({
+                    meta_attribute: 'metadata value'
+                });
+
+                expect(savedValue).toMatchObject(savedValueData);
+                expect(savedValue.metadata).toMatchObject({
+                    meta_attribute: 'metadata value'
+                });
+            });
+
+            test("Should throw if metadata doesn't match attribute settings", async () => {
+                const savedValueData = {
+                    id_value: '1337',
+                    value: 'test val',
+                    attribute: 'advanced_attribute',
+                    modified_at: 123456,
+                    created_at: 123456,
+                    metadata: {
+                        meta_attribute: 'metadata value'
+                    }
+                };
+
+                const mockValRepo = {
+                    createValue: global.__mockPromise(savedValueData)
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise({...mockAttrAdv})
+                };
+
+                const mockLibDomain = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                };
+
+                const valDomain = valueDomain({
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.library': mockLibDomain as ILibraryDomain,
+                    'core.infra.value': mockValRepo as IValueRepo,
+                    'core.infra.record': mockRecordRepo as IRecordRepo,
+                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                    'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                });
+
+                const saveVal = valDomain.saveValue(
+                    'test_lib',
+                    12345,
+                    'advanced_attribute_with_meta',
+                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    {userId: 1}
+                );
+
+                await expect(saveVal).rejects.toThrow(ValidationError);
+                await expect(saveVal).rejects.toHaveProperty('fields.metadata');
+            });
+
+            test('Should throw if no permission to edit metadata field', async () => {
+                const savedValueData = {
+                    id_value: '1337',
+                    value: 'test val',
+                    attribute: 'advanced_attribute',
+                    modified_at: 123456,
+                    created_at: 123456,
+                    metadata: {
+                        meta_attribute: 'metadata value'
+                    }
+                };
+
+                const mockValRepo = {
+                    createValue: global.__mockPromise(savedValueData)
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise({...mockAttrAdv})
+                };
+
+                const mockLibDomain = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                };
+
+                const mockAttrPermForbidDom: Mockify<IAttributePermissionDomain> = {
+                    getAttributePermission: jest
+                        .fn()
+                        .mockImplementation((a, u, attrId) =>
+                            Promise.resolve(attrId === 'meta_attribute' ? false : true)
+                        )
+                };
+                const valDomain = valueDomain({
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.library': mockLibDomain as ILibraryDomain,
+                    'core.infra.value': mockValRepo as IValueRepo,
+                    'core.infra.record': mockRecordRepo as IRecordRepo,
+                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                    'core.domain.permission.attributePermission': mockAttrPermForbidDom as IAttributePermissionDomain,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                });
+
+                const saveVal = valDomain.saveValue(
+                    'test_lib',
+                    12345,
+                    'advanced_attribute_with_meta',
+                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    {userId: 1}
+                );
+
+                await expect(saveVal).rejects.toThrow(PermissionError);
+                await expect(saveVal).rejects.toHaveProperty('fields.metadata');
+            });
+
+            test('Should run actions list on metadata values', async () => {
+                const attrWithMetadataId = 'advanced_attribute_with_meta';
+                const savedValueData = {
+                    id_value: '1337',
+                    value: 'test val',
+                    attribute: attrWithMetadataId,
+                    modified_at: 123456,
+                    created_at: 123456,
+                    metadata: {
+                        meta_attribute: 'metadata value'
+                    }
+                };
+
+                const mockValRepo = {
+                    createValue: global.__mockPromise(savedValueData)
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: jest.fn().mockImplementation(id =>
+                        Promise.resolve(
+                            id === attrWithMetadataId
+                                ? {...mockAttrAdvWithMetadata}
+                                : {
+                                      ...mockAttrSimple,
+                                      id: 'meta_attribute',
+                                      actions_list: {[ActionsListEvents.SAVE_VALUE]: {name: 'myAction'}}
+                                  }
+                        )
+                    )
+                };
+
+                const mockLibDomain = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                };
+
+                const valDomain = valueDomain({
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.library': mockLibDomain as ILibraryDomain,
+                    'core.infra.value': mockValRepo as IValueRepo,
+                    'core.infra.record': mockRecordRepo as IRecordRepo,
+                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                    'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                });
+
+                await valDomain.saveValue(
+                    'test_lib',
+                    12345,
+                    attrWithMetadataId,
+                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    {userId: 1}
+                );
+
+                expect(mockActionsListDomain.runActionsList).toHaveBeenCalled();
+                expect(mockActionsListDomain.runActionsList.mock.calls[0][2].attribute.id).toBe('meta_attribute');
+            });
+
+            test('Should throw with metafield specified if actions list throws', async () => {
+                const mockUtils: Mockify<IUtils> = {
+                    rethrow: jest.fn().mockImplementation(e => {
+                        throw e;
+                    })
+                };
+
+                const attrWithMetadataId = 'advanced_attribute_with_meta';
+                const savedValueData = {
+                    id_value: '1337',
+                    value: 'test val',
+                    attribute: attrWithMetadataId,
+                    modified_at: 123456,
+                    created_at: 123456,
+                    metadata: {
+                        meta_attribute: 'metadata value'
+                    }
+                };
+
+                const mockValRepo = {
+                    createValue: global.__mockPromise(savedValueData)
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: jest.fn().mockImplementation(id =>
+                        Promise.resolve(
+                            id === attrWithMetadataId
+                                ? {...mockAttrAdvWithMetadata}
+                                : {
+                                      ...mockAttrSimple,
+                                      id: 'meta_attribute',
+                                      actions_list: {[ActionsListEvents.SAVE_VALUE]: {name: 'myAction'}}
+                                  }
+                        )
+                    )
+                };
+
+                const mockALThrowsDomain: Mockify<IActionsListDomain> = {
+                    runActionsList: jest.fn().mockImplementation(() => {
+                        throw new ValidationError({test_attr: 'error'});
+                    })
+                };
+
+                const mockLibDomain = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                };
+
+                const valDomain = valueDomain({
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.library': mockLibDomain as ILibraryDomain,
+                    'core.infra.value': mockValRepo as IValueRepo,
+                    'core.infra.record': mockRecordRepo as IRecordRepo,
+                    'core.domain.actionsList': mockALThrowsDomain as IActionsListDomain,
+                    'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
+                    'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                const saveVal = valDomain.saveValue(
+                    'test_lib',
+                    12345,
+                    'advanced_attribute_with_meta',
+                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    {userId: 1}
+                );
+
+                await expect(saveVal).rejects.toThrow(ValidationError);
+                await expect(saveVal).rejects.toHaveProperty('fields.metadata');
+            });
         });
     });
 
@@ -910,6 +1249,67 @@ describe('ValueDomain', () => {
 
             expect(mockValRepo.deleteValue).toBeCalledTimes(0);
         });
+
+        test('Should throw if unknown library', async function() {
+            const values: IValue[] = [
+                {
+                    attribute: 'advanced_attribute',
+                    value: '',
+                    id_value: 987654
+                }
+            ];
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [], totalCount: 0})
+            };
+
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain
+            });
+
+            const saveVal = valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, true);
+
+            await expect(saveVal).rejects.toThrow(ValidationError);
+            await expect(saveVal).rejects.toHaveProperty('fields.library');
+        });
+
+        test('Should throw if unknown record', async function() {
+            const values: IValue[] = [
+                {
+                    attribute: 'advanced_attribute',
+                    value: '',
+                    id_value: 987654
+                }
+            ];
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
+                find: global.__mockPromise({totalCount: 0, list: []})
+            };
+
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.record': mockRecordRepoNotfound as IRecordRepo
+            });
+
+            const saveVal = valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, true);
+
+            await expect(saveVal).rejects.toThrow(ValidationError);
+            await expect(saveVal).rejects.toHaveProperty('fields.recordId');
+        });
     });
 
     describe('deleteValue', () => {
@@ -984,9 +1384,35 @@ describe('ValueDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
-            ).rejects.toThrow();
+            const deleteVal = valDomain.deleteValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1});
+
+            await expect(deleteVal).rejects.toThrow(ValidationError);
+            await expect(deleteVal).rejects.toHaveProperty('fields.library');
+        });
+
+        test('Should throw if unknown record', async function() {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
+                find: global.__mockPromise({totalCount: 0, list: []})
+            };
+
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.record': mockRecordRepoNotfound as IRecordRepo
+            });
+
+            const deleteVal = valDomain.deleteValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1});
+
+            await expect(deleteVal).rejects.toThrow(ValidationError);
+            await expect(deleteVal).rejects.toHaveProperty('fields.recordId');
         });
 
         test('Should throw if unknown value', async function() {
@@ -1432,7 +1858,38 @@ describe('ValueDomain', () => {
                 'core.infra.value': mockValRepo as IValueRepo
             });
 
-            await expect(valDomain.getValues('test_lib', 12345, 'test_attr')).rejects.toThrow();
+            const getVal = valDomain.getValues('test_lib', 12345, 'test_attr');
+
+            await expect(getVal).rejects.toThrow(ValidationError);
+            await expect(getVal).rejects.toHaveProperty('fields.library');
+        });
+
+        test('Should throw if unknown record', async function() {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+            };
+
+            const mockLibDomain = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+            };
+
+            const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
+                find: global.__mockPromise({totalCount: 0, list: []})
+            };
+
+            const mockValRepo = {};
+
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepoNotfound as IRecordRepo
+            });
+
+            const getVal = valDomain.getValues('test_lib', 12345, 'test_attr');
+
+            await expect(getVal).rejects.toThrow(ValidationError);
+            await expect(getVal).rejects.toHaveProperty('fields.recordId');
         });
     });
 });
