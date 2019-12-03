@@ -1,17 +1,17 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {difference, intersection} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
-import ValidationError, {IValidationErrorFieldDetail} from '../../errors/ValidationError';
-import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, IOAllowedTypes} from '../../_types/attribute';
+import ValidationError from '../../errors/ValidationError';
+import {IAttribute, IOAllowedTypes} from '../../_types/attribute';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
+import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
+import {validateAttributeData} from './helpers/attributeValidationHelper';
 
 export interface IAttributeDomain {
     /**
@@ -68,256 +68,19 @@ export default function({
     'core.infra.tree': treeRepo = null,
     config = null
 }: IDeps = {}): IAttributeDomain {
-    function _getDefaultActionsList(attribute: IAttribute): IActionsListConfig {
-        if (attribute.type !== AttributeTypes.SIMPLE && attribute.type !== AttributeTypes.ADVANCED) {
-            return {};
-        }
-
-        let defaultActions = {};
-        switch (attribute.format) {
-            case AttributeFormats.DATE:
-                defaultActions = {
-                    [ActionsListEvents.SAVE_VALUE]: [
-                        {
-                            name: 'toNumber',
-                            is_system: true
-                        },
-                        {
-                            name: 'validateFormat',
-                            is_system: true
-                        }
-                    ],
-                    [ActionsListEvents.GET_VALUE]: [
-                        {
-                            name: 'formatDate',
-                            is_system: false
-                        }
-                    ]
-                };
-            case AttributeFormats.ENCRYPTED:
-                defaultActions = {
-                    [ActionsListEvents.SAVE_VALUE]: [
-                        {
-                            name: 'validateFormat',
-                            is_system: true
-                        },
-                        {
-                            name: 'encrypt',
-                            is_system: true
-                        }
-                    ],
-                    [ActionsListEvents.GET_VALUE]: [
-                        {
-                            name: 'toBoolean',
-                            is_system: true
-                        }
-                    ]
-                };
-            case AttributeFormats.EXTENDED:
-                defaultActions = {
-                    [ActionsListEvents.SAVE_VALUE]: [
-                        {
-                            name: 'parseJSON',
-                            is_system: true
-                        },
-                        {
-                            name: 'validateFormat',
-                            is_system: true
-                        },
-                        {
-                            name: 'toJSON',
-                            is_system: true
-                        }
-                    ]
-                };
-            default:
-                defaultActions = {
-                    [ActionsListEvents.SAVE_VALUE]: [
-                        {
-                            name: 'validateFormat',
-                            is_system: true
-                        }
-                    ]
-                };
-        }
-
-        return {
-            [ActionsListEvents.GET_VALUE]: [],
-            [ActionsListEvents.SAVE_VALUE]: [],
-            [ActionsListEvents.DELETE_VALUE]: [],
-            ...defaultActions
-        };
-    }
-
-    function _getAllowedInputTypes(attribute: IAttribute): IOAllowedTypes {
-        let inputTypes;
-        switch (attribute.format) {
-            case AttributeFormats.NUMERIC:
-            case AttributeFormats.DATE:
-                inputTypes = {
-                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
-                    [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
-                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
-                };
-                break;
-            case AttributeFormats.BOOLEAN:
-                inputTypes = {
-                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
-                    [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.BOOLEAN],
-                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
-                };
-                break;
-            default:
-                inputTypes = {
-                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
-                    [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
-                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
-                };
-                break;
-        }
-
-        return inputTypes;
-    }
-
-    function _getAllowedOutputTypes(attribute: IAttribute): IOAllowedTypes {
-        let outputTypes;
-        switch (attribute.format) {
-            case AttributeFormats.NUMERIC:
-            case AttributeFormats.DATE:
-                outputTypes = {
-                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
-                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
-                };
-                break;
-            case AttributeFormats.BOOLEAN:
-                outputTypes = {
-                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
-                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
-                };
-                break;
-            default:
-                outputTypes = {
-                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
-                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
-                };
-                break;
-        }
-        outputTypes[ActionsListEvents.GET_VALUE] = Object.values(ActionsListIOTypes);
-
-        return outputTypes;
-    }
-
-    async function _validateAttributeData(attrData: IAttribute): Promise<{}> {
-        const errors = {} as any;
-
-        if (!utils.validateID(attrData.id)) {
-            errors.id = 'Invalid ID format: ' + attrData.id;
-        }
-
-        if (
-            (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) &&
-            attrData.multiple_values
-        ) {
-            errors.multiple_values = 'Multiple values not allowed for this attribute type';
-        }
-
-        if (
-            attrData.versions_conf &&
-            attrData.versions_conf.versionable &&
-            attrData.versions_conf.trees &&
-            attrData.versions_conf.trees.length
-        ) {
-            const existingTrees = await treeRepo.getTrees();
-            const unknownTrees = difference(attrData.versions_conf.trees, existingTrees.list.map(a => a.id));
-            if (unknownTrees.length) {
-                errors.versions_conf = `Unknown trees: ${unknownTrees.join(', ')}`;
-            }
-        }
-
-        // Check output type of last action
-        _validateInputType(attrData);
-
-        // Check presence of system actions
-        _validateRequiredActions(attrData);
-
-        return errors;
-    }
-
-    /**
-     * Check if last actions's output type matches attribute allowed input type
-     *
-     * @param attrData
-     */
-    function _validateInputType(attrData: IAttribute): void {
-        if (!attrData.actions_list) {
-            return;
-        }
-
-        const availableActions = actionsListDomain.getAvailableActions();
-        const allowedInputTypes = _getAllowedOutputTypes(attrData);
-        const errors: IValidationErrorFieldDetail = {};
-        for (const event of Object.values(ActionsListEvents)) {
-            if (!attrData.actions_list[event] || !attrData.actions_list[event].length) {
-                continue;
-            }
-
-            const eventActions = attrData.actions_list[event];
-            const lastAction = eventActions.slice(-1)[0];
-            const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
-
-            if (!intersection(lastActionDetails.output_types, allowedInputTypes[event]).length) {
-                errors[`actions_list.${event}`] = `Last action is invalid:
-                        expected action with ouptput types including ${allowedInputTypes[event]},
-                        received ${lastActionDetails.output_types}`;
-            }
-        }
-
-        if (Object.keys(errors).length) {
-            throw new ValidationError(errors);
-        }
-    }
-
-    /**
-     * Check if all required actions (flagged as system action) are present
-     *
-     * @param attrData
-     */
-    function _validateRequiredActions(attrData: IAttribute): void {
-        if (!attrData.actions_list) {
-            return;
-        }
-
-        const defaultActions = _getDefaultActionsList(attrData);
-        const missingActions = [];
-        for (const event of Object.keys(defaultActions)) {
-            for (const defAction of defaultActions[event]) {
-                if (
-                    defAction.is_system &&
-                    (!attrData.actions_list[event] ||
-                        !attrData.actions_list[event].find(a => a.name === defAction.name))
-                ) {
-                    missingActions.push(`${event} => ${defAction.name}`);
-                }
-            }
-        }
-
-        if (missingActions.length) {
-            throw new ValidationError({actions_list: `Missing required actions: ${missingActions.join(', ')}`});
-        }
-    }
-
     return {
         async getAttributeProperties(id: string): Promise<IAttribute> {
             const attrs = await attributeRepo.getAttributes({filters: {id}, strictFilters: true});
 
             if (!attrs.list.length) {
-                throw new ValidationError({id: 'Unknown attribute ' + id});
+                throw new ValidationError<IAttribute>({id: 'Unknown attribute ' + id});
             }
             const props = attrs.list.pop();
 
             return props;
         },
         async getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
+            // TODO: possibility to search multiple IDs
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
@@ -331,41 +94,8 @@ export default function({
             const attrs = await attributeRepo.getAttributes({filters: {id: attrData.id}, strictFilters: true});
             const isExistingAttr = !!attrs.list.length;
 
-            const attrProps = isExistingAttr ? attrs.list[0] : {};
+            const attrProps: IAttribute = attrs.list[0] ?? null;
             const attrToSave = {...attrProps, ...attrData};
-
-            // Check required fields
-            const requiredFieldsErrors: IValidationErrorFieldDetail = {};
-            if (!attrToSave.type) {
-                requiredFieldsErrors.type = "Attribute's type must be specified";
-            }
-
-            if (
-                (attrToSave.type === AttributeTypes.SIMPLE || attrToSave.type === AttributeTypes.ADVANCED) &&
-                !attrToSave.format
-            ) {
-                requiredFieldsErrors.format = "Attribute's format must be specified";
-            }
-
-            if (!attrToSave.label[config.lang.default]) {
-                requiredFieldsErrors.label = `Attribute's label for default language
-                    (${config.lang.default}) must be specified`;
-            }
-
-            if (
-                (attrToSave.type === AttributeTypes.SIMPLE_LINK || attrToSave.type === AttributeTypes.ADVANCED_LINK) &&
-                !attrToSave.linked_library
-            ) {
-                requiredFieldsErrors.linked_library = `Attribute's linked library must be specified`;
-            }
-
-            if (attrToSave.type === AttributeTypes.TREE && !attrToSave.linked_tree) {
-                requiredFieldsErrors.linked_tree = `Attribute's linked tree must be specified`;
-            }
-
-            if (Object.keys(requiredFieldsErrors).length) {
-                throw new ValidationError(requiredFieldsErrors);
-            }
 
             // Check permissions
             const action = isExistingAttr
@@ -377,48 +107,20 @@ export default function({
                 throw new PermissionError(action);
             }
 
-            let alToSave = null;
-            if (isExistingAttr) {
-                if (attrToSave.actions_list) {
-                    // We need to merge actions list to save with existing actions list to make sure we keep
-                    // the is_system flag to true on system actions
-                    const existingAL = (attrProps as IAttribute).actions_list || {
-                        [ActionsListEvents.SAVE_VALUE]: [],
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.DELETE_VALUE]: []
-                    };
-
-                    alToSave = Object.values(ActionsListEvents).reduce((allALs, evName): IActionsListConfig => {
-                        // Merge each action with existing system action. If there's no matching system action, we force
-                        // the flag to false
-                        allALs[evName] = attrToSave.actions_list[evName]
-                            ? attrToSave.actions_list[evName].map(actionToSave => {
-                                  const sysActionIndex = existingAL[evName].findIndex(
-                                      al => al.name === actionToSave.name && al.is_system
-                                  );
-                                  return {
-                                      ...{is_system: false},
-                                      ...existingAL[evName][sysActionIndex],
-                                      ...actionToSave
-                                  };
-                              })
-                            : [];
-
-                        return allALs;
-                    }, {});
-                }
-            } else {
-                alToSave = utils.mergeConcat(_getDefaultActionsList(attrToSave), attrToSave.actions_list);
-            }
-
             // Add default actions list on new attribute
-            attrToSave.actions_list = alToSave;
+            attrToSave.actions_list = getActionsListToSave(attrToSave, attrProps, !isExistingAttr, utils);
 
             // Check settings validity
-            const validationErrors = await _validateAttributeData(attrToSave);
+            const validationErrors = await validateAttributeData(attrToSave, {
+                utils,
+                treeRepo,
+                config,
+                attributeRepo,
+                actionsListDomain
+            });
 
             if (Object.keys(validationErrors).length) {
-                throw new ValidationError(validationErrors);
+                throw new ValidationError<IAttribute>(validationErrors);
             }
 
             const attr = isExistingAttr
@@ -441,22 +143,22 @@ export default function({
 
             // Check if exists and can delete
             if (!attr.list.length) {
-                throw new ValidationError({id: 'Unknown attribute ' + id});
+                throw new ValidationError<IAttribute>({id: 'Unknown attribute ' + id});
             }
 
             const attrProps = attr.list.pop();
 
             if (attrProps.system) {
-                throw new ValidationError({id: 'Cannot delete system attribute'});
+                throw new ValidationError<IAttribute>({id: 'Cannot delete system attribute'});
             }
 
             return attributeRepo.deleteAttribute(attrProps);
         },
         getInputTypes(attrData: IAttribute): IOAllowedTypes {
-            return _getAllowedInputTypes(attrData);
+            return getAllowedInputTypes(attrData);
         },
         getOutputTypes(attrData: IAttribute): IOAllowedTypes {
-            return _getAllowedOutputTypes(attrData);
+            return getAllowedOutputTypes(attrData);
         }
     };
 }

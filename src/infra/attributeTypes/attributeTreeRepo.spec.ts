@@ -36,6 +36,7 @@ describe('AttributeTreeRepo', () => {
         attribute: 'test_tree_attr',
         modified_at: 400999999,
         created_at: 400999999,
+        metadata: {my_attribute: 'metadata value'},
         version: {
             my_tree: 'test_lib/1'
         }
@@ -47,6 +48,7 @@ describe('AttributeTreeRepo', () => {
         attribute: 'test_tree_attr',
         modified_at: 400999999,
         created_at: 400999999,
+        metadata: {my_attribute: 'metadata value'},
         version: {
             my_tree: {
                 id: 1,
@@ -81,6 +83,7 @@ describe('AttributeTreeRepo', () => {
                 value: 'categories/123456',
                 modified_at: 400999999,
                 created_at: 400999999,
+                metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
                         id: 1,
@@ -100,6 +103,7 @@ describe('AttributeTreeRepo', () => {
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
                         id: 1,
@@ -126,6 +130,7 @@ describe('AttributeTreeRepo', () => {
                 id_value: 987654,
                 value: 'categories/123456',
                 modified_at: 400999999,
+                metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
                         id: 1,
@@ -198,7 +203,8 @@ describe('AttributeTreeRepo', () => {
                         _rev: '_WgJilsW--_',
                         attribute: 'test_tree_attr',
                         modified_at: 99999,
-                        created_at: 99999
+                        created_at: 99999,
+                        metadata: {my_attribute: 'metadata value'}
                     }
                 }
             ];
@@ -242,7 +248,8 @@ describe('AttributeTreeRepo', () => {
                 },
                 modified_at: 99999,
                 created_at: 99999,
-                attribute: 'test_tree_attr'
+                attribute: 'test_tree_attr',
+                metadata: {my_attribute: 'metadata value'}
             });
         });
 
@@ -283,7 +290,8 @@ describe('AttributeTreeRepo', () => {
                     _rev: '_WgJilsW--_',
                     attribute: 'test_tree_attr',
                     modified_at: 99999,
-                    created_at: 99999
+                    created_at: 99999,
+                    metadata: {my_attribute: 'metadata value'}
                 }
             },
             {
@@ -302,7 +310,8 @@ describe('AttributeTreeRepo', () => {
                     _rev: '_WgJilsW--_',
                     attribute: 'test_tree_attr',
                     modified_at: 99999,
-                    created_at: 99999
+                    created_at: 99999,
+                    metadata: {my_attribute: 'metadata value'}
                 }
             }
         ];
@@ -354,7 +363,8 @@ describe('AttributeTreeRepo', () => {
                 },
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
-                created_at: 99999
+                created_at: 99999,
+                metadata: {my_attribute: 'metadata value'}
             });
 
             expect(values[1]).toMatchObject({
@@ -368,7 +378,8 @@ describe('AttributeTreeRepo', () => {
                 },
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
-                created_at: 99999
+                created_at: 99999,
+                metadata: {my_attribute: 'metadata value'}
             });
         });
 

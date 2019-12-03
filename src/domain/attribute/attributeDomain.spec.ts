@@ -19,6 +19,18 @@ describe('attributeDomain', () => {
         }
     };
 
+    const mockPermDomain = {
+        getAdminPermission: global.__mockPromise(true)
+    };
+
+    const mockPermDomainForbidden = {
+        getAdminPermission: global.__mockPromise(false)
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     describe('getAttributes', () => {
         test('Should return a list of attributes', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
@@ -105,10 +117,6 @@ describe('attributeDomain', () => {
         };
 
         test('Should save a new attribute', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0}),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
@@ -149,10 +157,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should update an attribute', async function() {
-            const mockPermDomain = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -189,10 +193,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should read data from DB for fields not specified in save', async function() {
-            const mockPermDomain = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const attrData = {...mockAttrAdvVersionable};
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
@@ -244,10 +244,6 @@ describe('attributeDomain', () => {
         });
 
         test('When saving actions list, keep saved system actions', async () => {
-            const mockPermDomain = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const attrData = {
                 ...mockAttrAdv,
                 actions_list: {
@@ -307,10 +303,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if actions list type is invalid', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -331,7 +323,10 @@ describe('attributeDomain', () => {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
                 actions_list: {
-                    saveValue: [{is_system: true, name: 'validateFormat'}, {is_system: false, name: 'toNumber'}]
+                    saveValue: [
+                        {is_system: true, name: 'validateFormat'},
+                        {is_system: false, name: 'toNumber'}
+                    ]
                 },
                 label: {fr: 'Test'}
             };
@@ -340,10 +335,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if invalid ID', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockUtilsInvalidID: Mockify<IUtils> = {
                 validateID: jest.fn().mockReturnValue(false)
             };
@@ -375,10 +366,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if system action list is missing', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -407,10 +394,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if forbidden action', async function() {
-            const mockPermDomain = {
-                getAdminPermission: global.__mockPromise(false)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -420,7 +403,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission': mockPermDomainForbidden as IPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -438,10 +421,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if multiple values on simple or simple link attribute', async function() {
-            const mockPermDomain = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -475,10 +454,6 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if using invalid tree on versions conf', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: jest.fn().mockImplementation(filters => {
                     const list = filters.type === AttributeTypes.TREE ? [mockAttrTree] : [];
@@ -507,10 +482,6 @@ describe('attributeDomain', () => {
         });
 
         test('Check required fields at creation', async () => {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockTreeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
@@ -574,16 +545,72 @@ describe('attributeDomain', () => {
                 ValidationError
             );
         });
+
+        describe('Metadata', () => {
+            test('Should throw if saving metadata on simple attribute', async () => {
+                const mockAttrRepo: Mockify<IAttributeRepo> = {
+                    getAttributes: global.__mockPromise({list: [{...mockAttrSimple}]})
+                };
+
+                const attrDomain = attributeDomain({
+                    'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                    'core.domain.permission': mockPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConf
+                });
+
+                attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
+
+                await expect(
+                    attrDomain.saveAttribute(
+                        {
+                            ...mockAttrSimple,
+                            id: 'metadata_attribute',
+                            metadata_fields: ['some_simple_attribute']
+                        },
+                        queryInfos
+                    )
+                ).rejects.toThrow(ValidationError);
+            });
+
+            test('Should throw if invalid metadata attribute', async () => {
+                const mockAttrRepo: Mockify<IAttributeRepo> = {
+                    getAttributes: jest
+                        .fn()
+                        .mockImplementation(({filters}) =>
+                            filters.id === 'metadata_attribute'
+                                ? {list: [{...mockAttrAdv, id: 'metadata_attribute'}]}
+                                : {list: []}
+                        )
+                };
+
+                const attrDomain = attributeDomain({
+                    'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                    'core.domain.permission': mockPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConf
+                });
+
+                attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
+
+                await expect(
+                    attrDomain.saveAttribute(
+                        {
+                            ...mockAttrAdv,
+                            id: 'metadata_attribute',
+                            metadata_fields: ['some_invalid_attribute']
+                        },
+                        queryInfos
+                    )
+                ).rejects.toThrow(ValidationError);
+            });
+        });
     });
 
     describe('deleteAttribute', () => {
         const attrData = {id: 'test_attribute', system: false, label: {fr: 'Test'}, format: 'text', type: 'index'};
 
         test('Should delete an attribute and return deleted attribute', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise(attrData)};
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
@@ -615,14 +642,10 @@ describe('attributeDomain', () => {
         });
 
         test('Should throw if forbidden action', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
-            };
-
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                'core.domain.permission': mockPermDomain as IPermissionDomain
+                'core.domain.permission': mockPermDomainForbidden as IPermissionDomain
             });
             attrDomain.getAttributes = global.__mockPromise({list: [], totalCount: 0});
 

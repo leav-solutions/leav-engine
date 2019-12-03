@@ -34,10 +34,7 @@ describe('Utils', () => {
             const add = (a, b) => a + b;
             const square = n => n * n;
 
-            const addSquare = utilsModule.pipe(
-                add,
-                square
-            );
+            const addSquare = utilsModule.pipe(add, square);
 
             expect(await addSquare(1, 2)).toBe(9);
         });
@@ -51,10 +48,7 @@ describe('Utils', () => {
             };
 
             const triple = multiply(3);
-            const triples = utilsModule.pipe(
-                triple,
-                triple
-            );
+            const triples = utilsModule.pipe(triple, triple);
 
             expect(await triples(3)).toBe(27);
         });
@@ -92,6 +86,22 @@ describe('Utils', () => {
                 val2: ['a', 'b', 'c', 'd'],
                 val3: 'tata'
             });
+        });
+    });
+    describe('nameValArrayToObj', () => {
+        const utilsModule = utils();
+        test('Convert an array of name/value object to an object', async () => {
+            expect(
+                utilsModule.nameValArrayToObj([
+                    {name: 'key1', value: 'val1'},
+                    {name: 'key2', value: 'val2'}
+                ])
+            ).toStrictEqual({key1: 'val1', key2: 'val2'});
+        });
+
+        test('When array if empty or undefined, return null', () => {
+            expect(utilsModule.nameValArrayToObj([])).toBe(null);
+            expect(utilsModule.nameValArrayToObj()).toBe(null);
         });
     });
 });

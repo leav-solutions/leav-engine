@@ -34,6 +34,10 @@ export default function({
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
+            if (value.metadata) {
+                edgeData.metadata = value.metadata;
+            }
+
             const resEdge = await dbService.execute(aql`
                 INSERT ${edgeData}
                     IN ${edgeCollec}
@@ -46,7 +50,8 @@ export default function({
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
-                version: savedEdge.version
+                version: savedEdge.version,
+                metadata: savedEdge.metadata
             };
 
             if (value.version) {
@@ -70,6 +75,10 @@ export default function({
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
+            if (value.metadata) {
+                edgeData.metadata = value.metadata;
+            }
+
             const resEdge = await dbService.execute(aql`
                 UPDATE ${{_key: value.id_value}}
                     WITH ${edgeData}
@@ -83,7 +92,8 @@ export default function({
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
-                version: savedEdge.version
+                version: savedEdge.version,
+                metadata: savedEdge.metadata
             };
 
             if (value.version) {
@@ -142,7 +152,8 @@ export default function({
                 value: dbUtils.cleanup(r.linkedRecord),
                 attribute: r.edge.attribute,
                 modified_at: r.edge.modified_at,
-                created_at: r.edge.created_at
+                created_at: r.edge.created_at,
+                metadata: r.edge.metadata
             }));
         },
         async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
@@ -169,7 +180,8 @@ export default function({
                 value: dbUtils.cleanup(res[0].linkedRecord),
                 attribute: res[0].edge.attribute,
                 modified_at: res[0].edge.modified_at,
-                created_at: res[0].edge.created_at
+                created_at: res[0].edge.created_at,
+                metadata: res[0].edge.metadata
             };
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {

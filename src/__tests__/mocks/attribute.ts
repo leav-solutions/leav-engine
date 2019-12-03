@@ -32,6 +32,13 @@ export const mockAttrAdvVersionableSimple = {
     versions_conf: {...mockAttrAdvVersionable.versions_conf, mode: ValueVersionMode.SIMPLE}
 };
 
+export const mockAttrAdvWithMetadata: IAttribute = {
+    ...base,
+    id: 'advanced_attribute_with_meta',
+    type: AttributeTypes.ADVANCED,
+    metadata_fields: ['meta_attribute']
+};
+
 export const mockAttrSimpleLink = {...base, id: 'simple_link_attribute', type: AttributeTypes.SIMPLE_LINK};
 
 export const mockAttrAdvLink = {

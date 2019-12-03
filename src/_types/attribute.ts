@@ -15,6 +15,7 @@ export interface IAttribute {
     permissions_conf?: ITreePermissionsConf;
     multiple_values?: boolean;
     versions_conf?: IAttributeVersionsConf;
+    metadata_fields?: string[];
 }
 
 export enum ValueVersionMode {

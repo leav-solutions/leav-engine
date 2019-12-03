@@ -46,6 +46,10 @@ export default function({
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
+            if (value.metadata) {
+                edgeData.metadata = value.metadata;
+            }
+
             const resEdge = await dbService.execute(aql`
                 INSERT ${edgeData}
                 IN ${edgeCollec}
@@ -57,7 +61,8 @@ export default function({
                 value: savedVal.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at
+                created_at: savedEdge.created_at,
+                metadata: savedEdge.metadata
             };
 
             if (value.version) {
@@ -97,6 +102,10 @@ export default function({
                 edgeData.version = dbUtils.convertValueVersionToDb(value.version);
             }
 
+            if (value.metadata) {
+                edgeData.metadata = value.metadata;
+            }
+
             const resEdge = await dbService.execute(aql`
                 FOR e IN ${edgeCollec}
                 FILTER e._from == ${edgeFrom} AND e._to == ${edgeTo}
@@ -111,7 +120,8 @@ export default function({
                 value: savedVal.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at
+                created_at: savedEdge.created_at,
+                metadata: savedEdge.metadata
             };
 
             if (value.version) {
@@ -178,6 +188,7 @@ export default function({
                 attribute: r.edge.attribute,
                 modified_at: r.edge.modified_at,
                 created_at: r.edge.created_at,
+                metadata: r.edge.metadata,
                 version: dbUtils.convertValueVersionFromDb(r.edge.version)
             }));
         },

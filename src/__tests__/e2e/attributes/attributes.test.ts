@@ -88,4 +88,47 @@ describe('Attributes', () => {
         expect(res.data.data.deleteAttribute.id).toBe(testAttrName);
         expect(res.data.errors).toBeUndefined();
     });
+
+    test('Save metadata fields', async () => {
+        const metadataAttrId = 'simple_metadata_attribute';
+        const attributeWithMetadataId = 'adv_attribute_with_metadata';
+        // Create a simple attribute we can use for metadata
+        await makeGraphQlCall(`mutation {
+            saveAttribute(
+                attribute: {
+                    id: "${metadataAttrId}",
+                    type: simple,
+                    format: text,
+                    label: {fr: "Test attr", en: "Test attr en"}
+                }
+            ) {
+                id
+            }
+        }`);
+
+        // Create an advanced attribute with metadata
+        const res = await makeGraphQlCall(`mutation {
+            saveAttribute(
+                attribute: {
+                    id: "${attributeWithMetadataId}",
+                    type: advanced,
+                    format: text,
+                    label: {fr: "Test attr", en: "Test attr en"},
+                    metadata_fields: ["${metadataAttrId}"]
+                }
+            ) {
+                id
+                metadata_fields {
+                    id
+                    type
+                }
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.saveAttribute.metadata_fields).toBeDefined();
+        expect(res.data.data.saveAttribute.metadata_fields[0].id).toBe(metadataAttrId);
+        expect(res.data.data.saveAttribute.metadata_fields[0].type).toBe('simple');
+        expect(res.data.errors).toBeUndefined();
+    });
 });

@@ -31,6 +31,9 @@ Object {
     "_to": "core_values/987654",
     "attribute": "test_attr",
     "created_at": 400999999,
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
     "modified_at": 400999999,
   },
 }
@@ -159,6 +162,9 @@ Object {
     "_to": "core_values/987654",
     "attribute": "test_attr",
     "created_at": undefined,
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
     "modified_at": 500999999,
   },
 }

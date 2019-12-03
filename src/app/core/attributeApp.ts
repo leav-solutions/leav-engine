@@ -63,9 +63,10 @@ export default function({
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
-                        versions_conf: ValuesVersionsConf
-                        input_types: ActionListIOTypes
-                        output_types: ActionListIOTypes
+                        versions_conf: ValuesVersionsConf,
+                        input_types: ActionListIOTypes,
+                        output_types: ActionListIOTypes,
+                        metadata_fields: [Attribute!]
                     }
 
                     input AttributeInput {
@@ -79,7 +80,8 @@ export default function({
                         actions_list: ActionsListConfigurationInput,
                         permissions_conf: Treepermissions_confInput,
                         multiple_values: Boolean,
-                        versions_conf: ValuesVersionsConfInput
+                        versions_conf: ValuesVersionsConfInput,
+                        metadata_fields: [String!]
                     }
 
                     type EmbeddedAttribute {
@@ -186,7 +188,13 @@ export default function({
                             return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
                         },
                         input_types: attributeData => attributeDomain.getInputTypes(attributeData),
-                        output_types: attributeData => attributeDomain.getOutputTypes(attributeData)
+                        output_types: attributeData => attributeDomain.getOutputTypes(attributeData),
+                        metadata_fields: (attributeData: IAttribute) =>
+                            !!attributeData.metadata_fields
+                                ? attributeData.metadata_fields.map(attrId =>
+                                      attributeDomain.getAttributeProperties(attrId)
+                                  )
+                                : null
                     }
                 }
             };

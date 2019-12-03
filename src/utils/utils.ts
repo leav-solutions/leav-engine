@@ -23,6 +23,8 @@ export interface IUtils {
     pipe(...fns: any[]): any;
 
     mergeConcat(object: {}, sources: {}): {};
+
+    nameValArrayToObj(arr?: Array<{name: string; value: any}>): {[key: string]: any};
 }
 
 export default function(): IUtils {
@@ -59,6 +61,15 @@ export default function(): IUtils {
             };
 
             return mergeWith(object, sources, customizer);
+        },
+        nameValArrayToObj(arr: Array<{name: string; value: any}> = []): {[key: string]: any} {
+            return Array.isArray(arr) && arr.length
+                ? arr.reduce((formattedElem, elem) => {
+                      formattedElem[elem.name] = elem.value;
+
+                      return formattedElem;
+                  }, {})
+                : null;
         }
     };
 }

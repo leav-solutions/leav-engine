@@ -1,6 +1,6 @@
 import {IValueDomain} from 'domain/value/valueDomain';
 import {GraphQLScalarType} from 'graphql';
-import {IQueryInfos} from '_types/queryInfos';
+import {IUtils} from 'utils/utils';
 import {IValue, IValueVersion} from '_types/value';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
@@ -11,11 +11,13 @@ export interface ICoreValueApp {
 interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.app.graphql'?: IGraphqlApp;
+    'core.utils'?: IUtils;
 }
 
 export default function({
     'core.domain.value': valueDomain = null,
-    'core.app.graphql': graphqlApp = null
+    'core.app.graphql': graphqlApp = null,
+    'core.utils': utils = null
 }: IDeps = {}): ICoreValueApp {
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
         const versionsNames = Object.keys(version);
@@ -44,25 +46,12 @@ export default function({
             : null;
     };
 
-    const _executeSaveValue = async (
-        library: string,
-        recordId: number,
-        attribute: string,
-        value: IValue,
-        infos: IQueryInfos
-    ) => {
-        const savedVal = await valueDomain.saveValue(library, recordId, attribute, value, infos);
-
-        const formattedVersion: any = savedVal.version ? _convertVersionToGqlFormat(savedVal.version) : null;
-
-        return {...savedVal, version: formattedVersion};
-    };
-
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
                     scalar ValueVersion
+                    scalar ValueMetadata
 
                     input ValueVersionInput {
                         name: String!,
@@ -76,7 +65,8 @@ export default function({
                         modified_at: Int,
                         created_at: Int,
                         version: ValueVersion,
-                        attribute: ID
+                        attribute: ID,
+                        metadata: ValueMetadata
                     }
 
                     type saveValueBatchResult {
@@ -89,6 +79,11 @@ export default function({
                         attribute: String!,
                         input: String,
                         message: String!
+                    }
+
+                    input ValueMetadataInput {
+                        name: String!,
+                        value: String
                     }
 
                     type linkValue {
@@ -112,13 +107,15 @@ export default function({
                     input ValueInput {
                         id_value: ID,
                         value: String,
+                        metadata: [ValueMetadataInput],
                         version: [ValueVersionInput]
                     }
 
                     input ValueBatchInput {
                         attribute: ID,
                         id_value: ID,
-                        value: String
+                        value: String,
+                        metadata: ValueMetadata
                     }
 
                     extend type Mutation {
@@ -139,7 +136,11 @@ export default function({
                 resolvers: {
                     Mutation: {
                         async saveValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
-                            const valToSave = {...value, version: _convertVersionFromGqlFormat(value.version)};
+                            const valToSave = {
+                                ...value,
+                                version: _convertVersionFromGqlFormat(value.version),
+                                metadata: utils.nameValArrayToObj(value.metadata)
+                            };
 
                             const savedVal = await valueDomain.saveValue(
                                 library,
@@ -160,7 +161,8 @@ export default function({
                             const versionToUse = _convertVersionFromGqlFormat(version);
                             const convertedValues = values.map(val => ({
                                 ...val,
-                                version: versionToUse
+                                version: versionToUse,
+                                metadata: utils.nameValArrayToObj(val.metadata)
                             }));
 
                             const savedValues = await valueDomain.saveValueBatch(
