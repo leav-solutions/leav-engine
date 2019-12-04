@@ -5,7 +5,7 @@
     "main": "build/index.js",
     "scripts": {
         "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
-        "start:dev": "ts-node --type-check src/ --server",
+        "start:dev": "node --inspect=0.0.0.0:9229 -r ts-node/register src/ --server",
         "start:build": "npm run build && node . --server",
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",

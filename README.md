@@ -109,4 +109,26 @@ If you're stuck in the migration / installation phase, try to remove the `packag
 
 If you find a Gremlin in the system, keep calm, get out, and call 911.
 
+### Debugging
 
+The app is launched with the `inspect` option so you can attach a debugging tool to it, on port 9229.
+
+#### VS Code in Docker environment
+In VS Code, the easiest way to debug the app in its Docker container is to install the extension "Remote Development".
+Then, you will be able to open a container inside VS Code.
+Once inside the container, add this to your debbuging settings in `launch.json`:
+```json
+    {
+        "type": "node",
+        "request": "attach",
+        "name": "Attach",
+        "port": 9229,
+        "skipFiles": [
+            "<node_internals>/**",
+            "node_modules/**"
+        ]
+    }
+```
+Then start your debug session and enjoy! You can set breakpoints right on your file TS files and watch it breaking when using your app normally.
+
+More details on this: https://code.visualstudio.com/docs/remote/containers
