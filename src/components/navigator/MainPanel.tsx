@@ -1,15 +1,13 @@
-import React from 'react';
 import {useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import React from 'react';
 import {Dimmer, Transition} from 'semantic-ui-react';
-
 import Loading from '../shared/Loading';
-import {IReducerState, IReducerAction, ActionTypes} from './NavigatorReducer';
-import TopPanel from './TopPanel';
 import FiltersPanel from './FiltersPanel';
 import ListPanel from './ListPanel';
-
 import styles from './MainPanel.module.css';
+import {ActionTypes, IReducerAction, IReducerState} from './NavigatorReducer';
+import TopPanel from './TopPanel';
 
 export interface IListProps {
     state: IReducerState;
@@ -42,7 +40,7 @@ export default function MainPanel({state, dispatch}: IListProps) {
 }
 
 export const QUERY_LIBRARY_CONFIG = gql`
-    query($id: ID, $lang: [AvailableLanguage!]) {
+    query QUERY_LIBRARY_CONFIG($id: ID, $lang: [AvailableLanguage!]) {
         libraries(filters: {id: $id}) {
             list {
                 id

@@ -1,9 +1,8 @@
-import React from 'react';
 import {useQuery} from '@apollo/react-hooks';
-import {useTranslation} from 'react-i18next';
 import gql from 'graphql-tag';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
-
 import Loading from '../shared/Loading';
 
 export interface IRootSelectorContainerProps {
@@ -17,7 +16,7 @@ interface IRootSelectorElemProps {
 }
 
 export const QUERY = gql`
-    query($lang: [AvailableLanguage!]) {
+    query ROOT_SELECTOR_QUERY($lang: [AvailableLanguage!]) {
         libraries {
             list {
                 id
