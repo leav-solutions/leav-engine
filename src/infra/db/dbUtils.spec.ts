@@ -1,11 +1,22 @@
-import {Database} from 'arangojs';
+import {Database, DocumentCollection} from 'arangojs';
+import {asFunction, AwilixContainer} from 'awilix';
+import {resolve} from 'dns';
+import {readdirSync} from 'fs';
+import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
+import {Winston} from 'winston';
 import {ITree} from '_types/tree';
 import {TREES_COLLECTION_NAME} from '../../infra/tree/treeRepo';
 import {SortOrder} from '../../_types/list';
+import {IDbService} from './dbService';
 import dbUtils, {IDbUtils} from './dbUtils';
+import loadMigrationFile from './helpers/loadMigrationFile';
 
 describe('dbUtils', () => {
     const mockConf = {lang: {available: ['fr', 'en']}};
+
+    afterAll(() => {
+        jest.clearAllMocks();
+    });
 
     describe('cleanupSystemKeys', () => {
         test('Should remove all system keys', () => {
@@ -248,6 +259,76 @@ describe('dbUtils', () => {
                 my_tree: {id: 12345, library: 'my_lib'},
                 other_tree: {id: 6789, library: 'other_lib'}
             });
+        });
+    });
+
+    describe('migrate', () => {
+        test('Run core migrations', async () => {
+            // Mock migration files
+            const mockRun1 = jest.fn();
+            const file1 = {
+                default: () => ({
+                    run: mockRun1
+                })
+            };
+            const mockRun2 = jest.fn();
+            const file2 = {
+                default: () => ({
+                    run: mockRun2
+                })
+            };
+            (loadMigrationFile as jest.FunctionLike) = global.__mockPromiseMultiple([file1, file2]);
+
+            // Mock migration files reading
+            (readdirSync as jest.FunctionLike) = jest.fn().mockReturnValue(['000.ts', '001.ts']);
+            (resolve as jest.FunctionLike) = jest
+                .fn()
+                .mockReturnValueOnce('/fakeDir/migrations')
+                .mockReturnValueOnce('/fakeDir/migrations/000.ts')
+                .mockReturnValueOnce('/fakeDir/migrations/001.ts');
+
+            // Mock DB functions
+            const mockCollecSave = jest.fn();
+            const mockDb = {
+                Database: jest.fn(),
+                listCollections: global.__mockPromise([]),
+                collection: () =>
+                    (({
+                        create: jest.fn(),
+                        save: mockCollecSave
+                    } as unknown) as DocumentCollection)
+            };
+            const mockDbServ: Mockify<IDbService> = {
+                db: (mockDb as unknown) as Database,
+                execute: global.__mockPromise([])
+            };
+
+            const mockDepsManager = {
+                build: depDefault => {
+                    return depDefault();
+                }
+            };
+            (asFunction as jest.FunctionLike) = m => m;
+
+            const mockLogger: Mockify<Winston> = {
+                info: jest.fn()
+            };
+
+            const mockPluginsRepo: Mockify<IPluginsRepo> = {
+                getRegisteredPlugins: jest.fn().mockReturnValue([])
+            };
+
+            const testDbUtils = dbUtils({
+                'core.infra.db.dbService': mockDbServ,
+                'core.utils.logger': mockLogger as Winston,
+                'core.infra.plugins': mockPluginsRepo as IPluginsRepo
+            });
+
+            await testDbUtils.migrate(mockDepsManager as AwilixContainer);
+
+            expect(mockRun1).toBeCalled();
+            expect(mockRun2).toBeCalled();
+            expect(mockCollecSave).toBeCalledTimes(2);
         });
     });
 });

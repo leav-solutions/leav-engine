@@ -1,7 +1,8 @@
 import {aql} from 'arangojs';
 import {CollectionType} from 'arangojs/lib/cjs/collection';
-import {asFunction, AwilixContainer} from 'awilix';
+import {AwilixContainer} from 'awilix';
 import * as fs from 'fs';
+import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import * as path from 'path';
 import {isArray} from 'util';
 import * as winston from 'winston';
@@ -11,8 +12,9 @@ import {IList, IPaginationParams, ISortParams} from '_types/list';
 import {ITree, ITreeFilterOptions} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
+import runMigrationFiles from './helpers/runMigrationFiles';
 
-const COLLECTION_NAME = 'core_db_migrations';
+export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
 export interface IFindCoreEntityParams {
     collectionName: string;
@@ -34,19 +36,17 @@ export interface IDbUtils {
     clearDatabase(): Promise<void>;
 }
 
-export interface IMigration {
-    run(): Promise<void>;
-}
-
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.utils.logger'?: winston.Winston;
+    'core.infra.plugins'?: IPluginsRepo;
     config?: any;
 }
 
 export default function({
     'core.infra.db.dbService': dbService = null,
     'core.utils.logger': logger = null,
+    'core.infra.plugins': pluginsRepo = null,
     config = null
 }: IDeps = {}): IDbUtils {
     /**
@@ -57,9 +57,9 @@ export default function({
     async function _initMigrationsCollection(): Promise<void> {
         const collections = await dbService.db.listCollections();
 
-        const colExists = collections.reduce((exists, c) => exists || c.name === COLLECTION_NAME, false);
+        const colExists = collections.reduce((exists, c) => exists || c.name === MIGRATIONS_COLLECTION_NAME, false);
         if (!colExists) {
-            const collection = dbService.db.collection(COLLECTION_NAME);
+            const collection = dbService.db.collection(MIGRATIONS_COLLECTION_NAME);
             await collection.create();
         }
     }
@@ -121,38 +121,31 @@ export default function({
                 RETURN m.file
             `);
 
+            const _runMigrationFiles = (files, folder, prefix = null) =>
+                runMigrationFiles({
+                    files,
+                    executedMigrations,
+                    migrationsDir: folder,
+                    prefix,
+                    deps: {depsManager, dbService, logger}
+                });
+
+            /*** Core migrations ***/
             // Load migrations files
             const migrationsDir = path.resolve(__dirname, 'migrations');
             const migrationFiles = fs.readdirSync(migrationsDir).filter(file => file.indexOf('.map') === -1);
 
-            for (const file of migrationFiles) {
-                // Check if it's been run before
-                if (typeof (executedMigrations as []).find(el => el === file) === 'undefined') {
-                    const importedFile = await import(path.resolve(migrationsDir, file));
+            await _runMigrationFiles(migrationFiles, migrationsDir);
 
-                    if (typeof importedFile.default !== 'function') {
-                        throw new Error(
-                            `[DB Migration Error] ${file}: Migration files' default export must be a function`
-                        );
-                    }
+            /*** Plugins migrations ***/
+            const plugins = pluginsRepo.getRegisteredPlugins();
+            for (const plugin of plugins) {
+                const pluginMigrationFolder = path.resolve(plugin.path + '/infra/db/migrations');
+                const pluginMigrationFiles = fs
+                    .readdirSync(pluginMigrationFolder)
+                    .filter(file => file.indexOf('.map') === -1);
 
-                    try {
-                        logger.info(`[DB Migration] Executing ${file}...`);
-
-                        // Run migration
-                        const migration: IMigration = depsManager.build(asFunction(importedFile.default));
-                        await migration.run();
-
-                        // Store migration execution to DB
-                        const collection = dbService.db.collection(COLLECTION_NAME);
-                        await collection.save({
-                            file,
-                            date: Date.now()
-                        });
-                    } catch (e) {
-                        throw new Error(`[DB Migration Error] ${file}: ${e}`);
-                    }
-                }
+                await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolder, plugin.infos.name);
             }
         },
 
