@@ -9,15 +9,15 @@ import {AttributeFormat, IOTypes} from './globalTypes';
 // ====================================================
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_input_types {
-    saveValue: IOTypes[] | null;
-    getValue: IOTypes[] | null;
-    deleteValue: IOTypes[] | null;
+    saveValue: IOTypes[];
+    getValue: IOTypes[];
+    deleteValue: IOTypes[];
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_output_types {
-    saveValue: IOTypes[] | null;
-    getValue: IOTypes[] | null;
-    deleteValue: IOTypes[] | null;
+    saveValue: IOTypes[];
+    getValue: IOTypes[];
+    deleteValue: IOTypes[];
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue_params {
@@ -62,8 +62,8 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list {
 export interface GET_ACTIONS_LIST_QUERY_attributes_list {
     id: string;
     format: AttributeFormat | null;
-    input_types: GET_ACTIONS_LIST_QUERY_attributes_list_input_types | null;
-    output_types: GET_ACTIONS_LIST_QUERY_attributes_list_output_types | null;
+    input_types: GET_ACTIONS_LIST_QUERY_attributes_list_input_types;
+    output_types: GET_ACTIONS_LIST_QUERY_attributes_list_output_types;
     actions_list: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list | null;
 }
 

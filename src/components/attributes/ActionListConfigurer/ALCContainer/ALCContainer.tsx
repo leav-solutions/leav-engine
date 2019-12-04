@@ -5,7 +5,11 @@ import {DndProvider} from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import {getActionListQuery} from '../../../../queries/attributes/getActionListQuery';
 import {saveAttributeActionsListMutation} from '../../../../queries/attributes/saveAttributeActionsListMutation';
-import {GET_ACTIONS_LIST_QUERY} from '../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
+import {
+    GET_ACTIONS_LIST_QUERY,
+    GET_ACTIONS_LIST_QUERY_attributes_list_input_types,
+    GET_ACTIONS_LIST_QUERY_attributes_list_output_types
+} from '../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import Loading from '../../../shared/Loading';
 import ALCList from '../ALCList';
 import ALCReserve from '../ALCReserve';
@@ -31,13 +35,18 @@ interface IALCContainerProps {
     attribute: any;
 }
 
+interface IAttributeTypes {
+    inTypes: GET_ACTIONS_LIST_QUERY_attributes_list_input_types;
+    outTypes: GET_ACTIONS_LIST_QUERY_attributes_list_output_types;
+}
+
 //////////////////// COMPONENT
 
 function ALCContainer({availableActions = [], attribute}: IALCContainerProps): JSX.Element {
     // {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}}
     const [currentActionListName, setCurrentActionListName] = useState('saveValue');
 
-    const [attributeTypes, setAttributeTypes] = useState({
+    const [attributeTypes, setAttributeTypes] = useState<IAttributeTypes>({
         inTypes: {saveValue: [], getValue: [], deleteValue: []},
         outTypes: {saveValue: [], getValue: [], deleteValue: []}
     });
