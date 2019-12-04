@@ -47,7 +47,7 @@ export default function({
                     }
 
                     type ActionListIOTypes {
-                        ${Object.values(ActionsListEvents).map(event => `${event}: [IOTypes]`)}
+                        ${Object.values(ActionsListEvents).map(event => `${event}: [IOTypes!]`)}
                     }
 
                     # Application Attribute
