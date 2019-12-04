@@ -1,5 +1,5 @@
+import {IMigration} from '_types/migration';
 import {IDbService} from '../dbService';
-import {IMigration} from '../dbUtils';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

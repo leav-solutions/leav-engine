@@ -1,8 +1,8 @@
 import {aql} from 'arangojs';
 import * as moment from 'moment';
+import {IMigration} from '_types/migration';
 import {AttributeTypes} from '../../../_types/attribute';
 import {collectionTypes, IDbService} from '../dbService';
-import {IMigration} from '../dbUtils';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

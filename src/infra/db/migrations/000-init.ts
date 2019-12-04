@@ -1,10 +1,10 @@
 import * as moment from 'moment';
+import {IMigration} from '_types/migration';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {IAttributeRepo} from '../../attribute/attributeRepo';
 import {ILibraryRepo} from '../../library/libraryRepo';
 import {collectionTypes, IDbService} from '../dbService';
-import {IMigration} from '../dbUtils';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
