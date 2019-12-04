@@ -1,6 +1,6 @@
 const token = require('./apollo.token');
 
-const apiUrl = 'http://localhost:4001';
+const apiUrl = 'http://core.leav.localhost';
 module.exports = {
     client: {
         service: {
