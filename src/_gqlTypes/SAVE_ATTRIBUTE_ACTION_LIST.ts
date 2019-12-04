@@ -15,7 +15,7 @@ export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue {
     name: string;
-    params: (SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue_params | null)[] | null;
+    params: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue_params[] | null;
 }
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue_params {
@@ -25,7 +25,7 @@ export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue_
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue {
     name: string;
-    params: (SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue_params | null)[] | null;
+    params: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue_params[] | null;
 }
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue_params {
@@ -35,13 +35,13 @@ export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteVal
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue {
     name: string;
-    params: (SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue_params | null)[] | null;
+    params: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue_params[] | null;
 }
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list {
-    saveValue: (SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue | null)[] | null;
-    getValue: (SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue | null)[] | null;
-    deleteValue: (SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue | null)[] | null;
+    saveValue: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue[] | null;
+    getValue: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue[] | null;
+    deleteValue: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue[] | null;
 }
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute {

@@ -2,9 +2,23 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
+import {AttributeFormat, IOTypes} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_ACTIONS_LIST_QUERY
 // ====================================================
+
+export interface GET_ACTIONS_LIST_QUERY_attributes_list_input_types {
+    saveValue: IOTypes[] | null;
+    getValue: IOTypes[] | null;
+    deleteValue: IOTypes[] | null;
+}
+
+export interface GET_ACTIONS_LIST_QUERY_attributes_list_output_types {
+    saveValue: IOTypes[] | null;
+    getValue: IOTypes[] | null;
+    deleteValue: IOTypes[] | null;
+}
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue_params {
     name: string;
@@ -14,7 +28,7 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue_p
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue {
     name: string;
     is_system: boolean;
-    params: (GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue_params | null)[] | null;
+    params: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue_params[] | null;
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue_params {
@@ -25,7 +39,7 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue_pa
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue {
     name: string;
     is_system: boolean;
-    params: (GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue_params | null)[] | null;
+    params: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue_params[] | null;
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue_params {
@@ -36,25 +50,24 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue {
     name: string;
     is_system: boolean;
-    params: (GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue_params | null)[] | null;
+    params: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue_params[] | null;
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list {
-    saveValue: (GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue | null)[] | null;
-    getValue: (GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue | null)[] | null;
-    deleteValue: (GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue | null)[] | null;
+    saveValue: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue[] | null;
+    getValue: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue[] | null;
+    deleteValue: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue[] | null;
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list {
     id: string;
-    format: string;
-    input_types: any;
-    output_types: any;
+    format: AttributeFormat | null;
+    input_types: GET_ACTIONS_LIST_QUERY_attributes_list_input_types | null;
+    output_types: GET_ACTIONS_LIST_QUERY_attributes_list_output_types | null;
     actions_list: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list | null;
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes {
-    totalCount: number;
     list: GET_ACTIONS_LIST_QUERY_attributes_list[];
 }
 

@@ -49,6 +49,13 @@ export enum AvailableLanguage {
     fr = 'fr'
 }
 
+export enum IOTypes {
+    boolean = 'boolean',
+    number = 'number',
+    object = 'object',
+    string = 'string'
+}
+
 export enum PermissionTypes {
     admin = 'admin',
     attribute = 'attribute',
@@ -94,7 +101,7 @@ export enum ValueVersionMode {
 
 export interface ActionConfigurationInput {
     name: AvailableActionsName;
-    params?: (ActionConfigurationParamInput | null)[] | null;
+    params?: ActionConfigurationParamInput[] | null;
 }
 
 export interface ActionConfigurationParamInput {
@@ -103,9 +110,9 @@ export interface ActionConfigurationParamInput {
 }
 
 export interface ActionsListConfigurationInput {
-    saveValue?: (ActionConfigurationInput | null)[] | null;
-    getValue?: (ActionConfigurationInput | null)[] | null;
-    deleteValue?: (ActionConfigurationInput | null)[] | null;
+    saveValue?: ActionConfigurationInput[] | null;
+    getValue?: ActionConfigurationInput[] | null;
+    deleteValue?: ActionConfigurationInput[] | null;
 }
 
 export interface AttributeInput {
@@ -120,6 +127,7 @@ export interface AttributeInput {
     permissions_conf?: Treepermissions_confInput | null;
     multiple_values?: boolean | null;
     versions_conf?: ValuesVersionsConfInput | null;
+    metadata_fields?: string[] | null;
 }
 
 export interface EmbeddedAttributeInput {
@@ -205,6 +213,7 @@ export interface ValueBatchInput {
     attribute?: string | null;
     id_value?: string | null;
     value?: string | null;
+    metadata?: any | null;
 }
 
 export interface ValueVersionInput {

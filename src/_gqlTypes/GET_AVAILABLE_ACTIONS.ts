@@ -19,9 +19,9 @@ export interface GET_AVAILABLE_ACTIONS_availableActions_params {
 export interface GET_AVAILABLE_ACTIONS_availableActions {
     name: AvailableActionsName;
     description: string | null;
-    input_types: (ActionIOTypes | null)[];
-    output_types: (ActionIOTypes | null)[];
-    params: (GET_AVAILABLE_ACTIONS_availableActions_params | null)[] | null;
+    input_types: ActionIOTypes[];
+    output_types: ActionIOTypes[];
+    params: GET_AVAILABLE_ACTIONS_availableActions_params[] | null;
 }
 
 export interface GET_AVAILABLE_ACTIONS {
