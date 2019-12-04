@@ -1,14 +1,17 @@
 import {IAppGraphQLSchema} from 'app/graphql/graphqlApp';
-import {IPlugin} from '../../_types/plugin';
+import {IPluginsDomain} from 'domain/plugins/pluginsDomain';
+import {IPluginInfos} from '../../_types/plugin';
 
 export interface ICorePluginsApp {
-    registerPlugin(plugin: IPlugin): void;
+    registerPlugin(path: string, plugin: IPluginInfos): void;
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export default function(): ICorePluginsApp {
-    const _loadedPlugins: IPlugin[] = [];
+interface IDeps {
+    'core.domain.plugins': IPluginsDomain;
+}
 
+export default function({'core.domain.plugins': pluginsDomain}: IDeps): ICorePluginsApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -27,7 +30,7 @@ export default function(): ICorePluginsApp {
                 resolvers: {
                     Query: {
                         plugins() {
-                            return _loadedPlugins;
+                            return pluginsDomain.getRegisteredPlugins().map(p => p.infos);
                         }
                     }
                 }
@@ -37,8 +40,8 @@ export default function(): ICorePluginsApp {
 
             return fullSchema;
         },
-        registerPlugin(plugin: IPlugin) {
-            _loadedPlugins.push(plugin);
+        registerPlugin(path: string, plugin: IPluginInfos) {
+            return pluginsDomain.registerPlugin(path, plugin);
         }
     };
 }
