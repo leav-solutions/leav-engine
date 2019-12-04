@@ -47,7 +47,7 @@ export default function({
                     }
 
                     type ActionListIOTypes {
-                        ${Object.values(ActionsListEvents).map(event => `${event}: [IOTypes!]`)}
+                        ${Object.values(ActionsListEvents).map(event => `${event}: [IOTypes!]!`)}
                     }
 
                     # Application Attribute
@@ -64,8 +64,8 @@ export default function({
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
                         versions_conf: ValuesVersionsConf,
-                        input_types: ActionListIOTypes,
-                        output_types: ActionListIOTypes,
+                        input_types: ActionListIOTypes!,
+                        output_types: ActionListIOTypes!,
                         metadata_fields: [Attribute!]
                     }
 
