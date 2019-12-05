@@ -15,7 +15,7 @@ interface IAttributesListProps {
     loading: boolean;
     withFilters?: boolean;
     filters?: any;
-    children?: JSX.Element;
+    actions?: JSX.Element;
 }
 
 /* tslint:disable-next-line:variable-name */
@@ -25,7 +25,7 @@ const AttributesList = ({
     withFilters = true,
     filters = {},
     onRowClick,
-    children,
+    actions,
     onFiltersUpdate
 }: IAttributesListProps): JSX.Element => {
     const _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
@@ -43,7 +43,7 @@ const AttributesList = ({
     // const {onRowClick, children} = props;
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
-    const childrenList: React.ReactNode[] = children ? (!Array.isArray(children) ? [children] : children) : [];
+    const actionsList: React.ReactNode[] = actions ? (!Array.isArray(actions) ? [actions] : actions) : [];
     const types = Object.keys(AttributeType).map(type => ({
         key: type,
         value: type,
@@ -161,7 +161,7 @@ const AttributesList = ({
                                     <Checkbox readOnly checked={a.system} />
                                 </Table.Cell>
                                 <Table.Cell textAlign="right" width={1} className="actions">
-                                    {childrenList.map(child =>
+                                    {actionsList.map(child =>
                                         React.cloneElement(child as React.ReactElement<any>, {attribute: a})
                                     )}
                                 </Table.Cell>

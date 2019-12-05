@@ -87,9 +87,8 @@ describe('AttributesList', () => {
                     onRowClick={onRowClick}
                     onFiltersUpdate={onFiltersUpdate}
                     withFilters={false}
-                >
-                    <div key="attr_lib_test" className="children_to_render" />
-                </AttributesList>
+                    actions={<div key="attr_lib_test" className="children_to_render" />}
+                />
             </MockedProvider>
         );
         const attrListComp = comp.find('AttributesList').shallow();

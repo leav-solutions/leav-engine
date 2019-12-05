@@ -1,7 +1,7 @@
 import {cloneDeep} from 'lodash';
-import {GET_ACTIONS_LIST_QUERY_attributes_list_actions_list} from '../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
+import {GET_ACTIONS_LIST_QUERY_attributes_list_actions_list} from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import {IAction, IActionConfig, IReserveAction} from '../interfaces/interfaces';
-import {getColorsRangeFrom} from '../utils/getColorRange';
+import {getColorsRangeFrom} from './getColorRange';
 
 //////////////////// FUNCTIONS TO INITIATE THE STATE
 

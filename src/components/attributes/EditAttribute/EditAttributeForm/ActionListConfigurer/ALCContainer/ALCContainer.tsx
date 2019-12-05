@@ -3,14 +3,14 @@ import {cloneDeep} from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
-import {getActionListQuery} from '../../../../queries/attributes/getActionListQuery';
-import {saveAttributeActionsListMutation} from '../../../../queries/attributes/saveAttributeActionsListMutation';
+import {getActionListQuery} from '../../../../../../queries/attributes/getActionListQuery';
+import {saveAttributeActionsListMutation} from '../../../../../../queries/attributes/saveAttributeActionsListMutation';
 import {
     GET_ACTIONS_LIST_QUERY,
     GET_ACTIONS_LIST_QUERY_attributes_list_input_types,
     GET_ACTIONS_LIST_QUERY_attributes_list_output_types
-} from '../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
-import Loading from '../../../shared/Loading';
+} from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
+import Loading from '../../../../../shared/Loading';
 import ALCList from '../ALCList';
 import ALCReserve from '../ALCReserve';
 import BinDragLayer from '../DragDrop/BinDragLayer';

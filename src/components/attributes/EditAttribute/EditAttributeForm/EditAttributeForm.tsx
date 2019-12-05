@@ -1,14 +1,14 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab} from 'semantic-ui-react';
-import useLang from '../../../hooks/useLang';
+import useLang from '../../../../hooks/useLang';
 // import {useLang} from '../../../hooks/useLang';
-import {localizedLabel} from '../../../utils/utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {IFormError} from '../../../_types//errors';
-import EditAttributeInfosForm from '../EditAttributeInfosForm';
-import EditAttributePermissions from '../EditAttributePermissions';
-import ActionListConfigurer from '../ActionListConfigurer';
+import {localizedLabel} from '../../../../utils/utils';
+import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
+import {IFormError} from '../../../../_types/errors';
+import ActionListConfigurer from './ActionListConfigurer';
+import EditAttributeInfosForm from './EditAttributeInfosForm';
+import EditAttributePermissions from './EditAttributePermissions';
 
 interface IEditAttributeFormProps {
     attribute: GET_ATTRIBUTES_attributes_list | null;

@@ -13,7 +13,7 @@ import {
 } from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
-import EditAttributeForm from '../EditAttributeForm';
+import EditAttributeForm from './EditAttributeForm';
 
 export interface IEditAttributeMatchParams {
     id: string;

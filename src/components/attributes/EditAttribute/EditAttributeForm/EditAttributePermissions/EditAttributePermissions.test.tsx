@@ -4,11 +4,11 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import sleep from 'sleep-promise';
 import EditAttributePermissions from '.';
-import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {AttributeType, PermissionsRelation} from '../../../_gqlTypes/globalTypes';
-import {mockAttrSimple, mockAttrTree} from '../../../__mocks__/attributes';
+import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
+import {AttributeType, PermissionsRelation} from '../../../../../_gqlTypes/globalTypes';
+import {mockAttrSimple, mockAttrTree} from '../../../../../__mocks__/attributes';
 
-jest.mock('../../../hooks/useLang');
+jest.mock('../../../../../hooks/useLang');
 
 describe('EditAttributePermissions', () => {
     const mocks = [

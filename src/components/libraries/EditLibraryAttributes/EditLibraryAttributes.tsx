@@ -102,17 +102,18 @@ const EditLibraryAttributes = ({library, readOnly}: IEditLibraryAttributesProps)
                                     attributes={library ? library.attributes : []}
                                     onRowClick={onRowClick}
                                     withFilters={false}
-                                >
-                                    {!readOnly ? (
-                                        <UnlinkLibAttribute
-                                            library={library}
-                                            key="unlink_attr_btn"
-                                            onUnlink={_onClickUnlink}
-                                        />
-                                    ) : (
-                                        <></>
-                                    )}
-                                </AttributesList>
+                                    actions={
+                                        !readOnly ? (
+                                            <UnlinkLibAttribute
+                                                library={library}
+                                                key="unlink_attr_btn"
+                                                onUnlink={_onClickUnlink}
+                                            />
+                                        ) : (
+                                            <></>
+                                        )
+                                    }
+                                />
 
                                 {!readOnly && (
                                     <Modal size="large" open={showNewAttrModal} onClose={_closeNewAttrModal} centered>

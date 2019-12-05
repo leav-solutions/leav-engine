@@ -77,13 +77,14 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                             onRowClick={onRowClick}
                             onFiltersUpdate={_onFiltersUpdate}
                             filters={filters}
-                        >
-                            {userData.permissions[PermissionsActions.admin_delete_attribute] ? (
-                                <DeleteAttribute key="delete_attr" />
-                            ) : (
-                                <></>
-                            )}
-                        </AttributesList>
+                            actions={
+                                userData.permissions[PermissionsActions.admin_delete_attribute] ? (
+                                    <DeleteAttribute key="delete_attr" />
+                                ) : (
+                                    <></>
+                                )
+                            }
+                        />
                     );
                 }}
             </AttributesQuery>

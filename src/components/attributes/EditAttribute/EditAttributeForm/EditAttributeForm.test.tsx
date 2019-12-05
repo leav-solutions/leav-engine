@@ -1,17 +1,17 @@
 import {shallow} from 'enzyme';
 import React from 'react';
-import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {mockAttrSimple} from '../../../__mocks__/attributes';
-import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
+import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
+import {mockAttrSimple} from '../../../../__mocks__/attributes';
+import MockedLangContextProvider from '../../../../__mocks__/MockedLangContextProvider';
 import EditAttributeForm from './EditAttributeForm';
 
-jest.mock('../../../utils/utils', () => ({
+jest.mock('../../../../utils/utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr),
     getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr'])
 }));
 
-jest.mock('../../../hooks/useLang');
+jest.mock('../../../../hooks/useLang');
 
 describe('EditAttributeForm', () => {
     const attribute: GET_ATTRIBUTES_attributes_list = {

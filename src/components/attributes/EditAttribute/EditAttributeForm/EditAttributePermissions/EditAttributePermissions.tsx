@@ -2,13 +2,18 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import useLang from '../../../hooks/useLang';
-import {localizedLabel} from '../../../utils/utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeType, PermissionsActions, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
-import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
-import Loading from '../../shared/Loading';
+import useLang from '../../../../../hooks/useLang';
+import {AttributesQuery, getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
+import {localizedLabel} from '../../../../../utils/utils';
+import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {
+    AttributeType,
+    PermissionsActions,
+    PermissionsRelation,
+    PermissionTypes
+} from '../../../../../_gqlTypes/globalTypes';
+import DefineTreePermissionsView from '../../../../permissions/DefineTreePermissionsView';
+import Loading from '../../../../shared/Loading';
 
 interface IEditAttributePermissionsProps {
     attribute: GET_ATTRIBUTES_attributes_list;

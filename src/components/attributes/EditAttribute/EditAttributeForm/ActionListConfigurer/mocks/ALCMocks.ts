@@ -1,5 +1,5 @@
-import {getAvailableActionsQuery} from '../../../../queries/attributes/getAvailableActionsQuery';
-import {AttributeType, AttributeFormat} from '../../../../_gqlTypes/globalTypes';
+import {getAvailableActionsQuery} from '../../../../../../queries/attributes/getAvailableActionsQuery';
+import {AttributeFormat, AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 
 export const AVAILABLE_ACTIONS_MOCK = [
     {
