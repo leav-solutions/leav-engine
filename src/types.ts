@@ -59,7 +59,7 @@ export enum ErrorList {
     'file output must be a png' = 4,
     'file type unknow' = 5,
     "can't parse message" = 6,
-    'error in execImage' = 11,
+    'error when generate image' = 11,
     'error in execImageWithClip' = 12,
     'error in execPsd' = 13,
     'error in execPsdWithClip' = 14,

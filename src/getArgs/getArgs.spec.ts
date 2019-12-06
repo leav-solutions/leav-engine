@@ -1,3 +1,4 @@
+import {IVersion} from './../types';
 import {getArgs} from './getArgs';
 import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
@@ -14,9 +15,18 @@ describe('getArgs', () => {
         const size = 800;
         const useProfile = false;
 
-        getArgs(type, input, output, size, useProfile);
+        const version: IVersion = {
+            sizes: [
+                {
+                    size,
+                    output,
+                },
+            ],
+        };
 
-        expect(getImageArgs).toBeCalledWith(ext, input, output, size, useProfile);
+        getArgs(type, input, output, size, version, useProfile);
+
+        expect(getImageArgs).toBeCalledWith(ext, input, output, size, version, useProfile);
     });
 
     test('type video use getVideoArgs', () => {
@@ -29,7 +39,16 @@ describe('getArgs', () => {
         const size = 800;
         const useProfile = false;
 
-        getArgs(type, input, output, size, useProfile);
+        const version: IVersion = {
+            sizes: [
+                {
+                    size,
+                    output,
+                },
+            ],
+        };
+
+        getArgs(type, input, output, size, version, useProfile);
 
         expect(getVideoArgs).toBeCalledWith(input, output, size);
     });
@@ -44,6 +63,15 @@ describe('getArgs', () => {
         const size = 800;
         const useProfile = false;
 
-        expect(() => getArgs(type, input, output, size, useProfile)).toThrow();
+        const version: IVersion = {
+            sizes: [
+                {
+                    size,
+                    output,
+                },
+            ],
+        };
+
+        expect(() => getArgs(type, input, output, size, version, useProfile)).toThrow();
     });
 });

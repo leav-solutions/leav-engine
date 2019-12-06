@@ -1,5 +1,6 @@
 FROM ubuntu
 
+RUN apt-get clean 
 RUN apt-get update
 RUN apt-get install -y npm imagemagick ffmpeg unoconv
 

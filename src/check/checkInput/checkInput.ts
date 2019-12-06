@@ -4,8 +4,7 @@ export const checkInput = (input: string) => {
     if (!fs.existsSync(input)) {
         throw [
             {
-                error_code: 1,
-                error: "file doesn't exit",
+                error: 1,
                 params: null,
             },
         ];
@@ -16,8 +15,7 @@ export const checkInput = (input: string) => {
         if (!stats.isFile()) {
             throw [
                 {
-                    error_code: 2,
-                    error: 'input is not a file',
+                    error: 2,
                     params: null,
                 },
             ];
@@ -25,8 +23,7 @@ export const checkInput = (input: string) => {
     } catch (e) {
         throw [
             {
-                error_code: 3,
-                error: 'error when get file stats',
+                error: 3,
                 params: null,
             },
         ];

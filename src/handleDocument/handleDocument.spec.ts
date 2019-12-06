@@ -1,9 +1,9 @@
 import {unlinkSync} from 'fs';
-import {getConfig} from './../../../getConfig/getConfig';
+import {getConfig} from '../getConfig/getConfig';
 import {execFileSync} from 'child_process';
-import {handleDocument} from './getDocumentArgs';
+import {handleDocument} from './handleDocument';
 
-import config = require('../../../../config/config_spec.json');
+import config = require('../../config/config_spec.json');
 
 describe('getDocumentArgs', () => {
     afterAll(() => jest.resetAllMocks());

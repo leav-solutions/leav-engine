@@ -1,8 +1,8 @@
-import {handleDocument} from './../getArgs/getImageArgs/getDocumentArgs/getDocumentArgs';
+import {handleDocument} from './../handleDocument/handleDocument';
 import {join} from 'path';
 import {execFileSync} from 'child_process';
 import {getArgs} from './../getArgs/getArgs';
-import {IMessageConsume, IResult, ISize, IVersion, IConfig, IExec} from './../types';
+import {IMessageConsume, IResult, ISize, IVersion, IConfig} from './../types';
 
 export const generatePreview = (msgContent: IMessageConsume, type: string, config: IConfig): IResult[] => {
     const results: IResult[] = [];
@@ -19,9 +19,9 @@ export const generatePreview = (msgContent: IMessageConsume, type: string, confi
 
         const versionSizeRest = version.sizes.filter(v => v !== versionMaxSize);
 
-        versionSizeRest.forEach(size => {
-            execute({type, relativeInput: maxSizeLocation, version, size, results, rootPath});
-        });
+        versionSizeRest.forEach(size =>
+            execute({type, relativeInput: maxSizeLocation, version, size, results, rootPath}),
+        );
     });
 
     return results;
@@ -44,8 +44,19 @@ const execute = ({rootPath, relativeInput, version, size, type, results, useProf
     if (type === 'document') {
         handleDocument(absInput, absOutput, size.size);
     } else {
-        const {command, args} = getArgs(type, absInput, absOutput, size.size, useProfile);
-        execFileSync(command, args, {stdio: 'pipe'});
+        const commands = getArgs(type, absInput, absOutput, size.size, version, useProfile);
+        commands.forEach(commandAndArgs => {
+            if (commandAndArgs) {
+                const {command, args} = commandAndArgs;
+                try {
+                    execFileSync(command, args);
+                } catch (e) {
+                    throw {
+                        error: 11,
+                    };
+                }
+            }
+        });
     }
 
     results.push({

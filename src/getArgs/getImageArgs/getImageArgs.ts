@@ -1,17 +1,25 @@
 import {getConfig} from './../../getConfig/getConfig';
 import {getPsdArgs} from './getPsdArgs/getPsdArgs';
 import {getJpgArgs} from './getJpgArgs/getJpgArgs';
-import {IExec, IArgs} from './../../types';
+import {handleBackground} from './handleBackground/handleBackground';
+import {IExec, IArgs, IVersion} from './../../types';
 import {join} from 'path';
 
-export const getImageArgs = (ext: string, input: string, output: string, size: number, useProfile = false): IExec => {
+export const getImageArgs = (
+    ext: string,
+    input: string,
+    output: string,
+    size: number,
+    version: IVersion,
+    useProfile = false,
+): IExec[] => {
     const command = 'convert';
     const args = [
         input, // input path
         '-resize', // use resize option
         `${size}x${size}>`, // resize value
         '-density', // use density option
-        '200', // density value
+        version.density ? version.density.toString() : '200', // density value
         `png:${output}`, // output path
     ];
 
@@ -40,10 +48,18 @@ export const getImageArgs = (ext: string, input: string, output: string, size: n
             break;
     }
 
-    return {
-        command,
-        args,
-    };
+    let backgroundsArgs: IExec = null;
+    if (useProfile) {
+        backgroundsArgs = handleBackground(args, version.background, output);
+    }
+
+    return [
+        {
+            command,
+            args,
+        },
+        backgroundsArgs,
+    ];
 };
 
 const addTypeArgs = (getTypeArgs: (input: string) => IArgs, args: string[], input: string) => {

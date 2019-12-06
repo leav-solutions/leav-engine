@@ -1,15 +1,23 @@
 import {unlinkSync} from 'fs';
 import {execFileSync} from 'child_process';
-import {getImageArgs} from './../getImageArgs';
+import {getImageArgs} from '../getArgs/getImageArgs/getImageArgs';
 
 // convert document in tmp pdf, convert the pdf in png and delete the pdf
 export const handleDocument = (input: string, output: string, size: number) => {
     const tmpFile = createDocumentTmpFile(input, output);
+    const version = {
+        sizes: [{output: 'test.png', size}],
+    };
 
-    const {command, args} = getImageArgs('pdf', tmpFile, output, size, true);
+    const commands = getImageArgs('pdf', tmpFile, output, size, version, true);
 
     try {
-        execFileSync(command, args, {stdio: 'pipe'});
+        commands.forEach(commandAndArgs => {
+            if (commandAndArgs) {
+                const {command, args} = commandAndArgs;
+                execFileSync(command, args, {stdio: 'pipe'});
+            }
+        });
     } catch (e) {
         throw {
             error: 16,

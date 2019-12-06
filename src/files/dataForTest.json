@@ -1,27 +1,5 @@
 [
     {
-        "input": "./images_jpg/jpg-with-clippping-path.jpg",
-        "versions": [
-            {
-                "background": true,
-                "sizes": [
-                    {
-                        "size": 800,
-                        "output": "./images_generate/jpg.800.png"
-                    },
-                    {
-                        "size": 1200,
-                        "output": "./images_generate/jpg.1200.png"
-                    },
-                    {
-                        "size": 200,
-                        "output": "./images_generate/jpg.200.png"
-                    }
-                ]
-            }
-        ]
-    },
-    {
         "input": "./images_psd/3.psd",
         "versions": [
             {
@@ -68,6 +46,28 @@
                     {
                         "size": 1400,
                         "output": "./images_generate/docx.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./images_jpg/jpg-with-clippping-path.jpg",
+        "versions": [
+            {
+                "background": "true",
+                "sizes": [
+                    {
+                        "size": 400,
+                        "output": "./images_generate/jpg.400.png"
+                    },
+                    {
+                        "size": 800,
+                        "output": "./images_generate/jpg.800.png"
+                    },
+                    {
+                        "size": 200,
+                        "output": "./images_generate/jpg.200.png"
                     }
                 ]
             }
