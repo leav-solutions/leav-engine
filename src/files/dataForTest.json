@@ -53,9 +53,10 @@
     },
     {
         "input": "./images_jpg/jpg-with-clippping-path.jpg",
+        "context": "dsfsdfdsfomhsdofhm4444",
         "versions": [
             {
-                "background": "true",
+                "background": true,
                 "sizes": [
                     {
                         "size": 400,

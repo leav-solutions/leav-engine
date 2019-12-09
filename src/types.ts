@@ -53,17 +53,15 @@ export interface ISize {
 }
 
 export enum ErrorList {
-    "file doesn't exist" = 1,
+    "file doesn't exist," = 1,
     'input is not a file' = 2,
-    'error when get file stats' = 3,
+    'error when getting file stats' = 3,
     'file output must be a png' = 4,
-    'file type unknow' = 5,
-    "can't parse message" = 6,
-    'error when generate image' = 11,
-    'error in execImageWithClip' = 12,
-    'error in execPsd' = 13,
-    'error in execPsdWithClip' = 14,
-    'error in execVideo' = 15,
+    'file type unknown' = 5,
+    "can't parse the message" = 6,
+    'error when generating the preview' = 11,
+    'error when creating the temporary file for the document type' = 12,
+    'error when generating preview from temporary pdf document' = 13,
 }
 
 export interface IExec {

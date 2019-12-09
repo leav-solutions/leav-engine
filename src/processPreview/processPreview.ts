@@ -30,7 +30,7 @@ export const processPreview = (msg: ConsumeMessage, config: IConfig): IResponse 
         results = generatePreview(msgContent, type, config);
     } catch (e) {
         return {
-            results: e,
+            results: [e],
             context: msgContent.context,
         };
     }

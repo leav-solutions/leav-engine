@@ -1,5 +1,5 @@
 import {Channel} from 'amqplib';
-import {IResult} from '../../types';
+import {IResult, ErrorList} from '../../types';
 
 interface IProps {
     exchange: string;
@@ -12,6 +12,10 @@ export const sendResponse = async (
     {exchange, routingKey}: IProps,
     context: any,
 ) => {
-    const buffer = Buffer.from(JSON.stringify({responses, context}));
+    const responseWithErrorReason = responses.map(r =>
+        ErrorList[r.error] ? {...r, error_detail: ErrorList[r.error]} : r,
+    );
+    const buffer = Buffer.from(JSON.stringify({responses: responseWithErrorReason, context}));
+
     return channel.publish(exchange, routingKey, buffer);
 };

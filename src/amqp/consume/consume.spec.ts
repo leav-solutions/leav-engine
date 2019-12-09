@@ -2,7 +2,7 @@ import {processPreview} from '../../processPreview/processPreview';
 import {IResult} from './../../types';
 import {Channel, ConsumeMessage} from 'amqplib';
 import {consume, handleMsg} from './consume';
-import {sendResponse} from './../publish/publish';
+import {sendResponse} from '../sendResponse/sendResponse';
 import * as config from '../../../config/config_spec.json';
 
 describe('test consume', () => {

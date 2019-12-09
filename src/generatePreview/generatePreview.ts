@@ -45,6 +45,7 @@ const execute = ({rootPath, relativeInput, version, size, type, results, useProf
         handleDocument(absInput, absOutput, size.size);
     } else {
         const commands = getArgs(type, absInput, absOutput, size.size, version, useProfile);
+
         commands.forEach(commandAndArgs => {
             if (commandAndArgs) {
                 const {command, args} = commandAndArgs;
@@ -53,6 +54,12 @@ const execute = ({rootPath, relativeInput, version, size, type, results, useProf
                 } catch (e) {
                     throw {
                         error: 11,
+                        params: {
+                            size: size.size,
+                            output: size.output,
+                            background: version.background,
+                            density: version.density,
+                        },
                     };
                 }
             }

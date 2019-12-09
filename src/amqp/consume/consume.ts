@@ -1,6 +1,6 @@
 import {Channel, ConsumeMessage} from 'amqplib';
 import {IConfig} from '../../types';
-import {sendResponse} from '../publish/publish';
+import {sendResponse} from '../sendResponse/sendResponse';
 import {processPreview} from './../../processPreview/processPreview';
 
 export const consume = async (channel: Channel, config: IConfig) =>

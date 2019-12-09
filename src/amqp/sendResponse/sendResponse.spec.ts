@@ -1,6 +1,6 @@
 import {Channel} from 'amqplib';
-import {IResult} from './../../types';
-import {sendResponse} from './publish';
+import {IResult} from '../../types';
+import {sendResponse} from './sendResponse';
 
 describe('test sendResponse', () => {
     const channel: Mockify<Channel> = {

@@ -4,40 +4,50 @@ import {getImageArgs} from '../getArgs/getImageArgs/getImageArgs';
 
 // convert document in tmp pdf, convert the pdf in png and delete the pdf
 export const handleDocument = (input: string, output: string, size: number) => {
-    const tmpFile = createDocumentTmpFile(input, output);
+    const tmpFile = createDocumentTmpFile(input, output, size);
     const version = {
         sizes: [{output: 'test.png', size}],
     };
 
     const commands = getImageArgs('pdf', tmpFile, output, size, version, true);
 
-    try {
-        commands.forEach(commandAndArgs => {
-            if (commandAndArgs) {
-                const {command, args} = commandAndArgs;
+    commands.forEach(commandAndArgs => {
+        if (commandAndArgs) {
+            const {command, args} = commandAndArgs;
+            try {
                 execFileSync(command, args, {stdio: 'pipe'});
+            } catch (e) {
+                throw {
+                    error: 13,
+                    params: {
+                        size,
+                        output,
+                    },
+                };
             }
-        });
-    } catch (e) {
+        }
+    });
+
+    unlinkSync(tmpFile);
+};
+
+const createDocumentTmpFile = (input: string, output: string, size: number) => {
+    const tmpOutput = `${output}.pdf`;
+
+    const command = 'unoconv';
+    const args = ['-f', 'pdf', '-o', tmpOutput, input];
+
+    try {
+        execFileSync(command, args, {stdio: 'pipe'});
+    } catch (error) {
         throw {
-            error: 16,
+            error: 12,
             params: {
                 output,
                 size,
             },
         };
     }
-
-    unlinkSync(tmpFile);
-};
-
-const createDocumentTmpFile = (input: string, output: string) => {
-    const tmpOutput = `${output}.pdf`;
-
-    const command = 'unoconv';
-    const args = ['-f', 'pdf', '-o', tmpOutput, input];
-
-    execFileSync(command, args, {stdio: 'pipe'});
 
     return tmpOutput;
 };
