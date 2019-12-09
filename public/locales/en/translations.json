@@ -155,6 +155,13 @@
         "select_root": "Please select a library in the list aside.",
         "edit_filters": "Edit filters"
     },
+    "plugins": {
+        "title": "Plugins",
+        "label": "Name",
+        "description": "Description",
+        "version": "Version",
+        "author": "Author"
+    },
     "records": {
         "add_value": "Add value",
         "links_elements_count": "{{count}} elements",

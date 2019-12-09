@@ -17,6 +17,6 @@ describe('Home', () => {
             .shallow();
 
         expect(comp.find('MainMenu')).toHaveLength(1);
-        expect(comp.find('ProtectedRoute')).toHaveLength(8);
+        expect(comp.find('ProtectedRoute')).toHaveLength(9);
     });
 });

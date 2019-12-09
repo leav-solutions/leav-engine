@@ -31,7 +31,15 @@ const MainMenu = (): JSX.Element => {
         ? menuItems.filter(item => userData.permissions![`admin_access_${item.id}`])
         : [];
 
-    return <AppMenu items={[...filteredItems, {id: 'navigator', label: t('navigator.title')}]} />;
+    return (
+        <AppMenu
+            items={[
+                ...filteredItems,
+                {id: 'navigator', label: t('navigator.title')},
+                {id: 'plugins', label: t('plugins.title')}
+            ]}
+        />
+    );
 };
 
 export default MainMenu;
