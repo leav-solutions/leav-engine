@@ -1,13 +1,9 @@
-import React from 'react';
 import {MockedProvider} from '@apollo/react-testing';
-
-import {render, mount, shallow} from 'enzyme';
+import {mount} from 'enzyme';
+import React from 'react';
 import {act} from 'react-dom/test-utils';
-import ActionListConfigurer from './ActionListConfigurer';
-
-import {AVAILABLE_ACTIONS_MOCK, ATTRIBUTE_MOCK, NO_AVAILABLE_ACTION_MOCK} from './mocks/ALCMocks';
-
-// import ALCContainer from '../ActionListConfigurer/ALCContainer';
+import ActionsListTab from './ActionsListTab';
+import {ATTRIBUTE_MOCK, AVAILABLE_ACTIONS_MOCK, NO_AVAILABLE_ACTION_MOCK} from './mocks/ALCMocks';
 
 // adds the availableActions
 // check that it don't crash when there's no actionList or no available actions
@@ -19,13 +15,13 @@ const wait = () => {
     });
 };
 
-describe('ActionListConfigurer', () => {
+describe('ActionsListTab', () => {
     test('adds the available actions ', async () => {
         let component;
         await act(async () => {
             component = mount(
                 <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
-                    <ActionListConfigurer attribute={ATTRIBUTE_MOCK} />
+                    <ActionsListTab attribute={ATTRIBUTE_MOCK} />
                 </MockedProvider>
             );
         });
@@ -45,7 +41,7 @@ describe('ActionListConfigurer', () => {
         await act(async () => {
             component = mount(
                 <MockedProvider mocks={NO_AVAILABLE_ACTION_MOCK} addTypename={false}>
-                    <ActionListConfigurer attribute={ATTRIBUTE_MOCK} />
+                    <ActionsListTab attribute={ATTRIBUTE_MOCK} />
                 </MockedProvider>
             );
         });

@@ -12,7 +12,7 @@ interface IActionListConfigurerProps {
     attribute: GET_ATTRIBUTES_attributes_list;
 }
 
-function ActionListConfigurer({attribute}: IActionListConfigurerProps): JSX.Element {
+function ActionsListTab({attribute}: IActionListConfigurerProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_AVAILABLE_ACTIONS, GET_ATTRIBUTES_attributes_list>(
         getAvailableActionsQuery
     );
@@ -42,4 +42,4 @@ function ActionListConfigurer({attribute}: IActionListConfigurerProps): JSX.Elem
     return <ALCContainer availableActions={actions} attribute={attribute} />;
 }
 
-export default ActionListConfigurer;
+export default ActionsListTab;

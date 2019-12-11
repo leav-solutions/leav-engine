@@ -4,12 +4,12 @@ import {ApolloClient} from 'apollo-client';
 import {ApolloLink} from 'apollo-link';
 import {onError} from 'apollo-link-error';
 import {HttpLink} from 'apollo-link-http';
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as yup from 'yup';
 import {isAllowedQuery, IsAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
-import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {AvailableLanguage, PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import LangContext from '../../shared/LangContext';
 import Loading from '../../shared/Loading';
 import UserContext from '../../shared/UserContext';
@@ -163,10 +163,17 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
                         name: '',
                         permissions: permsArrayToObject(data.isAllowed)
                     };
+
                     const lang = getSysTranslationQueryLanguage(i18n);
+                    const availableLangs = process.env.REACT_APP_AVAILABLE_LANG
+                        ? process.env.REACT_APP_AVAILABLE_LANG.split(',').map(l => AvailableLanguage[l])
+                        : [];
+                    const defaultLang = process.env.REACT_APP_DEFAULT_LANG
+                        ? AvailableLanguage[process.env.REACT_APP_DEFAULT_LANG]
+                        : AvailableLanguage.en;
 
                     return (
-                        <LangContext.Provider value={{lang}}>
+                        <LangContext.Provider value={{lang, availableLangs, defaultLang}}>
                             <UserContext.Provider value={userData}>
                                 <div className="App height100">
                                     <Home />

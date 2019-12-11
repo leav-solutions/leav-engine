@@ -3,6 +3,8 @@ import {AvailableLanguage} from '../../../_gqlTypes/globalTypes';
 
 export interface ILangContext {
     lang: AvailableLanguage[];
+    availableLangs: AvailableLanguage[];
+    defaultLang: AvailableLanguage;
 }
 
 /* tslint:disable-next-line:variable-name */

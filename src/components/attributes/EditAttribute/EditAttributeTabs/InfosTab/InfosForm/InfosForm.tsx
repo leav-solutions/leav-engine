@@ -3,62 +3,51 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
 import * as yup from 'yup';
-import useLang from '../../../../../hooks/useLang';
-import {formatIDString, getFieldError} from '../../../../../utils/utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../_gqlTypes/globalTypes';
-import {ErrorTypes, IFormError} from '../../../../../_types/errors';
-import LibrariesSelector from '../../../../libraries/LibrariesSelector';
-import FormFieldWrapper from '../../../../shared/FormFieldWrapper';
-import TreesSelector from '../../../../trees/TreesSelector';
+import useLang from '../../../../../../hooks/useLang';
+import {formatIDString, getFieldError} from '../../../../../../utils';
+import {GET_ATTRIBUTES_attributes_list} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../../_gqlTypes/globalTypes';
+import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
+import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
+import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
+import TreesSelector from '../../../../../trees/TreesSelector';
 
-interface IEditAttributeInfosFormProps {
+interface IInfosFormProps {
     attribute: GET_ATTRIBUTES_attributes_list | null;
-    onSubmit: (formData: any) => void;
+    readonly: boolean;
+    onSubmitInfos: (dataToSave: GET_ATTRIBUTES_attributes_list) => void;
     errors?: IFormError;
-    readOnly: boolean;
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
-const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
+const defaultAttributeData: GET_ATTRIBUTES_attributes_list = {
+    id: '',
+    system: false,
+    label: {
+        fr: '',
+        en: ''
+    },
+    type: AttributeType.simple,
+    format: AttributeFormat.text,
+    linked_tree: null,
+    linked_library: null,
+    permissions_conf: null,
+    multiple_values: false,
+    versions_conf: {
+        versionable: false,
+        mode: ValueVersionMode.smart,
+        trees: []
+    }
+};
 
-/* tslint:disable-next-line:variable-name */
-const EditAttributeInfosForm = ({
-    errors,
-    attribute,
-    onSubmit,
-    readOnly,
-    onCheckIdExists
-}: IEditAttributeInfosFormProps): JSX.Element => {
+function InfosForm({attribute, readonly, onSubmitInfos, errors, onCheckIdExists}: IInfosFormProps): JSX.Element {
     const {t} = useTranslation();
-    const defaultAttribute: GET_ATTRIBUTES_attributes_list = {
-        id: '',
-        system: false,
-        label: {
-            fr: '',
-            en: ''
-        },
-        type: AttributeType.simple,
-        format: AttributeFormat.text,
-        linked_tree: null,
-        linked_library: null,
-        permissions_conf: null,
-        multiple_values: false,
-        versions_conf: {
-            versionable: false,
-            mode: ValueVersionMode.smart,
-            trees: []
-        }
-    };
-
-    const {lang: userLang} = useLang();
-
-    const existingAttr = attribute !== null;
-    const initialValues = attribute !== null ? attribute : defaultAttribute;
+    const {lang: userLang, availableLangs, defaultLang} = useLang();
+    const isNewAttribute = attribute === null;
+    const initialValues = attribute !== null ? attribute : defaultAttributeData;
 
     const _handleSubmit = values => {
-        onSubmit(values);
+        onSubmitInfos(values);
     };
 
     const serverValidationErrors =
@@ -69,7 +58,7 @@ const EditAttributeInfosForm = ({
         .required()
         .matches(/^[a-z0-9_]+$/);
 
-    if (!existingAttr) {
+    if (isNewAttribute) {
         // TODO: ID unicity validation is not debounced. As it's not trivial to implement, check future implementation
         // in formik (https://github.com/jaredpalmer/formik/pull/1597)
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
@@ -99,7 +88,7 @@ const EditAttributeInfosForm = ({
             const [field, subfield] = name.split('.');
 
             // On new attribute, automatically generate an ID based on label
-            if (!existingAttr && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
+            if (isNewAttribute && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
                 setFieldValue('id', formatIDString(value));
             }
         };
@@ -133,16 +122,16 @@ const EditAttributeInfosForm = ({
             <Form onSubmit={handleSubmit}>
                 <Form.Group grouped>
                     <label>{t('attributes.label')}</label>
-                    {langs.map(lang => (
+                    {availableLangs.map(lang => (
                         <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
                             <Form.Input
                                 label={`${lang} ${lang === defaultLang ? '*' : ''}`}
                                 width="4"
                                 name={`label.${lang}`}
-                                disabled={readOnly}
+                                disabled={readonly}
                                 onChange={_handleLabelChange}
                                 onBlur={handleBlur}
-                                value={values.label[lang]}
+                                value={values.label[lang] || ''}
                             />
                         </FormFieldWrapper>
                     ))}
@@ -151,7 +140,7 @@ const EditAttributeInfosForm = ({
                     <Form.Input
                         label={t('attributes.ID')}
                         width="4"
-                        disabled={existingAttr || readOnly}
+                        disabled={!isNewAttribute || readonly}
                         name="id"
                         onChange={_handleChange}
                         onBlur={handleBlur}
@@ -162,7 +151,7 @@ const EditAttributeInfosForm = ({
                     <Form.Select
                         label={t('attributes.type')}
                         width="4"
-                        disabled={existingAttr || values.system || readOnly}
+                        disabled={!isNewAttribute || values.system || readonly}
                         name="type"
                         onChange={_handleChange}
                         options={Object.keys(AttributeType).map(attrType => {
@@ -178,7 +167,7 @@ const EditAttributeInfosForm = ({
                     <FormFieldWrapper error={_getErrorByField('format')}>
                         <Form.Select
                             label={t('attributes.format')}
-                            disabled={values.system || readOnly}
+                            disabled={values.system || readonly}
                             width="4"
                             name="format"
                             onChange={_handleChange}
@@ -193,7 +182,7 @@ const EditAttributeInfosForm = ({
                 {isLinkAttribute && (
                     <FormFieldWrapper error={_getErrorByField('linked_library')}>
                         <LibrariesSelector
-                            disabled={values.system || readOnly}
+                            disabled={values.system || readonly}
                             lang={userLang}
                             fluid
                             selection
@@ -214,7 +203,7 @@ const EditAttributeInfosForm = ({
                             selection
                             multiple={false}
                             width="4"
-                            disabled={values.system || readOnly}
+                            disabled={values.system || readonly}
                             label={t('attributes.linked_tree')}
                             placeholder={t('attributes.linked_tree')}
                             name="linked_tree"
@@ -226,7 +215,7 @@ const EditAttributeInfosForm = ({
                     <FormFieldWrapper error={_getErrorByField('multiple_values')}>
                         <Form.Checkbox
                             label={t('attributes.allow_multiple_values')}
-                            disabled={values.system || readOnly}
+                            disabled={values.system || readonly}
                             width="8"
                             toggle
                             name="multiple_values"
@@ -241,7 +230,7 @@ const EditAttributeInfosForm = ({
                         <FormFieldWrapper error={_getErrorByField('versions_conf')}>
                             <Form.Checkbox
                                 label={t('attributes.versionable')}
-                                disabled={values.system || readOnly}
+                                disabled={values.system || readonly}
                                 width="8"
                                 toggle
                                 name="versions_conf.versionable"
@@ -254,7 +243,7 @@ const EditAttributeInfosForm = ({
                                 <FormFieldWrapper error={_getErrorByField('versions_conf.mode')}>
                                     <Form.Select
                                         label={t('attributes.versions_mode')}
-                                        disabled={values.system || readOnly}
+                                        disabled={values.system || readonly}
                                         width="4"
                                         name="versions_conf.mode"
                                         onChange={_handleChange}
@@ -281,7 +270,7 @@ const EditAttributeInfosForm = ({
                                         selection
                                         width="4"
                                         multiple
-                                        disabled={values.system || readOnly}
+                                        disabled={values.system || readonly}
                                         label={t('attributes.versions_trees')}
                                         placeholder={t('attributes.versions_trees')}
                                         value={values.versions_conf ? values.versions_conf.trees || [] : []}
@@ -294,9 +283,11 @@ const EditAttributeInfosForm = ({
                         )}
                     </Form.Group>
                 )}
-                {!readOnly && (
+                {!readonly && (
                     <Form.Group inline>
-                        <Form.Button type="submit">{t('admin.submit')}</Form.Button>
+                        <Form.Button type="submit" data-test-id="attribute-infos-submit-btn">
+                            {t('admin.submit')}
+                        </Form.Button>
                     </Form.Group>
                 )}
             </Form>
@@ -321,6 +312,6 @@ const EditAttributeInfosForm = ({
             />
         </>
     );
-};
+}
 
-export default EditAttributeInfosForm;
+export default InfosForm;
