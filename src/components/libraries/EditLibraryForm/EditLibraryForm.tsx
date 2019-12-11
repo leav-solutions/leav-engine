@@ -6,6 +6,7 @@ import {IFormError} from '../../../_types/errors';
 import EditLibraryAttributes from '../EditLibraryAttributes';
 import EditLibraryInfosForm from '../EditLibraryInfosForm';
 import EditLibraryPermissions from '../EditLibraryPermissions';
+import EditableNavigator from './EditableNavigator';
 
 interface IEditLibraryFormProps {
     library: GET_LIBRARIES_libraries_list | null;
@@ -75,6 +76,17 @@ const EditLibraryForm = ({
                     return (
                         <Tab.Pane key="attributes" className="grow">
                             <EditLibraryAttributes library={library} readOnly={readOnly} />
+                        </Tab.Pane>
+                    );
+                }
+            },
+            {
+                key: 'navigator',
+                menuItem: t('navigator.title'),
+                render: () => {
+                    return (
+                        <Tab.Pane key="navigator" className="grow">
+                            <EditableNavigator library={library} />
                         </Tab.Pane>
                     );
                 }
