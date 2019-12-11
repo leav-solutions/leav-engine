@@ -11,7 +11,6 @@ import ProtectedRoute from '../../shared/ProtectedRoute';
 import EditTree from '../../trees/EditTree';
 import Trees from '../../trees/Trees';
 import MainMenu from '../MainMenu';
-import Navigator from '../../navigator';
 import Plugins from '../../plugins';
 
 /* tslint:disable-next-line:variable-name */
@@ -79,7 +78,6 @@ function Home(): JSX.Element {
                         component={AdminPermissions}
                         exact
                     />
-                    <ProtectedRoute path="/navigator" component={Navigator} exact />
                     <ProtectedRoute path="/plugins" component={Plugins} exact />
                 </Content>
             </div>
