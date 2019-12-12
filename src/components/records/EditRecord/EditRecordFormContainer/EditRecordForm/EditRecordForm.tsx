@@ -86,7 +86,7 @@ const EditRecordForm = ({
                     newFieldValue = [...values[fieldName], value];
                 }
             } else {
-                newFieldValue = {...values[fieldName], value};
+                newFieldValue = {...values[fieldName], ...value};
             }
 
             setFieldValue(fieldName, newFieldValue);
