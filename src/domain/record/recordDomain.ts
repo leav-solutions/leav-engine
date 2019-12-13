@@ -168,7 +168,7 @@ export default function({
             attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
 
         if (isLinkAttribute && attribute.linked_library) {
-            if (typeof val.value === 'number') {
+            if (attribute.type === AttributeTypes.SIMPLE_LINK) {
                 val.value = {
                     id: val.value
                 };
