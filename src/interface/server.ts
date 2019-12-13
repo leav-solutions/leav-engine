@@ -54,7 +54,7 @@ export default function({
         err.message = `[${errId}] ${err.message}`;
         logger.error(`${err.message}\n${err.extensions.exception.stacktrace.join('\n')}`);
 
-        if (config.env !== 'development' && config.env !== 'test') {
+        if (!config.debug) {
             err.message = `[${errId}] Internal Error`;
         }
 
