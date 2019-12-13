@@ -7,7 +7,13 @@ export const getJpgArgs = (input: string): IArgs => {
     if (clippingPath) {
         return {
             before: [],
-            after: ['-alpha', 'transparent', '-clip', '-alpha', 'opaque'],
+            after: [
+                '-alpha',
+                'transparent', // set the image transparent
+                '-clip', // select the clipping path
+                '-alpha',
+                'opaque', // set the inside of the image opaque
+            ],
         };
     } else {
         return {

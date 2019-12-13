@@ -6,12 +6,22 @@ export const getPsdArgs = (input: string): IArgs => {
 
     if (clippingPath) {
         return {
-            before: ['-flatten'],
-            after: ['-alpha', 'transparent', '-clip', '-alpha', 'opaque'],
+            before: [
+                '-flatten', // flatten all layers
+            ],
+            after: [
+                '-alpha',
+                'transparent', // set the image transparent
+                '-clip', // select the clipping path
+                '-alpha',
+                'opaque', // set the inside of the image opaque
+            ],
         };
     } else {
         return {
-            before: ['-flatten'],
+            before: [
+                '-flatten', // flatten all layers
+            ],
             after: [],
         };
     }

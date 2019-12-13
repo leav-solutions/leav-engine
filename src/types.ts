@@ -44,6 +44,7 @@ export interface IMessageConsume {
 export interface IVersion {
     background?: true | false | string;
     density?: number;
+    multiPage?: string;
     sizes: ISize[];
 }
 
@@ -62,6 +63,10 @@ export enum ErrorList {
     'error when generating the preview' = 11,
     'error when creating the temporary file for the document type' = 12,
     'error when generating preview from temporary pdf document' = 13,
+    'error when getting the colorspace of the input' = 14,
+    'error when create the folder for multi page' = 15,
+    'error when getting the number page of pdf' = 16,
+    'error when generating multi page' = 17,
 }
 
 export interface IExec {

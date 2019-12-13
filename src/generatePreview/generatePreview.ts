@@ -42,7 +42,7 @@ const execute = ({rootPath, relativeInput, version, size, type, results, useProf
     const absOutput = join(rootPath, size.output);
 
     if (type === 'document') {
-        handleDocument(absInput, absOutput, size.size);
+        handleDocument(absInput, absOutput, size.size, version, rootPath);
     } else {
         const commands = getArgs(type, absInput, absOutput, size.size, version, useProfile);
 

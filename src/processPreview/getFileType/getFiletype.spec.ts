@@ -9,8 +9,8 @@ describe('getFileType', () => {
         expect(getFileType('test.png')).toEqual('image');
     });
 
-    test('pdf is an image type', () => {
-        expect(getFileType('test.pdf')).toEqual('image');
+    test('pdf is an document type', () => {
+        expect(getFileType('test.pdf')).toEqual('document');
     });
 
     test('psd is an image type', () => {
@@ -31,5 +31,17 @@ describe('getFileType', () => {
 
     test('mov is an video type', () => {
         expect(getFileType('test.mov')).toEqual('video');
+    });
+
+    test('docx is an document type', () => {
+        expect(getFileType('test.docx')).toEqual('document');
+    });
+
+    test('pptx is an document type', () => {
+        expect(getFileType('test.pptx')).toEqual('document');
+    });
+
+    test('odt is an document type', () => {
+        expect(getFileType('test.odt')).toEqual('document');
     });
 });

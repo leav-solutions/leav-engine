@@ -7,7 +7,7 @@ import * as config from '../../config/config_spec.json';
 
 describe('generatePreview', () => {
     console.info = jest.fn();
-    (execFileSync as jest.FunctionLike) = jest.fn();
+    (execFileSync as jest.FunctionLike) = jest.fn(() => '');
     (getConfig as jest.FunctionLike) = jest.fn(() => config);
 
     const msgContent: IMessageConsume = {

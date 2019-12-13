@@ -1,3 +1,4 @@
+import {execFileSync} from 'child_process';
 import {getConfig} from './../../getConfig/getConfig';
 import {getPsdArgs} from './getPsdArgs/getPsdArgs';
 import {getJpgArgs} from './getJpgArgs/getJpgArgs';
@@ -14,6 +15,7 @@ export const getImageArgs = (
     useProfile = false,
 ): IExec[] => {
     const command = 'convert';
+
     const args = [
         input, // input path
         '-resize', // use resize option
@@ -24,15 +26,32 @@ export const getImageArgs = (
     ];
 
     if (useProfile) {
-        const config = getConfig();
-        const profileArgs = [
-            '-profile', // use profile option
-            join(config.ICCPath, 'EuroscaleCoated.icc'), // profile value
-            '-profile', // use profile option
-            join(config.ICCPath, 'srgb.icm'), // profile value
-        ];
+        try {
+            // not neccessary for imagemagick >=7
+            const colorspace = execFileSync('identify', ['-format', '%r', input]);
 
-        args.splice(-1, 0, ...profileArgs);
+            if (colorspace.indexOf('CYMK') > -1) {
+                const config = getConfig();
+                const profileArgs = [
+                    '-profile', // use profile option
+                    join(config.ICCPath, 'EuroscaleCoated.icc'), // profile value
+                    '-profile', // use profile option
+                    join(config.ICCPath, 'srgb.icm'), // profile value
+                ];
+
+                args.splice(-1, 0, ...profileArgs);
+            }
+        } catch (e) {
+            throw {
+                error: 14,
+                params: {
+                    background: version.background,
+                    density: version.density,
+                    size,
+                    output,
+                },
+            };
+        }
     }
 
     switch (ext) {
@@ -44,7 +63,7 @@ export const getImageArgs = (
             addTypeArgs(getJpgArgs, args, input);
             break;
         case 'pdf':
-            args.splice(0, 1, `${input}[0]`);
+            args.splice(0, 1, `${input}[0]`); // take only the first page of the pdf
             break;
     }
 

@@ -17,7 +17,7 @@ export const getArgs = (
 
     switch (type) {
         case 'video':
-            return [getVideoArgs(input, output, size)];
+            return getVideoArgs(input, output, size);
         case 'image':
             return getImageArgs(ext, input, output, size, version, useProfile);
         case 'other':

@@ -401,7 +401,7 @@
     },
     "pdf": {
         "mime": "application/pdf",
-        "type": "image"
+        "type": "document"
     },
     "pgp": {
         "mime": "application/pgp-encrypted",

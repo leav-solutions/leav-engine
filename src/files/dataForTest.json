@@ -1,38 +1,38 @@
 [
     {
-        "input": "./images_psd/3.psd",
+        "input": "./psd/3.psd",
         "versions": [
             {
                 "sizes": [
                     {
                         "size": 1600,
-                        "output": "./images_generate/gateaux.png"
+                        "output": "./generate/gateaux.png"
                     }
                 ]
             }
         ]
     },
     {
-        "input": "./images_pdf/test.pdf",
+        "input": "./pdf/test.pdf",
         "versions": [
             {
                 "sizes": [
                     {
                         "size": 400,
-                        "output": "./images_generate/pdf.png"
+                        "output": "./generate/pdf.png"
                     }
                 ]
             }
         ]
     },
     {
-        "input": "./images_png/120106427143_1.png",
+        "input": "./png/120106427143_1.png",
         "versions": [
             {
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./images_generate/cookie.png"
+                        "output": "./generate/cookie.png"
                     }
                 ]
             }
@@ -45,14 +45,14 @@
                 "sizes": [
                     {
                         "size": 1400,
-                        "output": "./images_generate/docx.png"
+                        "output": "./generate/docx.png"
                     }
                 ]
             }
         ]
     },
     {
-        "input": "./images_jpg/jpg-with-clippping-path.jpg",
+        "input": "./jpg/jpg-with-clippping-path.jpg",
         "context": "dsfsdfdsfomhsdofhm4444",
         "versions": [
             {
@@ -60,15 +60,111 @@
                 "sizes": [
                     {
                         "size": 400,
-                        "output": "./images_generate/jpg.400.png"
+                        "output": "./generate/jpg.400.png"
                     },
                     {
                         "size": 800,
-                        "output": "./images_generate/jpg.800.png"
+                        "output": "./generate/jpg.800.png"
                     },
                     {
                         "size": 200,
-                        "output": "./images_generate/jpg.200.png"
+                        "output": "./generate/jpg.200.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./mp4/test.mp4",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/mp4.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./tiff/test.TIF",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/tiff.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pdf/carrefour2.pdf",
+        "versions": [
+            {
+                "multiPage": "./generate/carrefour2/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/carrefour2.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pdf/carrefour1.pdf",
+        "versions": [
+            {
+                "multiPage": "./generate/carrefour1/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/carrefour1.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pptx/meteor.pptx",
+        "versions": [
+            {
+                "multiPage": "./generate/meteor/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/pptx.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pdf/carrefour3.pdf",
+        "versions": [
+            {
+                "multiPage": "./generate/carrefour3/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/carrefour3.png"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./docx/test.docx",
+        "versions": [
+            {
+                "multiPage": "./generate/docx/",
+                "sizes": [
+                    {
+                        "size": 1400,
+                        "output": "./generate/docx.png"
                     }
                 ]
             }

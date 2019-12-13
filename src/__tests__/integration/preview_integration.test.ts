@@ -255,6 +255,101 @@ describe('test preview generation', () => {
 
         await sendTestMessage(configIntegration, msgSend);
     });
+
+    // this test can take time
+    test('pdf with multi page to png', async done => {
+        jest.setTimeout(15000);
+
+        const output = '/src/files/test/preview/docx.png';
+        const multiPage = '/src/files/test/preview/pdfMultiPage/';
+
+        const msgSend = {
+            input: '/src/files/test/testMultiPage.pdf',
+            context: 'context',
+            versions: [
+                {
+                    multiPage,
+                    sizes: [
+                        {
+                            size: 800,
+                            output,
+                        },
+                    ],
+                },
+            ],
+        };
+
+        await consumeResponse(configIntegration, (msg, channel) => {
+            channel.ack(msg);
+            const {
+                responses: [responses],
+            } = JSON.parse(msg.content.toString());
+
+            expect(responses).toEqual(
+                expect.objectContaining({
+                    error: 0,
+                    params: expect.objectContaining({
+                        size: msgSend.versions[0].sizes[0].size,
+                    }),
+                }),
+            );
+            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.rootPath, multiPage, '01.pdf'))).toBeTruthy();
+
+            channel.close();
+
+            done();
+        });
+
+        await sendTestMessage(configIntegration, msgSend);
+    });
+
+    test('docx with multi page to png', async done => {
+        jest.setTimeout(15000);
+
+        const output = '/src/files/test/preview/docxMultiPage.png';
+        const multiPage = '/src/files/test/preview/docxMultiPage/';
+
+        const msgSend = {
+            input: '/src/files/test/testMultiPage.docx',
+            context: 'context',
+            versions: [
+                {
+                    multiPage,
+                    sizes: [
+                        {
+                            size: 800,
+                            output,
+                        },
+                    ],
+                },
+            ],
+        };
+
+        await consumeResponse(configIntegration, (msg, channel) => {
+            channel.ack(msg);
+            const {
+                responses: [responses],
+            } = JSON.parse(msg.content.toString());
+
+            expect(responses).toEqual(
+                expect.objectContaining({
+                    error: 0,
+                    params: expect.objectContaining({
+                        size: msgSend.versions[0].sizes[0].size,
+                    }),
+                }),
+            );
+            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.rootPath, multiPage, '01.pdf'))).toBeTruthy();
+
+            channel.close();
+
+            done();
+        });
+
+        await sendTestMessage(configIntegration, msgSend);
+    });
 });
 
 const sendTestMessage = async (config: IConfig, msg: IMessageConsume) => {

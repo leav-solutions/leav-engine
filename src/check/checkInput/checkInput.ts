@@ -9,21 +9,22 @@ export const checkInput = (input: string) => {
             },
         ];
     }
-
+    let stats: fs.Stats;
     try {
-        const stats = fs.lstatSync(input);
-        if (!stats.isFile()) {
-            throw [
-                {
-                    error: 2,
-                    params: null,
-                },
-            ];
-        }
+        stats = fs.lstatSync(input);
     } catch (e) {
         throw [
             {
                 error: 3,
+                params: null,
+            },
+        ];
+    }
+
+    if (!stats.isFile()) {
+        throw [
+            {
+                error: 2,
                 params: null,
             },
         ];
