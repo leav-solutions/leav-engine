@@ -85,7 +85,7 @@ const EditLibraryForm = ({
                 menuItem: t('navigator.title'),
                 render: () => {
                     return (
-                        <Tab.Pane key="navigator" className="grow">
+                        <Tab.Pane key="navigator" className="height100" style={{padding: '0', border: '0px none'}}>
                             <EditableNavigator library={library} />
                         </Tab.Pane>
                     );
