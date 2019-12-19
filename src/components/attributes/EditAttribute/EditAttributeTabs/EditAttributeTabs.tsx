@@ -4,17 +4,20 @@ import {Header, Tab} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {onAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
 import InfosTab from './InfosTab';
+import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
+    forcedType?: AttributeType;
 }
 
-function EditAttributeTabs({attribute, onPostSave}: IEditAttributeTabsProps): JSX.Element {
+function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const headerLabel =
@@ -26,12 +29,16 @@ function EditAttributeTabs({attribute, onPostSave}: IEditAttributeTabsProps): JS
             menuItem: t('attributes.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <InfosTab attribute={attribute} onPostSave={onPostSave} />
+                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
                 </Tab.Pane>
             )
         }
     ];
     if (!!attribute) {
+        const isMetadataAllowed = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
+            attribute.type
+        );
+
         panes.push(
             {
                 key: 'permissions',
@@ -45,7 +52,7 @@ function EditAttributeTabs({attribute, onPostSave}: IEditAttributeTabsProps): JS
                 }
             },
             {
-                key: 'configurer',
+                key: 'actions_list',
                 menuItem: t('attributes.action_list'),
                 render: () => {
                     return (
@@ -56,6 +63,20 @@ function EditAttributeTabs({attribute, onPostSave}: IEditAttributeTabsProps): JS
                 }
             }
         );
+
+        if (isMetadataAllowed) {
+            panes.push({
+                key: 'metadata',
+                menuItem: t('attributes.metadata'),
+                render: () => {
+                    return (
+                        <Tab.Pane key="metadata" className="grow flex-col">
+                            <MetadataTab attribute={attribute} readonly={false} />
+                        </Tab.Pane>
+                    );
+                }
+            });
+        }
     }
 
     return (

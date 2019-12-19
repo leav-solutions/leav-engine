@@ -10,6 +10,12 @@ export const attributeDetailsFragment = gql`
         linked_library
         linked_tree
         multiple_values
+        metadata_fields {
+            id
+            label(lang: $lang)
+            type
+            format
+        }
         permissions_conf {
             permissionTreeAttributes {
                 id

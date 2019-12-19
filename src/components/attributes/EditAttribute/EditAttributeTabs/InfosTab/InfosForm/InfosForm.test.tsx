@@ -4,6 +4,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import renderer from 'react-test-renderer';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
 import InfosForm from './InfosForm';
 
@@ -103,5 +104,21 @@ describe('InfosForm', () => {
         comp.update();
 
         expect(_idNotUnique).toBeCalled();
+    });
+
+    test('Can force values on new attribute', async () => {
+        const comp = mount(
+            <InfosForm
+                attribute={null}
+                readonly={false}
+                onSubmitInfos={onSubmit}
+                onCheckIdExists={onCheckIdExists}
+                forcedType={AttributeType.advanced}
+            />
+        );
+
+        const typeField = comp.find('FormSelect[name="type"]');
+        expect(typeField.prop('value')).toBe('advanced');
+        expect(typeField.prop('disabled')).toBe(true);
     });
 });

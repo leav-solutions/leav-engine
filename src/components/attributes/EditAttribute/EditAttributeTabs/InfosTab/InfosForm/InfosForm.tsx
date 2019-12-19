@@ -18,6 +18,7 @@ interface IInfosFormProps {
     onSubmitInfos: (dataToSave: GET_ATTRIBUTES_attributes_list) => void;
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
+    forcedType?: AttributeType;
 }
 
 const defaultAttributeData: GET_ATTRIBUTES_attributes_list = {
@@ -33,6 +34,7 @@ const defaultAttributeData: GET_ATTRIBUTES_attributes_list = {
     linked_library: null,
     permissions_conf: null,
     multiple_values: false,
+    metadata_fields: null,
     versions_conf: {
         versionable: false,
         mode: ValueVersionMode.smart,
@@ -40,11 +42,22 @@ const defaultAttributeData: GET_ATTRIBUTES_attributes_list = {
     }
 };
 
-function InfosForm({attribute, readonly, onSubmitInfos, errors, onCheckIdExists}: IInfosFormProps): JSX.Element {
+function InfosForm({
+    attribute,
+    readonly,
+    onSubmitInfos,
+    errors,
+    onCheckIdExists,
+    forcedType
+}: IInfosFormProps): JSX.Element {
     const {t} = useTranslation();
     const {lang: userLang, availableLangs, defaultLang} = useLang();
     const isNewAttribute = attribute === null;
     const initialValues = attribute !== null ? attribute : defaultAttributeData;
+
+    if (isNewAttribute && forcedType) {
+        initialValues.type = forcedType;
+    }
 
     const _handleSubmit = values => {
         onSubmitInfos(values);
@@ -151,7 +164,7 @@ function InfosForm({attribute, readonly, onSubmitInfos, errors, onCheckIdExists}
                     <Form.Select
                         label={t('attributes.type')}
                         width="4"
-                        disabled={!isNewAttribute || values.system || readonly}
+                        disabled={!isNewAttribute || values.system || readonly || (isNewAttribute && !!forcedType)}
                         name="type"
                         onChange={_handleChange}
                         options={Object.keys(AttributeType).map(attrType => {

@@ -24,6 +24,12 @@ export const saveAttributeQuery = gql`
                 mode
                 trees
             }
+            metadata_fields {
+                id
+                label
+                type
+                format
+            }
         }
     }
 `;

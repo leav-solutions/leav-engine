@@ -3,7 +3,11 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {GET_ATTRIBUTES, GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {
+    GET_ATTRIBUTES,
+    GET_ATTRIBUTESVariables,
+    GET_ATTRIBUTES_attributes_list
+} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../shared/Loading';
 import AttributesSelectionList from './AttributesSelectionList';
 
@@ -12,6 +16,7 @@ interface IAttributesSelectionProps {
     openModal: boolean;
     onClose: () => void;
     selection: string[];
+    filter?: GET_ATTRIBUTESVariables;
 }
 
 /* tslint:disable-next-line:variable-name */
@@ -19,11 +24,14 @@ const AttributesSelectionModal = ({
     openModal,
     selection,
     onClose,
-    onSubmit
+    onSubmit,
+    filter
 }: IAttributesSelectionProps): JSX.Element => {
     const {t} = useTranslation();
     const [pendingSelection, setPendingSelection] = useState<string[]>([]);
-    const {loading, error, data} = useQuery<GET_ATTRIBUTES>(getAttributesQuery);
+    const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+        variables: filter
+    });
 
     const _handleclose = () => {
         setPendingSelection([]);

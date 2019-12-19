@@ -8,6 +8,13 @@ import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} f
 // GraphQL fragment: AttributeDetails
 // ====================================================
 
+export interface AttributeDetails_metadata_fields {
+    id: string;
+    label: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+}
+
 export interface AttributeDetails_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
@@ -34,6 +41,7 @@ export interface AttributeDetails {
     linked_library: string | null;
     linked_tree: string | null;
     multiple_values: boolean;
+    metadata_fields: AttributeDetails_metadata_fields[] | null;
     permissions_conf: AttributeDetails_permissions_conf | null;
     versions_conf: AttributeDetails_versions_conf | null;
 }

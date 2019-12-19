@@ -70,6 +70,8 @@
         "versions_mode_smart": "Smart",
         "linked_library": "Linked library",
         "linked_tree": "Linked tree",
+        "metadata": "Metadata",
+        "metadata_field_delete_confirm": "Do you really want to remove field {{attrLabel}} from metadata?",
         "types": {
             "tree": "Tree",
             "advanced": "Advanced",

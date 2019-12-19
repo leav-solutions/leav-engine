@@ -7,6 +7,7 @@ import {
     GET_ATTRIBUTESVariables,
     GET_ATTRIBUTES_attributes_list
 } from '../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {onAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
@@ -14,9 +15,10 @@ import InfosForm from './InfosForm';
 interface IInfosTabProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
+    forcedType?: AttributeType;
 }
 
-function InfosTab({attribute, onPostSave}: IInfosTabProps): JSX.Element {
+function InfosTab({attribute, onPostSave, forcedType}: IInfosTabProps): JSX.Element {
     const [saveAttribute, {error}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: e => undefined
@@ -70,6 +72,7 @@ function InfosTab({attribute, onPostSave}: IInfosTabProps): JSX.Element {
             attribute={attribute || null}
             readonly={false}
             onCheckIdExists={_isIdUnique}
+            forcedType={forcedType}
         />
     );
 }

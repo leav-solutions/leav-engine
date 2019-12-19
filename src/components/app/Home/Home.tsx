@@ -7,11 +7,11 @@ import EditAttribute from '../../attributes/EditAttribute';
 import EditLibrary from '../../libraries/EditLibrary';
 import Libraries from '../../libraries/Libraries';
 import AdminPermissions from '../../permissions/AdminPermissions';
+import Plugins from '../../plugins';
 import ProtectedRoute from '../../shared/ProtectedRoute';
 import EditTree from '../../trees/EditTree';
 import Trees from '../../trees/Trees';
 import MainMenu from '../MainMenu';
-import Plugins from '../../plugins';
 
 /* tslint:disable-next-line:variable-name */
 const LeftCol = styled.div`
@@ -35,7 +35,7 @@ function Home(): JSX.Element {
                 <LeftCol>
                     <MainMenu />
                 </LeftCol>
-                <Content className="content flex-col height100">
+                <Content className="content flex-col height100" style={{overflowX: 'scroll'}}>
                     <ProtectedRoute
                         permissions={[PermissionsActions.admin_access_libraries]}
                         path="/libraries"

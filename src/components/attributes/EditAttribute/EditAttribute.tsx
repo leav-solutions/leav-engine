@@ -7,6 +7,7 @@ import {
     GET_ATTRIBUTESVariables,
     GET_ATTRIBUTES_attributes_list
 } from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
 
@@ -21,9 +22,10 @@ interface IEditAttributeProps {
     history?: History;
     attributeId?: string | null;
     onPostSave?: onAttributePostSaveFunc;
+    forcedType?: AttributeType;
 }
 
-function EditAttribute({match: routeMatch, attributeId, onPostSave}: IEditAttributeProps): JSX.Element {
+function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
@@ -32,9 +34,9 @@ function EditAttribute({match: routeMatch, attributeId, onPostSave}: IEditAttrib
 
     const _renderEditAttributeTabs = useMemo(
         () => (attribute?: GET_ATTRIBUTES_attributes_list) => (
-            <EditAttributeTabs attribute={attribute} onPostSave={onPostSave} />
+            <EditAttributeTabs attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
         ),
-        [onPostSave]
+        [onPostSave, forcedType]
     );
 
     if (!attrId) {
