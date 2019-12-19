@@ -1,23 +1,19 @@
 import React from 'react';
 import {create} from 'react-test-renderer';
-import {GET_ATTRIBUTES_attributes} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
+import {mockAttrSimple} from '../../../../__mocks__/attributes';
 import AttributesSelectionList from './AttributesSelectionList';
 
 describe('AttributesSelectionList', () => {
     test('Snapshot test', async () => {
-        const attributes: GET_ATTRIBUTES_attributes[] = [
+        const attributes: GET_ATTRIBUTES_attributes_list[] = [
             {
+                ...mockAttrSimple,
                 id: 'test_attr',
-                type: AttributeType.simple,
-                format: AttributeFormat.text,
-                system: false,
                 label: {
                     fr: 'Test',
                     en: 'Test'
-                },
-                linked_tree: null,
-                permissions_conf: null
+                }
             }
         ];
 

@@ -3,17 +3,21 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import AttributesSelectionModal from './AttributesSelectionModal';
 
+jest.mock('./AttributesSelectionList', () => {
+    return function AttributesSelectionList() {
+        return <div>AttributesSelectionList</div>;
+    };
+});
+
 describe('AttributesSelection', () => {
-    test('Snapshot test', async () => {
+    test('Loading and success state', async () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
-                    variables: {type: [AttributeType.tree]}
+                    query: getAttributesQuery
                 },
                 result: {
                     data: {
@@ -27,7 +31,8 @@ describe('AttributesSelection', () => {
                                     label: {
                                         fr: 'Attr 1'
                                     },
-                                    id: 'test_tree_attr'
+                                    id: 'test_tree_attr',
+                                    versions_conf: null
                                 },
                                 {
                                     ...mockAttrSimple,
@@ -35,7 +40,8 @@ describe('AttributesSelection', () => {
                                     label: {
                                         fr: 'Attr 2'
                                     },
-                                    id: 'other_test_tree_attr'
+                                    id: 'other_test_tree_attr',
+                                    versions_conf: null
                                 }
                             ]
                         }
@@ -50,14 +56,49 @@ describe('AttributesSelection', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks}>
+                <MockedProvider mocks={mocks} addTypename>
                     <AttributesSelectionModal onSubmit={onSubmit} onClose={onClose} openModal selection={selection} />
                 </MockedProvider>
             );
+        });
+
+        expect(comp.find('Loading')).toHaveLength(1);
+
+        await act(async () => {
             await wait(0);
             comp.update();
         });
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find('AttributesSelectionList')).toHaveLength(1);
+    });
+
+    test('Error state', async () => {
+        const mocks = [
+            {
+                request: {
+                    query: getAttributesQuery
+                },
+                error: new Error('Boom!')
+            }
+        ];
+        const onSubmit = jest.fn();
+        const onClose = jest.fn();
+        const selection = [];
+
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks} addTypename>
+                    <AttributesSelectionModal onSubmit={onSubmit} onClose={onClose} openModal selection={selection} />
+                </MockedProvider>
+            );
+        });
+
+        await act(async () => {
+            await wait(0);
+            comp.update();
+        });
+
+        expect(comp.find('.error')).toHaveLength(1);
     });
 });
