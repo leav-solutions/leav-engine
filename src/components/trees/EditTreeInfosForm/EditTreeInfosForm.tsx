@@ -8,6 +8,7 @@ import useLang from '../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../utils/utils';
 import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {ErrorTypes, IFormError} from '../../../_types/errors';
+import {Override} from '../../../_types/Override';
 import LibrariesSelector from '../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 
@@ -18,6 +19,13 @@ interface IEditTreeInfosFormProps {
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
+
+type TreeInfos = Override<
+    GET_TREES_trees_list,
+    {
+        libraries: string[];
+    }
+>;
 
 /* tslint:disable-next-line:variable-name */
 const FormGroupWithMargin = styled(Form.Group)`
@@ -43,7 +51,7 @@ const EditTreeInfosForm = ({
         libraries: []
     };
 
-    const initialValues: GET_TREES_trees_list = tree === null ? defaultTree : tree;
+    const initialValues: TreeInfos = tree === null ? defaultTree : {...tree, libraries: tree.libraries.map(l => l.id)};
 
     const existingTree = tree !== null;
 
@@ -69,7 +77,7 @@ const EditTreeInfosForm = ({
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
     }
 
-    const validationSchema: yup.ObjectSchema<Partial<GET_TREES_trees_list>> = yup.object().shape({
+    const validationSchema: yup.ObjectSchema<Partial<TreeInfos>> = yup.object().shape({
         label: yup.object().shape({
             [defaultLang || langs[0]]: yup.string().required()
         }),
@@ -84,7 +92,7 @@ const EditTreeInfosForm = ({
         errors: inputErrors,
         values,
         touched
-    }: FormikProps<GET_TREES_trees_list>) => {
+    }: FormikProps<TreeInfos>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
 
@@ -107,7 +115,7 @@ const EditTreeInfosForm = ({
         const {id, label, libraries, system} = values;
 
         const _getErrorByField = (fieldName: string): string =>
-            getFieldError<GET_TREES_trees_list>(fieldName, touched, serverValidationErrors || {}, inputErrors);
+            getFieldError<TreeInfos>(fieldName, touched, serverValidationErrors || {}, inputErrors);
 
         return (
             <Form onSubmit={handleSubmit}>
@@ -149,7 +157,7 @@ const EditTreeInfosForm = ({
                         width="4"
                         name="libraries"
                         onChange={_handleChange}
-                        value={libraries.map(l => l.id)}
+                        value={libraries}
                     />
                 </FormFieldWrapper>
                 {!readOnly && (
