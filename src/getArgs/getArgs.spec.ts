@@ -4,7 +4,7 @@ import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
 
 describe('getArgs', () => {
-    test('type image use getImageArgs', () => {
+    test('type image use getImageArgs', async () => {
         (getImageArgs as jest.FunctionLike) = jest.fn();
         (getVideoArgs as jest.FunctionLike) = jest.fn();
 
@@ -24,12 +24,12 @@ describe('getArgs', () => {
             ],
         };
 
-        getArgs(type, input, output, size, version, useProfile);
+        await getArgs(type, input, output, size, version, useProfile);
 
         expect(getImageArgs).toBeCalledWith(ext, input, output, size, version, useProfile);
     });
 
-    test('type video use getVideoArgs', () => {
+    test('type video use getVideoArgs', async () => {
         (getImageArgs as jest.FunctionLike) = jest.fn();
         (getVideoArgs as jest.FunctionLike) = jest.fn();
 
@@ -48,12 +48,12 @@ describe('getArgs', () => {
             ],
         };
 
-        getArgs(type, input, output, size, version, useProfile);
+        await getArgs(type, input, output, size, version, useProfile);
 
         expect(getVideoArgs).toBeCalledWith(input, output, size);
     });
 
-    test('type video use getVideoArgs', () => {
+    test('none exist type should throw', async () => {
         (getImageArgs as jest.FunctionLike) = jest.fn();
         (getVideoArgs as jest.FunctionLike) = jest.fn();
 
@@ -72,6 +72,12 @@ describe('getArgs', () => {
             ],
         };
 
-        expect(() => getArgs(type, input, output, size, version, useProfile)).toThrow();
+        await expect(getArgs(type, input, output, size, version, useProfile)).rejects.toStrictEqual({
+            error: 5,
+            params: {
+                output,
+                size,
+            },
+        });
     });
 });

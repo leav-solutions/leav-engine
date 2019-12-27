@@ -5,7 +5,7 @@ import {IMessageConsume, IResponse, IConfig, IResult} from './../types';
 import {handleCheck} from '../check/handleCheck';
 import {generatePreview} from './../generatePreview/generatePreview';
 
-export const processPreview = (msg: ConsumeMessage, config: IConfig): IResponse => {
+export const processPreview = async (msg: ConsumeMessage, config: IConfig): Promise<IResponse> => {
     let msgContent: IMessageConsume;
 
     try {
@@ -16,7 +16,7 @@ export const processPreview = (msg: ConsumeMessage, config: IConfig): IResponse 
 
     let type: string;
     try {
-        handleCheck(msgContent, config.rootPath);
+        await handleCheck(msgContent, config);
         type = getFileType(msgContent.input);
     } catch (e) {
         return {
@@ -27,7 +27,7 @@ export const processPreview = (msg: ConsumeMessage, config: IConfig): IResponse 
 
     let results: IResult[];
     try {
-        results = generatePreview(msgContent, type, config);
+        results = await generatePreview(msgContent, type, config);
     } catch (e) {
         return {
             results: [e],

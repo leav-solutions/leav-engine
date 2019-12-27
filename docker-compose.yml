@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     volumes:
-      - /Users/smarzykmathieu/Dev/preview:/app
+      - .:/app
       - /Users/smarzykmathieu/Data/:/data
+      - /Users/smarzykmathieu/Demo/:/demo
     network_mode: host

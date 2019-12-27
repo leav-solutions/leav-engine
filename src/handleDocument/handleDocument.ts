@@ -1,33 +1,38 @@
+import {execFile} from 'child_process';
 import {extname} from 'path';
 import {handleMultiPage} from './handleMultiPage/handleMultiPage';
-import {unlinkSync} from 'fs';
-import {execFileSync} from 'child_process';
-import {IVersion} from './../types';
+import {unlink} from 'fs';
+import {IVersion, IRootPaths} from './../types';
 import {getImageArgs} from '../getArgs/getImageArgs/getImageArgs';
 
 // convert document in tmp pdf, convert the pdf in png and delete the pdf
-export const handleDocument = (input: string, output: string, size: number, version: IVersion, rootPath: string) => {
+export const handleDocument = async (
+    input: string,
+    output: string,
+    size: number,
+    version: IVersion,
+    rootPaths: IRootPaths,
+) => {
     const ext = extname(input)
         .toLowerCase()
         .replace('.', '');
 
-    let tmpFile = input;
+    let pdfFile = input;
     if (ext !== 'pdf') {
-        tmpFile = createDocumentTmpFile(input, output, size);
+        pdfFile = await _createDocumentTmpFile(input, output, size);
     }
 
     if (version.multiPage) {
-        handleMultiPage(tmpFile, version.multiPage, rootPath);
+        handleMultiPage(pdfFile, version.multiPage, rootPaths);
     }
 
-    const commands = getImageArgs('pdf', tmpFile, output, size, version, true);
+    const commands = await getImageArgs('pdf', pdfFile, output, size, version, true);
 
-    commands.forEach(commandAndArgs => {
+    for (const commandAndArgs of commands) {
         if (commandAndArgs) {
             const {command, args} = commandAndArgs;
-            try {
-                execFileSync(command, args, {stdio: 'pipe'});
-            } catch (e) {
+            const errorExec = await new Promise(r => execFile(command, args, {}, e => r(e)));
+            if (errorExec) {
                 throw {
                     error: 13,
                     params: {
@@ -37,22 +42,26 @@ export const handleDocument = (input: string, output: string, size: number, vers
                 };
             }
         }
-    });
+    }
 
     if (ext !== 'pdf') {
-        unlinkSync(tmpFile);
+        await new Promise(r => unlink(pdfFile, r));
     }
 };
 
-const createDocumentTmpFile = (input: string, output: string, size: number) => {
+const _createDocumentTmpFile = async (input: string, output: string, size: number) => {
     const tmpOutput = `${output}.pdf`;
 
     const command = 'unoconv';
     const args = ['-f', 'pdf', '-o', tmpOutput, input];
 
-    try {
-        execFileSync(command, args, {stdio: 'pipe'});
-    } catch (error) {
+    const error = await new Promise(r =>
+        execFile(command, args, {}, e => {
+            r(e);
+        }),
+    );
+
+    if (error) {
         throw {
             error: 12,
             params: {

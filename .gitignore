@@ -54,3 +54,6 @@ logs
 local
 files
 jest_0
+
+# ignore imageMagick tmp files
+magick-*

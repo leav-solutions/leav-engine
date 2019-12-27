@@ -1,13 +1,12 @@
-import {execSync} from 'child_process';
+import {exec} from 'child_process';
 
-export const checkClippingPathJpg = (input: string) => {
+export const checkClippingPathJpg = async (input: string) => {
     let clippingPath = true;
-    try {
-        const commandTestClip = `identify -clip ${input}`;
-        execSync(commandTestClip, {
-            stdio: 'pipe',
-        });
-    } catch (e) {
+    const commandTestClip = `identify -clip ${input}`;
+
+    const error = await new Promise(r => exec(commandTestClip, e => r(e)));
+
+    if (error) {
         clippingPath = false;
     }
 

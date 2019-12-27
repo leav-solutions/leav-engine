@@ -1,8 +1,8 @@
 import {IArgs} from './../../../types';
 import {checkClippingPathPsd} from './checkClippingPathPsd/checkClippingPathPsd';
 
-export const getPsdArgs = (input: string): IArgs => {
-    const clippingPath = checkClippingPathPsd(input);
+export const getPsdArgs = async (input: string): Promise<IArgs> => {
+    const clippingPath = await checkClippingPathPsd(input);
 
     if (clippingPath) {
         return {

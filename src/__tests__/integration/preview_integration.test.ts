@@ -38,7 +38,7 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
@@ -79,7 +79,7 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
@@ -120,7 +120,7 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
@@ -162,7 +162,7 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
@@ -204,7 +204,7 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
@@ -246,7 +246,7 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
@@ -293,8 +293,8 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
-            expect(fs.existsSync(path.join(configIntegration.rootPath, multiPage, '01.pdf'))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
 
             channel.close();
 
@@ -340,8 +340,8 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.rootPath, output))).toBeTruthy();
-            expect(fs.existsSync(path.join(configIntegration.rootPath, multiPage, '01.pdf'))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(configIntegration.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
 
             channel.close();
 

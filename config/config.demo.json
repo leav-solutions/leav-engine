@@ -1,0 +1,23 @@
+{
+    "inputRootPath": "/demo/original",
+    "outputRootPath": "/demo/result",
+    "ICCPath": "/app/profile/",
+    "amqp": {
+        "protocol": "amqp",
+        "hostname": "host.docker.internal",
+        "port": 15672,
+        "username": "guest",
+        "password": "guest",
+        "consume": {
+            "queue": "demo-preview",
+            "exchange": "demo",
+            "routingKey": "demo-preview"
+        },
+        "publish": {
+            "queue": "demo-preview-result",
+            "exchange": "demo",
+            "routingKey": "demo-preview-result"
+        }
+    },
+    "verbose": true
+}

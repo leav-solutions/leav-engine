@@ -17,5 +17,6 @@
             "exchange": "preview",
             "routingKey": "preview_response"
         }
-    }
+    },
+    "verbose": true
 }

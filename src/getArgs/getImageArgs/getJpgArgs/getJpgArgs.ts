@@ -1,8 +1,8 @@
 import {IArgs} from './../../../types';
 import {checkClippingPathJpg} from './checkClippingPathJpg/checkClippingPathJpg';
 
-export const getJpgArgs = (input: string): IArgs => {
-    const clippingPath = checkClippingPathJpg(input);
+export const getJpgArgs = async (input: string): Promise<IArgs> => {
+    const clippingPath = await checkClippingPathJpg(input);
 
     if (clippingPath) {
         return {

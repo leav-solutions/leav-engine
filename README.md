@@ -8,13 +8,14 @@ System:
 - imagemagick (<=6.9)
 - ffmpeg
 - libreoffice
+- unoconv
 
 JS: 
 - amqplib
 
 # Error Code
 
-- 1: file doesn't exist,
+- 1: file doesn't exist
 - 2: input is not a file
 - 3: error when getting file stats
 - 4: file output must be a png
@@ -23,12 +24,17 @@ JS:
 - 11: error when generating the preview
 - 12: error when creating the temporary file for the document type
 - 13: error when generating preview from temporary pdf document
+- 14: error when getting the colorspace of the input
+- 15: error when creating the folder for multi-page
+- 16: error when getting the number page of pdf
+- 17: error when generating multi-page
 
 # Config file 
 
 ```JSON
 {
-    "rootPath": "/data/",
+    "inputRootPath": "/data/",
+    "outputRootPath": "/data/",
     "ICCPath": "/data/profile/",
     "amqp": {
         "protocol": "amqp",
@@ -76,16 +82,17 @@ JS:
 
 ```JSON
 {
-    "input": "./preview/test.jpg",
+    "input": "preview/test.jpg",
     "context": "context",
     "versions": [
         {
             "background": false,
             "density": 300,
+            "multiPage": "preview/muliPageFolder",
             "sizes": [
                 {
                     "size": 800,
-                    "output": "./preview/test/test.800.png"
+                    "output": "preview/test/test.800.png"
                 }
             ]
         }
@@ -100,6 +107,7 @@ JS:
 - versions: a different version of the preview 
     - background: background in the preview, true will display a checkerboard, false will display nothing and a string of a hexadecimal color will display that color
     - density: the resolution of the image
+    - multiPage: path to the folder were to store the splitted pages, only work with pdf and document
     - sizes: different size of the previews
         - size: the size of the preview
         - output: the output of the preview
@@ -108,8 +116,7 @@ JS:
 
 ```JSON
 {
-    "responses": [
-        {
+    "responses": [{
         "error": 0,
         "error_detail": undefined, 
         "params": {
@@ -117,9 +124,8 @@ JS:
             "density": 300,
             "size": 800,
             "output": "/data/preview/test/test.800.png"
-            }
         }
-    ],
+    }],
     "context": "context"
 }
 ```

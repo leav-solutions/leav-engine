@@ -15,6 +15,7 @@ export const sendResponse = async (
     const responseWithErrorReason = responses.map(r =>
         ErrorList[r.error] ? {...r, error_detail: ErrorList[r.error]} : r,
     );
+
     const buffer = Buffer.from(JSON.stringify({responses: responseWithErrorReason, context}));
 
     return channel.publish(exchange, routingKey, buffer);

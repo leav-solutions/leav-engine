@@ -1,57 +1,100 @@
+import {execFile} from 'child_process';
 import {handleDocument} from './../handleDocument/handleDocument';
 import {join} from 'path';
-import {execFileSync} from 'child_process';
 import {getArgs} from './../getArgs/getArgs';
-import {IMessageConsume, IResult, ISize, IVersion, IConfig} from './../types';
+import {IMessageConsume, IResult, ISize, IVersion, IConfig, IRootPaths} from './../types';
 
-export const generatePreview = (msgContent: IMessageConsume, type: string, config: IConfig): IResult[] => {
+export const generatePreview = async (
+    msgContent: IMessageConsume,
+    type: string,
+    config: IConfig,
+): Promise<IResult[]> => {
+    let currentType = type;
+
     const results: IResult[] = [];
     const {input, versions} = msgContent;
 
-    const rootPath = config.rootPath;
+    const {inputRootPath, outputRootPath} = config;
+    const rootPaths: IRootPaths = {input: inputRootPath, output: outputRootPath};
 
-    versions.forEach(version => {
+    for (const version of versions) {
         const versionMaxSize = version.sizes.reduce((prev, current) => (prev.size < current.size ? current : prev));
-        const useProfile = true;
 
-        execute({type, relativeInput: input, version, size: versionMaxSize, results, rootPath, useProfile});
-        const maxSizeLocation = versionMaxSize.output;
+        const absInput = join(rootPaths.input, input);
+        const absOutput = join(rootPaths.output, versionMaxSize.output);
+
+        currentType = await _execute({
+            type: currentType,
+            absInput,
+            absOutput,
+            version,
+            size: versionMaxSize,
+            results,
+            rootPaths,
+            config,
+            first: true,
+        });
+        const maxSizePath = versionMaxSize.output;
 
         const versionSizeRest = version.sizes.filter(v => v !== versionMaxSize);
+        for (const size of versionSizeRest) {
+            const absNewInput = join(rootPaths.output, maxSizePath);
+            const absFinalOutput = join(rootPaths.output, size.output);
 
-        versionSizeRest.forEach(size =>
-            execute({type, relativeInput: maxSizeLocation, version, size, results, rootPath}),
-        );
-    });
+            await _execute({
+                type: currentType,
+                absInput: absNewInput,
+                absOutput: absFinalOutput,
+                version,
+                size,
+                results,
+                rootPaths,
+                config,
+                first: false,
+            });
+        }
+    }
 
     return results;
 };
 
 interface IExecute {
     type: string;
-    relativeInput: string;
+    absInput: string;
+    absOutput: string;
     version: IVersion;
     size: ISize;
     results: IResult[];
-    rootPath: string;
-    useProfile?: boolean;
+    rootPaths: IRootPaths;
+    config: IConfig;
+    first?: boolean;
 }
 
-const execute = ({rootPath, relativeInput, version, size, type, results, useProfile = false}: IExecute) => {
-    const absInput = join(rootPath, relativeInput);
-    const absOutput = join(rootPath, size.output);
-
+const _execute = async ({
+    rootPaths,
+    absInput,
+    absOutput,
+    version,
+    size,
+    type,
+    results,
+    config,
+    first = false,
+}: IExecute) => {
     if (type === 'document') {
-        handleDocument(absInput, absOutput, size.size, version, rootPath);
+        await handleDocument(absInput, absOutput, size.size, version, rootPaths);
     } else {
-        const commands = getArgs(type, absInput, absOutput, size.size, version, useProfile);
-
-        commands.forEach(commandAndArgs => {
+        const commands = await getArgs(type, absInput, absOutput, size.size, version, first);
+        for (const commandAndArgs of commands) {
             if (commandAndArgs) {
                 const {command, args} = commandAndArgs;
-                try {
-                    execFileSync(command, args);
-                } catch (e) {
+
+                const error = await new Promise(r =>
+                    execFile(command, args, {}, e => {
+                        r(e);
+                    }),
+                );
+                if (error) {
                     throw {
                         error: 11,
                         params: {
@@ -63,7 +106,7 @@ const execute = ({rootPath, relativeInput, version, size, type, results, useProf
                     };
                 }
             }
-        });
+        }
     }
 
     results.push({
@@ -76,5 +119,10 @@ const execute = ({rootPath, relativeInput, version, size, type, results, useProf
         },
     });
 
-    console.info(size.output);
+    if (config.verbose) {
+        console.info(size.output);
+    }
+
+    // After generating the first execution we generate a png reuse for other sizes, so the type is an image
+    return 'image';
 };

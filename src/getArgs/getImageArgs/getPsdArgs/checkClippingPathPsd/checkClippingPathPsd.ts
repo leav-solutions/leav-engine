@@ -1,16 +1,13 @@
-import {execFileSync} from 'child_process';
+import {execFile} from 'child_process';
 
-export const checkClippingPathPsd = (input: string) => {
+export const checkClippingPathPsd = async (input: string): Promise<boolean> => {
     let clippingPath = true;
 
-    try {
-        const result = execFileSync('identify', ['-format', '%[8BIM:1999,2998:#1]', input], {
-            stdio: 'pipe',
-        });
-        if (result.length === 0) {
-            clippingPath = false;
-        }
-    } catch (e) {
+    const [error, result] = await new Promise(r =>
+        execFile('identify', ['-format', '%[8BIM:1999,2998:#1]', input], {}, (err, stdout) => r([err, stdout])),
+    );
+
+    if (result.length === 0 || error) {
         clippingPath = false;
     }
 

@@ -6,5 +6,5 @@ const configPath = process.argv[2] || './config/config.json';
 const config = getConfig(configPath);
 
 jpgFiles(config);
-// psdFiles(config);
-// pngFiles(config);
+psdFiles(config);
+pngFiles(config);

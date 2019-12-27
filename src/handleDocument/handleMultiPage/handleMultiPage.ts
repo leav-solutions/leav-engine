@@ -1,14 +1,22 @@
-import {execFileSync} from 'child_process';
-import {existsSync, mkdirSync} from 'fs';
+import {execFile} from 'child_process';
+import {access, mkdir} from 'fs';
 import {join} from 'path';
+import {IRootPaths} from '../../types';
 
-export const handleMultiPage = (pdfFile: string, multiPage: string, rootPath: string) => {
-    const folderDestinationPath = join(rootPath, multiPage);
+export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPaths: IRootPaths) => {
+    const folderDestinationPath = join(rootPaths.output, multiPage);
 
-    if (!existsSync(folderDestinationPath)) {
-        try {
-            mkdirSync(folderDestinationPath);
-        } catch (e) {
+    const pathExist = await new Promise(r =>
+        access(folderDestinationPath, e => {
+            r(!e);
+        }),
+    );
+
+    if (!pathExist) {
+        const createDir = await new Promise(resolve =>
+            mkdir(folderDestinationPath, {recursive: true}, e => resolve(!e)),
+        );
+        if (!createDir) {
             throw {
                 error: 15,
             };
@@ -16,37 +24,34 @@ export const handleMultiPage = (pdfFile: string, multiPage: string, rootPath: st
     }
 
     let nbPage: number;
-    try {
-        nbPage = parseInt(
-            execFileSync('gs', [
+    const {result: resultCountPage, error: errorCountPage} = await new Promise(resolve =>
+        execFile(
+            'gs',
+            [
                 '-q',
                 '-dNODISPLAY', // only display the command result
                 '-dBATCH', // quit ghostscript after the command
                 '-c',
                 `(${pdfFile}) (r) file runpdfbegin pdfpagecount = quit`,
-            ]),
-            10,
-        );
-    } catch (e) {
+            ],
+            (err, stdout) => resolve({result: stdout, error: err}),
+        ),
+    );
+
+    if (errorCountPage) {
         throw {
             error: 16,
         };
     }
 
-    const countDigit = (n: number) => {
-        let count = 0;
-        while (n !== 0) {
-            n = Math.round(n / 10);
-            count++;
-        }
+    nbPage = parseInt(resultCountPage, 10);
 
-        return count;
-    };
+    const countDigit = (n: number) => n.toString().length;
 
     const fullPath = join(folderDestinationPath, `%${'0' + countDigit(nbPage)}d.pdf`);
 
-    try {
-        execFileSync(
+    const {error} = await new Promise(resolve =>
+        execFile(
             'gs',
             [
                 `-sOutputFile=${fullPath}`,
@@ -57,9 +62,10 @@ export const handleMultiPage = (pdfFile: string, multiPage: string, rootPath: st
                 '-dNOPAUSE', // don't stop after each page
                 pdfFile,
             ],
-            {stdio: 'pipe'},
-        );
-    } catch (e) {
+            err => resolve({error: err}),
+        ),
+    );
+    if (error) {
         throw {
             error: 17,
         };

@@ -3,7 +3,8 @@ import {IConfig} from '../types';
 
 let initialized = false;
 let config: IConfig = {
-    rootPath: '',
+    inputRootPath: '',
+    outputRootPath: '',
     ICCPath: '',
     amqp: {
         protocol: '',

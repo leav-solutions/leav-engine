@@ -25,7 +25,7 @@ describe('processPreview', () => {
     };
 
     const config = {
-        rootPath: '/app',
+        inputRootPath: '/app',
     };
 
     test('use getMsgContent', () => {
@@ -43,6 +43,6 @@ describe('processPreview', () => {
 
         processPreview(msg as ConsumeMessage, config as IConfig);
 
-        expect(handleCheck).toBeCalledWith(msg, config.rootPath);
+        expect(handleCheck).toBeCalledWith(msg, config);
     });
 });

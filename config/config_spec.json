@@ -1,5 +1,6 @@
 {
-    "rootPath": "/Users/smarzykmathieu/Dev/preview",
+    "inputRootPath": "/Users/smarzykmathieu/Dev/preview",
+    "outputRootPath": "/Users/smarzykmathieu/Dev/preview",
     "ICCPath": "/Users/smarzykmathieu/Dev/preview/profile/",
     "amqp": {
         "protocol": "amqp",
@@ -17,5 +18,6 @@
             "exchange": "preview",
             "routingKey": "test_response"
         }
-    }
+    },
+    "verbose": false
 }

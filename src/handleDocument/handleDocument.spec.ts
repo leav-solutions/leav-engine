@@ -1,7 +1,8 @@
+import {getImageArgs} from './../getArgs/getImageArgs/getImageArgs';
 import {IVersion} from './../types';
-import {unlinkSync} from 'fs';
+import {unlink} from 'fs';
 import {getConfig} from '../getConfig/getConfig';
-import {execFileSync} from 'child_process';
+import {execFile} from 'child_process';
 import {handleDocument} from './handleDocument';
 
 import config = require('../../config/config_spec.json');
@@ -9,14 +10,21 @@ import config = require('../../config/config_spec.json');
 describe('getDocumentArgs', () => {
     afterAll(() => jest.resetAllMocks());
 
-    (execFileSync as jest.FunctionLike) = jest.fn(() => '');
+    (execFile as jest.FunctionLike) = jest.fn((...args) => args[3]());
+    (unlink as jest.FunctionLike) = jest.fn((...args) => args[1]());
+
+    (getImageArgs as jest.FunctionLike) = jest.fn(() => [
+        {
+            command: 'convert',
+            args: [`${output}.pdf[0]`, 'png:' + output],
+        },
+    ]);
     (getConfig as jest.FunctionLike) = jest.fn(() => config);
-    (unlinkSync as jest.FunctionLike) = jest.fn();
 
     const input = 'test.docx';
     const output = 'test.png';
     const size = 800;
-    const rootPath = '/data/';
+    const rootPaths = {input: '/data/', output: '/data/'};
     const version: IVersion = {
         sizes: [
             {
@@ -26,20 +34,22 @@ describe('getDocumentArgs', () => {
         ],
     };
 
-    handleDocument(input, output, size, version, rootPath);
+    (async () => handleDocument(input, output, size, version, rootPaths))();
 
-    test('check unoconv commad', () => {
-        expect(execFileSync).toHaveBeenCalledWith(
+    test('check unoconv command', () => {
+        expect(execFile).toHaveBeenCalledWith(
             'unoconv',
             expect.arrayContaining([input, `${output}.pdf`]),
+            expect.anything(),
             expect.anything(),
         );
     });
 
     test('check convert command', () => {
-        expect(execFileSync).toHaveBeenLastCalledWith(
+        expect(execFile).toHaveBeenCalledWith(
             'convert',
             expect.arrayContaining([`${output}.pdf[0]`, 'png:' + output]),
+            expect.anything(),
             expect.anything(),
         );
     });

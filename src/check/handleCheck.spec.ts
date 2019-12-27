@@ -1,10 +1,13 @@
 import {handleCheck} from './handleCheck';
 import {checkInput} from './checkInput/checkInput';
-import {IMessageConsume} from './../types';
+import {IMessageConsume, IConfig} from './../types';
 import {checkOutput} from './checkOutput/checkOutput';
 
 describe('handleCheck', () => {
-    const rootPath = '/app/';
+    const inputRootPath = '/app/';
+    const outputRootPath = '/app/';
+    const config: Mockify<IConfig> = {inputRootPath, outputRootPath};
+
     const input = 'test.jpg';
     const output = 'test.png';
     const size = 800;
@@ -23,21 +26,21 @@ describe('handleCheck', () => {
         ],
     };
 
-    test('should call checkInput with input absolute path', () => {
+    test('should call checkInput with input absolute path', async () => {
         (checkInput as jest.FunctionLike) = jest.fn();
         (checkOutput as jest.FunctionLike) = jest.fn();
 
-        handleCheck(msgContent as IMessageConsume, rootPath);
+        await handleCheck(msgContent as IMessageConsume, config as IConfig);
 
-        expect(checkInput).toBeCalledWith(rootPath + msgContent.input);
+        expect(checkInput).toBeCalledWith(msgContent.input, inputRootPath);
     });
 
-    test('should call checkOuput with output', () => {
+    test('should call checkOutput with output', async () => {
         (checkInput as jest.FunctionLike) = jest.fn();
         (checkOutput as jest.FunctionLike) = jest.fn();
 
-        handleCheck(msgContent as IMessageConsume, rootPath);
+        await handleCheck(msgContent as IMessageConsume, config as IConfig);
 
-        expect(checkOutput).toBeCalledWith(rootPath + output, size);
+        expect(checkOutput).toBeCalledWith(inputRootPath + output, size, expect.anything());
     });
 });

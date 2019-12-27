@@ -3,14 +3,14 @@ import {IExec, IVersion} from './../types';
 import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
 
-export const getArgs = (
+export const getArgs = async (
     type: string,
     input: string,
     output: string,
     size: number,
     version: IVersion,
-    useProfile = false,
-): IExec[] => {
+    first = false,
+): Promise<IExec[]> => {
     const ext = extname(input)
         .toLowerCase()
         .replace('.', '');
@@ -19,8 +19,8 @@ export const getArgs = (
         case 'video':
             return getVideoArgs(input, output, size);
         case 'image':
-            return getImageArgs(ext, input, output, size, version, useProfile);
-        case 'other':
+            return getImageArgs(ext, input, output, size, version, first);
+        default:
             throw {
                 error: 5,
                 params: {

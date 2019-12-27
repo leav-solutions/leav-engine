@@ -1,20 +1,20 @@
 import {handleMultiPage} from './handleMultiPage';
-import {existsSync, mkdirSync} from 'fs';
-import {execFileSync} from 'child_process';
+import {exists, mkdir} from 'fs';
+import {execFile} from 'child_process';
 
 describe('handleMultiPage', () => {
-    test('test', () => {
+    test('test', async () => {
         const pdfFile = './test';
         const multiPage = '';
-        const rootPath = '/data/';
+        const rootPaths = {input: '/data/', output: '/data/'};
 
-        (mkdirSync as jest.FunctionLike) = jest.fn();
-        (existsSync as jest.FunctionLike) = jest.fn();
-        (execFileSync as jest.FunctionLike) = jest.fn(() => '10');
+        (mkdir as jest.FunctionLike) = jest.fn((...args) => args[2]());
+        (exists as jest.FunctionLike) = jest.fn((...args) => args[1]());
+        (execFile as jest.FunctionLike) = jest.fn((...args) => args[2](null, '10'));
 
-        handleMultiPage(pdfFile, multiPage, rootPath);
+        await handleMultiPage(pdfFile, multiPage, rootPaths);
 
-        expect(execFileSync).toBeCalledWith('gs', expect.anything());
-        expect(execFileSync).lastCalledWith('gs', expect.arrayContaining([pdfFile]), expect.anything());
+        expect(execFile).toBeCalledWith('gs', expect.anything(), expect.anything());
+        expect(execFile).lastCalledWith('gs', expect.anything(), expect.anything());
     });
 });

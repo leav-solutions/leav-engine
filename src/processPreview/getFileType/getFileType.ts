@@ -6,7 +6,14 @@ export const getFileType = (file: string): string => {
         .toLowerCase()
         .replace('.', '');
 
-    const type = extensions[extension].type ? extensions[extension].type : 'other';
+    const type = extensions[extension].type;
+
+    if (!type) {
+        throw {
+            error: 18,
+            params: null,
+        };
+    }
 
     return type;
 };

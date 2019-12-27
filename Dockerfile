@@ -1,8 +1,12 @@
 FROM ubuntu
 
 RUN apt-get clean 
-RUN apt-get update
-RUN apt-get install -y npm imagemagick ffmpeg unoconv
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y npm 
+RUN apt-get install -y imagemagick
+RUN apt-get install -y ffmpeg 
+RUN apt-get install -y unoconv 
 
 # set working dir
 WORKDIR /app

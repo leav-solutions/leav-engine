@@ -1,5 +1,6 @@
 {
-    "rootPath": "/app/",
+    "inputRootPath": "/app/",
+    "outputRootPath": "/app/",
     "ICCPath": "/app/profile/",
     "amqp": {
         "protocol": "amqp",
@@ -17,5 +18,6 @@
             "exchange": "preview",
             "routingKey": "test_response"
         }
-    }
+    },
+    "verbose": false
 }

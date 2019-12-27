@@ -1,13 +1,18 @@
-import {execFileSync} from 'child_process';
+import {execFile} from 'child_process';
 import {checkClippingPathPsd} from './checkClippingPathPsd';
 
 describe('checkClippingPathPsd', () => {
-    test('use identify on input', () => {
+    test('use identify on input', async () => {
         const input = 'test.jpg';
-        (execFileSync as jest.FunctionLike) = jest.fn(() => true);
+        (execFile as jest.FunctionLike) = jest.fn((...args) => args[3](undefined, true));
 
-        checkClippingPathPsd(input);
+        await checkClippingPathPsd(input);
 
-        expect(execFileSync).toBeCalledWith('identify', expect.arrayContaining([input]), expect.anything());
+        expect(execFile).toBeCalledWith(
+            'identify',
+            expect.arrayContaining([input]),
+            expect.anything(),
+            expect.anything(),
+        );
     });
 });

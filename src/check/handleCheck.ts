@@ -1,18 +1,15 @@
-import {Channel, ConsumeMessage} from 'amqplib';
-import * as path from 'path';
-import {IMessageConsume} from './../types';
+import {join} from 'path';
+import {IMessageConsume, IConfig} from './../types';
 import {checkInput} from './checkInput/checkInput';
 import {checkOutput} from './checkOutput/checkOutput';
 
-export const handleCheck = (msgContent: IMessageConsume, rootPath: string) => {
+export const handleCheck = async (msgContent: IMessageConsume, config: IConfig) => {
     const {input, versions} = msgContent;
-    const _addRootPath = (p: string) => path.join(rootPath, p);
 
-    checkInput(_addRootPath(input));
-
+    await checkInput(input, config.inputRootPath);
     versions.map(version => {
-        version.sizes.map(size => {
-            checkOutput(_addRootPath(size.output), size.size);
+        version.sizes.map(async size => {
+            await checkOutput(join(config.outputRootPath, size.output), size.size, config);
         });
     });
 };

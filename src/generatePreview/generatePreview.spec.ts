@@ -1,5 +1,7 @@
+import {handleDocument} from './../handleDocument/handleDocument';
+import {getArgs} from './../getArgs/getArgs';
 import {getConfig} from './../getConfig/getConfig';
-import {execFileSync} from 'child_process';
+import {execFile} from 'child_process';
 import {generatePreview} from './generatePreview';
 import {IMessageConsume} from './../types';
 
@@ -7,7 +9,10 @@ import * as config from '../../config/config_spec.json';
 
 describe('generatePreview', () => {
     console.info = jest.fn();
-    (execFileSync as jest.FunctionLike) = jest.fn(() => '');
+    (execFile as jest.FunctionLike) = jest.fn(() => '');
+    (getArgs as jest.FunctionLike) = jest.fn(() => []);
+    (handleDocument as jest.FunctionLike) = jest.fn(() => []);
+
     (getConfig as jest.FunctionLike) = jest.fn(() => config);
 
     const msgContent: IMessageConsume = {
@@ -33,16 +38,14 @@ describe('generatePreview', () => {
             },
         ],
     };
-    const type = 'image';
+    test('result generatePreview', async () => {
+        const type = 'image';
 
-    const results = generatePreview(msgContent, type, config);
+        const results = await generatePreview(msgContent, type, config);
 
-    test('first results ', () => {
         const [firstResult] = results;
-        expect(firstResult.params.output).toEqual(expect.stringContaining('test.800.jpg'));
-    });
 
-    test('results length and error', () => {
+        expect(firstResult.params.output).toEqual(expect.stringContaining('test.800.jpg'));
         expect(results.length).toBe(3);
         results.map(r => expect(r.error).toBe(0));
     });
