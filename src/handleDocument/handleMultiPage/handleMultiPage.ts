@@ -1,6 +1,6 @@
 import {execFile} from 'child_process';
-import {access, mkdir} from 'fs';
-import {join} from 'path';
+import {access, mkdir, existsSync} from 'fs';
+import {join, dirname} from 'path';
 import {IRootPaths} from '../../types';
 
 export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPaths: IRootPaths) => {
@@ -13,9 +13,7 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
     );
 
     if (!pathExist) {
-        const createDir = await new Promise(resolve =>
-            mkdir(folderDestinationPath, {recursive: true}, e => resolve(!e)),
-        );
+        const createDir = await new Promise(r => mkdir(folderDestinationPath, async e => r(!e)));
         if (!createDir) {
             throw {
                 error: 15,

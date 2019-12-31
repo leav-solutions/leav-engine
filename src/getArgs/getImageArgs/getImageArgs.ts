@@ -1,3 +1,4 @@
+import {getSvgCommand} from './../getSvgCommand/getSvgCommand';
 import {execFile} from 'child_process';
 import {getConfig} from './../../getConfig/getConfig';
 import {getPsdArgs} from './getPsdArgs/getPsdArgs';
@@ -14,9 +15,9 @@ export const getImageArgs = async (
     version: IVersion,
     first = false,
 ): Promise<IExec[]> => {
-    const command = 'convert';
+    let command = 'convert';
 
-    const args = [
+    let args = [
         input, // input path
         '-resize', // use resize option
         `${size}x${size}>`, // resize value
@@ -67,6 +68,10 @@ export const getImageArgs = async (
         case 'pdf':
             args.splice(0, 1, `${input}[0]`); // take only the first page of the pdf
             break;
+        case 'svg':
+            const res = getSvgCommand(input, output, size);
+            command = res.command;
+            args = res.args;
     }
 
     let backgroundsArgs: IExec = null;

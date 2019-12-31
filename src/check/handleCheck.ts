@@ -7,9 +7,10 @@ export const handleCheck = async (msgContent: IMessageConsume, config: IConfig) 
     const {input, versions} = msgContent;
 
     await checkInput(input, config.inputRootPath);
-    versions.map(version => {
-        version.sizes.map(async size => {
+
+    for (const version of versions) {
+        for (const size of version.sizes) {
             await checkOutput(join(config.outputRootPath, size.output), size.size, config);
-        });
-    });
+        }
+    }
 };

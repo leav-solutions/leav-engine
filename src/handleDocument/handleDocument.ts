@@ -23,7 +23,7 @@ export const handleDocument = async (
     }
 
     if (version.multiPage) {
-        handleMultiPage(pdfFile, version.multiPage, rootPaths);
+        await handleMultiPage(pdfFile, version.multiPage, rootPaths);
     }
 
     const commands = await getImageArgs('pdf', pdfFile, output, size, version, true);

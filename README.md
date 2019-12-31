@@ -9,6 +9,7 @@ System:
 - ffmpeg
 - libreoffice
 - unoconv
+- inkscape
 
 JS: 
 - amqplib
@@ -28,6 +29,7 @@ JS:
 - 15: error when creating the folder for multi-page
 - 16: error when getting the number page of pdf
 - 17: error when generating multi-page
+- 18: type of the file not manage
 
 # Config file 
 

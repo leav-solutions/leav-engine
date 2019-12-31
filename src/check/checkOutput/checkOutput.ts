@@ -1,5 +1,5 @@
 import {extname, dirname, join} from 'path';
-import {access, mkdir} from 'fs';
+import {access, mkdir, existsSync} from 'fs';
 import {IConfig} from './../../types';
 
 export const checkOutput = async (output: string, size: number, config: IConfig) => {
