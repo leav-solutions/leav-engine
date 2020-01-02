@@ -17,33 +17,33 @@ JS:
 # Error Code
 
 ## Config Error
-101: can't access the inputRootPath
-102: can't access the outputRootPath
+- 101: can't access the inputRootPath
+- 102: can't access the outputRootPath
 
 ## Message Error
-201: can't parse the message received
+- 201: can't parse the message received
 
 ## Input Error
-301: input file doesn't exist
-302: input is not a file
-303: error when getting input file stats
-304: input file type unknown
-305: type of the input file not manage
+- 301: input file doesn't exist
+- 302: input is not a file
+- 303: error when getting input file stats
+- 304: input file type unknown
+- 305: type of the input file not manage
 
 ## Output Error
-401: output file must be a png
-402: can't create folder for output
+- 401: output file must be a png
+- 402: can't create folder for output
 
 ## Generate Error
-501: error when generating the preview
-502: error when creating the temporary file for the document type
-503: error when generating preview from temporary pdf document
-504: error when getting the colorspace of the input
+- 501: error when generating the preview
+- 502: error when creating the temporary file for the document type
+- 503: error when generating preview from temporary pdf document
+- 504: error when getting the colorspace of the input
 
 ## MultiPage Error
-601: error when create the folder for multi page
-602: error when getting the number page of pdf
-603: error when generating multi page
+- 601: error when create the folder for multi page
+- 602: error when getting the number page of pdf
+- 603: error when generating multi page
 
 # Config file 
 
