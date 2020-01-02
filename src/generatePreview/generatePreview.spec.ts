@@ -3,7 +3,7 @@ import {getArgs} from './../getArgs/getArgs';
 import {getConfig} from './../getConfig/getConfig';
 import {execFile} from 'child_process';
 import {generatePreview} from './generatePreview';
-import {IMessageConsume} from './../types';
+import {IMessageConsume} from '../types/types';
 
 import * as config from '../../config/config_spec.json';
 
@@ -24,15 +24,18 @@ describe('generatePreview', () => {
                     {
                         size: 200,
                         output: 'test.200.jpg',
+                        name: 'small',
                     },
                     {
                         size: 800,
                         output: 'test.800.jpg',
+                        name: 'big',
                     },
 
                     {
                         size: 100,
                         output: 'test.100.jpg',
+                        name: 'very_small',
                     },
                 ],
             },

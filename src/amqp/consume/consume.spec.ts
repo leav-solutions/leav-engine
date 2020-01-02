@@ -1,5 +1,5 @@
 import {processPreview} from '../../processPreview/processPreview';
-import {IResult} from './../../types';
+import {IResult} from '../../types/types';
 import {Channel, ConsumeMessage} from 'amqplib';
 import {consume, handleMsg} from './consume';
 import {sendResponse} from '../sendResponse/sendResponse';
@@ -49,6 +49,7 @@ describe('test handleMsg', () => {
             params: {
                 output: 'test',
                 size: 800,
+                name: 'big',
             },
         };
 

@@ -8,7 +8,7 @@ describe('getPsdArgs', () => {
 
         const args = await getPsdArgs(input);
 
-        expect(args.before).toContain('-flatten');
+        expect(args.before.length).toBe(0);
         expect(args.after).toContain('-clip');
     });
 

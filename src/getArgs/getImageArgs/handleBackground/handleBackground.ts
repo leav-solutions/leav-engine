@@ -1,4 +1,4 @@
-import {IExec} from '../../../types';
+import {IExec} from '../../../types/types';
 
 export const handleBackground = (args: string[], background: boolean | string, output: string): IExec => {
     if (typeof background === 'string') {

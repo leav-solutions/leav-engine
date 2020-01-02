@@ -1,5 +1,5 @@
 import {getImageArgs} from './../getArgs/getImageArgs/getImageArgs';
-import {IVersion} from './../types';
+import {IVersion} from '../types/types';
 import {unlink} from 'fs';
 import {getConfig} from '../getConfig/getConfig';
 import {execFile} from 'child_process';
@@ -24,17 +24,19 @@ describe('getDocumentArgs', () => {
     const input = 'test.docx';
     const output = 'test.png';
     const size = 800;
+    const name = 'big';
     const rootPaths = {input: '/data/', output: '/data/'};
     const version: IVersion = {
         sizes: [
             {
                 size,
                 output,
+                name,
             },
         ],
     };
 
-    (async () => handleDocument(input, output, size, version, rootPaths))();
+    (async () => handleDocument(input, output, size, name, version, rootPaths))();
 
     test('check unoconv command', () => {
         expect(execFile).toHaveBeenCalledWith(

@@ -1,5 +1,4 @@
-import {IVersion} from './../../types';
-import {getConfig} from './../../getConfig/getConfig';
+import {IVersion} from '../../types/types';
 import {getJpgArgs} from './getJpgArgs/getJpgArgs';
 import {getImageArgs} from './getImageArgs';
 
@@ -9,14 +8,15 @@ describe('getImageArgs', () => {
         const input = 'test.jpg';
         const output = 'test.png';
         const size = 800;
+        const name = 'medium';
 
         const version: IVersion = {
-            sizes: [{output, size}],
+            sizes: [{output, size, name}],
         };
 
         (getJpgArgs as jest.FunctionLike) = jest.fn(() => ({before: [], after: []}));
 
-        getImageArgs(ext, input, output, size, version);
+        getImageArgs(ext, input, output, size, name, version);
 
         expect(getJpgArgs).toBeCalled();
     });
@@ -28,12 +28,12 @@ describe('getImageArgs', () => {
         const size = 800;
 
         const version: IVersion = {
-            sizes: [{output, size}],
+            sizes: [{output, size, name}],
         };
 
         (getJpgArgs as jest.FunctionLike) = jest.fn(() => ({before: [], after: []}));
 
-        getImageArgs(ext, input, output, size, version);
+        getImageArgs(ext, input, output, size, name, version);
 
         expect(getJpgArgs).toBeCalled();
     });

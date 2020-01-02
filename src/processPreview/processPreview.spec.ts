@@ -1,6 +1,6 @@
 import {handleCheck} from './../check/handleCheck';
 import {getMsgContent} from './getMsgContent/getMsgContent';
-import {IConfig, ErrorList} from './../types';
+import {IConfig} from '../types/types';
 import {ConsumeMessage} from 'amqplib';
 import {processPreview} from './processPreview';
 

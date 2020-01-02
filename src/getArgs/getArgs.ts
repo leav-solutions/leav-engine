@@ -1,5 +1,6 @@
+import {ErrorPreview} from './../types/ErrorPreview';
 import {extname} from 'path';
-import {IExec, IVersion} from './../types';
+import {IExec, IVersion} from '../types/types';
 import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
 
@@ -8,6 +9,7 @@ export const getArgs = async (
     input: string,
     output: string,
     size: number,
+    name: string,
     version: IVersion,
     first = false,
 ): Promise<IExec[]> => {
@@ -19,14 +21,15 @@ export const getArgs = async (
         case 'video':
             return getVideoArgs(input, output, size);
         case 'image':
-            return getImageArgs(ext, input, output, size, version, first);
+            return getImageArgs(ext, input, output, size, name, version, first);
         default:
-            throw {
-                error: 5,
+            throw new ErrorPreview({
+                error: 304,
                 params: {
                     output,
                     size,
+                    name,
                 },
-            };
+            });
     }
 };

@@ -1,6 +1,7 @@
+import {initialCheck} from './initialCheck/initialCheck';
 import {handleCheck} from './handleCheck';
 import {checkInput} from './checkInput/checkInput';
-import {IMessageConsume, IConfig} from './../types';
+import {IMessageConsume, IConfig} from '../types/types';
 import {checkOutput} from './checkOutput/checkOutput';
 
 describe('handleCheck', () => {
@@ -11,6 +12,7 @@ describe('handleCheck', () => {
     const input = 'test.jpg';
     const output = 'test.png';
     const size = 800;
+    const name = 'big';
 
     const msgContent: Mockify<IMessageConsume> = {
         input,
@@ -20,6 +22,7 @@ describe('handleCheck', () => {
                     {
                         size,
                         output,
+                        name,
                     },
                 ],
             },
@@ -29,6 +32,7 @@ describe('handleCheck', () => {
     test('should call checkInput with input absolute path', async () => {
         (checkInput as jest.FunctionLike) = jest.fn();
         (checkOutput as jest.FunctionLike) = jest.fn();
+        (initialCheck as jest.FunctionLike) = jest.fn();
 
         await handleCheck(msgContent as IMessageConsume, config as IConfig);
 
@@ -41,6 +45,6 @@ describe('handleCheck', () => {
 
         await handleCheck(msgContent as IMessageConsume, config as IConfig);
 
-        expect(checkOutput).toBeCalledWith(inputRootPath + output, size, expect.anything());
+        expect(checkOutput).toBeCalledWith(inputRootPath + output, size, name, expect.anything());
     });
 });

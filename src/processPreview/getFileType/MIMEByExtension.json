@@ -203,6 +203,10 @@
         "mime": "image/svg+xml",
         "type": "image"
     },
+    "eps": {
+        "mime": "application/EncapsulatedPostScript",
+        "type": "image"
+    },
     "svgz": {
         "mime": "image/svg+xml",
         "type": "image"

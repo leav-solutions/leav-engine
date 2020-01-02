@@ -6,7 +6,8 @@
                 "sizes": [
                     {
                         "size": 1600,
-                        "output": "./generate/gateaux.png"
+                        "output": "./generate/gateaux.png",
+                        "name": "psd_BIG"
                     }
                 ]
             }
@@ -19,7 +20,8 @@
                 "sizes": [
                     {
                         "size": 400,
-                        "output": "./generate/pdf.png"
+                        "output": "./generate/pdf.png",
+                        "name": "pdf_SMALL"
                     }
                 ]
             }
@@ -32,7 +34,8 @@
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./generate/cookie.png"
+                        "output": "./generate/cookie.png",
+                        "name": "png_MEDIUM"
                     }
                 ]
             }
@@ -45,7 +48,8 @@
                 "sizes": [
                     {
                         "size": 1400,
-                        "output": "./generate/docx.png"
+                        "output": "./generate/docx.png",
+                        "name": "docx_BIG"
                     }
                 ]
             }
@@ -60,15 +64,18 @@
                 "sizes": [
                     {
                         "size": 400,
-                        "output": "./generate/jpg.400.png"
+                        "output": "./generate/jpg.400.png",
+                        "name": "jpg_MEDIUM"
                     },
                     {
                         "size": 800,
-                        "output": "./generate/jpg.800.png"
+                        "output": "./generate/jpg.800.png",
+                        "name": "jpg_BIG"
                     },
                     {
                         "size": 200,
-                        "output": "./generate/jpg.200.png"
+                        "output": "./generate/jpg.200.png",
+                        "name": "jpg_SMALL"
                     }
                 ]
             }
@@ -81,7 +88,8 @@
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./generate/mp4.png"
+                        "output": "./generate/mp4.png",
+                        "name": "mp4_MEDIUM"
                     }
                 ]
             }
@@ -94,7 +102,8 @@
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./generate/tiff.png"
+                        "output": "./generate/tiff.png",
+                        "name": "tiff_MEDIUM"
                     }
                 ]
             }
@@ -108,7 +117,8 @@
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./generate/carrefour2.png"
+                        "output": "./generate/carrefour2.png",
+                        "name": "pdf_multiPage_MEDIUM"
                     }
                 ]
             }
@@ -122,7 +132,8 @@
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./generate/carrefour1.png"
+                        "output": "./generate/carrefour1.png",
+                        "name": "pdf_multiPage_MEDIUM"
                     }
                 ]
             }
@@ -136,7 +147,8 @@
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./generate/pptx.png"
+                        "output": "./generate/pptx.png",
+                        "name": "pptx_MEDIUM"
                     }
                 ]
             }
@@ -150,7 +162,8 @@
                 "sizes": [
                     {
                         "size": 600,
-                        "output": "./generate/carrefour3.png"
+                        "output": "./generate/ca`rrefour3.png",
+                        "name": "pdf_multiPage_MEDIUM"
                     }
                 ]
             }
@@ -164,7 +177,8 @@
                 "sizes": [
                     {
                         "size": 1400,
-                        "output": "./generate/docx.png"
+                        "output": "./generate/docx.png",
+                        "name": ""
                     }
                 ]
             }

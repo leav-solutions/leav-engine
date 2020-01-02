@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import {IConfig} from '../types';
+import {IConfig} from '../types/types';
 
 let initialized = false;
 let config: IConfig = {

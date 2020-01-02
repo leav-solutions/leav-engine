@@ -1,4 +1,5 @@
-import {IVersion} from './../types';
+import {ErrorPreview} from './../types/ErrorPreview';
+import {IVersion} from '../types/types';
 import {getArgs} from './getArgs';
 import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
@@ -13,6 +14,7 @@ describe('getArgs', () => {
         const output = 'test.png';
         const ext = 'jpg';
         const size = 800;
+        const name = 'test_big';
         const useProfile = false;
 
         const version: IVersion = {
@@ -20,13 +22,14 @@ describe('getArgs', () => {
                 {
                     size,
                     output,
+                    name,
                 },
             ],
         };
 
-        await getArgs(type, input, output, size, version, useProfile);
+        await getArgs(type, input, output, size, name, version, useProfile);
 
-        expect(getImageArgs).toBeCalledWith(ext, input, output, size, version, useProfile);
+        expect(getImageArgs).toBeCalledWith(ext, input, output, size, name, version, useProfile);
     });
 
     test('type video use getVideoArgs', async () => {
@@ -37,6 +40,7 @@ describe('getArgs', () => {
         const input = 'test.mkv';
         const output = 'test.png';
         const size = 800;
+        const name = 'test_big';
         const useProfile = false;
 
         const version: IVersion = {
@@ -44,11 +48,12 @@ describe('getArgs', () => {
                 {
                     size,
                     output,
+                    name,
                 },
             ],
         };
 
-        await getArgs(type, input, output, size, version, useProfile);
+        await getArgs(type, input, output, size, name, version, useProfile);
 
         expect(getVideoArgs).toBeCalledWith(input, output, size);
     });
@@ -61,6 +66,7 @@ describe('getArgs', () => {
         const input = 'test.dsfsdfsdf';
         const output = 'test.png';
         const size = 800;
+        const name = 'test_big';
         const useProfile = false;
 
         const version: IVersion = {
@@ -68,16 +74,20 @@ describe('getArgs', () => {
                 {
                     size,
                     output,
+                    name,
                 },
             ],
         };
 
-        await expect(getArgs(type, input, output, size, version, useProfile)).rejects.toStrictEqual({
-            error: 5,
-            params: {
-                output,
-                size,
-            },
-        });
+        await expect(getArgs(type, input, output, size, name, version, useProfile)).rejects.toStrictEqual(
+            new ErrorPreview({
+                error: 304,
+                params: {
+                    output,
+                    size,
+                    name,
+                },
+            }),
+        );
     });
 });

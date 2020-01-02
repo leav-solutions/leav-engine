@@ -1,25 +1,10 @@
+import {ISize} from './../../types/types';
+import {ErrorPreview} from './../../types/ErrorPreview';
 import {extname, dirname, join} from 'path';
 import {access, mkdir, existsSync} from 'fs';
-import {IConfig} from './../../types';
+import {IConfig} from '../../types/types';
 
-export const checkOutput = async (output: string, size: number, config: IConfig) => {
-    // check output rootPath
-    const outputRootPathExist = await new Promise(r =>
-        access(config.outputRootPath, e => {
-            r(!e);
-        }),
-    );
-
-    if (!outputRootPathExist) {
-        throw {
-            error: 8,
-            params: {
-                output,
-                size,
-            },
-        };
-    }
-
+export const checkOutput = async (output: string, size: number, name: string, config: IConfig) => {
     // check if folder exist and create it if not
     const dirOutput = dirname(output);
 
@@ -48,13 +33,14 @@ export const checkOutput = async (output: string, size: number, config: IConfig)
                 );
                 // ignore error -17: folder already exists
                 if (errDirCreated && errDirCreated.errno !== -17) {
-                    throw {
-                        error: 9,
+                    throw new ErrorPreview({
+                        error: 401,
                         params: {
                             output,
                             size,
+                            name,
                         },
-                    };
+                    });
                 }
             }
         }
@@ -66,12 +52,13 @@ export const checkOutput = async (output: string, size: number, config: IConfig)
         .replace('.', '');
 
     if (extOutput !== 'png') {
-        throw {
-            error: 4,
+        throw new ErrorPreview({
+            error: 402,
             params: {
                 output,
                 size,
+                name,
             },
-        };
+        });
     }
 };

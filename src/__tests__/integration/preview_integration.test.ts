@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {Channel, Options, ConsumeMessage} from 'amqplib';
-import {IConfig, IMessageConsume} from '../../types';
+import {IConfig, IMessageConsume} from '../../types/types';
 import {getChannel} from '../../amqp/getChannel/getChannel';
 
 import configIntegration = require('../../../config/config_integration.json');
@@ -18,6 +18,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },
@@ -59,6 +60,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },
@@ -100,6 +102,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },
@@ -141,6 +144,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },
@@ -183,6 +187,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },
@@ -226,6 +231,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },
@@ -273,6 +279,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },
@@ -320,6 +327,7 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
+                            name: 'big',
                         },
                     ],
                 },

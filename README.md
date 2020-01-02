@@ -5,7 +5,7 @@ Generate previews for images, video, pdf, etc.
 # Dependencies
 
 System:
-- imagemagick (<=6.9)
+- imagemagick
 - ffmpeg
 - libreoffice
 - unoconv
@@ -16,20 +16,34 @@ JS:
 
 # Error Code
 
-- 1: file doesn't exist
-- 2: input is not a file
-- 3: error when getting file stats
-- 4: file output must be a png
-- 5: file type unknown
-- 6: can't parse the message
-- 11: error when generating the preview
-- 12: error when creating the temporary file for the document type
-- 13: error when generating preview from temporary pdf document
-- 14: error when getting the colorspace of the input
-- 15: error when creating the folder for multi-page
-- 16: error when getting the number page of pdf
-- 17: error when generating multi-page
-- 18: type of the file not manage
+## Config Error
+101: can't access the inputRootPath
+102: can't access the outputRootPath
+
+## Message Error
+201: can't parse the message received
+
+## Input Error
+301: input file doesn't exist
+302: input is not a file
+303: error when getting input file stats
+304: input file type unknown
+305: type of the input file not manage
+
+## Output Error
+401: output file must be a png
+402: can't create folder for output
+
+## Generate Error
+501: error when generating the preview
+502: error when creating the temporary file for the document type
+503: error when generating preview from temporary pdf document
+504: error when getting the colorspace of the input
+
+## MultiPage Error
+601: error when create the folder for multi page
+602: error when getting the number page of pdf
+603: error when generating multi page
 
 # Config file 
 
@@ -94,7 +108,8 @@ JS:
             "sizes": [
                 {
                     "size": 800,
-                    "output": "preview/test/test.800.png"
+                    "output": "preview/test/test.800.png",
+                    "name": "big"
                 }
             ]
         }
@@ -113,6 +128,7 @@ JS:
     - sizes: different size of the previews
         - size: the size of the preview
         - output: the output of the preview
+        - name: name of the preview generate
 
 # Response send
 
@@ -125,7 +141,8 @@ JS:
             "background": false,
             "density": 300,
             "size": 800,
-            "output": "/data/preview/test/test.800.png"
+            "output": "/data/preview/test/test.800.png",
+            "name": "big"
         }
     }],
     "context": "context"
@@ -141,4 +158,5 @@ JS:
         - density: density of the image
         - size: size of the preview generate
         - output: absolute path to the output
+        - name: name of the preview generate 
 - context: context given in the message reveived

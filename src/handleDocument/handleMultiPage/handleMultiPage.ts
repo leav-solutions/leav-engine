@@ -1,7 +1,8 @@
+import {ErrorPreview} from './../../types/ErrorPreview';
 import {execFile} from 'child_process';
 import {access, mkdir, existsSync} from 'fs';
 import {join, dirname} from 'path';
-import {IRootPaths} from '../../types';
+import {IRootPaths} from '../../types/types';
 
 export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPaths: IRootPaths) => {
     const folderDestinationPath = join(rootPaths.output, multiPage);
@@ -15,9 +16,9 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
     if (!pathExist) {
         const createDir = await new Promise(r => mkdir(folderDestinationPath, async e => r(!e)));
         if (!createDir) {
-            throw {
-                error: 15,
-            };
+            throw new ErrorPreview({
+                error: 601,
+            });
         }
     }
 
@@ -37,9 +38,9 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
     );
 
     if (errorCountPage) {
-        throw {
-            error: 16,
-        };
+        throw new ErrorPreview({
+            error: 602,
+        });
     }
 
     nbPage = parseInt(resultCountPage, 10);
@@ -64,8 +65,8 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
         ),
     );
     if (error) {
-        throw {
-            error: 17,
-        };
+        throw new ErrorPreview({
+            error: 603,
+        });
     }
 };

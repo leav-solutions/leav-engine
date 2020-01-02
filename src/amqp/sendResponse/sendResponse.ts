@@ -1,5 +1,6 @@
+import {ErrorList} from './../../types/ErrorList';
 import {Channel} from 'amqplib';
-import {IResult, ErrorList} from '../../types';
+import {IResult} from '../../types/types';
 
 interface IProps {
     exchange: string;

@@ -1,4 +1,4 @@
-import {IArgs} from './../../../types';
+import {IArgs} from '../../../types/types';
 import {checkClippingPathPsd} from './checkClippingPathPsd/checkClippingPathPsd';
 
 export const getPsdArgs = async (input: string): Promise<IArgs> => {
@@ -6,10 +6,9 @@ export const getPsdArgs = async (input: string): Promise<IArgs> => {
 
     if (clippingPath) {
         return {
-            before: [
-                '-flatten', // flatten all layers
-            ],
+            before: [],
             after: [
+                '-flatten', // flatten all layers
                 '-alpha',
                 'transparent', // set the image transparent
                 '-clip', // select the clipping path

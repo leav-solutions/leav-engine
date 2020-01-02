@@ -1,5 +1,5 @@
 import {Options} from 'amqplib';
-import {IConfig} from '../types';
+import {IConfig} from '../types/types';
 import {initAmqp} from './init/init';
 import {consume} from './consume/consume';
 import {getChannel} from './getChannel/getChannel';

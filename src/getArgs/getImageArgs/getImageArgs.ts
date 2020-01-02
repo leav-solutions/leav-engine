@@ -1,10 +1,11 @@
+import {ErrorPreview} from './../../types/ErrorPreview';
 import {getSvgCommand} from './../getSvgCommand/getSvgCommand';
 import {execFile} from 'child_process';
 import {getConfig} from './../../getConfig/getConfig';
 import {getPsdArgs} from './getPsdArgs/getPsdArgs';
 import {getJpgArgs} from './getJpgArgs/getJpgArgs';
 import {handleBackground} from './handleBackground/handleBackground';
-import {IExec, IArgs, IVersion} from './../../types';
+import {IExec, IArgs, IVersion} from '../../types/types';
 import {join} from 'path';
 
 export const getImageArgs = async (
@@ -12,17 +13,18 @@ export const getImageArgs = async (
     input: string,
     output: string,
     size: number,
+    name: string,
     version: IVersion,
     first = false,
 ): Promise<IExec[]> => {
     let command = 'convert';
 
     let args = [
+        '-density', // use density option
+        version.density ? version.density.toString() : '200', // density value
         input, // input path
         '-resize', // use resize option
         `${size}x${size}>`, // resize value
-        '-density', // use density option
-        version.density ? version.density.toString() : '200', // density value
         `png:${output}`, // output path
     ];
 
@@ -33,18 +35,19 @@ export const getImageArgs = async (
         );
 
         if (errorIdentify) {
-            throw {
-                error: 14,
+            throw new ErrorPreview({
+                error: 504,
                 params: {
                     background: version.background,
                     density: version.density,
                     size,
                     output,
+                    name,
                 },
-            };
+            });
         }
 
-        if (colorspace.indexOf('CYMK') > -1) {
+        if (colorspace.indexOf('CMYK') > -1) {
             const config = getConfig();
             const profileArgs = [
                 '-profile', // use profile option
@@ -66,12 +69,20 @@ export const getImageArgs = async (
             await _addTypeArgs(getJpgArgs, args, input);
             break;
         case 'pdf':
-            args.splice(0, 1, `${input}[0]`); // take only the first page of the pdf
+            args.splice(2, 1, `${input}[0]`); // take only the first page of the pdf
             break;
         case 'svg':
             const res = getSvgCommand(input, output, size);
             command = res.command;
             args = res.args;
+            break;
+        case 'eps':
+            // args.splice(0, 0, '-colorspace', 'sRGB');
+            break;
+        case 'tif':
+        case 'tiff':
+            args.splice(0, 0, '-flatten');
+            break;
     }
 
     let backgroundsArgs: IExec = null;
@@ -90,6 +101,6 @@ export const getImageArgs = async (
 
 const _addTypeArgs = async (getTypeArgs: (input: string) => Promise<IArgs>, args: string[], input: string) => {
     const {before: beforeArgs, after: afterArgs}: IArgs = await getTypeArgs(input);
-    args.splice(1, 0, ...beforeArgs);
+    args.splice(2, 0, ...beforeArgs);
     args.splice(-1, 0, ...afterArgs);
 };

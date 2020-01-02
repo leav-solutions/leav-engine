@@ -1,4 +1,4 @@
-import {IExec} from './../../types';
+import {IExec} from '../../types/types';
 
 export const getVideoArgs = (input: string, output: string, size: number): IExec[] => {
     const command = 'ffmpeg';

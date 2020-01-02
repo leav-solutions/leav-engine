@@ -1,3 +1,4 @@
+import {ErrorPreview} from './../../types/ErrorPreview';
 import {ConsumeMessage} from 'amqplib';
 
 export const getMsgContent = (msg: ConsumeMessage) => {
@@ -5,15 +6,8 @@ export const getMsgContent = (msg: ConsumeMessage) => {
         return JSON.parse(msg.content.toString());
     } catch (e) {
         console.error("Can't parse message");
-        throw {
-            results: [
-                {
-                    error_code: 6,
-                    error: "can't parse message",
-                    params: null,
-                },
-            ],
-            context: null,
-        };
+        throw new ErrorPreview({
+            error: 201,
+        });
     }
 };

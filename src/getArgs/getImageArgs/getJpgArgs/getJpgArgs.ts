@@ -1,4 +1,4 @@
-import {IArgs} from './../../../types';
+import {IArgs} from '../../../types/types';
 import {checkClippingPathJpg} from './checkClippingPathJpg/checkClippingPathJpg';
 
 export const getJpgArgs = async (input: string): Promise<IArgs> => {

@@ -1,4 +1,4 @@
-import {IConfig} from '../types';
+import {IConfig} from '../types/types';
 import {startBench} from './startBench';
 
 export const pngFiles = (config: IConfig) => {

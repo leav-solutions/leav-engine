@@ -1,8 +1,9 @@
+import {ErrorPreview} from './../types/ErrorPreview';
 import {execFile} from 'child_process';
 import {handleDocument} from './../handleDocument/handleDocument';
 import {join} from 'path';
 import {getArgs} from './../getArgs/getArgs';
-import {IMessageConsume, IResult, ISize, IVersion, IConfig, IRootPaths} from './../types';
+import {IMessageConsume, IResult, ISize, IVersion, IConfig, IRootPaths} from '../types/types';
 
 export const generatePreview = async (
     msgContent: IMessageConsume,
@@ -82,9 +83,9 @@ const _execute = async ({
     first = false,
 }: IExecute) => {
     if (type === 'document') {
-        await handleDocument(absInput, absOutput, size.size, version, rootPaths);
+        await handleDocument(absInput, absOutput, size.size, size.name, version, rootPaths);
     } else {
-        const commands = await getArgs(type, absInput, absOutput, size.size, version, first);
+        const commands = await getArgs(type, absInput, absOutput, size.size, size.name, version, first);
         for (const commandAndArgs of commands) {
             if (commandAndArgs) {
                 const {command, args} = commandAndArgs;
@@ -95,15 +96,16 @@ const _execute = async ({
                     }),
                 );
                 if (error) {
-                    throw {
-                        error: 11,
+                    throw new ErrorPreview({
+                        error: 501,
                         params: {
                             size: size.size,
                             output: size.output,
+                            name: size.name,
                             background: version.background,
                             density: version.density,
                         },
-                    };
+                    });
                 }
             }
         }
@@ -114,13 +116,14 @@ const _execute = async ({
         params: {
             output: absOutput,
             size: size.size,
+            name: size.name,
             density: version.density,
             background: version.background,
         },
     });
 
     if (config.verbose) {
-        console.info(size.output);
+        console.info('output', size.output);
     }
 
     // After generating the first execution we generate a png reuse for other sizes, so the type is an image

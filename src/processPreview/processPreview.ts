@@ -1,10 +1,9 @@
 import {ConsumeMessage} from 'amqplib';
+import {handleCheck} from '../check/handleCheck';
+import {IConfig, IMessageConsume, IResponse, IResult} from '../types/types';
+import {generatePreview} from './../generatePreview/generatePreview';
 import {getFileType} from './getFileType/getFileType';
 import {getMsgContent} from './getMsgContent/getMsgContent';
-import {IMessageConsume, IResponse, IConfig, IResult} from './../types';
-import {handleCheck} from '../check/handleCheck';
-import {generatePreview} from './../generatePreview/generatePreview';
-import {existsSync} from 'fs';
 
 export const processPreview = async (msg: ConsumeMessage, config: IConfig): Promise<IResponse> => {
     let msgContent: IMessageConsume;
@@ -13,6 +12,10 @@ export const processPreview = async (msg: ConsumeMessage, config: IConfig): Prom
         msgContent = getMsgContent(msg);
     } catch (e) {
         return e;
+    }
+
+    if (config.verbose) {
+        console.info('input:', msgContent.input);
     }
 
     let type: string;

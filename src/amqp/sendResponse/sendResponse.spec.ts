@@ -1,5 +1,5 @@
 import {Channel} from 'amqplib';
-import {IResult} from '../../types';
+import {IResult} from '../../types/types';
 import {sendResponse} from './sendResponse';
 
 describe('test sendResponse', () => {
@@ -13,6 +13,7 @@ describe('test sendResponse', () => {
             params: {
                 output: 'test',
                 size: 800,
+                name: 'big',
             },
         },
     ];

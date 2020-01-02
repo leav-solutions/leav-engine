@@ -1,5 +1,5 @@
 import {Channel, ConsumeMessage} from 'amqplib';
-import {IConfig} from '../../types';
+import {IConfig} from '../../types/types';
 import {sendResponse} from '../sendResponse/sendResponse';
 import {processPreview} from './../../processPreview/processPreview';
 
