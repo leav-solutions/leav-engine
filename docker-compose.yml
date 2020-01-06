@@ -19,3 +19,4 @@ services:
       - /Users/smarzykmathieu/Data/:/data
       - /Users/smarzykmathieu/Demo/:/demo
     network_mode: host
+    command: sh -c "./start.sh"

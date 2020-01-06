@@ -8,11 +8,18 @@ RUN apk add npm imagemagick ffmpeg inkscape
 ENV UNO_URL https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv
 
 # Install unoconv
-RUN apk --no-cache add bash mc \
+RUN apk --no-cache add bash mc openjdk8 \
     curl \
     util-linux \
     libreoffice-common \
+    libreoffice-base \
+    libreoffice-connector-postgres \
     libreoffice-writer \
+    libreoffice-calc \
+    libreoffice-draw \ 
+    libreoffice-impress \
+    libreoffice-math \
+    libreofficekit \
     ttf-droid-nonlatin \
     ttf-droid \
     ttf-dejavu \

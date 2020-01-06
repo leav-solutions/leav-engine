@@ -28,8 +28,11 @@ export const processPreview = async (msg: ConsumeMessage, config: IConfig): Prom
 
         results = await generatePreview(msgContent, type, config);
     } catch (e) {
+        const {error, params} = e;
+        const result: IResult = {error, params};
+
         return {
-            results: [e],
+            results: [result],
             context: msgContent.context,
         };
     }

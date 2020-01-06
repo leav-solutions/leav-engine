@@ -29,7 +29,6 @@ export const getImageArgs = async (
     ];
 
     if (first) {
-        // not neccessary for imagemagick >=7
         const [errorIdentify, colorspace] = await new Promise(r =>
             execFile('identify', ['-format', '%r', input], {}, (error, response) => r([error, response])),
         );
@@ -69,15 +68,22 @@ export const getImageArgs = async (
             await _addTypeArgs(getJpgArgs, args, input);
             break;
         case 'pdf':
-            args.splice(2, 1, `${input}[0]`); // take only the first page of the pdf
+            args.splice(2, 1, `${input}[0]`); // replace the input, take only the first page of the pdf
             break;
         case 'svg':
+            // svg don't work with imageMagick
             const res = getSvgCommand(input, output, size);
             command = res.command;
             args = res.args;
             break;
         case 'eps':
-            // args.splice(0, 0, '-colorspace', 'sRGB');
+            // remove existing profile after input given
+            args.splice(
+                2,
+                0,
+                '+profile', // remove profile
+                '*', // remove all profile
+            );
             break;
         case 'tif':
         case 'tiff':
