@@ -1,3 +1,4 @@
+import {handleError} from './../../utils/log';
 import {ISize} from './../../types/types';
 import {ErrorPreview} from './../../types/ErrorPreview';
 import {extname, dirname, join} from 'path';
@@ -33,12 +34,15 @@ export const checkOutput = async (output: string, size: number, name: string, co
                 );
                 // ignore error -17: folder already exists
                 if (errDirCreated && errDirCreated.errno !== -17) {
+                    const errorId = handleError(errDirCreated);
+
                     throw new ErrorPreview({
                         error: 401,
                         params: {
                             output,
                             size,
                             name,
+                            errorId,
                         },
                     });
                 }

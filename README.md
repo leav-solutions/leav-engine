@@ -13,6 +13,7 @@ System:
 
 JS: 
 - amqplib
+- uuid
 
 # Error Code
 

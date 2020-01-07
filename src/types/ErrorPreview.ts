@@ -1,11 +1,12 @@
 import {ErrorList} from './ErrorList';
 
 export interface IErrorPreviewParams {
-    output: string;
-    name: string;
-    size: number;
+    output?: string;
+    name?: string;
+    size?: number;
     background?: boolean | string;
     density?: number;
+    errorId?: string;
 }
 
 export interface IErrorPreviewMessage {

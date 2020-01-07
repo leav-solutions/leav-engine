@@ -1,3 +1,4 @@
+import {handleError} from './../../utils/log';
 import {ErrorPreview} from './../../types/ErrorPreview';
 import {getSvgCommand} from './../getSvgCommand/getSvgCommand';
 import {execFile} from 'child_process';
@@ -34,6 +35,8 @@ export const getImageArgs = async (
         );
 
         if (errorIdentify) {
+            const errorId = handleError(errorIdentify);
+
             throw new ErrorPreview({
                 error: 504,
                 params: {
@@ -42,6 +45,7 @@ export const getImageArgs = async (
                     size,
                     output,
                     name,
+                    errorId,
                 },
             });
         }

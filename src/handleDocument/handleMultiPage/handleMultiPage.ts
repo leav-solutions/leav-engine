@@ -1,3 +1,4 @@
+import {handleError} from './../../utils/log';
 import {ErrorPreview} from './../../types/ErrorPreview';
 import {execFile} from 'child_process';
 import {access, mkdir, existsSync} from 'fs';
@@ -14,10 +15,15 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
     );
 
     if (!pathExist) {
-        const createDir = await new Promise(r => mkdir(folderDestinationPath, async e => r(!e)));
-        if (!createDir) {
+        const errorCreateDir = await new Promise(r => mkdir(folderDestinationPath, async e => r(e)));
+        if (errorCreateDir) {
+            const errorId = handleError(errorCreateDir);
+
             throw new ErrorPreview({
                 error: 601,
+                params: {
+                    errorId,
+                },
             });
         }
     }
@@ -38,8 +44,13 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
     );
 
     if (errorCountPage) {
+        const errorId = handleError(errorCountPage);
+
         throw new ErrorPreview({
             error: 602,
+            params: {
+                errorId,
+            },
         });
     }
 
@@ -65,8 +76,13 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
         ),
     );
     if (error) {
+        const errorId = handleError(error);
+
         throw new ErrorPreview({
             error: 603,
+            params: {
+                errorId,
+            },
         });
     }
 };

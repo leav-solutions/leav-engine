@@ -1,3 +1,4 @@
+import {handleError} from './../utils/log';
 import {ErrorPreview} from './../types/ErrorPreview';
 import {execFile} from 'child_process';
 import {handleDocument} from './../handleDocument/handleDocument';
@@ -96,6 +97,8 @@ const _execute = async ({
                     }),
                 );
                 if (error) {
+                    const errorId = handleError(error);
+
                     throw new ErrorPreview({
                         error: 501,
                         params: {
@@ -104,6 +107,7 @@ const _execute = async ({
                             name: size.name,
                             background: version.background,
                             density: version.density,
+                            errorId,
                         },
                     });
                 }

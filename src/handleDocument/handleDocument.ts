@@ -1,3 +1,4 @@
+import {handleError} from './../utils/log';
 import {ErrorPreview} from './../types/ErrorPreview';
 import {execFile} from 'child_process';
 import {extname} from 'path';
@@ -34,13 +35,17 @@ export const handleDocument = async (
         if (commandAndArgs) {
             const {command, args} = commandAndArgs;
             const errorExec = await new Promise(r => execFile(command, args, {}, e => r(e)));
+
             if (errorExec) {
+                const errorId = handleError(errorExec);
+
                 throw new ErrorPreview({
                     error: 503,
                     params: {
                         size,
                         output,
                         name,
+                        errorId,
                     },
                 });
             }
@@ -65,12 +70,15 @@ const _createDocumentTmpFile = async (input: string, output: string, size: numbe
     );
 
     if (error) {
+        const errorId = handleError(error);
+
         throw new ErrorPreview({
             error: 502,
             params: {
                 output,
                 size,
                 name,
+                errorId,
             },
         });
     }

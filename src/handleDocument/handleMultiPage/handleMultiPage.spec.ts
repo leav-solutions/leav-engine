@@ -3,7 +3,7 @@ import {exists, mkdir} from 'fs';
 import {execFile} from 'child_process';
 
 describe('handleMultiPage', () => {
-    test('test', async () => {
+    test('gs use call with the right arguments', async () => {
         const pdfFile = './test';
         const multiPage = '';
         const rootPaths = {input: '/data/', output: '/data/'};
