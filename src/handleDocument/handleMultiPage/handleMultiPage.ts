@@ -28,7 +28,7 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
         }
     }
 
-    let nbPage: number;
+    let nbDigit: number;
     const {result: resultCountPage, error: errorCountPage} = await new Promise(resolve =>
         execFile(
             'gs',
@@ -54,11 +54,9 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
         });
     }
 
-    nbPage = parseInt(resultCountPage, 10);
+    nbDigit = resultCountPage.toString().length;
 
-    const countDigit = (n: number) => n.toString().length;
-
-    const fullPath = join(folderDestinationPath, `%${'0' + countDigit(nbPage)}d.pdf`);
+    const fullPath = join(folderDestinationPath, `%${'0' + nbDigit}d.pdf`);
 
     const {error} = await new Promise(resolve =>
         execFile(

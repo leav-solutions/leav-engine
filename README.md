@@ -143,7 +143,8 @@ JS:
             "density": 300,
             "size": 800,
             "output": "/data/preview/test/test.800.png",
-            "name": "big"
+            "name": "big",
+            "errorId": "string"
         }
     }],
     "context": "context"

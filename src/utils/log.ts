@@ -9,5 +9,5 @@ export const handleError = (error: any) => {
 };
 
 export const logError = (errorId: string, error: any) => {
-    console.info(errorId, error);
+    console.error(errorId, error);
 };

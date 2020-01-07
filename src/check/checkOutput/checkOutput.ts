@@ -1,5 +1,4 @@
 import {handleError} from './../../utils/log';
-import {ISize} from './../../types/types';
 import {ErrorPreview} from './../../types/ErrorPreview';
 import {extname, dirname, join} from 'path';
 import {access, mkdir, existsSync} from 'fs';
@@ -21,17 +20,15 @@ export const checkOutput = async (output: string, size: number, name: string, co
 
         for (const path of pathList) {
             allPath = join(allPath, path);
-            const folderExist = await new Promise(r =>
-                access(allPath, e => {
-                    r(!e);
-                }),
-            );
+            const folderExist = await new Promise(r => access(allPath, e => r(!e)));
+
             if (!folderExist) {
                 const errDirCreated: NodeJS.ErrnoException = await new Promise(r =>
                     mkdir(allPath, e => {
                         r(e);
                     }),
                 );
+
                 // ignore error -17: folder already exists
                 if (errDirCreated && errDirCreated.errno !== -17) {
                     const errorId = handleError(errDirCreated);

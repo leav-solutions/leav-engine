@@ -7,14 +7,14 @@ export const getFileType = (file: string): string => {
         .toLowerCase()
         .replace('.', '');
 
-    const type = extensions[extension].type;
-
-    if (!type) {
+    if (!extensions[extension]) {
         throw new ErrorPreview({
             error: 301,
             params: null,
         });
     }
+
+    const type = extensions[extension].type;
 
     return type;
 };
