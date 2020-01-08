@@ -25,7 +25,7 @@ const EditLibraryAttributes = ({library, readOnly}: IEditLibraryAttributesProps)
     const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
     const onRowClick = () => null;
-    const lang = useLang();
+    const {lang} = useLang();
 
     const _openNewAttrModal = () => {
         setShowNewAttrModal(true);
@@ -55,6 +55,7 @@ const EditLibraryAttributes = ({library, readOnly}: IEditLibraryAttributesProps)
                     };
 
                     const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes_list) => {
+                        console.log('CALLED', newAttr);
                         if (library === null) {
                             return;
                         }
@@ -102,23 +103,24 @@ const EditLibraryAttributes = ({library, readOnly}: IEditLibraryAttributesProps)
                                     attributes={library ? library.attributes : []}
                                     onRowClick={onRowClick}
                                     withFilters={false}
-                                >
-                                    {!readOnly ? (
-                                        <UnlinkLibAttribute
-                                            library={library}
-                                            key="unlink_attr_btn"
-                                            onUnlink={_onClickUnlink}
-                                        />
-                                    ) : (
-                                        <></>
-                                    )}
-                                </AttributesList>
+                                    actions={
+                                        !readOnly ? (
+                                            <UnlinkLibAttribute
+                                                library={library}
+                                                key="unlink_attr_btn"
+                                                onUnlink={_onClickUnlink}
+                                            />
+                                        ) : (
+                                            <></>
+                                        )
+                                    }
+                                />
 
                                 {!readOnly && (
                                     <Modal size="large" open={showNewAttrModal} onClose={_closeNewAttrModal} centered>
                                         <Modal.Header>{t('attributes.new')}</Modal.Header>
                                         <Modal.Content>
-                                            <EditAttribute attributeId={null} afterSubmit={_onNewAttributeSaved} />
+                                            <EditAttribute attributeId={null} onPostSave={_onNewAttributeSaved} />
                                         </Modal.Content>
                                     </Modal>
                                 )}

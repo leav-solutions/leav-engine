@@ -72,6 +72,8 @@
         "versions_mode_smart": "Intelligent",
         "linked_library": "Bibliothèque liée",
         "linked_tree": "Arbre lié",
+        "metadata": "Métadonnées",
+        "metadata_field_delete_confirm": "Êtes-vous sûr de vouloir supprimer le champ {{attrLabel}} des métadonnées?",
         "types": {
             "tree": "Arbre",
             "advanced": "Avancé",

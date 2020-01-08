@@ -8,6 +8,13 @@ import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, 
 // GraphQL mutation operation: SAVE_LIBRARY_ATTRIBUTES
 // ====================================================
 
+export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_metadata_fields {
+    id: string;
+    label: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+}
+
 export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
@@ -34,6 +41,7 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes {
     linked_library: string | null;
     linked_tree: string | null;
     multiple_values: boolean;
+    metadata_fields: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_permissions_conf | null;
     versions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_versions_conf | null;
 }

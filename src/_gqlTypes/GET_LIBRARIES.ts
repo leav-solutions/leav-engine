@@ -15,6 +15,13 @@ import {
 // GraphQL query operation: GET_LIBRARIES
 // ====================================================
 
+export interface GET_LIBRARIES_libraries_list_attributes_metadata_fields {
+    id: string;
+    label: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+}
+
 export interface GET_LIBRARIES_libraries_list_attributes_permissions_conf_permissionTreeAttributes {
     id: string;
     linked_tree: string | null;
@@ -41,6 +48,7 @@ export interface GET_LIBRARIES_libraries_list_attributes {
     linked_library: string | null;
     linked_tree: string | null;
     multiple_values: boolean;
+    metadata_fields: GET_LIBRARIES_libraries_list_attributes_metadata_fields[] | null;
     permissions_conf: GET_LIBRARIES_libraries_list_attributes_permissions_conf | null;
     versions_conf: GET_LIBRARIES_libraries_list_attributes_versions_conf | null;
 }

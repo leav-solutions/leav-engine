@@ -14,7 +14,8 @@ const base: GET_ATTRIBUTES_attributes_list = {
     linked_tree: null,
     linked_library: null,
     permissions_conf: null,
-    versions_conf: {versionable: false, mode: ValueVersionMode.smart, trees: null}
+    versions_conf: {versionable: false, mode: ValueVersionMode.smart, trees: null},
+    metadata_fields: null
 };
 
 export const mockAttrSimple = {...base, id: 'simple_attribute'};

@@ -1,28 +1,142 @@
-import {MockedProvider} from '@apollo/react-testing';
-import {render} from 'enzyme';
-import {History} from 'history';
+import {MockedProvider, wait} from '@apollo/react-testing';
+import {mount} from 'enzyme';
 import React from 'react';
-import {match} from 'react-router';
-import {Mockify} from '../../../_types//Mockify';
-import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
-import EditAttribute, {IEditAttributeMatchParams} from './EditAttribute';
+import {act} from 'react-dom/test-utils';
+import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import {mockAttrAdv} from '../../../__mocks__/attributes';
+import EditAttribute from './EditAttribute';
+
+jest.mock(
+    './EditAttributeTabs',
+    () =>
+        function EditAttributeTabs() {
+            return <div>Edit attribute tabs</div>;
+        }
+);
 
 describe('EditAttribute', () => {
-    test('Snapshot test', async () => {
-        const mockMatch: Mockify<match<IEditAttributeMatchParams>> = {params: {id: 'test_attr'}};
-        const mockHistory: Mockify<History> = {};
+    test('Loading and success state', async () => {
+        const mocks = [
+            {
+                request: {
+                    query: getAttributesQuery,
+                    variables: {id: 'test_attr'}
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            __typename: 'AttributesList',
+                            totalCount: 1,
+                            list: [
+                                {
+                                    ...mockAttrAdv,
+                                    __typename: 'Attribute',
+                                    versions_conf: null
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ];
 
-        const comp = render(
-            <MockedProvider>
-                <MockedUserContextProvider>
-                    <EditAttribute
-                        match={mockMatch as match<IEditAttributeMatchParams>}
-                        history={mockHistory as History}
-                    />
-                </MockedUserContextProvider>
-            </MockedProvider>
-        );
+        let comp;
 
-        expect(comp).toMatchSnapshot();
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks}>
+                    <EditAttribute attributeId="test_attr" />
+                </MockedProvider>
+            );
+        });
+
+        expect(comp.find('Loading')).toHaveLength(1);
+
+        await act(async () => {
+            await wait(0);
+            comp.update();
+        });
+
+        expect(comp.find('EditAttributeTabs')).toHaveLength(1);
+    });
+
+    test('Error state', async () => {
+        const mocks = [
+            {
+                request: {
+                    query: getAttributesQuery,
+                    variables: {id: 'test_attr'}
+                },
+                error: new Error('boom!')
+            }
+        ];
+
+        let comp;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks}>
+                    <EditAttribute attributeId="test_attr" />
+                </MockedProvider>
+            );
+        });
+
+        expect(comp.find('Loading')).toHaveLength(1);
+
+        await act(async () => {
+            await wait(0);
+            comp.update();
+        });
+
+        expect(comp.find('div.error')).toHaveLength(1);
+    });
+
+    test('Unknown attribute', async () => {
+        const mocks = [
+            {
+                request: {
+                    query: getAttributesQuery,
+                    variables: {id: 'test_attr'}
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            __typename: 'AttributesList',
+                            totalCount: 0,
+                            list: []
+                        }
+                    }
+                }
+            }
+        ];
+
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks}>
+                    <EditAttribute attributeId="test_attr" />
+                </MockedProvider>
+            );
+        });
+
+        await act(async () => {
+            await wait(0);
+            comp.update();
+        });
+
+        expect(comp.find('div.unknown')).toHaveLength(1);
+    });
+
+    test('If no ID provided, display tabs directly (new attribute)', async () => {
+        let comp;
+        await act(async () => {
+            comp = mount(
+                <MockedProvider>
+                    <EditAttribute />
+                </MockedProvider>
+            );
+        });
+
+        expect(comp.find('EditAttributeTabs')).toHaveLength(1);
     });
 });

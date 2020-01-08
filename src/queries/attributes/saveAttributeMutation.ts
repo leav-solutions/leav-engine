@@ -1,19 +1,35 @@
-import {Mutation} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../_gqlTypes/SAVE_ATTRIBUTE';
 
 export const saveAttributeQuery = gql`
     mutation SAVE_ATTRIBUTE($attrData: AttributeInput!) {
         saveAttribute(attribute: $attrData) {
             id
-            label
-            format
             type
+            format
             system
+            label
+            linked_library
+            linked_tree
             multiple_values
+            permissions_conf {
+                permissionTreeAttributes {
+                    id
+                    linked_tree
+                    label
+                }
+                relation
+            }
+            versions_conf {
+                versionable
+                mode
+                trees
+            }
+            metadata_fields {
+                id
+                label
+                type
+                format
+            }
         }
     }
 `;
-
-/* tslint:disable-next-line:variable-name */
-export const SaveAttributeMutation = p => Mutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(p);
