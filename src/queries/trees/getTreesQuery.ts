@@ -12,6 +12,7 @@ export const getTreesQuery = gql`
                 id
                 label(lang: $lang)
                 system
+                behavior
                 libraries {
                     id
                     label
