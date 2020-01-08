@@ -33,7 +33,10 @@
         "permissions_settings_title": "Settings",
         "permissions_relation": "Relation",
         "permissions_relation_and": "AND",
-        "permissions_relation_or": "OR"
+        "permissions_relation_or": "OR",
+        "behavior": "Behavior",
+        "behavior_files": "Files",
+        "behavior_standard": "Standard"
     },
     "attributes": {
         "title": "Attributes",
@@ -99,7 +102,10 @@
         "confirm_delete": "Do you really want to delete tree {{treeLabel}}?",
         "confirm_delete_element": "Do you really want to detach this element?",
         "add_element": "Add element",
-        "select_tree_node": "Select an element"
+        "select_tree_node": "Select an element",
+        "behavior": "Behavior",
+        "behavior_files": "Files",
+        "behavior_standard": "Standard"
     },
     "permissions": {
         "title": "Admin Permissions",

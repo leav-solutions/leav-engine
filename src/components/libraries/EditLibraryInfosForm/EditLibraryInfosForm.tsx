@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import useLang from '../../../hooks/useLang';
 import {formatIDString, getFieldError, localizedLabel} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
+import {LibraryBehavior} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types/errors';
 import FormFieldWrapper from '../../shared/FormFieldWrapper';
 
@@ -48,6 +49,7 @@ const EditLibraryInfosForm = ({
             fr: '',
             en: ''
         },
+        behavior: LibraryBehavior.standard,
         attributes: [],
         permissions_conf: null,
         recordIdentityConf: {
@@ -124,10 +126,16 @@ const EditLibraryInfosForm = ({
             setFieldValue(name, value);
         };
 
-        const {id, label, recordIdentityConf} = values;
+        const {id, label, behavior, recordIdentityConf} = values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_LIBRARIES_libraries_list>(fieldName, touched, serverValidationErrors || {}, inputErrors);
+
+        const behaviorOptions = Object.values(LibraryBehavior).map(b => ({
+            key: b,
+            value: b,
+            text: t(`libraries.behavior_${b}`)
+        }));
 
         return (
             <Form onSubmit={handleSubmit}>
@@ -153,6 +161,17 @@ const EditLibraryInfosForm = ({
                         onChange={_handleChange}
                         onBlur={handleBlur}
                         value={id}
+                    />
+                </FormFieldWrapper>
+                <FormFieldWrapper error={_getErrorByField('behavior')}>
+                    <Form.Select
+                        label={t('libraries.behavior')}
+                        disabled={existingLib || readonly}
+                        name="behavior"
+                        onChange={_handleChange}
+                        onBlur={handleBlur}
+                        value={behavior}
+                        options={behaviorOptions}
                     />
                 </FormFieldWrapper>
                 <Form.Group grouped>

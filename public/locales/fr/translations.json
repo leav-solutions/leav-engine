@@ -32,7 +32,10 @@
         "permissions_settings_title": "Paramètres",
         "permissions_relation": "Relation",
         "permissions_relation_and": "ET",
-        "permissions_relation_or": "OU"
+        "permissions_relation_or": "OU",
+        "behavior": "Comportement",
+        "behavior_files": "Fichiers",
+        "behavior_standard": "Standard"
     },
     "attributes": {
         "title": "Attributs",
@@ -98,7 +101,10 @@
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'arbre {{treeLabel}}?",
         "confirm_delete_element": "Êtes-vous sûr de vouloir détacher cet élément?",
         "add_element": "Ajouter un élément",
-        "select_tree_node": "Sélectionner un élément"
+        "select_tree_node": "Sélectionner un élément",
+        "behavior": "Comportement",
+        "behavior_files": "Fichiers",
+        "behavior_standard": "Standard"
     },
     "permissions": {
         "title": "Permissions administration",

@@ -56,6 +56,11 @@ export enum IOTypes {
     string = 'string'
 }
 
+export enum LibraryBehavior {
+    files = 'files',
+    standard = 'standard'
+}
+
 export enum PermissionTypes {
     admin = 'admin',
     attribute = 'attribute',
@@ -92,6 +97,11 @@ export enum PermissionsActions {
 export enum PermissionsRelation {
     and = 'and',
     or = 'or'
+}
+
+export enum TreeBehavior {
+    files = 'files',
+    standard = 'standard'
 }
 
 export enum ValueVersionMode {
@@ -142,6 +152,7 @@ export interface LibraryInput {
     id: string;
     label?: SystemTranslationInput | null;
     attributes?: string[] | null;
+    behavior?: LibraryBehavior | null;
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
 }
@@ -201,6 +212,7 @@ export interface TreeElementInput {
 export interface TreeInput {
     id: string;
     libraries?: string[] | null;
+    behavior?: TreeBehavior | null;
     label?: SystemTranslationInput | null;
 }
 

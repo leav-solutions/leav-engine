@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import useLang from '../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../utils/utils';
 import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../_types/errors';
 import {Override} from '../../../_types/Override';
 import LibrariesSelector from '../../libraries/LibrariesSelector';
@@ -47,6 +48,7 @@ const EditTreeInfosForm = ({
             fr: '',
             en: ''
         },
+        behavior: TreeBehavior.standard,
         system: false,
         libraries: []
     };
@@ -85,6 +87,12 @@ const EditTreeInfosForm = ({
         libraries: yup.array(yup.string()).min(1)
     });
 
+    const behaviorOptions = Object.values(TreeBehavior).map(b => ({
+        key: b,
+        value: b,
+        text: t(`trees.behavior_${b}`)
+    }));
+
     const _renderForm = ({
         handleSubmit,
         handleBlur,
@@ -112,7 +120,7 @@ const EditTreeInfosForm = ({
             setFieldValue(name, value);
         };
 
-        const {id, label, libraries, system} = values;
+        const {id, label, libraries, system, behavior} = values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<TreeInfos>(fieldName, touched, serverValidationErrors || {}, inputErrors);
@@ -143,6 +151,17 @@ const EditTreeInfosForm = ({
                         onChange={_handleChange}
                         onBlur={handleBlur}
                         value={id}
+                    />
+                </FormFieldWrapper>
+                <FormFieldWrapper error={_getErrorByField('behavior')}>
+                    <Form.Select
+                        label={t('trees.behavior')}
+                        disabled
+                        name="behavior"
+                        onChange={_handleChange}
+                        onBlur={handleBlur}
+                        value={behavior}
+                        options={behaviorOptions}
                     />
                 </FormFieldWrapper>
                 <FormFieldWrapper error={_getErrorByField('libraries')}>

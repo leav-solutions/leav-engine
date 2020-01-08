@@ -2,7 +2,14 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {
+    AvailableLanguage,
+    LibraryBehavior,
+    AttributeType,
+    AttributeFormat,
+    PermissionsRelation,
+    ValueVersionMode
+} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES
@@ -67,6 +74,7 @@ export interface GET_LIBRARIES_libraries_list {
     id: string;
     system: boolean | null;
     label: any | null;
+    behavior: LibraryBehavior;
     attributes: GET_LIBRARIES_libraries_list_attributes[] | null;
     permissions_conf: GET_LIBRARIES_libraries_list_permissions_conf | null;
     recordIdentityConf: GET_LIBRARIES_libraries_list_recordIdentityConf | null;
