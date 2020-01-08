@@ -67,8 +67,9 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         variables: {attId: attribute ? attribute.id : undefined}
     });
 
-    const [saveAttributeActionsList, {loading: loadingSave, error: errorSave}] = useMutation(
-        saveAttributeActionsListMutation
+    const [saveAttributeActionsList, {loading: loadingSave}] = useMutation(
+        saveAttributeActionsListMutation,
+        {onError: e => console.error(e.message)} // TODO: handle error properly
     );
 
     useEffect(() => {
@@ -230,12 +231,6 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     const onSelectorChange = listName => {
         setCurrentActionListName(listName);
     };
-
-    //////////////////// DEBUG
-
-    if (errorSave) {
-        console.log('errorSave');
-    }
 
     //////////////////// RENDER
 

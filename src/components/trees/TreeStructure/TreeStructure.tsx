@@ -296,36 +296,41 @@ const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fa
                   }
                 : null;
 
-        await client.mutate<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>({
-            mutation: addTreeElementQuery,
-            variables: {
-                treeId: tree.id,
-                element: {
+        // TODO properly handle errors
+        try {
+            await client.mutate<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>({
+                mutation: addTreeElementQuery,
+                variables: {
+                    treeId: tree.id,
+                    element: {
+                        id: record.id,
+                        library: record.library.id
+                    },
+                    parent: parentToSave
+                }
+            });
+
+            const newRecord = {
+                record: {
                     id: record.id,
-                    library: record.library.id
+                    library: record.library,
+                    whoAmI: record
                 },
-                parent: parentToSave
-            }
-        });
+                children: [],
+                order: 0
+            };
 
-        const newRecord = {
-            record: {
-                id: record.id,
-                library: record.library,
-                whoAmI: record
-            },
-            children: [],
-            order: 0
-        };
-
-        const updatedTree = addNodeUnderParent({
-            treeData,
-            newNode: _convertTreeRecord([newRecord])[0],
-            parentKey: getTreeNodeKey({node: parent}),
-            getNodeKey: getTreeNodeKey,
-            expandParent: true
-        });
-        setTreeData(updatedTree.treeData);
+            const updatedTree = addNodeUnderParent({
+                treeData,
+                newNode: _convertTreeRecord([newRecord])[0],
+                parentKey: getTreeNodeKey({node: parent}),
+                getNodeKey: getTreeNodeKey,
+                expandParent: true
+            });
+            setTreeData(updatedTree.treeData);
+        } catch (e) {
+            console.error(e.message);
+        }
     };
 
     return (
