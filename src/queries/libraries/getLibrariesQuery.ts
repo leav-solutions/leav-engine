@@ -12,7 +12,6 @@ export const getLibsQuery = gql`
                 id
                 system
                 label
-                behavior
                 attributes {
                     ...AttributeDetails
                 }

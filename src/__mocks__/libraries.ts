@@ -1,4 +1,3 @@
-import {LibraryBehavior} from '../_gqlTypes/globalTypes';
 import {mockAttrSimple, mockAttrSimpleLink} from './attributes';
 
 export const mockLibrary = {
@@ -9,7 +8,6 @@ export const mockLibrary = {
         en: 'Products',
         fr: 'Produits'
     },
-    behavior: LibraryBehavior.standard,
     permissions_conf: null,
     recordIdentityConf: null,
     gqlNames: {
