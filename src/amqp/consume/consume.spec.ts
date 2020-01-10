@@ -1,14 +1,15 @@
+import {Channel, ConsumeMessage} from 'amqplib';
+import * as config from '../../../config/config_spec.json';
 import {processPreview} from '../../processPreview/processPreview';
 import {IResult} from '../../types/types';
-import {Channel, ConsumeMessage} from 'amqplib';
-import {consume, handleMsg} from './consume';
 import {sendResponse} from '../sendResponse/sendResponse';
-import * as config from '../../../config/config_spec.json';
+import {consume, handleMsg} from './consume';
 
 describe('test consume', () => {
     test('execution', async () => {
         const channel: Mockify<Channel> = {
             consume: jest.fn(),
+            prefetch: jest.fn(),
         };
 
         await consume(channel as Channel, config);
@@ -23,6 +24,7 @@ describe('test handleMsg', () => {
 
         const channel: Mockify<Channel> = {
             ack: jest.fn(),
+            prefetch: jest.fn(),
         };
 
         const msg: Mockify<ConsumeMessage> = {

@@ -10,6 +10,7 @@ describe('checkOutput', () => {
     };
 
     test('should throw an error', async () => {
+        (console.error as jest.FunctionLike) = jest.fn();
         checkOutput(path, size, name, config as IConfig).catch(e => expect(e).not.toBeNull());
     });
 });

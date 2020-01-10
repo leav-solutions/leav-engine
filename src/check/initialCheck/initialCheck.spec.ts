@@ -12,6 +12,7 @@ describe('initialCheck', () => {
     };
 
     test('check inputRootPath should throw', async () => {
+        (console.error as jest.FunctionLike) = jest.fn();
         await expect(initialCheck(config as IConfig)).rejects.toStrictEqual(
             new ErrorPreview({
                 error: 101,

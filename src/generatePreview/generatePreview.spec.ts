@@ -1,11 +1,10 @@
-import {handleDocument} from './../handleDocument/handleDocument';
+import {execFile} from 'child_process';
+import * as config from '../../config/config_spec.json';
+import {IMessageConsume} from '../types/types';
 import {getArgs} from './../getArgs/getArgs';
 import {getConfig} from './../getConfig/getConfig';
-import {execFile} from 'child_process';
+import {handleDocument} from './../handleDocument/handleDocument';
 import {generatePreview} from './generatePreview';
-import {IMessageConsume} from '../types/types';
-
-import * as config from '../../config/config_spec.json';
 
 describe('generatePreview', () => {
     console.info = jest.fn();
@@ -44,8 +43,7 @@ describe('generatePreview', () => {
     test('result generatePreview', async () => {
         const type = 'image';
 
-        const results = await generatePreview(msgContent, type, config);
-
+        const [results] = await generatePreview(msgContent, type, config);
         const [firstResult] = results;
 
         expect(firstResult.params.output).toEqual(expect.stringContaining('test.800.jpg'));

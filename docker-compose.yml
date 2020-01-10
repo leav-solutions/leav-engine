@@ -1,19 +1,9 @@
 version: "3"
 services:
-  preview-ubuntu:
-    build: 
-      context: .
-      dockerfile: ./Dockerfile.preview-ubuntu
-    volumes:
-      - .:/app
-      - /Users/smarzykmathieu/Data/:/data
-      - /Users/smarzykmathieu/Demo/:/demo
-    network_mode: host
-  
-  preview-alpine:
+  app:
     build:
       context: .
-      dockerfile: ./Dockerfile.preview-alpine
+      dockerfile: ./Dockerfile
     volumes:
       - .:/app
       - /Users/smarzykmathieu/Data/:/data
