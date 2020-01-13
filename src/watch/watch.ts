@@ -1,6 +1,5 @@
 import * as chokidar from 'chokidar';
-import {lstat, Stats} from 'fs';
-import {join} from 'path';
+import {Stats} from 'fs';
 import {getInode, initRedis} from '../redis/redis';
 import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
@@ -214,23 +213,4 @@ const clearTmp = (path: string, inode: number) => {
     delete timeoutRefs[inode];
     delete inodesTmp[inode];
     delete pathsTmp[path];
-};
-
-const checkIsDirectory = async (rootPath: string, path: string): Promise<boolean> => {
-    let isDirectory: boolean;
-
-    try {
-        isDirectory = await new Promise((resolve, reject) =>
-            lstat(join(rootPath, path), (err, stats) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(stats.isDirectory());
-            })
-        );
-    } catch (e) {
-        isDirectory = false;
-    }
-
-    return isDirectory;
 };
