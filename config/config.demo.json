@@ -1,0 +1,25 @@
+{
+    "rootPath": "/Users/smarzykmathieu/Demo/original",
+    "rootKey": "demo",
+    "redis": {
+        "host": "127.0.0.1",
+        "port": 6379
+    },
+    "amqp": {
+        "protocol": "amqp",
+        "hostname": "localhost",
+        "port": 15672,
+        "username": "guest",
+        "password": "guest",
+        "queue": "demo-automate-scan",
+        "exchange": "demo",
+        "routingKey": "automate-scan"
+    },
+    "watcher": {
+        "awaitWriteFinish": {
+            "stabilityThreshold": 2000,
+            "pollInterval": 100
+        }
+    },
+    "verbose": true
+}

@@ -1,4 +1,4 @@
-import {sendToRabbitMQ, generateMsgRabbitMQ} from './rabbitmq';
+import {generateMsgRabbitMQ, sendToRabbitMQ} from './rabbitmq';
 
 jest.mock('../index');
 
@@ -53,8 +53,9 @@ describe('test generateMsgRabbitMQ', () => {
         const pathAfter = './test';
         const inode = 12344;
         const rootKey = 'abc1244';
+        const isDirectory = false;
 
-        const res = generateMsgRabbitMQ(event, pathBefore, pathAfter, inode, rootKey);
+        const res = generateMsgRabbitMQ(event, pathBefore, pathAfter, inode, isDirectory, rootKey);
 
         expect(res).toEqual(
             JSON.stringify({
@@ -62,6 +63,7 @@ describe('test generateMsgRabbitMQ', () => {
                 time: Math.round(Date.now() / 1000),
                 pathAfter,
                 pathBefore,
+                isDirectory: false,
                 inode,
                 rootKey
             })

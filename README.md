@@ -53,3 +53,25 @@ By default, the script take the file in `./config/config.json`
   - `105`: Can't publish to rabbitMQ
 - Error with redis:
   - `201`: Error with redis
+
+## Messend send
+
+```
+{
+  event: string,
+  time: number,
+  pathAfter: string,
+  pathBefore: string,
+  inode: number,
+  isDirectory: boolean,
+  rootKey: any
+}
+```
+
+`event`: the event occurred
+`time`: timestamp when the message is sent
+`pathAfter`: path of the file/folder after the event occurred
+`pathBefore`: path of the file/folder before the event occurred
+`inode`: id of the file/folder
+`isDirectory`: the event occurred on a folder or not
+`rootKey`: information given in the config return here  

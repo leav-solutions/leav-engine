@@ -1,7 +1,9 @@
 import * as chokidar from 'chokidar';
-import {initRedis, getInode} from '../redis/redis';
-import {IAmqpParams, IWatcherParams, IParams, IParamsExtends} from '../types';
-import {handleCreate, handleDelete, handleUpdate, handleMove} from './events';
+import {lstat, Stats} from 'fs';
+import {join} from 'path';
+import {getInode, initRedis} from '../redis/redis';
+import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
+import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
 
 const inodesTmp: {[i: number]: string} = {};
 const timeoutRefs: {[i: number]: any} = {};
@@ -34,6 +36,7 @@ export const start = async (
         checkEvent(event, path, stats, {
             ready,
             timeout,
+            rootPath: rootPathProps,
             rootKey,
             verbose,
             amqp: amqpParams
@@ -49,18 +52,14 @@ export const start = async (
 
 export const checkEvent = async (event: string, path: string, stats: any, params: IParamsExtends) => {
     if (params.ready) {
-        await manageInode(event, path, stats, {
-            ready: params.ready,
-            timeout: params.timeout,
-            rootKey: params.rootKey,
-            verbose: params.verbose,
-            amqp: params.amqp
-        });
+        const inode = await manageInode(path, stats);
+        const isDirectory = await manageIsDirectory(stats);
+        await checkMove(event, path, isDirectory, inode, params);
     } else {
         handleInit(path, stats.ino, params.verbose);
     }
 };
-export const manageInode = async (event: string, path: string, stats: any, params: IParamsExtends) => {
+export const manageInode = async (path: string, stats: Stats) => {
     let inode: number;
 
     if (stats) {
@@ -74,10 +73,21 @@ export const manageInode = async (event: string, path: string, stats: any, param
         inode = await getInode(path);
     }
 
-    await checkMove(event, path, stats, inode, params);
+    return inode;
 };
 
-const checkMove = async (event: string, path: string, stats: any, inode: any, params: IParamsExtends) => {
+export const manageIsDirectory = async (stats: Stats) => {
+    let isDirectory = false;
+
+    if (stats) {
+        // Get isDirectory from the stats
+        isDirectory = stats.isDirectory();
+    }
+
+    return isDirectory;
+};
+
+const checkMove = async (event: string, path: string, isDirectory: boolean, inode: any, params: IParamsExtends) => {
     const amqp = params.amqp || {};
 
     if (inodesTmp[inode] && path !== inodesTmp[inode]) {
@@ -89,13 +99,16 @@ const checkMove = async (event: string, path: string, stats: any, inode: any, pa
 
         // cancel other event
         clearTmp(path, inode);
+
         // delay on move event to keep the order of the event
         setTimeout(async () => {
             await handleEvent(
                 'move',
                 path,
+                isDirectory,
                 inode,
                 {
+                    rootPath: params.rootPath,
                     rootKey: params.rootKey,
                     amqp,
                     verbose: params.verbose
@@ -112,7 +125,8 @@ const checkMove = async (event: string, path: string, stats: any, inode: any, pa
                 (timeoutRefs[inode] = setTimeout(
                     async () =>
                         resolve(
-                            handleEvent(event, path, inode, {
+                            handleEvent(event, path, isDirectory, inode, {
+                                rootPath: params.rootPath,
                                 rootKey: params.rootKey,
                                 verbose: params.verbose,
                                 amqp: params.amqp
@@ -124,28 +138,38 @@ const checkMove = async (event: string, path: string, stats: any, inode: any, pa
     }
 };
 
-export const handleEvent = async (event: string, path: string, inode: number, params: IParams, oldPath?: string) => {
+export const handleEvent = async (
+    event: string,
+    path: string,
+    isDirectory: boolean,
+    inode: number,
+    params: IParams,
+    oldPath?: string
+) => {
     const amqp = {
+        rootPath: params.rootPath,
         rootKey: params.rootKey,
         verbose: params.verbose,
         amqp: params.amqp
     };
 
     switch (event) {
-        case 'add':
         case 'addDir':
-            await handleCreate(path, inode, amqp);
+            isDirectory = true;
+        case 'add':
+            await handleCreate(path, inode, amqp, isDirectory);
             break;
-        case 'unlink':
         case 'unlinkDir':
-            await handleDelete(path, inode, amqp);
+            isDirectory = true;
+        case 'unlink':
+            await handleDelete(path, inode, amqp, isDirectory);
             break;
         case 'change':
-            await handleUpdate(path, inode, amqp);
+            await handleUpdate(path, inode, amqp, isDirectory);
             break;
         case 'move':
             if (oldPath) {
-                await handleMove(oldPath, path, inode, amqp);
+                await handleMove(oldPath, path, inode, amqp, isDirectory);
             }
             break;
         default:
@@ -190,4 +214,23 @@ const clearTmp = (path: string, inode: number) => {
     delete timeoutRefs[inode];
     delete inodesTmp[inode];
     delete pathsTmp[path];
+};
+
+const checkIsDirectory = async (rootPath: string, path: string): Promise<boolean> => {
+    let isDirectory: boolean;
+
+    try {
+        isDirectory = await new Promise((resolve, reject) =>
+            lstat(join(rootPath, path), (err, stats) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(stats.isDirectory());
+            })
+        );
+    } catch (e) {
+        isDirectory = false;
+    }
+
+    return isDirectory;
 };

@@ -1,6 +1,7 @@
-import {initRedis} from '../redis/redis';
 import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
-import {checkEvent} from './watch';
+import {initRedis} from '../redis/redis';
+import {IParamsExtends} from './../types';
+import {checkEvent, manageIsDirectory} from './watch';
 
 const file = './test';
 const inode = 123456;
@@ -18,10 +19,11 @@ describe('test checkEvent', () => {
         (initRedis as jest.FunctionLike) = jest.fn();
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();
 
-        const params = {
+        const params: IParamsExtends = {
             verbose: false,
             ready: false,
             timeout: 0,
+            rootPath: '/files',
             rootKey
         };
 
@@ -39,6 +41,7 @@ describe('test checkEvent', () => {
             verbose: false,
             ready: false,
             timeout: 0,
+            rootPath: '/files',
             rootKey
         };
 
@@ -50,11 +53,13 @@ describe('test checkEvent', () => {
 
     test('Add a file', async () => {
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();
+        (manageIsDirectory as jest.FunctionLike) = jest.fn();
 
         const params = {
             verbose: false,
             ready: true,
             timeout: 0,
+            rootPath: '/files',
             rootKey
         };
 
@@ -71,11 +76,13 @@ describe('test checkEvent', () => {
 
     test('Add a dir', async () => {
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();
+        (manageIsDirectory as jest.FunctionLike) = jest.fn();
 
         const params = {
             verbose: false,
             ready: true,
             timeout: 0,
+            rootPath: '/files',
             rootKey
         };
 
@@ -92,11 +99,13 @@ describe('test checkEvent', () => {
 
     test('Unlink a file', async () => {
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();
+        (manageIsDirectory as jest.FunctionLike) = jest.fn();
 
         const params = {
             verbose: false,
             ready: true,
             timeout: 0,
+            rootPath: '/files',
             rootKey
         };
 
@@ -113,11 +122,13 @@ describe('test checkEvent', () => {
 
     test('Unlink a dir', async () => {
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();
+        (manageIsDirectory as jest.FunctionLike) = jest.fn();
 
         const params = {
             verbose: false,
             ready: true,
             timeout: 0,
+            rootPath: '/files',
             rootKey
         };
 
@@ -134,11 +145,13 @@ describe('test checkEvent', () => {
 
     test('Update a file', async () => {
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();
+        (manageIsDirectory as jest.FunctionLike) = jest.fn();
 
         const params = {
             verbose: false,
             ready: true,
             timeout: 0,
+            rootPath: '/files',
             rootKey
         };
 
@@ -155,11 +168,13 @@ describe('test checkEvent', () => {
 
     test('Move a file', async () => {
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();
+        (manageIsDirectory as jest.FunctionLike) = jest.fn();
 
         const params = {
             verbose: false,
             ready: true,
             timeout: 500,
+            rootPath: '/files',
             rootKey
         };
 

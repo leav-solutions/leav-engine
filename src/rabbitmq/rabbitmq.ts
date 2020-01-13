@@ -1,4 +1,4 @@
-import {IAmqpParams} from './../types';
+import {IAmqpParams, IMessageSend} from './../types';
 
 export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
     if (amqp && amqp.channel && amqp.exchange && amqp.routingKey) {
@@ -24,14 +24,18 @@ export const generateMsgRabbitMQ = (
     pathBefore: string | null,
     pathAfter: string | null,
     inode: number,
+    isDirectory: boolean,
     rootKey: string
 ) => {
-    return JSON.stringify({
+    const params: IMessageSend = {
         event,
         time: Math.round(Date.now() / 1000),
         pathAfter,
         pathBefore,
+        isDirectory,
         inode,
         rootKey
-    });
+    };
+
+    return JSON.stringify(params);
 };

@@ -42,6 +42,7 @@ export interface IConfig {
 }
 
 export interface IParams {
+    rootPath: string;
     rootKey: string;
     verbose: boolean;
     amqp?: IAmqpParams;
@@ -50,4 +51,14 @@ export interface IParams {
 export interface IParamsExtends extends IParams {
     timeout?: number;
     ready?: boolean;
+}
+
+export interface IMessageSend {
+    event: string;
+    time: number;
+    pathAfter: string;
+    pathBefore: string;
+    inode: number;
+    isDirectory: boolean;
+    rootKey: any;
 }
