@@ -1,4 +1,4 @@
-import {Options, connect} from 'amqplib';
+import {connect, Options} from 'amqplib';
 
 export const getChannel = async (amqpConfig: Options.Connect) => {
     try {

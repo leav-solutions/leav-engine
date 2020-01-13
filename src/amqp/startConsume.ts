@@ -1,8 +1,8 @@
 import {Options} from 'amqplib';
 import {IConfig} from '../types/types';
-import {initAmqp} from './init/init';
 import {consume} from './consume/consume';
 import {getChannel} from './getChannel/getChannel';
+import {initAmqp} from './init/init';
 
 export const startConsume = async (config: IConfig) => {
     const amqpConfig: Options.Connect = {

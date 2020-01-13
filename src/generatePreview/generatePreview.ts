@@ -5,7 +5,7 @@ export const generatePreview = async (
     msgContent: IMessageConsume,
     type: string,
     config: IConfig,
-): Promise<IResult[][]> => {
+): Promise<IResult[]> => {
     const {input, versions} = msgContent;
 
     const {inputRootPath, outputRootPath} = config;
@@ -17,7 +17,7 @@ export const generatePreview = async (
         handleVersions.push(handleVersion({version, rootPaths, input, type, config}));
     }
 
-    const results = await Promise.all(handleVersions);
+    const [results] = await Promise.all(handleVersions);
 
     return results;
 };

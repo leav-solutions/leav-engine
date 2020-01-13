@@ -43,8 +43,8 @@ describe('generatePreview', () => {
     test('result generatePreview', async () => {
         const type = 'image';
 
-        const [results] = await generatePreview(msgContent, type, config);
-        const [firstResult] = results;
+        const results = await generatePreview(msgContent, type, config);
+        const firstResult = results[0];
 
         expect(firstResult.params.output).toEqual(expect.stringContaining('test.800.jpg'));
         expect(results.length).toBe(3);
