@@ -33,12 +33,12 @@ By default, the script take the file in `./config/config.json`
 }
 ```
 
-`rootPath`: path to the folder to watch, if absolute the name of the folder will not appear in message.
-`rootKey`: key of the folder to watch, if not given, it will be generate with a hash of the rootPath
-`redis`: informations to connect to redis
-`amqp`: informations to use RabbitMQ
-`watcher`: config for the watcher
-`verbose`: allow the app to display informations messages
+- `rootPath`: path to the folder to watch, if absolute the name of the folder will not appear in message.
+- `rootKey`: key of the folder to watch, if not given, it will be generate with a hash of the rootPath
+- `redis`: informations to connect to redis
+- `amqp`: informations to use RabbitMQ
+- `watcher`: config for the watcher
+- `verbose`: allow the app to display informations messages
 
 ## Error code
 - Commun errror:
@@ -68,10 +68,10 @@ By default, the script take the file in `./config/config.json`
 }
 ```
 
-`event`: the event occurred
-`time`: timestamp when the message is sent
-`pathAfter`: path of the file/folder after the event occurred
-`pathBefore`: path of the file/folder before the event occurred
-`inode`: id of the file/folder
-`isDirectory`: the event occurred on a folder or not
-`rootKey`: information given in the config return here  
+- `event`: the event occurred
+- `time`: timestamp when the message is sent
+- `pathAfter`: path of the file/folder after the event occurred
+- `pathBefore`: path of the file/folder before the event occurred
+- `inode`: id of the file/folder
+- `isDirectory`: the event occurred on a folder or not
+- `rootKey`: information given in the config return here  
