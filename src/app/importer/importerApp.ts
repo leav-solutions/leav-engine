@@ -42,6 +42,7 @@ export default function({
                 // Remove fields which require attribute creation. We'll take care of it later
                 delete libToSave.attributes;
                 delete libToSave.recordIdentityConf;
+                delete libToSave.permissions_conf;
 
                 return libraryDomain.saveLibrary(libToSave, infos);
             })
@@ -73,7 +74,8 @@ export default function({
                 const libToSave = {
                     id: lib.id,
                     attributes: libAttributes,
-                    recordIdentityConf: lib.recordIdentityConf
+                    recordIdentityConf: lib.recordIdentityConf,
+                    permissions_conf: lib.permissions_conf
                 };
                 return libraryDomain.saveLibrary(libToSave, infos);
             })
