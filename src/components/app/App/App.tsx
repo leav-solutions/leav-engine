@@ -103,7 +103,7 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
                 _handleApolloError(err);
             }),
             new HttpLink({
-                uri: process.env.REACT_APP_API_URL,
+                uri: process.env.REACT_APP_API_URL + `?lang=${i18n.language}`,
                 headers: {
                     Authorization: token
                 }
