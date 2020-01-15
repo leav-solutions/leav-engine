@@ -2,12 +2,12 @@
   "rootPath": "./folder_to_watch",
   "rootKey": "1234abc",
   "redis": {
-    "host": "127.0.0.1",
+    "host": "cache",
     "port": 6379
   },
   "amqp": {
     "protocol": "amqp",
-    "hostname": "localhost",
+    "hostname": "message_broker",
     "port": 15672,
     "username": "guest",
     "password": "guest",

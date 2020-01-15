@@ -1,10 +1,10 @@
-import {createClient} from '../redis/redis';
-import * as fs from 'fs';
-import * as Crypto from 'crypto';
+import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
-import {Options, Connection, Channel} from 'amqplib';
-import {start} from '../watch/watch';
+import * as Crypto from 'crypto';
+import * as fs from 'fs';
+import {createClient} from '../redis/redis';
 import {IConfig} from '../types';
+import {start} from '../watch/watch';
 
 export const getConfig = (configPathArg?: string): IConfig => {
     const configPath = configPathArg ? configPathArg : './config/config.json';
@@ -45,39 +45,7 @@ export const startWatch = async (configPathArg?: string) => {
         const queue = config.amqp.queue;
         const routingKey = config.amqp.routingKey;
 
-        const channel: Channel = await new Promise(resolve =>
-            amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
-                if (error0) {
-                    console.error("101 - Can't connect to rabbitMQ");
-                    process.exit(101);
-                }
-
-                const ch = await connection.createChannel();
-
-                try {
-                    await ch.assertExchange(exchange, 'direct', {durable: true});
-                } catch (e) {
-                    console.error('102 - Error when assert exchange', e.message);
-                    process.exit(102);
-                }
-
-                try {
-                    await ch.assertQueue(queue, {durable: true});
-                } catch (e) {
-                    console.error('103 - Error when assert queue', e.message);
-                    process.exit(103);
-                }
-
-                try {
-                    await ch.bindQueue(queue, exchange, routingKey);
-                } catch (e) {
-                    console.error('104 - Error when bind queue', e.message);
-                    process.exit(104);
-                }
-
-                resolve(ch);
-            })
-        );
+        const channel: Channel = await getChannel(amqpConfig, exchange, queue, routingKey);
 
         let watchParams = {};
         if (config.watcher && config.watcher.awaitWriteFinish) {
@@ -98,4 +66,40 @@ export const startWatch = async (configPathArg?: string) => {
         const watchParams = {verbose: config.verbose};
         return start(config.rootPath, rootKey, watchParams);
     }
+};
+
+export const getChannel = async (amqpConfig: any, exchange: string, queue: string, routingKey: string) => {
+    return new Promise<Channel>(resolve =>
+        amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
+            if (error0) {
+                console.error("101 - Can't connect to rabbitMQ");
+                process.exit(101);
+            }
+
+            const ch = await connection.createChannel();
+
+            try {
+                await ch.assertExchange(exchange, 'direct', {durable: true});
+            } catch (e) {
+                console.error('102 - Error when assert exchange', e.message);
+                process.exit(102);
+            }
+
+            try {
+                await ch.assertQueue(queue, {durable: true});
+            } catch (e) {
+                console.error('103 - Error when assert queue', e.message);
+                process.exit(103);
+            }
+
+            try {
+                await ch.bindQueue(queue, exchange, routingKey);
+            } catch (e) {
+                console.error('104 - Error when bind queue', e.message);
+                process.exit(104);
+            }
+
+            resolve(ch);
+        })
+    );
 };
