@@ -1,3 +1,4 @@
+import {useQuery} from '@apollo/react-hooks';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -5,8 +6,9 @@ import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
-import {AttributesQuery, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
+import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {addWildcardToFilters} from '../../../utils/utils';
+import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
@@ -30,6 +32,10 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
     const [filters, setFilters] = useState<IAttributesFilters>({});
     const userData = useUserData();
 
+    const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+        variables: {...addWildcardToFilters(filters), lang}
+    });
+
     const _onFiltersUpdate = (filterElem: any) => {
         const newElemState =
             filterElem.type === 'checkbox'
@@ -43,6 +49,8 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
             [filterElem.name]: newElemState
         });
     };
+
+    const _onRowClick = attribute => history.push('/attributes/edit/' + attribute.id);
 
     return (
         <div>
@@ -62,32 +70,24 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                     </Grid.Column>
                 )}
             </Grid>
-            <AttributesQuery query={getAttributesQuery} variables={{...addWildcardToFilters(filters), lang}}>
-                {({loading, error, data}) => {
-                    if (typeof error !== 'undefined') {
-                        return <p>Error: {error.message}</p>;
+            {!error ? (
+                <AttributesList
+                    loading={loading || !data}
+                    attributes={data && data.attributes ? data.attributes.list : []}
+                    onRowClick={_onRowClick}
+                    onFiltersUpdate={_onFiltersUpdate}
+                    filters={filters}
+                    actions={
+                        userData.permissions[PermissionsActions.admin_delete_attribute] ? (
+                            <DeleteAttribute key="delete_attr" />
+                        ) : (
+                            <></>
+                        )
                     }
-
-                    const onRowClick = attribute => history.push('/attributes/edit/' + attribute.id);
-
-                    return (
-                        <AttributesList
-                            loading={loading || !data}
-                            attributes={data && data.attributes ? data.attributes.list : []}
-                            onRowClick={onRowClick}
-                            onFiltersUpdate={_onFiltersUpdate}
-                            filters={filters}
-                            actions={
-                                userData.permissions[PermissionsActions.admin_delete_attribute] ? (
-                                    <DeleteAttribute key="delete_attr" />
-                                ) : (
-                                    <></>
-                                )
-                            }
-                        />
-                    );
-                }}
-            </AttributesQuery>
+                />
+            ) : (
+                <p>Error: {error.message}</p>
+            )}
         </div>
     );
 };
