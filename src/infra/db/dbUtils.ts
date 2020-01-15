@@ -220,7 +220,9 @@ export default function({
                 for (const filterKey of filtersKeys) {
                     const filterVal = dbFilters[filterKey];
                     const conds = _getFilterCondition(filterKey, filterVal, strictFilters);
-                    queryParts.push(aql`FILTER`, conds);
+                    if (conds.query) {
+                        queryParts.push(aql`FILTER`, conds);
+                    }
                 }
             }
 
