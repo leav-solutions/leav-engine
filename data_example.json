@@ -3,7 +3,11 @@
         {
             "id": "products",
             "label": { "fr": "Products" },
-            "attributes": ["label", "category", "price"]
+            "attributes": ["label", "category", "price", "advanced_date", "advanced_extended", "checkbox"],
+            "permissions_conf": {
+                "permissionTreeAttributes": ["category"],
+                "relation": "and"
+            }
         },
         {
             "id": "categories",
@@ -16,7 +20,7 @@
         {
             "id": "ubs",
             "label": { "fr": "UBs" },
-            "attributes": ["label", "eans"],
+            "attributes": ["label", "eans", "price"],
             "recordIdentityConf": {
                 "label": "label"
             }
@@ -47,10 +51,59 @@
         },
         {
             "id": "name",
-            "type": "simple",
+            "type": "advanced",
             "format": "text",
             "label": { "fr": "Nom" },
             "multiple_values": false
+        },
+        {
+            "id": "advanced_date",
+            "type": "advanced",
+            "format": "date",
+            "label": { "fr": "Avancé date" },
+            "multiple_values": false
+        },
+        {
+            "id": "checkbox",
+            "type": "simple",
+            "format": "boolean",
+            "label": { "fr": "Simple Booléen" }
+        },
+        {
+            "id": "advanced_extended",
+            "type": "advanced",
+            "format": "extended",
+            "label": { "fr": "Avancé étendu" },
+            "multiple_values": false,
+            "embedded_fields": [
+                {
+                    "id": "field_1",
+                    "format": "text",
+                    "label": {"fr": "Champ 1"}
+                },
+                {
+                    "id": "field_2",
+                    "format": "numeric",
+                    "label": {"fr": "Champ 2"}
+                },
+                {
+                    "id": "field_3",
+                    "format": "extended",
+                    "label": {"fr": "Champ 3 - étendu"},
+                    "embedded_fields": [
+                        {
+                            "id": "field_3_1",
+                            "format": "text",
+                            "label": {"fr": "Champ 3 - 1"}
+                        },
+                        {
+                            "id": "field_3_2",
+                            "format": "numeric",
+                            "label": {"fr": "Champ 3 - 2"}
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "eans",
@@ -68,7 +121,45 @@
             "versions_conf": {
                 "versionable": true,
                 "trees": ["regions"]
-            }
+            },
+            "actions_list": {
+                "deleteValue": [],
+                "getValue": [
+                  {
+                    "is_system": false,
+                    "name": "formatNumber",
+                    "params": [
+                      {
+                        "name": "decimals",
+                        "value": "2"
+                      },
+                      {
+                        "name": "thousandsSeparator",
+                        "value": " "
+                      },
+                      {
+                        "name": "decimalsSeparator",
+                        "value": ","
+                      },
+                      {
+                        "name": "prefix",
+                        "value": ""
+                      },
+                      {
+                        "name": "suffix",
+                        "value": "€"
+                      }
+                    ]
+                  }
+                ],
+                "saveValue": [
+                  {
+                    "is_system": true,
+                    "name": "validateFormat",
+                    "params": null
+                  }
+                ]
+              }
         }
     ],
     "trees": [
@@ -144,8 +235,8 @@
         }
     ],
     "records": {
-        "products": 100,
-        "ubs": 100,
+        "products": 20,
+        "ubs": 20,
         "categories": [
             {
                 "key": 4
@@ -189,6 +280,11 @@
             "category": {
                 "generate": true,
                 "values": ["categories/4", "categories/8", "categories/9"]
+            },
+            "price": {
+                "generate": true,
+                "values": [9.99, 10.99, 1337.42],
+                "versions": [{"regions": "regions/3"}, {"regions": "regions/4"}, {"regions": "regions/2"}]
             }
         },
         "ubs": {
