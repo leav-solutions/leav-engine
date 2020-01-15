@@ -42,7 +42,7 @@ export default function(): IActionsListFunction {
                 default_value: ' '
             },
             {
-                name: 'decimalSeparator',
+                name: 'decimalsSeparator',
                 type: 'string',
                 description: 'Decimals separator',
                 required: false,
