@@ -3,7 +3,7 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {difference} from 'lodash';
-import {ErrorFieldDetail} from '_types/errors';
+import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {IQueryInfos} from '../../../_types/queryInfos';
 import {IValue} from '../../../_types/value';
@@ -90,15 +90,17 @@ const _validateVersion = async (value: IValue, deps: {treeRepo: ITreeRepo}): Pro
         const errors = await prevErrors;
 
         if (!existingTreesIds.includes(treeName)) {
-            errors.push([`Unknown tree ${treeName}`]);
+            errors.push([Errors.UNKNOWN_VERSION_TREE]);
             return errors;
         }
 
         const isPresent = await deps.treeRepo.isElementPresent(treeName, value.version[treeName]);
         if (!isPresent) {
             errors.push([
-                `Element ${value.version[treeName].library}/${value.version[treeName].id}
-                not present in tree ${treeName}`
+                {
+                    msg: Errors.ELEMENT_NOT_IN_TREE,
+                    vars: {element: `${value.version[treeName].library}/${value.version[treeName].id}`, tree: treeName}
+                }
             ]);
         }
         return errors;
@@ -116,7 +118,7 @@ const _validateMetadata = (attribute: IAttribute, value: IValue): ErrorFieldDeta
     const valueMetaFields = Object.keys(value.metadata);
     const unknownFields = difference(valueMetaFields, attribute.metadata_fields);
     if (unknownFields.length) {
-        errors.metadata = `Unknown fields: ${unknownFields.join(', ')}`;
+        errors.metadata = {msg: Errors.UNKNOWN_METADATA_FIELDS, vars: {fields: unknownFields.join(', ')}};
     }
 
     return errors;
@@ -131,7 +133,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     if (valueExists) {
         const existingVal = await deps.valueRepo.getValueById(library, recordId, attributeProps, value);
         if (existingVal === null) {
-            errors.id_value = 'Unknown value';
+            errors.id_value = Errors.UNKNOWN_VALUE;
         }
     }
 

@@ -1,3 +1,4 @@
+import {Errors} from '../../_types/errors';
 import ValidationError from '../../errors/ValidationError';
 import {
     AdminPermissionsActions,
@@ -115,7 +116,7 @@ export default function({
             switch (type) {
                 case PermissionTypes.RECORD:
                     if (!target || !target.recordId) {
-                        throw new ValidationError({target: 'Missing record ID'});
+                        throw new ValidationError({target: Errors.MISSING_RECORD_ID});
                     }
 
                     perm = await recordPermissionDomain.getRecordPermission(
@@ -128,7 +129,7 @@ export default function({
                 case PermissionTypes.ATTRIBUTE:
                     const errors = [];
                     if (!target) {
-                        throw new ValidationError({target: `Missing target`});
+                        throw new ValidationError({target: Errors.MISSING_TARGET});
                     }
 
                     if (!target.recordId) {
@@ -140,7 +141,9 @@ export default function({
                     }
 
                     if (errors.length) {
-                        throw new ValidationError({target: `Missing fields: ${errors.join(', ')}`});
+                        throw new ValidationError({
+                            target: {msg: Errors.MISSING_FIELDS, vars: {fields: errors.join(', ')}}
+                        });
                     }
 
                     perm = attributePermissionDomain.getAttributePermission(

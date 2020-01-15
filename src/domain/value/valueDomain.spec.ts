@@ -7,6 +7,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {
     mockAttrAdv,
     mockAttrAdvLink,
@@ -210,7 +211,7 @@ describe('ValueDomain', () => {
         test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
-                    throw new ValidationError({id: 'Unknown attribute ' + id});
+                    throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
                 })
             };
 
@@ -916,7 +917,7 @@ describe('ValueDomain', () => {
 
                 const mockALThrowsDomain: Mockify<IActionsListDomain> = {
                     runActionsList: jest.fn().mockImplementation(() => {
-                        throw new ValidationError({test_attr: 'error'});
+                        throw new ValidationError({test_attr: Errors.ERROR});
                     })
                 };
 
@@ -1078,7 +1079,7 @@ describe('ValueDomain', () => {
 
             const mockActionsListDomainInvalid: Mockify<IActionsListDomain> = {
                 runActionsList: jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: 'invalid'});
+                    throw new ValidationError({test_attr: Errors.ERROR});
                 })
             };
 
@@ -1098,7 +1099,7 @@ describe('ValueDomain', () => {
             expect(res).toStrictEqual({
                 values: [],
                 errors: [
-                    {attribute: 'test_attr', input: 'test', message: 'invalid', type: 'VALIDATION_ERROR'},
+                    {attribute: 'test_attr', input: 'test', message: 'ERROR', type: 'VALIDATION_ERROR'},
                     {attribute: 'test_attr2', input: 'test', message: 'Validation error', type: 'VALIDATION_ERROR'}
                 ]
             });
@@ -1352,7 +1353,7 @@ describe('ValueDomain', () => {
         test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
-                    throw new ValidationError({id: 'Unknown attribute ' + id});
+                    throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
                 })
             };
 
@@ -1822,7 +1823,7 @@ describe('ValueDomain', () => {
         test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
-                    throw new ValidationError({id: 'Unknown attribute ' + id});
+                    throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
                 })
             };
 

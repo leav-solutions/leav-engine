@@ -56,7 +56,9 @@ const _registerModules = async (
     return container;
 };
 
-export async function init(): Promise<{coreContainer: AwilixContainer; pluginsContainer: AwilixContainer}> {
+export async function init(additionalModulesToRegister?: {
+    [registerKey: string]: any;
+}): Promise<{coreContainer: AwilixContainer; pluginsContainer: AwilixContainer}> {
     const srcFolder = __dirname;
     const pluginsFolder = realpathSync(__dirname + '/plugins');
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
@@ -72,6 +74,10 @@ export async function init(): Promise<{coreContainer: AwilixContainer; pluginsCo
     // Add a few extra dependencies
     coreContainer.register('config', asValue(await config));
     coreContainer.register('pluginsFolder', asValue(pluginsFolder));
+
+    for (const [modKey, mod] of Object.entries(additionalModulesToRegister)) {
+        coreContainer.register(modKey, asValue(mod));
+    }
 
     /*** PLUGINS ***/
     const pluginsContainer = coreContainer.createScope();

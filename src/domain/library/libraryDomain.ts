@@ -1,3 +1,4 @@
+import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {difference, union} from 'lodash';
 import {IUtils} from 'utils/utils';
@@ -6,6 +7,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {Errors} from '../../_types/errors';
 import {ILibrary} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -25,14 +27,18 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission'?: IPermissionDomain;
     'core.utils'?: IUtils;
+    translator?: i18n;
+    // 'core.domain.translator'?: ITranslatorDomain;
 }
 
 export default function({
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
-    'core.utils': utils = null
-}: IDeps = {}): ILibraryDomain {
+    'core.utils': utils = null,
+    translator: translator
+}: // 'core.domain.translator': t = null
+IDeps = {}): ILibraryDomain {
     return {
         async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
             const initializedParams = {...params};
@@ -57,13 +63,13 @@ export default function({
         },
         async getLibraryProperties(id: string): Promise<ILibrary> {
             if (!id) {
-                throw new ValidationError({id: 'Missing library ID'});
+                throw new ValidationError({id: Errors.MISSING_LIBRARY_ID});
             }
 
             const libs = await libraryRepo.getLibraries({filters: {id}, strictFilters: true});
 
             if (!libs.list.length) {
-                throw new ValidationError({id: 'Unknown library ' + id});
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
             const props = libs.list.pop();
@@ -74,7 +80,7 @@ export default function({
             const libs = await libraryRepo.getLibraries({filters: {id}});
 
             if (!libs.list.length) {
-                throw new ValidationError({id: 'Unknown library ' + id});
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
             return libraryRepo.getLibraryAttributes(id);
@@ -95,7 +101,7 @@ export default function({
             }
 
             if (!utils.validateID(dataToSave.id)) {
-                throw new ValidationError({id: 'Invalid ID format: ' + dataToSave.id});
+                throw new ValidationError({id: Errors.INVALID_ID_FORMAT});
             }
 
             if (dataToSave.permissions_conf) {
@@ -106,7 +112,10 @@ export default function({
                 );
 
                 if (unknownTreeAttributes.length) {
-                    errors.permissions_conf = `Unknown tree attributes: ${unknownTreeAttributes.join(', ')}`;
+                    errors.permissions_conf = {
+                        msg: Errors.UNKNOWN_ATTRIBUTES,
+                        vars: {attributes: unknownTreeAttributes.join(', ')}
+                    };
                 }
             }
 
@@ -118,10 +127,16 @@ export default function({
 
             if (libAttributes.length) {
                 const availableAttributes = await attributeDomain.getAttributes();
-                const unknownAttrs = difference(libAttributes, availableAttributes.list.map(attr => attr.id));
+                const unknownAttrs = difference(
+                    libAttributes,
+                    availableAttributes.list.map(attr => attr.id)
+                );
 
                 if (unknownAttrs.length) {
-                    errors.attributes = `Unknown attributes: ${unknownAttrs.join(', ')}`;
+                    errors.attributes = {
+                        msg: Errors.UNKNOWN_ATTRIBUTES,
+                        vars: {attributes: unknownAttrs.join(', ')}
+                    };
                 }
             }
 
@@ -144,7 +159,10 @@ export default function({
                 }
 
                 if (unbindedAttrs.length) {
-                    errors.recordIdentityConf = `Attributes must be binded to library: ${unbindedAttrs.join(', ')}`;
+                    errors.recordIdentityConf = {
+                        msg: Errors.UNBINDED_ATTRIBUTES,
+                        vars: {attributes: unbindedAttrs.join(', ')}
+                    };
                 }
             }
 
@@ -176,11 +194,11 @@ export default function({
 
             // Check if exists and can delete
             if (!lib.list.length) {
-                throw new ValidationError({id: 'Unknown library'});
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
             if (lib.list.pop().system) {
-                throw new ValidationError({id: 'Cannot delete system library'});
+                throw new ValidationError({id: Errors.SYSTEM_LIBRARY_DELETION});
             }
 
             return libraryRepo.deleteLibrary(id);

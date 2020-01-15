@@ -1,7 +1,7 @@
 import {aql} from 'arangojs';
 import {CollectionType} from 'arangojs/lib/cjs/collection';
 import {AwilixContainer} from 'awilix';
-import * as fs from 'fs';
+import {readdirSync} from 'fs';
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import * as path from 'path';
 import {isArray} from 'util';
@@ -133,7 +133,7 @@ export default function({
             /*** Core migrations ***/
             // Load migrations files
             const migrationsDir = path.resolve(__dirname, 'migrations');
-            const migrationFiles = fs.readdirSync(migrationsDir).filter(file => file.indexOf('.map') === -1);
+            const migrationFiles = readdirSync(migrationsDir).filter(file => file.indexOf('.map') === -1);
 
             await _runMigrationFiles(migrationFiles, migrationsDir);
 
@@ -141,9 +141,9 @@ export default function({
             const plugins = pluginsRepo.getRegisteredPlugins();
             for (const plugin of plugins) {
                 const pluginMigrationFolder = path.resolve(plugin.path + '/infra/db/migrations');
-                const pluginMigrationFiles = fs
-                    .readdirSync(pluginMigrationFolder)
-                    .filter(file => file.indexOf('.map') === -1);
+                const pluginMigrationFiles = readdirSync(pluginMigrationFolder).filter(
+                    file => file.indexOf('.map') === -1
+                );
 
                 await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolder, plugin.infos.name);
             }

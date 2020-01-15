@@ -3,6 +3,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {IList} from '_types/list';
 import ValidationError from '../../errors/ValidationError';
+import {Errors} from '../../_types/errors';
 import {ILibrary} from '../../_types/library';
 import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -212,7 +213,7 @@ export default function({
                         typeof pagination.offset !== 'undefined' &&
                         typeof pagination.cursor !== 'undefined'
                     ) {
-                        throw new ValidationError({pagination: 'Cannot use offset and cursor at the same time'});
+                        throw new ValidationError({pagination: Errors.PAGINATION_OFFSET_AND_CURSOR});
                     }
 
                     if (typeof filters !== 'undefined') {

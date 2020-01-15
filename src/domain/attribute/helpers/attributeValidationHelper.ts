@@ -3,9 +3,10 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, intersection} from 'lodash';
 import {IUtils} from 'utils/utils';
-import ValidationError, {ErrorFieldDetail} from '../../../errors/ValidationError';
+import ValidationError from '../../../errors/ValidationError';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {getAllowedOutputTypes, getDefaultActionsList} from './attributeALHelper';
 
 const _validateSettings = (
@@ -21,13 +22,13 @@ const _validateSettings = (
     const errors: ErrorFieldDetail<IAttribute> = {};
 
     if (!deps.utils.validateID(attrData.id)) {
-        errors.id = 'Invalid ID format: ' + attrData.id;
+        errors.id = Errors.INVALID_ID_FORMAT;
     }
     if (
         (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) &&
         attrData.multiple_values
     ) {
-        errors.multiple_values = 'Multiple values not allowed for this attribute type';
+        errors.multiple_values = Errors.MULTIPLE_VALUES_NOT_ALLOWED;
     }
 
     return errors;
@@ -63,7 +64,7 @@ const _validateVersionsConf = async (
         );
 
         if (unknownTrees.length) {
-            errors.versions_conf = `Unknown trees: ${unknownTrees.join(', ')}`;
+            errors.versions_conf = {msg: Errors.UNKNOWN_TREES, vars: {trees: unknownTrees.join(', ')}};
         }
     }
 
@@ -96,9 +97,10 @@ const _validateInputType = (
         const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
 
         if (!intersection(lastActionDetails.output_types, allowedOutputTypes[event]).length) {
-            inputTypeErrors[`actions_list.${event}`] = `Last action is invalid:
-                        expected action with ouptput types including ${allowedOutputTypes[event]},
-                        received ${lastActionDetails.output_types}`;
+            inputTypeErrors[`actions_list.${event}`] = {
+                msg: Errors.INVALID_ACTION_TYPE,
+                vars: {expected: allowedOutputTypes[event], received: lastActionDetails.output_types}
+            };
         }
     }
 
@@ -130,7 +132,10 @@ const _validateRequiredActions = (attrData: IAttribute): ErrorFieldDetail<IAttri
     }
 
     if (missingActions.length) {
-        requiredActionsErrors.actions_list = `Missing required actions: ${missingActions.join(', ')}`;
+        requiredActionsErrors.actions_list = {
+            msg: Errors.MISSING_REQUIRED_ACTION,
+            vars: {actions: missingActions.join(', ')}
+        };
     }
 
     return requiredActionsErrors;
@@ -149,7 +154,7 @@ const _validateMetadataFields = async (
     // Check metadata fields
     if (attrData.metadata_fields?.length) {
         if (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) {
-            throw new ValidationError({metadata_fields: 'Cannot save metadata on simple attribute'});
+            throw new ValidationError({metadata_fields: Errors.CANNOT_SAVE_METADATA});
         }
 
         const metadatableAttrs = await deps.attributeRepo.getAttributes({
@@ -163,7 +168,10 @@ const _validateMetadataFields = async (
         );
 
         if (invalidAttributes.length) {
-            metadataFieldsErrors.metadata_fields = `Invalid attribute(s): ${invalidAttributes.join(', ')}`;
+            metadataFieldsErrors.metadata_fields = {
+                msg: Errors.INVALID_ATTRIBUTES,
+                vars: {attributes: invalidAttributes.join(', ')}
+            };
         }
 
         return metadataFieldsErrors;
@@ -180,27 +188,26 @@ const _validateRequiredFields = (attrData: IAttribute, deps: {config: any}): Err
     // Check required fields
     const requiredFieldsErrors: ErrorFieldDetail<IAttribute> = {};
     if (!attrData.type) {
-        requiredFieldsErrors.type = "Attribute's type must be specified";
+        requiredFieldsErrors.type = Errors.REQUIRED_ATTRIBUTE_TYPE;
     }
 
     if ((attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.ADVANCED) && !attrData.format) {
-        requiredFieldsErrors.format = "Attribute's format must be specified";
+        requiredFieldsErrors.format = Errors.REQUIRED_ATTRIBUTE_FORMAT;
     }
 
     if (!attrData.label[deps.config.lang.default]) {
-        requiredFieldsErrors.label = `Attribute's label for default language
-            (${deps.config.lang.default}) must be specified`;
+        requiredFieldsErrors.label = {msg: Errors.REQUIRED_ATTRIBUTE_LABEL, vars: {lang: deps.config.lang.default}};
     }
 
     if (
         (attrData.type === AttributeTypes.SIMPLE_LINK || attrData.type === AttributeTypes.ADVANCED_LINK) &&
         !attrData.linked_library
     ) {
-        requiredFieldsErrors.linked_library = `Attribute's linked library must be specified`;
+        requiredFieldsErrors.linked_library = Errors.REQUIRED_ATTRIBUTE_LINKED_LIBRARY;
     }
 
     if (attrData.type === AttributeTypes.TREE && !attrData.linked_tree) {
-        requiredFieldsErrors.linked_tree = `Attribute's linked tree must be specified`;
+        requiredFieldsErrors.linked_tree = Errors.REQUIRED_ATTRIBUTE_LINKED_TREE;
     }
 
     return requiredFieldsErrors;

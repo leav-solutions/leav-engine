@@ -5,7 +5,7 @@ import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes, ValueVersionMode} from '../../_types/attribute';
-import {ErrorTypes} from '../../_types/errors';
+import {Errors, ErrorTypes} from '../../_types/errors';
 import {AttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IValue, IValuesOptions} from '../../_types/value';
@@ -350,7 +350,7 @@ export default function({
                 const existingVal = await valueRepo.getValueById(library, recordId, attr, value);
 
                 if (existingVal === null) {
-                    throw new ValidationError({id: 'Unknown value'});
+                    throw new ValidationError({id: Errors.UNKNOWN_VALUE});
                 }
             }
 

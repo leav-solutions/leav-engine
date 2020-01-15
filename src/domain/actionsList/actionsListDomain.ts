@@ -1,10 +1,10 @@
 import * as Joi from '@hapi/joi';
 import {AwilixContainer} from 'awilix';
 import {partialRight} from 'lodash';
-import {ErrorFieldDetail} from '../../errors/ValidationError';
 import {IUtils} from '../../utils/utils';
 import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
+import {ErrorFieldDetail} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 
