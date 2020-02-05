@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import formatDateAction from './formatDateAction';
 
