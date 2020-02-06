@@ -1,5 +1,6 @@
 import {config} from './config';
 import {init as initDI} from './depsManager';
+import i18nextInit from './i18nextInit';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 
@@ -8,7 +9,10 @@ import {initPlugins} from './pluginsLoader';
 
     await initDb(conf);
 
-    const {coreContainer, pluginsContainer} = await initDI();
+    // Init i18next
+    const translator = await i18nextInit(conf);
+
+    const {coreContainer, pluginsContainer} = await initDI({translator});
 
     const server = coreContainer.cradle['core.interface.server'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];

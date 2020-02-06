@@ -1,6 +1,7 @@
 import {Database} from 'arangojs';
 import {config} from '../../config';
 import {init as initDI} from '../../depsManager';
+import i18nextInit from '../../i18nextInit';
 
 export async function setup() {
     try {
@@ -20,7 +21,10 @@ export async function setup() {
 
         await db.createDatabase(conf.db.name);
 
-        const {coreContainer} = await initDI();
+        // Init i18next
+        const translator = await i18nextInit(conf);
+
+        const {coreContainer} = await initDI({translator});
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
         await dbUtils.migrate(coreContainer);

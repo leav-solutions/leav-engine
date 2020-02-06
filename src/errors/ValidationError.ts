@@ -1,12 +1,4 @@
-import {ErrorTypes} from '../_types/errors';
-
-/**
- * Field error details
- * must be "fieldName: 'message about what failed'"
- */
-export type ErrorFieldDetail<T> = {
-    [P in keyof T]?: string;
-};
+import {ErrorFieldDetail, ErrorTypes} from '../_types/errors';
 
 export default class ValidationError<T> extends Error {
     /**

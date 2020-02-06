@@ -1,7 +1,7 @@
 import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
 import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
 import {IAttribute} from '_types/attribute';
-import {ErrorFieldDetail} from '_types/errors';
+import {ErrorFieldDetail} from '../../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {AttributePermissionsActions, RecordPermissionsActions} from '../../../_types/permissions';

@@ -30,7 +30,11 @@ interface IDeps {
     config?: any;
 }
 
-export default function({'core.depsManager': depsManager = null, 'core.utils': utils = null}: IDeps = {}): IGraphqlApp {
+export default function({
+    'core.depsManager': depsManager = null,
+    'core.utils': utils = null,
+    config = null
+}: IDeps = {}): IGraphqlApp {
     let _fullSchema: GraphQLSchema;
     const _pluginsSchema: IAppGraphQLSchema[] = [];
 
@@ -136,6 +140,7 @@ export default function({'core.depsManager': depsManager = null, 'core.utils': u
             const infos: IQueryInfos = {};
 
             infos.userId = !!ctx.auth && ctx.auth.userId ? Number(ctx.auth.userId) : null;
+            infos.lang = ctx.lang ?? config.lang.default;
 
             return infos;
         },

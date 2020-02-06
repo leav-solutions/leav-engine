@@ -1,6 +1,6 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import * as moment from 'moment';
+import moment from 'moment';
 import {IAttribute} from '../../../_types/attribute';
 import {IValue} from '../../../_types/value';
 import doesValueExist from './doesValueExist';

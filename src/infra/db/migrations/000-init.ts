@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import {IMigration} from '_types/migration';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';

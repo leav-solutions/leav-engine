@@ -1,6 +1,7 @@
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
+import {Errors} from '../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
@@ -147,7 +148,7 @@ export default function({
             }
 
             if (!utils.validateID(tree.id)) {
-                throw new ValidationError({id: 'Invalid ID format: ' + tree.id});
+                throw new ValidationError({id: Errors.INVALID_ID_FORMAT});
             }
 
             // Check if all libraries exists
@@ -157,7 +158,9 @@ export default function({
             const unknownLibs = difference(tree.libraries, libsIds);
 
             if (unknownLibs.length) {
-                throw new ValidationError({libraries: `Unknown libraries: ${unknownLibs.join(', ')}`});
+                throw new ValidationError({
+                    libraries: {msg: Errors.UNKNOWN_LIBRARIES, vars: {libraries: unknownLibs.join(', ')}}
+                });
             }
 
             const savedTree = newTree ? await treeRepo.updateTree(tree) : await treeRepo.createTree(tree);
@@ -176,11 +179,11 @@ export default function({
             const trees = await this.getTrees({filters: {id}});
 
             if (!trees.list.length) {
-                throw new ValidationError({id: 'Unknown tree'});
+                throw new ValidationError({id: Errors.UNKNOWN_TREE});
             }
 
             if (trees.list.pop().system) {
-                throw new ValidationError({id: 'Cannot delete system tree'});
+                throw new ValidationError({id: Errors.SYSTEM_TREE_DELETION});
             }
 
             return treeRepo.deleteTree(id);
@@ -202,19 +205,19 @@ export default function({
             const errors: any = {};
 
             if (!(await _treeExists(treeId))) {
-                errors.treeId = 'Unknown tree';
+                errors.treeId = Errors.UNKNOWN_TREE;
             }
 
             if (!(await _treeElementExists(element))) {
-                errors.element = 'Unknown element';
+                errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
             if (parent !== null && !(await _treeElementExists(parent))) {
-                errors.parent = 'Unknown parent';
+                errors.parent = Errors.UNKNOWN_PARENT;
             }
 
             if (await treeRepo.isElementPresent(treeId, element)) {
-                errors.element = 'Element already present';
+                errors.element = Errors.ELEMENT_ALREADY_PRESENT;
             }
 
             if (!!Object.keys(errors).length) {
@@ -232,15 +235,15 @@ export default function({
             const errors: any = {};
 
             if (!(await _treeExists(treeId))) {
-                errors.treeId = 'Unknown tree';
+                errors.treeId = Errors.UNKNOWN_TREE;
             }
 
             if (!(await _treeElementExists(element))) {
-                errors.element = 'Unknown element';
+                errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
             if (parentTo !== null && !(await _treeElementExists(parentTo))) {
-                errors.parentTo = 'Unknown parent';
+                errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
             if (!!Object.keys(errors).length) {
@@ -257,11 +260,11 @@ export default function({
             const errors: any = {};
 
             if (!(await _treeExists(treeId))) {
-                errors.treeId = 'Unknown tree';
+                errors.treeId = Errors.UNKNOWN_TREE;
             }
 
             if (!(await _treeElementExists(element))) {
-                errors.element = 'Unknown element';
+                errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
             if (!!Object.keys(errors).length) {
@@ -273,7 +276,7 @@ export default function({
         async getTreeContent(treeId: string, startingNode: ITreeElement = null): Promise<ITreeNode[]> {
             const errors: any = {};
             if (!(await _treeExists(treeId))) {
-                errors.treeId = 'Unknown tree';
+                errors.treeId = Errors.UNKNOWN_TREE;
             }
 
             if (Object.keys(errors).length) {
@@ -294,7 +297,7 @@ export default function({
             const attrs = await attributeDomain.getAttributes({filters: {id: attribute}});
 
             if (!attrs.list.length) {
-                throw new ValidationError({id: 'Unknown attribute ' + attribute});
+                throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
             }
 
             return treeRepo.getLinkedRecords(treeId, attribute, element);

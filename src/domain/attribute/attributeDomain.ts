@@ -6,6 +6,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {IAttribute, IOAllowedTypes} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
@@ -73,7 +74,7 @@ export default function({
             const attrs = await attributeRepo.getAttributes({filters: {id}, strictFilters: true});
 
             if (!attrs.list.length) {
-                throw new ValidationError<IAttribute>({id: 'Unknown attribute ' + id});
+                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
             }
             const props = attrs.list.pop();
 
@@ -143,13 +144,13 @@ export default function({
 
             // Check if exists and can delete
             if (!attr.list.length) {
-                throw new ValidationError<IAttribute>({id: 'Unknown attribute ' + id});
+                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
             }
 
             const attrProps = attr.list.pop();
 
             if (attrProps.system) {
-                throw new ValidationError<IAttribute>({id: 'Cannot delete system attribute'});
+                throw new ValidationError<IAttribute>({id: Errors.SYSTEM_ATTRIBUTE_DELETION});
             }
 
             return attributeRepo.deleteAttribute(attrProps);

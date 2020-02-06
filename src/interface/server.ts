@@ -4,10 +4,11 @@ import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {execute, GraphQLError} from 'graphql';
 import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
+import {i18n} from 'i18next';
 import {IUtils} from 'utils/utils';
 import * as uuid from 'uuid';
 import * as winston from 'winston';
-import {ErrorTypes} from '../_types/errors';
+import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 
 export interface IServer {
     init(): Promise<void>;
@@ -19,6 +20,7 @@ interface IDeps {
     'core.app.auth'?: IAuthApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
+    translator?: i18n;
 }
 
 export default function({
@@ -26,15 +28,29 @@ export default function({
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.utils.logger': logger = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    translator = null
 }: IDeps = {}): IServer {
-    const _handleError = (err: GraphQLError) => {
+    const _handleError = (err: GraphQLError, {context}: any) => {
         const origErr: any = err.originalError;
 
         const isGraphlValidationError = err.extensions && err.extensions.code === 'GRAPHQL_VALIDATION_FAILED';
         const errorType = (!!origErr && origErr.type) || ErrorTypes.INTERNAL_ERROR;
         const errorFields = (!!origErr && origErr.fields) || {};
         const errorAction = (!!origErr && origErr.action) || null;
+
+        // Translate errors details
+        for (const [field, errorDetails] of Object.entries(errorFields)) {
+            const toTranslate =
+                typeof errorDetails === 'string' ? {msg: errorDetails, vars: {}} : (errorDetails as IExtendedErrorMsg);
+
+            const lang = context.lang ?? config.lang.default;
+            errorFields[field] = translator.t(('errors.' + toTranslate.msg) as string, {
+                ...toTranslate.vars,
+                lng: lang,
+                interpolation: {escapeValue: false}
+            });
+        }
 
         err.extensions.code = errorType;
         err.extensions.fields = errorFields;
@@ -93,12 +109,23 @@ export default function({
 
                 const apolloServ = new ApolloServer({
                     debug: config.debug,
-                    formatError: _handleError,
+                    formatResponse: (resp, ctx) => {
+                        // const formattedErrors = resp.errors ? resp.errors.map(e => _handleError(e, ctx)) : null;
+
+                        const formattedResp = {...resp};
+
+                        if (resp.errors) {
+                            formattedResp.errors = resp.errors.map(e => _handleError(e, ctx));
+                        }
+
+                        return formattedResp;
+                    },
                     tracing: true,
                     cacheControl: false,
                     context: ({request}) => {
                         return {
-                            auth: request.auth.isAuthenticated ? request.auth.credentials : false
+                            auth: request.auth.isAuthenticated ? request.auth.credentials : false,
+                            lang: request.query.lang ?? config.lang.default
                         };
                     },
                     // We're using a gateway here instead of a simple schema definition because we need to be able
