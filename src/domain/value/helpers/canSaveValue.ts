@@ -1,9 +1,9 @@
 import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
 import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
 import {IAttribute} from '_types/attribute';
-import {ErrorFieldDetail} from '../../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
+import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {AttributePermissionsActions, RecordPermissionsActions} from '../../../_types/permissions';
 import doesValueExist from './doesValueExist';
 
@@ -57,7 +57,11 @@ const _canSaveMetadata = async (
         return {canSave: true};
     }
 
-    return {canSave: false, fields: {metadata: `Forbidden action on fields ${errors.join(', ')}`}, reason: permToCheck};
+    return {
+        canSave: false,
+        fields: {metadata: {msg: Errors.METADATA_PERMISSION_ERROR, vars: {fields: errors.join(', ')}}},
+        reason: permToCheck
+    };
 };
 
 export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> => {

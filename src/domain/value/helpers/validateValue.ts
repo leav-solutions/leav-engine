@@ -3,15 +3,15 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {difference} from 'lodash';
-import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {ErrorFieldDetail, Errors, IExtendedErrorMsg} from '../../../_types/errors';
 import {IQueryInfos} from '../../../_types/queryInfos';
-import {IValue} from '../../../_types/value';
+import {IValue, IValueVersion} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
 
 interface ILinkRecordValidationResult {
     isValid: boolean;
-    reason?: string;
+    reason?: Errors | IExtendedErrorMsg;
 }
 
 interface IValidateValueParams {
@@ -44,7 +44,13 @@ const _validateLinkedRecord = async (
 
     return records.list.length
         ? {isValid: true}
-        : {isValid: false, reason: `Unknown record ${value.value} in library ${attribute.linked_library}`};
+        : {
+              isValid: false,
+              reason: {
+                  msg: Errors.UNKNOWN_LINKED_RECORD,
+                  vars: {record: value.value, library: attribute.linked_library}
+              }
+          };
 };
 
 const _validateTreeLinkedRecord = async (
@@ -62,13 +68,22 @@ const _validateTreeLinkedRecord = async (
     ]);
 
     if (!records.list.length) {
-        return {isValid: false, reason: `Unknown record ${recordId} in library ${library}`};
+        return {
+            isValid: false,
+            reason: {
+                msg: Errors.UNKNOWN_LINKED_RECORD,
+                vars: {record: recordId, library}
+            }
+        };
     }
 
     const isElementInTree = await deps.treeRepo.isElementPresent(attribute.linked_tree, {library, id: recordId});
 
     if (!isElementInTree) {
-        return {isValid: false, reason: `Element ${value.value} is not in tree ${attribute.linked_tree}`};
+        return {
+            isValid: false,
+            reason: {msg: Errors.ELEMENT_NOT_IN_TREE, vars: {element: value.value, tree: attribute.linked_tree}}
+        };
     }
 
     return {isValid: true};
@@ -80,31 +95,34 @@ const _mustCheckLinkedRecord = (attribute: IAttribute): boolean => {
     return linkTypes.includes(attribute.type);
 };
 
-const _validateVersion = async (value: IValue, deps: {treeRepo: ITreeRepo}): Promise<string[]> => {
+const _validateVersion = async (
+    value: IValue,
+    deps: {treeRepo: ITreeRepo}
+): Promise<ErrorFieldDetail<IValueVersion>> => {
     const trees = Object.keys(value.version);
     const existingTrees = await deps.treeRepo.getTrees();
     const existingTreesIds = existingTrees.list.map(t => t.id);
 
-    const badElements = await trees.reduce(async (prevErrors, treeName) => {
+    const badElements: ErrorFieldDetail<IValueVersion> = await trees.reduce(async (prevErrors, treeName) => {
         // As our reduce function is async, we must wait for previous iteration to resolve
         const errors = await prevErrors;
 
         if (!existingTreesIds.includes(treeName)) {
-            errors.push([Errors.UNKNOWN_VERSION_TREE]);
+            errors[treeName] = {msg: Errors.UNKNOWN_VERSION_TREE, vars: {tree: treeName}};
             return errors;
         }
 
         const isPresent = await deps.treeRepo.isElementPresent(treeName, value.version[treeName]);
         if (!isPresent) {
-            errors.push([
-                {
-                    msg: Errors.ELEMENT_NOT_IN_TREE,
-                    vars: {element: `${value.version[treeName].library}/${value.version[treeName].id}`, tree: treeName}
-                }
-            ]);
+            errors[treeName] = {
+                msg: Errors.ELEMENT_NOT_IN_TREE,
+                vars: {element: `${value.version[treeName].library}/${value.version[treeName].id}`, tree: treeName}
+            };
         }
+
         return errors;
-    }, Promise.resolve([]));
+    }, Promise.resolve({}));
+
     return badElements;
 };
 
@@ -139,8 +157,10 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
 
     if (!!value.version) {
         const badElements = await _validateVersion(value, deps);
-        if (badElements.length) {
-            errors.version = badElements.join('. ');
+        if (Object.keys(badElements).length) {
+            for (const badVersion of Object.keys(badElements)) {
+                errors[`version.${badVersion}`] = badElements[badVersion];
+            }
         }
     }
 

@@ -2,6 +2,7 @@ import * as Joi from '@hapi/joi';
 import {IUtils} from 'utils/utils';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import actionListDomain from './actionsListDomain';
 
 describe('handleJoiError', () => {
@@ -69,7 +70,7 @@ describe('runActionsList', () => {
         const mockUtils: Mockify<IUtils> = {
             pipe: jest.fn().mockReturnValue(
                 jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: 'error'});
+                    throw new ValidationError({test_attr: Errors.ERROR});
                 })
             )
         };
@@ -79,7 +80,7 @@ describe('runActionsList', () => {
             {
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: 'error'});
+                    throw new ValidationError({test_attr: Errors.ERROR});
                 })
             },
             {
