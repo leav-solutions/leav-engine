@@ -66,7 +66,8 @@ export default function({
                         versions_conf: ValuesVersionsConf,
                         input_types: ActionListIOTypes!,
                         output_types: ActionListIOTypes!,
-                        metadata_fields: [Attribute!]
+                        metadata_fields: [Attribute!],
+                        values_list: ValuesListConf
                     }
 
                     input AttributeInput {
@@ -81,7 +82,8 @@ export default function({
                         permissions_conf: Treepermissions_confInput,
                         multiple_values: Boolean,
                         versions_conf: ValuesVersionsConfInput,
-                        metadata_fields: [String!]
+                        metadata_fields: [String!],
+                        values_list: ValuesListConfInput
                     }
 
                     type EmbeddedAttribute {
@@ -110,6 +112,18 @@ export default function({
                         versionable: Boolean!,
                         mode: ValueVersionMode,
                         trees: [String!]
+                    }
+
+                    type ValuesListConf {
+                        enable: Boolean!,
+                        allowFreeEntry: Boolean,
+                        values: [String!]
+                    }
+
+                    input ValuesListConfInput {
+                        enable: Boolean!,
+                        allowFreeEntry: Boolean,
+                        values: [String!]
                     }
 
                     input AttributesFiltersInput {
