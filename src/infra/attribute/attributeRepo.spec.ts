@@ -86,7 +86,13 @@ describe('AttributeRepo', () => {
     });
 
     describe('createAttribute', () => {
-        const docAttrData = {_key: 'test_attribute', system: true, format: 'text', type: 'standard'};
+        const docAttrData = {
+            _key: 'test_attribute',
+            system: true,
+            format: 'text',
+            type: 'standard',
+            label: {fr: 'Test'}
+        };
         const attrData = {
             id: 'test_attribute',
             system: true,

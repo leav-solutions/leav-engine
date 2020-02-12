@@ -68,17 +68,7 @@ export default function({
             return dbUtils.cleanup(res.pop());
         },
         async createAttribute(attrData: IAttribute): Promise<IAttribute> {
-            const defaultParams = {
-                _key: '',
-                system: false,
-                label: {fr: '', en: ''},
-                type: AttributeTypes.ADVANCED,
-                format: AttributeFormats.TEXT,
-                multiple_values: false
-            };
-            let docToInsert = dbUtils.convertToDoc(attrData);
-
-            docToInsert = {...defaultParams, ...docToInsert};
+            const docToInsert = dbUtils.convertToDoc(attrData);
 
             // Insert in libraries collection
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);

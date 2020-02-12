@@ -9,10 +9,8 @@ Object {
     "_key": "test_attribute",
     "format": "text",
     "label": Object {
-      "en": "",
-      "fr": "",
+      "fr": "Test",
     },
-    "multiple_values": false,
     "system": true,
     "type": "standard",
   },
