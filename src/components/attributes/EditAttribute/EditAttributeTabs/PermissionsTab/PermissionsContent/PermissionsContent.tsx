@@ -4,7 +4,11 @@ import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {
+    GET_ATTRIBUTES_attributes_list,
+    GET_ATTRIBUTES_attributes_list_TreeAttribute
+} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../../../../_gqlTypes/GET_LIBRARIES';
 import {
     PermissionsActions,
     PermissionsRelation,
@@ -15,7 +19,7 @@ import DefineTreePermissionsView from '../../../../../permissions/DefineTreePerm
 
 interface IPermissionsContentProps {
     attribute: GET_ATTRIBUTES_attributes_list;
-    treeAttributes: GET_ATTRIBUTES_attributes_list[];
+    treeAttributes: GET_ATTRIBUTES_attributes_list_TreeAttribute[];
     onSubmitSettings: (conf: Treepermissions_confInput) => void;
     readonly: boolean;
 }
@@ -82,7 +86,8 @@ function PermissionsContent({
                     menuItem: localizedLabel(a.label, lang),
                     render: () => (
                         <Tab.Pane key={a.id} className="grow flex-col height100">
-                            {a.linked_tree ? (
+                            {(a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
+                                .linked_tree ? (
                                 <DefineTreePermissionsView
                                     key={a.id}
                                     treeAttribute={a}

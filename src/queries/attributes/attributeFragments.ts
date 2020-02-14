@@ -7,8 +7,6 @@ export const attributeDetailsFragment = gql`
         format
         system
         label(lang: $lang)
-        linked_library
-        linked_tree
         multiple_values
         metadata_fields {
             id
@@ -19,8 +17,10 @@ export const attributeDetailsFragment = gql`
         permissions_conf {
             permissionTreeAttributes {
                 id
-                linked_tree
                 label(lang: $lang)
+                ... on TreeAttribute {
+                    linked_tree
+                }
             }
             relation
         }
@@ -28,6 +28,76 @@ export const attributeDetailsFragment = gql`
             versionable
             mode
             trees
+        }
+        ... on LinkAttribute {
+            linked_library
+        }
+        ... on TreeAttribute {
+            linked_tree
+        }
+    }
+`;
+
+export const attributeValuesListDetailsFragment = gql`
+    fragment AttributeValuesListDetails on Attribute {
+        ... on StandardAttribute {
+            values_list {
+                enable
+                allowFreeEntry
+                values
+            }
+        }
+        ... on LinkAttribute {
+            values_list {
+                enable
+                allowFreeEntry
+                linkValues: values {
+                    whoAmI {
+                        id
+                        library {
+                            id
+                            label
+                        }
+                        label
+                        color
+                        preview
+                    }
+                }
+            }
+        }
+        ... on TreeAttribute {
+            values_list {
+                enable
+                allowFreeEntry
+                treeValues: values {
+                    record {
+                        whoAmI {
+                            id
+                            library {
+                                id
+                                label
+                            }
+                            label
+                            color
+                            preview
+                        }
+                    }
+                    ancestors {
+                        record {
+                            whoAmI {
+                                id
+                                library {
+                                    id
+                                    label
+                                }
+                                label
+                                color
+                                preview
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 `;

@@ -1,4 +1,4 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {wait} from '@apollo/react-testing';
 import {InMemoryCache} from 'apollo-cache-inmemory';
 import {mount} from 'enzyme';
 import React from 'react';
@@ -8,6 +8,8 @@ import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttribut
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, PermissionsRelation, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {mockAttrAdv, mockAttrSimple} from '../../../../../__mocks__/attributes';
+import {attributesFragmentMatcher} from '../../../../../__mocks__/fragmentMatchers/attributesFragmentMatchers';
+import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import PermissionsTab from './PermissionsTab';
 
 jest.mock(
@@ -52,9 +54,9 @@ describe('PermissionsTab', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks}>
+                <MockedProviderWithFragments mocks={mocks}>
                     <PermissionsTab attribute={attribute} readonly={false} />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -83,9 +85,9 @@ describe('PermissionsTab', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks}>
+                <MockedProviderWithFragments mocks={mocks}>
                     <PermissionsTab attribute={attribute} readonly={false} />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -150,7 +152,7 @@ describe('PermissionsTab', () => {
             }
         ];
 
-        const mockCache = new InMemoryCache();
+        const mockCache = new InMemoryCache({fragmentMatcher: attributesFragmentMatcher});
         mockCache.writeQuery({
             query: getAttributesQuery,
             variables: {id: 'simple_attribute'},
@@ -172,9 +174,9 @@ describe('PermissionsTab', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} cache={mockCache}>
+                <MockedProviderWithFragments mocks={mocks} cache={mockCache}>
                     <PermissionsTab attribute={attribute} readonly={false} />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 

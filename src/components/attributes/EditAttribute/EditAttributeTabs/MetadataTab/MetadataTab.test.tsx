@@ -1,4 +1,4 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {wait} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
@@ -7,6 +7,7 @@ import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttribut
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
+import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import MetadataTab from './MetadataTab';
 
 jest.mock(
@@ -110,9 +111,9 @@ describe('MetadataTab', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks}>
+                <MockedProviderWithFragments mocks={mocks}>
                     <MetadataTab attribute={attribute} readonly={false} />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 

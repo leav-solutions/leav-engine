@@ -1,9 +1,10 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {wait} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
+import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import InfosTab from './InfosTab';
 
 jest.mock(
@@ -65,9 +66,9 @@ describe('InfosTab', () => {
         ];
 
         const comp = mount(
-            <MockedProvider mocks={mocks} addTypename>
+            <MockedProviderWithFragments mocks={mocks} addTypename>
                 <InfosTab onPostSave={onPostSave} />
-            </MockedProvider>
+            </MockedProviderWithFragments>
         );
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');
 
@@ -106,9 +107,9 @@ describe('InfosTab', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocksError} addTypename>
+                <MockedProviderWithFragments mocks={mocksError} addTypename>
                     <InfosTab />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');

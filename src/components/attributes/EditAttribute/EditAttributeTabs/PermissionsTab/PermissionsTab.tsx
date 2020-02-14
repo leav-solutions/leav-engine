@@ -6,7 +6,8 @@ import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttribut
 import {
     GET_ATTRIBUTES,
     GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list
+    GET_ATTRIBUTES_attributes_list,
+    GET_ATTRIBUTES_attributes_list_TreeAttribute
 } from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
@@ -69,7 +70,11 @@ function PermissionsTab({attribute, readonly}: IPermissionsTabProps): JSX.Elemen
         <PermissionsContent
             attribute={attribute}
             readonly={readonly}
-            treeAttributes={!!data && data.attributes ? data.attributes.list : []}
+            treeAttributes={
+                !!data && data.attributes
+                    ? (data.attributes.list as GET_ATTRIBUTES_attributes_list_TreeAttribute[])
+                    : []
+            }
             onSubmitSettings={_handleSubmitSettings}
         />
     );

@@ -18,7 +18,9 @@ export const getLibsQuery = gql`
                 permissions_conf {
                     permissionTreeAttributes {
                         id
-                        linked_tree
+                        ... on TreeAttribute {
+                            linked_tree
+                        }
                         label(lang: $lang)
                     }
                     relation

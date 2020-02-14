@@ -1,9 +1,10 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {mockAttrAdv} from '../../../__mocks__/attributes';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import EditAttribute from './EditAttribute';
 
 jest.mock(
@@ -44,9 +45,9 @@ describe('EditAttribute', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks}>
+                <MockedProviderWithFragments mocks={mocks}>
                     <EditAttribute attributeId="test_attr" />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -75,9 +76,9 @@ describe('EditAttribute', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks}>
+                <MockedProviderWithFragments mocks={mocks}>
                     <EditAttribute attributeId="test_attr" />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -113,9 +114,9 @@ describe('EditAttribute', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks}>
+                <MockedProviderWithFragments mocks={mocks}>
                     <EditAttribute attributeId="test_attr" />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -131,9 +132,9 @@ describe('EditAttribute', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider>
+                <MockedProviderWithFragments>
                     <EditAttribute />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 

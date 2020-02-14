@@ -5,7 +5,11 @@ import {Button, Dropdown, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../hooks/useLang';
 import {isLinkAttribute, localizedLabel} from '../../../../../../utils/utils';
-import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+import {
+    GET_LIBRARIES_libraries_list_attributes,
+    GET_LIBRARIES_libraries_list_attributes_LinkAttribute,
+    GET_LIBRARIES_libraries_list_attributes_TreeAttribute
+} from '../../../../../../_gqlTypes/GET_LIBRARIES';
 import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../../_gqlTypes/RecordIdentity';
 import {FormLinksAllowedValues, ILinkValue, ITreeLinkValue} from '../../../../../../_types/records';
@@ -128,24 +132,26 @@ function EditRecordFormLinks({values, attribute, onChange, readOnly = false}: IE
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>
-                            {!readOnly && isLinkAttr && attribute.linked_library && (
-                                <Dropdown trigger={addValueBtn} icon={false}>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item
-                                            data-test-id="add_value_btn"
-                                            onClick={_handleOpenSelectRecordModal}
-                                            icon="search"
-                                            text={t('records.select_record')}
-                                        />
-                                        <Dropdown.Item
-                                            data-test-id="add_value_create_btn"
-                                            onClick={_handleOpenAddRecordModal}
-                                            icon="plus circle"
-                                            text={t('records.create_record')}
-                                        />
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            )}
+                            {!readOnly &&
+                                isLinkAttr &&
+                                (attribute as GET_LIBRARIES_libraries_list_attributes_LinkAttribute).linked_library && (
+                                    <Dropdown trigger={addValueBtn} icon={false}>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item
+                                                data-test-id="add_value_btn"
+                                                onClick={_handleOpenSelectRecordModal}
+                                                icon="search"
+                                                text={t('records.select_record')}
+                                            />
+                                            <Dropdown.Item
+                                                data-test-id="add_value_create_btn"
+                                                onClick={_handleOpenAddRecordModal}
+                                                icon="plus circle"
+                                                text={t('records.create_record')}
+                                            />
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                )}
                             {!readOnly && attribute.type === AttributeType.tree && addValueBtn}
                             <ElementsCount data-test-id="elements_count">
                                 {t('records.links_elements_count', {count: valuesToDisplay.length})}
@@ -176,29 +182,39 @@ function EditRecordFormLinks({values, attribute, onChange, readOnly = false}: IE
                     })}
                 </Table.Body>
             </Table>
-            {!readOnly && isLinkAttr && attribute.linked_library && (
-                <>
-                    <SelectRecordModal
-                        open={isOpenSelectRecordModal}
-                        library={attribute.linked_library}
-                        onSelect={_onRecordAdded}
-                        onClose={_handleCloseSelectRecordModal}
+            {!readOnly &&
+                isLinkAttr &&
+                (attribute as GET_LIBRARIES_libraries_list_attributes_LinkAttribute).linked_library && (
+                    <>
+                        <SelectRecordModal
+                            open={isOpenSelectRecordModal}
+                            library={
+                                (attribute as GET_LIBRARIES_libraries_list_attributes_LinkAttribute).linked_library ||
+                                ''
+                            }
+                            onSelect={_onRecordAdded}
+                            onClose={_handleCloseSelectRecordModal}
+                        />
+                        <EditRecordModal
+                            library={
+                                (attribute as GET_LIBRARIES_libraries_list_attributes_LinkAttribute).linked_library ||
+                                ''
+                            }
+                            open={isOpenAddRecordModal}
+                            onClose={_handleCloseAddRecordModal}
+                        />
+                    </>
+                )}
+            {!readOnly &&
+                attribute.type === AttributeType.tree &&
+                (attribute as GET_LIBRARIES_libraries_list_attributes_TreeAttribute).linked_tree && (
+                    <SelectTreeNodeModal
+                        open={isOpenSelectTreeNodeModal}
+                        onClose={_handleCloseSelectTreeNodeModal}
+                        tree={(attribute as GET_LIBRARIES_libraries_list_attributes_TreeAttribute).linked_tree || ''}
+                        onSelect={_onTreeNodeSelected}
                     />
-                    <EditRecordModal
-                        library={attribute.linked_library}
-                        open={isOpenAddRecordModal}
-                        onClose={_handleCloseAddRecordModal}
-                    />
-                </>
-            )}
-            {!readOnly && attribute.type === AttributeType.tree && attribute.linked_tree && (
-                <SelectTreeNodeModal
-                    open={isOpenSelectTreeNodeModal}
-                    onClose={_handleCloseSelectTreeNodeModal}
-                    tree={attribute.linked_tree}
-                    onSelect={_onTreeNodeSelected}
-                />
-            )}
+                )}
         </>
     );
 }

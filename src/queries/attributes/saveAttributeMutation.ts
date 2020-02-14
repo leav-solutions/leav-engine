@@ -1,6 +1,8 @@
 import gql from 'graphql-tag';
+import {attributeValuesListDetailsFragment} from './attributeFragments';
 
 export const saveAttributeQuery = gql`
+    ${attributeValuesListDetailsFragment}
     mutation SAVE_ATTRIBUTE($attrData: AttributeInput!) {
         saveAttribute(attribute: $attrData) {
             id
@@ -8,13 +10,13 @@ export const saveAttributeQuery = gql`
             format
             system
             label
-            linked_library
-            linked_tree
             multiple_values
             permissions_conf {
                 permissionTreeAttributes {
                     id
-                    linked_tree
+                    ... on TreeAttribute {
+                        linked_tree
+                    }
                     label
                 }
                 relation
@@ -29,6 +31,13 @@ export const saveAttributeQuery = gql`
                 label
                 type
                 format
+            }
+            ...AttributeValuesListDetails
+            ... on LinkAttribute {
+                linked_library
+            }
+            ... on TreeAttribute {
+                linked_tree
             }
         }
     }

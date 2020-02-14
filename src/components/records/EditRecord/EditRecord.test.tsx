@@ -1,9 +1,10 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {mockLibrary} from '../../../__mocks__/libraries';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import EditRecord from './EditRecord';
 
 jest.mock(
@@ -41,9 +42,9 @@ describe('EditRecord', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <EditRecord library="products" recordId="12345" />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -73,9 +74,9 @@ describe('EditRecord', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <EditRecord library="products" recordId="12345" />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -115,9 +116,9 @@ describe('EditRecord', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <EditRecord library="products" recordId="12345" onIdentityUpdate={onLabelUpdate} />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
