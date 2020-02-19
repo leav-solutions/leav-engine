@@ -364,7 +364,11 @@ export default function({
                       })
                     : value;
 
-            return valueRepo.deleteValue(library, recordId, attr, actionsListRes);
+            const res = await valueRepo.deleteValue(library, recordId, attr, actionsListRes);
+            // Make sure attribute is returned here
+            res.attribute = attribute;
+
+            return res;
         }
     };
 }
