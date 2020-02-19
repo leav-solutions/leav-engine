@@ -1,4 +1,6 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -11,12 +13,16 @@ export interface ICoreAttributeApp {
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.record'?: IRecordDomain;
+    'core.domain.tree'?: ITreeDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core'?: ICoreApp;
 }
 
 export default function({
     'core.domain.attribute': attributeDomain = null,
+    'core.domain.record': recordDomain = null,
+    'core.domain.tree': treeDomain = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.core': coreApp = null
 }: IDeps = {}): ICoreAttributeApp {
@@ -50,15 +56,28 @@ export default function({
                         ${Object.values(ActionsListEvents).map(event => `${event}: [IOTypes!]!`)}
                     }
 
-                    # Application Attribute
-                    type Attribute {
+                    interface Attribute {
                         id: ID!,
                         type: AttributeType!,
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        linked_library: String,
-                        linked_tree: String,
+                        actions_list: ActionsListConfiguration,
+                        permissions_conf: Treepermissions_conf,
+                        multiple_values: Boolean!,
+                        versions_conf: ValuesVersionsConf,
+                        input_types: ActionListIOTypes!,
+                        output_types: ActionListIOTypes!,
+                        metadata_fields: [Attribute!]
+                    }
+
+                    # Application Attribute
+                    type StandardAttribute implements Attribute {
+                        id: ID!,
+                        type: AttributeType!,
+                        format: AttributeFormat,
+                        system: Boolean!,
+                        label(lang: [AvailableLanguage!]): SystemTranslation,
                         embedded_fields: [EmbeddedAttribute],
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
@@ -67,7 +86,41 @@ export default function({
                         input_types: ActionListIOTypes!,
                         output_types: ActionListIOTypes!,
                         metadata_fields: [Attribute!],
-                        values_list: ValuesListConf
+                        values_list: StandardValuesListConf
+                    }
+
+                    type LinkAttribute implements Attribute{
+                        id: ID!,
+                        type: AttributeType!,
+                        format: AttributeFormat,
+                        system: Boolean!,
+                        label(lang: [AvailableLanguage!]): SystemTranslation,
+                        linked_library: String,
+                        actions_list: ActionsListConfiguration,
+                        permissions_conf: Treepermissions_conf,
+                        multiple_values: Boolean!,
+                        versions_conf: ValuesVersionsConf,
+                        input_types: ActionListIOTypes!,
+                        output_types: ActionListIOTypes!,
+                        metadata_fields: [Attribute!],
+                        values_list: LinkValuesListConf
+                    }
+
+                    type TreeAttribute implements Attribute{
+                        id: ID!,
+                        type: AttributeType!,
+                        format: AttributeFormat,
+                        system: Boolean!,
+                        label(lang: [AvailableLanguage!]): SystemTranslation,
+                        linked_tree: String,
+                        actions_list: ActionsListConfiguration,
+                        permissions_conf: Treepermissions_conf,
+                        multiple_values: Boolean!,
+                        versions_conf: ValuesVersionsConf,
+                        input_types: ActionListIOTypes!,
+                        output_types: ActionListIOTypes!,
+                        metadata_fields: [Attribute!],
+                        values_list: TreeValuesListConf
                     }
 
                     input AttributeInput {
@@ -114,10 +167,22 @@ export default function({
                         trees: [String!]
                     }
 
-                    type ValuesListConf {
+                    type StandardValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
                         values: [String!]
+                    }
+
+                    type LinkValuesListConf {
+                        enable: Boolean!,
+                        allowFreeEntry: Boolean,
+                        values: [Record!]
+                    }
+
+                    type TreeValuesListConf {
+                        enable: Boolean!,
+                        allowFreeEntry: Boolean,
+                        values: [TreeNode!]
                     }
 
                     input ValuesListConfInput {
@@ -195,6 +260,18 @@ export default function({
                         }
                     },
                     Attribute: {
+                        __resolveType: (attr: IAttribute) => {
+                            switch (attr.type) {
+                                case AttributeTypes.SIMPLE:
+                                case AttributeTypes.ADVANCED:
+                                    return 'StandardAttribute';
+                                case AttributeTypes.SIMPLE_LINK:
+                                case AttributeTypes.ADVANCED_LINK:
+                                    return 'LinkAttribute';
+                                case AttributeTypes.TREE:
+                                    return 'TreeAttribute';
+                            }
+                        },
                         /**
                          * Return attribute label, potentially filtered by requested language
                          */
@@ -209,6 +286,54 @@ export default function({
                                       attributeDomain.getAttributeProperties(attrId)
                                   )
                                 : null
+                    },
+                    LinkAttribute: {
+                        values_list: (attributeData: IAttribute, a2) => {
+                            if (!attributeData.values_list.enable) {
+                                return attributeData.values_list;
+                            }
+
+                            // Here, values is a list of record ID. Return record object instead
+                            // TODO: this could be optimized if find() would allow searching for multiple IDs at once
+                            return {
+                                ...attributeData.values_list,
+                                values: (attributeData.values_list.values as string[])
+                                    .map(async recId => {
+                                        const record = await recordDomain.find({
+                                            library: attributeData.linked_library,
+                                            filters: {id: recId}
+                                        });
+
+                                        return record.list.length ? record.list[0] : null;
+                                    })
+                                    .filter(r => r !== null) // Remove invalid values (unknown records)
+                            };
+                        }
+                    },
+                    TreeAttribute: {
+                        values_list: async (attributeData: IAttribute, _, ctx) => {
+                            ctx.treeId = attributeData.linked_tree;
+
+                            // Here, values is a list of "[id_record]/[id_library]". Return tree node instead
+                            return {
+                                ...attributeData.values_list,
+                                values: (attributeData.values_list.values as string[])
+                                    .map(async treeElem => {
+                                        const [library, id] = treeElem.split('/');
+                                        const record = await recordDomain.find({
+                                            library,
+                                            filters: {id}
+                                        });
+                                        const isInTree = await treeDomain.isElementPresent(attributeData.linked_tree, {
+                                            library,
+                                            id: Number(id)
+                                        });
+                                        const ret = record.list.length && isInTree ? {record: record.list[0]} : null;
+                                        return ret;
+                                    })
+                                    .filter(r => r !== null)
+                            };
+                        }
                     }
                 }
             };

@@ -1,6 +1,8 @@
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
+import {IRecord} from './record';
 import {ISystemTranslation} from './systemTranslation';
+import {ITreeElement} from './tree';
 
 export interface IAttribute {
     id: string;
@@ -53,7 +55,7 @@ export interface IAttributeFilterOptions {
 
 export interface IValuesListConf {
     enable: boolean;
-    values?: string[];
+    values?: string[] | IRecord[] | ITreeElement[];
     allowFreeEntry?: boolean;
 }
 
