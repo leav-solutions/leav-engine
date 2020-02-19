@@ -85,7 +85,12 @@
             "date": "Date",
             "encrypted": "Crypté",
             "numeric": "Numérique"
-        }
+        },
+        "values_list_enable": "Activer",
+        "allow_free_entry": "Autoriser la saisie libre",
+        "values": "Valeurs",
+        "values_list": "Liste de valeurs",
+        "add_value": "Ajouter une valeur"
     },
     "trees": {
         "title": "Arbres",

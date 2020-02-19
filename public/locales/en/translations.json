@@ -86,7 +86,12 @@
             "date": "Date",
             "encrypted": "Encrypted",
             "numeric": "Numeric"
-        }
+        },
+        "values_list_enable": "Enable",
+        "allow_free_entry": "Allow free entry",
+        "values": "Values",
+        "values_list": "Values list",
+        "add_value": "Add value"
     },
     "trees": {
         "title": "Trees",

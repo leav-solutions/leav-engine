@@ -5,7 +5,9 @@ import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttribut
 import {
     GET_ATTRIBUTES,
     GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list
+    GET_ATTRIBUTES_attributes_list,
+    GET_ATTRIBUTES_attributes_list_LinkAttribute,
+    GET_ATTRIBUTES_attributes_list_TreeAttribute
 } from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
@@ -44,8 +46,8 @@ function InfosTab({attribute, onPostSave, forcedType}: IInfosTabProps): JSX.Elem
                 },
                 type: dataToSave.type,
                 format: dataToSave.format,
-                linked_tree: dataToSave.linked_tree,
-                linked_library: dataToSave.linked_library,
+                linked_tree: (dataToSave as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree,
+                linked_library: (dataToSave as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library,
                 multiple_values: dataToSave.multiple_values,
                 versions_conf: {
                     versionable: dataToSave.versions_conf ? dataToSave.versions_conf.versionable : false,

@@ -128,6 +128,7 @@ export interface AttributeInput {
     multiple_values?: boolean | null;
     versions_conf?: ValuesVersionsConfInput | null;
     metadata_fields?: string[] | null;
+    values_list?: ValuesListConfInput | null;
 }
 
 export interface EmbeddedAttributeInput {
@@ -219,6 +220,12 @@ export interface ValueBatchInput {
 export interface ValueVersionInput {
     name: string;
     value: TreeElementInput;
+}
+
+export interface ValuesListConfInput {
+    enable: boolean;
+    allowFreeEntry?: boolean | null;
+    values?: string[] | null;
 }
 
 export interface ValuesVersionsConfInput {
