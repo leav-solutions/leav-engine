@@ -10,9 +10,9 @@ export const consume = async (channel: Channel, config: IConfig) => {
 
 export const handleMsg = async (msg: ConsumeMessage, channel: Channel, config: IConfig) => {
     if (msg.content) {
-        const {results, context} = await processPreview(msg, config);
+        const response = await processPreview(msg, config);
 
-        await sendResponse(channel, results, config.amqp.publish, context);
+        await sendResponse(channel, config.amqp.publish, response);
 
         channel.ack(msg);
     }

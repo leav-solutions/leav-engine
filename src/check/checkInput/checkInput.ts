@@ -1,7 +1,7 @@
-import {handleError} from './../../utils/log';
-import {ErrorPreview} from './../../types/ErrorPreview';
-import {lstat, access} from 'fs';
+import {access, lstat} from 'fs';
 import {join} from 'path';
+import {ErrorPreview} from './../../types/ErrorPreview';
+import {handleError} from './../../utils/log';
 
 export const checkInput = async (input: string, inputRootPath: string) => {
     const absInput = join(inputRootPath, input);

@@ -1,8 +1,8 @@
-import {handleError} from './../../utils/log';
-import {ErrorPreview} from './../../types/ErrorPreview';
-import {extname, dirname, join} from 'path';
-import {access, mkdir, existsSync} from 'fs';
+import {access, mkdir} from 'fs';
+import {dirname, extname, join} from 'path';
 import {IConfig} from '../../types/types';
+import {handleError} from '../../utils/log';
+import {ErrorPreview} from './../../types/ErrorPreview';
 
 export const checkOutput = async (output: string, size: number, name: string, config: IConfig) => {
     // check if folder exist and create it if not
@@ -16,34 +16,20 @@ export const checkOutput = async (output: string, size: number, name: string, co
     if (!pathExist) {
         const pathList = dirOutput.split('/');
         pathList.shift();
-        let allPath = '/';
+        const errorCreateDir = await createDirectoryRecursively(pathList, output, size);
 
-        for (const path of pathList) {
-            allPath = join(allPath, path);
-            const folderExist = await new Promise(r => access(allPath, e => r(!e)));
+        if (errorCreateDir) {
+            const errorId = handleError(errorCreateDir);
 
-            if (!folderExist) {
-                const errDirCreated: NodeJS.ErrnoException = await new Promise(r =>
-                    mkdir(allPath, e => {
-                        r(e);
-                    }),
-                );
-
-                // ignore error -17: folder already exists
-                if (errDirCreated && errDirCreated.errno !== -17) {
-                    const errorId = handleError(errDirCreated);
-
-                    throw new ErrorPreview({
-                        error: 401,
-                        params: {
-                            output,
-                            size,
-                            name,
-                            errorId,
-                        },
-                    });
-                }
-            }
+            throw new ErrorPreview({
+                error: 401,
+                params: {
+                    output,
+                    size,
+                    name,
+                    errorId,
+                },
+            });
         }
     }
 
@@ -61,5 +47,27 @@ export const checkOutput = async (output: string, size: number, name: string, co
                 name,
             },
         });
+    }
+};
+
+export const createDirectoryRecursively = async (pathList: string[], output: string, size: number) => {
+    let allPath = '/';
+
+    for (const path of pathList) {
+        allPath = join(allPath, path);
+        const folderExist = await new Promise(r => access(allPath, e => r(!e)));
+
+        if (!folderExist) {
+            const errDirCreated: NodeJS.ErrnoException = await new Promise(r =>
+                mkdir(allPath, e => {
+                    r(e);
+                }),
+            );
+
+            // ignore error -17: folder already exists
+            if (errDirCreated && errDirCreated.errno !== -17) {
+                return errDirCreated;
+            }
+        }
     }
 };

@@ -33,3 +33,7 @@ RUN apk --no-cache add bash mc openjdk8 \
 
 # set working dir
 WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm install
+

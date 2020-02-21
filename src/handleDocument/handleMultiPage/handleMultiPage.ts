@@ -1,13 +1,47 @@
-import {handleError} from './../../utils/log';
-import {ErrorPreview} from './../../types/ErrorPreview';
 import {execFile} from 'child_process';
-import {access, mkdir, existsSync} from 'fs';
-import {join, dirname} from 'path';
-import {IRootPaths} from '../../types/types';
+import {access} from 'fs';
+import {join} from 'path';
+import {createDirectoryRecursively} from '../../check/checkOutput/checkOutput';
+import {IResult, IRootPaths} from '../../types/types';
+import {ErrorPreview} from './../../types/ErrorPreview';
+import {handleError} from './../../utils/log';
 
-export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPaths: IRootPaths) => {
+export const handleMultiPage = async (
+    pdfFile: string,
+    multiPage: string,
+    rootPaths: IRootPaths,
+    results: IResult[],
+) => {
     const folderDestinationPath = join(rootPaths.output, multiPage);
 
+    let nbDigit: number;
+    try {
+        await _createFolderRec(folderDestinationPath);
+
+        nbDigit = await _countPage(pdfFile);
+        nbDigit = nbDigit.toString().length;
+
+        await _split(folderDestinationPath, nbDigit, pdfFile);
+    } catch (e) {
+        const {error, params} = e;
+        const result: IResult = {error, params};
+
+        results.push(result);
+        return;
+    }
+
+    const result: IResult = {
+        error: 0,
+        params: {
+            output: multiPage,
+            name: 'pages',
+        },
+    };
+
+    results.push(result);
+};
+
+const _createFolderRec = async (folderDestinationPath: string) => {
     const pathExist = await new Promise(r =>
         access(folderDestinationPath, e => {
             r(!e);
@@ -15,7 +49,10 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
     );
 
     if (!pathExist) {
-        const errorCreateDir = await new Promise(r => mkdir(folderDestinationPath, async e => r(e)));
+        const pathList = folderDestinationPath.split('/');
+        pathList.shift();
+        const errorCreateDir = await createDirectoryRecursively(pathList, folderDestinationPath, 0);
+
         if (errorCreateDir) {
             const errorId = handleError(errorCreateDir);
 
@@ -27,8 +64,9 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
             });
         }
     }
+};
 
-    let nbDigit: number;
+const _countPage = async (pdfFile: string) => {
     const {result: resultCountPage, error: errorCountPage} = await new Promise(resolve =>
         execFile(
             'gs',
@@ -54,8 +92,10 @@ export const handleMultiPage = async (pdfFile: string, multiPage: string, rootPa
         });
     }
 
-    nbDigit = resultCountPage.toString().length;
+    return resultCountPage;
+};
 
+const _split = async (folderDestinationPath: string, nbDigit: number, pdfFile: string) => {
     const fullPath = join(folderDestinationPath, `%${'0' + nbDigit}d.pdf`);
 
     const {error} = await new Promise(resolve =>

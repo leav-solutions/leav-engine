@@ -24,10 +24,11 @@ export interface IConfig {
 
 export interface IResult {
     error: number;
+    error_detail?: string;
     params?: {
         background?: true | false | string;
         density?: number;
-        size: number;
+        size?: number;
         output: string;
         name: string;
     };
@@ -35,6 +36,7 @@ export interface IResult {
 
 export interface IResponse {
     context: any;
+    input: string;
     results?: IResult[];
 }
 

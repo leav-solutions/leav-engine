@@ -29,7 +29,15 @@ export const execute = async ({
     first = false,
 }: IExecute) => {
     if (type === 'document') {
-        await handleDocument(absInput, absOutput, size.size, size.name, version, rootPaths);
+        await handleDocument({
+            input: absInput,
+            output: absOutput,
+            size: size.size,
+            name: size.name,
+            version,
+            rootPaths,
+            results,
+        });
     } else {
         const commands = await getArgs(type, absInput, absOutput, size.size, size.name, version, first);
         for (const commandAndArgs of commands) {
@@ -60,10 +68,12 @@ export const execute = async ({
         }
     }
 
+    const outputWithoutRootPath = absOutput.replace(rootPaths.output, '');
+
     results.push({
         error: 0,
         params: {
-            output: absOutput,
+            output: outputWithoutRootPath,
             size: size.size,
             name: size.name,
             density: version.density,

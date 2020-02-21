@@ -1,21 +1,22 @@
 {
-    "rootPath": "/data/",
+    "inputRootPath": "/files",
+    "outputRootPath": "/results",
     "ICCPath": "/app/profile/",
     "amqp": {
         "protocol": "amqp",
-        "hostname": "host.docker.internal",
+        "hostname": "message_broker",
         "port": 15672,
         "username": "guest",
         "password": "guest",
         "consume": {
-            "queue": "preview",
+            "queue": "files_preview_request",
             "exchange": "preview",
-            "routingKey": "preview"
+            "routingKey": "files_preview_request"
         },
         "publish": {
-            "queue": "preview_response",
+            "queue": "files_preview_response",
             "exchange": "preview",
-            "routingKey": "preview_response"
+            "routingKey": "files_preview_response"
         }
     },
     "verbose": true

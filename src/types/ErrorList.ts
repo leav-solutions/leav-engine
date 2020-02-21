@@ -1,4 +1,6 @@
 export enum ErrorList {
+    // no error
+    'preview create' = 0,
     // config
     "can't access the inputRootPath" = 101,
     "can't access the outputRootPath" = 102,

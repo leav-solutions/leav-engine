@@ -1,21 +1,24 @@
-import {handleError} from './../utils/log';
-import {ErrorPreview} from './../types/ErrorPreview';
 import {execFile} from 'child_process';
-import {extname} from 'path';
-import {handleMultiPage} from './handleMultiPage/handleMultiPage';
 import {unlink} from 'fs';
-import {IVersion, IRootPaths} from '../types/types';
+import {extname} from 'path';
 import {getImageArgs} from '../getArgs/getImageArgs/getImageArgs';
+import {IResult, IRootPaths, IVersion} from '../types/types';
+import {ErrorPreview} from './../types/ErrorPreview';
+import {handleError} from './../utils/log';
+import {handleMultiPage} from './handleMultiPage/handleMultiPage';
+
+interface IHandleDocument {
+    input: string;
+    output: string;
+    size: number;
+    name: string;
+    version: IVersion;
+    rootPaths: IRootPaths;
+    results: IResult[];
+}
 
 // convert document in tmp pdf, convert the pdf in png and delete the pdf
-export const handleDocument = async (
-    input: string,
-    output: string,
-    size: number,
-    name: string,
-    version: IVersion,
-    rootPaths: IRootPaths,
-) => {
+export const handleDocument = async ({input, output, size, name, version, rootPaths, results}: IHandleDocument) => {
     const ext = extname(input)
         .toLowerCase()
         .replace('.', '');
@@ -26,7 +29,7 @@ export const handleDocument = async (
     }
 
     if (version.multiPage) {
-        await handleMultiPage(pdfFile, version.multiPage, rootPaths);
+        await handleMultiPage(pdfFile, version.multiPage, rootPaths, results);
     }
 
     const commands = await getImageArgs('pdf', pdfFile, output, size, name, version, true);

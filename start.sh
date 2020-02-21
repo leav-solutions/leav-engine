@@ -1,3 +1,3 @@
 /usr/local/bin/unoconv --listener &
 npm install
-npm run start:dev config/config.demo.json
+npm run start:watch

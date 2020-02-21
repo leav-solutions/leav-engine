@@ -34,11 +34,13 @@ export const processPreview = async (msg: ConsumeMessage, config: IConfig): Prom
         return {
             results: [result],
             context: msgContent.context,
+            input: msgContent.input,
         };
     }
 
     return {
         results,
         context: msgContent.context,
+        input: msgContent.input,
     };
 };
