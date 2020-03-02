@@ -154,7 +154,9 @@
     "navigator": {
         "title": "Navigateur",
         "select_root": "Veuillez sélectionner une bibliothèque dans la liste ci-contre.",
-        "edit_filters": "Modifier les filtres"
+        "edit_filters": "Modifier les filtres",
+        "select_range": "Selectionner la limite d'affichage",
+        "display_all": "Montrer tout"
     },
     "plugins": {
         "title": "Plugins",
