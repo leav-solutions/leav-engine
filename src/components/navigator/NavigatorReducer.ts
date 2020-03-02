@@ -27,6 +27,15 @@ export interface IReducerState {
     showFilters: boolean;
     list: RecordData[];
     execSearch: boolean;
+    availableOffsets: Array<number | string>;
+    selectedOffset: number | null;
+    totalCount?: number;
+    offset?: number;
+    currentPage?: number;
+}
+export interface ICursors {
+    prev: string;
+    next: string;
 }
 export interface IFilter {
     attribute: string;
@@ -48,7 +57,9 @@ export enum ActionTypes {
     SET_LIST = 'SET_LIST',
     FILTER_REMOVE = 'FILTER_REMOVE',
     SELECTION_ADD = 'SELECTION_ADD',
-    SELECTION_REMOVE = 'SELECTION_REMOVE'
+    SELECTION_REMOVE = 'SELECTION_REMOVE',
+    SET_OFFSET = 'SET_OFFSET',
+    SET_LIMIT = 'SET_LIMIT'
 }
 
 export const initialState = {
@@ -68,7 +79,9 @@ export const initialState = {
     filters: [],
     showFilters: false,
     list: [],
-    execSearch: true
+    execSearch: true,
+    availableOffsets: [5, 10, 15, 20, 50, 100],
+    selectedOffset: 10
 };
 
 const reducer = (state: IReducerState, action: IReducerAction): IReducerState => {
@@ -133,8 +146,38 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
         case ActionTypes.SET_LIST:
             return {
                 ...state,
-                list: action.data,
-                execSearch: false
+                list: action.data.list,
+                totalCount: action.data.totalCount,
+                offset: action.data.offset,
+                execSearch: false,
+                availableOffsets:
+                    state.availableOffsets.length < 7
+                        ? [...state.availableOffsets, action.data.all]
+                        : state.availableOffsets
+            };
+        case ActionTypes.SET_OFFSET:
+            return {
+                ...state,
+                offset: action.data.offset,
+                currentPage: action.data.page,
+                execSearch: true
+            };
+        case ActionTypes.SET_LIMIT:
+            if (typeof action.data.limit === 'string') {
+                return {
+                    ...state,
+                    selectedOffset: null,
+                    offset: 0,
+                    currentPage: 1,
+                    execSearch: true
+                };
+            }
+            return {
+                ...state,
+                selectedOffset: action.data.limit,
+                offset: 0,
+                currentPage: 1,
+                execSearch: true
             };
         case ActionTypes.SELECTION_ADD:
             const addedSelection = state.multipleSelection

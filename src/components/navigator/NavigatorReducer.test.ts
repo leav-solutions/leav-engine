@@ -85,8 +85,24 @@ describe('Navigator Reducer', () => {
     test('Action SET_LIST', () => {
         const state = reducer(initialState, {
             type: ActionTypes.SET_LIST,
-            data: [1, 2]
+            data: {list: [1, 2]}
         });
         expect(state.list).toHaveLength(2);
+    });
+    test('Action SET_OFFSET', () => {
+        const data = {offset: 3, page: 2};
+        const state = reducer(initialState, {
+            type: ActionTypes.SET_OFFSET,
+            data
+        });
+        expect(state.offset).toBe(3);
+        expect(state.currentPage).toBe(2);
+    });
+    test('Action SET_LIMIT', () => {
+        const state = reducer(initialState, {
+            type: ActionTypes.SET_LIMIT,
+            data: {limit: 25}
+        });
+        expect(state.selectedOffset).toBe(25);
     });
 });
