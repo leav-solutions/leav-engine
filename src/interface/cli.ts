@@ -1,6 +1,6 @@
 import {IBenchmarkApp} from 'app/benchmark/benchmarkApp';
 import {IImporterApp} from 'app/importer/importerApp';
-import * as program from 'commander';
+import program from 'commander';
 
 interface IDeps {
     'core.app.importer'?: IImporterApp;

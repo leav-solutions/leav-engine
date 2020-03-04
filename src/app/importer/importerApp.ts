@@ -34,6 +34,12 @@ export default function({
     'core.depsManager': depsManager = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): IImporterApp {
+    const _writeToConsole = (msg, clearLine = true) => {
+        process.stdout.clearLine(-1);
+        process.stdout.cursorTo(0);
+        process.stdout.write(msg);
+    };
+
     const _processLibraries = (libraries, infos: IQueryInfos): Promise<any[]> => {
         return Promise.all(
             libraries.map(lib => {
@@ -83,28 +89,28 @@ export default function({
     };
 
     const _processRecords = async (records, infos): Promise<{[key: number]: number}> => {
+        let insertedRecords = 0;
+        const _insertRecord = async (library, key) => {
+            const createdRecord = await recordDomain.createRecord(library, infos);
+            recordsMapping[library] = recordsMapping[library] || {};
+            recordsMapping[library][key] = createdRecord.id;
+
+            insertedRecords++;
+            _writeToConsole(`${insertedRecords} created records...`);
+        };
+
         const recordsMapping = {};
-        const recordsToImport = [];
         for (const libName of Object.keys(records)) {
             if (isArray(records[libName])) {
                 for (const record of records[libName]) {
-                    recordsToImport.push({library: libName, key: record.key});
+                    await _insertRecord(libName, record.key);
                 }
             } else if (records[libName]) {
                 for (let j = 0; j < records[libName]; j++) {
-                    recordsToImport.push({library: libName, key: j});
+                    await _insertRecord(libName, j);
                 }
             }
         }
-
-        await Promise.all(
-            recordsToImport.map(async r => {
-                const createdRecord = await recordDomain.createRecord(r.library, infos);
-                recordsMapping[r.library] = recordsMapping[r.library] || {};
-
-                recordsMapping[r.library][r.key] = createdRecord.id;
-            })
-        );
 
         return recordsMapping;
     };
@@ -113,14 +119,43 @@ export default function({
         return Promise.all(trees.map(tree => _saveTreeContent(tree.id, tree.content, null, recordsMapping)));
     };
 
-    const _processValues = (values, attributesById, recordsMapping, infos): Promise<any[]> => {
-        const valuesToImport = [];
+    const _processValues = async (values, attributesById, recordsMapping, infos): Promise<number> => {
+        let insertedValues = 0;
+        const _insertValue = async valueData => {
+            const attrType = attributesById[valueData.attribute].type;
+            if (attrType === 'tree') {
+                const [library, key] = valueData.value.split('/');
+                valueData.value = `${library}/${recordsMapping[library][key]}`;
+            } else if (attrType === 'advanced_link' || attrType === 'simple_link') {
+                valueData.value = recordsMapping[attributesById[valueData.attribute].linked_library][valueData.value];
+            }
+
+            let version = null;
+            if (valueData.version) {
+                version = {};
+                for (const treeName of Object.keys(valueData.version)) {
+                    const [lib, key] = valueData.version[treeName].split('/');
+                    version[treeName] = {library: lib, id: recordsMapping[lib][key]};
+                }
+            }
+
+            await valueDomain.saveValue(
+                valueData.library,
+                recordsMapping[valueData.library][valueData.recordKey],
+                valueData.attribute,
+                {value: valueData.value, version},
+                infos
+            );
+            insertedValues++;
+            _writeToConsole(`${insertedValues} created values...`);
+        };
+
         for (const libName of Object.keys(values)) {
             for (const attrName of Object.keys(values[libName])) {
                 const valSettings = values[libName][attrName];
                 if (isArray(valSettings)) {
                     for (const val of valSettings) {
-                        valuesToImport.push({
+                        await _insertValue({
                             library: libName,
                             attribute: attrName,
                             recordKey: val.recordKey,
@@ -133,7 +168,7 @@ export default function({
                             ? valSettings.values[Number(key) % valSettings.values.length]
                             : _generateValue(attrName, key, attributesById, recordsMapping);
 
-                        valuesToImport.push({
+                        await _insertValue({
                             library: libName,
                             attribute: attrName,
                             recordKey: key,
@@ -147,34 +182,7 @@ export default function({
             }
         }
 
-        return Promise.all(
-            valuesToImport.map(async v => {
-                const attrType = attributesById[v.attribute].type;
-                if (attrType === 'tree') {
-                    const [library, key] = v.value.split('/');
-                    v.value = `${library}/${recordsMapping[library][key]}`;
-                } else if (attrType === 'advanced_link' || attrType === 'simple_link') {
-                    v.value = recordsMapping[attributesById[v.attribute].linked_library][v.value];
-                }
-
-                let version = null;
-                if (v.version) {
-                    version = {};
-                    for (const treeName of Object.keys(v.version)) {
-                        const [lib, key] = v.version[treeName].split('/');
-                        version[treeName] = {library: lib, id: recordsMapping[lib][key]};
-                    }
-                }
-
-                const createdValue = await valueDomain.saveValue(
-                    v.library,
-                    recordsMapping[v.library][v.recordKey],
-                    v.attribute,
-                    {value: v.value, version},
-                    infos
-                );
-            })
-        );
+        return insertedValues;
     };
 
     const _generateValue = (attrName, key, attributesById, recordsMapping): string => {
@@ -260,7 +268,7 @@ export default function({
                 count = count + Object.keys(recordsMapping[libName]).length;
                 return count;
             }, 0);
-            console.info(`Processed ${recordsCount} records`);
+            _writeToConsole(`Processed ${recordsCount} records \n`);
 
             // Create tree content
             console.info('Processing trees content...');
@@ -268,8 +276,8 @@ export default function({
 
             // Save values
             console.info('Processing values...');
-            const values = await _processValues(data.values, attrsById, recordsMapping, infos);
-            console.info(`Processed ${values.length} values`);
+            const insertedValuesCount = await _processValues(data.values, attrsById, recordsMapping, infos);
+            _writeToConsole(`Processed ${insertedValuesCount} values \n`);
 
             const endTime = now();
 

@@ -235,8 +235,8 @@
         }
     ],
     "records": {
-        "products": 20,
-        "ubs": 20,
+        "products": 50,
+        "ubs": 50,
         "categories": [
             {
                 "key": 4
