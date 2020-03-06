@@ -10,14 +10,16 @@ import ActionsListTab from './ActionsListTab';
 import InfosTab from './InfosTab';
 import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
+import {History} from 'history';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
+    history?: History;
 }
 
-function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTabsProps): JSX.Element {
+function EditAttributeTabs({attribute, onPostSave, forcedType, history}: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const headerLabel =
@@ -29,11 +31,12 @@ function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTa
             menuItem: t('attributes.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
+                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} history={history} />
                 </Tab.Pane>
             )
         }
     ];
+
     if (!!attribute) {
         const isMetadataAllowed = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
             attribute.type

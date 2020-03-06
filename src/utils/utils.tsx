@@ -205,3 +205,7 @@ export function isLinkAttribute(attribute: GET_ATTRIBUTES_attributes_list, stric
 
     return linkTypes.includes(attribute.type);
 }
+
+export const clearCacheQueriesFromRegexp = (cache, regexp) => {
+    Object.keys(cache.data.data).forEach(key => key.match(regexp) && cache.data.delete(key));
+};

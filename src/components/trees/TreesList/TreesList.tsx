@@ -92,7 +92,7 @@ const TreesList = ({trees, loading, filters, onFiltersUpdate, onRowClick}: ITree
                                     <Checkbox readOnly checked={!!tree.system} />
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <DeleteTree tree={tree} />
+                                    <DeleteTree tree={tree} filters={filters} />
                                 </Table.Cell>
                             </Table.Row>
                         );

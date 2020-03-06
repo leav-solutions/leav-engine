@@ -162,7 +162,7 @@ const EditTreeInfosForm = ({
                 </FormFieldWrapper>
                 {!readOnly && (
                     <FormGroupWithMargin>
-                        <Form.Button>{t('admin.submit')}</Form.Button>
+                        <Form.Button type="submit">{t('admin.submit')}</Form.Button>
                     </FormGroupWithMargin>
                 )}
             </Form>

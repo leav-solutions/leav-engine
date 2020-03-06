@@ -1,27 +1,58 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {DataProxy} from 'apollo-cache';
 import useUserData from '../../../hooks/useUserData';
 import {DeleteTreeMutation, deleteTreeQuery} from '../../../queries/trees/deleteTreeMutation';
-import {getTreesQueryName} from '../../../queries/trees/getTreesQuery';
 import useLang from '../../../hooks/useLang';
-import {localizedLabel} from '../../../utils/utils';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
+import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {getTreesQuery, getTreesQueryName} from '../../../queries/trees/getTreesQuery';
+import {addWildcardToFilters, localizedLabel} from '../../../utils/utils';
 
 interface IDeleteTreeProps {
     tree?: GET_TREES_trees_list;
+    filters?: any;
 }
 
 /* tslint:disable-next-line:variable-name */
-const DeleteTree = ({tree}: IDeleteTreeProps): JSX.Element | null => {
+const DeleteTree = ({tree, filters}: IDeleteTreeProps): JSX.Element | null => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const userData = useUserData();
 
+    const _updateCache = (cache: DataProxy, {data: {deleteTree}}: any) => {
+        const cacheData = cache.readQuery<GET_TREES, GET_TREESVariables>({
+            query: getTreesQuery,
+            variables: {...addWildcardToFilters(filters), lang: availableLanguages}
+        });
+
+        if (!cacheData) {
+            return;
+        }
+
+        clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.trees/);
+
+        if (!cacheData) {
+            return;
+        }
+
+        const newCount = cacheData.trees?.totalCount ? cacheData.trees?.totalCount - 1 : 0;
+        const newList = cacheData.trees?.list ? cacheData.trees.list.filter(l => l.id !== deleteTree.id) : [];
+
+        cache.writeQuery<GET_TREES, GET_TREESVariables>({
+            query: getTreesQuery,
+            variables: {...addWildcardToFilters(filters), lang: availableLanguages},
+            data: {trees: {...cacheData.trees, totalCount: newCount, list: newList}}
+        });
+    };
+
+    // VERIF if you can delete the 'refetchQueries'
+
     return !!tree && userData.permissions[PermissionsActions.admin_delete_tree] ? (
-        <DeleteTreeMutation mutation={deleteTreeQuery} refetchQueries={[getTreesQueryName]}>
+        <DeleteTreeMutation mutation={deleteTreeQuery} refetchQueries={[getTreesQueryName]} update={_updateCache}>
             {deleteTree => {
                 const onDelete = async () =>
                     deleteTree({

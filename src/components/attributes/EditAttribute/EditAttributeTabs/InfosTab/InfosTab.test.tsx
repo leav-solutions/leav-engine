@@ -1,10 +1,15 @@
 import {MockedProvider, wait} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
+import {InMemoryCache} from 'apollo-cache-inmemory';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
 import InfosTab from './InfosTab';
+import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
+import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
+
+jest.mock('../../../../../hooks/useLang');
 
 jest.mock(
     './InfosForm',
@@ -33,6 +38,7 @@ describe('InfosTab', () => {
             }
         }
     };
+
     test('Render form', async () => {
         const comp = shallow(<InfosTab />);
 
@@ -41,8 +47,29 @@ describe('InfosTab', () => {
 
     test('Save data on submit and run onPostSave', async () => {
         const onPostSave = jest.fn();
-
+        let comp;
         let saveQueryCalled = false;
+
+        const mockCache = new InMemoryCache();
+
+        mockCache.writeQuery({
+            query: getAttributesQuery,
+            variables: {id: 'advanced_attribute'},
+            data: {
+                attributes: {
+                    __typename: 'AttributesList',
+                    totalCount: 1,
+                    list: [
+                        {
+                            ...mockAttrAdv,
+                            __typename: 'Attribute',
+                            versions_conf: null
+                        }
+                    ]
+                }
+            }
+        });
+
         const mocks = [
             {
                 request: {
@@ -64,11 +91,16 @@ describe('InfosTab', () => {
             }
         ];
 
-        const comp = mount(
-            <MockedProvider mocks={mocks} addTypename>
-                <InfosTab onPostSave={onPostSave} />
-            </MockedProvider>
-        );
+        await act(async () => {
+            comp = mount(
+                <MockedProvider mocks={mocks} cache={mockCache} addTypename>
+                    <MockedLangContextProvider>
+                        <InfosTab onPostSave={onPostSave} />
+                    </MockedLangContextProvider>
+                </MockedProvider>
+            );
+        });
+
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');
 
         if (!!submitFunc) {
@@ -107,7 +139,9 @@ describe('InfosTab', () => {
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocksError} addTypename>
-                    <InfosTab />
+                    <MockedLangContextProvider>
+                        <InfosTab />
+                    </MockedLangContextProvider>
                 </MockedProvider>
             );
         });
@@ -119,7 +153,9 @@ describe('InfosTab', () => {
                 await wait(0);
             });
 
-            comp.update();
+            await act(async () => {
+                comp.update();
+            });
         }
 
         expect(comp.find('InfosForm').prop('errors')).not.toBe(null);

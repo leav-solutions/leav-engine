@@ -10,6 +10,7 @@ import {GET_LIBRARIES, GET_LIBRARIESVariables, GET_LIBRARIES_libraries_list} fro
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditLibraryForm from '../EditLibraryForm';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
 
 interface IEditLibraryProps {
     match: any;
@@ -27,7 +28,59 @@ const EditLibrary = ({match, history}: IEditLibraryProps): JSX.Element => {
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
         variables: {id: libraryId, lang}
     });
-    const [saveLibrary, {error: errorSave}] = useMutation(saveLibQuery);
+
+    const [saveLibrary, {error: errorSave}] = useMutation(saveLibQuery, {
+        update: async (cache, {data: dataCached}) => {
+            const cachedData: any = cache.readQuery({query: getLibsQuery, variables: {lang}});
+            const newLibrarie = dataCached.saveLibrary;
+
+            clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.libraries/);
+
+            let libraries;
+            let index;
+
+            cachedData.libraries.list.filter((e, i) => {
+                if (e.id === newLibrarie.id) {
+                    index = i;
+                }
+                return false;
+            });
+
+            if (index !== undefined) {
+                cachedData.libraries.list[index] = newLibrarie;
+                libraries = {
+                    totalCount: cachedData.libraries.totalCount + 1,
+                    list: [...cachedData.libraries.list],
+                    __typename: cachedData.libraries.__typename
+                };
+            } else {
+                libraries = {
+                    totalCount: cachedData.libraries.totalCount + 1,
+                    list: [...cachedData.libraries.list, newLibrarie],
+                    __typename: cachedData.libraries.__typename
+                };
+            }
+
+            const newlibraries = {
+                totalCount: 1,
+                list: [newLibrarie],
+                __typename: cachedData.libraries.__typename
+            };
+
+            cache.writeQuery({
+                query: getLibsQuery,
+                data: {libraries: newlibraries},
+                variables: {id: dataCached.saveLibrary.id, lang}
+            });
+
+            cache.writeQuery({
+                query: getLibsQuery,
+                data: {libraries},
+                variables: {lang}
+            });
+            //   refetch();
+        }
+    });
 
     const [getLibById, {data: dataLibById}] = useLazyQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery);
 
@@ -36,6 +89,7 @@ const EditLibrary = ({match, history}: IEditLibraryProps): JSX.Element => {
 
         return !!dataLibById && !!dataLibById.libraries && !dataLibById.libraries.list.length;
     };
+
     /**
      * Retrieve EditLibraryForm, wrapped by mutation component
      * @param libToEdit
@@ -60,10 +114,8 @@ const EditLibrary = ({match, history}: IEditLibraryProps): JSX.Element => {
                                   }
                                 : null
                     }
-                },
-                refetchQueries: [{query: getLibsQuery, variables: {id: libData.id}}, {query: getLibsQuery}]
+                }
             });
-
             history.replace({pathname: '/libraries/edit/' + libData.id});
         };
 
