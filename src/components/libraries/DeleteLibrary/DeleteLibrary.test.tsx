@@ -6,6 +6,8 @@ import {Mockify} from '../../../_types//Mockify';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import DeleteLibrary from './DeleteLibrary';
 
+jest.mock('../../../hooks/useLang');
+
 describe('DeleteLibrary', () => {
     test('Disable button on system lib', async () => {
         const library: Mockify<GET_LIBRARIES_libraries_list> = {

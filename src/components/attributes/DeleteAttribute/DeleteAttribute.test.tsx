@@ -6,6 +6,7 @@ import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES'
 import {Mockify} from '../../../_types//Mockify';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import DeleteAttribute from './DeleteAttribute';
+import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 
 describe('DeleteAttribute', () => {
     test('Snapshot test', async () => {
@@ -18,7 +19,9 @@ describe('DeleteAttribute', () => {
         act(() => {
             comp = render(
                 <MockedProvider>
-                    <DeleteAttribute attribute={attr as GET_ATTRIBUTES_attributes_list} />
+                    <MockedLangContextProvider>
+                        <DeleteAttribute attribute={attr as GET_ATTRIBUTES_attributes_list} />
+                    </MockedLangContextProvider>
                 </MockedProvider>
             );
         });

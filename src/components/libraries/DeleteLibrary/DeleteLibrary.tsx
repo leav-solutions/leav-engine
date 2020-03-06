@@ -8,29 +8,40 @@ import {GET_LIBRARIES, GET_LIBRARIESVariables, GET_LIBRARIES_libraries_list} fro
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
+import useLang from '../../../hooks/useLang';
+import {addWildcardToFilters} from '../../../utils/utils';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
 
 interface IDeleteLibraryProps {
     library: GET_LIBRARIES_libraries_list;
+    filters?: any;
 }
 
 /* tslint:disable-next-line:variable-name */
-const DeleteLibrary = ({library}: IDeleteLibraryProps): JSX.Element | null => {
+const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | null => {
     const {t} = useTranslation();
+    const {lang} = useLang();
     const userData = useUserData();
     const _updateCache = (cache: DataProxy, {data: {deleteLibrary}}: any) => {
-        const cacheData = cache.readQuery<GET_LIBRARIES, GET_LIBRARIESVariables>({query: getLibsQuery});
+        const cacheData = cache.readQuery<GET_LIBRARIES, GET_LIBRARIESVariables>({
+            query: getLibsQuery,
+            variables: {...addWildcardToFilters(filters), lang}
+        });
 
         if (!cacheData) {
             return;
         }
 
-        // Remove lib from cached list
+        clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.libraries/);
+
         const newCount = cacheData.libraries?.totalCount ? cacheData.libraries?.totalCount - 1 : 0;
         const newList = cacheData.libraries?.list
             ? cacheData.libraries.list.filter(l => l.id !== deleteLibrary.id)
             : [];
+
         cache.writeQuery<GET_LIBRARIES, GET_LIBRARIESVariables>({
             query: getLibsQuery,
+            variables: {...addWildcardToFilters(filters), lang},
             data: {libraries: {...cacheData.libraries, totalCount: newCount, list: newList}}
         });
     };

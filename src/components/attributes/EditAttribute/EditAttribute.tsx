@@ -10,6 +10,7 @@ import {
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
+import {History} from 'history';
 
 export interface IEditAttributeMatchParams {
     id: string;
@@ -25,7 +26,13 @@ interface IEditAttributeProps {
     forcedType?: AttributeType;
 }
 
-function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}: IEditAttributeProps): JSX.Element {
+function EditAttribute({
+    match: routeMatch,
+    attributeId,
+    onPostSave,
+    forcedType,
+    history
+}: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
@@ -34,9 +41,14 @@ function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}:
 
     const _renderEditAttributeTabs = useMemo(
         () => (attribute?: GET_ATTRIBUTES_attributes_list) => (
-            <EditAttributeTabs attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
+            <EditAttributeTabs
+                attribute={attribute}
+                onPostSave={onPostSave}
+                forcedType={forcedType}
+                history={history}
+            />
         ),
-        [onPostSave, forcedType]
+        [onPostSave, forcedType, history]
     );
 
     if (!attrId) {

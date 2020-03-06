@@ -79,7 +79,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                     filters={filters}
                     actions={
                         userData.permissions[PermissionsActions.admin_delete_attribute] ? (
-                            <DeleteAttribute key="delete_attr" />
+                            <DeleteAttribute key="delete_attr" filters={filters} />
                         ) : (
                             <></>
                         )

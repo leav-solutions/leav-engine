@@ -8,6 +8,7 @@ import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gql
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditTreeForm from '../EditTreeForm';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
 
 interface IEditTreeProps {
     match: any;
@@ -22,12 +23,33 @@ const EditTree = ({match, history}: IEditTreeProps): JSX.Element => {
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
         variables: {id: treeId}
     });
-    const [saveTree, {error: errorSave}] = useMutation(saveTreeQuery);
+
+    const [saveTree, {error: errorSave}] = useMutation(saveTreeQuery, {
+        update: async (cache, {data: dataCached}) => {
+            const cachedData: any = cache.readQuery({query: getTreesQuery, variables: {id: dataCached.saveTree.id}});
+
+            const newTree = dataCached.saveTree;
+
+            clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.trees/);
+
+            const newTrees = {
+                totalCount: 1,
+                list: [newTree],
+                __typename: cachedData.trees.__typename
+            };
+
+            cache.writeQuery({
+                query: getTreesQuery,
+                data: {trees: newTrees},
+                variables: {id: dataCached.saveTree.id}
+            });
+        }
+    });
+
     const [getTreeById, {data: dataTreeById}] = useLazyQuery<GET_TREES, GET_TREESVariables>(getTreesQuery);
 
     const _isIdUnique = async val => {
         await getTreeById({variables: {id: val}});
-
         return !!dataTreeById && !!dataTreeById.trees && !dataTreeById.trees.list.length;
     };
 
