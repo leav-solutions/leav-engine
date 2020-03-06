@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Label, Icon, Divider} from 'semantic-ui-react';
 
@@ -6,9 +6,12 @@ import {IListProps} from './MainPanel';
 import {ActionTypes} from './NavigatorReducer';
 
 import styles from './MainPanel.module.css';
+import EditRecordModal from '../records/EditRecordModal';
 
 export default function TopPanel({state, dispatch}: IListProps) {
     const {t} = useTranslation();
+    const [createRecordOpen, setCreateRecordOpen] = useState(false);
+
     const {clearRoot, toggleFilters, makeOnFilterRemove, selectedRootAttributesById} = useMemo(() => {
         return {
             clearRoot: () => {
@@ -38,6 +41,18 @@ export default function TopPanel({state, dispatch}: IListProps) {
         };
     }, [dispatch, state.selectedRootAttributes]);
 
+    const _createNewRecord = () => {
+        setCreateRecordOpen(true);
+    };
+
+    const _onCloseEditRecordModal = () => {
+        setCreateRecordOpen(false);
+        dispatch({
+            type: ActionTypes.SET_FILTERS,
+            data: state.filters
+        });
+    };
+
     return (
         <div className={`ui block segment secondary height100 ${styles.TopPanelHeader}`}>
             <h3>
@@ -51,6 +66,18 @@ export default function TopPanel({state, dispatch}: IListProps) {
                 <Icon name="edit" />
                 {t('navigator.edit_filters')}
             </Button>
+
+            <Button
+                icon
+                labelPosition="left"
+                size="large"
+                style={{position: 'absolute', right: '10px', top: '16px'}}
+                onClick={_createNewRecord}
+            >
+                <Icon name="plus" />
+                {t('records.create_record')}
+            </Button>
+
             <Divider />
 
             <Label.Group onClick={toggleFilters} color="blue">
@@ -63,6 +90,13 @@ export default function TopPanel({state, dispatch}: IListProps) {
                     </Label>
                 ))}
             </Label.Group>
+            {createRecordOpen && (
+                <EditRecordModal
+                    open
+                    onClose={_onCloseEditRecordModal}
+                    library={state.selectedRoot ? state.selectedRoot : ''}
+                />
+            )}
         </div>
     );
 }
