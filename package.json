@@ -1,0 +1,26 @@
+{
+  "name": "manual-scan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "node src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.cacom.fr:dev/leav/manual-scan.git"
+  },
+  "author": "Jérémy Bel <j.bel@cacom.fr>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^13.9.0",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "tslint": "^6.0.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "arangojs": "^6.13.0"
+  }
+}
