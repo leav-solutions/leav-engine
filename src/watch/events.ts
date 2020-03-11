@@ -4,27 +4,27 @@ import {IParams} from '../types';
 
 export const handleCreate = async (path: string, inode: number, params: IParams, isDirectory: boolean) => {
     await updateData(path, inode);
-    sendToRabbitMQ(generateMsgRabbitMQ('create', null, path, inode, isDirectory, params.rootKey), params.amqp);
+    sendToRabbitMQ(generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, params.rootKey), params.amqp);
     if (params.verbose) {
-        console.info('create', path);
+        console.info('CREATE', path);
     }
     return true;
 };
 
 export const handleDelete = async (path: string, inode: number, params: IParams, isDirectory: boolean) => {
     await deleteData(path);
-    sendToRabbitMQ(generateMsgRabbitMQ('delete', path, null, inode, isDirectory, params.rootKey), params.amqp);
+    sendToRabbitMQ(generateMsgRabbitMQ('REMOVE', path, null, inode, isDirectory, params.rootKey), params.amqp);
     if (params.verbose) {
-        console.info('delete', path);
+        console.info('REMOVE', path);
     }
     return true;
 };
 
 export const handleUpdate = async (path: string, inode: number, params: IParams, isDirectory: boolean) => {
     await updateData(path, inode);
-    sendToRabbitMQ(generateMsgRabbitMQ('update', path, path, inode, isDirectory, params.rootKey), params.amqp);
+    sendToRabbitMQ(generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, params.rootKey), params.amqp);
     if (params.verbose) {
-        console.info('update', path);
+        console.info('UPDATE', path);
     }
     return true;
 };
@@ -37,9 +37,11 @@ export const handleMove = async (
     isDirectory: boolean
 ) => {
     await updateData(pathAfter, inode, pathBefore);
-    sendToRabbitMQ(generateMsgRabbitMQ('move', pathBefore, pathAfter, inode, isDirectory, params.rootKey), params.amqp);
+    sendToRabbitMQ(generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, params.rootKey), params.amqp);
+
     if (params.verbose) {
-        console.info('move', pathBefore, pathAfter);
+        console.info('MOVE', pathBefore, pathAfter);
     }
+
     return true;
 };

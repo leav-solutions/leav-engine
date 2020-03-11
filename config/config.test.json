@@ -11,8 +11,8 @@
     "port": 15672,
     "username": "guest",
     "password": "guest",
-    "queue": "files_events",
-    "exchange": "leav_core",
+    "queue": "test_files_events",
+    "exchange": "test_leav_core",
     "routingKey": "files.event",
     "type": "direct"
   },

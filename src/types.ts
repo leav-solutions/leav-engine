@@ -31,11 +31,12 @@ export interface IConfig {
         queue: string;
         exchange: string;
         routingKey: string;
+        type: string;
     };
     watcher?: {
         awaitWriteFinish: {
             stabilityThreshold: number;
-            pollIntervak: number;
+            pollInterval: number;
         };
     };
     verbose?: boolean;

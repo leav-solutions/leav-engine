@@ -44,8 +44,9 @@ export const startWatch = async (configPathArg?: string) => {
         const exchange = config.amqp.exchange;
         const queue = config.amqp.queue;
         const routingKey = config.amqp.routingKey;
+        const type = config.amqp.type;
 
-        const channel: Channel = await getChannel(amqpConfig, exchange, queue, routingKey);
+        const channel: Channel = await getChannel(amqpConfig, exchange, queue, routingKey, type);
 
         let watchParams = {};
         if (config.watcher && config.watcher.awaitWriteFinish) {
@@ -68,7 +69,13 @@ export const startWatch = async (configPathArg?: string) => {
     }
 };
 
-export const getChannel = async (amqpConfig: any, exchange: string, queue: string, routingKey: string) => {
+export const getChannel = async (
+    amqpConfig: Options.Connect,
+    exchange: string,
+    queue: string,
+    routingKey: string,
+    type: string
+) => {
     return new Promise<Channel>(resolve =>
         amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
             if (error0) {
@@ -79,7 +86,7 @@ export const getChannel = async (amqpConfig: any, exchange: string, queue: strin
             const ch = await connection.createChannel();
 
             try {
-                await ch.assertExchange(exchange, 'direct', {durable: true});
+                await ch.assertExchange(exchange, type, {durable: true});
             } catch (e) {
                 console.error('102 - Error when assert exchange', e.message);
                 process.exit(102);

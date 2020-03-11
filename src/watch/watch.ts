@@ -90,8 +90,16 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
     const amqp = params.amqp || {};
 
     if (inodesTmp[inode] && path !== inodesTmp[inode]) {
-        // keep the inode
-        const oldInode = inodesTmp[inode];
+        let pathBefore: string;
+        let pathAfter: string;
+
+        if (event === 'add' || event === 'addDir') {
+            pathBefore = path;
+            pathAfter = inodesTmp[inode];
+        } else {
+            pathBefore = inodesTmp[inode];
+            pathAfter = path;
+        }
 
         // save the inode if the next unlink arrive before the create finish to stock data in redis
         pathsTmp[path] = inode;
@@ -103,7 +111,7 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
         setTimeout(async () => {
             await handleEvent(
                 'move',
-                path,
+                pathBefore,
                 isDirectory,
                 inode,
                 {
@@ -112,7 +120,7 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
                     amqp,
                     verbose: params.verbose
                 },
-                oldInode
+                pathAfter
             );
         }, params.timeout);
     } else {

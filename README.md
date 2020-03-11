@@ -68,7 +68,11 @@ By default, the script take the file in `./config/config.json`
 }
 ```
 
-- `event`: the event occurred
+- `event`: the event occurred, can be:
+  - CREATE
+  - REMOVE
+  - UPDATE
+  - MOVE
 - `time`: timestamp when the message is sent
 - `pathAfter`: path of the file/folder after the event occurred
 - `pathBefore`: path of the file/folder before the event occurred
