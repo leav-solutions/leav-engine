@@ -2,16 +2,17 @@ import {Channel} from 'amqplib';
 
 export const initAmqp = async (
     channel: Channel,
+    type: string,
     {exchange, queue, routingKey}: {exchange: string; queue: string; routingKey: string},
 ) => {
-    await assertExchange(channel, exchange);
+    await assertExchange(channel, type, exchange);
     await assertQueue(channel, queue);
     await bindQueue(channel, queue, exchange, routingKey);
 };
 
-export const assertExchange = async (channel: Channel, exchange: string) => {
+export const assertExchange = async (channel: Channel, type: string, exchange: string) => {
     try {
-        await channel.assertExchange(exchange, 'direct', {durable: true});
+        await channel.assertExchange(exchange, type, {durable: true});
     } catch (e) {
         console.error('102 - Error when assert exchange', e.message);
         process.exit(102);

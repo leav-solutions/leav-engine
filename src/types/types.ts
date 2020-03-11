@@ -8,6 +8,7 @@ export interface IConfig {
         port: number;
         username: string;
         password: string;
+        type: string;
         consume: {
             queue: string;
             exchange: string;

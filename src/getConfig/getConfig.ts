@@ -12,6 +12,7 @@ let config: IConfig = {
         port: 0,
         username: '',
         password: '',
+        type: '',
         consume: {
             queue: '',
             exchange: '',

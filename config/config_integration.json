@@ -8,6 +8,7 @@
         "port": 15672,
         "username": "guest",
         "password": "guest",
+        "type": "direct",
         "consume": {
             "queue": "test_consume",
             "exchange": "preview",

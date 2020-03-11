@@ -10,13 +10,13 @@
         "password": "guest",
         "type": "direct",
         "consume": {
-            "queue": "files_preview_request",
-            "exchange": "leav_core",
+            "queue": "test_files_preview_request",
+            "exchange": "test_leav_core",
             "routingKey": "files.previewRequest"
         },
         "publish": {
-            "queue": "files_preview_response",
-            "exchange": "leav_core",
+            "queue": "test_files_preview_response",
+            "exchange": "test_leav_core",
             "routingKey": "files.previewResponse"
         }
     },
