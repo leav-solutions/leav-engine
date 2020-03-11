@@ -1,13 +1,23 @@
-import {render} from 'enzyme';
+import {shallow} from 'enzyme';
 import React from 'react';
-import {ITreeLinkValue} from '../../../../../../../_types/records';
-import EditRecordFormLinksTreeElement from './EditRecordFormLinksTreeElement';
+import {ITreeLinkValue} from '../../../../../_types/records';
+import LinksFieldTreeElement from './LinksFieldTreeElement';
 
-jest.mock('./PathPart', () => {
-    return function PathPart({record, deletable}) {
-        return <div data-test-id={`path_part_${record.id}_${!!deletable}`} />;
-    };
-});
+jest.mock(
+    '../../../../shared/TreeNodeBreadcrumb',
+    () =>
+        function TreeNodeBreadcrumb() {
+            return <div>TreeNodeBreadcrumb</div>;
+        }
+);
+
+jest.mock(
+    '../../../EditRecordModal',
+    () =>
+        function EditRecordModal() {
+            return <div>EditRecordModal</div>;
+        }
+);
 
 describe('EditRecordFormLinksTreeElement', () => {
     const value: ITreeLinkValue = {
@@ -67,11 +77,11 @@ describe('EditRecordFormLinksTreeElement', () => {
         created_at: 1234567890,
         version: null
     };
+
     test('Display value and its ancestors', async () => {
         const onDelete = jest.fn();
-        const comp = render(<EditRecordFormLinksTreeElement value={value} onDeleteLink={onDelete} />);
+        const comp = shallow(<LinksFieldTreeElement value={value} onDeleteLink={onDelete} />);
 
-        expect(comp.find('[data-test-id="path_part_1_true"]')).toHaveLength(1);
-        expect(comp.find('[data-test-id="path_part_2_false"]')).toHaveLength(1);
+        expect(comp.find('TreeNodeBreadcrumb')).toHaveLength(1);
     });
 });

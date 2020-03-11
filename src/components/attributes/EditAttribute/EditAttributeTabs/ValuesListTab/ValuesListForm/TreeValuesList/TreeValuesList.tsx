@@ -4,6 +4,7 @@ import {TreeItem} from 'react-sortable-tree';
 import {Button, Icon, List} from 'semantic-ui-react';
 import {RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
 import {ITreeValuesList} from '../../../../../../../_types/attributes';
+import {ITreeLinkElement} from '../../../../../../../_types/records';
 import EditRecordModal from '../../../../../../records/EditRecordModal';
 import TreeNodeBreadcrumb from '../../../../../../shared/TreeNodeBreadcrumb';
 import SelectTreeNodeModal from '../../../../../../trees/SelectTreeNodeModal';
@@ -84,7 +85,7 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
                     return (
                         <List.Item data-test-id="values-list-value" key={`values_${i}`}>
                             <List.Content floated="left">
-                                <TreeNodeBreadcrumb element={val} actions={breadcrumbActions} />
+                                <TreeNodeBreadcrumb element={val as ITreeLinkElement} actions={breadcrumbActions} />
                             </List.Content>
                             <List.Content floated="right">
                                 <Button data-test-id="link-value-delete-btn" icon="trash" onClick={_deleteValue(i)} />

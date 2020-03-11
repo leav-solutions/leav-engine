@@ -8,9 +8,9 @@ import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFr
 import EditRecord from './EditRecord';
 
 jest.mock(
-    './EditRecordFormContainer',
+    './EditRecordForm',
     () =>
-        function EditRecordFormContainer() {
+        function RecordEditionForm() {
             return <div>Edit form container</div>;
         }
 );
@@ -55,9 +55,10 @@ describe('EditRecord', () => {
             comp.update();
         });
 
-        const formContainer = comp.find('EditRecordFormContainer');
+        const formContainer = comp.find('RecordEditionForm');
         expect(formContainer).toHaveLength(1);
-        expect(formContainer.prop('attributes')).toHaveLength(2);
+        const attributes = formContainer.prop('library').attributes;
+        expect(attributes).toHaveLength(2);
     });
 
     test('Error state', async () => {
@@ -127,7 +128,7 @@ describe('EditRecord', () => {
             comp.update();
         });
 
-        const labelUpdateFunc = comp.find('EditRecordFormContainer').prop('onIdentityUpdate');
+        const labelUpdateFunc = comp.find('RecordEditionForm').prop('onIdentityUpdate');
 
         labelUpdateFunc();
 

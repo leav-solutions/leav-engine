@@ -1,15 +1,15 @@
 import {shallow} from 'enzyme';
 import React from 'react';
-import {ILinkValue} from '../../../../../../../_types/records';
-import EditRecordFormLinksElement from './EditRecordFormLinksElement';
+import {ILinkValue} from '../../../../../_types/records';
+import LinksFieldElement from './LinksFieldElement';
 
-jest.mock('../../../../../../shared/RecordCard', () => {
+jest.mock('../../../../shared/RecordCard', () => {
     return function RecordCard() {
         return <div data-test-id="record_card" />;
     };
 });
 
-jest.mock('../../../../../EditRecordModal', () => {
+jest.mock('../../../EditRecordModal', () => {
     return function EditRecordModal() {
         return <div data-test-id="edit_record_modal" />;
     };
@@ -41,13 +41,13 @@ describe('EditRecordFormLinksElement', () => {
     };
 
     test('Display record data', async () => {
-        const comp = shallow(<EditRecordFormLinksElement value={mockValue} onDeleteLink={onDelete} />);
+        const comp = shallow(<LinksFieldElement value={mockValue} onDeleteLink={onDelete} />);
 
         expect(comp.find('RecordCard')).toHaveLength(1);
     });
 
     test('Display menu on hover', async () => {
-        const comp = shallow(<EditRecordFormLinksElement value={mockValue} onDeleteLink={onDelete} />);
+        const comp = shallow(<LinksFieldElement value={mockValue} onDeleteLink={onDelete} />);
 
         comp.find('[data-test-id="link_element_wrapper"]').simulate('mouseEnter');
         expect(comp.find('[data-test-id="link_element_hover_menu"]')).toHaveLength(1);
@@ -57,7 +57,7 @@ describe('EditRecordFormLinksElement', () => {
     });
 
     test('Open record edition in modal', async () => {
-        const comp = shallow(<EditRecordFormLinksElement value={mockValue} onDeleteLink={onDelete} />);
+        const comp = shallow(<LinksFieldElement value={mockValue} onDeleteLink={onDelete} />);
 
         comp.find('[data-test-id="link_element_wrapper"]').simulate('mouseEnter');
         comp.find('[data-test-id="edit_record_btn"]').simulate('click');
@@ -66,7 +66,7 @@ describe('EditRecordFormLinksElement', () => {
     });
 
     test('Delete element', async () => {
-        const comp = shallow(<EditRecordFormLinksElement value={mockValue} onDeleteLink={onDelete} />);
+        const comp = shallow(<LinksFieldElement value={mockValue} onDeleteLink={onDelete} />);
 
         comp.find('[data-test-id="link_element_wrapper"]').simulate('mouseEnter');
         comp.find('[data-test-id="delete_link_btn"]').simulate('click');

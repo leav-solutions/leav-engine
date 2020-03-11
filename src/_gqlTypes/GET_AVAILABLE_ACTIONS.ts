@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AvailableActionsName, ActionIOTypes} from './globalTypes';
+import {ActionIOTypes} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_AVAILABLE_ACTIONS
@@ -17,7 +17,7 @@ export interface GET_AVAILABLE_ACTIONS_availableActions_params {
 }
 
 export interface GET_AVAILABLE_ACTIONS_availableActions {
-    name: AvailableActionsName;
+    name: string;
     description: string | null;
     input_types: ActionIOTypes[];
     output_types: ActionIOTypes[];

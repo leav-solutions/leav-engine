@@ -1,0 +1,140 @@
+import {MockedProvider} from '@apollo/react-testing';
+import {mount} from 'enzyme';
+import React from 'react';
+import {act} from 'react-dom/test-utils';
+import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
+import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
+import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
+import {RecordData} from '../../../../../_types/records';
+import {mockAttrSimple} from '../../../../../__mocks__/attributes';
+import {mockLibrary} from '../../../../../__mocks__/libraries';
+import CreateRecordFormContainer from './CreateRecordFormContainer';
+
+jest.mock(
+    '../CreateRecordForm',
+    () =>
+        function CreateRecordForm() {
+            return <div>CreateRecordForm</div>;
+        }
+);
+
+jest.mock('../../../../../hooks/useLang');
+
+describe('CreateRecordFormContainer', () => {
+    test('Render form', async () => {
+        const comp = mount(
+            <MockedProvider>
+                <CreateRecordFormContainer library={{...mockLibrary}} attributes={[{...mockAttrSimple}]} />
+            </MockedProvider>
+        );
+
+        expect(comp.find('CreateRecordForm')).toHaveLength(1);
+    });
+
+    test('Calls onPostSave', async () => {
+        const onPostSave = jest.fn();
+        const attributes = [{...mockAttrSimple}];
+        const recordDataQuery = getRecordDataQuery(mockLibrary, attributes);
+        const mocks = [
+            {
+                request: {
+                    query: createRecordQuery,
+                    variables: {library: 'products'}
+                },
+                result: {
+                    data: {
+                        createRecord: {
+                            id: '1234567',
+                            whoAmI: {
+                                __typename: 'RecordIdentity',
+                                id: '1234567',
+                                library: mockLibrary,
+                                label: null,
+                                color: null,
+                                preview: null
+                            },
+                            __typename: 'Record'
+                        }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: saveValueBatchQuery,
+                    variables: {
+                        library: 'products',
+                        recordId: '1234567',
+                        version: null,
+                        values: [{attribute: 'simple_attribute', id_value: null, value: 'MyVal'}]
+                    }
+                },
+                result: {
+                    data: {
+                        saveValueBatch: {
+                            __typename: 'saveValueBatchResult',
+                            values: [],
+                            errors: null
+                        }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: recordDataQuery,
+                    variables: {id: '1234567', version: [], lang: ['fr', 'en']}
+                },
+                result: {
+                    data: {
+                        record: {
+                            list: [
+                                {
+                                    id: '1234567',
+                                    whoAmI: {
+                                        id: '1234567',
+                                        library: mockLibrary,
+                                        label: null,
+                                        color: null,
+                                        preview: null
+                                    },
+                                    simple_attribute: {id_value: null, value: 'MyVal'},
+                                    __typename: 'Record'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ];
+
+        const comp = mount(
+            <MockedProvider mocks={mocks}>
+                <CreateRecordFormContainer
+                    library={{...mockLibrary}}
+                    attributes={[{...mockAttrSimple}]}
+                    onPostSave={onPostSave}
+                />
+            </MockedProvider>
+        );
+
+        const saveFunc: (values: RecordData) => void = comp.find('CreateRecordForm').prop('onSave');
+
+        if (!saveFunc) {
+            return;
+        }
+
+        await act(async () => {
+            await saveFunc({
+                simple_attribute: {
+                    id_value: null,
+                    value: 'MyVal',
+                    modified_at: null,
+                    created_at: null,
+                    raw_value: 'MyVal',
+                    version: null
+                }
+            });
+        });
+
+        expect(onPostSave).toBeCalled();
+    });
+});

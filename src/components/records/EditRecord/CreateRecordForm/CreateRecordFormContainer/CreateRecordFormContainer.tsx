@@ -1,18 +1,19 @@
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {NetworkStatus} from 'apollo-client';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {createRecordQuery} from '../../../../queries/records/createRecordMutation';
-import {getRecordDataQuery} from '../../../../queries/records/recordDataQuery';
-import {saveValueBatchQuery} from '../../../../queries/values/saveValueBatchMutation';
-import {versionObjToGraphql} from '../../../../utils/utils';
-import {CREATE_RECORD, CREATE_RECORDVariables} from '../../../../_gqlTypes/CREATE_RECORD';
+import useLang from '../../../../../hooks/useLang';
+import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
+import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
+import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
+import {versionObjToGraphql} from '../../../../../utils/utils';
+import {CREATE_RECORD, CREATE_RECORDVariables} from '../../../../../_gqlTypes/CREATE_RECORD';
 import {
     GET_LIBRARIES_libraries_list,
     GET_LIBRARIES_libraries_list_attributes
-} from '../../../../_gqlTypes/GET_LIBRARIES';
-import {AttributeType, TreeElementInput, ValueBatchInput} from '../../../../_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
-import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
+} from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {AttributeType, TreeElementInput, ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
+import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
     IGenericValue,
     IGetRecordData,
@@ -21,12 +22,11 @@ import {
     IValue,
     RecordData,
     RecordEdition
-} from '../../../../_types/records';
-import useLang from '../../../../hooks/useLang';
-import Loading from '../../../shared/Loading';
-import EditRecordForm from './EditRecordForm';
+} from '../../../../../_types/records';
+import Loading from '../../../../shared/Loading';
+import CreateRecordForm from '../CreateRecordForm';
 
-interface IEditRecordFormContainerProps {
+interface ICreateRecordFormContainerProps {
     library: GET_LIBRARIES_libraries_list;
     recordId?: string;
     attributes: GET_LIBRARIES_libraries_list_attributes[];
@@ -55,14 +55,14 @@ const _extractValueToSave = (value: IGenericValue, attribute: GET_LIBRARIES_libr
                     : null;
             break;
         default:
-            extractedValue = (value as ITreeLinkValue) !== null ? (value as IValue).value : null;
+            extractedValue = (value as IValue) !== null ? (value as IValue).value : null;
             break;
     }
 
     return extractedValue;
 };
 
-function EditRecordFormContainer({
+function CreateRecordFormContainer({
     attributes,
     library,
     recordId: initialRecordId,
@@ -71,7 +71,7 @@ function EditRecordFormContainer({
     setSubmitFunc,
     onPostSave,
     inModal = false
-}: IEditRecordFormContainerProps): JSX.Element {
+}: ICreateRecordFormContainerProps): JSX.Element {
     const attributesById = useMemo(
         () =>
             attributes.reduce((acc, attr) => {
@@ -124,11 +124,13 @@ function EditRecordFormContainer({
                         if (val && (val.id_value || (!val.id_value && val.value !== null))) {
                             const valToSave: string | null = _extractValueToSave(val, attributesById[attrName]);
 
-                            allValues.push({
-                                attribute: attrName,
-                                id_value: val ? val.id_value : null,
-                                value: valToSave
-                            });
+                            if (valToSave !== '') {
+                                allValues.push({
+                                    attribute: attrName,
+                                    id_value: val ? val.id_value : null,
+                                    value: valToSave
+                                });
+                            }
                         }
                     }
                 } else {
@@ -156,17 +158,13 @@ function EditRecordFormContainer({
         };
 
         let saveValuesRes;
-        if (!recordId) {
-            const resCreaRecord = await createRecord({
-                variables: {library: library.id}
-            });
+        const resCreaRecord = await createRecord({
+            variables: {library: library.id}
+        });
 
-            if (!!resCreaRecord && !!resCreaRecord.data) {
-                setRecordId(resCreaRecord.data.createRecord.id);
-                saveValuesRes = await _executeSaveValue(resCreaRecord.data.createRecord.id);
-            }
-        } else {
-            saveValuesRes = await _executeSaveValue(recordId);
+        if (!!resCreaRecord && !!resCreaRecord.data) {
+            setRecordId(resCreaRecord.data.createRecord.id);
+            saveValuesRes = await _executeSaveValue(resCreaRecord.data.createRecord.id);
         }
         setSavePending(false);
 
@@ -174,8 +172,7 @@ function EditRecordFormContainer({
 
         if (
             onPostSave &&
-            saveValuesRes &&
-            saveValuesRes.data &&
+            saveValuesRes?.data &&
             !saveValuesRes.data.errors &&
             !saveValuesRes.data.saveValueBatch.errors &&
             saveValuesRes.data.saveValueBatch.values
@@ -183,10 +180,6 @@ function EditRecordFormContainer({
             onPostSave(_extractRecordIdentity(freshData.data));
         }
     };
-
-    // console.log("error: ", error)
-    // console.log("loading: ", loading)
-    // console.log("data: ", )
 
     if (error) {
         return <p className="error">ERROR</p>;
@@ -209,24 +202,10 @@ function EditRecordFormContainer({
               }, {})
             : {};
 
-    const recordData: RecordData = recordId
-        ? Object.keys(data!.record.list[0]).reduce((cleanData, fieldName) => {
-              if (fieldName !== '__typename') {
-                  cleanData[fieldName] = data!.record.list[0][fieldName];
-
-                  if (formErrors[fieldName] && formErrors[fieldName].input) {
-                      cleanData[fieldName].value = formErrors[fieldName].input;
-                  }
-              }
-              return cleanData;
-          }, {})
-        : {};
-
     return (
-        <EditRecordForm
-            recordData={recordData}
+        <CreateRecordForm
             onSave={onSave}
-            attributes={attributes}
+            attributes={attributesById}
             errors={formErrors}
             setSubmitFuncRef={setSubmitFunc}
             inModal={inModal}
@@ -234,4 +213,4 @@ function EditRecordFormContainer({
     );
 }
 
-export default EditRecordFormContainer;
+export default CreateRecordFormContainer;

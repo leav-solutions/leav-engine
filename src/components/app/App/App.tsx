@@ -1,5 +1,10 @@
 import {ApolloProvider} from '@apollo/react-common';
-import {InMemoryCache, IntrospectionFragmentMatcher, IntrospectionResultData} from 'apollo-cache-inmemory';
+import {
+    defaultDataIdFromObject,
+    InMemoryCache,
+    IntrospectionFragmentMatcher,
+    IntrospectionResultData
+} from 'apollo-cache-inmemory';
 import {ApolloClient} from 'apollo-client';
 import {ApolloLink} from 'apollo-link';
 import {onError} from 'apollo-link-error';
@@ -8,8 +13,9 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as yup from 'yup';
 import {isAllowedQuery, IsAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
-import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
+import {getRecordIdentityCacheKey, getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import {AvailableLanguage, PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import LangContext from '../../shared/LangContext';
 import Loading from '../../shared/Loading';
 import UserContext from '../../shared/UserContext';
@@ -109,7 +115,27 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
                 }
             })
         ]),
-        cache: new InMemoryCache({fragmentMatcher})
+        cache: new InMemoryCache({
+            fragmentMatcher,
+            dataIdFromObject: obj => {
+                let res;
+                switch (obj.__typename) {
+                    case 'RecordIdentity':
+                        res =
+                            !(obj as RecordIdentity_whoAmI).id || !(obj as RecordIdentity_whoAmI).library.id
+                                ? defaultDataIdFromObject(obj)
+                                : getRecordIdentityCacheKey(
+                                      (obj as RecordIdentity_whoAmI).library.id,
+                                      (obj as RecordIdentity_whoAmI).id
+                                  );
+                        break;
+                    default:
+                        res = defaultDataIdFromObject(obj);
+                        break;
+                }
+                return res;
+            }
+        })
     });
 
     // Load yup messages translations

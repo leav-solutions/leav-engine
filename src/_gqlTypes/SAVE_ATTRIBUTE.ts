@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeFormat, AttributeInput, AttributeType, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_ATTRIBUTE
@@ -93,8 +93,14 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_metadata_fields {
     format: AttributeFormat | null;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_library {
+    id: string;
+    label: any | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI {
     id: string;
+    library: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_library;
     label: string | null;
     color: string | null;
     preview: string | null;
@@ -157,8 +163,14 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_metadata_fields {
     format: AttributeFormat | null;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_library {
+    id: string;
+    label: any | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI {
     id: string;
+    library: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_library;
     label: string | null;
     color: string | null;
     preview: string | null;
@@ -168,8 +180,14 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
     whoAmI: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library {
+    id: string;
+    label: any | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI {
     id: string;
+    library: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library;
     label: string | null;
     color: string | null;
     preview: string | null;

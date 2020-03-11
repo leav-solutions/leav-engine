@@ -2,7 +2,7 @@ import {i18n} from 'i18next';
 import {TreeNode} from 'react-sortable-tree';
 import {PermissionsActions} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
-import {Mockify} from '../_types//Mockify';
+import {Mockify} from '../_types/Mockify';
 import {mockAttrAdv, mockAttrAdvLink, mockAttrSimpleLink, mockAttrTree} from '../__mocks__/attributes';
 import {
     addWildcardToFilters,
@@ -10,13 +10,14 @@ import {
     getFieldError,
     getInvertColor,
     getRandomColor,
+    getRecordIdentityCacheKey,
+    getSysTranslationQueryLanguage,
     getTreeNodeKey,
     isLinkAttribute,
     localizedLabel,
     permsArrayToObject,
     stringToColor,
-    versionObjToGraphql,
-    getSysTranslationQueryLanguage
+    versionObjToGraphql
 } from './utils';
 
 describe('utils', () => {
@@ -224,6 +225,12 @@ describe('utils', () => {
 
         test('Include type tree if non-strict mode', async () => {
             expect(isLinkAttribute(mockAttrTree, false)).toBe(true);
+        });
+    });
+
+    describe('getRecordIdentityCacheKey', () => {
+        test('Return cache key based on lib and id', async () => {
+            expect(getRecordIdentityCacheKey('test_lib', '12345')).toBe('recordIdentity/test_lib/12345');
         });
     });
 });

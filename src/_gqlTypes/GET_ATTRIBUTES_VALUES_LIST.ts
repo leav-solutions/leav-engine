@@ -22,8 +22,14 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute {
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list | null;
 }
 
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_library {
+    id: string;
+    label: any | null;
+}
+
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI {
     id: string;
+    library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_library;
     label: string | null;
     color: string | null;
     preview: string | null;
@@ -48,8 +54,14 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute {
     linked_library: string | null;
 }
 
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_library {
+    id: string;
+    label: any | null;
+}
+
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI {
     id: string;
+    library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_library;
     label: string | null;
     color: string | null;
     preview: string | null;
@@ -59,8 +71,14 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
     whoAmI: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI;
 }
 
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library {
+    id: string;
+    label: any | null;
+}
+
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI {
     id: string;
+    library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library;
     label: string | null;
     color: string | null;
     preview: string | null;

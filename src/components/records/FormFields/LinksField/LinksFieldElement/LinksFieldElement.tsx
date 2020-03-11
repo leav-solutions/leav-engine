@@ -2,14 +2,14 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Confirm, Icon, Menu, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {ILinkValue} from '../../../../../../../_types/records';
-import RecordCard from '../../../../../../shared/RecordCard';
-import EditRecordModal from '../../../../../EditRecordModal';
+import {ILinkValue} from '../../../../../_types/records';
+import RecordCard from '../../../../shared/RecordCard';
+import EditRecordModal from '../../../EditRecordModal';
 
-interface IEditRecordFormLinksElementProps {
+interface ILinksFieldElementProps {
     value: ILinkValue;
     onDeleteLink: (value: ILinkValue) => void;
-    readOnly?: boolean;
+    readonly?: boolean;
 }
 
 /* tslint:disable-next-line:variable-name */
@@ -34,11 +34,7 @@ const HoverMenu = styled(Menu)`
 `;
 
 /* tslint:disable-next-line:variable-name */
-const EditRecordFormLinksElement = ({
-    value,
-    onDeleteLink,
-    readOnly = false
-}: IEditRecordFormLinksElementProps): JSX.Element => {
+const LinksFieldElement = ({value, onDeleteLink, readonly = false}: ILinksFieldElementProps): JSX.Element => {
     const {t} = useTranslation();
     const [isHovering, setIsHovering] = useState<boolean>(false);
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
@@ -75,7 +71,7 @@ const EditRecordFormLinksElement = ({
                                         <Icon name="edit outline" size="large" />
                                         {t('records.edit')}
                                     </Menu.Item>
-                                    {!readOnly && (
+                                    {!readonly && (
                                         <Menu.Item
                                             data-test-id="delete_link_btn"
                                             size="big"
@@ -95,7 +91,7 @@ const EditRecordFormLinksElement = ({
                         recordId={value.value.whoAmI.id}
                         library={value.value.whoAmI.library.id}
                     />
-                    {!readOnly && (
+                    {!readonly && (
                         <Confirm
                             data-test-id="delete_confirm_modal"
                             open={openDeleteConfirm}
@@ -110,4 +106,4 @@ const EditRecordFormLinksElement = ({
     );
 };
 
-export default EditRecordFormLinksElement;
+export default LinksFieldElement;

@@ -57,7 +57,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
             <TreesQuery query={getTreesQuery} variables={{...addWildcardToFilters(filters), lang}}>
                 {({loading, error, data}) => {
                     if (typeof error !== 'undefined') {
-                        return <p>Error: {error.message}</p>;
+                        return <p>Error : {error.message}</p>;
                     }
 
                     const onRowClick = tree => history.push('/trees/edit/' + tree.id);

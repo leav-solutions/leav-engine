@@ -55,7 +55,6 @@ const EditLibraryAttributes = ({library, readOnly}: IEditLibraryAttributesProps)
                     };
 
                     const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes_list) => {
-                        console.log('CALLED', newAttr);
                         if (library === null) {
                             return;
                         }

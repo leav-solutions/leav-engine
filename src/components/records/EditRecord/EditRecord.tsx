@@ -6,7 +6,8 @@ import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {RecordEdition} from '../../../_types/records';
 import Loading from '../../shared/Loading';
-import EditRecordFormContainer from './EditRecordFormContainer';
+import CreateRecordFormContainer from './CreateRecordForm/CreateRecordFormContainer';
+import RecordEditionForm from './EditRecordForm';
 
 export interface IEditRecordProps {
     library: string;
@@ -27,8 +28,6 @@ function EditRecord({
     onPostSave,
     inModal = false
 }: IEditRecordProps): JSX.Element {
-    // Get attributes
-    // TODO: handle error
     const {data, loading, error} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
         variables: {id: library}
     });
@@ -50,16 +49,19 @@ function EditRecord({
     const attributes = lib.attributes || [];
 
     return (
-        <EditRecordFormContainer
-            library={lib}
-            recordId={recordId}
-            valueVersion={version}
-            attributes={attributes}
-            onIdentityUpdate={onIdentityUpdate}
-            setSubmitFunc={setSubmitFunc}
-            inModal={inModal}
-            onPostSave={onPostSave}
-        />
+        <>
+            {recordId ? (
+                <RecordEditionForm initialRecordId={recordId} library={lib} onIdentityUpdate={onIdentityUpdate} />
+            ) : (
+                <CreateRecordFormContainer
+                    onPostSave={onPostSave}
+                    attributes={attributes}
+                    setSubmitFunc={setSubmitFunc}
+                    library={lib}
+                    inModal={inModal}
+                />
+            )}
+        </>
     );
 }
 

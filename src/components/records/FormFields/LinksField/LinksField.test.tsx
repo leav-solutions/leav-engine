@@ -1,21 +1,21 @@
 import {shallow} from 'enzyme';
 import React from 'react';
-import {mockAttrAdvLink, mockAttrTreeMultival} from '../../../../../../__mocks__/attributes';
-import EditRecordFormLinks from './EditRecordFormLinks';
+import {mockAttrAdvLink, mockAttrTreeMultival} from '../../../../__mocks__/attributes';
+import LinksField from './LinksField';
 
-jest.mock('./EditRecordFormLinksElement', () => {
-    return function EditRecordFormLinksElement() {
+jest.mock('./LinksFieldElement', () => {
+    return function LinksFieldElement() {
         return <div data-test-id="record_links_element" />;
     };
 });
 
-jest.mock('./EditRecordFormLinksTreeElement', () => {
-    return function EditRecordFormLinksTreeElement() {
+jest.mock('./LinksFieldTreeElement', () => {
+    return function LinksFieldTreeElement() {
         return <div data-test-id="record_links_element" />;
     };
 });
 
-jest.mock('../../../../../../hooks/useLang');
+jest.mock('../../../../hooks/useLang');
 
 describe('EditRecordFormLinks', () => {
     const linkValues = [
@@ -115,32 +115,26 @@ describe('EditRecordFormLinks', () => {
     const onChange = jest.fn();
 
     test('Display table with links values', async () => {
-        const comp = shallow(
-            <EditRecordFormLinks values={linkValues} attribute={{...mockAttrAdvLink}} onChange={onChange} />
-        );
+        const comp = shallow(<LinksField values={linkValues} attribute={{...mockAttrAdvLink}} onChange={onChange} />);
 
         expect(comp.find('[data-test-id="link_values"]')).toHaveLength(1);
-        expect(comp.find('[data-test-id="link_values"] EditRecordFormLinksElement')).toHaveLength(2);
+        expect(comp.find('[data-test-id="link_values"] LinksFieldElement')).toHaveLength(2);
         expect(comp.find('[data-test-id="elements_count"]').text()).toContain('2');
     });
 
     test('Display table with tree links values', async () => {
-        const comp = shallow(
-            <EditRecordFormLinks values={treeValues} attribute={mockAttrTreeMultival} onChange={onChange} />
-        );
+        const comp = shallow(<LinksField values={treeValues} attribute={mockAttrTreeMultival} onChange={onChange} />);
 
-        expect(comp.find('[data-test-id="link_values"] EditRecordFormLinksTreeElement')).toHaveLength(1);
+        expect(comp.find('[data-test-id="link_values"] LinksFieldTreeElement')).toHaveLength(1);
     });
 
     test('Delete link', async () => {
-        const comp = shallow(
-            <EditRecordFormLinks values={linkValues} attribute={{...mockAttrAdvLink}} onChange={onChange} />
-        );
+        const comp = shallow(<LinksField values={linkValues} attribute={{...mockAttrAdvLink}} onChange={onChange} />);
 
-        expect(comp.find('[data-test-id="link_values"] EditRecordFormLinksElement')).toHaveLength(2);
+        expect(comp.find('[data-test-id="link_values"] LinksFieldElement')).toHaveLength(2);
 
         const onDeleteFunc: (value) => void = comp
-            .find('[data-test-id="link_values"] EditRecordFormLinksElement')
+            .find('[data-test-id="link_values"] LinksFieldElement')
             .first()
             .prop('onDeleteLink');
 
@@ -149,13 +143,12 @@ describe('EditRecordFormLinks', () => {
         }
 
         expect(onChange).toBeCalledWith({
-            attribute: 'adv_link_attribute',
             id_value: '98765',
             value: null,
-            raw_value: null,
-            modified_at: 1234567890,
-            created_at: 1234567890,
-            version: null
+            created_at: null,
+            modified_at: null,
+            version: null,
+            raw_value: null
         });
     });
 
@@ -196,9 +189,9 @@ describe('EditRecordFormLinks', () => {
         ];
 
         const comp = shallow(
-            <EditRecordFormLinks values={valuesWithNull} attribute={{...mockAttrAdvLink}} onChange={onChange} />
+            <LinksField values={valuesWithNull} attribute={{...mockAttrAdvLink}} onChange={onChange} />
         );
 
-        expect(comp.find('[data-test-id="link_values"] EditRecordFormLinksElement')).toHaveLength(1);
+        expect(comp.find('[data-test-id="link_values"] LinksFieldElement')).toHaveLength(1);
     });
 });

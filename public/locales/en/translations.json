@@ -62,6 +62,7 @@
         "permissions_relation_or": "OR",
         "multiple_values": "Multiple values",
         "allow_multiple_values": "Allow multiple values",
+        "remove_value": "Remove value",
         "values_versions": "Values versions",
         "versionable": "Values versionable",
         "versions_trees": "Trees",

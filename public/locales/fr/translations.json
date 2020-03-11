@@ -61,6 +61,7 @@
         "informations": "Informations",
         "multiple_values": "Valeurs multiples",
         "allow_multiple_values": "Autoriser les valeurs multiples",
+        "remove_value": "Supprimer la valeur",
         "values_versions": "Versions de valeurs",
         "versionable": "Valeurs versionables",
         "versions_trees": "Arbres",

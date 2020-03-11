@@ -30,20 +30,6 @@ export enum AttributeType {
     tree = 'tree'
 }
 
-export enum AvailableActionsName {
-    encrypt = 'encrypt',
-    formatDate = 'formatDate',
-    formatNumber = 'formatNumber',
-    maskValue = 'maskValue',
-    parseJSON = 'parseJSON',
-    toBoolean = 'toBoolean',
-    toJSON = 'toJSON',
-    toNumber = 'toNumber',
-    toString = 'toString',
-    validateFormat = 'validateFormat',
-    validateRegex = 'validateRegex'
-}
-
 export enum AvailableLanguage {
     en = 'en',
     fr = 'fr'
@@ -54,6 +40,11 @@ export enum IOTypes {
     number = 'number',
     object = 'object',
     string = 'string'
+}
+
+export enum LibraryBehavior {
+    files = 'files',
+    standard = 'standard'
 }
 
 export enum PermissionTypes {
@@ -94,13 +85,18 @@ export enum PermissionsRelation {
     or = 'or'
 }
 
+export enum TreeBehavior {
+    files = 'files',
+    standard = 'standard'
+}
+
 export enum ValueVersionMode {
     simple = 'simple',
     smart = 'smart'
 }
 
 export interface ActionConfigurationInput {
-    name: AvailableActionsName;
+    id: string;
     params?: ActionConfigurationParamInput[] | null;
 }
 
@@ -143,6 +139,7 @@ export interface LibraryInput {
     id: string;
     label?: SystemTranslationInput | null;
     attributes?: string[] | null;
+    behavior?: LibraryBehavior | null;
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
 }
@@ -202,6 +199,7 @@ export interface TreeElementInput {
 export interface TreeInput {
     id: string;
     libraries?: string[] | null;
+    behavior?: TreeBehavior | null;
     label?: SystemTranslationInput | null;
 }
 
@@ -215,6 +213,18 @@ export interface ValueBatchInput {
     id_value?: string | null;
     value?: string | null;
     metadata?: any | null;
+}
+
+export interface ValueInput {
+    id_value?: string | null;
+    value?: string | null;
+    metadata?: (ValueMetadataInput | null)[] | null;
+    version?: (ValueVersionInput | null)[] | null;
+}
+
+export interface ValueMetadataInput {
+    name: string;
+    value?: string | null;
 }
 
 export interface ValueVersionInput {

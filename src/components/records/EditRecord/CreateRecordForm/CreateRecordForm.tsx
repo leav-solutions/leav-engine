@@ -2,24 +2,16 @@ import {Formik} from 'formik';
 import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
-import useLang from '../../../../../hooks/useLang';
-import {isLinkAttribute, localizedLabel} from '../../../../../utils/utils';
-import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../_gqlTypes/GET_LIBRARIES';
-import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
-import {
-    IGenericValue,
-    ILinkValue,
-    ITreeLinkValue,
-    IValue,
-    RecordData,
-    RecordEdition
-} from '../../../../../_types/records';
-import FormFieldWrapper from '../../../../shared/FormFieldWrapper';
-import EditRecordFormLinks from './EditRecordFormLinks';
+import useLang from '../../../../hooks/useLang';
+import {isLinkAttribute, localizedLabel} from '../../../../utils';
+import {GET_LIBRARIES_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIBRARIES';
+import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
+import {IGenericValue, ILinkValue, ITreeLinkValue, RecordData, RecordEdition} from '../../../../_types/records';
+import FormFieldWrapper from '../../../shared/FormFieldWrapper';
+import LinksField from '../../FormFields/LinksField';
 
-interface IEditRecordFormProps {
-    attributes: GET_LIBRARIES_libraries_list_attributes[];
-    recordData: RecordData;
+interface ICreateRecordFormProps {
+    attributes: {[attributeId: string]: GET_LIBRARIES_libraries_list_attributes};
     errors?: IEditRecordFormError;
     onSave: (values: RecordData) => void;
     setSubmitFuncRef?: RecordEdition.SetSubmitFuncRef;
@@ -30,15 +22,23 @@ export interface IEditRecordFormError {
     [fieldName: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
 }
 
+const virginValue = {
+    id_value: null,
+    value: '',
+    raw_value: '',
+    modified_at: null,
+    created_at: null,
+    version: null
+};
+
 /* tslint:disable-next-line:variable-name */
-const EditRecordForm = ({
+const CreateRecordForm = ({
     onSave,
     attributes,
-    recordData,
     setSubmitFuncRef,
     errors = {},
     inModal = false
-}: IEditRecordFormProps): JSX.Element => {
+}: ICreateRecordFormProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const _isAttributeReadOnly = (attribute: GET_LIBRARIES_libraries_list_attributes): boolean => {
@@ -55,28 +55,28 @@ const EditRecordForm = ({
     const _renderForm = ({values, handleSubmit, setFieldValue}) => {
         const _handleChange = (e, data) => {
             const value = data.type === 'checkbox' ? data.checked : data.value;
-            const name: string = data.name;
+            const fieldName: string = data.name;
 
             // If we're on a multivalues attribute, we need to find the updated value in the array
             // Otherwise, just update value
             let newFieldValue;
-            if (Array.isArray(values[name])) {
-                newFieldValue = values[name].map((v, i) => {
+            if (attributes[fieldName].multiple_values) {
+                newFieldValue = values[fieldName].map((v, i) => {
                     const newVal = i === data['data-index'] ? value : v.value;
                     return {...v, value: newVal};
                 });
             } else {
-                newFieldValue = {...values[name], value};
+                newFieldValue = {...values[fieldName], value};
             }
 
-            setFieldValue(name, newFieldValue);
+            setFieldValue(fieldName, newFieldValue);
         };
 
         const _handleLinkChange = (fieldName: string) => (value: ILinkValue | ITreeLinkValue) => {
             // If we're on a multivalues attribute, we need to find the updated value in the array
             // Otherwise, just update value
             let newFieldValue;
-            if (Array.isArray(values[fieldName])) {
+            if (attributes[fieldName].multiple_values) {
                 if (value.id_value) {
                     newFieldValue = values[fieldName].map(v => {
                         const newVal = v.id_value === value.id_value ? value : v;
@@ -92,55 +92,45 @@ const EditRecordForm = ({
             setFieldValue(fieldName, newFieldValue);
         };
 
-        const _addValue = name => () => {
-            if (!Array.isArray(values[name])) {
-                return;
-            }
-
-            const newFieldValues = values[name].map(v => ({...v}));
+        const _addValue = fieldName => () => {
+            const newFieldValues = values[fieldName].map(v => ({...v}));
             newFieldValues.push({
                 value: '',
                 id_value: null
             });
 
-            setFieldValue(name, newFieldValues);
+            setFieldValue(fieldName, newFieldValues);
         };
 
         const _renderValueField = (
             attr: GET_LIBRARIES_libraries_list_attributes,
             fieldValues: IGenericValue[] | IGenericValue,
-            readOnly: boolean
+            readonly: boolean
         ) => {
+            const formValues = Array.isArray(fieldValues) ? fieldValues : [fieldValues];
+
             if (isLinkAttribute(attr, false)) {
                 return (
-                    <EditRecordFormLinks
-                        values={fieldValues as (ILinkValue | ILinkValue[])}
+                    <LinksField
+                        values={formValues as ILinkValue[] | ITreeLinkValue[]}
                         attribute={attr}
                         onChange={_handleLinkChange(attr.id)}
-                        readOnly={readOnly}
+                        readonly={readonly}
                     />
                 );
             }
 
-            const _renderInput = (label, idValue, valueContent, index = 0) => (
-                <Form.Input
-                    key={attr.id}
-                    name={attr.id}
-                    label={label}
-                    value={valueContent || ''}
-                    data-id-value={idValue}
-                    data-index={index}
-                    onChange={_handleChange}
-                    disabled={readOnly}
-                />
-            );
+            if (!formValues.length) {
+                formValues.push({...virginValue});
+            }
 
             const attributeLabel = localizedLabel(attr.label, availableLanguages);
+            const canAddValue = !readonly && (attr.multiple_values || !formValues.length);
 
-            if (!readOnly && fieldValues && Array.isArray(fieldValues)) {
-                const fieldLabel = (
-                    <>
-                        <label style={{display: 'inline'}}>{attributeLabel}</label>
+            return (
+                <>
+                    <label style={{display: 'inline'}}>{attributeLabel}</label>
+                    {canAddValue && (
                         <Button
                             type="button"
                             size="mini"
@@ -155,27 +145,34 @@ const EditRecordForm = ({
                             <Icon name="plus" />
                             {t('records.add_value')}
                         </Button>
-                    </>
-                );
-                return (fieldValues as IValue[]).map((v, i) => _renderInput(!i && fieldLabel, v.id_value, v.value, i));
-            } else {
-                const valToDisplay = !!fieldValues
-                    ? attr.id === 'id'
-                        ? (fieldValues as IValue)
-                        : (fieldValues as IValue).value
-                    : '';
-                const idValue = !!fieldValues ? (fieldValues as IValue).id_value : null;
-                return _renderInput(attributeLabel, idValue, valToDisplay);
-            }
+                    )}
+                    {formValues.map((v, i) => {
+                        return (
+                            <Form.Input
+                                key={attr.id + '_' + i}
+                                name={attr.id}
+                                value={v?.value || ''}
+                                data-index={i}
+                                onChange={_handleChange}
+                                disabled={readonly}
+                            />
+                        );
+                    })}
+                </>
+            );
         };
 
         submitRef.current = handleSubmit;
 
         return (
             <Form onSubmit={handleSubmit}>
-                {attributes.map(a => (
-                    <FormFieldWrapper key={a.id} error={(errors[a.id] && errors[a.id].message) || ''}>
-                        {_renderValueField(a, values[a.id], _isAttributeReadOnly(a))}
+                {Object.keys(attributes).map(attrId => (
+                    <FormFieldWrapper key={attrId} error={(errors[attrId] && errors[attrId].message) || ''}>
+                        {_renderValueField(
+                            attributes[attrId],
+                            values[attrId],
+                            _isAttributeReadOnly(attributes[attrId])
+                        )}
                     </FormFieldWrapper>
                 ))}
                 {!inModal && (
@@ -189,7 +186,13 @@ const EditRecordForm = ({
         );
     };
 
-    return <Formik render={_renderForm} initialValues={recordData} onSubmit={onSave} enableReinitialize />;
+    const initValues = Object.keys(attributes).reduce((allValues, attrId) => {
+        allValues[attrId] = attributes[attrId].multiple_values ? [{...virginValue}] : {...virginValue};
+
+        return allValues;
+    }, {});
+
+    return <Formik render={_renderForm} initialValues={initValues} onSubmit={onSave} enableReinitialize />;
 };
 
-export default EditRecordForm;
+export default CreateRecordForm;

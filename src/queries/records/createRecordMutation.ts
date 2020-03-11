@@ -1,9 +1,12 @@
 import gql from 'graphql-tag';
+import {recordIdentityFragment} from './recordIdentityFragment';
 
 export const createRecordQuery = gql`
-    mutation CREATE_RECORD($library: ID!) {
+    ${recordIdentityFragment}
+    mutation CREATE_RECORD($library: ID!, $lang: [AvailableLanguage!]) {
         createRecord(library: $library) {
             id
+            ...RecordIdentity
         }
     }
 `;

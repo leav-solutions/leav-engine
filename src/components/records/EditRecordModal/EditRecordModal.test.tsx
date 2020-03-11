@@ -5,9 +5,9 @@ import {act} from 'react-dom/test-utils';
 import EditRecordModal from './EditRecordModal';
 
 jest.mock(
-    '../EditRecord',
+    '../EditRecord/EditRecord',
     () =>
-        function EditRecord() {
+        function EditRecordComp() {
             return <div>Edit record</div>;
         }
 );
@@ -15,7 +15,7 @@ jest.mock(
 describe('EditRecordModal', () => {
     const onClose = jest.fn();
     test('Open and close modal', async () => {
-        const comp = mount(<EditRecordModal open recordId="12345" library="test_lib" onClose={onClose} />);
+        const comp = mount(<EditRecordModal open library="test_lib" onClose={onClose} />);
 
         expect(comp.find('Modal').prop('open')).toBe(true);
 

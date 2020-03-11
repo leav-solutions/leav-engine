@@ -3,7 +3,11 @@ import {i18n} from 'i18next';
 import {get} from 'lodash';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
-import {GET_ATTRIBUTES_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES';
+import {
+    GET_ATTRIBUTES_attributes_list,
+    GET_ATTRIBUTES_attributes_list_LinkAttribute,
+    GET_ATTRIBUTES_attributes_list_TreeAttribute
+} from '../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, AvailableLanguage, TreeElementInput} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {IErrorByField} from '../_types/errors';
@@ -196,7 +200,10 @@ export function versionObjToGraphql(version: {
     return gqlVersions;
 }
 
-export function isLinkAttribute(attribute: GET_ATTRIBUTES_attributes_list, strict: boolean = true) {
+export function isLinkAttribute(
+    attribute: GET_ATTRIBUTES_attributes_list,
+    strict: boolean = true
+): attribute is GET_ATTRIBUTES_attributes_list_LinkAttribute {
     const linkTypes = [AttributeType.advanced_link, AttributeType.simple_link];
 
     if (!strict) {
@@ -206,6 +213,16 @@ export function isLinkAttribute(attribute: GET_ATTRIBUTES_attributes_list, stric
     return linkTypes.includes(attribute.type);
 }
 
+export function isTreeAttribute(
+    attribute: GET_ATTRIBUTES_attributes_list
+): attribute is GET_ATTRIBUTES_attributes_list_TreeAttribute {
+    return attribute.type === AttributeType.tree;
+}
+
 export const clearCacheQueriesFromRegexp = (cache, regexp) => {
     Object.keys(cache.data.data).forEach(key => key.match(regexp) && cache.data.delete(key));
 };
+
+export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
+    return `recordIdentity/${libId}/${recordId}`;
+}
