@@ -50,10 +50,7 @@ export const startWatch = async (configPathArg?: string) => {
 
         let watchParams = {};
         if (config.watcher && config.watcher.awaitWriteFinish) {
-            watchParams = {
-                awaitWriteFinish: {...config.watcher.awaitWriteFinish},
-                verbose: config.verbose
-            };
+            watchParams = {...config.watcher, verbose: config.verbose};
         }
 
         const watcher = await start(config.rootPath, rootKey, watchParams, {
