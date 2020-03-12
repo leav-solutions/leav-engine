@@ -11,7 +11,7 @@ export interface IWatcherParams {
         stabilityThreshold?: number;
         pollInterval: 100;
     };
-    timeout?: number;
+    delay?: number;
     verbose?: boolean;
 }
 
@@ -50,7 +50,7 @@ export interface IParams {
 }
 
 export interface IParamsExtends extends IParams {
-    timeout?: number;
+    delay?: number;
     ready?: boolean;
 }
 

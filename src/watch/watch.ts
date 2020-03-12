@@ -18,7 +18,7 @@ export const start = async (
 
     let ready = false;
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
-    const timeout = (watchParams && watchParams.timeout) || 100;
+    const delay = (watchParams && watchParams.delay) || 100;
 
     // if absolute path given, we use it here to not display the name of the root folder in message
     const cwd = rootPathProps.charAt(0).indexOf('/') === 0 ? rootPathProps : '.';
@@ -34,7 +34,7 @@ export const start = async (
     watcher.on('all', async (event: string, path: string, stats: any) =>
         checkEvent(event, path, stats, {
             ready,
-            timeout,
+            delay,
             rootPath: rootPathProps,
             rootKey,
             verbose,
@@ -122,7 +122,7 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
                 },
                 pathAfter
             );
-        }, params.timeout);
+        }, params.delay);
     } else {
         inodesTmp[inode] = path;
         pathsTmp[path] = inode;
@@ -139,7 +139,7 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
                                 amqp: params.amqp
                             })
                         ),
-                    params.timeout
+                    params.delay
                 ))
         );
     }
