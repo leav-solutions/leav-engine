@@ -51,7 +51,7 @@ export const startWatch = async (configPathArg?: string) => {
         let watchParams = {};
         if (config.watcher && config.watcher.awaitWriteFinish) {
             watchParams = {
-                ...config.watcher.awaitWriteFinish,
+                awaitWriteFinish: {...config.watcher.awaitWriteFinish},
                 verbose: config.verbose
             };
         }
