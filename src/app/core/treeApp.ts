@@ -1,6 +1,7 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import {GraphQLScalarType} from 'graphql';
 import {isNumber} from 'util';
 import {ITree, ITreeElement, TreeBehavior} from '../../_types/tree';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -46,6 +47,8 @@ export default function({
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
+                    scalar FullTreeContent
+
                     enum TreeBehavior {
                         ${Object.values(TreeBehavior).join(' ')}
                     }
@@ -118,6 +121,9 @@ export default function({
                         # If startAt is specified, it returns this element's children. Otherwise, it starts
                         # from tree root
                         treeContent(treeId: ID!, startAt: TreeElementInput): [TreeNode!]
+
+                        # Retrieve full tree content form tree root, as an object.
+                        fullTreeContent(treeId: ID!): FullTreeContent
                     }
 
                     extend type Mutation {
@@ -150,6 +156,10 @@ export default function({
                         async treeContent(_, {treeId, startAt}, ctx, info) {
                             ctx.treeId = treeId;
                             return treeDomain.getTreeContent(treeId, startAt);
+                        },
+                        async fullTreeContent(_, {treeId}, ctx, info) {
+                            ctx.treeId = treeId;
+                            return treeDomain.getTreeContent(treeId);
                         }
                     },
                     Mutation: {
@@ -173,6 +183,14 @@ export default function({
                             return treeDomain.deleteElement(treeId, element, deleteChildren);
                         }
                     },
+                    FullTreeContent: new GraphQLScalarType({
+                        name: 'FullTreeContent',
+                        description: `Object representing the full tree structure.
+                            On each node we will have record data and children`,
+                        serialize: val => val,
+                        parseValue: val => val,
+                        parseLiteral: ast => ast
+                    }),
                     Tree: {
                         /**
                          * Return tree label, potentially filtered by requested language
