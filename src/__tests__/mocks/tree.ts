@@ -1,4 +1,4 @@
-import {ITree} from '_types/tree';
+import {ITree, TreeBehavior} from '../../_types/tree';
 
 export const mockTree: ITree = {
     id: 'my_tree',
@@ -7,4 +7,10 @@ export const mockTree: ITree = {
         en: 'MyTree'
     },
     libraries: ['lib1', 'lib2']
+};
+
+export const mockFilesTree: ITree = {
+    ...mockTree,
+    behavior: TreeBehavior.FILES,
+    libraries: ['lib1']
 };

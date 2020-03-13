@@ -1,18 +1,27 @@
 import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {difference, union} from 'lodash';
+import {ITreeRepo} from 'infra/tree/treeRepo';
+import {omit, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
+import {ErrorFieldDetail} from '_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {ILibrary} from '../../_types/library';
+import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
+import checkSavePermission from './helpers/checkSavePermission';
+import getDefaultAttributes from './helpers/getDefaultAttributes';
+import runBehaviorPostDelete from './helpers/runBehaviorPostDelete';
+import runBehaviorPostSave from './helpers/runBehaviorPostSave';
+import validateLibAttributes from './helpers/validateLibAttributes';
+import validatePermConf from './helpers/validatePermConf';
+import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
 
 export interface ILibraryDomain {
     getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>>;
@@ -28,17 +37,17 @@ interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
     'core.utils'?: IUtils;
     translator?: i18n;
-    // 'core.domain.translator'?: ITranslatorDomain;
+    'core.infra.tree'?: ITreeRepo;
 }
 
 export default function({
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
+    'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
     translator: translator
-}: // 'core.domain.translator': t = null
-IDeps = {}): ILibraryDomain {
+}: IDeps = {}): ILibraryDomain {
     return {
         async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
             const initializedParams = {...params};
@@ -86,38 +95,36 @@ IDeps = {}): ILibraryDomain {
             return libraryRepo.getLibraryAttributes(id);
         },
         async saveLibrary(libData: ILibrary, infos: IQueryInfos): Promise<ILibrary> {
-            const dataToSave = {...libData};
-            const libs = await libraryRepo.getLibraries({filters: {id: dataToSave.id}});
+            const libs = await libraryRepo.getLibraries({filters: {id: libData.id}});
             const existingLib = !!libs.list.length;
             const errors = {} as any;
-            const defaultAttributes = ['id', 'created_at', 'created_by', 'modified_at', 'modified_by'];
+            const defaultParams = {
+                id: '',
+                system: false,
+                behavior: LibraryBehavior.STANDARD,
+                label: {fr: '', en: ''}
+            };
+
+            // If existing lib, skip all uneditable fields from supplied params.
+            // If new lib, merge default params with supplied params
+            const uneditableFields = ['behavior', 'system'];
+            const dataToSave = existingLib ? omit(libData, uneditableFields) : {...defaultParams, ...libData};
+
+            const validationErrors: Array<ErrorFieldDetail<ILibrary>> = [];
+            const defaultAttributes = getDefaultAttributes(dataToSave.behavior);
 
             // Check permissions
-            const action = existingLib ? AdminPermissionsActions.EDIT_LIBRARY : AdminPermissionsActions.CREATE_LIBRARY;
-            const canSaveLibrary = await permissionDomain.getAdminPermission(action, infos.userId);
-
-            if (!canSaveLibrary) {
-                throw new PermissionError(action);
+            const permCheck = await checkSavePermission(existingLib, infos.userId, {permissionDomain});
+            if (!permCheck.canSave) {
+                throw new PermissionError(permCheck.action);
             }
 
+            // Validate ID format
             if (!utils.validateID(dataToSave.id)) {
                 throw new ValidationError({id: Errors.INVALID_ID_FORMAT});
             }
 
-            if (dataToSave.permissions_conf) {
-                const availableTreeAttributes = await attributeDomain.getAttributes();
-                const unknownTreeAttributes = difference(
-                    dataToSave.permissions_conf.permissionTreeAttributes,
-                    availableTreeAttributes.list.map(treeAttr => treeAttr.id)
-                );
-
-                if (unknownTreeAttributes.length) {
-                    errors.permissions_conf = {
-                        msg: Errors.UNKNOWN_ATTRIBUTES,
-                        vars: {attributes: unknownTreeAttributes.join(', ')}
-                    };
-                }
-            }
+            validationErrors.push(await validatePermConf(dataToSave.permissions_conf, {attributeDomain}));
 
             // New library? Link default attributes. Otherwise, save given attributes if any
             const attributesToSave =
@@ -125,58 +132,31 @@ IDeps = {}): ILibraryDomain {
 
             const libAttributes = existingLib ? attributesToSave : union(defaultAttributes, attributesToSave);
 
-            if (libAttributes.length) {
-                const availableAttributes = await attributeDomain.getAttributes();
-                const unknownAttrs = difference(
-                    libAttributes,
-                    availableAttributes.list.map(attr => attr.id)
-                );
+            // We can get rid of attributes in lib data, it will be saved separately
+            delete dataToSave.attributes;
 
-                if (unknownAttrs.length) {
-                    errors.attributes = {
-                        msg: Errors.UNKNOWN_ATTRIBUTES,
-                        vars: {attributes: unknownAttrs.join(', ')}
-                    };
-                }
-            }
+            validationErrors.push(
+                await validateLibAttributes(libAttributes, {attributeDomain}),
+                await validateRecordIdentityConf(dataToSave as ILibrary, libAttributes, {
+                    attributeDomain,
+                    libraryRepo
+                })
+            );
 
-            if (dataToSave.recordIdentityConf) {
-                const allowedAttributes = libAttributes.length
-                    ? libAttributes
-                    : (await libraryRepo.getLibraryAttributes(dataToSave.id)).map(a => a.id);
-
-                const unbindedAttrs = [];
-                for (const identitiyField of Object.keys(dataToSave.recordIdentityConf)) {
-                    const attrId = dataToSave.recordIdentityConf[identitiyField];
-                    if (!attrId) {
-                        dataToSave.recordIdentityConf[identitiyField] = null;
-                        continue;
-                    }
-
-                    if (allowedAttributes.indexOf(attrId) === -1) {
-                        unbindedAttrs.push(attrId);
-                    }
-                }
-
-                if (unbindedAttrs.length) {
-                    errors.recordIdentityConf = {
-                        msg: Errors.UNBINDED_ATTRIBUTES,
-                        vars: {attributes: unbindedAttrs.join(', ')}
-                    };
-                }
-            }
-
-            if (Object.keys(errors).length) {
-                throw new ValidationError(errors);
+            const mergedValidationErrors = validationErrors.reduce((acc, cur) => ({...acc, ...cur}), {});
+            if (Object.keys(mergedValidationErrors).length) {
+                throw new ValidationError(mergedValidationErrors);
             }
 
             const lib = existingLib
-                ? await libraryRepo.updateLibrary(dataToSave)
-                : await libraryRepo.createLibrary(dataToSave);
+                ? await libraryRepo.updateLibrary(dataToSave as ILibrary)
+                : await libraryRepo.createLibrary(dataToSave as ILibrary);
 
             if (libAttributes.length) {
                 await libraryRepo.saveLibraryAttributes(dataToSave.id, libAttributes);
             }
+
+            await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils});
 
             return lib;
         },
@@ -190,16 +170,18 @@ IDeps = {}): ILibraryDomain {
             }
 
             // Get library
-            const lib = await this.getLibraries({filters: {id}});
+            const libraries = await this.getLibraries({filters: {id}});
 
-            // Check if exists and can delete
-            if (!lib.list.length) {
+            if (!libraries.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
-            if (lib.list.pop().system) {
+            const lib = libraries.list[0];
+            if (lib.system) {
                 throw new ValidationError({id: Errors.SYSTEM_LIBRARY_DELETION});
             }
+
+            await runBehaviorPostDelete(lib, {treeRepo, utils});
 
             return libraryRepo.deleteLibrary(id);
         }

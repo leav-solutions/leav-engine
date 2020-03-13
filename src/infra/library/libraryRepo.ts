@@ -80,13 +80,7 @@ export default function({
             return dbUtils.findCoreEntity<ILibrary>({...initializedParams, collectionName: LIB_COLLECTION_NAME});
         },
         async createLibrary(libData: ILibrary): Promise<ILibrary> {
-            const defaultParams = {_key: '', system: false, label: {fr: '', en: ''}};
-            let docToInsert = dbUtils.convertToDoc(libData);
-
-            docToInsert = {...defaultParams, ...docToInsert};
-
-            const libAttributes = docToInsert.attributes;
-            delete docToInsert.attributes; // Attributes have to be handled separately
+            const docToInsert = dbUtils.convertToDoc(libData);
 
             // Create new collection for library
             await dbService.createCollection(docToInsert._key);
@@ -130,7 +124,10 @@ export default function({
 
             // Get current library attributes
             const currentAttrs = await this.getLibraryAttributes(libId);
-            const deletedAttrs = difference(currentAttrs.filter(a => !a.system).map(a => a.id), attributes);
+            const deletedAttrs = difference(
+                currentAttrs.filter(a => !a.system).map(a => a.id),
+                attributes
+            );
 
             // Unlink attributes not used anymore
             if (deletedAttrs.length) {

@@ -1,3 +1,5 @@
+import {IFilesManagerInterface} from 'interface/filesManager';
+import * as Config from '_types/config';
 import {config} from './config';
 import {init as initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
@@ -5,7 +7,14 @@ import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 
 (async function() {
-    const conf: any = await config;
+    let conf: Config.IConfig;
+
+    try {
+        conf = await config;
+    } catch (e) {
+        console.log('config error', e);
+        process.exit(1);
+    }
 
     await initDb(conf);
 
@@ -15,6 +24,7 @@ import {initPlugins} from './pluginsLoader';
     const {coreContainer, pluginsContainer} = await initDI({translator});
 
     const server = coreContainer.cradle['core.interface.server'];
+    const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
@@ -27,6 +37,9 @@ import {initPlugins} from './pluginsLoader';
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
+        } else if (typeof opt !== 'undefined' && opt.indexOf('filesManager') !== -1) {
+            // Init files management
+            await filesManager.init();
         } else {
             await cli.run();
         }

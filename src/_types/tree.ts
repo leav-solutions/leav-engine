@@ -4,6 +4,7 @@ import {ISystemTranslation} from './systemTranslation';
 export interface ITree {
     id: string;
     libraries: string[];
+    behavior?: TreeBehavior;
     label: ISystemTranslation;
     system?: boolean;
 }
@@ -26,4 +27,9 @@ export interface ITreeNode {
     ancestors?: ITreeNode[];
     children?: ITreeNode[];
     linkedRecords?: IRecord[];
+}
+
+export enum TreeBehavior {
+    STANDARD = 'standard',
+    FILES = 'files'
 }

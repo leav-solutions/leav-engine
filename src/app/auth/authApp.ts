@@ -45,7 +45,8 @@ export default function({
                             const users = await recordDomain.find({
                                 library: 'users',
                                 filters: {id: auth.userId},
-                                withCount: false
+                                withCount: false,
+                                retrieveInactive: true
                             });
 
                             return users.list[0];
@@ -65,7 +66,10 @@ export default function({
                     }
                     // Get user id
                     try {
-                        const users = await recordDomain.find({library: 'users', filters: {login}});
+                        const users = await recordDomain.find({
+                            library: 'users',
+                            filters: {login}
+                        });
 
                         if (!users.list.length) {
                             return unauthorized('Invalid credentials');

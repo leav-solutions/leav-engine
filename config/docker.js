@@ -10,5 +10,8 @@ module.exports = {
     auth: {
         tokenExpiration: '99y'
     },
-    debug: true
+    debug: true,
+    amqp: {
+        host: 'message_broker'
+    }
 };

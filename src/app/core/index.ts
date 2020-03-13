@@ -1,6 +1,7 @@
 export {default as actionList} from './actionListApp';
 export {default as attribute} from './attributeApp';
 export {default} from './coreApp';
+export {default as filesManager} from './filesManagerApp';
 export {default as library} from './libraryApp';
 export {default as permission} from './permissionApp';
 export {default as plugins} from './pluginsApp';

@@ -361,6 +361,50 @@ describe('RecordRepo', () => {
             expect(records.list.length).toBe(2);
             expect(records.cursor.next).toBeTruthy();
         });
+
+        describe('Inactive records', () => {
+            const mockQueryRes = [
+                {
+                    _key: '222536283',
+                    _id: 'ubs/222536283',
+                    _rev: '_WgM_51a--_',
+                    created_at: 1520931427,
+                    modified_at: 1520931427
+                }
+            ];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(mockQueryRes)
+            };
+
+            const mockCleanupRes = {
+                id: '222536283',
+                created_at: 1520931427,
+                modified_at: 1520931427
+            };
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue(mockCleanupRes)
+            };
+
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            beforeEach(() => jest.clearAllMocks());
+
+            test('Should not retrieve inactive records', async () => {
+                const records = await recRepo.find('test_lib', [], null, false, false);
+                expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('active == true');
+            });
+
+            test('Should retrieve inactive records if forced', async () => {
+                const records = await recRepo.find('test_lib', [], null, false, true);
+                expect(mockDbServ.execute.mock.calls[0][0].query).not.toMatch('active == true');
+            });
+        });
     });
 
     describe('find with filters', () => {

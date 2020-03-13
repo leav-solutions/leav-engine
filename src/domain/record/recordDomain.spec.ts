@@ -305,4 +305,54 @@ describe('RecordDomain', () => {
             expect((value as IValue).value.library).toBe('users');
         });
     });
+
+    describe('Deactivate record', () => {
+        test('Set active to false on record', async () => {
+            const record = {
+                id: 222536283,
+                library: 'test_lib',
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                active: true
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValue: global.__mockPromise({value: false})
+            };
+
+            const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
+
+            const recordAfter = await recDomain.deactivateRecord(record, {userId: 1});
+
+            expect(mockValueDomain.saveValue).toBeCalled();
+            expect(mockValueDomain.saveValue.mock.calls[0][2]).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][3].value).toBe(false);
+            expect(recordAfter.active).toBe(false);
+        });
+    });
+
+    describe('Activate record', () => {
+        test('Set active to true on record', async () => {
+            const record = {
+                id: 222536283,
+                library: 'test_lib',
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                active: false
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValue: global.__mockPromise({value: true})
+            };
+
+            const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
+
+            const recordAfter = await recDomain.activateRecord(record, {userId: 1});
+
+            expect(mockValueDomain.saveValue).toBeCalled();
+            expect(mockValueDomain.saveValue.mock.calls[0][2]).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][3].value).toBe(true);
+            expect(recordAfter.active).toBe(true);
+        });
+    });
 });

@@ -1,8 +1,10 @@
 import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
+import {LibraryBehavior} from '../../_types/library';
 import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -18,11 +20,20 @@ describe('LibraryDomain', () => {
                 {id: 'created_by', type: AttributeTypes.SIMPLE},
                 {id: 'modified_at', type: AttributeTypes.SIMPLE},
                 {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                {id: 'active', type: AttributeTypes.SIMPLE},
                 {id: 'attr1', type: AttributeTypes.SIMPLE},
-                {id: 'attr2', type: AttributeTypes.SIMPLE}
+                {id: 'attr2', type: AttributeTypes.SIMPLE},
+                {id: 'root_key', type: AttributeTypes.SIMPLE},
+                {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                {id: 'file_path', type: AttributeTypes.SIMPLE}
             ],
             totalCount: 0
         })
+    };
+
+    const mockTreeRepo: Mockify<ITreeRepo> = {
+        createTree: jest.fn(),
+        deleteTree: jest.fn()
     };
 
     describe('getLibraries', () => {
@@ -132,270 +143,371 @@ describe('LibraryDomain', () => {
 
     describe('saveLibrary', () => {
         const mockUtils: Mockify<IUtils> = {
-            validateID: jest.fn().mockReturnValue(true)
+            validateID: jest.fn().mockReturnValue(true),
+            getLibraryTreeId: jest.fn().mockReturnValue({})
         };
 
-        test('Should save a new library', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
+        describe('Create library', () => {
+            test('Should save a new library', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
 
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [], totalCount: 0}),
-                createLibrary: global.__mockPromise({id: 'test', system: false}),
-                updateLibrary: jest.fn(),
-                saveLibraryAttributes: jest.fn()
-            };
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [], totalCount: 0}),
+                    createLibrary: global.__mockPromise({id: 'test', system: false}),
+                    updateLibrary: jest.fn(),
+                    saveLibraryAttributes: jest.fn()
+                };
 
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtils as IUtils
-            });
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
 
-            const newLib = await libDomain.saveLibrary(
-                {
-                    id: 'test',
-                    attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}, {id: 'attr2', type: AttributeTypes.SIMPLE}]
-                },
-                queryInfos
-            );
-
-            expect(mockLibRepo.createLibrary.mock.calls.length).toBe(1);
-            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr1')).toBe(true);
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr2')).toBe(true);
-
-            expect(newLib).toMatchObject({id: 'test', system: false});
-
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
-                AdminPermissionsActions.CREATE_LIBRARY
-            );
-        });
-
-        test('Should update a library', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                createLibrary: jest.fn(),
-                updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                saveLibraryAttributes: jest.fn()
-            };
-
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtils as IUtils
-            });
-
-            const updatedLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
-
-            expect(mockLibRepo.createLibrary.mock.calls.length).toBe(0);
-            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
-
-            expect(updatedLib).toMatchObject({id: 'test', system: false});
-
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_LIBRARY);
-        });
-
-        test('Should update library attributes', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                createLibrary: jest.fn(),
-                updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                saveLibraryAttributes: jest.fn()
-            };
-
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtils as IUtils
-            });
-
-            const updatedLib = await libDomain.saveLibrary(
-                {
-                    id: 'test',
-                    attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}, {id: 'attr2', type: AttributeTypes.SIMPLE}]
-                },
-                queryInfos
-            );
-
-            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0]).toEqual('test');
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1]).toEqual(['attr1', 'attr2']);
-
-            expect(updatedLib).toMatchObject({id: 'test', system: false});
-
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_LIBRARY);
-        });
-
-        test('Should throw if unknown attributes', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                createLibrary: jest.fn(),
-                updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                saveLibraryAttributes: jest.fn()
-            };
-
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtils as IUtils
-            });
-
-            await expect(
-                libDomain.saveLibrary(
+                const newLib = await libDomain.saveLibrary(
                     {
                         id: 'test',
                         attributes: [
-                            {id: 'attr3', type: AttributeTypes.SIMPLE},
-                            {id: 'attr4', type: AttributeTypes.SIMPLE}
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE}
                         ]
                     },
                     queryInfos
-                )
-            ).rejects.toThrow(ValidationError);
+                );
 
-            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
-            expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
-        });
+                expect(mockLibRepo.createLibrary.mock.calls.length).toBe(1);
+                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr1')).toBe(true);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr2')).toBe(true);
 
-        test('Should throw if unknown trees attributes in permissions conf', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
+                expect(newLib).toMatchObject({id: 'test', system: false});
 
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                createLibrary: jest.fn(),
-                updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                saveLibraryAttributes: jest.fn()
-            };
-
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtils as IUtils
+                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
+                    AdminPermissionsActions.CREATE_LIBRARY
+                );
             });
 
-            await expect(
-                libDomain.saveLibrary(
+            test('Should throw if invalid ID', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
+
+                const mockUtilsInvalidID: Mockify<IUtils> = {
+                    validateID: jest.fn().mockReturnValue(false)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn()
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtilsInvalidID as IUtils
+                });
+
+                await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(ValidationError);
+            });
+
+            test('Save behavior specific attributes', async () => {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [], totalCount: 0}),
+                    createLibrary: global.__mockPromise({id: 'test', system: false}),
+                    updateLibrary: jest.fn(),
+                    saveLibraryAttributes: jest.fn()
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                });
+
+                await libDomain.saveLibrary(
                     {
                         id: 'test',
-                        attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}],
-                        permissions_conf: {
-                            permissionTreeAttributes: ['unknownTree'],
-                            relation: PermissionsRelations.AND
-                        }
+                        behavior: LibraryBehavior.FILES
                     },
                     queryInfos
-                )
-            ).rejects.toThrow(ValidationError);
+                );
 
-            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
-        });
-
-        test('Should throw if attributes in recordIdentity are not binded to library', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                createLibrary: jest.fn(),
-                updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                saveLibraryAttributes: jest.fn(),
-                getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
-            };
-
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtils as IUtils
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('is_directory')).toBe(true);
             });
 
-            await expect(
-                libDomain.saveLibrary(
+            test('For FILES library, create linked tree', async () => {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [], totalCount: 0}),
+                    createLibrary: global.__mockPromise({id: 'test', system: false, behavior: LibraryBehavior.FILES}),
+                    updateLibrary: jest.fn(),
+                    saveLibraryAttributes: jest.fn()
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                });
+
+                await libDomain.saveLibrary(
                     {
                         id: 'test',
-                        recordIdentityConf: {label: 'unknownAttribute'}
+                        behavior: LibraryBehavior.FILES
                     },
                     queryInfos
-                )
-            ).rejects.toThrow(ValidationError);
+                );
 
-            expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+                expect(mockTreeRepo.createTree).toBeCalled();
+            });
         });
 
-        test('Should throw if forbidden action', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
-            };
+        describe('Update library', () => {
+            test('Should update a library', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
 
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                createLibrary: jest.fn(),
-                updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                saveLibraryAttributes: jest.fn()
-            };
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn()
+                };
 
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtils as IUtils
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                const updatedLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
+
+                expect(mockLibRepo.createLibrary.mock.calls.length).toBe(0);
+                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
+
+                expect(updatedLib).toMatchObject({id: 'test', system: false});
+
+                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
+                    AdminPermissionsActions.EDIT_LIBRARY
+                );
             });
 
-            await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(PermissionError);
-        });
+            test('Should update library attributes', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
 
-        test('Should throw if invalid ID', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn()
+                };
 
-            const mockUtilsInvalidID: Mockify<IUtils> = {
-                validateID: jest.fn().mockReturnValue(false)
-            };
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
 
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                createLibrary: jest.fn(),
-                updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                saveLibraryAttributes: jest.fn()
-            };
+                const updatedLib = await libDomain.saveLibrary(
+                    {
+                        id: 'test',
+                        attributes: [
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE}
+                        ]
+                    },
+                    queryInfos
+                );
 
-            const libDomain = libraryDomain({
-                'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
-                'core.utils': mockUtilsInvalidID as IUtils
+                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0]).toEqual('test');
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1]).toEqual(['attr1', 'attr2']);
+
+                expect(updatedLib).toMatchObject({id: 'test', system: false});
+
+                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
+                    AdminPermissionsActions.EDIT_LIBRARY
+                );
             });
 
-            await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(ValidationError);
+            test('Should throw if unknown attributes', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn()
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                await expect(
+                    libDomain.saveLibrary(
+                        {
+                            id: 'test',
+                            attributes: [
+                                {id: 'attr3', type: AttributeTypes.SIMPLE},
+                                {id: 'attr4', type: AttributeTypes.SIMPLE}
+                            ]
+                        },
+                        queryInfos
+                    )
+                ).rejects.toThrow(ValidationError);
+
+                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
+            });
+
+            test('Should throw if unknown trees attributes in permissions conf', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn()
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                await expect(
+                    libDomain.saveLibrary(
+                        {
+                            id: 'test',
+                            attributes: [{id: 'attr1', type: AttributeTypes.SIMPLE}],
+                            permissions_conf: {
+                                permissionTreeAttributes: ['unknownTree'],
+                                relation: PermissionsRelations.AND
+                            }
+                        },
+                        queryInfos
+                    )
+                ).rejects.toThrow(ValidationError);
+
+                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+            });
+
+            test('Should throw if attributes in recordIdentity are not binded to library', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn(),
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                await expect(
+                    libDomain.saveLibrary(
+                        {
+                            id: 'test',
+                            recordIdentityConf: {label: 'unknownAttribute'}
+                        },
+                        queryInfos
+                    )
+                ).rejects.toThrow(ValidationError);
+
+                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+            });
+
+            test('Should throw if forbidden action', async function() {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(false)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn()
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(PermissionError);
+            });
+
+            test('Should not save behavior on existing library', async () => {
+                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                    getAdminPermission: global.__mockPromise(true)
+                };
+
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn()
+                };
+
+                const libDomain = libraryDomain({
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                await libDomain.saveLibrary({id: 'test'}, queryInfos);
+
+                expect(mockLibRepo.updateLibrary.mock.calls[0][0].behavior).toBeUndefined();
+            });
         });
     });
 
@@ -453,6 +565,32 @@ describe('LibraryDomain', () => {
             libDomain.getLibraries = global.__mockPromise([libData]);
 
             await expect(libDomain.deleteLibrary(libData.id, queryInfos)).rejects.toThrow(PermissionError);
+        });
+
+        test('When deleting a files library, delete linked tree', async () => {
+            const mockUtils: Mockify<IUtils> = {
+                getLibraryTreeId: jest.fn().mockReturnValue({})
+            };
+
+            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
+                getAdminPermission: global.__mockPromise(true)
+            };
+
+            const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.utils': mockUtils as IUtils
+            });
+            libDomain.getLibraries = global.__mockPromise({
+                list: [{...libData, behavior: LibraryBehavior.FILES}],
+                totalCount: 1
+            });
+
+            await libDomain.deleteLibrary(libData.id, queryInfos);
+
+            expect(mockTreeRepo.deleteTree).toBeCalled();
         });
     });
 });

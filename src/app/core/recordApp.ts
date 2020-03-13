@@ -26,7 +26,10 @@ export default function({
                         id: ID!,
                         library: Library!,
                         created_at: Value,
+                        created_by: linkValue,
                         modified_at: Value,
+                        modified_by: linkValue,
+                        active: Value,
                         whoAmI: RecordIdentity!
                     }
 

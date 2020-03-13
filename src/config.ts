@@ -1,20 +1,23 @@
+import * as Joi from '@hapi/joi';
 import * as rootPath from 'app-root-path';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as Config from '_types/config';
 import {env as appEnv} from './env';
 
 /**
  * Load config file for given env
  *
  * @param  {string}  env
- * @return {Promise<{}>}
+ * @return {Promise<IConfig | {}>}
  */
-const _getConfigByEnv = async function(env: string): Promise<{}> {
+const _getConfigByEnv = async function(env: string): Promise<Config.IConfig | {}> {
     const envFile = path.resolve(path.join(rootPath.path, `/config/${env}.js`));
 
     if (env && fs.existsSync(envFile)) {
         const envConf = await import(envFile);
-        return envConf;
+
+        return envConf.default;
     }
 
     return {};
@@ -60,7 +63,7 @@ const _mergeDeep = (target, ...sources) => {
  *
  * @return {Promise} Full config
  */
-const _getCombinedConfig = async function(): Promise<{}> {
+const _getCombinedConfig = async function(): Promise<Config.IConfig> {
     const definedEnv: string = appEnv || '';
 
     const merged = _mergeDeep(
@@ -71,7 +74,71 @@ const _getCombinedConfig = async function(): Promise<{}> {
             env: definedEnv
         }
     );
+
+    checkConfig(merged);
+
     return merged;
 };
 
-export const config: {} = _getCombinedConfig();
+const checkConfig = (conf: Config.IConfig) => {
+    const configSchema = Joi.object().keys({
+        server: Joi.object().keys({
+            host: Joi.string().required(),
+            port: Joi.number().required()
+        }),
+        db: Joi.object().keys({
+            url: Joi.string().required(),
+            name: Joi.string().required()
+        }),
+        auth: Joi.object().keys({
+            scheme: Joi.string().required(),
+            key: Joi.string(),
+            algorithm: Joi.string().required(),
+            tokenExpiration: Joi.string().required()
+        }),
+        lang: Joi.object().keys({
+            available: Joi.array()
+                .items(Joi.string())
+                .required(),
+            default: Joi.string().required()
+        }),
+        logs: Joi.object().keys({
+            level: Joi.string().required(),
+            transport: Joi.array()
+                .items(Joi.string())
+                .required(),
+            destinationFile: Joi.string().required()
+        }),
+        permissions: Joi.object().keys({
+            default: Joi.boolean().required()
+        }),
+        amqp: Joi.object().keys({
+            host: Joi.string().required(),
+            port: Joi.number().required(),
+            user: Joi.string().required(),
+            password: Joi.string().required(),
+            exchange: Joi.string().required(),
+            type: Joi.string().required()
+        }),
+        filesManager: Joi.object().keys({
+            queues: Joi.object().keys({
+                filesEvents: Joi.string().required(),
+                previewRequest: Joi.string().required(),
+                previewResponse: Joi.string().required()
+            }),
+            userId: Joi.number().required(),
+            prefetch: Joi.number()
+        }),
+        debug: Joi.boolean(),
+        env: Joi.string()
+    });
+
+    const isValid = configSchema.validate(conf);
+
+    if (isValid.error !== null) {
+        const errorMsg = isValid.error.details.map(e => e.message).join(', ');
+        throw new Error(errorMsg);
+    }
+};
+
+export const config: Promise<Config.IConfig> = _getCombinedConfig();

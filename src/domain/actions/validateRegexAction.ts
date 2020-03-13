@@ -26,7 +26,7 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                 schema = schema.regex(new RegExp(params.regex));
             }
 
-            const validationRes = Joi.validate(value, schema);
+            const validationRes = schema.validate(value);
 
             if (!!validationRes.error) {
                 throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));

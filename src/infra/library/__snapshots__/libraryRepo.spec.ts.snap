@@ -7,10 +7,6 @@ Object {
   "@value1": "core_libraries",
   "value0": Object {
     "_key": "test_library",
-    "label": Object {
-      "en": "",
-      "fr": "",
-    },
     "system": true,
   },
 }

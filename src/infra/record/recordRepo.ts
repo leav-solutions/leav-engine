@@ -37,7 +37,8 @@ export interface IRecordRepo {
         library: string,
         filters?: IRecordFilterOption[],
         pagination?: IPaginationParams | ICursorPaginationParams,
-        withCount?: boolean
+        withCount?: boolean,
+        retrieveInactive?: boolean
     ): Promise<IListWithCursor<IRecord>>;
 }
 
@@ -75,7 +76,8 @@ export default function({
             library: string,
             filters?: IRecordFilterOption[],
             pagination?: IPaginationParams | ICursorPaginationParams,
-            withCount: boolean = false
+            withCount: boolean = false,
+            retrieveInactive: boolean = false
         ): Promise<IListWithCursor<IRecord>> {
             const queryParts = [];
             const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
@@ -112,6 +114,10 @@ export default function({
                     queryParts.push(aql`FILTER r._key ${aql.literal(operator)} ${from}`);
                     queryParts.push(aql`LIMIT ${pagination.limit}`);
                 }
+            }
+
+            if (!retrieveInactive) {
+                queryParts.push(aql`FILTER r.active == true`);
             }
 
             // Force sorting on ID

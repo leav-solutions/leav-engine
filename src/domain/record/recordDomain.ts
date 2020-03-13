@@ -26,6 +26,7 @@ export interface IFindRecordParams {
     options?: IValuesOptions;
     pagination?: IPaginationParams | ICursorPaginationParams;
     withCount?: boolean;
+    retrieveInactive?: boolean;
 }
 
 export interface IRecordDomain {
@@ -78,6 +79,9 @@ export interface IRecordDomain {
      * @param record
      */
     getRecordIdentity(record: IRecord): Promise<IRecordIdentity>;
+
+    deactivateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord>;
+    activateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord>;
 }
 
 interface IDeps {
@@ -199,7 +203,8 @@ export default function({
                 created_at: moment().unix(),
                 created_by: infos.userId,
                 modified_at: moment().unix(),
-                modified_by: infos.userId
+                modified_by: infos.userId,
+                active: true
             };
 
             return recordRepo.createRecord(library, recordData);
@@ -247,7 +252,7 @@ export default function({
             return recordRepo.deleteRecord(library, id);
         },
         async find(params: IFindRecordParams): Promise<IListWithCursor<IRecord>> {
-            const {library, filters, options, pagination, withCount} = params;
+            const {library, filters, pagination, withCount, retrieveInactive = false} = params;
             const fullFilters: IRecordFilterOption[] = [];
 
             // Hydrate filters with attribute properties and cast filters values if needed
@@ -264,7 +269,7 @@ export default function({
                 }
             }
 
-            const records = await recordRepo.find(library, fullFilters, pagination, withCount);
+            const records = await recordRepo.find(library, fullFilters, pagination, withCount, retrieveInactive);
 
             return records;
         },
@@ -296,6 +301,16 @@ export default function({
             );
 
             return attrProps.multiple_values ? formattedValues : formattedValues[0];
+        },
+        async deactivateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord> {
+            const savedVal = await valueDomain.saveValue(record.library, record.id, 'active', {value: false}, infos);
+
+            return {...record, active: savedVal.value};
+        },
+        async activateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord> {
+            const savedVal = await valueDomain.saveValue(record.library, record.id, 'active', {value: true}, infos);
+
+            return {...record, active: savedVal.value};
         }
     };
     return ret;

@@ -4,7 +4,7 @@ import {IUtils} from 'utils/utils';
 import {IList} from '_types/list';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {ILibrary} from '../../_types/library';
+import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp';
@@ -41,6 +41,10 @@ export default function({
 
             const baseSchema = {
                 typeDefs: `
+                    enum LibraryBehavior {
+                        ${Object.values(LibraryBehavior).join(' ')}
+                    }
+
                     # Specific names generated to query this library on GraphQL
                     type LibraryGraphqlNames {
                         query: String!,
@@ -55,6 +59,7 @@ export default function({
                         id: ID!,
                         system: Boolean,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
+                        behavior: LibraryBehavior!,
                         attributes: [Attribute!],
                         permissions_conf: Treepermissions_conf,
                         recordIdentityConf: RecordIdentityConf,
@@ -65,6 +70,7 @@ export default function({
                         id: ID!
                         label: SystemTranslationInput,
                         attributes: [ID!],
+                        behavior: LibraryBehavior,
                         permissions_conf: Treepermissions_confInput,
                         recordIdentityConf: RecordIdentityConfInput
                     }
@@ -72,7 +78,8 @@ export default function({
                     input LibrariesFiltersInput {
                         id: ID,
                         label: String,
-                        system: Boolean
+                        system: Boolean,
+                        behavior: [LibraryBehavior!]
                     }
 
                     type LibrariesList {
@@ -83,6 +90,7 @@ export default function({
                     enum LibrariesSortableFields {
                         id
                         system
+                        behavior
                     }
 
                     input SortLibraries {
@@ -197,13 +205,14 @@ export default function({
                             filters: [${_getLibGqlFilterType(libTypeName)}],
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
+                            retrieveInactive: Boolean
                         ): ${_getLibGqlListType(libTypeName)}!
                     }
                 `;
 
                 baseSchema.resolvers.Query[libQueryName] = async (
                     parent,
-                    {filters, version, pagination},
+                    {filters, version, pagination, retrieveInactive = false},
                     context,
                     info
                 ): Promise<IList<IRecord>> => {
@@ -241,7 +250,8 @@ export default function({
                         filters,
                         pagination,
                         options: {version: formattedVersion},
-                        withCount: fields.includes('totalCount')
+                        withCount: fields.includes('totalCount'),
+                        retrieveInactive
                     });
                 };
                 baseSchema.resolvers[libTypeName] = {

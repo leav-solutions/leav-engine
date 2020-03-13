@@ -40,9 +40,6 @@ logs
 
 ### Misc. ###
 *.dump
-*.xls*
-*.doc*
-*.odt*
 *.tmp
 
 ### Netbeans ###

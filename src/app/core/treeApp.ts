@@ -2,7 +2,7 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {isNumber} from 'util';
-import {ITree, ITreeElement} from '_types/tree';
+import {ITree, ITreeElement, TreeBehavior} from '../../_types/tree';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreApp} from './coreApp';
 
@@ -46,17 +46,23 @@ export default function({
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
+                    enum TreeBehavior {
+                        ${Object.values(TreeBehavior).join(' ')}
+                    }
+
                     # Application TRee
                     type Tree {
                         id: ID!,
                         system: Boolean!,
                         libraries: [Library!]!,
+                        behavior: TreeBehavior!,
                         label(lang: [AvailableLanguage!]): SystemTranslation
                     }
 
                     input TreeInput {
                         id: ID!
                         libraries: [String!],
+                        behavior: TreeBehavior,
                         label: SystemTranslationInput
                     }
 
@@ -81,7 +87,8 @@ export default function({
                     input TreesFiltersInput {
                         id: ID,
                         label: String,
-                        system: Boolean
+                        system: Boolean,
+                        behavior: TreeBehavior
                     }
 
                     type TreesList {
@@ -92,6 +99,7 @@ export default function({
                     enum TreesSortableFields {
                         id
                         system
+                        behavior
                     }
 
                     input SortTrees {

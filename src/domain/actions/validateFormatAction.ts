@@ -1,4 +1,4 @@
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import ValidationError from '../../errors/ValidationError';
 import {
     ActionsListIOTypes,
@@ -76,7 +76,7 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
             // Joi might convert value before testing. raw() force it to send back the value we passed in
             const formatSchema = _getSchema(ctx.attribute).raw();
 
-            const validationRes = Joi.validate(value, formatSchema);
+            const validationRes = formatSchema.validate(value);
 
             if (!!validationRes.error) {
                 throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));

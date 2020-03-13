@@ -23,5 +23,22 @@ module.exports = {
         destinationFile: '/var/log/leav.log' // If logging in file
     },
     permissions: {default: true},
+    amqp: {
+        host: 'localhost',
+        port: '5672',
+        user: 'guest',
+        password: 'guest',
+        exchange: 'leav_core',
+        type: 'direct'
+    },
+    filesManager: {
+        queues: {
+            filesEvents: 'files_events',
+            previewRequest: 'files_preview_request',
+            previewResponse: 'files_preview_response'
+        },
+        userId: 1,
+        prefetch: 1
+    },
     debug: false
 };

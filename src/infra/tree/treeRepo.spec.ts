@@ -1,4 +1,5 @@
 import {Database} from 'arangojs';
+import {TreeBehavior} from '../../_types/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
 import treeRepo from './treeRepo';
 
@@ -36,6 +37,7 @@ describe('TreeRepo', () => {
 
             const createdTree = await repo.createTree({
                 id: 'test_tree',
+                behavior: TreeBehavior.STANDARD,
                 libraries: ['test_lib', 'test_lib2'],
                 system: false,
                 label: {fr: 'Test'}
@@ -71,6 +73,7 @@ describe('TreeRepo', () => {
 
             const updatedTree = await repo.updateTree({
                 id: 'test_tree',
+                behavior: TreeBehavior.STANDARD,
                 libraries: ['test_lib', 'test_lib2'],
                 system: false,
                 label: {fr: 'Test'}

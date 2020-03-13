@@ -25,6 +25,13 @@ export interface IUtils {
     mergeConcat(object: {}, sources: {}): {};
 
     nameValArrayToObj(arr?: Array<{name: string; value: any}>): {[key: string]: any};
+
+    /**
+     * Get the tree library associated with the library given
+     *
+     * @param library
+     */
+    getLibraryTreeId(library: string): string;
 }
 
 export default function(): IUtils {
@@ -70,6 +77,9 @@ export default function(): IUtils {
                       return formattedElem;
                   }, {})
                 : null;
+        },
+        getLibraryTreeId(library) {
+            return `${library}_tree`;
         }
     };
 }

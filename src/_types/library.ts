@@ -7,6 +7,7 @@ export interface ILibrary {
     id: string;
     label?: ISystemTranslation;
     system?: boolean;
+    behavior?: LibraryBehavior;
 
     /**
      * List of attributes usable in this library
@@ -28,4 +29,9 @@ export interface ILibraryFilterOptions {
     id?: string;
     label?: string;
     system?: boolean;
+}
+
+export enum LibraryBehavior {
+    STANDARD = 'standard',
+    FILES = 'files'
 }

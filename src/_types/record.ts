@@ -5,7 +5,10 @@ export interface IRecord {
     id?: number;
     library?: string;
     created_at?: number;
+    created_by?: number;
     modified_at?: number;
+    modified_by?: number;
+    active?: boolean;
     [attributeName: string]: any;
 }
 

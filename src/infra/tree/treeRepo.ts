@@ -117,10 +117,9 @@ export default function({
 
     return {
         async createTree(treeData: ITree): Promise<ITree> {
-            const defaultParams = {_key: '', system: false, label: {fr: '', en: ''}};
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);
 
-            const docToInsert = {...defaultParams, ...dbUtils.convertToDoc(treeData)};
+            const docToInsert = dbUtils.convertToDoc(treeData);
 
             const treeRes = await dbService.execute(aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`);
 

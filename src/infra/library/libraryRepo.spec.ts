@@ -43,13 +43,11 @@ describe('LibraryRepo', () => {
     describe('createLibrary', () => {
         const docLibData = {
             _key: 'test_library',
-            system: true,
-            attributes: [{id: 'id', type: AttributeTypes.SIMPLE}, {id: 'created_by', type: AttributeTypes.SIMPLE}]
+            system: true
         };
         const libData = {
             id: 'test_library',
-            system: true,
-            attributes: [{id: 'id', type: AttributeTypes.SIMPLE}, {id: 'created_by', type: AttributeTypes.SIMPLE}]
+            system: true
         };
         test('Should insert a library and create a new collection', async function() {
             const mockDbServ = {
@@ -129,7 +127,10 @@ describe('LibraryRepo', () => {
         test('Should delete a library and return deleted library', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({
-                    list: [{id: 'attr1', type: AttributeTypes.SIMPLE}, {id: 'attr2', type: AttributeTypes.SIMPLE}],
+                    list: [
+                        {id: 'attr1', type: AttributeTypes.SIMPLE},
+                        {id: 'attr2', type: AttributeTypes.SIMPLE}
+                    ],
                     totalCount: 0
                 }),
                 deleteAttribute: global.__mockPromise({})
