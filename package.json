@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "node src/index.ts"
+    "start:dev": "ts-node src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -16,11 +16,22 @@
     "@types/node": "^13.9.0",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
     "tslint": "^6.0.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "arangojs": "^6.13.0"
+    "amqplib": "^0.5.5",
+    "apollo-cache-inmemory": "^1.6.5",
+    "apollo-client": "^2.6.8",
+    "apollo-link": "^1.2.13",
+    "apollo-link-http": "^1.5.16",
+    "app-root-path": "^3.0.0",
+    "arangojs": "^6.13.0",
+    "graphql": "^14.6.0",
+    "graphql-tag": "^2.10.3",
+    "node-fetch": "^2.6.0",
+    "walk": "^2.3.14"
   }
 }

@@ -1,7 +1,7 @@
 module.exports = {
-    db: {
-        url: process.env.ARANGO_URL,
-        name: process.env.DB_NAME
+    graphql: {
+        uri: process.env.GRAPHQL_URL,
+        token: process.env.GRAPHQL_TOKEN
     },
     filesystem: {
         absolutePath: process.env.FILESYSTEM_ABSOLUTE_PATH
