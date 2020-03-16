@@ -1,5 +1,7 @@
 import {shallow} from 'enzyme';
+import {Location} from 'history';
 import React from 'react';
+import {Mockify} from '../../../../_types/Mockify';
 import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
 
@@ -56,6 +58,22 @@ describe('EditAttributeTabs', () => {
 
             const panes: any[] = comp.find('Tab').prop('panes');
             expect(panes.filter(p => p.key === 'metadata')).toHaveLength(1);
+        });
+
+        test('should open the tab in anchor', async () => {
+            const tabName = 'permissions';
+            const mockLocation: Mockify<Location> = {
+                hash: '#' + tabName
+            };
+
+            const comp = shallow(
+                <EditAttributeTabs attribute={{...mockAttrAdv}} location={mockLocation as Location} />
+            );
+
+            const activeIndex: number = comp.find('Tab').prop('activeIndex');
+            const panes: any[] = comp.find('Tab').prop('panes');
+
+            expect(panes.findIndex(p => p.key === tabName)).toBe(activeIndex);
         });
     });
 });

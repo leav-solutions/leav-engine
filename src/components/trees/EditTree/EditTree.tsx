@@ -1,22 +1,23 @@
 import {useLazyQuery, useMutation, useQuery} from '@apollo/react-hooks';
-import {History} from 'history';
+import {History, Location} from 'history';
 import React from 'react';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {saveTreeQuery} from '../../../queries/trees/saveTreeMutation';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
 import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditTreeForm from '../EditTreeForm';
-import {clearCacheQueriesFromRegexp} from '../../../utils';
 
 interface IEditTreeProps {
     match: any;
     history: History;
+    location: Location;
 }
 
 /* tslint:disable-next-line:variable-name */
-const EditTree = ({match, history}: IEditTreeProps): JSX.Element => {
+const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
     const treeId = match.params.id;
     const userData = useUserData();
 
@@ -81,6 +82,8 @@ const EditTree = ({match, history}: IEditTreeProps): JSX.Element => {
                 readOnly={readOnly}
                 errors={formErrors}
                 onCheckIdExists={_isIdUnique}
+                history={history}
+                location={location}
             />
         );
     };

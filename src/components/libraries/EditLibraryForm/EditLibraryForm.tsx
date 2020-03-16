@@ -1,6 +1,7 @@
-import React from 'react';
+import {History, Location} from 'history';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Header, Tab} from 'semantic-ui-react';
+import {Header, Tab, TabProps} from 'semantic-ui-react';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {IFormError} from '../../../_types/errors';
 import EditLibraryAttributes from '../EditLibraryAttributes';
@@ -15,6 +16,8 @@ interface IEditLibraryFormProps {
     readOnly: boolean;
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
+    history?: History;
+    location?: Location;
 }
 
 /* tslint:disable-next-line:variable-name */
@@ -24,7 +27,9 @@ const EditLibraryForm = ({
     onPermsSettingsSubmit,
     readOnly,
     errors,
-    onCheckIdExists
+    onCheckIdExists,
+    history,
+    location
 }: IEditLibraryFormProps): JSX.Element => {
     const {t} = useTranslation();
     const label =
@@ -94,10 +99,28 @@ const EditLibraryForm = ({
         ]);
     }
 
+    const tabName = location ? location.hash.replace('#', '') : undefined;
+    const [activeIndex, setActiveIndex] = useState<number | undefined>(
+        tabName ? panes.findIndex(p => tabName === p.key) : 0
+    );
+
+    const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
+        if (data.panes && data.activeIndex !== undefined) {
+            setActiveIndex(parseInt(data.activeIndex.toString(), 0));
+            history?.push(`#${data.panes[data.activeIndex].key}`);
+        }
+    };
+
     return (
         <>
             <Header className="no-grow">{label}</Header>
-            <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col height100" />
+            <Tab
+                activeIndex={activeIndex}
+                onTabChange={_handleOnTabChange}
+                menu={{secondary: true, pointing: true}}
+                panes={panes}
+                className="grow flex-col height100"
+            />
         </>
     );
 };

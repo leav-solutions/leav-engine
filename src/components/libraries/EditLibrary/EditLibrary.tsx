@@ -1,25 +1,26 @@
 import {useLazyQuery, useMutation, useQuery} from '@apollo/react-hooks';
-import {History} from 'history';
+import {History, Location} from 'history';
 import {i18n} from 'i18next';
 import React from 'react';
 import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {saveLibQuery} from '../../../queries/libraries/saveLibMutation';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
 import {GET_LIBRARIES, GET_LIBRARIESVariables, GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditLibraryForm from '../EditLibraryForm';
-import {clearCacheQueriesFromRegexp} from '../../../utils';
 
 interface IEditLibraryProps {
     match: any;
     history: History;
+    location: Location;
     i18n: i18n;
 }
 
 /* tslint:disable-next-line:variable-name */
-const EditLibrary = ({match, history}: IEditLibraryProps): JSX.Element => {
+const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element => {
     const libraryId = match.params.id;
     const {lang} = useLang();
     const userData = useUserData();
@@ -144,6 +145,8 @@ const EditLibrary = ({match, history}: IEditLibraryProps): JSX.Element => {
                 onPermsSettingsSubmit={onPermissionsFormSubmit}
                 readOnly={readOnly}
                 onCheckIdExists={_isIdUnique}
+                history={history}
+                location={location}
             />
         );
     };
