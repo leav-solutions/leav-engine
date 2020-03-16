@@ -1,6 +1,7 @@
-import React from 'react';
+import {History, Location} from 'history';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Header, Tab} from 'semantic-ui-react';
+import {Header, Tab, TabProps} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
@@ -10,16 +11,22 @@ import ActionsListTab from './ActionsListTab';
 import InfosTab from './InfosTab';
 import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
-import {History} from 'history';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
     history?: History;
+    location?: Location;
 }
 
-function EditAttributeTabs({attribute, onPostSave, forcedType, history}: IEditAttributeTabsProps): JSX.Element {
+function EditAttributeTabs({
+    attribute,
+    onPostSave,
+    forcedType,
+    history,
+    location
+}: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const headerLabel =
@@ -82,10 +89,28 @@ function EditAttributeTabs({attribute, onPostSave, forcedType, history}: IEditAt
         }
     }
 
+    const tabName = location ? location.hash.replace('#', '') : undefined;
+    const [activeIndex, setActiveIndex] = useState<number | undefined>(
+        tabName ? panes.findIndex(p => tabName === p.key) : 0
+    );
+
+    const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
+        if (data.panes && data.activeIndex !== undefined) {
+            setActiveIndex(parseInt(data.activeIndex.toString(), 0));
+            history?.push(`#${data.panes[data.activeIndex].key}`);
+        }
+    };
+
     return (
         <>
             <Header className="no-grow">{headerLabel}</Header>
-            <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col height100" />
+            <Tab
+                onTabChange={_handleOnTabChange}
+                menu={{secondary: true, pointing: true}}
+                panes={panes}
+                className="grow flex-col height100"
+                activeIndex={activeIndex}
+            />
         </>
     );
 }

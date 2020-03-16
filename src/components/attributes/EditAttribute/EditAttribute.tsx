@@ -1,4 +1,5 @@
 import {useQuery} from '@apollo/react-hooks';
+import {History, Location} from 'history';
 import React, {useMemo} from 'react';
 import {match} from 'react-router';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
@@ -10,7 +11,6 @@ import {
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
-import {History} from 'history';
 
 export interface IEditAttributeMatchParams {
     id: string;
@@ -24,6 +24,7 @@ interface IEditAttributeProps {
     attributeId?: string | null;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
+    location?: Location;
 }
 
 function EditAttribute({
@@ -31,7 +32,8 @@ function EditAttribute({
     attributeId,
     onPostSave,
     forcedType,
-    history
+    history,
+    location
 }: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
@@ -40,12 +42,13 @@ function EditAttribute({
     });
 
     const _renderEditAttributeTabs = useMemo(
-        () => (attribute?: GET_ATTRIBUTES_attributes_list) => (
+        () => (attribute?: GET_ATTRIBUTES_attributes_list, locationGiven?: Location) => (
             <EditAttributeTabs
                 attribute={attribute}
                 onPostSave={onPostSave}
                 forcedType={forcedType}
                 history={history}
+                location={locationGiven}
             />
         ),
         [onPostSave, forcedType, history]
@@ -67,7 +70,7 @@ function EditAttribute({
         return <div className="unknown">Unknown attribute</div>;
     }
 
-    return _renderEditAttributeTabs(data.attributes.list[0]);
+    return _renderEditAttributeTabs(data.attributes.list[0], location);
 }
 
 export default EditAttribute;
