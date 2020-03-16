@@ -15,3 +15,7 @@ export interface IMessageSend {
     isDirectory: boolean;
     rootKey: any;
 }
+
+export interface IFullTreeContent {
+    [index: number]: {order: number; record: any; children: IFullTreeContent[]};
+}

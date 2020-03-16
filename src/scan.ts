@@ -1,10 +1,16 @@
 import walk from 'walk';
 import fs from 'fs';
 import crypto from 'crypto';
-import {env} from './env';
+import {ApolloClient} from 'apollo-client';
+import {createHttpLink} from 'apollo-link-http';
+import {ApolloLink} from 'apollo-link';
+import {InMemoryCache} from 'apollo-cache-inmemory';
 import config from './config';
+import gql from 'graphql-tag';
+import fetch from 'node-fetch';
+import {IFullTreeContent} from './types';
 
-const createHashFromFile = filePath =>
+const _createHashFromFile = filePath =>
     new Promise(resolve => {
         const hash = crypto.createHash('md5');
         fs.createReadStream(filePath)
@@ -12,32 +18,63 @@ const createHashFromFile = filePath =>
             .on('end', () => resolve(hash.digest('hex')));
     });
 
-export default async () => {
+const filesystem = async () => {
     const conf = await config;
+    let data = [];
 
     const options = {
-        followLinks: false
+        followLinks: false,
+        listeners: {
+            directories: (root, dirStatsArray, next) => {
+                for (const dsa of dirStatsArray) {
+                    dsa.path = root;
+                }
+
+                data = data.concat(dirStatsArray);
+                next();
+            },
+            file: async (root, fileStats, next) => {
+                fileStats.md5 = await _createHashFromFile(root + '/' + fileStats.name);
+                data.push(fileStats);
+                next();
+            },
+            errors: (root, nodeStatsArray, next) => {
+                next();
+            }
+        }
     };
 
-    const walker = walk.walk(conf.filesystem.absolutePath, options);
-
-    walker.on('directories', function(root, dirStatsArray, next) {
-        console.log(root);
-        console.log(dirStatsArray);
-        next();
-    });
-
-    walker.on('file', async function(root, fileStats, next) {
-        fileStats.md5 = await createHashFromFile(root + '/' + fileStats.name);
-        console.log(fileStats);
-        next();
-    });
-
-    walker.on('errors', function(root, nodeStatsArray, next) {
-        next();
-    });
-
-    walker.on('end', function() {
-        console.log('all done');
-    });
+    walk.walkSync(conf.filesystem.absolutePath, options); // FIXME: Promise?
+    return data;
 };
+
+const database = async (): Promise<IFullTreeContent> => {
+    const conf = await config;
+
+    const httpLink = createHttpLink({uri: conf.graphql.uri, fetch});
+    const authLink = new ApolloLink((operation, forward) => {
+        operation.setContext({
+            headers: {
+                authorization: conf.graphql.token
+            }
+        });
+        return forward(operation);
+    });
+
+    const client = new ApolloClient({
+        link: authLink.concat(httpLink),
+        cache: new InMemoryCache()
+    });
+
+    const result = await client.query({
+        query: gql`
+            {
+                fullTreeContent(treeId: "files_tree")
+            }
+        `
+    });
+
+    return result.data.fullTreeContent;
+};
+
+export default {filesystem, database};
