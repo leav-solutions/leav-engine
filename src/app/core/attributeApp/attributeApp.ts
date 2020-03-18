@@ -1,31 +1,38 @@
+import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
-import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
-import {ICoreApp} from './coreApp';
+import {IUtils} from 'utils/utils';
+import {ActionsListEvents} from '../../../_types/actionsList';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {IAppGraphQLSchema, IGraphqlApp} from '../../graphql/graphqlApp';
+import {ICoreApp} from '../coreApp';
+import {getFormatFromALConf, getFormatFromAttribute} from './helpers/graphqlFormats';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-    getGraphQLFormat(attribute: IAttribute): string;
+    getGraphQLFormat(attribute: IAttribute): Promise<string>;
 }
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.actionsList'?: IActionsListDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core'?: ICoreApp;
+    'core.utils'?: IUtils;
 }
 
-export default function({
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.tree': treeDomain = null,
-    'core.app.graphql': graphqlApp = null,
-    'core.app.core': coreApp = null
-}: IDeps = {}): ICoreAttributeApp {
+export default function(deps: IDeps = {}): ICoreAttributeApp {
+    const {
+        'core.domain.attribute': attributeDomain = null,
+        'core.domain.record': recordDomain = null,
+        'core.domain.tree': treeDomain = null,
+        'core.app.graphql': graphqlApp = null,
+        'core.app.core': coreApp = null,
+        'core.utils': utils = null
+    } = deps;
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const attributes = await attributeDomain.getAttributes();
@@ -342,7 +349,7 @@ export default function({
 
             return fullSchema;
         },
-        getGraphQLFormat(attribute: IAttribute): string {
+        async getGraphQLFormat(attribute: IAttribute): Promise<string> {
             let typeToReturn;
 
             if (attribute.id === 'id') {
@@ -351,11 +358,18 @@ export default function({
                 attribute.type === AttributeTypes.SIMPLE_LINK ||
                 attribute.type === AttributeTypes.ADVANCED_LINK
             ) {
-                typeToReturn = 'linkValue';
+                typeToReturn = utils.libNameToTypeName(attribute.linked_library);
             } else if (attribute.type === AttributeTypes.TREE) {
-                typeToReturn = 'treeValue';
+                typeToReturn = 'TreeNode';
             } else {
-                typeToReturn = 'Value';
+                // Get actions list output type if any
+                if (attribute?.actions_list?.getValue.length) {
+                    typeToReturn = await getFormatFromALConf([...attribute?.actions_list?.getValue], deps);
+                }
+
+                if (!typeToReturn) {
+                    typeToReturn = getFormatFromAttribute(attribute.format);
+                }
             }
 
             if (attribute.multiple_values) {

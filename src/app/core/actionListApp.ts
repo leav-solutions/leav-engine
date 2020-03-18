@@ -2,14 +2,14 @@ import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 
-export interface ICoreAttributeApp {
+export interface ICoreActionListApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
 }
-export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): ICoreAttributeApp {
+export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): ICoreActionListApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

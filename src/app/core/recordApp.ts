@@ -1,7 +1,9 @@
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
-import {IRecord} from '../../_types/record';
+import {IRecord} from '_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {ICoreAttributeApp} from './attributeApp/attributeApp';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -9,28 +11,36 @@ export interface ICoreRecordApp {
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
+    'core.domain.attribute'?: IAttributeDomain;
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
+    'core.app.core.attribute'?: ICoreAttributeApp;
 }
 
 export default function({
     'core.domain.record': recordDomain = null,
+    'core.domain.attribute': attributeDomain = null,
     'core.utils': utils = null,
-    'core.app.graphql': graphqlApp = null
+    'core.app.graphql': graphqlApp = null,
+    'core.app.core.attribute': attributeApp = null
 }: IDeps = {}): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
+            const systemAttributes = ['created_at', 'created_by', 'modified_at', 'modified_by', 'active'];
+
             const baseSchema = {
                 typeDefs: `
                     interface Record {
                         id: ID!,
                         library: Library!,
-                        created_at: Value,
-                        created_by: linkValue,
-                        modified_at: Value,
-                        modified_by: linkValue,
-                        active: Value,
                         whoAmI: RecordIdentity!
+                        property(attribute: ID!): [GenericValue!]
+                        ${await Promise.all(
+                            systemAttributes.map(async a => {
+                                const attrProps = await attributeDomain.getAttributeProperties(a);
+                                return `${a}: ${await attributeApp.getGraphQLFormat(attrProps)}`;
+                            })
+                        )}
                     }
 
                     type RecordIdentity {

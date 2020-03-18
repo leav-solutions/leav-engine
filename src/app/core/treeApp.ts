@@ -43,6 +43,18 @@ export default function({
         return path.prev !== null ? _findParentAttribute(path.prev) : null;
     };
 
+    /**
+     * Extract tree ID from parent by retrieving attribute, then tree linked to this attribute
+     *
+     * @param parent
+     * @param info
+     */
+    const _extractTreeIdFromParent = async (parent, info): Promise<string> => {
+        const attribute = parent.attribute ?? _findParentAttribute(info.path);
+        const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+        return attributeProps.linked_tree;
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -153,12 +165,13 @@ export default function({
                         async trees(parent, {filters, pagination, sort}) {
                             return treeDomain.getTrees({filters, withCount: true, pagination, sort});
                         },
-                        async treeContent(_, {treeId, startAt}, ctx, info) {
-                            ctx.treeId = treeId;
-                            return treeDomain.getTreeContent(treeId, startAt);
+                        async treeContent(_, {treeId, startAt}) {
+                            const res = await treeDomain.getTreeContent(treeId);
+
+                            // Add treeId as it might be useful for nested resolvers
+                            return res.map(r => ({...r, treeId}));
                         },
-                        async fullTreeContent(_, {treeId}, ctx, info) {
-                            ctx.treeId = treeId;
+                        async fullTreeContent(_, {treeId}) {
                             return treeDomain.getTreeContent(treeId);
                         }
                     },
@@ -211,7 +224,7 @@ export default function({
                         }
                     },
                     TreeNode: {
-                        children: async (parent, args, ctx, info) => {
+                        children: async (parent, _, ctx, info) => {
                             if (typeof parent.children !== 'undefined') {
                                 return parent.children;
                             }
@@ -221,40 +234,27 @@ export default function({
                                 library: parent.record.library
                             };
 
-                            // When coming from 'treeContent' call, treeId is set on context. Otherwise,
-                            // we have to retrieve parent tree attributes to find out which tree we must use
-                            let treeId;
-                            if (typeof ctx.treeId === 'undefined') {
-                                const attribute = _findParentAttribute(info.path);
-                                const attributeProps = await attributeDomain.getAttributeProperties(attribute);
-                                treeId = attributeProps.linked_tree;
-                            } else {
-                                treeId = ctx.treeId;
-                            }
+                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info));
 
-                            return treeDomain.getElementChildren(treeId, element);
+                            const children = await treeDomain.getElementChildren(treeId, element);
+
+                            // Add treeId as it might be useful for nested resolvers
+                            return children.map(n => ({...n, treeId}));
                         },
-                        ancestors: async (parent, args, ctx, info) => {
+                        ancestors: async (parent, _, ctx, info) => {
                             const element = {
                                 id: parent.record.id,
                                 library: parent.record.library
                             };
 
-                            // When coming from 'treeContent' call, treeId is set on context. Otherwise,
-                            // we have to retrieve parent tree attributes to find out which tree we must use
-                            let treeId;
-                            if (typeof ctx.treeId === 'undefined') {
-                                const attribute = _findParentAttribute(info.path);
-                                const attributeProps = await attributeDomain.getAttributeProperties(attribute);
-                                treeId = attributeProps.linked_tree;
-                            } else {
-                                treeId = ctx.treeId;
-                            }
+                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info));
 
-                            return treeDomain.getElementAncestors(treeId, element);
+                            const ancestors = await treeDomain.getElementAncestors(treeId, element);
+
+                            // Add treeId as it might be useful for nested resolvers
+                            return ancestors.map(n => ({...n, treeId}));
                         },
                         linkedRecords: async (parent, {attribute}, ctx, info) => {
-                            const queryFields = graphqlApp.getQueryFields(info);
                             const attributeProps = await attributeDomain.getAttributeProperties(attribute);
                             const element = {
                                 id: parent.record.id,

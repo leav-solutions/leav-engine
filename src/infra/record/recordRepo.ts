@@ -124,10 +124,8 @@ export default function({
             queryParts.push(aql`SORT r._key ASC`);
             queryParts.push(aql`RETURN MERGE(r, {library: ${library}})`);
 
-            const records = await dbService.execute<IExecuteWithCount | any[]>(
-                aql.join(queryParts, '\n'),
-                countResults
-            );
+            const fullQuery = aql.join(queryParts, '\n');
+            const records = await dbService.execute<IExecuteWithCount | any[]>(fullQuery, countResults);
 
             const list: any[] = countResults ? (records as IExecuteWithCount).results : (records as any[]);
             const totalCount = countResults ? (records as IExecuteWithCount).totalCount : null;

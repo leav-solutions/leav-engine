@@ -25,6 +25,7 @@ export interface IValue {
 
 export interface IValuesOptions {
     version?: IValueVersion;
+    forceArray?: boolean;
     [optionName: string]: any;
 }
 

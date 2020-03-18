@@ -3,7 +3,6 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {isArray} from 'util';
 import {IRecord} from '_types/record';
 import {IValue} from '_types/value';
 import {ActionsListEvents} from '../../_types/actionsList';
@@ -231,6 +230,7 @@ describe('RecordDomain', () => {
 
             const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at');
 
+            expect(Array.isArray(value)).toBe(false);
             expect((value as IValue).value).toBe(2119477320);
         });
 
@@ -258,7 +258,7 @@ describe('RecordDomain', () => {
 
             const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'label');
 
-            expect(isArray(value)).toBe(true);
+            expect(Array.isArray(value)).toBe(true);
             expect(value[0].value).toBe('MyLabel');
         });
 
@@ -303,6 +303,22 @@ describe('RecordDomain', () => {
 
             expect((value as IValue).value.id).toBe(42);
             expect((value as IValue).value.library).toBe('users');
+        });
+
+        test('If force array, return an array', async () => {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    id: 'created_at',
+                    type: AttributeTypes.SIMPLE,
+                    multiple_values: false
+                })
+            };
+            const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
+
+            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at', {forceArray: true});
+
+            expect(Array.isArray(value)).toBe(true);
+            expect((value as IValue)[0].value).toBe(2119477320);
         });
     });
 

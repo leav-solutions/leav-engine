@@ -1,4 +1,5 @@
 import {GraphQLScalarType} from 'graphql';
+import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
@@ -17,6 +18,10 @@ export default function({'core.app.graphql': graphqlApp = null, config = null}: 
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
+                    scalar JSON
+                    scalar JSONObject
+                    scalar Any
+
                     enum AvailableLanguage {
                         ${config.lang.available.join(' ')}
                     }
@@ -40,6 +45,15 @@ export default function({'core.app.graphql': graphqlApp = null, config = null}: 
                 resolvers: {
                     Query: {} as any,
                     Mutation: {} as any,
+                    JSON: GraphQLJSON,
+                    JSONObject: GraphQLJSONObject,
+                    Any: new GraphQLScalarType({
+                        name: 'Any',
+                        description: 'Can be anything',
+                        serialize: val => val,
+                        parseValue: val => val,
+                        parseLiteral: ast => ast
+                    }),
                     SystemTranslation: new GraphQLScalarType({
                         name: 'SystemTranslation',
                         description: 'System entities fields translation (label...)',
