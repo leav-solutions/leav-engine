@@ -9,6 +9,7 @@ import config from './config';
 import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import {IFullTreeContent} from './types';
+import moment from 'moment';
 
 const _createHashFromFile = filePath =>
     new Promise(resolve => {
@@ -18,7 +19,13 @@ const _createHashFromFile = filePath =>
             .on('end', () => resolve(hash.digest('hex')));
     });
 
-const filesystem = async () => {
+const _createHashFromDirectory = ({ino, name, path, mtime}) =>
+    crypto
+        .createHash('md5')
+        .update(ino + name + path + moment(mtime).unix())
+        .digest('hex');
+
+const filesystem = async (): Promise<any[]> => {
     const conf = await config;
     let data = [];
 
@@ -27,7 +34,10 @@ const filesystem = async () => {
         listeners: {
             directories: (root, dirStatsArray, next) => {
                 for (const dsa of dirStatsArray) {
-                    dsa.path = root;
+                    dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
+                    dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
+                    dsa.md5 = _createHashFromDirectory(dsa);
+                    dsa.trt = false;
                 }
 
                 data = data.concat(dirStatsArray);
@@ -35,6 +45,7 @@ const filesystem = async () => {
             },
             file: async (root, fileStats, next) => {
                 fileStats.md5 = await _createHashFromFile(root + '/' + fileStats.name);
+                fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
                 data.push(fileStats);
                 next();
             },
@@ -44,7 +55,8 @@ const filesystem = async () => {
         }
     };
 
-    walk.walkSync(conf.filesystem.absolutePath, options); // FIXME: Promise?
+    walk.walkSync(conf.filesystem.absolutePath, options);
+
     return data;
 };
 

@@ -13,11 +13,11 @@
   "author": "Jérémy Bel <j.bel@cacom.fr>",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^13.9.0",
+    "@types/node": "^13.9.1",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "ts-node": "^8.6.2",
-    "tslint": "^6.0.0",
+    "tslint": "^6.1.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.8.3"
   },
@@ -28,9 +28,10 @@
     "apollo-link": "^1.2.13",
     "apollo-link-http": "^1.5.16",
     "app-root-path": "^3.0.0",
-    "arangojs": "^6.13.0",
+    "arangojs": "^6.14.0",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
+    "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
     "walk": "^2.3.14"
   }
