@@ -21,13 +21,6 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                         ${ActionsListIOTypes.OBJECT}
                     }
 
-                    enum AvailableActionsName {
-                        ${actionsListDomain
-                            .getAvailableActions()
-                            .map(a => a.name)
-                            .join(' ')}
-                    }
-
                     type ActionParam {
                         name: String!,
                         type: String!,
@@ -37,7 +30,8 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                     }
 
                     type Action {
-                        name: AvailableActionsName!,
+                        id: ID!,
+                        name: String!,
                         description: String,
                         input_types: [ActionIOTypes!]!,
                         output_types: [ActionIOTypes!]!,
@@ -45,6 +39,7 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                     }
 
                     type ActionConfiguration {
+                        id: ID!,
                         name: String!,
                         is_system: Boolean!,
                         params: [ActionConfigurationParam!]
@@ -63,7 +58,7 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                     }
 
                     input ActionConfigurationInput {
-                        name: AvailableActionsName!,
+                        id: ID!,
                         params: [ActionConfigurationParamInput!]
                     }
 

@@ -61,7 +61,11 @@ export default function({
             // Retrieve actual function to execute from saved actions list
             // For each function, we apply params and ctx parameters.
             const actionsToExec = actions.map(action => {
-                const actionFunc = availActions.find(a => a.name === action.name).action;
+                const actionFunc = availActions.find(a => {
+                    const availableActionId = a.id ? a.id : a.name;
+                    const actionId = action.id ? action.id : action.name;
+                    return availableActionId === actionId;
+                }).action;
 
                 // Convert params from an array of object with name and value properties
                 // to an object {name: value}

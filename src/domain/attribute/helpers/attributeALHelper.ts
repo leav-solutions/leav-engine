@@ -13,17 +13,20 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
                     {
-                        name: 'toNumber',
+                        id: 'toNumber',
+                        name: 'To Number',
                         is_system: true
                     },
                     {
-                        name: 'validateFormat',
+                        id: 'validateFormat',
+                        name: 'Validate Format',
                         is_system: true
                     }
                 ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
-                        name: 'formatDate',
+                        id: 'formatDate',
+                        name: 'Format Date',
                         is_system: false
                     }
                 ]
@@ -32,17 +35,20 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
                     {
-                        name: 'validateFormat',
+                        id: 'validateFormat',
+                        name: 'Validate Format',
                         is_system: true
                     },
                     {
-                        name: 'encrypt',
+                        id: 'encrypt',
+                        name: 'Encrypt',
                         is_system: true
                     }
                 ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
-                        name: 'toBoolean',
+                        id: 'toBoolean',
+                        name: 'To Boolean',
                         is_system: true
                     }
                 ]
@@ -51,15 +57,18 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
                     {
-                        name: 'parseJSON',
+                        id: 'parseJSON',
+                        name: 'Parse JSON',
                         is_system: true
                     },
                     {
-                        name: 'validateFormat',
+                        id: 'validateFormat',
+                        name: 'Validate Format',
                         is_system: true
                     },
                     {
-                        name: 'toJSON',
+                        id: 'toJSON',
+                        name: 'To JSON',
                         is_system: true
                     }
                 ]
@@ -68,7 +77,8 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
                     {
-                        name: 'validateFormat',
+                        id: 'validateFormat',
+                        name: 'Validate Format',
                         is_system: true
                     }
                 ]

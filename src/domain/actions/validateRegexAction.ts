@@ -14,7 +14,8 @@ interface IDeps {
 
 export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
     return {
-        name: 'validateRegex',
+        id: 'validateRegex',
+        name: 'Validate Regex',
         description: 'Check if value is a string matching given regex',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],

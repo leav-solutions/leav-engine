@@ -41,6 +41,7 @@ export interface IActionsListParamsConfig {
 }
 
 export interface IActionsListFunction {
+    id: string;
     name: string;
     description: string;
     input_types: ActionsListIOTypes[];
@@ -50,7 +51,8 @@ export interface IActionsListFunction {
 }
 
 export interface IActionsListSavedAction {
+    id: string;
     name: string;
     is_system?: boolean;
-    params?: [{name: string; value: string}];
+    params?: Array<{name: string; value: string}>;
 }

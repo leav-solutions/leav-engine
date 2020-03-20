@@ -2,7 +2,8 @@ import {ActionsListIOTypes, ActionsListValueType, IActionsListFunction} from '..
 
 export default function(): IActionsListFunction {
     return {
-        name: 'maskValue',
+        id: 'maskValue',
+        name: 'Mask Value',
         description: 'Mask any value by replacing with dots or empty string if no value',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],

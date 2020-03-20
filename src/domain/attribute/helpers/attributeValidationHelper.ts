@@ -94,7 +94,7 @@ const _validateInputType = (
 
         const eventActions = attrData.actions_list[event];
         const lastAction = eventActions.slice(-1)[0];
-        const lastActionDetails = availableActions.find(a => a.name === lastAction.name);
+        const lastActionDetails = availableActions.find(a => a.id === lastAction.id);
 
         if (!intersection(lastActionDetails.output_types, allowedOutputTypes[event]).length) {
             inputTypeErrors[`actions_list.${event}`] = {
@@ -124,9 +124,9 @@ const _validateRequiredActions = (attrData: IAttribute): ErrorFieldDetail<IAttri
         for (const defAction of defaultActions[event]) {
             if (
                 defAction.is_system &&
-                (!attrData.actions_list[event] || !attrData.actions_list[event].find(a => a.name === defAction.name))
+                (!attrData.actions_list[event] || !attrData.actions_list[event].find(a => a.id === defAction.id))
             ) {
-                missingActions.push(`${event} => ${defAction.name}`);
+                missingActions.push(`${event} => ${defAction.id}`);
             }
         }
     }

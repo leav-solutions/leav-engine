@@ -47,13 +47,15 @@ export default function({
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {
-                                name: 'formatDate',
+                                id: 'formatDate',
+                                name: 'Format Date',
                                 is_system: false
                             }
                         ],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],
@@ -78,13 +80,15 @@ export default function({
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {
-                                name: 'formatDate',
+                                id: 'formatDate',
+                                name: 'Format Date',
                                 is_system: false
                             }
                         ],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],
@@ -102,7 +106,8 @@ export default function({
                         [ActionsListEvents.GET_VALUE]: [],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],
@@ -119,17 +124,20 @@ export default function({
                     actions_list: {
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             },
                             {
-                                name: 'encrypt',
+                                id: 'encrypt',
+                                name: 'Encrypt',
                                 is_system: true
                             }
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             {
-                                name: 'maskValue',
+                                id: 'maskValue',
+                                name: 'Mask Value',
                                 is_system: true
                             }
                         ],

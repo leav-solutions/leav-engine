@@ -38,17 +38,20 @@ export default function({
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {
-                                name: 'toBoolean',
+                                id: 'toBoolean',
+                                name: 'To Boolean',
                                 is_system: true
                             }
                         ],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             },
                             {
-                                name: 'toBoolean',
+                                id: 'toBoolean',
+                                name: 'To Boolean',
                                 is_system: true
                             }
                         ],
