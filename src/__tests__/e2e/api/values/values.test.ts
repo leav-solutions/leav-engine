@@ -24,8 +24,8 @@ describe('Values', () => {
                         label: {fr: "Test attr simple"},
                         actions_list: {
                             saveValue: [
-                                {name: validateFormat},
-                                {name: validateRegex, params: [{name: "regex", value: "^TEST"}]}
+                                {id: "validateFormat",},
+                                {id: "validateRegex", params: [{name: "regex", value: "^TEST"}]}
                             ]
                         }
                     }
@@ -65,13 +65,13 @@ describe('Values', () => {
                         actions_list: {
                             saveValue: [
                                 {
-                                    name: parseJSON
+                                    id: "parseJSON"
                                 },
                                 {
-                                    name: validateFormat
+                                    id: "validateFormat"
                                 },
                                 {
-                                    name: toJSON
+                                    id: "toJSON"
                                 }
                             ]
                         }
