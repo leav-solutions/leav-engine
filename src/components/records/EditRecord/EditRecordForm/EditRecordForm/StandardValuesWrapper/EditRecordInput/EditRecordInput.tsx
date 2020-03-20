@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {Button, Form, Input} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../../../_gqlTypes/GET_LIBRARIES';
-import {IGenericValue} from '../../../../../../../_types/records';
+import {IGenericValue, IValue} from '../../../../../../../_types/records';
 
 interface IEditRecordInputProps {
     attribute: GET_LIBRARIES_libraries_list_attributes;
@@ -111,7 +111,7 @@ function EditRecordInput({
                 fluid
                 type="text"
                 name={`${attribute.id}_${value?.id_value || 'newVal'}`}
-                value={value?.value || ''}
+                value={(value as IValue)?.value || ''}
                 disabled={attribute.system}
                 onFocus={_handleFocus}
                 onChange={_handleChange}

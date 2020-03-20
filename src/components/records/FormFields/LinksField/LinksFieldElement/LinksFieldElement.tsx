@@ -53,18 +53,18 @@ const LinksFieldElement = ({value, onDeleteLink, readonly = false}: ILinksFieldE
 
     return (
         <>
-            {value.value && (
+            {value.linkValue && (
                 <>
                     <Row
                         data-test-id="link_element_wrapper"
-                        key={`${value.id_value}_${value.value.whoAmI.id}`}
+                        key={`${value.id_value}_${value.linkValue.whoAmI.id}`}
                         onMouseEnter={_handleMouseEnter}
                         onMouseLeave={_handleMouseLeave}
                         style={{position: 'relative'}}
                         className="my_row"
                     >
                         <Table.Cell style={{position: 'relative'}}>
-                            <RecordCard record={value.value.whoAmI} />
+                            <RecordCard record={value.linkValue.whoAmI} />
                             {isHovering && (
                                 <HoverMenu data-test-id="link_element_hover_menu" size="small" inverted>
                                     <Menu.Item data-test-id="edit_record_btn" size="big" onClick={_openEditRecord}>
@@ -88,8 +88,8 @@ const LinksFieldElement = ({value, onDeleteLink, readonly = false}: ILinksFieldE
                     <EditRecordModal
                         open={showModal}
                         onClose={_closeEditRecord}
-                        recordId={value.value.whoAmI.id}
-                        library={value.value.whoAmI.library.id}
+                        recordId={value.linkValue.whoAmI.id}
+                        library={value.linkValue.whoAmI.library.id}
                     />
                     {!readonly && (
                         <Confirm

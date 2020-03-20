@@ -22,7 +22,7 @@ jest.mock(
 describe('EditRecordFormLinksTreeElement', () => {
     const value: ITreeLinkValue = {
         id_value: '98765',
-        value: {
+        treeValue: {
             record: {
                 whoAmI: {
                     id: '1',
@@ -72,7 +72,6 @@ describe('EditRecordFormLinksTreeElement', () => {
                 }
             ]
         },
-        raw_value: null,
         modified_at: 1234567890,
         created_at: 1234567890,
         version: null

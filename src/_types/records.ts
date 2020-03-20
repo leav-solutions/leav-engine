@@ -4,7 +4,7 @@ import {RecordIdentity_whoAmI} from '../_gqlTypes/RecordIdentity';
 // Using type intersection to be able to define properties ID and whoAmI and allow dynamic keys
 // with type IValue
 export type RecordData = {
-    [attributeName: string]: IGenericValue | IGenericValue[];
+    [attributeName: string]: IGenericValue[];
 } & {
     id?: string;
     whoAmI?: RecordIdentity_whoAmI;
@@ -27,23 +27,22 @@ export interface ITreeLinkElement extends ITreeLinkNode {
 
 export interface IGenericValue {
     id_value: string | null;
-    value: string | ILinkElement | ITreeLinkElement | null;
-    raw_value: string | null;
     modified_at: number | null;
     created_at: number | null;
     version: IValueVersion | null;
 }
 
 export interface IValue extends IGenericValue {
-    value: string | null;
+    value: string | number | boolean | null;
+    raw_value: string | number | boolean | null;
 }
 
 export interface ILinkValue extends IGenericValue {
-    value: ILinkElement | null;
+    linkValue: ILinkElement | null;
 }
 
 export interface ITreeLinkValue extends IGenericValue {
-    value: ITreeLinkElement | null;
+    treeValue: ITreeLinkElement | null;
 }
 
 export type FormLinksAllowedValues = ILinkValue | ITreeLinkValue;

@@ -4,7 +4,7 @@ import {TreeItem} from 'react-sortable-tree';
 import {Button, Dropdown, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../hooks/useLang';
-import {isLinkAttribute, isTreeAttribute, localizedLabel} from '../../../../utils';
+import {isLinkAttribute, isLinkValue, isTreeAttribute, isTreeValue, localizedLabel} from '../../../../utils';
 import {GET_LIBRARIES_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIBRARIES';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
@@ -18,7 +18,7 @@ import LinksFieldTreeElement from './LinksFieldTreeElement';
 interface IEditRecordFormLinksProps {
     attribute: GET_LIBRARIES_libraries_list_attributes;
     values: FormLinksAllowedValues[];
-    onChange: (value: ILinkValue | ITreeLinkValue) => void;
+    onChange: (value: ILinkValue | ITreeLinkValue, index: number) => void;
     readonly?: boolean;
 }
 
@@ -48,22 +48,19 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
     const valuesToDisplay = values.filter(v => v !== null);
 
     const _onRecordAdded = (record: RecordIdentity_whoAmI) => {
-        // _onValueChanged({
-        //     id_value: null,
-        //     valueToSave: record.id
-        // });
-
-        onChange({
-            value: {
-                id: record.id,
-                whoAmI: record
+        onChange(
+            {
+                linkValue: {
+                    id: record.id,
+                    whoAmI: record
+                },
+                id_value: null,
+                modified_at: null,
+                created_at: null,
+                version: null
             },
-            id_value: null,
-            raw_value: null,
-            modified_at: null,
-            created_at: null,
-            version: null
-        });
+            values.length
+        );
         _handleCloseSelectRecordModal();
     };
 
@@ -73,7 +70,7 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
     const _handleCloseSelectTreeNodeModal = () => setIsOpenSelectTreeNodeModal(false);
     const _onTreeNodeSelected = ({node}: TreeItem) => {
         const val: ITreeLinkValue = {
-            value: {
+            treeValue: {
                 record: {whoAmI: node.whoAmI},
                 ancestors: node.parents.map(p => ({
                     record: {
@@ -82,17 +79,12 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 }))
             },
             id_value: null,
-            raw_value: null,
             modified_at: null,
             created_at: null,
             version: null
         };
 
-        // const val = {
-        //     id_value: null,
-        //     valueToSave: `${node.whoAmI.library.id}/${node.whoAmI.id}`
-        // };
-        onChange(val);
+        onChange(val, values.length);
         _handleCloseSelectTreeNodeModal();
     };
 
@@ -100,17 +92,19 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
 
     const _handleCloseAddRecordModal = (record?: RecordIdentity_whoAmI) => {
         if (!!record) {
-            onChange({
-                value: {
-                    id: record.id,
-                    whoAmI: record
+            onChange(
+                {
+                    linkValue: {
+                        id: record.id,
+                        whoAmI: record
+                    },
+                    id_value: null,
+                    modified_at: null,
+                    created_at: null,
+                    version: null
                 },
-                id_value: null,
-                raw_value: null,
-                modified_at: null,
-                created_at: null,
-                version: null
-            });
+                values.length
+            );
         }
         setIsOpenAddRecordModal(false);
     };
@@ -122,15 +116,17 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
         _handleOpenSelectTreeNodeModal();
     };
 
-    const _handleDeleteLink = (valueToDelete: FormLinksAllowedValues) => {
-        onChange({
-            value: null,
-            id_value: valueToDelete.id_value,
-            raw_value: null,
-            modified_at: null,
-            created_at: null,
-            version: null
-        });
+    const _handleDeleteLink = index => (valueToDelete: FormLinksAllowedValues) => {
+        onChange(
+            {
+                linkValue: null,
+                id_value: valueToDelete.id_value,
+                modified_at: null,
+                created_at: null,
+                version: null
+            },
+            index
+        );
     };
 
     const addValueBtn = (
@@ -180,23 +176,23 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {valuesToDisplay.map(v => {
-                        if (!v || !v.value) {
+                    {valuesToDisplay.map((v, i) => {
+                        if (!v || (isLinkValue(v) && !v.linkValue) || (isTreeValue(v) && !v.treeValue)) {
                             return undefined;
                         }
 
                         return isLinkAttribute(attribute) ? (
                             <LinksFieldElement
                                 value={v as ILinkValue}
-                                key={`${v.id_value}_${(v as ILinkValue).value!.whoAmI.id}`}
-                                onDeleteLink={_handleDeleteLink}
+                                key={`${v.id_value}_${(v as ILinkValue).linkValue!.whoAmI.id}`}
+                                onDeleteLink={_handleDeleteLink(i)}
                                 readonly={readonly}
                             />
                         ) : (
                             <LinksFieldTreeElement
-                                key={`${v.id_value}_${(v as ITreeLinkValue).value!.record.whoAmI.id}`}
+                                key={`${v.id_value}_${(v as ITreeLinkValue).treeValue!.record.whoAmI.id}`}
                                 value={v as ITreeLinkValue}
-                                onDeleteLink={_handleDeleteLink}
+                                onDeleteLink={_handleDeleteLink(i)}
                             />
                         );
                     })}

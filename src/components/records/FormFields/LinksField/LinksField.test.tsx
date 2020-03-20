@@ -1,5 +1,6 @@
 import {shallow} from 'enzyme';
 import React from 'react';
+import {ILinkValue, ITreeLinkValue} from '../../../../_types/records';
 import {mockAttrAdvLink, mockAttrTreeMultival} from '../../../../__mocks__/attributes';
 import LinksField from './LinksField';
 
@@ -18,11 +19,10 @@ jest.mock('./LinksFieldTreeElement', () => {
 jest.mock('../../../../hooks/useLang');
 
 describe('EditRecordFormLinks', () => {
-    const linkValues = [
+    const linkValues: ILinkValue[] = [
         {
-            attribute: 'adv_link_attribute',
             id_value: '98765',
-            value: {
+            linkValue: {
                 id: '1',
                 whoAmI: {
                     id: '1',
@@ -37,15 +37,13 @@ describe('EditRecordFormLinks', () => {
                     preview: null
                 }
             },
-            raw_value: null,
             modified_at: 1234567890,
             created_at: 1234567890,
             version: null
         },
         {
-            attribute: 'adv_link_attribute',
             id_value: '98766',
-            value: {
+            linkValue: {
                 id: '2',
                 whoAmI: {
                     id: '2',
@@ -60,18 +58,16 @@ describe('EditRecordFormLinks', () => {
                     preview: null
                 }
             },
-            raw_value: null,
             modified_at: 1234567890,
             created_at: 1234567890,
             version: null
         }
     ];
 
-    const treeValues = [
+    const treeValues: ITreeLinkValue[] = [
         {
-            attribute: 'adv_link_attribute',
             id_value: '98765',
-            value: {
+            treeValue: {
                 record: {
                     whoAmI: {
                         id: '1',
@@ -105,7 +101,6 @@ describe('EditRecordFormLinks', () => {
                     }
                 ]
             },
-            raw_value: null,
             modified_at: 1234567890,
             created_at: 1234567890,
             version: null
@@ -142,22 +137,23 @@ describe('EditRecordFormLinks', () => {
             onDeleteFunc(linkValues[0]);
         }
 
-        expect(onChange).toBeCalledWith({
-            id_value: '98765',
-            value: null,
-            created_at: null,
-            modified_at: null,
-            version: null,
-            raw_value: null
-        });
+        expect(onChange).toBeCalledWith(
+            {
+                id_value: '98765',
+                linkValue: null,
+                created_at: null,
+                modified_at: null,
+                version: null
+            },
+            0
+        );
     });
 
     test("Don't display null values (= deleted)", async () => {
-        const valuesWithNull = [
+        const valuesWithNull: ILinkValue[] = [
             {
-                attribute: 'adv_link_attribute',
                 id_value: '98765',
-                value: {
+                linkValue: {
                     id: '1',
                     whoAmI: {
                         id: '1',
@@ -172,16 +168,13 @@ describe('EditRecordFormLinks', () => {
                         preview: null
                     }
                 },
-                raw_value: null,
                 modified_at: 1234567890,
                 created_at: 1234567890,
                 version: null
             },
             {
-                attribute: 'adv_link_attribute',
                 id_value: '98766',
-                value: null,
-                raw_value: null,
+                linkValue: null,
                 modified_at: 1234567890,
                 created_at: 1234567890,
                 version: null

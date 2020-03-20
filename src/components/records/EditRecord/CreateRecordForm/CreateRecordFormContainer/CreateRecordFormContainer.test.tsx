@@ -5,7 +5,7 @@ import {act} from 'react-dom/test-utils';
 import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
-import {RecordData} from '../../../../../_types/records';
+import {IValue, RecordData} from '../../../../../_types/records';
 import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import CreateRecordFormContainer from './CreateRecordFormContainer';
@@ -122,18 +122,20 @@ describe('CreateRecordFormContainer', () => {
             return;
         }
 
-        await act(async () => {
-            await saveFunc({
-                simple_attribute: {
-                    id_value: null,
-                    value: 'MyVal',
-                    modified_at: null,
-                    created_at: null,
-                    raw_value: 'MyVal',
-                    version: null
-                }
-            });
-        });
+        const valToSave: IValue = {
+            id_value: null,
+            value: 'MyVal',
+            modified_at: null,
+            created_at: null,
+            raw_value: 'MyVal',
+            version: null
+        };
+
+        await act(() =>
+            saveFunc({
+                simple_attribute: [valToSave]
+            })
+        );
 
         expect(onPostSave).toBeCalled();
     });

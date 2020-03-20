@@ -5,12 +5,12 @@ import useLang from '../../../../../hooks/useLang';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {deleteValueQuery} from '../../../../../queries/values/deleteValueMutation';
 import {saveValueQuery} from '../../../../../queries/values/saveValueMutation';
-import {isLinkAttribute, versionObjToGraphql} from '../../../../../utils/utils';
+import {isLinkAttribute, isLinkValue, isTreeValue, versionObjToGraphql} from '../../../../../utils';
 import {
     GET_LIBRARIES_libraries_list,
     GET_LIBRARIES_libraries_list_attributes
 } from '../../../../../_gqlTypes/GET_LIBRARIES';
-import {AttributeType, TreeElementInput, ValueInput} from '../../../../../_gqlTypes/globalTypes';
+import {TreeElementInput, ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {IGetRecordData, ILinkValue, ITreeLinkValue, IValue, RecordData} from '../../../../../_types/records';
@@ -123,26 +123,22 @@ const EditRecordForm = ({
     };
 
     const _getInput = attribute => {
-        let values = recordData[attribute.id];
-
-        if (!Array.isArray(values)) {
-            values = [values];
-        }
+        const values = recordData[attribute.id];
 
         if (isLinkAttribute(attribute, false)) {
             const _handleLinkChange = (value: ILinkValue | ITreeLinkValue) => {
-                if (value.value === null) {
+                if (
+                    (isLinkValue(value) && value.linkValue === null) ||
+                    (isTreeValue(value) && value.treeValue === null)
+                ) {
                     return _deleteValue(attribute)({id_value: value.id_value, value: null});
                 }
 
                 const savedValue = {
                     id_value: value.id_value,
-                    value:
-                        attribute.type === AttributeType.tree
-                            ? `${(value as ITreeLinkValue)!.value?.record.whoAmI.library.id}/${
-                                  (value as ITreeLinkValue)!.value?.record.whoAmI.id
-                              }`
-                            : (value as ILinkValue)!.value?.id
+                    value: isTreeValue(value)
+                        ? `${value.treeValue?.record.whoAmI.library.id}/${value.treeValue?.record.whoAmI.id}`
+                        : (value as ILinkValue)!.linkValue?.id
                 };
 
                 return _submitValue(attribute)(savedValue);

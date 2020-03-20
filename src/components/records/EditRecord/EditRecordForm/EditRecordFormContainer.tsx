@@ -1,12 +1,10 @@
 import React from 'react';
 import {GET_LIBRARIES_libraries_list} from '../../../../_gqlTypes/GET_LIBRARIES';
-import {TreeElementInput} from '../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import EditRecordForm from './EditRecordForm';
 
 interface IEditRecordFormProps {
     initialRecordId?: string;
-    valueVersion?: {[treeName: string]: TreeElementInput};
     library: GET_LIBRARIES_libraries_list;
     setRecordIdentity?: (input: React.SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
     onIdentityUpdate?: any;
@@ -14,7 +12,6 @@ interface IEditRecordFormProps {
 
 function EditRecordFormContainer({
     initialRecordId,
-    valueVersion,
     library,
     setRecordIdentity,
     onIdentityUpdate

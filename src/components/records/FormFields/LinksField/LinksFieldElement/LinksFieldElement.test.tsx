@@ -19,7 +19,7 @@ describe('EditRecordFormLinksElement', () => {
     const onDelete = jest.fn();
     const mockValue: ILinkValue = {
         id_value: '98765',
-        value: {
+        linkValue: {
             id: '1',
             whoAmI: {
                 id: '1',
@@ -34,7 +34,6 @@ describe('EditRecordFormLinksElement', () => {
                 preview: null
             }
         },
-        raw_value: null,
         modified_at: 1234567890,
         created_at: 1234567890,
         version: null

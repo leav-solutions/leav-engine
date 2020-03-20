@@ -3,10 +3,11 @@ import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
-import {isLinkAttribute, localizedLabel} from '../../../../utils';
+import {isLinkAttribute, isValueNull, localizedLabel} from '../../../../utils';
 import {GET_LIBRARIES_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIBRARIES';
+import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
-import {IGenericValue, ILinkValue, ITreeLinkValue, RecordData, RecordEdition} from '../../../../_types/records';
+import {IGenericValue, ILinkValue, ITreeLinkValue, IValue, RecordData, RecordEdition} from '../../../../_types/records';
 import FormFieldWrapper from '../../../shared/FormFieldWrapper';
 import LinksField from '../../FormFields/LinksField';
 
@@ -22,13 +23,23 @@ export interface IEditRecordFormError {
     [fieldName: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
 }
 
-const virginValue = {
-    id_value: null,
-    value: '',
-    raw_value: '',
-    modified_at: null,
-    created_at: null,
-    version: null
+const _getVirginValue = (attribute): IValue | ILinkValue | ITreeLinkValue => {
+    const baseValue: IGenericValue = {
+        id_value: null,
+        modified_at: null,
+        created_at: null,
+        version: null
+    };
+
+    switch (attribute.type) {
+        case AttributeType.simple_link:
+        case AttributeType.advanced_link:
+            return {...baseValue, linkValue: null};
+        case AttributeType.tree:
+            return {...baseValue, treeValue: null};
+        default:
+            return {...baseValue, value: null, raw_value: null};
+    }
 };
 
 /* tslint:disable-next-line:variable-name */
@@ -59,34 +70,23 @@ const CreateRecordForm = ({
 
             // If we're on a multivalues attribute, we need to find the updated value in the array
             // Otherwise, just update value
-            let newFieldValue;
-            if (attributes[fieldName].multiple_values) {
-                newFieldValue = values[fieldName].map((v, i) => {
-                    const newVal = i === data['data-index'] ? value : v.value;
-                    return {...v, value: newVal};
-                });
-            } else {
-                newFieldValue = {...values[fieldName], value};
-            }
+            const newFieldValue = values[fieldName].map((v, i) => {
+                const newVal = i === data['data-index'] ? value : v.value;
+                return {...v, value: newVal};
+            });
 
             setFieldValue(fieldName, newFieldValue);
         };
 
-        const _handleLinkChange = (fieldName: string) => (value: ILinkValue | ITreeLinkValue) => {
-            // If we're on a multivalues attribute, we need to find the updated value in the array
-            // Otherwise, just update value
+        const _handleLinkChange = (fieldName: string) => (value: ILinkValue | ITreeLinkValue, index) => {
             let newFieldValue;
-            if (attributes[fieldName].multiple_values) {
-                if (value.id_value) {
-                    newFieldValue = values[fieldName].map(v => {
-                        const newVal = v.id_value === value.id_value ? value : v;
-                        return newVal;
-                    });
-                } else if (value.value) {
-                    newFieldValue = [...values[fieldName], value];
-                }
+            if (isValueNull(value)) {
+                // Delete value
+                newFieldValue = [...values[fieldName]];
+                newFieldValue = [...newFieldValue.slice(0, index), ...newFieldValue.slice(index + 1)];
             } else {
-                newFieldValue = {...values[fieldName], ...value};
+                // Add value
+                newFieldValue = [...values[fieldName], value];
             }
 
             setFieldValue(fieldName, newFieldValue);
@@ -104,15 +104,13 @@ const CreateRecordForm = ({
 
         const _renderValueField = (
             attr: GET_LIBRARIES_libraries_list_attributes,
-            fieldValues: IGenericValue[] | IGenericValue,
+            fieldValues: IGenericValue[],
             readonly: boolean
         ) => {
-            const formValues = Array.isArray(fieldValues) ? fieldValues : [fieldValues];
-
             if (isLinkAttribute(attr, false)) {
                 return (
                     <LinksField
-                        values={formValues as ILinkValue[] | ITreeLinkValue[]}
+                        values={fieldValues as ILinkValue[] | ITreeLinkValue[]}
                         attribute={attr}
                         onChange={_handleLinkChange(attr.id)}
                         readonly={readonly}
@@ -120,12 +118,12 @@ const CreateRecordForm = ({
                 );
             }
 
-            if (!formValues.length) {
-                formValues.push({...virginValue});
+            if (!fieldValues.length) {
+                fieldValues.push({..._getVirginValue(attr)});
             }
 
             const attributeLabel = localizedLabel(attr.label, availableLanguages);
-            const canAddValue = !readonly && (attr.multiple_values || !formValues.length);
+            const canAddValue = !readonly && (attr.multiple_values || !fieldValues.length);
 
             return (
                 <>
@@ -146,12 +144,12 @@ const CreateRecordForm = ({
                             {t('records.add_value')}
                         </Button>
                     )}
-                    {formValues.map((v, i) => {
+                    {fieldValues.map((v, i) => {
                         return (
                             <Form.Input
                                 key={attr.id + '_' + i}
                                 name={attr.id}
-                                value={v?.value || ''}
+                                value={(v as IValue)?.value || ''}
                                 data-index={i}
                                 onChange={_handleChange}
                                 disabled={readonly}
@@ -187,7 +185,7 @@ const CreateRecordForm = ({
     };
 
     const initValues = Object.keys(attributes).reduce((allValues, attrId) => {
-        allValues[attrId] = attributes[attrId].multiple_values ? [{...virginValue}] : {...virginValue};
+        allValues[attrId] = [{..._getVirginValue(attributes[attrId])}];
 
         return allValues;
     }, {});

@@ -11,6 +11,7 @@ import {
 import {AttributeType, AvailableLanguage, TreeElementInput} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {IErrorByField} from '../_types/errors';
+import {IGenericValue, ILinkValue, ITreeLinkValue, IValue} from '../_types/records';
 
 /**
  * Return label matching user language (or default language) from an object containing all languages labels
@@ -226,3 +227,24 @@ export const clearCacheQueriesFromRegexp = (cache, regexp) => {
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
     return `recordIdentity/${libId}/${recordId}`;
 }
+
+/*** Values type guards ***/
+export const isStandardValue = (value: IGenericValue): value is IValue => {
+    return typeof (value as IValue).value !== 'undefined';
+};
+
+export const isLinkValue = (value: IGenericValue): value is ILinkValue => {
+    return typeof (value as ILinkValue).linkValue !== 'undefined';
+};
+
+export const isTreeValue = (value: IGenericValue): value is ITreeLinkValue => {
+    return typeof (value as ITreeLinkValue).treeValue !== 'undefined';
+};
+
+export const isValueNull = (val: IGenericValue): boolean => {
+    return (
+        (isStandardValue(val) && val.value === null) ||
+        (isLinkValue(val) && val.linkValue === null) ||
+        (isTreeValue(val) && val.treeValue === null)
+    );
+};

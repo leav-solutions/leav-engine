@@ -26,7 +26,7 @@ function LinksFieldTreeElement({value, readOnly, onDeleteLink}: ILinksFieldTreeE
     };
     const _handleCloseEditRecordModal = () => setIsOpenEditRecordModal(false);
 
-    if (!value.value) {
+    if (!value.treeValue) {
         return (
             <Table.Row>
                 <Table.Cell>Invalid value</Table.Cell>
@@ -47,7 +47,7 @@ function LinksFieldTreeElement({value, readOnly, onDeleteLink}: ILinksFieldTreeE
             text: t('records.delete_link'),
             icon: 'trash alternate outline',
             action: _handleDeleteLink,
-            displayFilter: (r: RecordIdentity_whoAmI) => r.id === value.value?.record.whoAmI.id
+            displayFilter: (r: RecordIdentity_whoAmI) => r.id === value.treeValue?.record.whoAmI.id
         });
     }
 
@@ -55,7 +55,7 @@ function LinksFieldTreeElement({value, readOnly, onDeleteLink}: ILinksFieldTreeE
         <>
             <Table.Row>
                 <Table.Cell>
-                    <TreeNodeBreadcrumb element={value.value} actions={actions} />
+                    <TreeNodeBreadcrumb element={value.treeValue} actions={actions} />
                 </Table.Cell>
             </Table.Row>
             {isOpenEditRecordModal && !!editedRecord && (

@@ -5,7 +5,7 @@ import useLang from '../../../../../hooks/useLang';
 import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
-import {versionObjToGraphql} from '../../../../../utils/utils';
+import {isValueNull, versionObjToGraphql} from '../../../../../utils';
 import {CREATE_RECORD, CREATE_RECORDVariables} from '../../../../../_gqlTypes/CREATE_RECORD';
 import {
     GET_LIBRARIES_libraries_list,
@@ -43,14 +43,15 @@ const _extractValueToSave = (value: IGenericValue, attribute: GET_LIBRARIES_libr
     switch (attribute.type) {
         case AttributeType.advanced_link:
         case AttributeType.simple_link:
-            extractedValue = (value as ILinkValue).value !== null ? (value as ILinkValue).value!.whoAmI.id : null;
+            extractedValue =
+                (value as ILinkValue).linkValue !== null ? (value as ILinkValue).linkValue!.whoAmI.id : null;
             break;
         case AttributeType.tree:
             extractedValue =
-                (value as ITreeLinkValue).value !== null
+                (value as ITreeLinkValue).treeValue !== null
                     ? [
-                          (value as ITreeLinkValue).value!.record.whoAmI.library.id,
-                          (value as ITreeLinkValue).value!.record.whoAmI.id
+                          (value as ITreeLinkValue).treeValue!.record.whoAmI.library.id,
+                          (value as ITreeLinkValue).treeValue!.record.whoAmI.id
                       ].join('/')
                     : null;
             break;
@@ -117,30 +118,19 @@ function CreateRecordFormContainer({
         const submittedValues = Object.keys(values)
             .filter(attrName => !!attributesById[attrName] && !attributesById[attrName].system)
             .reduce((allValues: ValueBatchInput[], attrName: string) => {
-                if (attributesById[attrName].multiple_values) {
-                    // Multiple values
-                    for (const val of values[attrName] as IGenericValue[]) {
-                        // Don't save empty values which doesn't already exists: it means it is an empty field
-                        if (val && (val.id_value || (!val.id_value && val.value !== null))) {
-                            const valToSave: string | null = _extractValueToSave(val, attributesById[attrName]);
+                for (const val of values[attrName]) {
+                    // Don't save empty values which doesn't already exists: it means it is an empty field
+                    if (val && !isValueNull(val)) {
+                        const valToSave: string | null = _extractValueToSave(val, attributesById[attrName]);
 
-                            if (valToSave !== '') {
-                                allValues.push({
-                                    attribute: attrName,
-                                    id_value: val ? val.id_value : null,
-                                    value: valToSave
-                                });
-                            }
+                        if (valToSave !== '') {
+                            allValues.push({
+                                attribute: attrName,
+                                id_value: val ? val.id_value : null,
+                                value: valToSave
+                            });
                         }
                     }
-                } else {
-                    const valToSave = _extractValueToSave(values[attrName] as IGenericValue, attributesById[attrName]);
-
-                    allValues.push({
-                        attribute: attrName,
-                        id_value: values[attrName] ? (values[attrName] as IGenericValue).id_value : null,
-                        value: valToSave
-                    });
                 }
 
                 return allValues;
