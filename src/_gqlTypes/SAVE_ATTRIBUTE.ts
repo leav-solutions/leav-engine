@@ -2,13 +2,13 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AttributeFormat, AttributeInput, AttributeType, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_ATTRIBUTE
 // ====================================================
 
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -20,7 +20,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf
 }
 
 export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes =
-    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf {
@@ -60,7 +60,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     values_list: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list | null;
 }
 
-export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -72,7 +72,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_per
 }
 
 export type SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes =
-    | SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf {
@@ -130,7 +130,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     linked_library: string | null;
 }
 
-export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -142,7 +142,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_per
 }
 
 export type SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes =
-    | SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf {

@@ -15,7 +15,7 @@ export interface AttributeDetails_StandardAttribute_metadata_fields {
     format: AttributeFormat | null;
 }
 
-export interface AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -27,7 +27,7 @@ export interface AttributeDetails_StandardAttribute_permissions_conf_permissionT
 }
 
 export type AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes =
-    | AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface AttributeDetails_StandardAttribute_permissions_conf {
@@ -60,7 +60,7 @@ export interface AttributeDetails_LinkAttribute_metadata_fields {
     format: AttributeFormat | null;
 }
 
-export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -72,7 +72,7 @@ export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeA
 }
 
 export type AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes =
-    | AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface AttributeDetails_LinkAttribute_permissions_conf {
@@ -106,7 +106,7 @@ export interface AttributeDetails_TreeAttribute_metadata_fields {
     format: AttributeFormat | null;
 }
 
-export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -118,7 +118,7 @@ export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeA
 }
 
 export type AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes =
-    | AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface AttributeDetails_TreeAttribute_permissions_conf {

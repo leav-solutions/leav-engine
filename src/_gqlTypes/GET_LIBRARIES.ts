@@ -15,7 +15,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_metad
     format: AttributeFormat | null;
 }
 
-export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -27,7 +27,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permi
 }
 
 export type GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf {
@@ -60,7 +60,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_metadata_
     format: AttributeFormat | null;
 }
 
-export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -72,7 +72,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissio
 }
 
 export type GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf {
@@ -106,7 +106,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_metadata_
     format: AttributeFormat | null;
 }
 
-export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -118,7 +118,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissio
 }
 
 export type GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf {
@@ -150,7 +150,7 @@ export type GET_LIBRARIES_libraries_list_attributes =
     | GET_LIBRARIES_libraries_list_attributes_LinkAttribute
     | GET_LIBRARIES_libraries_list_attributes_TreeAttribute;
 
-export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -162,7 +162,7 @@ export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAtt
 }
 
 export type GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_StandardAttribute
     | GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface GET_LIBRARIES_libraries_list_permissions_conf {

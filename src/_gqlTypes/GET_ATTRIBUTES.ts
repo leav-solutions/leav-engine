@@ -15,7 +15,7 @@ export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_metadata_field
     format: AttributeFormat | null;
 }
 
-export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -27,7 +27,7 @@ export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_co
 }
 
 export type GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf {
@@ -60,7 +60,7 @@ export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_metadata_fields {
     format: AttributeFormat | null;
 }
 
-export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -72,7 +72,7 @@ export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_p
 }
 
 export type GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf {
@@ -106,7 +106,7 @@ export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_metadata_fields {
     format: AttributeFormat | null;
 }
 
-export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: any | null;
 }
@@ -118,7 +118,7 @@ export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_p
 }
 
 export type GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
     | GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf {
