@@ -166,7 +166,7 @@ export default function({
                             return treeDomain.getTrees({filters, withCount: true, pagination, sort});
                         },
                         async treeContent(_, {treeId, startAt}) {
-                            const res = await treeDomain.getTreeContent(treeId);
+                            const res = await treeDomain.getTreeContent(treeId, startAt);
 
                             // Add treeId as it might be useful for nested resolvers
                             return res.map(r => ({...r, treeId}));
