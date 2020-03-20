@@ -97,15 +97,18 @@ describe('attributeDomain', () => {
         const mockALDomain: Mockify<IActionsListDomain> = {
             getAvailableActions: jest.fn().mockReturnValue([
                 {
-                    name: 'validateFormat',
+                    id: 'validateFormat',
+                    name: 'Validate Format',
                     output_types: ['string', 'number']
                 },
                 {
-                    name: 'toNumber',
+                    id: 'toNumber',
+                    name: 'To Number',
                     output_types: ['number']
                 },
                 {
-                    name: 'toJSON',
+                    id: 'toJSON',
+                    name: 'To JSON',
                     output_types: ['string']
                 }
             ])
@@ -149,7 +152,7 @@ describe('attributeDomain', () => {
             expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.CREATE_ATTRIBUTE);
 
             expect(newAttr).toMatchObject({
-                actions_list: {saveValue: [{is_system: true, name: 'validateFormat'}]},
+                actions_list: {saveValue: [{is_system: true, id: 'validateFormat'}]},
                 format: 'text',
                 id: 'test',
                 type: 'advanced'
@@ -178,7 +181,7 @@ describe('attributeDomain', () => {
                     id: 'test',
                     type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.TEXT,
-                    actions_list: {saveValue: [{is_system: true, name: 'validateFormat'}]},
+                    actions_list: {saveValue: [{is_system: true, id: 'validateFormat', name: 'Validate Format'}]},
                     label: {fr: 'Test'}
                 },
                 queryInfos
@@ -248,10 +251,10 @@ describe('attributeDomain', () => {
                 ...mockAttrAdv,
                 actions_list: {
                     [ActionsListEvents.SAVE_VALUE]: [
-                        {name: 'validateFormat', is_system: true},
-                        {name: 'toNumber', is_system: false}
+                        {id: 'validateFormat', name: 'Validate Format', is_system: true},
+                        {id: 'toNumber', name: 'To Number', is_system: false}
                     ],
-                    [ActionsListEvents.GET_VALUE]: [{name: 'toNumber', is_system: true}],
+                    [ActionsListEvents.GET_VALUE]: [{id: 'toNumber', name: 'To Number', is_system: true}],
                     [ActionsListEvents.DELETE_VALUE]: []
                 }
             };
@@ -282,10 +285,15 @@ describe('attributeDomain', () => {
                     format: AttributeFormats.NUMERIC,
                     actions_list: {
                         [ActionsListEvents.SAVE_VALUE]: [
-                            {name: 'toJSON'},
-                            {name: 'validateFormat', params: [{name: 'myParam', value: 'param_value'}]}
+                            {id: 'toJSON', name: 'To JSON'},
+                            {
+                                id: 'validateFormat',
+                                is_system: true,
+                                name: 'Validate Format',
+                                params: [{name: 'myParam', value: 'param_value'}]
+                            }
                         ],
-                        [ActionsListEvents.GET_VALUE]: [{name: 'toNumber'}],
+                        [ActionsListEvents.GET_VALUE]: [{id: 'toNumber', is_system: true, name: 'To Number'}],
                         [ActionsListEvents.DELETE_VALUE]: []
                     }
                 },
@@ -294,10 +302,15 @@ describe('attributeDomain', () => {
 
             expect(mockAttrRepo.updateAttribute.mock.calls[0][0].actions_list).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [
-                    {name: 'toJSON', is_system: false},
-                    {name: 'validateFormat', is_system: true, params: [{name: 'myParam', value: 'param_value'}]}
+                    {id: 'toJSON', name: 'To JSON', is_system: false},
+                    {
+                        id: 'validateFormat',
+                        is_system: true,
+                        name: 'Validate Format',
+                        params: [{name: 'myParam', value: 'param_value'}]
+                    }
                 ],
-                [ActionsListEvents.GET_VALUE]: [{name: 'toNumber', is_system: true}],
+                [ActionsListEvents.GET_VALUE]: [{id: 'toNumber', is_system: true, name: 'To Number'}],
                 [ActionsListEvents.DELETE_VALUE]: []
             });
         });
@@ -324,8 +337,8 @@ describe('attributeDomain', () => {
                 type: AttributeTypes.ADVANCED,
                 actions_list: {
                     saveValue: [
-                        {is_system: true, name: 'validateFormat'},
-                        {is_system: false, name: 'toNumber'}
+                        {is_system: true, id: 'validateFormat', name: 'Validate Format'},
+                        {is_system: false, id: 'toNumber', name: 'To Number'}
                     ]
                 },
                 label: {fr: 'Test'}
@@ -358,7 +371,7 @@ describe('attributeDomain', () => {
             const attrToSave = {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
-                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]},
+                actions_list: {saveValue: [{is_system: true, id: 'toJSON', name: 'To JSON'}]},
                 label: {fr: 'Test'}
             };
 
@@ -387,7 +400,7 @@ describe('attributeDomain', () => {
                 type: AttributeTypes.ADVANCED,
                 format: AttributeFormats.TEXT,
                 label: {fr: 'Test'},
-                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]}
+                actions_list: {saveValue: [{is_system: true, id: 'toJSON', name: 'To JSON'}]}
             };
 
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
@@ -414,7 +427,7 @@ describe('attributeDomain', () => {
                 id: 'test',
                 type: AttributeTypes.ADVANCED,
                 format: AttributeFormats.TEXT,
-                actions_list: {saveValue: [{is_system: true, name: 'toJSON'}]},
+                actions_list: {saveValue: [{is_system: true, id: 'toJSON', name: 'To JSON'}]},
                 label: {fr: 'Test'}
             };
             await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(PermissionError);

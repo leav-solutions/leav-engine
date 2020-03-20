@@ -7,7 +7,8 @@ import {
 
 export default function(): IActionsListFunction {
     return {
-        name: 'toString',
+        id: 'toString',
+        name: 'To String',
         description: 'Convert value to string',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
         output_types: [ActionsListIOTypes.STRING],

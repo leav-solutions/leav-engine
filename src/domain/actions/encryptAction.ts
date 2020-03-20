@@ -8,7 +8,8 @@ import {
 
 export default function(): IActionsListFunction {
     return {
-        name: 'encrypt',
+        id: 'encrypt',
+        name: 'Encrypt',
         description: 'Encrypt value',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],

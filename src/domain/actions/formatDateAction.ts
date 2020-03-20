@@ -8,7 +8,8 @@ import {
 
 export default function(): IActionsListFunction {
     return {
-        name: 'formatDate',
+        id: 'formatDate',
+        name: 'Format Date',
         description: 'Convert timestamp to a date',
         input_types: [ActionsListIOTypes.NUMBER],
         output_types: [ActionsListIOTypes.STRING],

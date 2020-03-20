@@ -7,7 +7,8 @@ import {
 
 export default function(): IActionsListFunction {
     return {
-        name: 'parseJSON',
+        id: 'parseJSON',
+        name: 'Parse JSON',
         description: 'Parse a JSON string',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.OBJECT],

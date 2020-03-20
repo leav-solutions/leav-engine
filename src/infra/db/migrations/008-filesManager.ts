@@ -51,7 +51,8 @@ export default function({
                         [ActionsListEvents.GET_VALUE]: [],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],
@@ -70,17 +71,20 @@ export default function({
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {
-                                name: 'toBoolean',
+                                id: 'toBoolean',
+                                name: 'To Boolean',
                                 is_system: true
                             }
                         ],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             },
                             {
-                                name: 'toBoolean',
+                                id: 'toBoolean',
+                                name: 'To Boolean',
                                 is_system: true
                             }
                         ],
@@ -100,7 +104,8 @@ export default function({
                         [ActionsListEvents.GET_VALUE]: [],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],
@@ -120,7 +125,8 @@ export default function({
                         [ActionsListEvents.GET_VALUE]: [],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],
@@ -140,11 +146,13 @@ export default function({
                         [ActionsListEvents.GET_VALUE]: [],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             },
                             {
-                                name: 'toNumber',
+                                id: 'toNumber',
+                                name: 'To Number',
                                 is_system: true
                             }
                         ],
@@ -182,7 +190,8 @@ export default function({
                         [ActionsListEvents.GET_VALUE]: [],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],
@@ -235,7 +244,8 @@ export default function({
                         [ActionsListEvents.GET_VALUE]: [],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
-                                name: 'validateFormat',
+                                id: 'validateFormat',
+                                name: 'Validate Format',
                                 is_system: true
                             }
                         ],

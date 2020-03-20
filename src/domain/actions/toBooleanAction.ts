@@ -7,7 +7,8 @@ import {
 
 export default function(): IActionsListFunction {
     return {
-        name: 'toBoolean',
+        id: 'toBoolean',
+        name: 'To Boolean',
         description: 'Convert value to boolean',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
         output_types: [ActionsListIOTypes.BOOLEAN],

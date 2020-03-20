@@ -7,7 +7,8 @@ import {
 
 export default function(): IActionsListFunction {
     return {
-        name: 'toJSON',
+        id: 'toJSON',
+        name: 'To JSON',
         description: 'Convert value to a JSON string',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],

@@ -22,7 +22,8 @@ export default function(): IActionsListFunction {
     const _addSuffix = (n, suffix) => '' + n + suffix;
 
     return {
-        name: 'formatNumber',
+        id: 'formatNumber',
+        name: 'Format Number',
         description: 'Format a number',
         input_types: [ActionsListIOTypes.NUMBER],
         output_types: [ActionsListIOTypes.STRING],

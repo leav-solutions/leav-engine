@@ -15,7 +15,8 @@ interface IDeps {
 
 export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
     return {
-        name: 'validateFormat',
+        id: 'validateFormat',
+        name: 'Validate Format',
         description: 'Check if value matches attribute format',
         input_types: [
             ActionsListIOTypes.STRING,
