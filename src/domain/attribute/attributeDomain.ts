@@ -95,8 +95,17 @@ export default function({
             const attrs = await attributeRepo.getAttributes({filters: {id: attrData.id}, strictFilters: true});
             const isExistingAttr = !!attrs.list.length;
 
+            const defaultParams = {
+                _key: '',
+                system: false,
+                multiple_values: false,
+                values_list: {
+                    enable: false
+                }
+            };
+
             const attrProps: IAttribute = attrs.list[0] ?? null;
-            const attrToSave = {...attrProps, ...attrData};
+            const attrToSave = isExistingAttr ? {...attrProps, ...attrData} : {...defaultParams, ...attrData};
 
             // Check permissions
             const action = isExistingAttr

@@ -1,6 +1,8 @@
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
+import {IRecord} from './record';
 import {ISystemTranslation} from './systemTranslation';
+import {ITreeElement} from './tree';
 
 export interface IAttribute {
     id: string;
@@ -16,6 +18,7 @@ export interface IAttribute {
     multiple_values?: boolean;
     versions_conf?: IAttributeVersionsConf;
     metadata_fields?: string[];
+    values_list?: IValuesListConf;
 }
 
 export enum ValueVersionMode {
@@ -48,6 +51,12 @@ export interface IAttributeFilterOptions {
     label?: string;
     linked_library?: string;
     multiple_values?: boolean;
+}
+
+export interface IValuesListConf {
+    enable: boolean;
+    values?: string[] | IRecord[] | ITreeElement[];
+    allowFreeEntry?: boolean;
 }
 
 export type IOAllowedTypes = {
