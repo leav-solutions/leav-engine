@@ -2,12 +2,13 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {IList} from '_types/list';
+import {IValue, IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
-import {ICoreAttributeApp} from './attributeApp';
+import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICoreApp} from './coreApp';
 
 export interface ICoreLibraryApp {
@@ -178,10 +179,11 @@ export default function({
                     type ${libTypeName} implements Record {
                         library: Library!,
                         whoAmI: RecordIdentity!,
-                        ${lib.attributes.map(
-                            attr =>
-                                `${attr.id}:
-                                ${coreAttributeApp.getGraphQLFormat(attr)}`
+                        property(attribute: ID!): [GenericValue!],
+                        ${await Promise.all(
+                            lib.attributes.map(
+                                async attr => `${attr.id}: ${await coreAttributeApp.getGraphQLFormat(attr)}`
+                            )
                         )}
                     }
 
@@ -256,14 +258,38 @@ export default function({
                 };
                 baseSchema.resolvers[libTypeName] = {
                     library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null),
-                    whoAmI: recordDomain.getRecordIdentity
+                    whoAmI: recordDomain.getRecordIdentity,
+                    property: async (parent, {attribute}, ctx) => {
+                        const res = await recordDomain.getRecordFieldValue(lib.id, parent, attribute, {
+                            version: ctx.version,
+                            forceArray: true
+                        });
+
+                        // We add attribute ID on value as it might be useful for nested resolvers (like tree ancestors)
+                        // It will be automatically filtered out from response as it's not in the schema
+                        return (res as IValue[]).map(v => {
+                            return typeof v.value === 'object' && v.value !== null
+                                ? {
+                                      ...v,
+                                      value: {...v.value, attribute}
+                                  }
+                                : v;
+                        });
+                    }
                 };
 
                 for (const libAttr of lib.attributes) {
-                    baseSchema.resolvers[libTypeName][libAttr.id] = async (parent, args, ctx, info) =>
-                        recordDomain.getRecordFieldValue(lib.id, parent, libAttr.id, {
+                    baseSchema.resolvers[libTypeName][libAttr.id] = async (
+                        parent: IRecord,
+                        _,
+                        ctx: {version: IValueVersion}
+                    ) => {
+                        const val = await recordDomain.getRecordFieldValue(lib.id, parent, libAttr.id, {
                             version: ctx.version
                         });
+
+                        return Array.isArray(val) ? val.map(v => v.value) : val.value;
+                    };
                 }
             }
 

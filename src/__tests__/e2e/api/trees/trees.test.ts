@@ -259,12 +259,14 @@ describe('Trees', () => {
             valElement: ${testLibTypeName} {
                 list {
                     id
-                    ${attrTreeName} {
+                    property(attribute: "${attrTreeName}") {
                         id_value
-                        value {
-                            record {
-                                ... on User {
-                                    id
+                        ... on TreeValue {
+                            value {
+                                record {
+                                    ... on User {
+                                        id
+                                    }
                                 }
                             }
                         }
@@ -274,16 +276,18 @@ describe('Trees', () => {
             valParents: ${testLibTypeName} {
                 list {
                     id
-                    ${attrTreeName} {
+                    property(attribute: "${attrTreeName}") {
                         id_value
-                        value {
-                            record {
-                                id
-                            },
-                            ancestors {
+                        ... on TreeValue {
+                            value {
                                 record {
-                                    ... on User {
-                                        id
+                                    id
+                                },
+                                ancestors {
+                                    record {
+                                        ... on User {
+                                            id
+                                        }
                                     }
                                 }
                             }
@@ -294,16 +298,18 @@ describe('Trees', () => {
             valChildren: ${testLibTypeName} {
                 list {
                     id
-                    ${attrTreeName} {
+                    property(attribute: "${attrTreeName}") {
                         id_value
-                        value {
-                            record {
-                                id
-                            },
-                            children {
+                        ... on TreeValue {
+                            value {
                                 record {
-                                    ... on User {
-                                        id
+                                    id
+                                },
+                                children {
+                                    record {
+                                        ... on User {
+                                            id
+                                        }
                                     }
                                 }
                             }
@@ -314,14 +320,16 @@ describe('Trees', () => {
             valLinkedRecords: ${testLibTypeName} {
                 list {
                     id
-                    ${attrTreeName} {
+                    property(attribute: "${attrTreeName}") {
                         id_value
-                        value {
-                            record {
-                                id
-                            },
-                            linkedRecords(attribute: "${attrTreeName}") {
-                                id
+                        ... on TreeValue {
+                            value {
+                                record {
+                                    id
+                                },
+                                linkedRecords(attribute: "${attrTreeName}") {
+                                    id
+                                }
                             }
                         }
                     }
@@ -331,18 +339,19 @@ describe('Trees', () => {
 
         expect(resGetValues.status).toBe(200);
         expect(resGetValues.data.errors).toBeUndefined();
+        const resData = resGetValues.data.data;
 
-        expect(resGetValues.data.data.valElement.list[0][attrTreeName].id_value).toBeTruthy();
-        expect(typeof resGetValues.data.data.valElement.list[0][attrTreeName].value).toBe('object');
-        expect(resGetValues.data.data.valElement.list[0][attrTreeName].value.record.id).toBeTruthy();
+        expect(resData.valElement.list[0].property[0].id_value).toBeTruthy();
+        expect(typeof resData.valElement.list[0].property[0].value).toBe('object');
+        expect(resData.valElement.list[0].property[0].value.record.id).toBeTruthy();
 
-        expect(resGetValues.data.data.valParents.list[0][attrTreeName].value.ancestors).toBeInstanceOf(Array);
-        expect(resGetValues.data.data.valParents.list[0][attrTreeName].value.ancestors.length).toBe(2);
+        expect(resData.valParents.list[0].property[0].value.ancestors).toBeInstanceOf(Array);
+        expect(resData.valParents.list[0].property[0].value.ancestors.length).toBe(2);
 
-        expect(resGetValues.data.data.valChildren.list[0][attrTreeName].value.children).toBeInstanceOf(Array);
-        expect(resGetValues.data.data.valChildren.list[0][attrTreeName].value.children.length).toBe(1);
+        expect(resData.valChildren.list[0].property[0].value.children).toBeInstanceOf(Array);
+        expect(resData.valChildren.list[0].property[0].value.children.length).toBe(1);
 
-        expect(resGetValues.data.data.valLinkedRecords.list[0][attrTreeName].value.linkedRecords).toBeInstanceOf(Array);
-        expect(resGetValues.data.data.valLinkedRecords.list[0][attrTreeName].value.linkedRecords.length).toBe(1);
+        expect(resData.valLinkedRecords.list[0].property[0].value.linkedRecords).toBeInstanceOf(Array);
+        expect(resData.valLinkedRecords.list[0].property[0].value.linkedRecords.length).toBe(1);
     });
 });

@@ -48,7 +48,7 @@ describe('Values Metadata', () => {
         const queryGetVal = `{
             r: ${metadataLibGqlId} {
                 list {
-                    ${attrWithMetaId} {
+                    property(attribute: "${attrWithMetaId}") {
                         id_value
                         metadata
                     }
@@ -59,6 +59,6 @@ describe('Values Metadata', () => {
 
         expect(resGetVal.status).toBe(200);
         expect(resGetVal.data.errors).toBeUndefined();
-        expect(resGetVal.data.data.r.list[0][attrWithMetaId].metadata[metaAttrId]).toBeDefined();
+        expect(resGetVal.data.data.r.list[0].property[0].metadata[metaAttrId]).toBeDefined();
     });
 });

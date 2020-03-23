@@ -20,14 +20,12 @@ describe('Auth', () => {
         const res = await makeGraphQlCall(`{
             me {
                 id
-                login {
-                    value
-                }
+                login
             }
         }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.me.id).toBeTruthy();
-        expect(res.data.data.me.login.value).toBeTruthy();
+        expect(res.data.data.me.login).toBeTruthy();
     });
 });

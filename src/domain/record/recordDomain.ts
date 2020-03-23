@@ -162,11 +162,13 @@ export default function({
      * @param record
      * @param library
      */
-    const _formatRecordValue = async (attribute: IAttribute, value: IValue, record: IRecord, library: string) => {
+    const _formatRecordValue = async (
+        attribute: IAttribute,
+        value: IValue,
+        record: IRecord,
+        library: string
+    ): Promise<IValue> => {
         let val = {...value}; // Don't mutate given value
-        if (attribute.id === 'id') {
-            return val.value;
-        }
 
         const isLinkAttribute =
             attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
@@ -295,12 +297,13 @@ export default function({
         ): Promise<IValue | IValue[]> {
             const attrProps = await attributeDomain.getAttributeProperties(attributeId);
             const values = await _extractRecordValue(record, attrProps, library, options);
+            const forceArray = options?.forceArray ?? false;
 
             const formattedValues = await Promise.all(
                 values.map(v => _formatRecordValue(attrProps, v, record, library))
             );
 
-            return attrProps.multiple_values ? formattedValues : formattedValues[0];
+            return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0];
         },
         async deactivateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord> {
             const savedVal = await valueDomain.saveValue(record.library, record.id, 'active', {value: false}, infos);

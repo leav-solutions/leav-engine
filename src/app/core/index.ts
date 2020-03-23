@@ -1,5 +1,5 @@
 export {default as actionList} from './actionListApp';
-export {default as attribute} from './attributeApp';
+export {default as attribute} from './attributeApp/attributeApp';
 export {default} from './coreApp';
 export {default as filesManager} from './filesManagerApp';
 export {default as library} from './libraryApp';

@@ -18,16 +18,16 @@ const base: IAttribute = {
     versions_conf: {versionable: false}
 };
 
-export const mockAttrSimple = {...base, id: 'simple_attribute'};
-export const mockAttrId = {...base, id: 'id', system: true};
+export const mockAttrSimple: IAttribute = {...base, id: 'simple_attribute'};
+export const mockAttrId: IAttribute = {...base, id: 'id', system: true};
 
-export const mockAttrAdv = {...base, id: 'advanced_attribute', type: AttributeTypes.ADVANCED};
-export const mockAttrAdvMultiVal = {...mockAttrAdv, multiple_values: true};
-export const mockAttrAdvVersionable = {
+export const mockAttrAdv: IAttribute = {...base, id: 'advanced_attribute', type: AttributeTypes.ADVANCED};
+export const mockAttrAdvMultiVal: IAttribute = {...mockAttrAdv, multiple_values: true};
+export const mockAttrAdvVersionable: IAttribute = {
     ...mockAttrAdv,
     versions_conf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
 };
-export const mockAttrAdvVersionableSimple = {
+export const mockAttrAdvVersionableSimple: IAttribute = {
     ...mockAttrAdvVersionable,
     versions_conf: {...mockAttrAdvVersionable.versions_conf, mode: ValueVersionMode.SIMPLE}
 };
@@ -39,23 +39,33 @@ export const mockAttrAdvWithMetadata: IAttribute = {
     metadata_fields: ['meta_attribute']
 };
 
-export const mockAttrSimpleLink = {...base, id: 'simple_link_attribute', type: AttributeTypes.SIMPLE_LINK};
+export const mockAttrSimpleLink: IAttribute = {
+    ...base,
+    id: 'simple_link_attribute',
+    type: AttributeTypes.SIMPLE_LINK,
+    linked_library: 'test_lib'
+};
 
-export const mockAttrAdvLink = {
+export const mockAttrAdvLink: IAttribute = {
     ...base,
     id: 'adv_link_attribute',
     type: AttributeTypes.ADVANCED_LINK,
     linked_library: 'test_lib'
 };
-export const mockAttrAdvLinkMultiVal = {...mockAttrAdvLink, multiple_values: true};
+export const mockAttrAdvLinkMultiVal: IAttribute = {...mockAttrAdvLink, multiple_values: true};
 
-export const mockAttrTree = {...base, id: 'tree_attribute', type: AttributeTypes.TREE, linked_tree: 'my_tree'};
-export const mockAttrTreeVersionable = {
+export const mockAttrTree: IAttribute = {
+    ...base,
+    id: 'tree_attribute',
+    type: AttributeTypes.TREE,
+    linked_tree: 'my_tree'
+};
+export const mockAttrTreeVersionable: IAttribute = {
     ...mockAttrTree,
     versions_conf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
 };
-export const mockAttrTreeVersionableSimple = {
+export const mockAttrTreeVersionableSimple: IAttribute = {
     ...mockAttrTreeVersionable,
     versions_conf: {...mockAttrTreeVersionable.versions_conf, mode: ValueVersionMode.SIMPLE}
 };
-export const mockAttrTreeMultival = {...mockAttrTree, multiple_values: true};
+export const mockAttrTreeMultival: IAttribute = {...mockAttrTree, multiple_values: true};

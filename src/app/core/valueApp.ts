@@ -1,7 +1,9 @@
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {GraphQLScalarType} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IValue, IValueVersion} from '_types/value';
+import {AttributeTypes} from '../../_types/attribute';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreValueApp {
@@ -10,12 +12,14 @@ export interface ICoreValueApp {
 
 interface IDeps {
     'core.domain.value'?: IValueDomain;
+    'core.domain.attribute'?: IAttributeDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
 }
 
 export default function({
     'core.domain.value': valueDomain = null,
+    'core.domain.attribute': attributeDomain = null,
     'core.app.graphql': graphqlApp = null,
     'core.utils': utils = null
 }: IDeps = {}): ICoreValueApp {
@@ -58,7 +62,16 @@ export default function({
                         value: TreeElementInput!
                     }
 
-                    type Value {
+                    interface GenericValue {
+                        id_value: ID,
+                        modified_at: Int,
+                        created_at: Int,
+                        version: ValueVersion,
+                        attribute: ID,
+                        metadata: ValueMetadata
+                    }
+
+                    type Value implements GenericValue {
                         id_value: ID,
                         value: String,
                         raw_value: String,
@@ -86,22 +99,24 @@ export default function({
                         value: String
                     }
 
-                    type linkValue {
+                    type LinkValue implements GenericValue {
                         id_value: ID,
                         value: Record!,
                         modified_at: Int,
                         created_at: Int,
                         version: ValueVersion,
-                        attribute: ID
+                        attribute: ID,
+                        metadata: ValueMetadata
                     }
 
-                    type treeValue {
+                    type TreeValue implements GenericValue {
                         id_value: ID!,
                         modified_at: Int!,
                         created_at: Int!
                         value: TreeNode!,
                         version: ValueVersion,
-                        attribute: ID
+                        attribute: ID,
+                        metadata: ValueMetadata
                     }
 
                     input ValueInput {
@@ -203,7 +218,27 @@ export default function({
                         serialize: val => val,
                         parseValue: val => val,
                         parseLiteral: ast => ast
-                    })
+                    }),
+                    GenericValue: {
+                        __resolveType: async fieldValue => {
+                            const attribute = Array.isArray(fieldValue)
+                                ? fieldValue[0].attribute
+                                : fieldValue.attribute;
+
+                            const attrProps = await attributeDomain.getAttributeProperties(attribute);
+
+                            switch (attrProps.type) {
+                                case AttributeTypes.SIMPLE:
+                                case AttributeTypes.ADVANCED:
+                                    return 'Value';
+                                case AttributeTypes.SIMPLE_LINK:
+                                case AttributeTypes.ADVANCED_LINK:
+                                    return 'LinkValue';
+                                case AttributeTypes.TREE:
+                                    return 'TreeValue';
+                            }
+                        }
+                    }
                 }
             };
 
