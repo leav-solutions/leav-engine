@@ -1,6 +1,7 @@
-import React from 'react';
+import {History, Location} from 'history';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Header, Tab} from 'semantic-ui-react';
+import {Header, Tab, TabProps} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
@@ -16,9 +17,17 @@ interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
+    history?: History;
+    location?: Location;
 }
 
-function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTabsProps): JSX.Element {
+function EditAttributeTabs({
+    attribute,
+    onPostSave,
+    forcedType,
+    history,
+    location
+}: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const headerLabel =
@@ -30,11 +39,12 @@ function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTa
             menuItem: t('attributes.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
+                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} history={history} />
                 </Tab.Pane>
             )
         }
     ];
+
     if (!!attribute) {
         const isMetadataAllowed = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
             attribute.type
@@ -91,10 +101,28 @@ function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTa
         }
     }
 
+    const tabName = location ? location.hash.replace('#', '') : undefined;
+    const [activeIndex, setActiveIndex] = useState<number | undefined>(
+        tabName ? panes.findIndex(p => tabName === p.key) : 0
+    );
+
+    const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
+        if (data.panes && data.activeIndex !== undefined) {
+            setActiveIndex(parseInt(data.activeIndex.toString(), 0));
+            history?.push(`#${data.panes[data.activeIndex].key}`);
+        }
+    };
+
     return (
         <>
             <Header className="no-grow">{headerLabel}</Header>
-            <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col height100" />
+            <Tab
+                onTabChange={_handleOnTabChange}
+                menu={{secondary: true, pointing: true}}
+                panes={panes}
+                className="grow flex-col height100"
+                activeIndex={activeIndex}
+            />
         </>
     );
 }

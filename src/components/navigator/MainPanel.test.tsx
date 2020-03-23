@@ -9,7 +9,7 @@ import {initialState, ActionTypes} from './NavigatorReducer';
 import {AttributeType, AttributeFormat} from '../../_gqlTypes/globalTypes';
 
 const lang = ['fr'];
-const DATAMOCK = [
+export const DATAMOCK = [
     {
         request: {
             query: QUERY_LIBRARY_CONFIG,

@@ -160,7 +160,9 @@
     "navigator": {
         "title": "browser",
         "select_root": "Please select a library in the list aside.",
-        "edit_filters": "Edit filters"
+        "edit_filters": "Edit filters",
+        "select_range": "Select Range",
+        "display_all": "Display All"
     },
     "plugins": {
         "title": "Plugins",

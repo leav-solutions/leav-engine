@@ -13,17 +13,44 @@ import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {onAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
+import {clearCacheQueriesFromRegexp} from '../../../../../utils';
+import {History} from 'history';
+// import useLang from '../../../../../hooks/useLang';
 
 interface IInfosTabProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
+    history?: History;
 }
 
-function InfosTab({attribute, onPostSave, forcedType}: IInfosTabProps): JSX.Element {
+function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps): JSX.Element {
+    // const {lang} = useLang();
     const [saveAttribute, {error}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-        onError: e => undefined
+        onError: e => undefined,
+        update: async (cache, {data: dataCached}) => {
+            const newAttribute = dataCached.saveAttribute;
+            const cachedData: any = cache.readQuery({query: getAttributesQuery, variables: {id: newAttribute.id}});
+
+            clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.attributes/);
+
+            const newAttributes = {
+                totalCount: 1,
+                list: [newAttribute],
+                __typename: cachedData.attributes.__typename
+            };
+
+            cache.writeQuery({
+                query: getAttributesQuery,
+                data: {attributes: newAttributes},
+                variables: {id: newAttribute.id}
+            });
+
+            if (history) {
+                history.replace({pathname: '/attributes/edit/' + newAttribute.id});
+            }
+        }
     });
 
     const [getAttrById, {data: dataAttrById}] = useLazyQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(

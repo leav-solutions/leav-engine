@@ -38,6 +38,7 @@ export const getLibsQuery = gql`
                     searchableFields
                 }
             }
+            __typename
         }
     }
 `;

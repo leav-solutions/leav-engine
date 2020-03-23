@@ -1,5 +1,7 @@
 import {shallow} from 'enzyme';
+import {Location} from 'history';
 import React from 'react';
+import {Mockify} from '../../../_types/Mockify';
 import EditTreeForm from './EditTreeForm';
 
 jest.mock('../../../utils/utils', () => ({
@@ -16,11 +18,18 @@ describe('EditTreeForm', () => {
             id: 'test',
             label: {fr: 'Test', en: null},
             system: false,
-            libraries: ['test_lib', 'users']
+            libraries: [
+                {id: 'test_lib', label: null},
+                {id: 'users', label: null}
+            ]
         };
         const onSubmit = jest.fn();
 
-        const comp = shallow(<EditTreeForm tree={tree} onSubmit={onSubmit} />);
+        const onCheckIdExists = async () => true;
+
+        const comp = shallow(
+            <EditTreeForm readOnly onCheckIdExists={onCheckIdExists} tree={tree} onSubmit={onSubmit} />
+        );
 
         expect(
             comp
@@ -33,7 +42,11 @@ describe('EditTreeForm', () => {
     test('Render form for new tree', async () => {
         const onSubmit = jest.fn();
 
-        const comp = shallow(<EditTreeForm tree={null} onSubmit={onSubmit} />);
+        const onCheckIdExists = async () => true;
+
+        const comp = shallow(
+            <EditTreeForm readOnly onCheckIdExists={onCheckIdExists} tree={null} onSubmit={onSubmit} />
+        );
 
         expect(
             comp
@@ -41,5 +54,30 @@ describe('EditTreeForm', () => {
                 .shallow()
                 .text()
         ).toBe('trees.new');
+    });
+
+    test('should open the tab in anchor', async () => {
+        const tabName = 'structure';
+        const mockLocation: Mockify<Location> = {
+            hash: '#' + tabName
+        };
+        const onSubmit = jest.fn();
+
+        const onCheckIdExists = async () => true;
+
+        const comp = shallow(
+            <EditTreeForm
+                tree={null}
+                onSubmit={onSubmit}
+                readOnly
+                onCheckIdExists={onCheckIdExists}
+                location={mockLocation as Location}
+            />
+        );
+
+        const activeIndex: number = comp.find('Tab').prop('activeIndex');
+        const panes: any[] = comp.find('Tab').prop('panes');
+
+        expect(panes.findIndex(p => p.key === tabName)).toBe(activeIndex);
     });
 });

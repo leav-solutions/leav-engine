@@ -1,4 +1,5 @@
 import {useQuery} from '@apollo/react-hooks';
+import {History, Location} from 'history';
 import React, {useMemo} from 'react';
 import {match} from 'react-router';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
@@ -23,9 +24,17 @@ interface IEditAttributeProps {
     attributeId?: string | null;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
+    location?: Location;
 }
 
-function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}: IEditAttributeProps): JSX.Element {
+function EditAttribute({
+    match: routeMatch,
+    attributeId,
+    onPostSave,
+    forcedType,
+    history,
+    location
+}: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
@@ -33,10 +42,16 @@ function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}:
     });
 
     const _renderEditAttributeTabs = useMemo(
-        () => (attribute?: GET_ATTRIBUTES_attributes_list) => (
-            <EditAttributeTabs attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
+        () => (attribute?: GET_ATTRIBUTES_attributes_list, locationGiven?: Location) => (
+            <EditAttributeTabs
+                attribute={attribute}
+                onPostSave={onPostSave}
+                forcedType={forcedType}
+                history={history}
+                location={locationGiven}
+            />
         ),
-        [onPostSave, forcedType]
+        [onPostSave, forcedType, history]
     );
 
     if (!attrId) {
@@ -55,7 +70,7 @@ function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}:
         return <div className="unknown">Unknown attribute</div>;
     }
 
-    return _renderEditAttributeTabs(data.attributes.list[0]);
+    return _renderEditAttributeTabs(data.attributes.list[0], location);
 }
 
 export default EditAttribute;
