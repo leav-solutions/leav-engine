@@ -3,12 +3,13 @@ import {InMemoryCache} from 'apollo-cache-inmemory';
 import React from 'react';
 import {attributesFragmentMatcher} from '../fragmentMatchers/attributesFragmentMatchers';
 
+export const getMockCacheWithFragments = () => new InMemoryCache({fragmentMatcher: attributesFragmentMatcher});
+
 function MockedProviderWithFragments({children, ...props}) {
     // Set a new cache for each test to avoid fetching data in cache and not in provided mocks
-    const cache = new InMemoryCache({fragmentMatcher: attributesFragmentMatcher});
-
+    const mockCache = getMockCacheWithFragments();
     return (
-        <MockedProvider cache={cache} {...props}>
+        <MockedProvider cache={mockCache} {...props}>
             {children}
         </MockedProvider>
     );

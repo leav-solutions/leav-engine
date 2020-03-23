@@ -1,14 +1,12 @@
-import {wait} from '@apollo/react-testing';
+import {MockedProvider, wait} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
-import {InMemoryCache} from 'apollo-cache-inmemory';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
-import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
+import {getMockCacheWithFragments} from '../../../../../__mocks__/MockedProviderWithFragments/MockedProviderWithFragments';
 import InfosTab from './InfosTab';
-import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
-import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 
 jest.mock('../../../../../hooks/useLang');
 
@@ -48,29 +46,8 @@ describe('InfosTab', () => {
 
     test('Save data on submit and run onPostSave', async () => {
         const onPostSave = jest.fn();
-        let comp;
+
         let saveQueryCalled = false;
-
-        const mockCache = new InMemoryCache();
-
-        mockCache.writeQuery({
-            query: getAttributesQuery,
-            variables: {id: 'advanced_attribute'},
-            data: {
-                attributes: {
-                    __typename: 'AttributesList',
-                    totalCount: 1,
-                    list: [
-                        {
-                            ...mockAttrAdv,
-                            __typename: 'Attribute',
-                            versions_conf: null
-                        }
-                    ]
-                }
-            }
-        });
-
         const mocks = [
             {
                 request: {
@@ -92,10 +69,30 @@ describe('InfosTab', () => {
             }
         ];
 
+        const mockCache = getMockCacheWithFragments();
+
+        mockCache.writeQuery({
+            query: getAttributesQuery,
+            variables: {id: 'advanced_attribute'},
+            data: {
+                attributes: {
+                    __typename: 'AttributesList',
+                    totalCount: 1,
+                    list: [
+                        {
+                            ...mockAttrAdv,
+                            __typename: 'Attribute',
+                            versions_conf: null
+                        }
+                    ]
+                }
+            }
+        });
+
         const comp = mount(
-            <MockedProviderWithFragments mocks={mocks} addTypename>
+            <MockedProvider mocks={mocks} cache={mockCache} addTypename>
                 <InfosTab onPostSave={onPostSave} />
-            </MockedProviderWithFragments>
+            </MockedProvider>
         );
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');
 
@@ -131,12 +128,32 @@ describe('InfosTab', () => {
             }
         ];
 
+        const mockCache = getMockCacheWithFragments();
+
+        mockCache.writeQuery({
+            query: getAttributesQuery,
+            variables: {id: 'advanced_attribute'},
+            data: {
+                attributes: {
+                    __typename: 'AttributesList',
+                    totalCount: 1,
+                    list: [
+                        {
+                            ...mockAttrAdv,
+                            __typename: 'Attribute',
+                            versions_conf: null
+                        }
+                    ]
+                }
+            }
+        });
+
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments mocks={mocksError} addTypename>
+                <MockedProvider mocks={mocksError} cache={mockCache} addTypename>
                     <InfosTab />
-                </MockedProviderWithFragments>
+                </MockedProvider>
             );
         });
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');
