@@ -1,4 +1,5 @@
 module.exports = {
+    // rootPath: '/to_scan',
     graphql: {
         uri: 'http://core.leav.localhost/graphql',
         token:
@@ -8,5 +9,15 @@ module.exports = {
         absolutePath: '/home/jrmy/dev/docker-compose/files'
     },
     treeId: 0,
-    rmq: {}
+    rmq: {
+        protocol: 'amqp',
+        hostname: 'rabbitmq.leav.localhost',
+        username: 'guest',
+        password: 'guest',
+        queue: 'files_events',
+        exchange: 'leav_core',
+        routingKey: 'files.event',
+        type: 'direct'
+    },
+    verbose: true
 };

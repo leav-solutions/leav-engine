@@ -1,19 +1,21 @@
-import moment from 'moment';
 import crypto from 'crypto';
+import {create} from './rmq/commands';
+import config from './config';
+import {getChannel} from './rmq';
 
-let databaseDirectories = [];
-let databaseFiles = [];
-let filesystemDirectories = [];
-let filesystemFiles = [];
+let dbDir = [];
+let dbFiles = [];
+let fsDir = [];
+let fsFiles = [];
 
-const _splitDatabaseElements = async database => {
+const _splitDatabaseElem = async database => {
     let toList = [];
 
     const dir = database.filter(e => e.record.is_directory);
     const fil = database.filter(e => !e.record.is_directory);
 
-    databaseDirectories = databaseDirectories.concat(dir);
-    databaseFiles = databaseFiles.concat(fil);
+    dbDir = dbDir.concat(dir);
+    dbFiles = dbFiles.concat(fil);
 
     for (const d of dir) {
         toList = toList.concat(d.children);
@@ -21,71 +23,100 @@ const _splitDatabaseElements = async database => {
     }
 
     if (toList.length) {
-        _splitDatabaseElements(toList);
+        _splitDatabaseElem(toList);
     }
 
     return;
 };
 
-const _splitFilesystemElements = async filesystem => {
-    filesystemDirectories = filesystem.filter(e => e.type === 'directory');
-    filesystemFiles = filesystem.filter(e => e.type === 'file');
+const _splitFilesystemElem = async filesystem => {
+    fsDir = filesystem.filter(e => e.type === 'directory');
+    fsFiles = filesystem.filter(e => e.type === 'file');
 };
 
-const _processing = async level => {
-    // DIRECTORIES
-    // console.log('DB DIRECTORIES: ', databaseDirectories);
-    // console.log('FILESYSTEM: ', filesystem);
-
-    if (!filesystemDirectories.filter(dir => dir.level === level).length) {
+const _processing = async (level, channel, conf) => {
+    if (!fsDir.filter(fsd => fsd.level === level).length) {
         return;
     }
 
-    for (const directory of filesystemDirectories) {
-        // FIXME: TEMPORARY
-        // TODO: Use hash from database instead (ino + name + path + mtime)
-        if (directory.level === level) {
-            const found = databaseDirectories.find(d => {
-                // d.record.inode === directory.ino
+    // same inode: 1
+    // same name: 2
+    // same path: 4
 
-                console.log('FS');
-                console.log(directory.ino);
-                console.log(directory.name);
-                console.log(directory.path);
-                console.log(moment(directory.mtime).unix());
+    let match = 0;
+    let ddIndex = [];
 
-                console.log('_____');
+    for (const fsd of fsDir) {
+        match = 0;
+        ddIndex = [];
 
-                console.log('DATABASE');
-                console.log(d.record.inode);
-                console.log(d.record.file_name);
-                console.log(d.record.file_path);
-                console.log(d.record.modified_at);
+        if (fsd.level === level && !fsd.trt) {
+            for (const [i, dd] of dbDir.entries()) {
+                const res =
+                    (fsd.ino === dd.record.inode ? 1 : 0) +
+                    (fsd.name === dd.record.file_name ? 2 : 0) +
+                    (fsd.path === dd.record.file_path ? 4 : 0);
 
-                return (
-                    directory.md5 ===
-                    crypto
-                        .createHash('md5')
-                        .update(d.record.inode + d.record.file_name + d.record.file_path + d.record.modified_at)
-                        .digest('hex')
-                );
-            });
+                if (res > match) {
+                    match = res;
+                    ddIndex.push(i);
+                }
+            }
 
-            if (typeof found !== 'undefined') {
-                directory.trt = true;
+            if (ddIndex.length) {
+                dbDir[ddIndex[ddIndex.length - 1]].record.trt = true;
+            }
+
+            switch (match) {
+                case 5: // move
+                case 6: // rename
+                case 7: // ignore
+                    fsd.trt = true;
+                    // dd.record.trt = true;
+                    break;
+                default:
+                    // create // FIXME: TMP
+                    await create(
+                        fsd.path,
+                        fsd.ino,
+                        {
+                            rootPath: fsd.path,
+                            rootKey: 'rootKey',
+                            verbose: true,
+                            amqp: {
+                                channel,
+                                exchange: conf.rmq.exchange,
+                                routingKey: conf.rmq.routingKey
+                            }
+                        },
+                        true
+                    );
+                    break;
             }
         }
     }
 
-    _processing(level + 1);
+    _processing(level + 1, channel, conf);
 };
 
 export default async (filesystem, database) => {
-    await _splitDatabaseElements(database);
-    await _splitFilesystemElements(filesystem);
+    const conf = await config;
 
-    await _processing(0);
-    // console.log(filesystemDirectories);
-    //  console.log('___DIRECTORIES___', dbDirectories);
-    // console.log('___FILES___', dbFiles);
+    await _splitDatabaseElem(database);
+    await _splitFilesystemElem(filesystem);
+
+    const channel = await getChannel(
+        {
+            protocol: conf.rmq.protocol,
+            hostname: conf.rmq.hostname,
+            username: conf.rmq.username,
+            password: conf.rmq.password
+        },
+        conf.rmq.exchange,
+        conf.rmq.queue,
+        conf.rmq.routingKey,
+        conf.rmq.type
+    );
+
+    await _processing(0, channel, conf);
 };

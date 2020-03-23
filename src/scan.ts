@@ -9,7 +9,6 @@ import config from './config';
 import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import {IFullTreeContent} from './types';
-import moment from 'moment';
 
 const _createHashFromFile = filePath =>
     new Promise(resolve => {
@@ -22,7 +21,7 @@ const _createHashFromFile = filePath =>
 const _createHashFromDirectory = ({ino, name, path, mtime}) =>
     crypto
         .createHash('md5')
-        .update(ino + name + path + moment(mtime).unix())
+        .update(ino + name + path /* FIXME: + moment(mtime).unix()*/)
         .digest('hex');
 
 const filesystem = async (): Promise<any[]> => {
@@ -48,10 +47,11 @@ const filesystem = async (): Promise<any[]> => {
                 fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
                 data.push(fileStats);
                 next();
-            },
-            errors: (root, nodeStatsArray, next) => {
-                next();
             }
+            // TODO: errors handling
+            // errors: (root, nodeStatsArray, next) => {
+            //     next();
+            // }
         }
     };
 
