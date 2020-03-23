@@ -4,7 +4,10 @@ import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
+import {
+    GET_LIBRARIES_libraries_list,
+    GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
+} from '../../../_gqlTypes/GET_LIBRARIES';
 import {AttributeType, PermissionsActions, PermissionsRelation, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineLibPermissionsView from '../../permissions/DefineLibPermissionsView';
 import DefineTreePermissionsView from '../../permissions/DefineTreePermissionsView';
@@ -76,10 +79,13 @@ const EditLibraryPermissions = ({library, onSubmitSettings, readOnly}: IEditLibr
         menuItem: localizedLabel(a.label, availableLanguages),
         render: () => (
             <Tab.Pane key={a.id} className="grow flex-col height100">
-                {a.linked_tree ? (
+                {(a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
+                    .linked_tree ? (
                     <DefineTreePermissionsView
                         key={a.id}
-                        treeAttribute={a}
+                        treeAttribute={
+                            a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
+                        }
                         permissionType={PermissionTypes.record}
                         applyTo={library.id}
                         readOnly={readOnly}

@@ -5,7 +5,10 @@ import {Form, Icon, Message} from 'semantic-ui-react';
 import * as yup from 'yup';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {
+    GET_ATTRIBUTES_attributes_list,
+    GET_ATTRIBUTES_attributes_list_LinkAttribute
+} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
@@ -205,7 +208,7 @@ function InfosForm({
                             width="4"
                             name="linked_library"
                             onChange={_handleChange}
-                            value={values.linked_library || ''}
+                            value={(values as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library || ''}
                         />
                     </FormFieldWrapper>
                 )}

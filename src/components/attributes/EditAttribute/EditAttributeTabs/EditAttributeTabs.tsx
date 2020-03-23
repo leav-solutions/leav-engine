@@ -11,6 +11,7 @@ import ActionsListTab from './ActionsListTab';
 import InfosTab from './InfosTab';
 import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
+import ValuesListTab from './ValuesListTab';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
@@ -50,6 +51,17 @@ function EditAttributeTabs({
         );
 
         panes.push(
+            {
+                key: 'values_list',
+                menuItem: t('attributes.values_list'),
+                render: () => {
+                    return (
+                        <Tab.Pane key="values_list" className="grow flex-col height100">
+                            <ValuesListTab attributeId={attribute.id} />
+                        </Tab.Pane>
+                    );
+                }
+            },
             {
                 key: 'permissions',
                 menuItem: t('attributes.permissions'),

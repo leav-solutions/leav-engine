@@ -1,10 +1,11 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import AttributesSelectionModal from './AttributesSelectionModal';
 
 jest.mock('./AttributesSelectionList', () => {
@@ -57,9 +58,9 @@ describe('AttributesSelection', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <AttributesSelectionModal onSubmit={onSubmit} onClose={onClose} openModal selection={selection} />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -89,9 +90,9 @@ describe('AttributesSelection', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <AttributesSelectionModal onSubmit={onSubmit} onClose={onClose} openModal selection={selection} />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 
@@ -151,7 +152,7 @@ describe('AttributesSelection', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <AttributesSelectionModal
                         onSubmit={onSubmit}
                         onClose={onClose}
@@ -159,7 +160,7 @@ describe('AttributesSelection', () => {
                         selection={selection}
                         filter={filter}
                     />
-                </MockedProvider>
+                </MockedProviderWithFragments>
             );
         });
 

@@ -1,10 +1,11 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {wait} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
 import {InMemoryCache} from 'apollo-cache-inmemory';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
+import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import InfosTab from './InfosTab';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
@@ -91,16 +92,11 @@ describe('InfosTab', () => {
             }
         ];
 
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks} cache={mockCache} addTypename>
-                    <MockedLangContextProvider>
-                        <InfosTab onPostSave={onPostSave} />
-                    </MockedLangContextProvider>
-                </MockedProvider>
-            );
-        });
-
+        const comp = mount(
+            <MockedProviderWithFragments mocks={mocks} addTypename>
+                <InfosTab onPostSave={onPostSave} />
+            </MockedProviderWithFragments>
+        );
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');
 
         if (!!submitFunc) {
@@ -138,11 +134,9 @@ describe('InfosTab', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocksError} addTypename>
-                    <MockedLangContextProvider>
-                        <InfosTab />
-                    </MockedLangContextProvider>
-                </MockedProvider>
+                <MockedProviderWithFragments mocks={mocksError} addTypename>
+                    <InfosTab />
+                </MockedProviderWithFragments>
             );
         });
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');

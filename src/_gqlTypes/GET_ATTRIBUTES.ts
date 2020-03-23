@@ -8,43 +8,147 @@ import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, 
 // GraphQL query operation: GET_ATTRIBUTES
 // ====================================================
 
-export interface GET_ATTRIBUTES_attributes_list_metadata_fields {
+export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_metadata_fields {
     id: string;
     label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
-export interface GET_ATTRIBUTES_attributes_list_permissions_conf_permissionTreeAttributes {
+export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
     id: string;
-    linked_tree: string | null;
     label: any | null;
 }
 
-export interface GET_ATTRIBUTES_attributes_list_permissions_conf {
-    permissionTreeAttributes: GET_ATTRIBUTES_attributes_list_permissions_conf_permissionTreeAttributes[];
+export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
+    id: string;
+    label: any | null;
+    linked_tree: string | null;
+}
+
+export type GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes =
+    | GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
+
+export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf {
+    permissionTreeAttributes: GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes[];
     relation: PermissionsRelation;
 }
 
-export interface GET_ATTRIBUTES_attributes_list_versions_conf {
+export interface GET_ATTRIBUTES_attributes_list_StandardAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
     trees: string[] | null;
 }
 
-export interface GET_ATTRIBUTES_attributes_list {
+export interface GET_ATTRIBUTES_attributes_list_StandardAttribute {
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
     label: any | null;
-    linked_library: string | null;
-    linked_tree: string | null;
     multiple_values: boolean;
-    metadata_fields: GET_ATTRIBUTES_attributes_list_metadata_fields[] | null;
-    permissions_conf: GET_ATTRIBUTES_attributes_list_permissions_conf | null;
-    versions_conf: GET_ATTRIBUTES_attributes_list_versions_conf | null;
+    metadata_fields: GET_ATTRIBUTES_attributes_list_StandardAttribute_metadata_fields[] | null;
+    permissions_conf: GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf | null;
+    versions_conf: GET_ATTRIBUTES_attributes_list_StandardAttribute_versions_conf | null;
 }
+
+export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_metadata_fields {
+    id: string;
+    label: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+    id: string;
+    label: any | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
+    id: string;
+    label: any | null;
+    linked_tree: string | null;
+}
+
+export type GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes =
+    | GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
+
+export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf {
+    permissionTreeAttributes: GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes[];
+    relation: PermissionsRelation;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_versions_conf {
+    versionable: boolean;
+    mode: ValueVersionMode | null;
+    trees: string[] | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_LinkAttribute {
+    id: string;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+    label: any | null;
+    multiple_values: boolean;
+    metadata_fields: GET_ATTRIBUTES_attributes_list_LinkAttribute_metadata_fields[] | null;
+    permissions_conf: GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf | null;
+    versions_conf: GET_ATTRIBUTES_attributes_list_LinkAttribute_versions_conf | null;
+    linked_library: string | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_metadata_fields {
+    id: string;
+    label: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute {
+    id: string;
+    label: any | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
+    id: string;
+    label: any | null;
+    linked_tree: string | null;
+}
+
+export type GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes =
+    | GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_LinkAttribute
+    | GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
+
+export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf {
+    permissionTreeAttributes: GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes[];
+    relation: PermissionsRelation;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_versions_conf {
+    versionable: boolean;
+    mode: ValueVersionMode | null;
+    trees: string[] | null;
+}
+
+export interface GET_ATTRIBUTES_attributes_list_TreeAttribute {
+    id: string;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+    label: any | null;
+    multiple_values: boolean;
+    metadata_fields: GET_ATTRIBUTES_attributes_list_TreeAttribute_metadata_fields[] | null;
+    permissions_conf: GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf | null;
+    versions_conf: GET_ATTRIBUTES_attributes_list_TreeAttribute_versions_conf | null;
+    linked_tree: string | null;
+}
+
+export type GET_ATTRIBUTES_attributes_list =
+    | GET_ATTRIBUTES_attributes_list_StandardAttribute
+    | GET_ATTRIBUTES_attributes_list_LinkAttribute
+    | GET_ATTRIBUTES_attributes_list_TreeAttribute;
 
 export interface GET_ATTRIBUTES_attributes {
     totalCount: number;

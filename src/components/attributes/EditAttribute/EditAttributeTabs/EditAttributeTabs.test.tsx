@@ -43,7 +43,7 @@ describe('EditAttributeTabs', () => {
             const comp = shallow(<EditAttributeTabs attribute={mockAttribute} />);
 
             const panes: any[] = comp.find('Tab').prop('panes');
-            expect(panes.map(p => p.key)).toEqual(['infos', 'permissions', 'actions_list']);
+            expect(panes.map(p => p.key)).toEqual(['infos', 'values_list', 'permissions', 'actions_list']);
         });
 
         test('If attribute is new, display only infos tab', async () => {
