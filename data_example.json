@@ -127,7 +127,7 @@
                 "getValue": [
                   {
                     "is_system": false,
-                    "name": "formatNumber",
+                    "id": "formatNumber",
                     "params": [
                       {
                         "name": "decimals",
@@ -155,7 +155,7 @@
                 "saveValue": [
                   {
                     "is_system": true,
-                    "name": "validateFormat",
+                    "id": "validateFormat",
                     "params": null
                   }
                 ]
