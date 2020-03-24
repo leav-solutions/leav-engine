@@ -1,27 +1,19 @@
-import {IAmqpParams, IMessageSend} from '../types';
+import {IRMQMsg} from '../types';
 import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
+import config from '../config';
 
-export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
-    console.log('titi');
+export const sendToRabbitMQ = async (msg: string, channel: Channel) => {
+    const conf = await config;
+    const {exchange, routingKey} = conf.rmq;
 
-    if (amqp && amqp.channel && amqp.exchange && amqp.routingKey) {
-        const {channel, exchange, routingKey} = amqp;
-
-        try {
-            console.log('toto');
-
-            // if we had channel, send message to rabbitmq
-            channel.publish(exchange, routingKey, Buffer.from(msg), {
-                persistent: true
-            });
-        } catch (e) {
-            console.error("105 - Can't publish to rabbitMQ");
-            process.exit(105);
-        }
-    } else {
-        // else just display the infos
-        console.info(msg);
+    try {
+        channel.publish(exchange, routingKey, Buffer.from(msg), {
+            persistent: true
+        });
+    } catch (e) {
+        console.error("105 - Can't publish to rabbitMQ");
+        process.exit(105);
     }
 };
 
@@ -33,7 +25,7 @@ export const generateMsgRabbitMQ = (
     isDirectory: boolean,
     rootKey: string
 ) => {
-    const params: IMessageSend = {
+    const msg: IRMQMsg = {
         event,
         time: Math.round(Date.now() / 1000),
         pathAfter,
@@ -43,7 +35,7 @@ export const generateMsgRabbitMQ = (
         rootKey
     };
 
-    return JSON.stringify(params);
+    return JSON.stringify(msg);
 };
 
 export const getChannel = async (

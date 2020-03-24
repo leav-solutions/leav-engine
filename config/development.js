@@ -17,6 +17,7 @@ module.exports = {
         queue: 'files_events',
         exchange: 'leav_core',
         routingKey: 'files.event',
+        rootKey: 'files1',
         type: 'direct'
     },
     verbose: true

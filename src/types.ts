@@ -4,20 +4,14 @@ export interface IFullTreeContent {
     [index: number]: {order: number; record: any; children: IFullTreeContent[]};
 }
 
-export interface IAmqpParams {
-    channel?: Channel;
-    exchange?: string;
-    routingKey?: string;
-}
+// export interface IRMQCfg {
+//     rootKey: string;
+//     channel?: Channel;
+//     exchange?: string;
+//     routingKey?: string;
+// }
 
-export interface IParams {
-    rootPath: string;
-    rootKey: string;
-    verbose: boolean;
-    amqp?: IAmqpParams;
-}
-
-export interface IMessageSend {
+export interface IRMQMsg {
     event: string;
     time: number;
     pathAfter: string;

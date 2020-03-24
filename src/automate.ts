@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import {create} from './rmq/commands';
+import {create, remove, move} from './rmq/commands';
 import config from './config';
 import {getChannel} from './rmq';
 
@@ -57,7 +57,7 @@ const _processing = async (level, channel, conf) => {
                     (fsd.name === dd.record.file_name ? 2 : 0) +
                     (fsd.path === dd.record.file_path ? 4 : 0);
 
-                if (res > match) {
+                if (res > match && [3, 5, 7].includes(res)) {
                     match = res;
                     ddIndex.push(i);
                 }
@@ -68,28 +68,34 @@ const _processing = async (level, channel, conf) => {
             }
 
             switch (match) {
-                case 5: // move
-                case 6: // rename
+                case 5: // rename
+                    console.log('rename');
+                    await move(
+                        dbDir[ddIndex[ddIndex.length - 1]].record.file_path === '.'
+                            ? dbDir[ddIndex[ddIndex.length - 1]].record.file_name
+                            : `${dbDir[ddIndex[ddIndex.length - 1]].record.file_path}/${
+                                  dbDir[ddIndex[ddIndex.length - 1]].record.file_name
+                              }`,
+                        fsd.path === '.' ? fsd.name : `${fsd.path}/${fsd.name}`,
+                        fsd.ino,
+                        true, // isDirectory
+                        channel
+                    );
+                    break;
+                case 3: // move
+                    console.log('move');
+                    break;
                 case 7: // ignore
                     fsd.trt = true;
-                    // dd.record.trt = true;
                     break;
                 default:
-                    // create // FIXME: TMP
+                    // create
+                    console.log('create');
                     await create(
-                        fsd.path,
+                        fsd.path === '.' ? fsd.name : `${fsd.path}/${fsd.name}`,
                         fsd.ino,
-                        {
-                            rootPath: fsd.path,
-                            rootKey: 'rootKey',
-                            verbose: true,
-                            amqp: {
-                                channel,
-                                exchange: conf.rmq.exchange,
-                                routingKey: conf.rmq.routingKey
-                            }
-                        },
-                        true
+                        true, // isDirectory
+                        channel
                     );
                     break;
             }
@@ -119,4 +125,7 @@ export default async (filesystem, database) => {
     );
 
     await _processing(0, channel, conf);
+    // TODO: deleted elements
+
+    // console.log(dbDir);
 };
