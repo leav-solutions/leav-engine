@@ -1,7 +1,7 @@
 import {aql} from 'arangojs';
 import {IList} from '_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {IAttribute} from '../../_types/attribute';
 import {ILibrary} from '../../_types/library';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -10,8 +10,8 @@ import {IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
     getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>>;
-    updateAttribute(attrData: IAttribute): Promise<IAttribute>;
-    createAttribute(attrData: IAttribute): Promise<IAttribute>;
+    updateAttribute(attrData: IAttributeForRepo): Promise<IAttribute>;
+    createAttribute(attrData: IAttributeForRepo): Promise<IAttribute>;
     deleteAttribute(attrData: IAttribute): Promise<IAttribute>;
 
     /**
@@ -28,6 +28,10 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.value'?: IValueRepo;
+}
+
+interface IAttributeForRepo extends IAttribute {
+    multiple_values: boolean;
 }
 
 export default function({
@@ -48,18 +52,8 @@ export default function({
 
             return dbUtils.findCoreEntity<IAttribute>({...initializedParams, collectionName: ATTRIB_COLLECTION_NAME});
         },
-        async updateAttribute(attrData: IAttribute): Promise<IAttribute> {
-            const defaultParams = {
-                _key: '',
-                system: false,
-                label: {fr: '', en: ''},
-                type: AttributeTypes.ADVANCED,
-                format: AttributeFormats.TEXT,
-                multiple_values: false
-            };
-            let docToInsert = dbUtils.convertToDoc(attrData);
-
-            docToInsert = {...defaultParams, ...docToInsert};
+        async updateAttribute(attrData: IAttributeForRepo): Promise<IAttribute> {
+            const docToInsert = dbUtils.convertToDoc(attrData);
 
             // Insert in libraries collection
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
@@ -67,9 +61,8 @@ export default function({
 
             return dbUtils.cleanup(res.pop());
         },
-        async createAttribute(attrData: IAttribute): Promise<IAttribute> {
+        async createAttribute(attrData: IAttributeForRepo): Promise<IAttribute> {
             const docToInsert = dbUtils.convertToDoc(attrData);
-
             // Insert in libraries collection
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
             const res = await dbService.execute(aql`INSERT ${docToInsert} IN ${col} RETURN NEW`);

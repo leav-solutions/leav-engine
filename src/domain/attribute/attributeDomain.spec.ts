@@ -228,6 +228,7 @@ describe('attributeDomain', () => {
             );
 
             expect(mockAttrRepo.updateAttribute).toBeCalledWith({
+                _key: '',
                 id: 'advanced_attribute',
                 label: {
                     fr: 'Mon Attribut',
@@ -242,7 +243,10 @@ describe('attributeDomain', () => {
                 embedded_fields: null,
                 actions_list: null,
                 permissions_conf: null,
-                versions_conf: null
+                versions_conf: null,
+                values_list: {
+                    enable: false
+                }
             });
         });
 

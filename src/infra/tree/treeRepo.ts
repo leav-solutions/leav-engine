@@ -8,6 +8,7 @@ import {IDbUtils} from '../db/dbUtils';
 import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
 
 export interface ITreeRepo {
+    getDefaultElement(id: string): Promise<ITreeElement>;
     createTree(treeData: ITree): Promise<ITree>;
     updateTree(treeData: ITree): Promise<ITree>;
     getTrees(params?: IGetCoreEntitiesParams): Promise<IList<ITree>>;
@@ -116,6 +117,15 @@ export default function({
     }
 
     return {
+        async getDefaultElement(treeId: string): Promise<ITreeElement> {
+            // TODO Change this behavior
+            // for now, get first element in tree
+            const content = await this.getTreeContent(treeId);
+            return {
+                id: content[0].record.id,
+                library: content[0].record.library
+            };
+        },
         async createTree(treeData: ITree): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);
 

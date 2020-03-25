@@ -27,7 +27,8 @@ export default function({
                     system: true,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
-                    label: {fr: 'Identifiant', en: 'Identifier'}
+                    label: {fr: 'Identifiant', en: 'Identifier'},
+                    multiple_values: false
                 });
 
                 await attributeRepo.createAttribute({
@@ -35,7 +36,8 @@ export default function({
                     linked_library: 'users',
                     system: true,
                     type: AttributeTypes.SIMPLE_LINK,
-                    label: {fr: 'Créé par', en: 'Created by'}
+                    label: {fr: 'Créé par', en: 'Created by'},
+                    multiple_values: false
                 });
 
                 await attributeRepo.createAttribute({
@@ -44,6 +46,7 @@ export default function({
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.NUMERIC,
                     label: {fr: 'Date de création', en: 'Creation date'},
+                    multiple_values: false,
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {
@@ -68,7 +71,8 @@ export default function({
                     linked_library: 'users',
                     system: true,
                     type: AttributeTypes.SIMPLE_LINK,
-                    label: {fr: 'Modifié par', en: 'Modified by'}
+                    label: {fr: 'Modifié par', en: 'Modified by'},
+                    multiple_values: false
                 });
 
                 await attributeRepo.createAttribute({
@@ -93,7 +97,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
 
                 await attributeRepo.createAttribute({
@@ -112,7 +117,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
 
                 await attributeRepo.createAttribute({
@@ -142,7 +148,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 

@@ -46,7 +46,8 @@ describe('AttributeRepo', () => {
             system: true,
             format: 'text',
             type: 'standard',
-            label: {fr: 'Test'}
+            label: {fr: 'Test'},
+            multiple_values: false
         };
 
         const attrData = {
@@ -54,7 +55,8 @@ describe('AttributeRepo', () => {
             system: true,
             label: {fr: 'Test'},
             format: AttributeFormats.TEXT,
-            type: AttributeTypes.ADVANCED
+            type: AttributeTypes.ADVANCED,
+            multiple_values: false
         };
 
         test('Should update an existing attribute', async function() {
@@ -91,14 +93,16 @@ describe('AttributeRepo', () => {
             system: true,
             format: 'text',
             type: 'standard',
-            label: {fr: 'Test'}
+            label: {fr: 'Test'},
+            multiple_values: false
         };
         const attrData = {
             id: 'test_attribute',
             system: true,
             label: {fr: 'Test'},
             format: AttributeFormats.TEXT,
-            type: AttributeTypes.ADVANCED
+            type: AttributeTypes.ADVANCED,
+            multiple_values: false
         };
 
         test('Should create a new attribute', async function() {

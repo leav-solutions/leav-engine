@@ -123,7 +123,12 @@ export default function({
                 const trees: IFindValueTree[] = await Promise.all(
                     attr.versions_conf.trees.map(
                         async (treeName: string): Promise<IFindValueTree> => {
-                            const ancestors = await treeRepo.getElementAncestors(treeName, options.version[treeName]);
+                            const treeElem =
+                                options.version && options.version[treeName]
+                                    ? options.version[treeName]
+                                    : await treeRepo.getDefaultElement(treeName);
+
+                            const ancestors = await treeRepo.getElementAncestors(treeName, treeElem);
                             return {
                                 name: treeName,
                                 currentIndex: 0,

@@ -56,7 +56,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 

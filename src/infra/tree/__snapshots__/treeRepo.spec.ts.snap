@@ -141,6 +141,24 @@ Object {
 }
 `;
 
+exports[`TreeRepo getDefaultElement Should return the first element of a tree 1`] = `
+"
+                FOR v, e, p IN 1..@value0 OUTBOUND @value1
+                @@value2
+                LET path = (FOR pv IN p.vertices RETURN pv._id)
+                SORT LENGTH(path), e.order ASC
+                RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
+            "
+`;
+
+exports[`TreeRepo getDefaultElement Should return the first element of a tree 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 1000,
+  "value1": "core_trees/test_tree",
+}
+`;
+
 exports[`TreeRepo getElementChildren Should return element children 1`] = `
 "
                 FOR v

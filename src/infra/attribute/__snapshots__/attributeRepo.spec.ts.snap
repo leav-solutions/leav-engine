@@ -11,6 +11,7 @@ Object {
     "label": Object {
       "fr": "Test",
     },
+    "multiple_values": false,
     "system": true,
     "type": "standard",
   },
