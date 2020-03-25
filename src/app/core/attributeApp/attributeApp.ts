@@ -33,6 +33,23 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
         'core.app.core': coreApp = null,
         'core.utils': utils = null
     } = deps;
+    const commonResolvers = {
+        /**
+         * Return attribute label, potentially filtered by requested language
+         */
+        label: async (attributeData, args) => {
+            return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
+        },
+        input_types: attributeData => attributeDomain.getInputTypes(attributeData),
+        output_types: attributeData => attributeDomain.getOutputTypes(attributeData),
+        metadata_fields: async (attributeData: IAttribute) =>
+            !!attributeData.metadata_fields
+                ? Promise.all(
+                      attributeData.metadata_fields.map(attrId => attributeDomain.getAttributeProperties(attrId))
+                  )
+                : null
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const attributes = await attributeDomain.getAttributes();
@@ -75,7 +92,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         versions_conf: ValuesVersionsConf,
                         input_types: ActionListIOTypes!,
                         output_types: ActionListIOTypes!,
-                        metadata_fields: [Attribute!]
+                        metadata_fields: [StandardAttribute!]
                     }
 
                     # Application Attribute
@@ -92,7 +109,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         versions_conf: ValuesVersionsConf,
                         input_types: ActionListIOTypes!,
                         output_types: ActionListIOTypes!,
-                        metadata_fields: [Attribute!],
+                        metadata_fields: [StandardAttribute!],
                         values_list: StandardValuesListConf
                     }
 
@@ -109,7 +126,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         versions_conf: ValuesVersionsConf,
                         input_types: ActionListIOTypes!,
                         output_types: ActionListIOTypes!,
-                        metadata_fields: [Attribute!],
+                        metadata_fields: [StandardAttribute!],
                         values_list: LinkValuesListConf
                     }
 
@@ -126,7 +143,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         versions_conf: ValuesVersionsConf,
                         input_types: ActionListIOTypes!,
                         output_types: ActionListIOTypes!,
-                        metadata_fields: [Attribute!],
+                        metadata_fields: [StandardAttribute!],
                         values_list: TreeValuesListConf
                     }
 
@@ -278,23 +295,11 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                                 case AttributeTypes.TREE:
                                     return 'TreeAttribute';
                             }
-                        },
-                        /**
-                         * Return attribute label, potentially filtered by requested language
-                         */
-                        label: async (attributeData, args) => {
-                            return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
-                        },
-                        input_types: attributeData => attributeDomain.getInputTypes(attributeData),
-                        output_types: attributeData => attributeDomain.getOutputTypes(attributeData),
-                        metadata_fields: (attributeData: IAttribute) =>
-                            !!attributeData.metadata_fields
-                                ? attributeData.metadata_fields.map(attrId =>
-                                      attributeDomain.getAttributeProperties(attrId)
-                                  )
-                                : null
+                        }
                     },
+                    StandardAttribute: {...commonResolvers},
                     LinkAttribute: {
+                        ...commonResolvers,
                         values_list: (attributeData: IAttribute, a2) => {
                             if (!attributeData.values_list.enable) {
                                 return attributeData.values_list;
@@ -318,6 +323,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         }
                     },
                     TreeAttribute: {
+                        ...commonResolvers,
                         values_list: async (attributeData: IAttribute, _, ctx) => {
                             ctx.treeId = attributeData.linked_tree;
 
