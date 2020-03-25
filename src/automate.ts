@@ -34,32 +34,40 @@ const _splitFilesystemElem = async filesystem => {
     fsFiles = filesystem.filter(e => e.type === 'file');
 };
 
-const _processing = async (level, channel, conf) => {
+const _processDirs = async (level, channel, conf) => {
     if (!fsDir.filter(fsd => fsd.level === level).length) {
+        // delete all untreated directories in database
+        for (const dd of dbDir.filter(d => typeof d.record.trt === 'undefined')) {
+            console.log('remove');
+            await remove(
+                dd.record.file_path === '.' ? dd.record.file_name : `${dd.record.file_path}/${dd.record.file_name}`,
+                dd.record.inode,
+                true, // isDirectory
+                channel
+            );
+        }
+
         return;
     }
 
-    // same inode: 1
-    // same name: 2
-    // same path: 4
-
     let match = 0;
     let ddIndex = [];
-
     for (const fsd of fsDir) {
         match = 0;
         ddIndex = [];
 
         if (fsd.level === level && !fsd.trt) {
             for (const [i, dd] of dbDir.entries()) {
-                const res =
-                    (fsd.ino === dd.record.inode ? 1 : 0) +
-                    (fsd.name === dd.record.file_name ? 2 : 0) +
-                    (fsd.path === dd.record.file_path ? 4 : 0);
+                if (typeof dd.record.trt === 'undefined') {
+                    const res =
+                        (fsd.ino === dd.record.inode ? 1 : 0) +
+                        (fsd.name === dd.record.file_name ? 2 : 0) +
+                        (fsd.path === dd.record.file_path ? 4 : 0);
 
-                if (res > match && [3, 5, 7].includes(res)) {
-                    match = res;
-                    ddIndex.push(i);
+                    if (res > match && [1, 3, 5, 6, 7].includes(res)) {
+                        match = res;
+                        ddIndex.push(i);
+                    }
                 }
             }
 
@@ -68,29 +76,24 @@ const _processing = async (level, channel, conf) => {
             }
 
             switch (match) {
+                case 1: // identical inode only
+                case 3: // move
                 case 5: // rename
-                    console.log('rename');
+                case 6: // different inode only (e.g: remount disk)
+                    const dbFileName = dbDir[ddIndex[ddIndex.length - 1]].record.file_name;
+                    const dbFilePath = dbDir[ddIndex[ddIndex.length - 1]].record.file_path;
                     await move(
-                        dbDir[ddIndex[ddIndex.length - 1]].record.file_path === '.'
-                            ? dbDir[ddIndex[ddIndex.length - 1]].record.file_name
-                            : `${dbDir[ddIndex[ddIndex.length - 1]].record.file_path}/${
-                                  dbDir[ddIndex[ddIndex.length - 1]].record.file_name
-                              }`,
+                        dbFilePath === '.' ? dbFileName : `${dbFilePath}/${dbFileName}`,
                         fsd.path === '.' ? fsd.name : `${fsd.path}/${fsd.name}`,
                         fsd.ino,
                         true, // isDirectory
                         channel
                     );
                     break;
-                case 3: // move
-                    console.log('move');
-                    break;
-                case 7: // ignore
-                    fsd.trt = true;
+                case 7: // ignore (totally identical)
                     break;
                 default:
                     // create
-                    console.log('create');
                     await create(
                         fsd.path === '.' ? fsd.name : `${fsd.path}/${fsd.name}`,
                         fsd.ino,
@@ -99,10 +102,12 @@ const _processing = async (level, channel, conf) => {
                     );
                     break;
             }
+
+            fsd.trt = true;
         }
     }
 
-    _processing(level + 1, channel, conf);
+    _processDirs(level + 1, channel, conf);
 };
 
 export default async (filesystem, database) => {
@@ -124,8 +129,7 @@ export default async (filesystem, database) => {
         conf.rmq.type
     );
 
-    await _processing(0, channel, conf);
-    // TODO: deleted elements
+    await _processDirs(0, channel, conf);
 
     // console.log(dbDir);
 };
