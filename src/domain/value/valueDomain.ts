@@ -114,7 +114,12 @@ export default function({
                 !attr.versions_conf.versionable ||
                 attr.versions_conf.mode === ValueVersionMode.SIMPLE
             ) {
-                values = await valueRepo.getValues(library, recordId, attr, false, options);
+                const getValOptions = {
+                    ...options,
+                    version: attr?.versions_conf?.versionable ? options.version : null
+                };
+
+                values = await valueRepo.getValues(library, recordId, attr, false, getValOptions);
             } else {
                 // Get all values, no matter the version.
                 const allValues: IValue[] = await valueRepo.getValues(library, recordId, attr, true, options);
