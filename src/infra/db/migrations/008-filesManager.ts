@@ -57,7 +57,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 
@@ -89,7 +90,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 
@@ -110,7 +112,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 
@@ -131,7 +134,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 
@@ -157,7 +161,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 
@@ -196,7 +201,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 
@@ -250,7 +256,8 @@ export default function({
                             }
                         ],
                         [ActionsListEvents.DELETE_VALUE]: []
-                    }
+                    },
+                    multiple_values: false
                 });
             }
 
@@ -260,7 +267,8 @@ export default function({
                     system: true,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
-                    label: {fr: 'Nom du fichier', en: 'File name'}
+                    label: {fr: 'Nom du fichier', en: 'File name'},
+                    multiple_values: false
                 });
             }
 
@@ -270,7 +278,8 @@ export default function({
                     system: true,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.NUMERIC,
-                    label: {fr: 'Inode', en: 'Inode'}
+                    label: {fr: 'Inode', en: 'Inode'},
+                    multiple_values: false
                 });
             }
 
@@ -294,7 +303,8 @@ export default function({
                             format: AttributeFormats.TEXT
                         }
                     ],
-                    label: {fr: 'Aperçus', en: 'Previews'}
+                    label: {fr: 'Aperçus', en: 'Previews'},
+                    multiple_values: false
                 });
             }
 
@@ -332,7 +342,8 @@ export default function({
                             format: AttributeFormats.EXTENDED,
                             embedded_fields: previewStatusSubFields
                         }
-                    ]
+                    ],
+                    multiple_values: false
                 });
             }
 

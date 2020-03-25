@@ -105,7 +105,13 @@ export default function({
             };
 
             const attrProps: IAttribute = attrs.list[0] ?? null;
-            const attrToSave = isExistingAttr ? {...attrProps, ...attrData} : {...defaultParams, ...attrData};
+            const attrToSave = isExistingAttr
+                ? {
+                      ...defaultParams,
+                      ...attrProps,
+                      ...attrData
+                  }
+                : {...defaultParams, ...attrData};
 
             // Check permissions
             const action = isExistingAttr
