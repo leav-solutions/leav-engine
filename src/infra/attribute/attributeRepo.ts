@@ -24,6 +24,15 @@ export interface IAttributeRepo {
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
 
+const defaultParams = {
+    _key: '',
+    system: false,
+    label: {fr: '', en: ''},
+    type: AttributeTypes.ADVANCED,
+    format: AttributeFormats.TEXT,
+    multiple_values: false
+};
+
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
@@ -37,26 +46,11 @@ export default function({
 }: IDeps = {}): IAttributeRepo {
     return {
         async getAttributes(params: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
-            const defaultParams: IGetCoreEntitiesParams = {
-                filters: null,
-                strictFilters: false,
-                withCount: false,
-                pagination: null,
-                sort: null
-            };
             const initializedParams = {...defaultParams, ...params};
 
             return dbUtils.findCoreEntity<IAttribute>({...initializedParams, collectionName: ATTRIB_COLLECTION_NAME});
         },
         async updateAttribute(attrData: IAttribute): Promise<IAttribute> {
-            const defaultParams = {
-                _key: '',
-                system: false,
-                label: {fr: '', en: ''},
-                type: AttributeTypes.ADVANCED,
-                format: AttributeFormats.TEXT,
-                multiple_values: false
-            };
             let docToInsert = dbUtils.convertToDoc(attrData);
 
             docToInsert = {...defaultParams, ...docToInsert};
@@ -68,8 +62,8 @@ export default function({
             return dbUtils.cleanup(res.pop());
         },
         async createAttribute(attrData: IAttribute): Promise<IAttribute> {
-            const docToInsert = dbUtils.convertToDoc(attrData);
-
+            let docToInsert = dbUtils.convertToDoc(attrData);
+            docToInsert = {...defaultParams, ...docToInsert};
             // Insert in libraries collection
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
             const res = await dbService.execute(aql`INSERT ${docToInsert} IN ${col} RETURN NEW`);
