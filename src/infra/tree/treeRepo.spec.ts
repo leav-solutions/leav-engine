@@ -497,6 +497,74 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1).toBe('categories/223588185');
         });
     });
+    describe('getDefaultElement', () => {
+        test('Should return the first element of a tree', async () => {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        order: 0,
+                        record: {
+                            _id: 'core_trees/test_tree',
+                            _key: 'categories',
+                            _rev: '_Wm_Qdtu--_',
+                            label: {
+                                fr: 'Arbre des catégories'
+                            },
+                            libraries: ['categories'],
+                            system: false,
+                            path: ['core_trees/test_tree']
+                        }
+                    },
+                    {
+                        order: 0,
+                        record: {
+                            _id: 'categories/223588194',
+                            _key: '223588194',
+                            _rev: '_Wm_Sdaq--_',
+                            created_at: 1524057050,
+                            id: '223588194',
+                            modified_at: 1524057125,
+                            path: ['core_trees/test_tree', 'categories/223588194']
+                        }
+                    },
+                    {
+                        order: 1,
+                        record: {
+                            _id: 'categories/223588185',
+                            _key: '223588185',
+                            _rev: '_Wm_SdZ2--_',
+                            created_at: 1524057050,
+                            id: '223588185',
+                            modified_at: 1524057125,
+                            path: ['core_trees/test_tree', 'categories/223588185']
+                        }
+                    }
+                ])
+            };
+
+            const mockDbUtils = {
+                cleanup: dbUtils().cleanup
+            };
+
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const treeElement = await repo.getDefaultElement('test_tree');
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1).toBe('core_trees/test_tree');
+
+            expect(treeElement).toEqual({
+                id: '223588194',
+                library: 'categories'
+            });
+        });
+    });
 
     describe('getElementChildren', () => {
         test('Should return element children', async () => {
