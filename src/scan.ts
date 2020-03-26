@@ -1,6 +1,5 @@
 import walk from 'walk';
 import fs from 'fs';
-import crypto from 'crypto';
 import {ApolloClient} from 'apollo-client';
 import {createHttpLink} from 'apollo-link-http';
 import {ApolloLink} from 'apollo-link';
@@ -9,20 +8,17 @@ import config from './config';
 import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import {IFullTreeContent} from './types';
+import xxh from 'xxhashjs';
 
-const _createHashFromFile = filePath =>
-    new Promise(resolve => {
-        const hash = crypto.createHash('md5');
-        fs.createReadStream(filePath)
-            .on('data', data => hash.update(data))
-            .on('end', () => resolve(hash.digest('hex')));
-    });
-
-const _createHashFromDirectory = ({ino, name, path, mtime}) =>
-    crypto
-        .createHash('md5')
-        .update(ino + name + path /* FIXME: + moment(mtime).unix()*/)
-        .digest('hex');
+const _createHashFromFile = (path: string): string => {
+    const buf: Buffer = fs.readFileSync(path);
+    return xxh
+        .h32(0)
+        .update(buf)
+        .digest()
+        .toString(16)
+        .toUpperCase();
+};
 
 const filesystem = async (): Promise<any[]> => {
     const conf = await config;
@@ -31,11 +27,10 @@ const filesystem = async (): Promise<any[]> => {
     const options = {
         followLinks: false,
         listeners: {
-            directories: (root, dirStatsArray, next) => {
+            directories: async (root, dirStatsArray, next) => {
                 for (const dsa of dirStatsArray) {
                     dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
                     dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
-                    dsa.md5 = _createHashFromDirectory(dsa);
                     dsa.trt = false;
                 }
 
@@ -43,8 +38,10 @@ const filesystem = async (): Promise<any[]> => {
                 next();
             },
             file: async (root, fileStats, next) => {
-                fileStats.md5 = await _createHashFromFile(root + '/' + fileStats.name);
+                fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
                 fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
+                fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
+                fileStats.trt = false;
                 data.push(fileStats);
                 next();
             }

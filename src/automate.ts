@@ -4,8 +4,8 @@ import config from './config';
 import {getChannel} from './rmq';
 
 let dbDir = [];
-let dbFiles = [];
 let fsDir = [];
+let dbFiles = [];
 let fsFiles = [];
 
 const _splitDatabaseElem = async database => {
@@ -80,10 +80,10 @@ const _processDirs = async (level, channel, conf) => {
                 case 3: // move
                 case 5: // rename
                 case 6: // different inode only (e.g: remount disk)
-                    const dbFileName = dbDir[ddIndex[ddIndex.length - 1]].record.file_name;
-                    const dbFilePath = dbDir[ddIndex[ddIndex.length - 1]].record.file_path;
+                    const ddName = dbDir[ddIndex[ddIndex.length - 1]].record.file_name;
+                    const ddPath = dbDir[ddIndex[ddIndex.length - 1]].record.file_path;
                     await move(
-                        dbFilePath === '.' ? dbFileName : `${dbFilePath}/${dbFileName}`,
+                        ddPath === '.' ? ddName : `${ddPath}/${ddName}`,
                         fsd.path === '.' ? fsd.name : `${fsd.path}/${fsd.name}`,
                         fsd.ino,
                         true, // isDirectory
@@ -110,6 +110,83 @@ const _processDirs = async (level, channel, conf) => {
     _processDirs(level + 1, channel, conf);
 };
 
+const _processFiles = async (level, channel, conf) => {
+    // TODO: Add hash
+
+    if (!fsFiles.filter(fsf => fsf.level === level).length) {
+        // // delete all untreated files in database
+        for (const df of dbFiles.filter(f => typeof f.record.trt === 'undefined')) {
+            await remove(
+                df.record.file_path === '.' ? df.record.file_name : `${df.record.file_path}/${df.record.file_name}`,
+                df.record.inode,
+                false, // isDirectory
+                channel
+            );
+        }
+
+        return;
+    }
+
+    let match = 0;
+    let dfIndex = [];
+    for (const fsf of fsFiles) {
+        match = 0;
+        dfIndex = [];
+
+        if (fsf.level === level && !fsf.trt) {
+            for (const [i, df] of dbFiles.entries()) {
+                if (typeof df.record.trt === 'undefined') {
+                    const res =
+                        (fsf.ino === df.record.inode ? 1 : 0) +
+                        (fsf.name === df.record.file_name ? 2 : 0) +
+                        (fsf.path === df.record.file_path ? 4 : 0);
+
+                    if (res > match && [1, 3, 5, 6, 7].includes(res)) {
+                        match = res;
+                        dfIndex.push(i);
+                    }
+                }
+            }
+
+            if (dfIndex.length) {
+                dbFiles[dfIndex[dfIndex.length - 1]].record.trt = true;
+            }
+
+            switch (match) {
+                case 1: // identical inode only
+                case 3: // move
+                case 5: // rename
+                case 6: // different inode only (e.g: remount disk)
+                    const dbFileName = dbFiles[dfIndex[dfIndex.length - 1]].record.file_name;
+                    const dbFilePath = dbFiles[dfIndex[dfIndex.length - 1]].record.file_path;
+                    await move(
+                        dbFilePath === '.' ? dbFileName : `${dbFilePath}/${dbFileName}`,
+                        fsf.path === '.' ? fsf.name : `${fsf.path}/${fsf.name}`,
+                        fsf.ino,
+                        false, // isDirectory
+                        channel
+                    );
+                    break;
+                case 7: // ignore (totally identical)
+                    break;
+                default:
+                    // create
+                    await create(
+                        fsf.path === '.' ? fsf.name : `${fsf.path}/${fsf.name}`,
+                        fsf.ino,
+                        false, // isDirectory
+                        channel
+                    );
+                    break;
+            }
+
+            fsf.trt = true;
+        }
+    }
+
+    _processFiles(level + 1, channel, conf);
+};
+
 export default async (filesystem, database) => {
     const conf = await config;
 
@@ -130,6 +207,5 @@ export default async (filesystem, database) => {
     );
 
     await _processDirs(0, channel, conf);
-
-    // console.log(dbDir);
+    await _processFiles(0, channel, conf);
 };
