@@ -1,17 +1,23 @@
 import walk from 'walk';
 import fs from 'fs';
+import fetch from 'node-fetch';
+import gql from 'graphql-tag';
 import {ApolloClient} from 'apollo-client';
 import {createHttpLink} from 'apollo-link-http';
 import {ApolloLink} from 'apollo-link';
 import {InMemoryCache} from 'apollo-cache-inmemory';
-import config from './config';
-import gql from 'graphql-tag';
-import fetch from 'node-fetch';
-import {IFullTreeContent} from './types';
 import xxh from 'xxhashjs';
+import config from './config';
+import {FullTreeContent} from './_types/queries';
+import {FilesystemContent, FileContent} from './_types/filesystem';
+import {Config} from './_types/config';
+import util from 'util';
 
-const _createHashFromFile = (path: string): string => {
-    const buf: Buffer = fs.readFileSync(path);
+const readFile = util.promisify(fs.readFile);
+
+const _createHashFromFile = async (path: string): Promise<string> => {
+    const buf: Buffer = await readFile(path);
+
     return xxh
         .h32(0)
         .update(buf)
@@ -20,14 +26,14 @@ const _createHashFromFile = (path: string): string => {
         .toUpperCase();
 };
 
-const filesystem = async (): Promise<any[]> => {
-    const conf = await config;
+export const filesystem = async (): Promise<FilesystemContent> => {
+    const conf: Config = await config;
     let data = [];
 
     const options = {
         followLinks: false,
         listeners: {
-            directories: async (root, dirStatsArray, next) => {
+            directories: (root: any, dirStatsArray: FilesystemContent, next: any) => {
                 for (const dsa of dirStatsArray) {
                     dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
                     dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
@@ -37,7 +43,7 @@ const filesystem = async (): Promise<any[]> => {
                 data = data.concat(dirStatsArray);
                 next();
             },
-            file: async (root, fileStats, next) => {
+            file: async (root: any, fileStats: FileContent, next: any) => {
                 fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
                 fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
                 fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
@@ -57,8 +63,8 @@ const filesystem = async (): Promise<any[]> => {
     return data;
 };
 
-const database = async (): Promise<IFullTreeContent> => {
-    const conf = await config;
+export const database = async (): Promise<FullTreeContent> => {
+    const conf: Config = await config;
 
     const httpLink = createHttpLink({uri: conf.graphql.uri, fetch});
     const authLink = new ApolloLink((operation, forward) => {
@@ -83,7 +89,16 @@ const database = async (): Promise<IFullTreeContent> => {
         `
     });
 
+    // const getFullTreeContent = gql`
+    //     query GET_FULL_TREE_CONTENT($treeId: String!) {
+    //         fullTreeContent(treeId: $treeId)
+    //     }
+    // `;
+
+    // const result = await client.query({
+    //     query: getFullTreeContent,
+    //     variables: {treeId: conf.graphql.treeId}
+    // });
+
     return result.data.fullTreeContent;
 };
-
-export default {filesystem, database};

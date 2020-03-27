@@ -1,6 +1,6 @@
-import {IRMQMsg} from '../types';
 import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
+import {RMQConn, RMQMsg} from '../_types/rmq';
 import config from '../config';
 
 export const sendToRabbitMQ = async (msg: string, channel: Channel) => {
@@ -8,7 +8,7 @@ export const sendToRabbitMQ = async (msg: string, channel: Channel) => {
     const {exchange, routingKey} = conf.rmq;
 
     try {
-        channel.publish(exchange, routingKey, Buffer.from(msg), {
+        await channel.publish(exchange, routingKey, Buffer.from(msg), {
             persistent: true
         });
     } catch (e) {
@@ -25,7 +25,7 @@ export const generateMsgRabbitMQ = (
     isDirectory: boolean,
     rootKey: string
 ) => {
-    const msg: IRMQMsg = {
+    const msg: RMQMsg = {
         event,
         time: Math.round(Date.now() / 1000),
         pathAfter,
@@ -38,45 +38,38 @@ export const generateMsgRabbitMQ = (
     return JSON.stringify(msg);
 };
 
-export const getChannel = async (
-    amqpConfig: Options.Connect,
-    exchange: string,
-    queue: string,
-    routingKey: string,
-    type: string
-) => {
-    return new Promise<Channel>(async resolve => {
-        amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
-            if (error0) {
-                console.log(error0);
+export const init = (amqpConfig: Options.Connect, exchange: string, queue: string, routingKey: string, type: string) =>
+    new Promise<RMQConn>(resolve => {
+        amqp.connect(amqpConfig, async (error: any, connection: Connection | any) => {
+            if (error) {
+                console.error(error);
                 console.error("101 - Can't connect to rabbitMQ");
                 process.exit(101);
             }
 
-            const ch = await connection.createChannel();
+            const channel = await connection.createChannel();
 
             try {
-                await ch.assertExchange(exchange, type, {durable: true});
+                await channel.assertExchange(exchange, type, {durable: true});
             } catch (e) {
                 console.error('102 - Error when assert exchange', e.message);
                 process.exit(102);
             }
 
             try {
-                await ch.assertQueue(queue, {durable: true});
+                await channel.assertQueue(queue, {durable: true});
             } catch (e) {
                 console.error('103 - Error when assert queue', e.message);
                 process.exit(103);
             }
 
             try {
-                await ch.bindQueue(queue, exchange, routingKey);
+                await channel.bindQueue(queue, exchange, routingKey);
             } catch (e) {
                 console.error('104 - Error when bind queue', e.message);
                 process.exit(104);
             }
 
-            resolve(ch);
+            resolve({channel, connection});
         });
     });
-};

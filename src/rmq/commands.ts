@@ -1,6 +1,7 @@
-import {generateMsgRabbitMQ, sendToRabbitMQ} from '.';
 import {Channel} from 'amqplib';
+import {Config} from '../_types/config';
 import config from '../config';
+import {generateMsgRabbitMQ, sendToRabbitMQ} from '.';
 
 export const create = async (path: string, inode: number, isDirectory: boolean, channel: Channel) => {
     const conf = await config;
@@ -21,7 +22,7 @@ export const move = async (
     isDirectory: boolean,
     channel: Channel
 ) => {
-    const conf = await config;
+    const conf: Config = await config;
 
     await sendToRabbitMQ(
         generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, conf.rmq.rootKey),
