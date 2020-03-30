@@ -23,6 +23,7 @@ export const handleUpdateEvent = async (
     const recordData: IFilesAttributes = {
         INODE: scanMsg.inode,
         ROOT_KEY: scanMsg.rootKey,
+        HASH: scanMsg.hash,
         PREVIEWS_STATUS: previewsStatus,
         PREVIEWS: previews
     };

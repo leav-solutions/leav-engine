@@ -13,7 +13,8 @@ export enum FilesAttributes {
     INODE = 'inode',
     PREVIEWS = 'previews',
     PREVIEWS_STATUS = 'previews_status',
-    ACTIVE = 'active'
+    ACTIVE = 'active',
+    HASH = 'hash'
 }
 
 export interface IFilesAttributes {
@@ -25,6 +26,7 @@ export interface IFilesAttributes {
     PREVIEWS_STATUS?: object;
     PREVIEWS?: object;
     ACTIVE?: boolean;
+    HASH?: string;
 }
 
 export interface IFileEventData {
@@ -35,6 +37,7 @@ export interface IFileEventData {
     inode: number;
     rootKey: string;
     isDirectory: boolean;
+    hash?: string;
 }
 
 export interface IPreviewVersionSize {

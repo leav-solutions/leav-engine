@@ -126,7 +126,8 @@ export default function({
             pathAfter: Joi.string().allow(null),
             inode: Joi.number().required(),
             rootKey: Joi.string().required(),
-            isDirectory: Joi.boolean().required()
+            isDirectory: Joi.boolean().required(),
+            hash: Joi.string()
         });
 
         const isValid = msgBodySchema.validate(msg);

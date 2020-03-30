@@ -95,6 +95,28 @@ export default function({
                 });
             }
 
+            if (typeof attributesById.hash === 'undefined') {
+                attributesById.hash = await attributeRepo.createAttribute({
+                    id: 'hash',
+                    system: true,
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.TEXT,
+                    label: {fr: 'Hash', en: 'Hash'},
+                    actions_list: {
+                        [ActionsListEvents.GET_VALUE]: [],
+                        [ActionsListEvents.SAVE_VALUE]: [
+                            {
+                                id: 'validateFormat',
+                                name: 'Validate Format',
+                                is_system: true
+                            }
+                        ],
+                        [ActionsListEvents.DELETE_VALUE]: []
+                    },
+                    multiple_values: false
+                });
+            }
+
             if (typeof attributesById.file_path === 'undefined') {
                 attributesById.file_path = await attributeRepo.createAttribute({
                     id: 'file_path',
@@ -366,6 +388,7 @@ export default function({
                     'modified_at',
                     'root_key',
                     'is_directory',
+                    'hash',
                     'file_path',
                     'file_name',
                     'inode',
