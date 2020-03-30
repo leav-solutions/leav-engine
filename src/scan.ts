@@ -64,41 +64,45 @@ export const filesystem = async (): Promise<FilesystemContent> => {
 };
 
 export const database = async (): Promise<FullTreeContent> => {
-    const conf: Config = await config;
+    try {
+        const conf: Config = await config;
 
-    const httpLink = createHttpLink({uri: conf.graphql.uri, fetch});
-    const authLink = new ApolloLink((operation, forward) => {
-        operation.setContext({
-            headers: {
-                authorization: conf.graphql.token
-            }
+        const httpLink = createHttpLink({uri: conf.graphql.uri, fetch});
+        const authLink = new ApolloLink((operation, forward) => {
+            operation.setContext({
+                headers: {
+                    authorization: conf.graphql.token
+                }
+            });
+            return forward(operation);
         });
-        return forward(operation);
-    });
 
-    const client = new ApolloClient({
-        link: authLink.concat(httpLink),
-        cache: new InMemoryCache()
-    });
+        const client = new ApolloClient({
+            link: authLink.concat(httpLink),
+            cache: new InMemoryCache()
+        });
 
-    const result = await client.query({
-        query: gql`
-            {
-                fullTreeContent(treeId: "files_tree")
-            }
-        `
-    });
+        const result = await client.query({
+            query: gql`
+                {
+                    fullTreeContent(treeId: "files_tree")
+                }
+            `
+        });
 
-    // const getFullTreeContent = gql`
-    //     query GET_FULL_TREE_CONTENT($treeId: String!) {
-    //         fullTreeContent(treeId: $treeId)
-    //     }
-    // `;
+        // const getFullTreeContent = gql`
+        //     query GET_FULL_TREE_CONTENT($treeId: String!) {
+        //         fullTreeContent(treeId: $treeId)
+        //     }
+        // `;
 
-    // const result = await client.query({
-    //     query: getFullTreeContent,
-    //     variables: {treeId: conf.graphql.treeId}
-    // });
+        // const result = await client.query({
+        //     query: getFullTreeContent,
+        //     variables: {treeId: conf.graphql.treeId}
+        // });
 
-    return result.data.fullTreeContent;
+        return result.data.fullTreeContent;
+    } catch (e) {
+        throw e;
+    }
 };

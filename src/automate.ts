@@ -1,7 +1,7 @@
 import {FullTreeContent, Record} from './_types/queries';
 import {FilesystemContent} from './_types/filesystem';
 import {create, remove, move} from './rmq/commands';
-import {Channel} from 'amqplib';
+import * as amqp from 'amqplib';
 
 let dbElems: FullTreeContent;
 let fsElems: FilesystemContent;
@@ -25,7 +25,7 @@ const _extractChildrenDbElems = async (database: FullTreeContent): Promise<void>
     return;
 };
 
-const _process = async (level: number, channel: Channel): Promise<void> => {
+const _process = async (level: number, channel: amqp.Channel): Promise<void> => {
     // TODO: Add hash for files
 
     if (!fsElems.filter(fse => fse.level === level).length) {
@@ -102,9 +102,13 @@ const _process = async (level: number, channel: Channel): Promise<void> => {
     _process(level + 1, channel);
 };
 
-export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, channel: Channel): Promise<void> => {
+export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, channel: amqp.Channel): Promise<void> => {
     fsElems = fsScan;
-    await _extractChildrenDbElems(dbScan);
 
-    await _process(0, channel);
+    try {
+        await _extractChildrenDbElems(dbScan);
+        await _process(0, channel);
+    } catch (e) {
+        throw e;
+    }
 };

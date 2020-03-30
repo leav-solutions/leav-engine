@@ -17,7 +17,7 @@ export interface Filesystem {
 }
 
 export interface RMQ {
-    amqpConfig: Options.Connect;
+    connOpt: Options.Connect;
     queue: string;
     exchange: string;
     routingKey: string;

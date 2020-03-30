@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "ts-node src/index.ts"
+    "start:dev": "ts-node src/index.ts",
+    "test:integration": "jest"
   },
   "repository": {
     "type": "git",
@@ -13,9 +14,11 @@
   "author": "Jérémy Bel <j.bel@cacom.fr>",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^25.1.4",
     "@types/node": "^13.9.1",
-    "jest": "^25.1.0",
+    "jest": "^25.2.4",
     "prettier": "^1.19.1",
+    "ts-jest": "^25.3.0",
     "ts-node": "^8.7.0",
     "tslint": "^6.1.0",
     "tslint-eslint-rules": "^5.4.0",
@@ -34,6 +37,7 @@
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
     "walk": "^2.3.14",
+    "winston": "^3.2.1",
     "xxhashjs": "^0.2.2"
   }
 }
