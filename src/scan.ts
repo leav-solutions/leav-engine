@@ -6,25 +6,19 @@ import {ApolloClient} from 'apollo-client';
 import {createHttpLink} from 'apollo-link-http';
 import {ApolloLink} from 'apollo-link';
 import {InMemoryCache} from 'apollo-cache-inmemory';
-import xxh from 'xxhashjs';
 import config from './config';
 import {FullTreeContent} from './_types/queries';
 import {FilesystemContent, FileContent} from './_types/filesystem';
 import {Config} from './_types/config';
-import util from 'util';
+import crypto from 'crypto';
 
-const readFile = util.promisify(fs.readFile);
-
-const _createHashFromFile = async (path: string): Promise<string> => {
-    const buf: Buffer = await readFile(path);
-
-    return xxh
-        .h32(0)
-        .update(buf)
-        .digest()
-        .toString(16)
-        .toUpperCase();
-};
+const _createHashFromFile = (filePath: string): Promise<string> =>
+    new Promise(resolve => {
+        const hash = crypto.createHash('md5');
+        fs.createReadStream(filePath)
+            .on('data', data => hash.update(data))
+            .on('end', () => resolve(hash.digest('hex')));
+    });
 
 export const filesystem = async (): Promise<FilesystemContent> => {
     const conf: Config = await config;

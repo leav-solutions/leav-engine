@@ -1,0 +1,10 @@
+{
+    "moduleFileExtensions": [
+        "ts",
+        "js"
+    ],
+    "transform": {
+        "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": "src\/__tests__\/.*(.test.ts)$"
+}

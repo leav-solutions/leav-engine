@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "ts-node src/index.ts",
-    "test:integration": "jest"
+    "test:integration": "jest -c jest.config.json"
   },
   "repository": {
     "type": "git",
