@@ -20,42 +20,37 @@ const _createHashFromFile = (filePath: string): Promise<string> =>
             .on('end', () => resolve(hash.digest('hex')));
     });
 
-export const filesystem = async (): Promise<FilesystemContent> => {
-    const conf: Config = await config;
-    let data = [];
+export const filesystem = (): Promise<FilesystemContent> =>
+    new Promise(async resolve => {
+        const conf: Config = await config;
+        let data = [];
 
-    const options = {
-        followLinks: false,
-        listeners: {
-            directories: (root: any, dirStatsArray: FilesystemContent, next: any) => {
-                for (const dsa of dirStatsArray) {
-                    dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
-                    dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
-                    dsa.trt = false;
-                }
+        const walker = walk.walk(conf.filesystem.absolutePath, {followLinks: false});
 
-                data = data.concat(dirStatsArray);
-                next();
-            },
-            file: async (root: any, fileStats: FileContent, next: any) => {
-                fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
-                fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
-                fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
-                fileStats.trt = false;
-                data.push(fileStats);
-                next();
+        walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
+            for (const dsa of dirStatsArray) {
+                dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
+                dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
+                dsa.trt = false;
             }
-            // TODO: errors handling
-            // errors: (root, nodeStatsArray, next) => {
-            //     next();
-            // }
-        }
-    };
 
-    walk.walkSync(conf.filesystem.absolutePath, options);
+            data = data.concat(dirStatsArray);
+            next();
+        });
 
-    return data;
-};
+        walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
+            fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
+            fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
+            fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
+            fileStats.trt = false;
+            data.push(fileStats);
+            next();
+        });
+
+        walker.on('end', () => {
+            resolve(data);
+        });
+    });
 
 export const database = async (): Promise<FullTreeContent> => {
     try {

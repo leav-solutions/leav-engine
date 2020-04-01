@@ -8,6 +8,7 @@ import {FilesystemContent} from '../_types/filesystem';
 import config from '../config';
 import * as scan from '../scan';
 import automate from '../automate';
+import test2Db from './test2_database';
 
 let conf: Config;
 let rmqConn: RMQConn;
@@ -49,10 +50,10 @@ describe('integration tests sync-scan', () => {
     });
 
     test('initialization/creation events', async done => {
-        expect.assertions(5);
+        expect.assertions(10);
 
         const fsc: FilesystemContent = await scan.filesystem();
-        const dbs: FullTreeContent = await scan.database();
+        const dbs: FullTreeContent = [];
 
         await automate(fsc, dbs, rmqConn.channel);
 
@@ -67,61 +68,55 @@ describe('integration tests sync-scan', () => {
 
         await rmqConn.channel.consume(
             conf.rmq.queue,
-            msg => {
-                console.log(msg.content.toString());
+            async msg => {
+                // console.log(msg.content.toString());
                 const m = JSON.parse(msg.content);
-                if (Object.keys(expected).includes(m.pathAfter)) {
-                    expect(expected[m.pathAfter]).toEqual(m.event);
-                } else {
-                    throw new Error('bad path');
+                expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
+                expect(expected[m.pathAfter]).toEqual(m.event);
+                if (m.pathAfter === 'dir/sdir/ssfile') {
+                    await rmqConn.channel.cancel('test1');
+                    done();
                 }
             },
-            {noAck: true}
+            {consumerTag: 'test1', noAck: true}
         );
 
         // channel.close(() => undefined);
-        done();
     });
 
-    // test('file/directory move/rename/edit events', async done => {
-    //     expect.assertions(2);
+    test('file/directory move/rename/edit events', async done => {
+        expect.assertions(6);
 
-    //     fs.renameSync(`${conf.filesystem.absolutePath}/file`, `${conf.filesystem.absolutePath}/dir/f`); // MOVE
-    //     fs.renameSync(`${conf.filesystem.absolutePath}/dir/sfile`, `${conf.filesystem.absolutePath}/dir/sf`); // RENAME
-    //     // TODO: fs.writeFileSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`, Math.random()); // EDIT
+        fs.renameSync(`${conf.filesystem.absolutePath}/file`, `${conf.filesystem.absolutePath}/dir/f`); // MOVE
+        fs.renameSync(`${conf.filesystem.absolutePath}/dir/sfile`, `${conf.filesystem.absolutePath}/dir/sf`); // RENAME
+        // TODO: fs.writeFileSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`, Math.random()); // EDIT
 
-    //     const fsc: FilesystemContent = await scan.filesystem();
-    //     const dbs: FullTreeContent = await scan.database();
+        const fsc: FilesystemContent = await scan.filesystem();
+        const dbs: FullTreeContent = test2Db;
 
-    //     await automate(fsc, dbs, rmqConn.channel);
+        await automate(fsc, dbs, rmqConn.channel);
 
-    //     const expected = {
-    //         // pathBefore as keys
-    //         file: {pathAfter: 'dir/f', event: 'MOVE'},
-    //         'dir/sfile': {pathAfter: 'dir/sf', event: 'MOVE'}
-    //         // TODO:    'dir/sdir/ssfile': {pathBefore: 'dir/sdir/ssfile', event: 'MOVE'}
-    //     };
+        const expected = {
+            // pathBefore as keys
+            file: {pathAfter: 'dir/f', event: 'MOVE'},
+            'dir/sfile': {pathAfter: 'dir/sf', event: 'MOVE'}
+            // TODO:    'dir/sdir/ssfile': {pathBefore: 'dir/sdir/ssfile', event: 'MOVE'}
+        };
 
-    //     rmqConn.channel.consume(
-    //         conf.rmq.queue,
-    //         msg => {
-    //             // console.log(msg.content.toString());
-    //             const m = JSON.parse(msg.content);
-    //             if (Object.keys(expected).includes(m.pathBefore)) {
-    //                 expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
-    //                 expect(expected[m.pathBefore].event).toEqual(m.event);
-    //             } else {
-    //                 console.log(Object.keys(expected));
-    //                 console.log(m.pathBefore);
-    //                 throw new Error('bad move');
-    //             }
-
-    //             done();
-    //             // channel.close(() => undefined);
-    //         },
-    //         {noAck: true}
-    //     );
-    // });
+        rmqConn.channel.consume(
+            conf.rmq.queue,
+            msg => {
+                console.log(msg.content.toString());
+                const m = JSON.parse(msg.content);
+                expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
+                expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
+                expect(expected[m.pathBefore].event).toEqual(m.event);
+                // done();
+                // channel.close(() => undefined);
+            },
+            {consumerTag: 'test1', noAck: true}
+        );
+    });
 
     // test('file/directory delete', () => {
     //     console.log('test');
