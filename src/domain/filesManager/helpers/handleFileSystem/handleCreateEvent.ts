@@ -31,7 +31,8 @@ export const handleCreateEvent = async (
             ROOT_KEY: scanMsg.rootKey,
             INODE: scanMsg.inode,
             PREVIEWS_STATUS: previewsStatus,
-            PREVIEWS: previews
+            PREVIEWS: previews,
+            HASH: scanMsg.hash
         };
 
         await updateRecordFile(recordData, record.id, resources.library, deps);
@@ -48,6 +49,7 @@ export const handleCreateEvent = async (
             FILE_NAME: fileName,
             INODE: scanMsg.inode,
             IS_DIRECTORY: scanMsg.isDirectory,
+            HASH: scanMsg.hash,
             PREVIEWS_STATUS: previewsStatus,
             PREVIEWS: previews
         };
