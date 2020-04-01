@@ -2,9 +2,18 @@ import {generateMsgRabbitMQ, sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {deleteData, updateData} from '../redis/redis';
 import {IParams} from '../types';
 
-export const handleCreate = async (path: string, inode: number, params: IParams, isDirectory: boolean) => {
+export const handleCreate = async (
+    path: string,
+    inode: number,
+    params: IParams,
+    isDirectory: boolean,
+    hashFile: string
+) => {
     await updateData(path, inode);
-    sendToRabbitMQ(generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, params.rootKey), params.amqp);
+    sendToRabbitMQ(
+        generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, params.rootKey, hashFile),
+        params.amqp
+    );
     if (params.verbose) {
         console.info('CREATE', path);
     }
@@ -20,9 +29,18 @@ export const handleDelete = async (path: string, inode: number, params: IParams,
     return true;
 };
 
-export const handleUpdate = async (path: string, inode: number, params: IParams, isDirectory: boolean) => {
+export const handleUpdate = async (
+    path: string,
+    inode: number,
+    params: IParams,
+    isDirectory: boolean,
+    hashFile: string
+) => {
     await updateData(path, inode);
-    sendToRabbitMQ(generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, params.rootKey), params.amqp);
+    sendToRabbitMQ(
+        generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, params.rootKey, hashFile),
+        params.amqp
+    );
     if (params.verbose) {
         console.info('UPDATE', path);
     }

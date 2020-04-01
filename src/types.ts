@@ -62,4 +62,5 @@ export interface IMessageSend {
     inode: number;
     isDirectory: boolean;
     rootKey: any;
+    hash: string;
 }

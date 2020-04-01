@@ -25,7 +25,8 @@ export const generateMsgRabbitMQ = (
     pathAfter: string | null,
     inode: number,
     isDirectory: boolean,
-    rootKey: string
+    rootKey: string,
+    hash?: string
 ) => {
     const params: IMessageSend = {
         event,
@@ -34,7 +35,8 @@ export const generateMsgRabbitMQ = (
         pathBefore,
         isDirectory,
         inode,
-        rootKey
+        rootKey,
+        hash
     };
 
     return JSON.stringify(params);

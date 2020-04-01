@@ -1,3 +1,5 @@
+import {createHash} from 'crypto';
+import {createReadStream} from 'fs';
 import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {initRedis} from '../redis/redis';
 import {IParamsExtends} from './../types';
@@ -8,12 +10,22 @@ const inode = 123456;
 const rootKey = 'rootKey';
 const stats = {ino: inode};
 
+jest.mock('fs');
+jest.mock('crypto');
+
 jest.mock('../index');
 jest.mock('../redis/redis');
 
 describe('test checkEvent', () => {
     // disable console info in tests
     console.info = jest.fn();
+
+    (createHash as jest.FunctionLike) = jest.fn(() => ({digest: jest.fn}));
+    (createReadStream as jest.FunctionLike) = jest.fn(() => ({
+        on: jest.fn(() => ({
+            on: jest.fn((...args) => args[1]())
+        }))
+    }));
 
     test('Init - add a file', async () => {
         (initRedis as jest.FunctionLike) = jest.fn();
@@ -22,7 +34,6 @@ describe('test checkEvent', () => {
         const params: IParamsExtends = {
             verbose: false,
             ready: false,
-            timeout: 0,
             rootPath: '/files',
             rootKey
         };

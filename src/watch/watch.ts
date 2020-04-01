@@ -1,5 +1,7 @@
 import * as chokidar from 'chokidar';
-import {Stats} from 'fs';
+import {createHash} from 'crypto';
+import {createReadStream, Stats} from 'fs';
+import {join} from 'path';
 import {getInode, initRedis} from '../redis/redis';
 import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
@@ -160,11 +162,13 @@ export const handleEvent = async (
         amqp: params.amqp
     };
 
+    let hashFile: string;
     switch (event) {
         case 'addDir':
             isDirectory = true;
         case 'add':
-            await handleCreate(path, inode, amqp, isDirectory);
+            hashFile = await _createHashFromFile(join(params.rootPath, path));
+            await handleCreate(path, inode, amqp, isDirectory, hashFile);
             break;
         case 'unlinkDir':
             isDirectory = true;
@@ -172,7 +176,8 @@ export const handleEvent = async (
             await handleDelete(path, inode, amqp, isDirectory);
             break;
         case 'change':
-            await handleUpdate(path, inode, amqp, isDirectory);
+            hashFile = await _createHashFromFile(join(params.rootPath, path));
+            await handleUpdate(path, inode, amqp, isDirectory, hashFile);
             break;
         case 'move':
             if (oldPath) {
@@ -221,4 +226,21 @@ const clearTmp = (path: string, inode: number) => {
     delete timeoutRefs[inode];
     delete inodesTmp[inode];
     delete pathsTmp[path];
+};
+
+const _createHashFromFile = async (filePath: string): Promise<string> => {
+    let hashFile: string;
+    try {
+        const hash = createHash('md5');
+
+        hashFile = await new Promise(resolve =>
+            createReadStream(filePath)
+                .on('data', data => hash.update(data))
+                .on('end', () => resolve(hash.digest('hex')))
+        );
+        return hashFile;
+    } catch (e) {
+        console.error("Can't get hash from file", e);
+        return '';
+    }
 };
