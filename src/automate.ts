@@ -99,7 +99,7 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
         }
     }
 
-    _process(level + 1, channel);
+    await _process(level + 1, channel);
 };
 
 export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, channel: amqp.Channel): Promise<void> => {

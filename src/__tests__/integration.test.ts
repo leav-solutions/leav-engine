@@ -9,6 +9,7 @@ import config from '../config';
 import * as scan from '../scan';
 import automate from '../automate';
 import test2Db from './database/test2';
+import test3Db from './database/test3';
 
 let conf: Config;
 let rmqConn: RMQConn;
@@ -78,7 +79,6 @@ describe('integration tests sync-scan', () => {
         await rmqConn.channel.consume(
             conf.rmq.queue,
             async msg => {
-                // console.log(msg.content.toString());
                 const m = JSON.parse(msg.content);
                 expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
                 expect(expected[m.pathAfter]).toEqual(m.event);
@@ -128,7 +128,42 @@ describe('integration tests sync-scan', () => {
         );
     });
 
-    test('delete events', () => {
-        console.log('test');
+    test('delete events', async done => {
+        expect.assertions(10);
+
+        fs.rmdirSync(`${conf.filesystem.absolutePath}/dir`, {recursive: true});
+
+        const fsc: FilesystemContent = await scan.filesystem();
+        const dbs: FullTreeContent = test3Db(inodes);
+
+        await automate(fsc, dbs, rmqConn.channel);
+
+        const expected = {
+            // pathBefore as keys
+            dir: 'REMOVE',
+            'dir/sdir': 'REMOVE',
+            'dir/f': 'REMOVE',
+            'dir/sf': 'REMOVE',
+            'dir/sdir/ssfile': 'REMOVE'
+        };
+
+        rmqConn.channel.consume(
+            conf.rmq.queue,
+            async msg => {
+                const m = JSON.parse(msg.content);
+                expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
+                expect(expected[m.pathBefore]).toEqual(m.event);
+                if (m.pathBefore === 'dir/sdir/ssfile') {
+                    await rmqConn.channel.cancel('test3');
+                    done();
+                }
+            },
+            {consumerTag: 'test3', noAck: true}
+        );
+    });
+
+    afterAll(async done => {
+        await rmqConn.connection.close();
+        done();
     });
 });
