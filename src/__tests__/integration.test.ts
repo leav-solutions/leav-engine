@@ -8,10 +8,11 @@ import {FilesystemContent} from '../_types/filesystem';
 import config from '../config';
 import * as scan from '../scan';
 import automate from '../automate';
-import test2Db from './test2_database';
+import test2Db from './database/test2';
 
 let conf: Config;
 let rmqConn: RMQConn;
+let inodes: number[];
 
 beforeAll(async () => {
     conf = await config;
@@ -23,12 +24,12 @@ beforeAll(async () => {
 });
 
 describe('integration tests sync-scan', () => {
-    test('scan empty filesystem', () => {
+    test('check filesystem is empty', () => {
         expect.assertions(1);
         return expect(scan.filesystem()).resolves.toHaveLength(0);
     });
 
-    test('files/directories creation', () => {
+    test('filesystem creation', () => {
         expect.assertions(5);
 
         // Create two directories: dir/sdir from root
@@ -47,6 +48,14 @@ describe('integration tests sync-scan', () => {
         expect(fs.existsSync(`${conf.filesystem.absolutePath}/file`)).toEqual(true);
         expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir/sfile`)).toEqual(true);
         expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`)).toEqual(true);
+
+        inodes = [
+            fs.statSync(`${conf.filesystem.absolutePath}/dir`).ino,
+            fs.statSync(`${conf.filesystem.absolutePath}/dir/sdir`).ino,
+            fs.statSync(`${conf.filesystem.absolutePath}/file`).ino,
+            fs.statSync(`${conf.filesystem.absolutePath}/dir/sfile`).ino,
+            fs.statSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`).ino
+        ];
     });
 
     test('initialization/creation events', async done => {
@@ -84,7 +93,7 @@ describe('integration tests sync-scan', () => {
         // channel.close(() => undefined);
     });
 
-    test('file/directory move/rename/edit events', async done => {
+    test('move/rename/edit events', async done => {
         expect.assertions(6);
 
         fs.renameSync(`${conf.filesystem.absolutePath}/file`, `${conf.filesystem.absolutePath}/dir/f`); // MOVE
@@ -92,7 +101,7 @@ describe('integration tests sync-scan', () => {
         // TODO: fs.writeFileSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`, Math.random()); // EDIT
 
         const fsc: FilesystemContent = await scan.filesystem();
-        const dbs: FullTreeContent = test2Db;
+        const dbs: FullTreeContent = test2Db(inodes);
 
         await automate(fsc, dbs, rmqConn.channel);
 
@@ -105,20 +114,21 @@ describe('integration tests sync-scan', () => {
 
         rmqConn.channel.consume(
             conf.rmq.queue,
-            msg => {
-                console.log(msg.content.toString());
+            async msg => {
                 const m = JSON.parse(msg.content);
                 expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
                 expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
                 expect(expected[m.pathBefore].event).toEqual(m.event);
-                // done();
-                // channel.close(() => undefined);
+                if (m.pathAfter === 'dir/sf') {
+                    await rmqConn.channel.cancel('test2');
+                    done();
+                }
             },
-            {consumerTag: 'test1', noAck: true}
+            {consumerTag: 'test2', noAck: true}
         );
     });
 
-    // test('file/directory delete', () => {
-    //     console.log('test');
-    // });
+    test('delete events', () => {
+        console.log('test');
+    });
 });
