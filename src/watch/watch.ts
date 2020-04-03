@@ -168,6 +168,8 @@ export const handleEvent = async (
             isDirectory = true;
         case 'add':
             hashFile = await _createHashFromFile(join(params.rootPath, path));
+            if (!isDirectory) {
+            }
             await handleCreate(path, inode, amqp, isDirectory, hashFile);
             break;
         case 'unlinkDir':
@@ -176,7 +178,9 @@ export const handleEvent = async (
             await handleDelete(path, inode, amqp, isDirectory);
             break;
         case 'change':
-            hashFile = await _createHashFromFile(join(params.rootPath, path));
+            if (!isDirectory) {
+                hashFile = await _createHashFromFile(join(params.rootPath, path));
+            }
             await handleUpdate(path, inode, amqp, isDirectory, hashFile);
             break;
         case 'move':
@@ -233,14 +237,17 @@ const _createHashFromFile = async (filePath: string): Promise<string> => {
     try {
         const hash = createHash('md5');
 
-        hashFile = await new Promise(resolve =>
+        hashFile = await new Promise((resolve, reject) =>
             createReadStream(filePath)
+                .on('error', err => {
+                    reject(err);
+                })
                 .on('data', data => hash.update(data))
                 .on('end', () => resolve(hash.digest('hex')))
         );
         return hashFile;
     } catch (e) {
-        console.error("Can't get hash from file", e);
+        console.error(`Can't get hash from file ${filePath}`, e);
         return '';
     }
 };
