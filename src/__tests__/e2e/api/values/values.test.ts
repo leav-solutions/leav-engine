@@ -63,6 +63,7 @@ describe('Values', () => {
                             }
                         ],
                         actions_list: {
+                            getValue: [],
                             saveValue: [
                                 {
                                     id: "parseJSON"
@@ -73,7 +74,8 @@ describe('Values', () => {
                                 {
                                     id: "toJSON"
                                 }
-                            ]
+                            ],
+                            deleteValue: []
                         }
                     }
                 ) {
