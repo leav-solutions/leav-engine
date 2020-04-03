@@ -4,7 +4,7 @@ import {partialRight} from 'lodash';
 import {IUtils} from '../../utils/utils';
 import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
-import {ErrorFieldDetail} from '../../_types/errors';
+import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 
@@ -53,7 +53,12 @@ export default function({
             return actions;
         },
         handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord> {
-            return {[attribute.id]: error.details.map(er => er.message).join('\n')};
+            return {
+                [attribute.id]: {
+                    msg: Errors.FORMAT_ERROR,
+                    vars: {details: error.details.map(er => er.message).join('\n')}
+                }
+            };
         },
         async runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue> {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
