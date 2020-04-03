@@ -42,7 +42,7 @@ describe('integration tests sync-scan', () => {
             `${conf.filesystem.absolutePath}/file`,
             `${conf.filesystem.absolutePath}/dir/sfile`,
             `${conf.filesystem.absolutePath}/dir/sdir/ssfile`
-        ].forEach(p => fs.writeFileSync(p, Math.random()));
+        ].forEach(p => fs.writeFileSync(p, ''));
 
         expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir`)).toEqual(true);
         expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir/sdir`)).toEqual(true);
@@ -94,11 +94,11 @@ describe('integration tests sync-scan', () => {
     });
 
     test('move/rename/edit events', async done => {
-        expect.assertions(6);
+        expect.assertions(10);
 
         fs.renameSync(`${conf.filesystem.absolutePath}/file`, `${conf.filesystem.absolutePath}/dir/f`); // MOVE
         fs.renameSync(`${conf.filesystem.absolutePath}/dir/sfile`, `${conf.filesystem.absolutePath}/dir/sf`); // RENAME
-        // TODO: fs.writeFileSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`, Math.random()); // EDIT
+        fs.writeFileSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
         const fsc: FilesystemContent = await scan.filesystem();
         const dbs: FullTreeContent = test2Db(inodes);
@@ -108,8 +108,8 @@ describe('integration tests sync-scan', () => {
         const expected = {
             // pathBefore as keys
             file: {pathAfter: 'dir/f', event: 'MOVE'},
-            'dir/sfile': {pathAfter: 'dir/sf', event: 'MOVE'}
-            // TODO:    'dir/sdir/ssfile': {pathBefore: 'dir/sdir/ssfile', event: 'MOVE'}
+            'dir/sfile': {pathAfter: 'dir/sf', event: 'MOVE'},
+            'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'MOVE'}
         };
 
         rmqConn.channel.consume(
@@ -119,7 +119,8 @@ describe('integration tests sync-scan', () => {
                 expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
                 expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
                 expect(expected[m.pathBefore].event).toEqual(m.event);
-                if (m.pathAfter === 'dir/sf') {
+                if (m.pathAfter === 'dir/sdir/ssfile') {
+                    expect('f75b8179e4bbe7e2b4a074dcef62de95').toEqual(m.hash);
                     await rmqConn.channel.cancel('test2');
                     done();
                 }

@@ -26,6 +26,7 @@ export interface RecordAttr {
     previews: Previews;
     root_key: string;
     library: string;
+    hash?: string;
     trt?: boolean;
 }
 

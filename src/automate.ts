@@ -65,12 +65,17 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
 
             if (deIndex.length) {
                 dbElems[deIndex[deIndex.length - 1]].record.trt = true;
+
+                // if hashs are differents, it's a move and not an ignore event
+                if (match === 7 && dbElems[deIndex[deIndex.length - 1]].record.hash !== fse.hash) {
+                    match = 5;
+                }
             }
 
             switch (match) {
                 case 1: // identical inode only
                 case 3: // move
-                case 5: // rename
+                case 5: // name or content changed
                 case 6: // different inode only (e.g: remount disk)
                     const deName: string = dbElems[deIndex[deIndex.length - 1]].record.file_name;
                     const dePath: string = dbElems[deIndex[deIndex.length - 1]].record.file_path;
@@ -79,7 +84,8 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                         fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
                         fse.ino,
                         fse.type === 'directory' ? true : false,
-                        channel
+                        channel,
+                        fse.hash
                     );
                     break;
                 case 7: // ignore (totally identical)
@@ -90,7 +96,8 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                         fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
                         fse.ino,
                         fse.type === 'directory' ? true : false,
-                        channel
+                        channel,
+                        fse.hash
                     );
                     break;
             }

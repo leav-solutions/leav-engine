@@ -3,11 +3,20 @@ import {Config} from '../_types/config';
 import config from '../config';
 import {generateMsgRabbitMQ, sendToRabbitMQ} from '.';
 
-export const create = async (path: string, inode: number, isDirectory: boolean, channel: amqp.Channel) => {
+export const create = async (
+    path: string,
+    inode: number,
+    isDirectory: boolean,
+    channel: amqp.Channel,
+    hash?: string
+) => {
     try {
         const conf = await config;
 
-        await sendToRabbitMQ(generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, conf.rmq.rootKey), channel);
+        await sendToRabbitMQ(
+            generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, conf.rmq.rootKey, hash),
+            channel
+        );
     } catch (e) {
         throw e;
     }
@@ -28,13 +37,14 @@ export const move = async (
     pathAfter: string,
     inode: number,
     isDirectory: boolean,
-    channel: amqp.Channel
+    channel: amqp.Channel,
+    hash?: string
 ) => {
     try {
         const conf: Config = await config;
 
         await sendToRabbitMQ(
-            generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, conf.rmq.rootKey),
+            generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, conf.rmq.rootKey, hash),
             channel
         );
     } catch (e) {

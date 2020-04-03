@@ -101,6 +101,7 @@ const database: FullTreeContent = [
             file_path: '.',
             inode: 573226,
             is_directory: false,
+            hash: 'd41d8cd98f00b204e9800998ecf8427e',
             modified_at: 1585753474,
             modified_by: 1,
             previews_status: {
@@ -143,6 +144,7 @@ const database: FullTreeContent = [
             file_path: 'dir',
             inode: 573805,
             is_directory: false,
+            hash: 'd41d8cd98f00b204e9800998ecf8427e',
             modified_at: 1585753474,
             modified_by: 1,
             previews_status: {
@@ -185,6 +187,7 @@ const database: FullTreeContent = [
             file_path: 'dir/sdir',
             inode: 573990,
             is_directory: false,
+            hash: 'd41d8cd98f00b204e9800998ecf8427e',
             modified_at: 1585753474,
             modified_by: 1,
             previews_status: {

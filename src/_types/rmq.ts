@@ -12,5 +12,6 @@ export interface RMQMsg {
     pathBefore: string;
     inode: number;
     isDirectory: boolean;
+    hash?: string;
     rootKey: string;
 }
