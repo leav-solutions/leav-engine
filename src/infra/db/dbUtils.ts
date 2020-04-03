@@ -7,6 +7,7 @@ import * as path from 'path';
 import {isArray} from 'util';
 import * as winston from 'winston';
 import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
+import {IForm} from '_types/forms';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
 import {IList, IPaginationParams, ISortParams} from '_types/list';
 import {ITree, ITreeFilterOptions} from '_types/tree';
@@ -30,7 +31,7 @@ export interface IDbUtils {
     cleanup?(record: {}): any;
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
-    findCoreEntity?<T extends ITree | ILibrary | IAttribute>(params: IFindCoreEntityParams): Promise<IList<T>>;
+    findCoreEntity?<T extends ITree | ILibrary | IAttribute | IForm>(params: IFindCoreEntityParams): Promise<IList<T>>;
     convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
     convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
     clearDatabase(): Promise<void>;
