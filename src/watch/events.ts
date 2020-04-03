@@ -7,7 +7,7 @@ export const handleCreate = async (
     inode: number,
     params: IParams,
     isDirectory: boolean,
-    hashFile: string
+    hashFile?: string
 ) => {
     await updateData(path, inode);
     sendToRabbitMQ(
@@ -34,7 +34,7 @@ export const handleUpdate = async (
     inode: number,
     params: IParams,
     isDirectory: boolean,
-    hashFile: string
+    hashFile?: string
 ) => {
     await updateData(path, inode);
     sendToRabbitMQ(

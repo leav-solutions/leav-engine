@@ -162,13 +162,13 @@ export const handleEvent = async (
         amqp: params.amqp
     };
 
-    let hashFile: string;
+    let hashFile: string | undefined;
     switch (event) {
         case 'addDir':
             isDirectory = true;
         case 'add':
-            hashFile = await _createHashFromFile(join(params.rootPath, path));
             if (!isDirectory) {
+                hashFile = await _createHashFromFile(join(params.rootPath, path));
             }
             await handleCreate(path, inode, amqp, isDirectory, hashFile);
             break;
