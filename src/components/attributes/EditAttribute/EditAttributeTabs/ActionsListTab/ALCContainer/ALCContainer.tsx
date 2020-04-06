@@ -96,12 +96,12 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         return currentActionList ? currentActionList[currentActionListName].higherId + 1 : 0;
     };
 
-    const getActionFromName = (name: string, id: number = currentActionList[currentActionListName].higherId + 1) => {
+    const getActionFromId = (id: string, listId: number = currentActionList[currentActionListName].higherId + 1) => {
         if (!availableActions) {
-            return {id: -1};
+            return {list_id: -1};
         } else {
-            const act: IAction = cloneDeep(availableActions.filter(action => action.name === name)[0]);
-            act.id = id;
+            const act: IAction = cloneDeep(availableActions.filter(action => action.id === id)[0]);
+            act.list_id = listId;
             act.isSystem = false;
             return act;
         }
@@ -131,19 +131,19 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         return -1;
     };
 
-    const addActionToList = (actionName: string, atIndex?: number) => {
-        const action = getActionFromName(actionName);
+    const addActionToList = (actionId: string, atIndex?: number) => {
+        const action = getActionFromId(actionId);
 
         const currentActionListCopy = cloneDeep(currentActionList);
 
-        currentActionListCopy[currentActionListName].higherId = action.id;
-        currentActionListCopy[currentActionListName][action.id] = action;
-        const index = atIndex === undefined || atIndex === -1 ? action.id : atIndex;
+        currentActionListCopy[currentActionListName].higherId = action.list_id;
+        currentActionListCopy[currentActionListName][action.list_id] = action;
+        const index = atIndex === undefined || atIndex === -1 ? action.list_id : atIndex;
         setCurrentList(currentActionListCopy);
 
         if (currentActionListOrder) {
             const currentActionListOrderCopy = {...currentActionListOrder};
-            currentActionListOrderCopy[currentActionListName].splice(index, 0, action.id);
+            currentActionListOrderCopy[currentActionListName].splice(index, 0, action.list_id);
             setcurrentActionListOrder(currentActionListOrderCopy);
         }
     };
@@ -190,7 +190,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     const getConfigActionFromAction = act => {
         const params = act.params && act.params.length ? act.params.map(param => extractParamConfig(param)) : null;
         return {
-            name: act.name,
+            id: act.id,
             params
         };
     };

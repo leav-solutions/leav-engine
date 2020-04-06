@@ -18,7 +18,7 @@ export const getActionListQuery = gql`
                 }
                 actions_list {
                     saveValue {
-                        name
+                        id
                         is_system
                         params {
                             name
@@ -26,7 +26,7 @@ export const getActionListQuery = gql`
                         }
                     }
                     getValue {
-                        name
+                        id
                         is_system
                         params {
                             name
@@ -34,7 +34,7 @@ export const getActionListQuery = gql`
                         }
                     }
                     deleteValue {
-                        name
+                        id
                         is_system
                         params {
                             name

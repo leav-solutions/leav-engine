@@ -25,7 +25,8 @@ export const getCurrentList = (
                 if (sourceConfig && sourceConfig.length) {
                     sourceConfig.forEach((configAct, i) => {
                         const action = getActionFromConfig(configAct, availableActions, i);
-                        config[action.id] = action;
+                        action.list_id = i;
+                        config[action.list_id] = action;
                         config.higherId = i;
                     });
                 }
@@ -37,8 +38,9 @@ export const getCurrentList = (
 };
 
 export const getActionFromConfig = (configAct: IActionConfig, availableActions: IReserveAction[], id: number) => {
-    const action: IAction = cloneDeep(availableActions.filter(act => act.name === configAct.name)[0]);
-    action.id = id;
+    const action: IAction = cloneDeep(availableActions.filter(act => act.id === configAct.id)[0]);
+
+    action.list_id = id;
     action.isSystem = configAct.is_system;
 
     if (action.params && action.params.length) {

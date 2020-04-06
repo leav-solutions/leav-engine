@@ -67,9 +67,9 @@ function ALCList({
         drop: (dragObject: IDragObject) => {
             if (dragObject.origin === 'ALCReserve') {
                 if (currentIndex >= 0) {
-                    addActionToList(dragObject.action.name, currentIndex);
+                    addActionToList(dragObject.action.id, currentIndex);
                 } else {
-                    addActionToList(dragObject.action.name);
+                    addActionToList(dragObject.action.id);
                 }
                 setCurrentIndex(-1);
             }
@@ -156,12 +156,13 @@ function ALCList({
 
     const renderAction = (actionId: number, i: number) => {
         const action = cards[actionId];
+
         if (action) {
             return (
                 <ALCCard
                     key={actionId}
                     index={i}
-                    id={`${action.id}`}
+                    id={`${action.list_id}`}
                     action={action}
                     moveCard={moveCard}
                     findCard={findCard}
@@ -176,7 +177,7 @@ function ALCList({
                 />
             );
         } else {
-            return <ALCPlaceholder key="placeholder">Slide Actions Here</ALCPlaceholder>;
+            return <ALCPlaceholder key={`placeholder${i}`}>Slide Actions Here</ALCPlaceholder>;
         }
     };
 

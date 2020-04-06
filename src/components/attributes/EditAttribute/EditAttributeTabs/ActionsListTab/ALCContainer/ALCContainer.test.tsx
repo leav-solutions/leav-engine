@@ -26,7 +26,7 @@ const actionsMock = [
     {
         description: 'encryptValue',
         input_types: ['string'],
-        name: 'encrypt',
+        id: 'encrypt',
         output_types: ['string'],
         params: null
     }
@@ -99,7 +99,7 @@ describe('ALCContainer', () => {
         const actionList = component.find('ALCList').prop('actions');
         const actionListName = component.find('ALCList').prop('currentActionListName');
 
-        expect(actionList[actionListName][actionList[actionListName].higherId].name).toBe('encrypt');
+        expect(actionList[actionListName][actionList[actionListName].higherId].id).toBe('encrypt');
 
         component.unmount();
     });

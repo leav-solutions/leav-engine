@@ -10,7 +10,8 @@ export interface IParam {
 
 export interface IAction {
     // INTERNAL
-    id: number;
+    list_id: number;
+    id: string;
     name: string;
     description: string | null;
     input_types: string[];
@@ -20,6 +21,7 @@ export interface IAction {
 }
 
 export interface IReserveAction {
+    id: string;
     name: string;
     description: string;
     input_types: string[];
@@ -33,7 +35,7 @@ export interface IParamConfig {
 }
 
 export interface IActionConfig {
-    name: string;
+    id: string;
     is_system?: boolean;
     params: IParamConfig[] | null;
 }

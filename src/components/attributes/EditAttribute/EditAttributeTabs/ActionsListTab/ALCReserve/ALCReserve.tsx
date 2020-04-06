@@ -21,7 +21,7 @@ function ALCReserve({actions, setCurrentIndex, colorTypeDictionnary, addActionTo
     //////////////////// RENDER
 
     const renderActions = (action: IReserveAction, i: number) => {
-        const actualAction: IAction = {...action, id: -1, isSystem: false};
+        const actualAction: IAction = {...action, list_id: -1, isSystem: false};
 
         return (
             <ALCCard

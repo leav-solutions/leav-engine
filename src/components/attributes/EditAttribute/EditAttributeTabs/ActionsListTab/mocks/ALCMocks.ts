@@ -11,14 +11,16 @@ export const AVAILABLE_ACTIONS_MOCK = [
             data: {
                 availableActions: [
                     {
-                        name: 'validateFormat',
+                        id: 'validateFormat',
+                        name: 'Validate Format',
                         description: 'Check if value matches attribute format',
                         input_types: ['string', 'number', 'boolean', 'object'],
                         output_types: ['string', 'number', 'boolean', 'object'],
                         params: null
                     },
                     {
-                        name: 'maskValue',
+                        id: 'maskValue',
+                        name: 'Mask Value',
                         description: 'Mask any value by replacing with dots or empty string if no value',
                         input_types: ['string', 'number', 'boolean', 'object'],
                         output_types: ['string', 'number', 'boolean', 'object'],
