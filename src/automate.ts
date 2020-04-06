@@ -6,6 +6,13 @@ import * as amqp from 'amqplib';
 let dbElems: FullTreeContent;
 let fsElems: FilesystemContent;
 
+enum Attr {
+    NOTHING = 0,
+    INODE = 1,
+    NAME = 2,
+    PATH = 4
+}
+
 const _extractChildrenDbElems = async (database: FullTreeContent): Promise<void> => {
     let toList: FullTreeContent = [];
     dbElems = typeof dbElems !== 'undefined' ? dbElems.concat(database) : database;
@@ -42,19 +49,19 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
         return;
     }
 
-    let match: number = 0;
+    let match: Attr = 0;
     let deIndex: number[] = [];
     for (const fse of fsElems) {
-        match = 0;
+        match = Attr.NOTHING;
         deIndex = [];
 
         if (fse.level === level && !fse.trt) {
             for (const [i, de] of dbElems.entries()) {
                 if (typeof de.record.trt === 'undefined') {
                     const res: number =
-                        (fse.ino === de.record.inode ? 1 : 0) +
-                        (fse.name === de.record.file_name ? 2 : 0) +
-                        (fse.path === de.record.file_path ? 4 : 0);
+                        (fse.ino === de.record.inode ? Attr.INODE : 0) +
+                        (fse.name === de.record.file_name ? Attr.NAME : 0) +
+                        (fse.path === de.record.file_path ? Attr.PATH : 0);
 
                     if (res > match && [1, 3, 5, 6, 7].includes(res)) {
                         match = res;
@@ -67,16 +74,19 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                 dbElems[deIndex[deIndex.length - 1]].record.trt = true;
 
                 // if hashs are differents, it's a move and not an ignore event
-                if (match === 7 && dbElems[deIndex[deIndex.length - 1]].record.hash !== fse.hash) {
+                if (
+                    match === Attr.INODE + Attr.NAME + Attr.PATH &&
+                    dbElems[deIndex[deIndex.length - 1]].record.hash !== fse.hash
+                ) {
                     match = 5;
                 }
             }
 
             switch (match) {
-                case 1: // identical inode only
-                case 3: // move
-                case 5: // name or content changed
-                case 6: // different inode only (e.g: remount disk)
+                case Attr.INODE: // 1
+                case Attr.INODE + Attr.NAME: // 3
+                case Attr.INODE + Attr.PATH: // or different hash - 5
+                case Attr.NAME + Attr.PATH: // 6
                     const deName: string = dbElems[deIndex[deIndex.length - 1]].record.file_name;
                     const dePath: string = dbElems[deIndex[deIndex.length - 1]].record.file_path;
                     await move(
@@ -88,10 +98,10 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                         fse.hash
                     );
                     break;
-                case 7: // ignore (totally identical)
+                case Attr.INODE + Attr.NAME + Attr.PATH: // 7
                     break;
                 default:
-                    // create
+                    // 0 or Attr.PATH
                     await create(
                         fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
                         fse.ino,

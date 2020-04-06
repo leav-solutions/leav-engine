@@ -8,6 +8,8 @@ import * as rmq from './rmq';
 import {Config} from './_types/config';
 import config from './config';
 
+const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
+
 (async function() {
     try {
         const conf: Config = await config;
@@ -22,9 +24,8 @@ import config from './config';
 
         await automate(fsScan, dbScan, rmqConn.channel);
 
-        // await rmqConn.channel.deleteQueue(conf.rmq.queue, {ifEmpty: true});
-        // await rmqConn.channel.close();
-        // await rmqConn.connection.close();
+        // Wait 30s for the queue to be consumed before closing connection
+        setTimeout(() => rmqConn.connection.close(), WAIT_BEFORE_CLOSING_CONN);
     } catch (e) {
         console.error(e);
     }
