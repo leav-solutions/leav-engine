@@ -60,7 +60,7 @@
     },
     "dependencies": {
         "@hapi/boom": "^7.4.2",
-        "@hapi/hapi": "^18.4.0",
+        "@hapi/hapi": "^18.4.1",
         "@hapi/joi": "^15.0.3",
         "@types/amqplib": "^0.5.13",
         "amqplib": "^0.5.5",
