@@ -33,90 +33,92 @@ const _extractChildrenDbElems = async (database: FullTreeContent): Promise<void>
 };
 
 const _process = async (level: number, channel: amqp.Channel): Promise<void> => {
-    // TODO: Add hash for files
+    try {
+        if (!fsElems.filter(fse => fse.level === level).length) {
+            // delete all untreated elements in database
+            for (const de of dbElems.filter(e => typeof e.record.trt === 'undefined')) {
+                await remove(
+                    de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
+                    de.record.inode,
+                    de.record.is_directory,
+                    channel
+                );
+            }
 
-    if (!fsElems.filter(fse => fse.level === level).length) {
-        // delete all untreated elements in database
-        for (const de of dbElems.filter(e => typeof e.record.trt === 'undefined')) {
-            await remove(
-                de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
-                de.record.inode,
-                de.record.is_directory,
-                channel
-            );
+            return;
         }
 
-        return;
-    }
+        let match: Attr = 0;
+        let deIndex: number[] = [];
+        for (const fse of fsElems) {
+            match = Attr.NOTHING;
+            deIndex = [];
 
-    let match: Attr = 0;
-    let deIndex: number[] = [];
-    for (const fse of fsElems) {
-        match = Attr.NOTHING;
-        deIndex = [];
+            if (fse.level === level && !fse.trt) {
+                for (const [i, de] of dbElems.entries()) {
+                    if (typeof de.record.trt === 'undefined') {
+                        const res: number =
+                            (fse.ino === de.record.inode ? Attr.INODE : 0) +
+                            (fse.name === de.record.file_name ? Attr.NAME : 0) +
+                            (fse.path === de.record.file_path ? Attr.PATH : 0);
 
-        if (fse.level === level && !fse.trt) {
-            for (const [i, de] of dbElems.entries()) {
-                if (typeof de.record.trt === 'undefined') {
-                    const res: number =
-                        (fse.ino === de.record.inode ? Attr.INODE : 0) +
-                        (fse.name === de.record.file_name ? Attr.NAME : 0) +
-                        (fse.path === de.record.file_path ? Attr.PATH : 0);
-
-                    if (res > match && [1, 3, 5, 6, 7].includes(res)) {
-                        match = res;
-                        deIndex.push(i);
+                        if (res > match && [1, 3, 5, 6, 7].includes(res)) {
+                            match = res;
+                            deIndex.push(i);
+                        }
                     }
                 }
-            }
 
-            if (deIndex.length) {
-                dbElems[deIndex[deIndex.length - 1]].record.trt = true;
+                if (deIndex.length) {
+                    dbElems[deIndex[deIndex.length - 1]].record.trt = true;
 
-                // if hashs are differents, it's a move and not an ignore event
-                if (
-                    match === Attr.INODE + Attr.NAME + Attr.PATH &&
-                    dbElems[deIndex[deIndex.length - 1]].record.hash !== fse.hash
-                ) {
-                    match = 5;
+                    // if hashs are differents, it's a move and not an ignore event
+                    if (
+                        match === Attr.INODE + Attr.NAME + Attr.PATH &&
+                        dbElems[deIndex[deIndex.length - 1]].record.hash !== fse.hash
+                    ) {
+                        match = 5;
+                    }
                 }
-            }
 
-            switch (match) {
-                case Attr.INODE: // 1
-                case Attr.INODE + Attr.NAME: // 3
-                case Attr.INODE + Attr.PATH: // or different hash - 5
-                case Attr.NAME + Attr.PATH: // 6
-                    const deName: string = dbElems[deIndex[deIndex.length - 1]].record.file_name;
-                    const dePath: string = dbElems[deIndex[deIndex.length - 1]].record.file_path;
-                    await move(
-                        dePath === '.' ? deName : `${dePath}/${deName}`,
-                        fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
-                        fse.ino,
-                        fse.type === 'directory' ? true : false,
-                        channel,
-                        fse.hash
-                    );
-                    break;
-                case Attr.INODE + Attr.NAME + Attr.PATH: // 7
-                    break;
-                default:
-                    // 0 or Attr.PATH
-                    await create(
-                        fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
-                        fse.ino,
-                        fse.type === 'directory' ? true : false,
-                        channel,
-                        fse.hash
-                    );
-                    break;
-            }
+                switch (match) {
+                    case Attr.INODE: // 1
+                    case Attr.INODE + Attr.NAME: // 3
+                    case Attr.INODE + Attr.PATH: // or different hash - 5
+                    case Attr.NAME + Attr.PATH: // 6
+                        const deName: string = dbElems[deIndex[deIndex.length - 1]].record.file_name;
+                        const dePath: string = dbElems[deIndex[deIndex.length - 1]].record.file_path;
+                        await move(
+                            dePath === '.' ? deName : `${dePath}/${deName}`,
+                            fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
+                            fse.ino,
+                            fse.type === 'directory' ? true : false,
+                            channel,
+                            fse.hash
+                        );
+                        break;
+                    case Attr.INODE + Attr.NAME + Attr.PATH: // 7
+                        break;
+                    default:
+                        // 0 or Attr.PATH
+                        await create(
+                            fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
+                            fse.ino,
+                            fse.type === 'directory' ? true : false,
+                            channel,
+                            fse.hash
+                        );
+                        break;
+                }
 
-            fse.trt = true;
+                fse.trt = true;
+            }
         }
-    }
 
-    await _process(level + 1, channel);
+        await _process(level + 1, channel);
+    } catch (e) {
+        throw e;
+    }
 };
 
 export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, channel: amqp.Channel): Promise<void> => {

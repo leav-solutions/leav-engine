@@ -22,34 +22,38 @@ const _createHashFromFile = (filePath: string): Promise<string> =>
 
 export const filesystem = (): Promise<FilesystemContent> =>
     new Promise(async resolve => {
-        const conf: Config = await config;
-        let data = [];
+        try {
+            const conf: Config = await config;
+            let data = [];
 
-        const walker = walk.walk(conf.filesystem.absolutePath, {followLinks: false});
+            const walker = walk.walk(conf.filesystem.absolutePath, {followLinks: false});
 
-        walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
-            for (const dsa of dirStatsArray) {
-                dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
-                dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
-                dsa.trt = false;
-            }
+            walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
+                for (const dsa of dirStatsArray) {
+                    dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
+                    dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
+                    dsa.trt = false;
+                }
 
-            data = data.concat(dirStatsArray);
-            next();
-        });
+                data = data.concat(dirStatsArray);
+                next();
+            });
 
-        walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
-            fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
-            fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
-            fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
-            fileStats.trt = false;
-            data.push(fileStats);
-            next();
-        });
+            walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
+                fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
+                fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
+                fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
+                fileStats.trt = false;
+                data.push(fileStats);
+                next();
+            });
 
-        walker.on('end', () => {
-            resolve(data);
-        });
+            walker.on('end', () => {
+                resolve(data);
+            });
+        } catch (e) {
+            throw e;
+        }
     });
 
 export const database = async (): Promise<FullTreeContent> => {
