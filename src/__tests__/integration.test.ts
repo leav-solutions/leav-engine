@@ -25,8 +25,8 @@ beforeAll(async () => {
 
         // RabbitMQ initialization
         const connOpt: amqp.Options.Connect = conf.rmq.connOpt;
-        const {exchange, queue, routingKey, type} = conf.rmq;
-        rmqConn = await rmq.init(connOpt, exchange, queue, routingKey, type);
+        const {exchange, type} = conf.rmq;
+        rmqConn = await rmq.init(connOpt, exchange, type);
     } catch (e) {
         throw e;
     }
@@ -120,7 +120,7 @@ describe('integration tests sync-scan', () => {
                 // pathBefore as keys
                 file: {pathAfter: 'dir/f', event: 'MOVE'},
                 'dir/sfile': {pathAfter: 'dir/sf', event: 'MOVE'},
-                'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'MOVE'}
+                'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'UPDATE'}
             };
 
             rmqConn.channel.consume(

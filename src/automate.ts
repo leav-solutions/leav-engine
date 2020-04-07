@@ -1,6 +1,6 @@
 import {FullTreeContent, Record} from './_types/queries';
 import {FilesystemContent} from './_types/filesystem';
-import {create, remove, move} from './rmq/commands';
+import {create, remove, move, update} from './rmq/events';
 import * as amqp from 'amqplib';
 
 let dbElems: FullTreeContent;
@@ -77,14 +77,14 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                         match === Attr.INODE + Attr.NAME + Attr.PATH &&
                         dbElems[deIndex[deIndex.length - 1]].record.hash !== fse.hash
                     ) {
-                        match = 5;
+                        match = 8;
                     }
                 }
 
                 switch (match) {
                     case Attr.INODE: // Identical inode only
                     case Attr.INODE + Attr.NAME: // 3 - move
-                    case Attr.INODE + Attr.PATH: // 5 - name or hash changed
+                    case Attr.INODE + Attr.PATH: // 5 - name
                     case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
                         const deName: string = dbElems[deIndex[deIndex.length - 1]].record.file_name;
                         const dePath: string = dbElems[deIndex[deIndex.length - 1]].record.file_path;
@@ -93,11 +93,19 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                             fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
                             fse.ino,
                             fse.type === 'directory' ? true : false,
-                            channel,
-                            fse.hash
+                            channel
                         );
                         break;
                     case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
+                        break;
+                    case 8: // hash changed
+                        await update(
+                            fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
+                            fse.ino,
+                            false, // isDirectory,
+                            channel,
+                            fse.hash
+                        );
                         break;
                     default:
                         // 0 or Attr.PATH - create

@@ -16,8 +16,8 @@ const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
 
         // RabbitMQ initialization
         const connOpt: amqp.Options.Connect = conf.rmq.connOpt;
-        const {exchange, queue, routingKey, type} = conf.rmq;
-        const rmqConn: RMQConn = await rmq.init(connOpt, exchange, queue, routingKey, type);
+        const {exchange, type} = conf.rmq;
+        const rmqConn: RMQConn = await rmq.init(connOpt, exchange, type);
 
         const fsScan: FilesystemContent = await scan.filesystem();
         const dbScan: FullTreeContent = await scan.database();
@@ -25,7 +25,8 @@ const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
         await automate(fsScan, dbScan, rmqConn.channel);
 
         // Wait 30s for the queue to be consumed before closing connection
-        setTimeout(() => rmqConn.connection.close(), WAIT_BEFORE_CLOSING_CONN);
+        // setTimeout(() => rmqConn.connection.close(), WAIT_BEFORE_CLOSING_CONN);
+        // rmqConn.connection.close();
     } catch (e) {
         console.error(e);
     }

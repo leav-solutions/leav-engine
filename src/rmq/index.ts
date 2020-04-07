@@ -39,20 +39,12 @@ export const generateMsgRabbitMQ = (
     return JSON.stringify(msg);
 };
 
-export const init = async (
-    connOpt: amqp.Options.Connect,
-    exchange: string,
-    queue: string,
-    routingKey: string,
-    type: string
-): Promise<RMQConn> => {
+export const init = async (connOpt: amqp.Options.Connect, exchange: string, type: string): Promise<RMQConn> => {
     try {
         const connection: amqp.Connection = await amqp.connect(connOpt);
         const channel: amqp.Channel = await connection.createChannel();
 
         await channel.assertExchange(exchange, type, {durable: true});
-        await channel.assertQueue(queue, {durable: true});
-        await channel.bindQueue(queue, exchange, routingKey);
 
         return {channel, connection};
     } catch (e) {

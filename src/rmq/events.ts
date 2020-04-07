@@ -37,14 +37,32 @@ export const move = async (
     pathAfter: string,
     inode: number,
     isDirectory: boolean,
-    channel: amqp.Channel,
-    hash?: string
+    channel: amqp.Channel
 ) => {
     try {
         const conf: Config = await config;
 
         await sendToRabbitMQ(
-            generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, conf.rmq.rootKey, hash),
+            generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, conf.rmq.rootKey),
+            channel
+        );
+    } catch (e) {
+        throw e;
+    }
+};
+
+export const update = async (
+    path: string,
+    inode: number,
+    isDirectory: boolean,
+    channel: amqp.Channel,
+    hash: string
+) => {
+    try {
+        const conf: Config = await config;
+
+        await sendToRabbitMQ(
+            generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, conf.rmq.rootKey, hash),
             channel
         );
     } catch (e) {

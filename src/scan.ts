@@ -4,8 +4,8 @@ import fetch from 'node-fetch';
 import gql from 'graphql-tag';
 import {ApolloClient} from 'apollo-client';
 import {createHttpLink} from 'apollo-link-http';
-import {ApolloLink} from 'apollo-link';
-import {InMemoryCache} from 'apollo-cache-inmemory';
+import {ApolloLink, DocumentNode} from 'apollo-link';
+import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
 import config from './config';
 import {FullTreeContent} from './_types/queries';
 import {FilesystemContent, FileContent} from './_types/filesystem';
@@ -70,29 +70,21 @@ export const database = async (): Promise<FullTreeContent> => {
             return forward(operation);
         });
 
-        const client = new ApolloClient({
+        const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
             link: authLink.concat(httpLink),
             cache: new InMemoryCache()
         });
 
+        const getFullTreeContent: DocumentNode = gql`
+            query GET_FULL_TREE_CONTENT($treeId: ID!) {
+                fullTreeContent(treeId: $treeId)
+            }
+        `;
+
         const result = await client.query({
-            query: gql`
-                {
-                    fullTreeContent(treeId: "files_tree")
-                }
-            `
+            query: getFullTreeContent,
+            variables: {treeId: conf.graphql.treeId}
         });
-
-        // const getFullTreeContent = gql`
-        //     query GET_FULL_TREE_CONTENT($treeId: String!) {
-        //         fullTreeContent(treeId: $treeId)
-        //     }
-        // `;
-
-        // const result = await client.query({
-        //     query: getFullTreeContent,
-        //     variables: {treeId: conf.graphql.treeId}
-        // });
 
         return result.data.fullTreeContent;
     } catch (e) {
