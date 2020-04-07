@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "ts-node src/index.ts",
-    "test:integration": "jest -c jest.config.json"
+    "start:dev": "NODE_ENV=development ts-node src/index.ts",
+    "test:integration": "NODE_ENV=test jest -c jest.config.json"
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,7 @@
     "apollo-link-http": "^1.5.16",
     "app-root-path": "^3.0.0",
     "arangojs": "^6.14.0",
+    "dotenv": "^8.2.0",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "moment": "^2.24.0",

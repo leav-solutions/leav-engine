@@ -6,10 +6,8 @@ import {ApolloClient} from 'apollo-client';
 import {createHttpLink} from 'apollo-link-http';
 import {ApolloLink, DocumentNode} from 'apollo-link';
 import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
-import config from './config';
 import {FullTreeContent} from './_types/queries';
 import {FilesystemContent, FileContent} from './_types/filesystem';
-import {Config} from './_types/config';
 import crypto from 'crypto';
 
 const _createHashFromFile = (filePath: string): Promise<string> =>
@@ -21,50 +19,43 @@ const _createHashFromFile = (filePath: string): Promise<string> =>
     });
 
 export const filesystem = (): Promise<FilesystemContent> =>
-    new Promise(async resolve => {
-        try {
-            const conf: Config = await config;
-            let data = [];
+    new Promise(resolve => {
+        let data = [];
 
-            const walker = walk.walk(conf.filesystem.absolutePath, {followLinks: false});
+        const walker = walk.walk(process.env.FILESYSTEM_ABSPATH, {followLinks: false});
 
-            walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
-                for (const dsa of dirStatsArray) {
-                    dsa.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
-                    dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
-                    dsa.trt = false;
-                }
+        walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
+            for (const dsa of dirStatsArray) {
+                dsa.path = root.replace(`${process.env.FILESYSTEM_ABSPATH}`, '').slice(1) || '.';
+                dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
+                dsa.trt = false;
+            }
 
-                data = data.concat(dirStatsArray);
-                next();
-            });
+            data = data.concat(dirStatsArray);
+            next();
+        });
 
-            walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
-                fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
-                fileStats.path = root.replace(`${conf.filesystem.absolutePath}`, '').slice(1) || '.';
-                fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
-                fileStats.trt = false;
-                data.push(fileStats);
-                next();
-            });
+        walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
+            fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
+            fileStats.path = root.replace(`${process.env.FILESYSTEM_ABSPATH}`, '').slice(1) || '.';
+            fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
+            fileStats.trt = false;
+            data.push(fileStats);
+            next();
+        });
 
-            walker.on('end', () => {
-                resolve(data);
-            });
-        } catch (e) {
-            throw e;
-        }
+        walker.on('end', () => {
+            resolve(data);
+        });
     });
 
 export const database = async (): Promise<FullTreeContent> => {
     try {
-        const conf: Config = await config;
-
-        const httpLink = createHttpLink({uri: conf.graphql.uri, fetch});
+        const httpLink = createHttpLink({uri: process.env.GRAPHQL_URI, fetch});
         const authLink = new ApolloLink((operation, forward) => {
             operation.setContext({
                 headers: {
-                    authorization: conf.graphql.token
+                    authorization: process.env.GRAPHQL_TOKEN
                 }
             });
             return forward(operation);
@@ -83,7 +74,7 @@ export const database = async (): Promise<FullTreeContent> => {
 
         const result = await client.query({
             query: getFullTreeContent,
-            variables: {treeId: conf.graphql.treeId}
+            variables: {treeId: process.env.GRAPHQL_TREEID}
         });
 
         return result.data.fullTreeContent;

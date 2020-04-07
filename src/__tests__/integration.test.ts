@@ -1,17 +1,17 @@
-import * as amqp from 'amqplib';
 import fs from 'fs';
 import * as rmq from '../rmq';
 import {RMQConn} from '../_types/rmq';
-import {Config} from '../_types/config';
 import {FullTreeContent} from '../_types/queries';
 import {FilesystemContent} from '../_types/filesystem';
-import config from '../config';
 import * as scan from '../scan';
 import automate from '../automate';
 import test2Db from './database/test2';
 import test3Db from './database/test3';
+import {config} from 'dotenv';
+import {resolve} from 'path';
 
-let conf: Config;
+config({path: resolve(__dirname, `../../env/${process.env.NODE_ENV}`)});
+
 let rmqConn: RMQConn;
 let inodes: number[];
 
@@ -21,12 +21,7 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 
 beforeAll(async () => {
     try {
-        conf = await config;
-
-        // RabbitMQ initialization
-        const connOpt: amqp.Options.Connect = conf.rmq.connOpt;
-        const {exchange, type} = conf.rmq;
-        rmqConn = await rmq.init(connOpt, exchange, type);
+        rmqConn = await rmq.init();
     } catch (e) {
         throw e;
     }
@@ -42,28 +37,28 @@ describe('integration tests sync-scan', () => {
         expect.assertions(5);
 
         // Create two directories: dir/sdir from root
-        fs.mkdirSync(`${conf.filesystem.absolutePath}/dir`);
-        fs.mkdirSync(`${conf.filesystem.absolutePath}/dir/sdir`);
+        fs.mkdirSync(`${process.env.FILESYSTEM_ABSPATH}/dir`);
+        fs.mkdirSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir`);
 
         // Create three files with differents paths
         [
-            `${conf.filesystem.absolutePath}/file`,
-            `${conf.filesystem.absolutePath}/dir/sfile`,
-            `${conf.filesystem.absolutePath}/dir/sdir/ssfile`
+            `${process.env.FILESYSTEM_ABSPATH}/file`,
+            `${process.env.FILESYSTEM_ABSPATH}/dir/sfile`,
+            `${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`
         ].forEach(p => fs.writeFileSync(p, ''));
 
-        expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir`)).toEqual(true);
-        expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir/sdir`)).toEqual(true);
-        expect(fs.existsSync(`${conf.filesystem.absolutePath}/file`)).toEqual(true);
-        expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir/sfile`)).toEqual(true);
-        expect(fs.existsSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`)).toEqual(true);
+        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir`)).toEqual(true);
+        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir`)).toEqual(true);
+        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/file`)).toEqual(true);
+        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sfile`)).toEqual(true);
+        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`)).toEqual(true);
 
         inodes = [
-            fs.statSync(`${conf.filesystem.absolutePath}/dir`).ino,
-            fs.statSync(`${conf.filesystem.absolutePath}/dir/sdir`).ino,
-            fs.statSync(`${conf.filesystem.absolutePath}/file`).ino,
-            fs.statSync(`${conf.filesystem.absolutePath}/dir/sfile`).ino,
-            fs.statSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`).ino
+            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir`).ino,
+            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir`).ino,
+            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/file`).ino,
+            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sfile`).ino,
+            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`).ino
         ];
     });
 
@@ -86,7 +81,7 @@ describe('integration tests sync-scan', () => {
             };
 
             await rmqConn.channel.consume(
-                conf.rmq.queue,
+                process.env.RMQ_QUEUE,
                 async msg => {
                     const m = JSON.parse(msg.content);
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
@@ -106,9 +101,9 @@ describe('integration tests sync-scan', () => {
     test('move/rename/edit events', async done => {
         expect.assertions(10);
 
-        fs.renameSync(`${conf.filesystem.absolutePath}/file`, `${conf.filesystem.absolutePath}/dir/f`); // MOVE
-        fs.renameSync(`${conf.filesystem.absolutePath}/dir/sfile`, `${conf.filesystem.absolutePath}/dir/sf`); // RENAME
-        fs.writeFileSync(`${conf.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
+        fs.renameSync(`${process.env.FILESYSTEM_ABSPATH}/file`, `${process.env.FILESYSTEM_ABSPATH}/dir/f`); // MOVE
+        fs.renameSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sfile`, `${process.env.FILESYSTEM_ABSPATH}/dir/sf`); // RENAME
+        fs.writeFileSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
         try {
             const fsc: FilesystemContent = await scan.filesystem();
@@ -124,7 +119,7 @@ describe('integration tests sync-scan', () => {
             };
 
             rmqConn.channel.consume(
-                conf.rmq.queue,
+                process.env.RMQ_QUEUE,
                 async msg => {
                     const m = JSON.parse(msg.content);
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
@@ -146,7 +141,7 @@ describe('integration tests sync-scan', () => {
     test('delete events', async done => {
         expect.assertions(10);
 
-        fs.rmdirSync(`${conf.filesystem.absolutePath}/dir`, {recursive: true});
+        fs.rmdirSync(`${process.env.FILESYSTEM_ABSPATH}/dir`, {recursive: true});
 
         try {
             const fsc: FilesystemContent = await scan.filesystem();
@@ -164,7 +159,7 @@ describe('integration tests sync-scan', () => {
             };
 
             rmqConn.channel.consume(
-                conf.rmq.queue,
+                process.env.RMQ_QUEUE,
                 async msg => {
                     const m = JSON.parse(msg.content);
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));

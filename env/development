@@ -1,0 +1,16 @@
+GRAPHQL_URI=http://core.leav.localhost/graphql
+GRAPHQL_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwibG9naW4iOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTU4NDUyNjc5MSwiZXhwIjo0NzA4NzI5MTkxfQ.RtTiK_mYUBKUenCKApHddfsrW-NgAsLGXWjwdDmLCMM
+GRAPHQL_TREEID=files_tree
+
+FILESYSTEM_ABSPATH=/home/jrmy/dev/docker-compose/files
+
+RMQ_CONN_PROTOCOL=amqp
+RMQ_CONN_HOSTNAME=rabbitmq.leav.localhost
+RMQ_CONN_USERNAME=guest
+RMQ_CONN_PASSWORD=guest
+
+RMQ_QUEUE=files_events
+RMQ_EXCHANGE=leav_core
+RMQ_ROUTINGKEY=files.event
+RMQ_ROOTKEY=files1
+RMQ_TYPE=direct

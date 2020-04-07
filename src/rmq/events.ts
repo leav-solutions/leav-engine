@@ -1,6 +1,4 @@
 import * as amqp from 'amqplib';
-import {Config} from '../_types/config';
-import config from '../config';
 import {generateMsgRabbitMQ, sendToRabbitMQ} from '.';
 
 export const create = async (
@@ -11,10 +9,8 @@ export const create = async (
     hash?: string
 ) => {
     try {
-        const conf = await config;
-
         await sendToRabbitMQ(
-            generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, conf.rmq.rootKey, hash),
+            generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, process.env.RMQ_ROOTKEY, hash),
             channel
         );
     } catch (e) {
@@ -24,9 +20,10 @@ export const create = async (
 
 export const remove = async (path: string, inode: number, isDirectory: boolean, channel: amqp.Channel) => {
     try {
-        const conf = await config;
-
-        await sendToRabbitMQ(generateMsgRabbitMQ('REMOVE', path, null, inode, isDirectory, conf.rmq.rootKey), channel);
+        await sendToRabbitMQ(
+            generateMsgRabbitMQ('REMOVE', path, null, inode, isDirectory, process.env.ROOTKEY),
+            channel
+        );
     } catch (e) {
         throw e;
     }
@@ -40,10 +37,8 @@ export const move = async (
     channel: amqp.Channel
 ) => {
     try {
-        const conf: Config = await config;
-
         await sendToRabbitMQ(
-            generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, conf.rmq.rootKey),
+            generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, process.env.ROOTKEY),
             channel
         );
     } catch (e) {
@@ -59,10 +54,8 @@ export const update = async (
     hash: string
 ) => {
     try {
-        const conf: Config = await config;
-
         await sendToRabbitMQ(
-            generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, conf.rmq.rootKey, hash),
+            generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, process.env.ROOTKEY, hash),
             channel
         );
     } catch (e) {
