@@ -82,10 +82,10 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                 }
 
                 switch (match) {
-                    case Attr.INODE: // 1
-                    case Attr.INODE + Attr.NAME: // 3
-                    case Attr.INODE + Attr.PATH: // or different hash - 5
-                    case Attr.NAME + Attr.PATH: // 6
+                    case Attr.INODE: // Identical inode only
+                    case Attr.INODE + Attr.NAME: // 3 - move
+                    case Attr.INODE + Attr.PATH: // 5 - name or hash changed
+                    case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
                         const deName: string = dbElems[deIndex[deIndex.length - 1]].record.file_name;
                         const dePath: string = dbElems[deIndex[deIndex.length - 1]].record.file_path;
                         await move(
@@ -97,10 +97,10 @@ const _process = async (level: number, channel: amqp.Channel): Promise<void> => 
                             fse.hash
                         );
                         break;
-                    case Attr.INODE + Attr.NAME + Attr.PATH: // 7
+                    case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
                         break;
                     default:
-                        // 0 or Attr.PATH
+                        // 0 or Attr.PATH - create
                         await create(
                             fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
                             fse.ino,
