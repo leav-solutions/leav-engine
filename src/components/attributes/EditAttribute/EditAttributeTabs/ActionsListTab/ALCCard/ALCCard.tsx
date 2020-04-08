@@ -110,7 +110,7 @@ function ALCCard({
     //////////////////// COMPONENT FUNCTIONS
 
     const onRemoveButtonClicked = () => {
-        tryAndRemove(action.id);
+        tryAndRemove(action.list_id);
     };
 
     const handleToggleParams = () => {
@@ -203,7 +203,7 @@ function ALCCard({
                                         <Param
                                             index={index}
                                             key={i}
-                                            actionId={listAction.id !== undefined ? listAction.id : -1}
+                                            actionId={listAction.list_id !== undefined ? listAction.list_id : -1}
                                             param={param}
                                             changeParam={changeParam}
                                             setBlockCard={setBlockCard}

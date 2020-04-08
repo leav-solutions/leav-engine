@@ -6,21 +6,21 @@ export const saveAttributeActionsListMutation = gql`
             id
             actions_list {
                 saveValue {
-                    name
+                    id
                     params {
                         name
                         value
                     }
                 }
                 getValue {
-                    name
+                    id
                     params {
                         name
                         value
                     }
                 }
                 deleteValue {
-                    name
+                    id
                     params {
                         name
                         value

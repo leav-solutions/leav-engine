@@ -78,12 +78,12 @@ function ALCReserveCard({
     };
 
     const onAddButtonClicked = () => {
-        tryAndAdd(action.name, -1);
+        tryAndAdd(action.id, -1);
     };
 
-    const tryAndAdd = (actName: string, atIndex: number) => {
+    const tryAndAdd = (actId: string, atIndex: number) => {
         if (addActionToList) {
-            addActionToList(actName, atIndex);
+            addActionToList(actId, atIndex);
         }
     };
 

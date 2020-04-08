@@ -17,6 +17,7 @@ export interface GET_AVAILABLE_ACTIONS_availableActions_params {
 }
 
 export interface GET_AVAILABLE_ACTIONS_availableActions {
+    id: string;
     name: string;
     description: string | null;
     input_types: ActionIOTypes[];
