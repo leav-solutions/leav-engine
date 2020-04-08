@@ -3,7 +3,7 @@ export type FullTreeContent = Record[];
 export interface Record {
     order: number;
     record: RecordAttr;
-    children: FullTreeContent;
+    children?: FullTreeContent;
 }
 
 export interface RecordAttr {

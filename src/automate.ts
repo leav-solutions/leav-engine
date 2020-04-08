@@ -1,11 +1,7 @@
 import {FullTreeContent} from './_types/queries';
-import {FilesystemContent} from './_types/filesystem';
-import {Config} from './_types/config';
+import {FilesystemContent, FileContent} from './_types/filesystem';
 import {create, remove, move, update} from './rmq/events';
 import * as amqp from 'amqplib';
-
-let dbElems: FullTreeContent;
-let fsElems: FilesystemContent;
 
 enum Attr {
     NOTHING = 0,
@@ -14,9 +10,8 @@ enum Attr {
     PATH = 4
 }
 
-const _extractChildrenDbElems = async (database: FullTreeContent): Promise<void> => {
+const _extractChildrenDbElems = async (database: FullTreeContent, dbEl: FullTreeContent): Promise<FullTreeContent> => {
     let toList: FullTreeContent = [];
-    dbElems = typeof dbElems !== 'undefined' ? dbElems.concat(database) : database;
 
     for (const e of database) {
         if (e.record.is_directory && e.children.length) {
@@ -26,116 +21,136 @@ const _extractChildrenDbElems = async (database: FullTreeContent): Promise<void>
         delete e.children;
     }
 
+    dbEl = typeof dbEl !== 'undefined' ? dbEl.concat(database) : database;
+
     if (toList.length) {
-        await _extractChildrenDbElems(toList);
+        await _extractChildrenDbElems(toList, dbEl);
     }
 
-    return;
+    return dbEl;
 };
 
-const _process = async (level: number, channel: amqp.Channel): Promise<void> => {
-    try {
-        if (!fsElems.filter(fse => fse.level === level).length) {
-            // delete all untreated elements in database
-            for (const de of dbElems.filter(e => typeof e.record.trt === 'undefined')) {
-                await remove(
-                    de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
-                    de.record.inode,
-                    de.record.is_directory,
-                    channel
-                );
-            }
+const _getEventTypeAndDbElIdx = async (fc: FileContent, dbEl: FullTreeContent) => {
+    let match = Attr.NOTHING;
+    const dbElIdx = [];
 
+    for (const [i, e] of dbEl.entries()) {
+        if (typeof e.record.trt === 'undefined') {
+            const res: number =
+                (fc.ino === e.record.inode ? Attr.INODE : 0) +
+                (fc.name === e.record.file_name ? Attr.NAME : 0) +
+                (fc.path === e.record.file_path ? Attr.PATH : 0);
+
+            if (res > match && [1, 3, 5, 6, 7].includes(res)) {
+                match = res;
+                dbElIdx.push(i);
+            }
+        }
+    }
+
+    if (dbElIdx.length) {
+        dbEl[dbElIdx[dbElIdx.length - 1]].record.trt = true;
+
+        // if hashs are differents, it's a move and not an ignore event
+        if (match === Attr.INODE + Attr.NAME + Attr.PATH && dbEl[dbElIdx[dbElIdx.length - 1]].record.hash !== fc.hash) {
+            match = 8;
+        }
+    }
+
+    return {match, dbElIdx};
+};
+
+const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.Channel): Promise<void> => {
+    for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
+        await remove(
+            de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
+            de.record.inode,
+            de.record.is_directory,
+            channel
+        );
+    }
+};
+
+const _trtFile = async (
+    match: Attr,
+    dbElIdx: number[],
+    dbEl: FullTreeContent,
+    fc: FileContent,
+    channel: amqp.Channel
+): Promise<void> => {
+    switch (match) {
+        case Attr.INODE: // Identical inode only
+        case Attr.INODE + Attr.NAME: // 3 - move
+        case Attr.INODE + Attr.PATH: // 5 - name
+        case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
+            const deName: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_name;
+            const dePath: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_path;
+            await move(
+                dePath === '.' ? deName : `${dePath}/${deName}`,
+                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
+                fc.ino,
+                fc.type === 'directory' ? true : false,
+                channel
+            );
+            break;
+        case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
+            break;
+        case 8: // hash changed
+            await update(
+                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
+                fc.ino,
+                false, // isDirectory,
+                channel,
+                fc.hash
+            );
+            break;
+        default:
+            // 0 or Attr.PATH - create
+            await create(
+                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
+                fc.ino,
+                fc.type === 'directory' ? true : false,
+                channel,
+                fc.hash
+            );
+            break;
+    }
+};
+
+const _process = async (
+    fsEl: FilesystemContent,
+    dbEl: FullTreeContent,
+    level: number,
+    channel: amqp.Channel
+): Promise<void> => {
+    try {
+        if (!fsEl.filter(fse => fse.level === level).length) {
+            // delete all untreated elements in database before end of process
+            await _delUntrtDbEl(dbEl, channel);
             return;
         }
 
-        let match: Attr = 0;
-        let deIndex: number[] = [];
-        for (const fse of fsElems) {
-            match = Attr.NOTHING;
-            deIndex = [];
-
-            if (fse.level === level && !fse.trt) {
-                for (const [i, de] of dbElems.entries()) {
-                    if (typeof de.record.trt === 'undefined') {
-                        const res: number =
-                            (fse.ino === de.record.inode ? Attr.INODE : 0) +
-                            (fse.name === de.record.file_name ? Attr.NAME : 0) +
-                            (fse.path === de.record.file_path ? Attr.PATH : 0);
-
-                        if (res > match && [1, 3, 5, 6, 7].includes(res)) {
-                            match = res;
-                            deIndex.push(i);
-                        }
-                    }
-                }
-
-                if (deIndex.length) {
-                    dbElems[deIndex[deIndex.length - 1]].record.trt = true;
-
-                    // if hashs are differents, it's a move and not an ignore event
-                    if (
-                        match === Attr.INODE + Attr.NAME + Attr.PATH &&
-                        dbElems[deIndex[deIndex.length - 1]].record.hash !== fse.hash
-                    ) {
-                        match = 8;
-                    }
-                }
-
-                switch (match) {
-                    case Attr.INODE: // Identical inode only
-                    case Attr.INODE + Attr.NAME: // 3 - move
-                    case Attr.INODE + Attr.PATH: // 5 - name
-                    case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
-                        const deName: string = dbElems[deIndex[deIndex.length - 1]].record.file_name;
-                        const dePath: string = dbElems[deIndex[deIndex.length - 1]].record.file_path;
-                        await move(
-                            dePath === '.' ? deName : `${dePath}/${deName}`,
-                            fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
-                            fse.ino,
-                            fse.type === 'directory' ? true : false,
-                            channel
-                        );
-                        break;
-                    case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
-                        break;
-                    case 8: // hash changed
-                        await update(
-                            fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
-                            fse.ino,
-                            false, // isDirectory,
-                            channel,
-                            fse.hash
-                        );
-                        break;
-                    default:
-                        // 0 or Attr.PATH - create
-                        await create(
-                            fse.path === '.' ? fse.name : `${fse.path}/${fse.name}`,
-                            fse.ino,
-                            fse.type === 'directory' ? true : false,
-                            channel,
-                            fse.hash
-                        );
-                        break;
-                }
-
-                fse.trt = true;
+        let match: Attr;
+        let dbElIdx: number[];
+        for (const fc of fsEl) {
+            if (fc.level === level && !fc.trt) {
+                ({match, dbElIdx} = await _getEventTypeAndDbElIdx(fc, dbEl));
+                await _trtFile(match, dbElIdx, dbEl, fc, channel);
+                fc.trt = true;
             }
         }
 
-        await _process(level + 1, channel);
+        await _process(fsEl, dbEl, level + 1, channel);
     } catch (e) {
         throw e;
     }
 };
 
 export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, channel: amqp.Channel): Promise<void> => {
-    fsElems = fsScan;
-
     try {
-        await _extractChildrenDbElems(dbScan);
-        await _process(0, channel);
+        let dbEl: FullTreeContent;
+        dbEl = await _extractChildrenDbElems(dbScan, dbEl);
+        await _process(fsScan, dbEl, 0, channel);
     } catch (e) {
         throw e;
     }
