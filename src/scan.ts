@@ -9,6 +9,7 @@ import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
 import {FullTreeContent} from './_types/queries';
 import {FilesystemContent, FileContent} from './_types/filesystem';
 import crypto from 'crypto';
+import {Config} from './_types/config';
 
 const _createHashFromFile = (filePath: string): Promise<string> =>
     new Promise(resolve => {
@@ -18,15 +19,15 @@ const _createHashFromFile = (filePath: string): Promise<string> =>
             .on('end', () => resolve(hash.digest('hex')));
     });
 
-export const filesystem = (): Promise<FilesystemContent> =>
+export const filesystem = (cfg: Config): Promise<FilesystemContent> =>
     new Promise(resolve => {
         let data = [];
 
-        const walker = walk.walk(process.env.FILESYSTEM_ABSPATH, {followLinks: false});
+        const walker = walk.walk(cfg.filesystem.absolutePath, {followLinks: false});
 
         walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
             for (const dsa of dirStatsArray) {
-                dsa.path = root.replace(`${process.env.FILESYSTEM_ABSPATH}`, '').slice(1) || '.';
+                dsa.path = root.replace(`${cfg.filesystem.absolutePath}`, '').slice(1) || '.';
                 dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
                 dsa.trt = false;
             }
@@ -37,7 +38,7 @@ export const filesystem = (): Promise<FilesystemContent> =>
 
         walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
             fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
-            fileStats.path = root.replace(`${process.env.FILESYSTEM_ABSPATH}`, '').slice(1) || '.';
+            fileStats.path = root.replace(`${cfg.filesystem.absolutePath}`, '').slice(1) || '.';
             fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
             fileStats.trt = false;
             data.push(fileStats);
@@ -49,13 +50,13 @@ export const filesystem = (): Promise<FilesystemContent> =>
         });
     });
 
-export const database = async (): Promise<FullTreeContent> => {
+export const database = async (cfg: Config): Promise<FullTreeContent> => {
     try {
-        const httpLink = createHttpLink({uri: process.env.GRAPHQL_URI, fetch});
+        const httpLink = createHttpLink({uri: cfg.graphql.uri, fetch});
         const authLink = new ApolloLink((operation, forward) => {
             operation.setContext({
                 headers: {
-                    authorization: process.env.GRAPHQL_TOKEN
+                    authorization: cfg.graphql.token
                 }
             });
             return forward(operation);
@@ -74,7 +75,7 @@ export const database = async (): Promise<FullTreeContent> => {
 
         const result = await client.query({
             query: getFullTreeContent,
-            variables: {treeId: process.env.GRAPHQL_TREEID}
+            variables: {treeId: cfg.graphql.treeId}
         });
 
         return result.data.fullTreeContent;

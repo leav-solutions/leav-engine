@@ -4,20 +4,22 @@ import {RMQConn} from './_types/rmq';
 import * as scan from './scan';
 import automate from './automate';
 import * as rmq from './rmq';
-import {config} from 'dotenv';
+import dotenv from 'dotenv';
 import {resolve} from 'path';
-
-config({path: resolve(__dirname, `../env/${process.env.NODE_ENV}`)});
+dotenv.config({path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`)});
+import config from './config';
+import {Config} from './_types/config';
 
 const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
 
 (async function() {
     try {
-        // RabbitMQ initialization
-        const rmqConn: RMQConn = await rmq.init();
+        const cfg: Config = await config;
 
-        const fsScan: FilesystemContent = await scan.filesystem();
-        const dbScan: FullTreeContent = await scan.database();
+        const rmqConn: RMQConn = await rmq.init(cfg);
+
+        const fsScan: FilesystemContent = await scan.filesystem(cfg);
+        const dbScan: FullTreeContent = await scan.database(cfg);
 
         await automate(fsScan, dbScan, rmqConn.channel);
 

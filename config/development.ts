@@ -1,26 +1,23 @@
-import path from 'path';
-
 module.exports = {
     graphql: {
-        uri: 'http://core.leav.localhost/graphql',
-        token:
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwibG9naW4iOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTU4NDUyNjc5MSwiZXhwIjo0NzA4NzI5MTkxfQ.RtTiK_mYUBKUenCKApHddfsrW-NgAsLGXWjwdDmLCMM',
-        treeId: 'files_tree'
+        uri: process.env.GRAPHQL_URI,
+        token: process.env.GRAPHQL_TOKEN,
+        treeId: process.env.GRAPHQL_TREE_ID
     },
     filesystem: {
-        absolutePath: path.resolve(__dirname, '../../docker-compose/files')
+        absolutePath: process.env.FILESYSTEM_ABSOLUTE_PATH
     },
     rmq: {
         connOpt: {
-            protocol: 'amqp',
-            hostname: 'rabbitmq.leav.localhost',
-            username: 'guest',
-            password: 'guest'
+            protocol: process.env.RMQ_CONN_PROTOCOL,
+            hostname: process.env.RMQ_CONN_HOSTNAME,
+            username: process.env.RMQ_CONN_USERNAME,
+            password: process.env.RMQ_CONN_PASSWORD
         },
-        queue: 'files_events',
-        exchange: 'leav_core',
-        routingKey: 'files.event',
-        rootKey: 'files1',
-        type: 'direct'
+        queue: process.env.RMQ_QUEUE,
+        exchange: process.env.RMQ_EXCHANGE,
+        routingKey: process.env.RMQ_ROUTING_KEY,
+        rootKey: process.env.RMQ_ROOT_KEY,
+        type: process.env.RMQ_TYPE
     }
 };

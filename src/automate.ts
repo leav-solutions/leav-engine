@@ -1,5 +1,6 @@
 import {FullTreeContent} from './_types/queries';
 import {FilesystemContent} from './_types/filesystem';
+import {Config} from './_types/config';
 import {create, remove, move, update} from './rmq/events';
 import * as amqp from 'amqplib';
 

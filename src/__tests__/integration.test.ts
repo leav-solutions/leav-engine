@@ -7,11 +7,13 @@ import * as scan from '../scan';
 import automate from '../automate';
 import test2Db from './database/test2';
 import test3Db from './database/test3';
-import {config} from 'dotenv';
+import config from '../config';
+import {Config} from '../_types/config';
+import dotenv from 'dotenv';
 import {resolve} from 'path';
+dotenv.config({path: resolve(__dirname, `../../.env.${process.env.NODE_ENV}`)});
 
-config({path: resolve(__dirname, `../../env/${process.env.NODE_ENV}`)});
-
+let cfg: Config;
 let rmqConn: RMQConn;
 let inodes: number[];
 
@@ -21,7 +23,8 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 
 beforeAll(async () => {
     try {
-        rmqConn = await rmq.init();
+        cfg = await config;
+        rmqConn = await rmq.init(cfg);
     } catch (e) {
         throw e;
     }
@@ -30,35 +33,35 @@ beforeAll(async () => {
 describe('integration tests sync-scan', () => {
     test('check filesystem is empty', () => {
         expect.assertions(1);
-        return expect(scan.filesystem()).resolves.toHaveLength(0);
+        return expect(scan.filesystem(cfg)).resolves.toHaveLength(0);
     });
 
     test('filesystem creation', () => {
         expect.assertions(5);
 
         // Create two directories: dir/sdir from root
-        fs.mkdirSync(`${process.env.FILESYSTEM_ABSPATH}/dir`);
-        fs.mkdirSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir`);
+        fs.mkdirSync(`${cfg.filesystem.absolutePath}/dir`);
+        fs.mkdirSync(`${cfg.filesystem.absolutePath}/dir/sdir`);
 
         // Create three files with differents paths
         [
-            `${process.env.FILESYSTEM_ABSPATH}/file`,
-            `${process.env.FILESYSTEM_ABSPATH}/dir/sfile`,
-            `${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`
+            `${cfg.filesystem.absolutePath}/file`,
+            `${cfg.filesystem.absolutePath}/dir/sfile`,
+            `${cfg.filesystem.absolutePath}/dir/sdir/ssfile`
         ].forEach(p => fs.writeFileSync(p, ''));
 
-        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir`)).toEqual(true);
-        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir`)).toEqual(true);
-        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/file`)).toEqual(true);
-        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sfile`)).toEqual(true);
-        expect(fs.existsSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`)).toEqual(true);
+        expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir`)).toEqual(true);
+        expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sdir`)).toEqual(true);
+        expect(fs.existsSync(`${cfg.filesystem.absolutePath}/file`)).toEqual(true);
+        expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sfile`)).toEqual(true);
+        expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`)).toEqual(true);
 
         inodes = [
-            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir`).ino,
-            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir`).ino,
-            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/file`).ino,
-            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sfile`).ino,
-            fs.statSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`).ino
+            fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino,
+            fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino,
+            fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino,
+            fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino,
+            fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino
         ];
     });
 
@@ -66,7 +69,7 @@ describe('integration tests sync-scan', () => {
         expect.assertions(10);
 
         try {
-            const fsc: FilesystemContent = await scan.filesystem();
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = [];
 
             await automate(fsc, dbs, rmqConn.channel);
@@ -81,7 +84,7 @@ describe('integration tests sync-scan', () => {
             };
 
             await rmqConn.channel.consume(
-                process.env.RMQ_QUEUE,
+                cfg.rmq.queue,
                 async msg => {
                     const m = JSON.parse(msg.content);
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
@@ -101,12 +104,12 @@ describe('integration tests sync-scan', () => {
     test('move/rename/edit events', async done => {
         expect.assertions(10);
 
-        fs.renameSync(`${process.env.FILESYSTEM_ABSPATH}/file`, `${process.env.FILESYSTEM_ABSPATH}/dir/f`); // MOVE
-        fs.renameSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sfile`, `${process.env.FILESYSTEM_ABSPATH}/dir/sf`); // RENAME
-        fs.writeFileSync(`${process.env.FILESYSTEM_ABSPATH}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
+        fs.renameSync(`${cfg.filesystem.absolutePath}/file`, `${cfg.filesystem.absolutePath}/dir/f`); // MOVE
+        fs.renameSync(`${cfg.filesystem.absolutePath}/dir/sfile`, `${cfg.filesystem.absolutePath}/dir/sf`); // RENAME
+        fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
         try {
-            const fsc: FilesystemContent = await scan.filesystem();
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test2Db(inodes);
 
             await automate(fsc, dbs, rmqConn.channel);
@@ -119,7 +122,7 @@ describe('integration tests sync-scan', () => {
             };
 
             rmqConn.channel.consume(
-                process.env.RMQ_QUEUE,
+                cfg.rmq.queue,
                 async msg => {
                     const m = JSON.parse(msg.content);
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
@@ -141,10 +144,10 @@ describe('integration tests sync-scan', () => {
     test('delete events', async done => {
         expect.assertions(10);
 
-        fs.rmdirSync(`${process.env.FILESYSTEM_ABSPATH}/dir`, {recursive: true});
+        fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
 
         try {
-            const fsc: FilesystemContent = await scan.filesystem();
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test3Db(inodes);
 
             await automate(fsc, dbs, rmqConn.channel);
@@ -159,7 +162,7 @@ describe('integration tests sync-scan', () => {
             };
 
             rmqConn.channel.consume(
-                process.env.RMQ_QUEUE,
+                cfg.rmq.queue,
                 async msg => {
                     const m = JSON.parse(msg.content);
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));

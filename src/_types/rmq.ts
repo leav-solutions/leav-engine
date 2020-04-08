@@ -1,8 +1,8 @@
-import {Connection, Channel} from 'amqplib';
+import * as amqp from 'amqplib';
 
 export interface RMQConn {
-    connection: Connection;
-    channel: Channel;
+    connection: amqp.Connection;
+    channel: amqp.Channel;
 }
 
 export interface RMQMsg {
