@@ -26,7 +26,16 @@ beforeAll(async () => {
         cfg = await config;
         rmqConn = await rmq.init(cfg);
     } catch (e) {
-        throw e;
+        console.error(e);
+    }
+});
+
+afterAll(async done => {
+    try {
+        await rmqConn.connection.close();
+        done();
+    } catch (e) {
+        console.error(e);
     }
 });
 
@@ -97,7 +106,7 @@ describe('integration tests sync-scan', () => {
                 {consumerTag: 'test1', noAck: true}
             );
         } catch (e) {
-            throw e;
+            console.error(e);
         }
     });
 
@@ -137,7 +146,7 @@ describe('integration tests sync-scan', () => {
                 {consumerTag: 'test2', noAck: true}
             );
         } catch (e) {
-            throw e;
+            console.error(e);
         }
     });
 
@@ -175,16 +184,7 @@ describe('integration tests sync-scan', () => {
                 {consumerTag: 'test3', noAck: true}
             );
         } catch (e) {
-            throw e;
-        }
-    });
-
-    afterAll(async done => {
-        try {
-            await rmqConn.connection.close();
-            done();
-        } catch (e) {
-            throw e;
+            console.error(e);
         }
     });
 });

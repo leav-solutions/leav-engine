@@ -32,5 +32,5 @@ const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
 })();
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
-    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
