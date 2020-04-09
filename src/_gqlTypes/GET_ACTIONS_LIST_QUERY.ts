@@ -26,7 +26,7 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue_p
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue {
-    name: string;
+    id: string;
     is_system: boolean;
     params: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_saveValue_params[] | null;
 }
@@ -37,7 +37,7 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue_pa
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue {
-    name: string;
+    id: string;
     is_system: boolean;
     params: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_getValue_params[] | null;
 }
@@ -48,7 +48,7 @@ export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue
 }
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue {
-    name: string;
+    id: string;
     is_system: boolean;
     params: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list_deleteValue_params[] | null;
 }

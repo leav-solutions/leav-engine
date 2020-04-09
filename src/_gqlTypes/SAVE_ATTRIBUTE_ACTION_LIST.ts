@@ -14,7 +14,7 @@ export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue
 }
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue {
-    name: string;
+    id: string;
     params: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_saveValue_params[] | null;
 }
 
@@ -24,7 +24,7 @@ export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue_
 }
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue {
-    name: string;
+    id: string;
     params: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_getValue_params[] | null;
 }
 
@@ -34,7 +34,7 @@ export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteVal
 }
 
 export interface SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue {
-    name: string;
+    id: string;
     params: SAVE_ATTRIBUTE_ACTION_LIST_saveAttribute_actions_list_deleteValue_params[] | null;
 }
 

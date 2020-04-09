@@ -3,10 +3,10 @@
 // This file was automatically generated and should not be edited.
 
 import {
-    AttributeFormat,
-    AttributeType,
-    AvailableLanguage,
     LibraryInput,
+    AvailableLanguage,
+    AttributeType,
+    AttributeFormat,
     PermissionsRelation,
     ValueVersionMode
 } from './globalTypes';
