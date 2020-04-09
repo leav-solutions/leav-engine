@@ -1,17 +1,17 @@
 import fs from 'fs';
-import * as rmq from '../rmq';
-import {RMQConn} from '../_types/rmq';
-import {FullTreeContent} from '../_types/queries';
-import {FilesystemContent} from '../_types/filesystem';
-import * as scan from '../scan';
-import automate from '../automate';
+import * as rmq from '../../rmq';
+import {RMQConn} from '../../_types/rmq';
+import {FullTreeContent} from '../../_types/queries';
+import {FilesystemContent} from '../../_types/filesystem';
+import * as scan from '../../scan';
+import automate from '../../automate';
 import test2Db from './database/test2';
 import test3Db from './database/test3';
-import config from '../config';
-import {Config} from '../_types/config';
+import config from '../../config';
+import {Config} from '../../_types/config';
 import dotenv from 'dotenv';
 import {resolve} from 'path';
-dotenv.config({path: resolve(__dirname, `../../.env.${process.env.NODE_ENV}`)});
+dotenv.config({path: resolve(__dirname, `../../../.env.${process.env.NODE_ENV}`)});
 
 let cfg: Config;
 let rmqConn: RMQConn;

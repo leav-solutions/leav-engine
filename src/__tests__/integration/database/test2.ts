@@ -1,4 +1,4 @@
-import {FullTreeContent, Record} from '../../_types/queries';
+import {FullTreeContent, Record} from '../../../_types/queries';
 
 export default (inodes: number[]): FullTreeContent => {
     database.forEach((e: Record, i: number) => (e.record.inode = inodes[i]));
@@ -97,8 +97,8 @@ const database: FullTreeContent = [
             active: true,
             created_at: 1585753474,
             created_by: 1,
-            file_name: 'f',
-            file_path: 'dir',
+            file_name: 'file',
+            file_path: '.',
             inode: 573226,
             is_directory: false,
             hash: 'd41d8cd98f00b204e9800998ecf8427e',
@@ -140,7 +140,7 @@ const database: FullTreeContent = [
             active: true,
             created_at: 1585753474,
             created_by: 1,
-            file_name: 'sf',
+            file_name: 'sfile',
             file_path: 'dir',
             inode: 573805,
             is_directory: false,

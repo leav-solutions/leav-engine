@@ -10,7 +10,7 @@ enum Attr {
     PATH = 4
 }
 
-const _extractChildrenDbElems = async (database: FullTreeContent, dbEl: FullTreeContent): Promise<FullTreeContent> => {
+const _extractChildrenDbElems = (database: FullTreeContent, dbEl: FullTreeContent): FullTreeContent => {
     let toList: FullTreeContent = [];
 
     for (const e of database) {
@@ -24,7 +24,7 @@ const _extractChildrenDbElems = async (database: FullTreeContent, dbEl: FullTree
     dbEl = typeof dbEl !== 'undefined' ? dbEl.concat(database) : database;
 
     if (toList.length) {
-        await _extractChildrenDbElems(toList, dbEl);
+        return _extractChildrenDbElems(toList, dbEl);
     }
 
     return dbEl;
@@ -61,6 +61,7 @@ const _getEventTypeAndDbElIdx = async (fc: FileContent, dbEl: FullTreeContent) =
 };
 
 const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.Channel): Promise<void> => {
+    // console.log('BEFORE DEL dbEl:', dbEl);
     for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
         await remove(
             de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
@@ -126,6 +127,7 @@ const _process = async (
     try {
         if (!fsEl.filter(fse => fse.level === level).length) {
             // delete all untreated elements in database before end of process
+            // console.log('Before DEL fsEl:', fsEl);
             await _delUntrtDbEl(dbEl, channel);
             return;
         }
@@ -149,7 +151,7 @@ const _process = async (
 export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, channel: amqp.Channel): Promise<void> => {
     try {
         let dbEl: FullTreeContent;
-        dbEl = await _extractChildrenDbElems(dbScan, dbEl);
+        dbEl = _extractChildrenDbElems(dbScan, dbEl);
         await _process(fsScan, dbEl, 0, channel);
     } catch (e) {
         throw e;
