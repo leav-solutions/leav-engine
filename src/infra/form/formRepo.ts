@@ -1,7 +1,7 @@
 import {aql} from 'arangojs';
 import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
-import {IForm, IFormFilterOptions} from '_types/forms';
+import {IForm, IFormFilterOptions, IFormStrict} from '_types/forms';
 import {IList} from '_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
 
@@ -9,8 +9,8 @@ export const FORM_COLLECTION_NAME = 'core_forms';
 
 export interface IFormRepo {
     getForms(params?: IGetCoreEntitiesParams): Promise<IList<IForm>>;
-    updateForm(formData: IForm): Promise<IForm>;
-    createForm(formData: IForm): Promise<IForm>;
+    updateForm(formData: IFormStrict): Promise<IForm>;
+    createForm(formData: IFormStrict): Promise<IForm>;
     deleteForm(formData: IForm): Promise<IForm>;
 }
 

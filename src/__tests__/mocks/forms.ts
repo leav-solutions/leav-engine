@@ -1,4 +1,4 @@
-import {FormFieldType, FormLayoutElementType, IForm, IFormInputField} from '../../_types/forms';
+import {FormFieldType, FormLayoutElementType, IFormInputField, IFormStrict} from '../../_types/forms';
 
 const myField: IFormInputField = {
     containerId: 'some_container',
@@ -7,9 +7,11 @@ const myField: IFormInputField = {
     required: false
 };
 
-export const mockForm: IForm = {
+export const mockForm: IFormStrict = {
     id: 'test_form',
     library: 'my_lib',
+    system: false,
+    dependencyAttributes: [],
     label: {fr: 'Test Form'},
     layout: [
         {

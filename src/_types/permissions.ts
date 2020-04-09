@@ -39,6 +39,10 @@ export enum AdminPermissionsActions {
     CREATE_TREE = 'admin_create_tree',
     EDIT_TREE = 'admin_edit_tree',
     DELETE_TREE = 'admin_delete_tree',
+    ACCESS_FORMS = 'admin_access_forms',
+    CREATE_FORM = 'admin_create_form',
+    EDIT_FORM = 'admin_edit_form',
+    DELETE_FORM = 'admin_delete_form',
     ACCESS_PERMISSIONS = 'admin_access_permissions',
     EDIT_PERMISSION = 'admin_edit_permission',
     ACCESS_NAVIGATOR = 'admin_access_navigator'

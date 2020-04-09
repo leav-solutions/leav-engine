@@ -22,6 +22,8 @@ export interface IForm {
     fields?: IFormDependentFields[];
 }
 
+export type IFormStrict = Required<IForm>;
+
 export interface IFormLayoutElement {
     id: string;
     type?: FormLayoutElementType;

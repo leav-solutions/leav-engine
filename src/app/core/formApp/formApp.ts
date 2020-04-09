@@ -90,11 +90,11 @@ export default function({
                         }
                     },
                     Mutation: {
-                        async saveForm(_, {form}) {
-                            return formDomain.saveForm(form);
+                        async saveForm(_, {form}, ctx) {
+                            return formDomain.saveForm(form, ctx);
                         },
-                        async deleteForm(_, {library, id}) {
-                            return formDomain.deleteForm(library, id);
+                        async deleteForm(_, {library, id}, ctx) {
+                            return formDomain.deleteForm(library, id, ctx);
                         }
                     },
                     Form: {
