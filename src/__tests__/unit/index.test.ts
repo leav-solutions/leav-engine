@@ -44,7 +44,12 @@ describe('unit tests sync-scan', () => {
     });
 
     test('Scan filesystem', async () => {
-        await expect(scan.filesystem('wrong path')).rejects.toEqual('Wrong filesystem absolute path');
+        try {
+            expect.assertions(1);
+            await expect(scan.filesystem('wrong path')).rejects.toEqual('Wrong filesystem absolute path');
+        } catch (e) {
+            console.error(e);
+        }
     });
 
     // test('Scan Databse', () => {});
