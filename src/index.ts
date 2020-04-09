@@ -18,7 +18,7 @@ const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
 
         const rmqConn: RMQConn = await rmq.init(cfg);
 
-        const fsScan: FilesystemContent = await scan.filesystem(cfg);
+        const fsScan: FilesystemContent = await scan.filesystem(cfg.filesystem.absolutePath);
         const dbScan: FullTreeContent = await scan.database(cfg);
 
         await automate(fsScan, dbScan, rmqConn.channel);

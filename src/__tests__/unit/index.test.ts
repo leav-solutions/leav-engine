@@ -1,11 +1,10 @@
-import * as amqp from 'amqplib';
 import dotenv from 'dotenv';
 import {resolve} from 'path';
 import config from '../../config';
 import {Config} from '../../_types/config';
 import * as rmq from '../../rmq';
 import {RMQConn} from '../../_types/rmq';
-import {doesNotMatch} from 'assert';
+import * as scan from '../../scan';
 dotenv.config({path: resolve(__dirname, `../../../.env.${process.env.NODE_ENV}`)});
 
 let cfg: Config;
@@ -43,4 +42,10 @@ describe('unit tests sync-scan', () => {
             console.error(e);
         }
     });
+
+    test('Scan filesystem', async () => {
+        await expect(scan.filesystem('wrong path')).rejects.toEqual('Wrong filesystem absolute path');
+    });
+
+    // test('Scan Databse', () => {});
 });

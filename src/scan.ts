@@ -19,15 +19,20 @@ const _createHashFromFile = (filePath: string): Promise<string> =>
             .on('end', () => resolve(hash.digest('hex')));
     });
 
-export const filesystem = (cfg: Config): Promise<FilesystemContent> =>
-    new Promise(resolve => {
+export const filesystem = (absolutePath: string): Promise<FilesystemContent> =>
+    new Promise((resolve, reject) => {
         let data = [];
 
-        const walker = walk.walk(cfg.filesystem.absolutePath, {followLinks: false});
+        const absPathExist = fs.existsSync(absolutePath);
+        if (!absPathExist) {
+            return reject('Wrong filesystem absolute path');
+        }
+
+        const walker = walk.walk(absolutePath, {followLinks: false});
 
         walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
             for (const dsa of dirStatsArray) {
-                dsa.path = root.replace(`${cfg.filesystem.absolutePath}`, '').slice(1) || '.';
+                dsa.path = root.replace(`${absolutePath}`, '').slice(1) || '.';
                 dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
                 dsa.trt = false;
             }
@@ -38,7 +43,7 @@ export const filesystem = (cfg: Config): Promise<FilesystemContent> =>
 
         walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
             fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
-            fileStats.path = root.replace(`${cfg.filesystem.absolutePath}`, '').slice(1) || '.';
+            fileStats.path = root.replace(`${absolutePath}`, '').slice(1) || '.';
             fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
             fileStats.trt = false;
             data.push(fileStats);
