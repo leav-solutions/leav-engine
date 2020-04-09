@@ -31,6 +31,7 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
                     }
                 ]
             };
+            break;
         case AttributeFormats.ENCRYPTED:
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
@@ -53,6 +54,7 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
                     }
                 ]
             };
+            break;
         case AttributeFormats.EXTENDED:
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
@@ -73,6 +75,7 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
                     }
                 ]
             };
+            break;
         default:
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
@@ -83,6 +86,7 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
                     }
                 ]
             };
+            break;
     }
 
     return {

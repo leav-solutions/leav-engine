@@ -2,7 +2,7 @@ import * as hapi from '@hapi/hapi';
 import {ApolloServer} from 'apollo-server-hapi';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
-import {execute, GraphQLError} from 'graphql';
+import {execute, GraphQLFormattedError} from 'graphql';
 import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 import {i18n} from 'i18next';
 import {IUtils} from 'utils/utils';
@@ -31,13 +31,13 @@ export default function({
     'core.utils': utils = null,
     translator = null
 }: IDeps = {}): IServer {
-    const _handleError = (err: GraphQLError, {context}: any) => {
-        const origErr: any = err.originalError;
+    const _handleError = (err: GraphQLFormattedError, {context}: any) => {
+        const newError = {...err};
 
         const isGraphlValidationError = err.extensions && err.extensions.code === 'GRAPHQL_VALIDATION_FAILED';
-        const errorType = (!!origErr && origErr.type) || ErrorTypes.INTERNAL_ERROR;
-        const errorFields = (!!origErr && origErr.fields) || {};
-        const errorAction = (!!origErr && origErr.action) || null;
+        const errorType = err?.extensions.exception.type ?? ErrorTypes.INTERNAL_ERROR;
+        const errorFields = err?.extensions.exception.fields ?? {};
+        const errorAction = err?.extensions.exception.action ?? null;
 
         // Translate errors details
         for (const [field, errorDetails] of Object.entries(errorFields)) {
@@ -52,29 +52,29 @@ export default function({
             });
         }
 
-        err.extensions.code = errorType;
-        err.extensions.fields = errorFields;
-        err.extensions.action = errorAction;
+        newError.extensions.code = errorType;
+        newError.extensions.fields = errorFields;
+        newError.extensions.action = errorAction;
 
         if (
             errorType === ErrorTypes.VALIDATION_ERROR ||
             errorType === ErrorTypes.PERMISSION_ERROR ||
             isGraphlValidationError
         ) {
-            return err;
+            return newError;
         }
 
         const errId = uuid.v4();
 
         // Error is logged with original message
-        err.message = `[${errId}] ${err.message}`;
-        logger.error(`${err.message}\n${err.extensions.exception.stacktrace.join('\n')}`);
+        newError.message = `[${errId}] ${err.message}`;
+        logger.error(`${newError.message}\n${err.extensions.exception.stacktrace.join('\n')}`);
 
         if (!config.debug) {
-            err.message = `[${errId}] Internal Error`;
+            newError.message = `[${errId}] Internal Error`;
         }
 
-        return err;
+        return newError;
     };
 
     return {
@@ -107,6 +107,15 @@ export default function({
 
                 await graphqlApp.generateSchema();
 
+                const _executor = args => {
+                    return execute({
+                        ...args,
+                        schema: graphqlApp.schema,
+                        contextValue: args.context,
+                        variableValues: args.request.variables
+                    });
+                };
+
                 const apolloServ = new ApolloServer({
                     debug: config.debug,
                     formatResponse: (resp, ctx) => {
@@ -134,16 +143,10 @@ export default function({
                         load: () => {
                             return Promise.resolve({
                                 schema: graphqlApp.schema,
-                                executor: args => {
-                                    return execute({
-                                        ...args,
-                                        schema: graphqlApp.schema,
-                                        contextValue: args.context,
-                                        variableValues: args.request.variables
-                                    });
-                                }
+                                executor: _executor
                             });
                         },
+                        executor: _executor,
                         /**
                          * Init the function we want to call on schema change.
                          * The callback received here is an Apollo internal function which actually update

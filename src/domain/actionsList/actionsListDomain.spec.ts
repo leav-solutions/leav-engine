@@ -17,7 +17,14 @@ describe('handleJoiError', () => {
         };
 
         const res = domain.handleJoiError({id: 'test', type: AttributeTypes.SIMPLE}, mockError as Joi.ValidationError);
-        expect(res).toMatchObject({test: 'boom'});
+        expect(res).toMatchObject({
+            test: {
+                msg: 'FORMAT_ERROR',
+                vars: {
+                    details: 'boom'
+                }
+            }
+        });
     });
 });
 

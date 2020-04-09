@@ -135,7 +135,7 @@ const checkConfig = (conf: Config.IConfig) => {
 
     const isValid = configSchema.validate(conf);
 
-    if (isValid.error !== null) {
+    if (!!isValid.error) {
         const errorMsg = isValid.error.details.map(e => e.message).join(', ');
         throw new Error(errorMsg);
     }

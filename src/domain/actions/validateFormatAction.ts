@@ -36,7 +36,7 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                 switch (attribute.format) {
                     case AttributeFormats.TEXT:
                     case AttributeFormats.ENCRYPTED:
-                        schema = Joi.string().allow(['', null]);
+                        schema = Joi.string().allow('', null);
 
                         if ((attribute as IEmbeddedAttribute).validation_regex) {
                             schema = schema.regex(new RegExp((attribute as IEmbeddedAttribute).validation_regex));
@@ -44,11 +44,11 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
 
                         break;
                     case AttributeFormats.NUMERIC:
-                        schema = Joi.number().allow(['', null]);
+                        schema = Joi.number().allow('', null);
                         break;
                     case AttributeFormats.DATE:
                         schema = Joi.date()
-                            .allow(['', null])
+                            .allow('', null)
                             .timestamp('unix')
                             .raw();
                         break;

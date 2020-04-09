@@ -1,4 +1,6 @@
+import {ValueNode} from 'graphql';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
+import {graphqlParseLiteral} from './helpers/graphqlParseLiteral';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -32,6 +34,8 @@ export interface IUtils {
      * @param library
      */
     getLibraryTreeId(library: string): string;
+
+    graphqlParseLiteral(typeName: string, ast: ValueNode, variables?: {[key: string]: any}): any;
 }
 
 export default function(): IUtils {
@@ -80,6 +84,7 @@ export default function(): IUtils {
         },
         getLibraryTreeId(library) {
             return `${library}_tree`;
-        }
+        },
+        graphqlParseLiteral
     };
 }

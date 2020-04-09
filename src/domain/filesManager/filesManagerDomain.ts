@@ -119,7 +119,7 @@ export default function({
     const _validateMsg = (msg: IFileEventData): void => {
         const msgBodySchema = Joi.object().keys({
             event: Joi.string()
-                .equal(Object.keys(FileEvents))
+                .equal(...Object.keys(FileEvents))
                 .required(),
             time: Joi.number().required(),
             pathBefore: Joi.string().allow(null),
@@ -132,7 +132,7 @@ export default function({
 
         const isValid = msgBodySchema.validate(msg);
 
-        if (isValid.error !== null) {
+        if (!!isValid.error) {
             const errorMsg = isValid.error.details.map(e => e.message).join(', ');
             throw new Error(errorMsg);
         }
