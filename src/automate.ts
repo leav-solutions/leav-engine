@@ -30,7 +30,7 @@ const _extractChildrenDbElems = (database: FullTreeContent, dbEl: FullTreeConten
     return dbEl;
 };
 
-const _getEventTypeAndDbElIdx = async (fc: FileContent, dbEl: FullTreeContent) => {
+const _getEventTypeAndDbElIdx = (fc: FileContent, dbEl: FullTreeContent) => {
     let match = Attr.NOTHING;
     const dbElIdx = [];
 
@@ -61,14 +61,17 @@ const _getEventTypeAndDbElIdx = async (fc: FileContent, dbEl: FullTreeContent) =
 };
 
 const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.Channel): Promise<void> => {
-    // console.log('BEFORE DEL dbEl:', dbEl);
-    for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
-        await remove(
-            de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
-            de.record.inode,
-            de.record.is_directory,
-            channel
-        );
+    try {
+        for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
+            await remove(
+                de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
+                de.record.inode,
+                de.record.is_directory,
+                channel
+            );
+        }
+    } catch (e) {
+        throw e;
     }
 };
 
@@ -79,42 +82,46 @@ const _trtFile = async (
     fc: FileContent,
     channel: amqp.Channel
 ): Promise<void> => {
-    switch (match) {
-        case Attr.INODE: // Identical inode only
-        case Attr.INODE + Attr.NAME: // 3 - move
-        case Attr.INODE + Attr.PATH: // 5 - name
-        case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
-            const deName: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_name;
-            const dePath: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_path;
-            await move(
-                dePath === '.' ? deName : `${dePath}/${deName}`,
-                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
-                fc.ino,
-                fc.type === 'directory' ? true : false,
-                channel
-            );
-            break;
-        case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
-            break;
-        case 8: // hash changed
-            await update(
-                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
-                fc.ino,
-                false, // isDirectory,
-                channel,
-                fc.hash
-            );
-            break;
-        default:
-            // 0 or Attr.PATH - create
-            await create(
-                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
-                fc.ino,
-                fc.type === 'directory' ? true : false,
-                channel,
-                fc.hash
-            );
-            break;
+    try {
+        switch (match) {
+            case Attr.INODE: // Identical inode only
+            case Attr.INODE + Attr.NAME: // 3 - move
+            case Attr.INODE + Attr.PATH: // 5 - name
+            case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
+                const deName: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_name;
+                const dePath: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_path;
+                await move(
+                    dePath === '.' ? deName : `${dePath}/${deName}`,
+                    fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
+                    fc.ino,
+                    fc.type === 'directory' ? true : false,
+                    channel
+                );
+                break;
+            case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
+                break;
+            case 8: // hash changed
+                await update(
+                    fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
+                    fc.ino,
+                    false, // isDirectory,
+                    channel,
+                    fc.hash
+                );
+                break;
+            default:
+                // 0 or Attr.PATH - create
+                await create(
+                    fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
+                    fc.ino,
+                    fc.type === 'directory' ? true : false,
+                    channel,
+                    fc.hash
+                );
+                break;
+        }
+    } catch (e) {
+        throw e;
     }
 };
 
@@ -127,7 +134,6 @@ const _process = async (
     try {
         if (!fsEl.filter(fse => fse.level === level).length) {
             // delete all untreated elements in database before end of process
-            // console.log('Before DEL fsEl:', fsEl);
             await _delUntrtDbEl(dbEl, channel);
             return;
         }

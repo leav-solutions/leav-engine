@@ -6,5 +6,5 @@
     "transform": {
         "\\.(ts|tsx)$": "ts-jest"
     },
-    "testRegex": "src\/__tests__\/.*(.test.ts)$"
+    "testRegex": "src\/__tests__\/unit\/.*(.test.ts)$"
 }

@@ -125,5 +125,7 @@ describe('unit tests sync-scan', () => {
         }
     });
 
-    // test('Automate', () => {});
+    // test('Automate', () => {
+    //     _extractChildrenDbElems
+    // });
 });
