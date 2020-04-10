@@ -8,18 +8,10 @@ import {ApolloLink, DocumentNode} from 'apollo-link';
 import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
 import {FullTreeContent} from './_types/queries';
 import {FilesystemContent, FileContent} from './_types/filesystem';
-import crypto from 'crypto';
-import {Config} from './_types/config';
+import * as Config from './_types/config';
+import * as utils from './utils';
 
-const _createHashFromFile = (filePath: string): Promise<string> =>
-    new Promise(resolve => {
-        const hash = crypto.createHash('md5');
-        fs.createReadStream(filePath)
-            .on('data', data => hash.update(data))
-            .on('end', () => resolve(hash.digest('hex')));
-    });
-
-export const filesystem = (absolutePath: string): Promise<FilesystemContent> =>
+export const filesystem = ({absolutePath}: Config.Filesystem): Promise<FilesystemContent> =>
     new Promise((resolve, reject) => {
         let data = [];
 
@@ -42,7 +34,7 @@ export const filesystem = (absolutePath: string): Promise<FilesystemContent> =>
         });
 
         walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
-            fileStats.hash = await _createHashFromFile(root + '/' + fileStats.name);
+            fileStats.hash = await utils.createHashFromFile(root + '/' + fileStats.name);
             fileStats.path = root.replace(`${absolutePath}`, '').slice(1) || '.';
             fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
             fileStats.trt = false;
@@ -55,13 +47,14 @@ export const filesystem = (absolutePath: string): Promise<FilesystemContent> =>
         });
     });
 
-export const database = async (cfg: Config): Promise<FullTreeContent> => {
+export const database = async ({uri, token, treeId}: Config.GraphQL): Promise<FullTreeContent> => {
     try {
-        const httpLink = createHttpLink({uri: cfg.graphql.uri, fetch});
+        const httpLink = createHttpLink({uri, fetch});
+
         const authLink = new ApolloLink((operation, forward) => {
             operation.setContext({
                 headers: {
-                    authorization: cfg.graphql.token
+                    authorization: token
                 }
             });
             return forward(operation);
@@ -80,7 +73,7 @@ export const database = async (cfg: Config): Promise<FullTreeContent> => {
 
         const result = await client.query({
             query: getFullTreeContent,
-            variables: {treeId: cfg.graphql.treeId}
+            variables: {treeId}
         });
 
         return result.data.fullTreeContent;

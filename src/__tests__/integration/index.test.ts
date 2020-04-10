@@ -42,7 +42,7 @@ afterAll(async done => {
 describe('integration tests sync-scan', () => {
     test('check filesystem is empty', () => {
         expect.assertions(1);
-        return expect(scan.filesystem(cfg.filesystem.absolutePath)).resolves.toHaveLength(0);
+        return expect(scan.filesystem(cfg.filesystem)).resolves.toHaveLength(0);
     });
 
     test('filesystem creation', () => {
@@ -78,7 +78,7 @@ describe('integration tests sync-scan', () => {
         expect.assertions(10);
 
         try {
-            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem.absolutePath);
+            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
             const dbs: FullTreeContent = [];
 
             await automate(fsc, dbs, rmqConn.channel);
@@ -118,7 +118,7 @@ describe('integration tests sync-scan', () => {
         fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
         try {
-            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem.absolutePath);
+            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
             const dbs: FullTreeContent = test2Db(inodes);
 
             await automate(fsc, dbs, rmqConn.channel);
@@ -156,7 +156,7 @@ describe('integration tests sync-scan', () => {
         fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
 
         try {
-            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem.absolutePath);
+            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
             const dbs: FullTreeContent = test3Db(inodes);
 
             await automate(fsc, dbs, rmqConn.channel);

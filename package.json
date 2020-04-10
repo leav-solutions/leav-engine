@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "NODE_ENV=development ts-node src/index.ts",
-    "test:integration": "NODE_ENV=test jest -c jest.config.json"
+    "start:test": "NODE_ENV=test jest -c jest.config.json"
   },
   "repository": {
     "type": "git",
