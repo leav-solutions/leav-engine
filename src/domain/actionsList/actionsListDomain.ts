@@ -11,10 +11,17 @@ import {IValue} from '../../_types/value';
 export interface IActionsListDomain {
     /**
      * Retrieve all available functions to define actions lists
-     * To be available, a function must be define in a module with name ending by "Action", and export an object
+     * To be available, a function must be defined in a module with name ending by "Action", and export an object
      * of type IActionsListFunction
      */
     getAvailableActions(): IActionsListFunction[];
+
+    /**
+     * Allow to recorn a new action to the list of actions available
+     *
+     * @param actions
+     */
+    registerActions(actions: IActionsListFunction[]): void;
 
     /**
      * Format an error sent by Joi to match our ValidationError
@@ -26,7 +33,7 @@ export interface IActionsListDomain {
 
     /**
      * Execute a list of actions.
-     * They're ran in the order define in the actions array.
+     * They're run in the order defined in the actions array.
      *
      * @param actions List of actions to execute
      * @param value
@@ -44,13 +51,14 @@ export default function({
     'core.depsManager': depsManager = null,
     'core.utils': utils = null
 }: IDeps = {}): IActionsListDomain {
+    let _pluginActions = [];
     return {
         getAvailableActions(): IActionsListFunction[] {
             const actions = Object.keys(depsManager.registrations)
                 .filter(modName => modName.match(/^core\.domain\.actions\./))
                 .map(modName => depsManager.cradle[modName]);
 
-            return actions;
+            return [...actions, ..._pluginActions];
         },
         handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord> {
             return {
@@ -59,6 +67,9 @@ export default function({
                     vars: {details: error.details.map(er => er.message).join('\n')}
                 }
             };
+        },
+        registerActions(actions: IActionsListFunction[]): void {
+            _pluginActions = [..._pluginActions, ...actions];
         },
         async runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue> {
             const availActions: IActionsListFunction[] = this.getAvailableActions();

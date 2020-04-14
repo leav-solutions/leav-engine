@@ -1,8 +1,9 @@
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
+import {IActionsListFunction, ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
+import {IAppModule} from '_types/shared';
 
-export interface ICoreActionListApp {
+export interface ICoreActionListApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
@@ -89,6 +90,11 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
+        },
+        extensionPoints: {
+            registerActions: (actionArray?: IActionsListFunction[]) => {
+                actionsListDomain.registerActions(actionArray);
+            }
         }
     };
 }
