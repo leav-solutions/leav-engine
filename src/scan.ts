@@ -2,7 +2,7 @@ import walk from 'walk';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import gql from 'graphql-tag';
-import {ApolloClient} from 'apollo-client';
+import {ApolloClient, ApolloQueryResult} from 'apollo-client';
 import {createHttpLink} from 'apollo-link-http';
 import {ApolloLink, DocumentNode} from 'apollo-link';
 import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
@@ -71,7 +71,7 @@ export const database = async ({uri, token, treeId}: Config.GraphQL): Promise<Fu
             }
         `;
 
-        const result = await client.query({
+        const result: ApolloQueryResult<any> = await client.query({
             query: getFullTreeContent,
             variables: {treeId}
         });

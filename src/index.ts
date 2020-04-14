@@ -16,7 +16,7 @@ const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
     try {
         const cfg: Config = await config;
 
-        const rmqConn: RMQConn = await rmq.init(cfg);
+        const rmqConn: RMQConn = await rmq.init(cfg.rmq);
 
         const fsScan: FilesystemContent = await scan.filesystem(cfg.filesystem);
         const dbScan: FullTreeContent = await scan.database(cfg.graphql);

@@ -15,6 +15,7 @@
   "author": "Jérémy Bel <j.bel@cacom.fr>",
   "license": "ISC",
   "devDependencies": {
+    "@types/amqplib": "^0.5.13",
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.1",
     "jest": "^25.2.4",

@@ -1,11 +1,10 @@
-// import {amqp, Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib';
 import {RMQConn, RMQMsg} from '../_types/rmq';
-import {Config} from '../_types/config';
+import * as Config from '../_types/config';
 
-export const sendToRabbitMQ = async (cfg: Config, msg: string, channel: amqp.Channel): Promise<void> => {
+export const send = async ({exchange, routingKey}: Config.RMQ, msg: string, channel: amqp.Channel): Promise<void> => {
     try {
-        await channel.publish(cfg.rmq.exchange, cfg.rmq.routingKey, Buffer.from(msg), {
+        await channel.publish(exchange, routingKey, Buffer.from(msg), {
             persistent: true
         });
     } catch (e) {
@@ -13,7 +12,7 @@ export const sendToRabbitMQ = async (cfg: Config, msg: string, channel: amqp.Cha
     }
 };
 
-export const generateMsgRabbitMQ = (
+export const generateMsg = (
     event: string,
     pathBefore: string | null,
     pathAfter: string | null,
@@ -36,12 +35,12 @@ export const generateMsgRabbitMQ = (
     return JSON.stringify(msg);
 };
 
-export const init = async (cfg: Config): Promise<RMQConn> => {
+export const init = async ({connOpt, exchange, type}: Config.RMQ): Promise<RMQConn> => {
     try {
-        const connection: amqp.Connection = await amqp.connect(cfg.rmq.connOpt);
+        const connection: amqp.Connection = await amqp.connect(connOpt);
         const channel: amqp.Channel = await connection.createChannel();
 
-        await channel.assertExchange(cfg.rmq.exchange, cfg.rmq.type, {durable: true});
+        await channel.assertExchange(exchange, type, {durable: true});
 
         return {channel, connection};
     } catch (e) {

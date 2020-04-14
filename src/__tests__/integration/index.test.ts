@@ -24,7 +24,7 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 beforeAll(async () => {
     try {
         cfg = await config;
-        rmqConn = await rmq.init(cfg);
+        rmqConn = await rmq.init(cfg.rmq);
     } catch (e) {
         console.error(e);
     }
@@ -95,7 +95,7 @@ describe('integration tests sync-scan', () => {
             await rmqConn.channel.consume(
                 cfg.rmq.queue,
                 async msg => {
-                    const m = JSON.parse(msg.content);
+                    const m = JSON.parse(msg.content.toString());
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
                     expect(expected[m.pathAfter]).toEqual(m.event);
                     if (m.pathAfter === 'dir/sdir/ssfile') {
@@ -133,7 +133,7 @@ describe('integration tests sync-scan', () => {
             rmqConn.channel.consume(
                 cfg.rmq.queue,
                 async msg => {
-                    const m = JSON.parse(msg.content);
+                    const m = JSON.parse(msg.content.toString());
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
                     expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
                     expect(expected[m.pathBefore].event).toEqual(m.event);
@@ -173,7 +173,7 @@ describe('integration tests sync-scan', () => {
             rmqConn.channel.consume(
                 cfg.rmq.queue,
                 async msg => {
-                    const m = JSON.parse(msg.content);
+                    const m = JSON.parse(msg.content.toString());
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
                     expect(expected[m.pathBefore]).toEqual(m.event);
                     if (m.pathBefore === 'dir/sdir/ssfile') {
