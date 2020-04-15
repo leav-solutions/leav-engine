@@ -8,6 +8,7 @@ import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUT
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {onAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
+import EmbeddedFieldsTab from './EmbeddedFieldsTab';
 import InfosTab from './InfosTab';
 import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
@@ -49,6 +50,8 @@ function EditAttributeTabs({
         const isMetadataAllowed = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
             attribute.type
         );
+
+        const isFormatExtended = attribute.format === 'extended';
 
         panes.push(
             {
@@ -94,6 +97,20 @@ function EditAttributeTabs({
                     return (
                         <Tab.Pane key="metadata" className="grow flex-col">
                             <MetadataTab attribute={attribute} readonly={false} />
+                        </Tab.Pane>
+                    );
+                }
+            });
+        }
+
+        if (isFormatExtended) {
+            panes.push({
+                key: 'embeddedFields',
+                menuItem: t('attributes.embedded_fields'),
+                render: () => {
+                    return (
+                        <Tab.Pane key="EmbeddedFields" className="grow flex-col">
+                            <EmbeddedFieldsTab attribute={attribute} />
                         </Tab.Pane>
                     );
                 }

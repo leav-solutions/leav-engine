@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeFormat, AttributeInput, AttributeType, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_ATTRIBUTE
