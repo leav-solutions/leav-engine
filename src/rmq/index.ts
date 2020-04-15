@@ -4,6 +4,7 @@ import * as Config from '../_types/config';
 
 export const send = async ({exchange, routingKey}: Config.RMQ, msg: string, channel: amqp.Channel): Promise<void> => {
     try {
+        await channel.checkExchange(exchange);
         await channel.publish(exchange, routingKey, Buffer.from(msg), {
             persistent: true
         });

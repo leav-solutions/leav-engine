@@ -8,9 +8,11 @@ import {RMQConn} from '../../_types/rmq';
 import * as scan from '../../scan';
 import * as utils from '../../utils';
 import automate from '../../automate';
+import autoTestDb from './database/automateTest';
 dotenv.config({path: resolve(__dirname, `../../../.env.${process.env.NODE_ENV}`)});
 
 let cfg: Config;
+let rmqConn: RMQConn;
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -19,13 +21,21 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 beforeAll(async () => {
     try {
         cfg = await config;
+        rmqConn = await rmq.init(cfg.rmq);
     } catch (e) {
-        throw e;
+        console.error(e);
     }
 });
 
-afterAll(() => {
-    fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
+afterAll(async done => {
+    try {
+        fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
+        // FIXME: await rmqConn.channel.purgeQueue(cfg.rmq.queue);
+        await rmqConn.connection.close();
+        done();
+    } catch (e) {
+        console.error(e);
+    }
 });
 
 describe('unit tests sync-scan', () => {
@@ -36,23 +46,9 @@ describe('unit tests sync-scan', () => {
 
     test('rmq.init', async () => {
         try {
-            expect.assertions(9);
-            const rmqConn: RMQConn = await rmq.init(cfg.rmq);
-
-            expect(rmqConn).toHaveProperty('connection');
-            expect(rmqConn).toHaveProperty('channel');
-
-            expect(rmqConn).toBeInstanceOf(Object);
-            expect(rmqConn).toBeInstanceOf(Object);
+            expect.assertions(3);
 
             await expect(rmqConn.channel.checkExchange(cfg.rmq.exchange)).resolves.toStrictEqual({});
-            await expect(rmqConn.channel.checkQueue(cfg.rmq.queue)).resolves.toStrictEqual({
-                consumerCount: 0,
-                messageCount: 0,
-                queue: cfg.rmq.queue
-            });
-
-            await expect(rmqConn.connection.close()).resolves.toStrictEqual(undefined);
 
             await expect(
                 rmq.init({...cfg.rmq, connOpt: {...cfg.rmq.connOpt, hostname: 'wrong hostname'}})
@@ -141,17 +137,18 @@ describe('unit tests sync-scan', () => {
 
     test('automate', async () => {
         try {
-            expect.assertions(1);
-
-            const rmqConn: RMQConn = await rmq.init(cfg.rmq);
+            expect.assertions(2);
 
             await expect(automate([], [], rmqConn.channel)).resolves.toStrictEqual(undefined);
+
+            const fsScan = await scan.filesystem(cfg.filesystem);
+            await expect(automate(fsScan, autoTestDb, rmqConn.channel)).resolves.toStrictEqual(undefined);
         } catch (e) {
             console.error(e);
         }
     });
 
-    test('rmq.generateMsgRMQ', () => {
+    test('rmq.generateMsg', () => {
         try {
             expect.assertions(3);
 
@@ -170,6 +167,21 @@ describe('unit tests sync-scan', () => {
             delete msg.time;
 
             expect(msg).toStrictEqual(msgExpected);
+        } catch (e) {
+            console.error(e);
+        }
+    });
+
+    test('msg.send', async () => {
+        try {
+            expect.assertions(2);
+
+            await expect(rmq.send(cfg.rmq, 'msg', rmqConn.channel)).resolves.toBe(undefined);
+            await expect(
+                rmq.send({...cfg.rmq, exchange: 'wrong exchange'}, 'msg', rmqConn.channel)
+            ).rejects.toHaveProperty('code', 404);
+
+            // FIXME: UNHANDLED ERROR ON PREVIOUS EXPECT, I DON'T KNOW WHY!!!!
         } catch (e) {
             console.error(e);
         }
