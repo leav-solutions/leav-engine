@@ -86,7 +86,12 @@ export default function({
                 resolvers: {
                     Query: {
                         async forms(_, {filters, pagination, sort}) {
-                            return formDomain.getFormsByLib(filters.library, {filters, pagination, sort});
+                            return formDomain.getFormsByLib(filters.library, {
+                                filters,
+                                pagination,
+                                sort,
+                                withCount: true
+                            });
                         }
                     },
                     Mutation: {
