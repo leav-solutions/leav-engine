@@ -1,16 +1,16 @@
 import {DataProxy} from 'apollo-cache';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {DeleteLibMutation, deleteLibQuery} from '../../../queries/libraries/deleteLibMutation';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
+import {addWildcardToFilters} from '../../../utils/utils';
 import {GET_LIBRARIES, GET_LIBRARIESVariables, GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
-import useLang from '../../../hooks/useLang';
-import {addWildcardToFilters} from '../../../utils/utils';
-import {clearCacheQueriesFromRegexp} from '../../../utils';
 
 interface IDeleteLibraryProps {
     library: GET_LIBRARIES_libraries_list;

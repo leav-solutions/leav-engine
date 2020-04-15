@@ -11,7 +11,9 @@
             "id_exists": "Cet identifiant est déjà utilisé",
             "min": "Veuillez sélectionner au moins ${min} élément(s)"
         },
-        "or": "ou"
+        "or": "ou",
+        "expanded": "Agrandir",
+        "reduce": "Réduire"
     },
     "libraries": {
         "title": "Bibliothèques",
@@ -72,6 +74,10 @@
         "linked_tree": "Arbre lié",
         "metadata": "Métadonnées",
         "metadata_field_delete_confirm": "Êtes-vous sûr de vouloir supprimer le champ {{attrLabel}} des métadonnées?",
+        "embedded_fields": "Champs Intégrés",
+        "new_embedded_fields": "Créer un nouveau champs intégrés pour {{attrId}}",
+        "remove_embedded_fields": "Supprimer ce champs intégrés et ses enfants ?",
+        "validation_regex": "Règle de Validation",
         "types": {
             "tree": "Arbre",
             "advanced": "Avancé",
@@ -145,14 +151,14 @@
         "email": "Adresse e-mail",
         "password": "Mot de passe",
         "submit": "Envoyer",
-        "apologize_header" : "Nous sommes désolés,",
-        "apologize" : "nous ne pouvons vous authentifier :",
+        "apologize_header": "Nous sommes désolés,",
+        "apologize": "nous ne pouvons vous authentifier :",
         "loading": {
             "header": "Juste un instant,",
             "text": "Nous sommes en train de vous authentifier..."
         },
         "error": {
-            "bad_credentials" : "Paramètres d'authentification incorrects.",
+            "bad_credentials": "Paramètres d'authentification incorrects.",
             "no_server_response": "Le serveur ne répond pas.",
             "session_expired": "Votre session a expiré."
         }
@@ -179,6 +185,5 @@
         "edit": "Éditer",
         "delete_link": "Supprimer la liaison",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet élément?"
-
     }
 }

@@ -12,7 +12,9 @@
             "id_exists": "This ID already exists",
             "min": "Please select at least ${min} elements"
         },
-        "or": "or"
+        "or": "or",
+        "expanded": "Expand",
+        "reduce": "Shrink"
     },
     "libraries": {
         "title": "Libraries",
@@ -73,6 +75,10 @@
         "linked_tree": "Linked tree",
         "metadata": "Metadata",
         "metadata_field_delete_confirm": "Do you really want to remove field {{attrLabel}} from metadata?",
+        "embedded_fields": "Embedded Fields",
+        "new_embedded_fields": "Create a new embedded fields",
+        "remove_embedded_fields": "Remove these embedded fields and his child?",
+        "validation_regex": "Validation Rule",
         "types": {
             "tree": "Tree",
             "advanced": "Advanced",
@@ -146,14 +152,14 @@
         "email": "Email address",
         "password": "Password",
         "submit": "Submit",
-        "apologize_header" : "We are sorry,",
-        "apologize" : "we were not able to authenticate you :",
+        "apologize_header": "We are sorry,",
+        "apologize": "we were not able to authenticate you :",
         "loading": {
             "header": "Just a second,",
             "text": "we are authenticating you..."
         },
         "error": {
-            "bad_credentials" : "Invalid credentials.",
+            "bad_credentials": "Invalid credentials.",
             "no_server_response": "The server does not respond.",
             "session_expired": "Your session has expired."
         }
