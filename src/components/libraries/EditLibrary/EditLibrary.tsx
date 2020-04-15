@@ -106,6 +106,7 @@ const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element
                             fr: libData.label.fr,
                             en: libData.label.en
                         },
+                        behavior: libData.behavior,
                         recordIdentityConf:
                             libData.recordIdentityConf !== null
                                 ? {

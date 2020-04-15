@@ -4,6 +4,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import TreesSelector from '.';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
+import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 
 jest.mock('../../../hooks/useLang');
 
@@ -28,6 +29,7 @@ describe('TreesSelector', () => {
                                         en: 'TestTree',
                                         fr: 'TestTree'
                                     },
+                                    behavior: TreeBehavior.standard,
                                     libraries: [{id: 'test_lib', label: {fr: 'My Lib'}, __typename: 'Library'}]
                                 }
                             ]
