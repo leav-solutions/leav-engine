@@ -43,5 +43,33 @@
         "UNKNOWN_TREES": "Unknown trees : {{trees}}",
         "UNKNOWN_VALUE": "Unknown value",
         "UNKNOWN_VERSION_TREE": "Unknown tree {{tree}}"
+    },
+    "actions": {
+        "names": {
+            "encrypt": "Encrypt",
+            "formatDate": "Format Date",
+            "formatNumber": "Format Number",
+            "maskValue": "Mask Value",
+            "parseJSON": "Parse JSON",
+            "toBoolean": "Convert to Boolean",
+            "toJSON": "Convert to JSON",
+            "toNumber": "Convert to Number",
+            "toString": "Convert to String",
+            "validateFormat": "Validate Format",
+            "validateRegex": "Validate Regex"
+        },
+        "descriptions": {
+            "encrypt": "Encrypt value",
+            "formatDate": "Convert timestamp to a date",
+            "formatNumber": "Format a number",
+            "maskValue": "Mask any value by replacing with dots or empty string if no value",
+            "parseJSON": "Parse a JSON string",
+            "toBoolean": "Convert value to boolean",
+            "toJSON": "Convert value to a JSON string",
+            "toNumber": "Convert value to number",
+            "toString": "Convert value to string",
+            "validateFormat": "Check if value matches attribute format",
+            "validateRegex": "Check if value is a string matching given regex"
+        }
     }
 }

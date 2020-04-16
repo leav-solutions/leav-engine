@@ -2,6 +2,7 @@ import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IActionsListFunction, ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {IAppGraphQLSchema} from '../graphql/graphqlApp';
 import {IAppModule} from '_types/shared';
+import {i18n} from 'i18next';
 
 export interface ICoreActionListApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -9,8 +10,10 @@ export interface ICoreActionListApp extends IAppModule {
 
 interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
+    translator?: i18n;
 }
-export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): ICoreActionListApp {
+
+export default function({'core.domain.actionsList': actionsListDomain = null, translator = null}): ICoreActionListApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -79,8 +82,22 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                 `,
                 resolvers: {
                     Query: {
-                        async availableActions(parent, args) {
-                            return actionsListDomain.getAvailableActions();
+                        async availableActions(parent, args, ctx) {
+                            const availableActions = actionsListDomain.getAvailableActions();
+
+                            const translatedActionList = availableActions.map(action => {
+                                action.description = translator.t(('actions.descriptions.' + action.name) as string, {
+                                    lng: ctx.lang,
+                                    interpolation: {escapeValue: false}
+                                });
+                                action.name = translator.t(('actions.names.' + action.name) as string, {
+                                    lng: ctx.lang,
+                                    interpolation: {escapeValue: false}
+                                });
+                                return action;
+                            });
+
+                            return translatedActionList;
                         }
                     },
                     Mutation: {}
