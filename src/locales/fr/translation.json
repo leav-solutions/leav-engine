@@ -42,5 +42,33 @@
         "UNKNOWN_TREES": "Arbres inconnus : {{trees}}",
         "UNKNOWN_VALUE": "Valeur inconnue",
         "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}"
+    },
+    "actions": {
+        "names" : {
+            "encrypt": "Encrypter",
+            "formatDate": "Formater une Date",
+            "formatNumber": "Formater un Nombre",
+            "maskValue": "Masquer la Valeur",
+            "parseJSON": "Convertir JSON en Objet",
+            "toBoolean": "Convertir en Booléen",
+            "toJSON": "Convertir Objet en JSON",
+            "toNumber": "Convertir en Nombre",
+            "toString": "Convertir en String",
+            "validateFormat": "Valider le Format",
+            "validateRegex": "Valider la RegEx"
+        },
+        "descriptions" : {
+            "encrypt": "Encrypter la valeur",
+            "formatDate": "Convertir un timestamp en format date",
+            "formatNumber": "Formatter un nombre",
+            "maskValue": "Masquer une valeur en la remplaçant par des points, ou une chaine de caractères vide",
+            "parseJSON": "Transformer un JSON en objet",
+            "toBoolean": "Convertir une valeur en booléen",
+            "toJSON": "Convertir une valeur en JSON",
+            "toNumber": "Convertir une valeur en nombre",
+            "toString": "Convertir une vqleur en chqîne de caractères",
+            "validateFormat": "Vérifier si la valeur correspond au format de l'attribut",
+            "validateRegex": "Vérifier si la valeur est une chaîne de caractères qui correspond à une expression régulière donnée susdit"
+        }
     }
 }
