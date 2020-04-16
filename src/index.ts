@@ -23,9 +23,7 @@ const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
 
         await automate(fsScan, dbScan, rmqConn.channel);
 
-        // Wait 30s for the queue to be consumed before closing connection
-        // setTimeout(() => rmqConn.connection.close(), WAIT_BEFORE_CLOSING_CONN);
-        // rmqConn.connection.close();
+        await rmqConn.connection.close();
     } catch (e) {
         console.error(e);
     }

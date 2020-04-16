@@ -39,12 +39,12 @@ afterAll(async done => {
 });
 
 describe('unit tests sync-scan', () => {
-    test('check filesystem is empty', () => {
+    test('1 - check filesystem is empty', () => {
         expect.assertions(1);
         return expect(scan.filesystem(cfg.filesystem)).resolves.toHaveLength(0);
     });
 
-    test('rmq.init', async () => {
+    test('2 - rmq.init', async () => {
         try {
             expect.assertions(3);
 
@@ -65,7 +65,7 @@ describe('unit tests sync-scan', () => {
         }
     });
 
-    test('scan.filesystem', async () => {
+    test('3 - scan.filesystem', async () => {
         try {
             expect.assertions(5);
             await expect(scan.filesystem({absolutePath: 'wrong path'})).rejects.toEqual(
@@ -102,7 +102,7 @@ describe('unit tests sync-scan', () => {
         }
     });
 
-    test('utils.createHashFromFile', async () => {
+    test('4 - utils.createHashFromFile', async () => {
         expect.assertions(3);
 
         await expect(utils.createHashFromFile('wrong path')).rejects.toHaveProperty('code', 'ENOENT');
@@ -115,7 +115,7 @@ describe('unit tests sync-scan', () => {
         );
     });
 
-    test('scan.database', async () => {
+    test('5 - scan.database', async () => {
         try {
             expect.assertions(3);
 
@@ -135,7 +135,7 @@ describe('unit tests sync-scan', () => {
         }
     });
 
-    test('automate', async () => {
+    test('6 - automate', async () => {
         try {
             expect.assertions(2);
 
@@ -148,7 +148,7 @@ describe('unit tests sync-scan', () => {
         }
     });
 
-    test('rmq.generateMsg', () => {
+    test('7 - rmq.generateMsg', () => {
         try {
             expect.assertions(3);
 
@@ -172,7 +172,7 @@ describe('unit tests sync-scan', () => {
         }
     });
 
-    test('msg.send', async () => {
+    test('8 - msg.send', async () => {
         try {
             expect.assertions(2);
 
