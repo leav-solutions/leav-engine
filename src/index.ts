@@ -4,13 +4,8 @@ import {RMQConn} from './_types/rmq';
 import * as scan from './scan';
 import automate from './automate';
 import * as rmq from './rmq';
-import dotenv from 'dotenv';
-import {resolve} from 'path';
-dotenv.config({path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`)});
 import config from './config';
 import {Config} from './_types/config';
-
-const WAIT_BEFORE_CLOSING_CONN = 30000; // ms
 
 (async function() {
     try {

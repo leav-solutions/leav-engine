@@ -9,9 +9,6 @@ import test4Db from './database/test4';
 import test5Db from './database/test5';
 import config from '../../config';
 import {Config} from '../../_types/config';
-import dotenv from 'dotenv';
-import {resolve} from 'path';
-dotenv.config({path: resolve(__dirname, `../../../.env.${process.env.NODE_ENV}`)});
 
 let cfg: Config;
 let rmqConn: RMQConn;

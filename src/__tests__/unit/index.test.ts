@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
-import {resolve} from 'path';
 import fs from 'fs';
 import config from '../../config';
 import {Config} from '../../_types/config';
@@ -9,7 +7,6 @@ import * as scan from '../../scan';
 import * as utils from '../../utils';
 import automate from '../../automate';
 import autoTestDb from './database/automateTest';
-dotenv.config({path: resolve(__dirname, `../../../.env.${process.env.NODE_ENV}`)});
 
 let cfg: Config;
 let rmqConn: RMQConn;

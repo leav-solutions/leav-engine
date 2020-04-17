@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/amqplib": "^0.5.13",
     "@types/jest": "^25.1.4",
+    "@types/joi": "^14.3.4",
     "@types/node": "^13.9.1",
     "jest": "^25.2.4",
     "prettier": "^1.19.1",
@@ -34,9 +35,9 @@
     "apollo-link-http": "^1.5.16",
     "app-root-path": "^3.0.0",
     "arangojs": "^6.14.0",
-    "dotenv": "^8.2.0",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
+    "joi": "^14.3.1",
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
     "walk": "^2.3.14",
