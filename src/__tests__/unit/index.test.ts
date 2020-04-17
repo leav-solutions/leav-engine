@@ -4,9 +4,7 @@ import {Config} from '../../_types/config';
 import * as rmq from '../../rmq';
 import {RMQConn} from '../../_types/rmq';
 import * as scan from '../../scan';
-import * as utils from '../../utils';
 import automate from '../../automate';
-import autoTestDb from './database/automateTest';
 
 let cfg: Config;
 let rmqConn: RMQConn;
@@ -41,28 +39,7 @@ describe('unit tests sync-scan', () => {
         return expect(scan.filesystem(cfg.filesystem)).resolves.toHaveLength(0);
     });
 
-    test('2 - rmq.init', async () => {
-        try {
-            expect.assertions(3);
-
-            await expect(rmqConn.channel.checkExchange(cfg.rmq.exchange)).resolves.toStrictEqual({});
-
-            await expect(
-                rmq.init({...cfg.rmq, connOpt: {...cfg.rmq.connOpt, hostname: 'wrong hostname'}})
-            ).rejects.toHaveProperty('code', 'ENOTFOUND');
-
-            await expect(
-                rmq.init({...cfg.rmq, connOpt: {...cfg.rmq.connOpt, password: 'wrong pwd'}})
-            ).rejects.toHaveProperty(
-                'message',
-                `Handshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.\"`
-            );
-        } catch (e) {
-            console.error(e);
-        }
-    });
-
-    test('3 - scan.filesystem', async () => {
+    test('2 - scan.filesystem', async () => {
         try {
             expect.assertions(5);
 
@@ -100,90 +77,15 @@ describe('unit tests sync-scan', () => {
         }
     });
 
-    test('4 - utils.createHashFromFile', async () => {
-        try {
-            expect.assertions(3);
-
-            await expect(utils.createHashFromFile('wrong path')).rejects.toHaveProperty('code', 'ENOENT');
-            await expect(utils.createHashFromFile(`${cfg.filesystem.absolutePath}/dir/file`)).resolves.toBe(
-                'd41d8cd98f00b204e9800998ecf8427e'
-            );
-            await expect(utils.createHashFromFile(`${cfg.filesystem.absolutePath}/dir`)).rejects.toHaveProperty(
-                'code',
-                'EISDIR'
-            );
-        } catch (e) {
-            console.error(e);
-        }
-    });
-
-    test('5 - scan.database', async () => {
-        try {
-            expect.assertions(3);
-
-            await expect(
-                scan.database({uri: 'wrong uri', token: cfg.graphql.token, treeId: cfg.graphql.treeId})
-            ).rejects.toHaveProperty('message', 'Network error: Only absolute URLs are supported');
-
-            await expect(
-                scan.database({uri: cfg.graphql.uri, token: 'wrong token', treeId: cfg.graphql.treeId})
-            ).rejects.toHaveProperty('message', 'Network error: Response not successful: Received status code 401');
-
-            await expect(
-                scan.database({uri: cfg.graphql.uri, token: cfg.graphql.token, treeId: 'wrong treeId'})
-            ).rejects.toHaveProperty('message', 'GraphQL error: Validation error');
-        } catch (e) {
-            console.error(e);
-        }
-    });
-
-    test('6 - automate', async () => {
+    test('3 - automate', async () => {
         try {
             expect.assertions(2);
 
             await expect(automate([], [], rmqConn.channel)).resolves.toStrictEqual(undefined);
 
             const fsScan = await scan.filesystem(cfg.filesystem);
-            await expect(automate(fsScan, autoTestDb, rmqConn.channel)).resolves.toStrictEqual(undefined);
-        } catch (e) {
-            console.error(e);
-        }
-    });
-
-    test('7 - rmq.generateMsg', () => {
-        try {
-            expect.assertions(3);
-
-            const msg = JSON.parse(rmq.generateMsg('EVENT', 'path before', 'path after', 1, true, cfg.rmq.rootKey));
-            const msgExpected = {
-                event: 'EVENT',
-                pathAfter: 'path after',
-                pathBefore: 'path before',
-                isDirectory: true,
-                inode: 1,
-                rootKey: 'files1'
-            };
-
-            expect(msg).toHaveProperty('time');
-            expect(typeof msg.time).toBe('number');
-            delete msg.time;
-
-            expect(msg).toStrictEqual(msgExpected);
-        } catch (e) {
-            console.error(e);
-        }
-    });
-
-    test('8 - msg.send', async () => {
-        try {
-            expect.assertions(2);
-
-            await expect(rmq.send(cfg.rmq, 'msg', rmqConn.channel)).resolves.toBe(undefined);
-            await expect(
-                rmq.send({...cfg.rmq, exchange: 'wrong exchange'}, 'msg', rmqConn.channel)
-            ).rejects.toHaveProperty('code', 404);
-
-            // FIXME: UNHANDLED ERROR ON PREVIOUS EXPECT!!!!
+            const dbScan = await scan.database(cfg.graphql);
+            await expect(automate(fsScan, dbScan, rmqConn.channel)).resolves.toStrictEqual(undefined);
         } catch (e) {
             console.error(e);
         }
