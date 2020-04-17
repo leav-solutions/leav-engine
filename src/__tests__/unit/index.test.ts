@@ -65,6 +65,7 @@ describe('unit tests sync-scan', () => {
     test('3 - scan.filesystem', async () => {
         try {
             expect.assertions(5);
+
             await expect(scan.filesystem({absolutePath: 'wrong path'})).rejects.toEqual(
                 'Wrong filesystem absolute path'
             );
@@ -100,16 +101,20 @@ describe('unit tests sync-scan', () => {
     });
 
     test('4 - utils.createHashFromFile', async () => {
-        expect.assertions(3);
+        try {
+            expect.assertions(3);
 
-        await expect(utils.createHashFromFile('wrong path')).rejects.toHaveProperty('code', 'ENOENT');
-        await expect(utils.createHashFromFile(`${cfg.filesystem.absolutePath}/dir/file`)).resolves.toBe(
-            'd41d8cd98f00b204e9800998ecf8427e'
-        );
-        await expect(utils.createHashFromFile(`${cfg.filesystem.absolutePath}/dir`)).rejects.toHaveProperty(
-            'code',
-            'EISDIR'
-        );
+            await expect(utils.createHashFromFile('wrong path')).rejects.toHaveProperty('code', 'ENOENT');
+            await expect(utils.createHashFromFile(`${cfg.filesystem.absolutePath}/dir/file`)).resolves.toBe(
+                'd41d8cd98f00b204e9800998ecf8427e'
+            );
+            await expect(utils.createHashFromFile(`${cfg.filesystem.absolutePath}/dir`)).rejects.toHaveProperty(
+                'code',
+                'EISDIR'
+            );
+        } catch (e) {
+            console.error(e);
+        }
     });
 
     test('5 - scan.database', async () => {
@@ -178,7 +183,7 @@ describe('unit tests sync-scan', () => {
                 rmq.send({...cfg.rmq, exchange: 'wrong exchange'}, 'msg', rmqConn.channel)
             ).rejects.toHaveProperty('code', 404);
 
-            // FIXME: UNHANDLED ERROR ON PREVIOUS EXPECT, I DON'T KNOW WHY!!!!
+            // FIXME: UNHANDLED ERROR ON PREVIOUS EXPECT!!!!
         } catch (e) {
             console.error(e);
         }

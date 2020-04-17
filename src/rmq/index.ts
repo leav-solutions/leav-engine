@@ -3,14 +3,10 @@ import {RMQConn, RMQMsg} from '../_types/rmq';
 import * as Config from '../_types/config';
 
 export const send = async ({exchange, routingKey}: Config.RMQ, msg: string, channel: amqp.Channel): Promise<void> => {
-    try {
-        await channel.checkExchange(exchange);
-        await channel.publish(exchange, routingKey, Buffer.from(msg), {
-            persistent: true
-        });
-    } catch (e) {
-        throw e;
-    }
+    await channel.checkExchange(exchange);
+    await channel.publish(exchange, routingKey, Buffer.from(msg), {
+        persistent: true
+    });
 };
 
 export const generateMsg = (
@@ -37,14 +33,10 @@ export const generateMsg = (
 };
 
 export const init = async ({connOpt, exchange, type}: Config.RMQ): Promise<RMQConn> => {
-    try {
-        const connection: amqp.Connection = await amqp.connect(connOpt);
-        const channel: amqp.Channel = await connection.createChannel();
+    const connection: amqp.Connection = await amqp.connect(connOpt);
+    const channel: amqp.Channel = await connection.createChannel();
 
-        await channel.assertExchange(exchange, type, {durable: true});
+    await channel.assertExchange(exchange, type, {durable: true});
 
-        return {channel, connection};
-    } catch (e) {
-        throw e;
-    }
+    return {channel, connection};
 };

@@ -72,9 +72,9 @@ describe('integration tests sync-scan', () => {
     });
 
     test('3 - initialization/creation events', async done => {
-        expect.assertions(10);
-
         try {
+            expect.assertions(10);
+
             const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
             const dbs: FullTreeContent = [];
 
@@ -108,13 +108,13 @@ describe('integration tests sync-scan', () => {
     });
 
     test('4 - move/rename/edit events', async done => {
-        expect.assertions(10);
-
-        fs.renameSync(`${cfg.filesystem.absolutePath}/file`, `${cfg.filesystem.absolutePath}/dir/f`); // MOVE
-        fs.renameSync(`${cfg.filesystem.absolutePath}/dir/sfile`, `${cfg.filesystem.absolutePath}/dir/sf`); // RENAME
-        fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
-
         try {
+            expect.assertions(10);
+
+            fs.renameSync(`${cfg.filesystem.absolutePath}/file`, `${cfg.filesystem.absolutePath}/dir/f`); // MOVE
+            fs.renameSync(`${cfg.filesystem.absolutePath}/dir/sfile`, `${cfg.filesystem.absolutePath}/dir/sf`); // RENAME
+            fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
+
             const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
             const dbs: FullTreeContent = test4Db(inodes);
 
@@ -148,11 +148,11 @@ describe('integration tests sync-scan', () => {
     });
 
     test('5 - delete events', async done => {
-        expect.assertions(10);
-
-        fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
-
         try {
+            expect.assertions(10);
+
+            fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
+
             const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
             const dbs: FullTreeContent = test5Db(inodes);
 

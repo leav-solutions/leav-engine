@@ -48,36 +48,33 @@ export const filesystem = ({absolutePath}: Config.Filesystem): Promise<Filesyste
     });
 
 export const database = async ({uri, token, treeId}: Config.GraphQL): Promise<FullTreeContent> => {
-    try {
-        const httpLink = createHttpLink({uri, fetch});
+    const httpLink: ApolloLink = createHttpLink({uri, fetch});
 
-        const authLink = new ApolloLink((operation, forward) => {
-            operation.setContext({
-                headers: {
-                    authorization: token
-                }
-            });
-            return forward(operation);
-        });
-
-        const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
-            link: authLink.concat(httpLink),
-            cache: new InMemoryCache()
-        });
-
-        const getFullTreeContent: DocumentNode = gql`
-            query GET_FULL_TREE_CONTENT($treeId: ID!) {
-                fullTreeContent(treeId: $treeId)
+    const authLink: ApolloLink = new ApolloLink((operation, forward) => {
+        operation.setContext({
+            headers: {
+                authorization: token
             }
-        `;
-
-        const result: ApolloQueryResult<any> = await client.query({
-            query: getFullTreeContent,
-            variables: {treeId}
         });
 
-        return result.data.fullTreeContent;
-    } catch (e) {
-        throw e;
-    }
+        return forward(operation);
+    });
+
+    const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
+        link: authLink.concat(httpLink),
+        cache: new InMemoryCache()
+    });
+
+    const getFullTreeContent: DocumentNode = gql`
+        query GET_FULL_TREE_CONTENT($treeId: ID!) {
+            fullTreeContent(treeId: $treeId)
+        }
+    `;
+
+    const result: ApolloQueryResult<any> = await client.query({
+        query: getFullTreeContent,
+        variables: {treeId}
+    });
+
+    return result.data.fullTreeContent;
 };
