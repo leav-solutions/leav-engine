@@ -71,9 +71,6 @@ export default function({
         registerActions(actions: IActionsListFunction[]): void {
             _pluginActions = [..._pluginActions, ...actions];
         },
-        registerActions(actions: IActionsListFunction[]): void {
-            _pluginActions = [..._pluginActions, ...actions];
-        },
         async runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue> {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
 
