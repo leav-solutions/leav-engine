@@ -17,7 +17,7 @@ const Loading = ({withDimmer}: ILoadingProps): JSX.Element => {
 
     return withDimmer ? (
         <Dimmer active inverted>
-            ${loader}
+            {loader}
         </Dimmer>
     ) : (
         loader

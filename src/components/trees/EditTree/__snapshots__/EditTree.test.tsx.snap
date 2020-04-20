@@ -13,38 +13,6 @@ initialize {
         },
         "children": Array [
           Object {
-            "data": "$",
-            "next": Object {
-              "attribs": Object {
-                "class": "ui active text centered inline loader",
-              },
-              "children": Array [
-                Object {
-                  "data": "admin.loading",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "text",
-                },
-              ],
-              "name": "div",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": null,
-              "parent": [Circular],
-              "prev": [Circular],
-              "type": "tag",
-              "x-attribsNamespace": Object {
-                "class": undefined,
-              },
-              "x-attribsPrefix": Object {
-                "class": undefined,
-              },
-            },
-            "parent": [Circular],
-            "prev": null,
-            "type": "text",
-          },
-          Object {
             "attribs": Object {
               "class": "ui active text centered inline loader",
             },
@@ -61,13 +29,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": null,
             "parent": [Circular],
-            "prev": Object {
-              "data": "$",
-              "next": [Circular],
-              "parent": [Circular],
-              "prev": null,
-              "type": "text",
-            },
+            "prev": null,
             "type": "tag",
             "x-attribsNamespace": Object {
               "class": undefined,

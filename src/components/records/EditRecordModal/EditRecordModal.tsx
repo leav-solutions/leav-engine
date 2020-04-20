@@ -41,7 +41,7 @@ const EditRecordModal = ({open, recordId, library, version, onClose}: IEditRecor
                     <RecordCard record={recordIdentity} />
                 </Modal.Header>
             )}
-            <Modal.Content>
+            <Modal.Content scrolling style={{minHeight: 'calc(30vh)'}}>
                 <EditRecord
                     recordId={recordId}
                     library={library}
