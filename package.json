@@ -14,6 +14,7 @@
         "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json",
         "test:e2e:filesManager": "NODE_ENV=test jest -c jest-e2e-filesManager-config.json",
         "lint": "tslint --fix -p .",
+        "lint:test": "tslint -p .",
         "lint:watch": "watch 'npm run lint' src/",
         "prettier": "prettier --write 'src/**/*.ts'",
         "dev": "run-p lint:watch start:watch test:watch",
@@ -22,7 +23,8 @@
         "import": "ts-node src/ import --clear",
         "benchmark": "ts-node src/ benchmark",
         "build": "scripts/build.js",
-        "tscheck": "tsc -w -p ."
+        "tscheck": "tsc -p .",
+        "tscheck:watch": "tsc -w -p ."
     },
     "repository": {
         "type": "git",
