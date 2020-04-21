@@ -1,0 +1,10 @@
+stages:
+    - test
+
+lslint:
+    stage: test
+    image: node:alpine
+    before_script:
+        - npm install
+    script:
+        - npm run lint:test
