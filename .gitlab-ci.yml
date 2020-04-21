@@ -1,10 +1,24 @@
 stages:
     - test
 
-lslint:
+tslint:
     stage: test
     image: node:alpine
     before_script:
         - npm install
     script:
         - npm run lint:test
+tscheck:
+    stage: test
+    image: node:alpine
+    before_script:
+        - npm install
+    script:
+        - npm run tscheck
+unitTests:
+    stage: test
+    image: node:alpine
+    before_script:
+        - npm install
+    script:
+        - npm run test
