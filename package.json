@@ -28,17 +28,18 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://Jerome_MILLOT@bitbucket.org/leav_ca/leav_core.git"
+        "url": "https://gitlab.cacom.fr/dev/leav/leav_core"
     },
     "author": "",
     "license": "ISC",
-    "homepage": "https://bitbucket.org/leav_ca/leav_core#readme",
+    "homepage": "https://gitlab.cacom.fr/dev/leav/leav_core",
     "devDependencies": {
         "@casolutions/eslint-config": "^1.0.0",
         "@casolutions/prettier-config": "^1.0.0",
         "@types/debug": "0.0.30",
         "@types/glob": "^5.0.35",
         "@types/hapi": "^18.0.2",
+        "@types/hapi__joi": "^16.0.12",
         "@types/jest": "^23.0.0",
         "@types/lodash": "^4.14.109",
         "@types/node": "^12.12.6",
