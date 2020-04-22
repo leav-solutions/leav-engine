@@ -22,6 +22,7 @@
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Librairie liée non spécifiée",
         "REQUIRED_ATTRIBUTE_LINKED_TREE": "Arbre lié non spécifié",
         "REQUIRED_ATTRIBUTE_TYPE": "Type d'attribut non spécifié",
+        "FORBIDDEN_ID": "L'Id spécifiée est interdit",
         "SYSTEM_ATTRIBUTE_DELETION": "Impossible de supprimer un attribut système",
         "SYSTEM_LIBRARY_DELETION": "Impossible de supprimer une bibliothèque système",
         "SYSTEM_TREE_DELETION": "Impossible de supprimer un arbre système",

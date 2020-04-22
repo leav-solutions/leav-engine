@@ -23,6 +23,7 @@
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Attribute's linked library must be specified",
         "REQUIRED_ATTRIBUTE_LINKED_TREE": "Attribute's linked tree must be specified",
         "REQUIRED_ATTRIBUTE_TYPE": "Attribute's type must be specified",
+        "FORBIDDEN_ID": "The specified Id is forbidden",
         "SYSTEM_ATTRIBUTE_DELETION": "Cannot delete system attribute",
         "SYSTEM_LIBRARY_DELETION": "Cannot delete system library",
         "SYSTEM_TREE_DELETION": "Cannot delete system tree",
