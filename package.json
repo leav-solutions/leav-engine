@@ -23,8 +23,8 @@
         "import": "ts-node src/ import --clear",
         "benchmark": "ts-node src/ benchmark",
         "build": "scripts/build.js",
-        "tscheck": "tsc -p .",
-        "tscheck:watch": "tsc -w -p ."
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p ."
     },
     "repository": {
         "type": "git",
