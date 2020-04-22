@@ -191,9 +191,31 @@ const _validateMetadataFields = async (
  * @param attrData
  * @param deps
  */
+const _validateId = (attrData: IAttribute, deps: {config: any}): ErrorFieldDetail<IAttribute> => {
+    // Check required fields
+
+    const idFieldErrors: ErrorFieldDetail<IAttribute> = {};
+
+    const attributeForbiddenId = ['whoAmI', 'property'];
+
+    if (attributeForbiddenId.indexOf(attrData.id) > -1) {
+        idFieldErrors.id = Errors.FORBIDDEN_ID;
+    }
+
+    return idFieldErrors;
+};
+
+/**
+ * Check if attribute has are required fields based on its type and format
+ *
+ * @param attrData
+ * @param deps
+ */
 const _validateRequiredFields = (attrData: IAttribute, deps: {config: any}): ErrorFieldDetail<IAttribute> => {
     // Check required fields
+
     const requiredFieldsErrors: ErrorFieldDetail<IAttribute> = {};
+
     if (!attrData.type) {
         requiredFieldsErrors.type = Errors.REQUIRED_ATTRIBUTE_TYPE;
     }
@@ -235,6 +257,7 @@ export const validateAttributeData = async (
         _validateSettings(attrData, deps, ctx),
         _validateVersionsConf(attrData, deps, ctx),
         _validateRequiredFields(attrData, deps),
+        _validateId(attrData, deps),
         _validateMetadataFields(attrData, deps, ctx),
         _validateInputType(attrData, deps),
         _validateRequiredActions(attrData)

@@ -171,6 +171,48 @@ describe('attributeDomain', () => {
             });
         });
 
+        test('Should throw a validation error if the attribute:id is forbidden', async function() {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributes: global.__mockPromise({list: [], totalCount: 0}),
+                createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
+                updateAttribute: jest.fn()
+            };
+
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                config: mockConf
+            });
+
+            attrDomain.getAttributes = global.__mockPromise([{}]);
+
+            await expect(
+                attrDomain.saveAttribute({
+                    attrData: {
+                        id: 'whoAmI',
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.TEXT,
+                        label: {fr: 'quiJeSuis', en: 'whoAmI'}
+                    },
+                    ctx
+                })
+            ).rejects.toThrow(ValidationError);
+
+            await expect(
+                attrDomain.saveAttribute({
+                    attrData: {
+                        id: 'property',
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.TEXT,
+                        label: {fr: 'propriété', en: 'property'}
+                    },
+                    ctx
+                })
+            ).rejects.toThrow(ValidationError);
+        });
+
         test('Should update an attribute', async function() {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
