@@ -36,41 +36,65 @@ export interface ISaveBatchValueResult {
 }
 
 export interface IValueDomain {
-    getValues(library: string, recordId: number, attribute: string, options?: IValuesOptions): Promise<IValue[]>;
-    /**
-     * Save a value
-     * @param library
-     * @param recordId
-     * @param attribute
-     * @param value
-     * @param infos
-     */
-    saveValue(library: string, recordId: number, attribute: string, value: IValue, infos: IQueryInfos): Promise<IValue>;
+    getValues({
+        library,
+        recordId,
+        attribute,
+        options,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: string;
+        options?: IValuesOptions;
+        ctx: IQueryInfos;
+    }): Promise<IValue[]>;
+    saveValue({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: string;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue>;
 
     /**
      * Save multiple values independantly (possibly different attributes or versions).
      * If one of the value must not be saved (invalid value or user doesn't have permissions), no value is saved at all
      *
-     * @param library
-     * @param recordId
-     * @param values
-     * @param infos
-     * @param keepEmpty If false, empty values will be deleted (or not saved)
+     * keepEmpty If false, empty values will be deleted (or not saved)
      */
-    saveValueBatch(
-        library: string,
-        recordId: number,
-        values: IValue[],
-        infos: IQueryInfos,
-        keepEmpty?: boolean
-    ): Promise<ISaveBatchValueResult>;
-    deleteValue(
-        library: string,
-        recordId: number,
-        attribute: string,
-        value: IValue,
-        infos: IQueryInfos
-    ): Promise<IValue>;
+    saveValueBatch({
+        library,
+        recordId,
+        values,
+        ctx,
+        keepEmpty
+    }: {
+        library: string;
+        recordId: number;
+        values: IValue[];
+        ctx: IQueryInfos;
+        keepEmpty?: boolean;
+    }): Promise<ISaveBatchValueResult>;
+    deleteValue({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: string;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue>;
 }
 
 interface IDeps {
@@ -97,16 +121,11 @@ export default function({
     'core.utils': utils = null
 }: IDeps = {}): IValueDomain {
     return {
-        async getValues(
-            library: string,
-            recordId: number,
-            attribute: string,
-            options?: IValuesOptions
-        ): Promise<IValue[]> {
-            await validateLibrary(library, {libraryDomain});
-            await validateRecord(library, recordId, {recordRepo});
+        async getValues({library, recordId, attribute, options, ctx}): Promise<IValue[]> {
+            await validateLibrary(library, {libraryDomain}, ctx);
+            await validateRecord(library, recordId, {recordRepo}, ctx);
 
-            const attr = await attributeDomain.getAttributeProperties(attribute);
+            const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
             let values: IValue[];
             if (
@@ -119,10 +138,24 @@ export default function({
                     version: attr?.versions_conf?.versionable ? options.version : null
                 };
 
-                values = await valueRepo.getValues(library, recordId, attr, false, getValOptions);
+                values = await valueRepo.getValues({
+                    library,
+                    recordId,
+                    attribute: attr,
+                    forceGetAllValues: false,
+                    options: getValOptions,
+                    ctx
+                });
             } else {
                 // Get all values, no matter the version.
-                const allValues: IValue[] = await valueRepo.getValues(library, recordId, attr, true, options);
+                const allValues: IValue[] = await valueRepo.getValues({
+                    library,
+                    recordId,
+                    attribute: attr,
+                    forceGetAllValues: true,
+                    options,
+                    ctx
+                });
 
                 // Get trees ancestors
                 const trees: IFindValueTree[] = await Promise.all(
@@ -131,9 +164,13 @@ export default function({
                             const treeElem =
                                 options.version && options.version[treeName]
                                     ? options.version[treeName]
-                                    : await treeRepo.getDefaultElement(treeName);
+                                    : await treeRepo.getDefaultElement({id: treeName, ctx});
 
-                            const ancestors = await treeRepo.getElementAncestors(treeName, treeElem);
+                            const ancestors = await treeRepo.getElementAncestors({
+                                treeId: treeName,
+                                element: treeElem,
+                                ctx
+                            });
                             return {
                                 name: treeName,
                                 currentIndex: 0,
@@ -149,30 +186,25 @@ export default function({
 
             return values;
         },
-        async saveValue(
-            library: string,
-            recordId: number,
-            attribute: string,
-            value: IValue,
-            infos: IQueryInfos
-        ): Promise<IValue> {
-            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+        async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
-            await validateLibrary(library, {libraryDomain});
-            await validateRecord(library, recordId, {recordRepo});
+            await validateLibrary(library, {libraryDomain}, ctx);
+            await validateRecord(library, recordId, {recordRepo}, ctx);
 
             const valueChecksParams = {
                 attributeProps,
                 library,
                 recordId,
                 value,
-                keepEmpty: false
+                keepEmpty: false,
+                infos: ctx
             };
 
             // Check permissions
             const {canSave, reason: forbiddenPermission, fields} = await canSaveValue({
                 ...valueChecksParams,
-                infos,
+                ctx,
                 deps: {
                     recordPermissionDomain,
                     attributePermissionDomain
@@ -191,7 +223,8 @@ export default function({
                     recordRepo,
                     valueRepo,
                     treeRepo
-                }
+                },
+                ctx
             });
 
             if (Object.keys(validationErrors).length) {
@@ -205,33 +238,35 @@ export default function({
                     actionsListDomain,
                     attributeDomain,
                     utils
-                }
+                },
+                ctx
             });
 
-            const savedVal = await saveOneValue(library, recordId, attributeProps, valueToSave, {
-                valueRepo,
-                recordRepo
-            });
+            const savedVal = await saveOneValue(
+                library,
+                recordId,
+                attributeProps,
+                valueToSave,
+                {
+                    valueRepo,
+                    recordRepo
+                },
+                ctx
+            );
 
-            await updateRecordLastModif(library, recordId, infos, {recordRepo});
+            await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
             return savedVal;
         },
-        async saveValueBatch(
-            library: string,
-            recordId: number,
-            values: IValue[],
-            infos: IQueryInfos,
-            keepEmpty: boolean = false
-        ): Promise<ISaveBatchValueResult> {
-            await validateLibrary(library, {libraryDomain});
-            await validateRecord(library, recordId, {recordRepo});
+        async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
+            await validateLibrary(library, {libraryDomain}, ctx);
+            await validateRecord(library, recordId, {recordRepo}, ctx);
 
             const saveRes: ISaveBatchValueResult = await values.reduce(
                 async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
-                        const attributeProps = await attributeDomain.getAttributeProperties(value.attribute);
+                        const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 
                         const valueChecksParams = {
                             attributeProps,
@@ -244,7 +279,7 @@ export default function({
                         // Check permissions
                         const {canSave, reason: forbiddenPermission} = await canSaveValue({
                             ...valueChecksParams,
-                            infos,
+                            ctx,
                             deps: {
                                 recordPermissionDomain,
                                 attributePermissionDomain
@@ -263,7 +298,8 @@ export default function({
                                 recordRepo,
                                 valueRepo,
                                 treeRepo
-                            }
+                            },
+                            ctx
                         });
 
                         if (Object.keys(validationErrors).length) {
@@ -277,16 +313,30 @@ export default function({
                                 actionsListDomain,
                                 attributeDomain,
                                 utils
-                            }
+                            },
+                            ctx
                         });
 
                         const savedVal =
                             !keepEmpty && !valToSave.value && valToSave.id_value
-                                ? await valueRepo.deleteValue(library, recordId, attributeProps, valToSave)
-                                : await saveOneValue(library, recordId, attributeProps, valToSave, {
-                                      valueRepo,
-                                      recordRepo
-                                  });
+                                ? await valueRepo.deleteValue({
+                                      library,
+                                      recordId,
+                                      attribute: attributeProps,
+                                      value: valToSave,
+                                      ctx
+                                  })
+                                : await saveOneValue(
+                                      library,
+                                      recordId,
+                                      attributeProps,
+                                      valToSave,
+                                      {
+                                          valueRepo,
+                                          recordRepo
+                                      },
+                                      ctx
+                                  );
 
                         prevRes.values.push({...savedVal, attribute: value.attribute});
                     } catch (e) {
@@ -315,27 +365,22 @@ export default function({
             );
 
             if (saveRes.values.length) {
-                await updateRecordLastModif(library, recordId, infos, {recordRepo});
+                await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
             }
 
             return saveRes;
         },
-        async deleteValue(
-            library: string,
-            recordId: number,
-            attribute: string,
-            value: IValue,
-            infos: IQueryInfos
-        ): Promise<IValue> {
-            await validateLibrary(library, {libraryDomain});
-            await validateRecord(library, recordId, {recordRepo});
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+            await validateLibrary(library, {libraryDomain}, ctx);
+            await validateRecord(library, recordId, {recordRepo}, ctx);
 
             // Check permission
             const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
                 RecordPermissionsActions.EDIT,
-                infos.userId,
+                ctx.userId,
                 library,
-                recordId
+                recordId,
+                ctx
             );
 
             if (!canUpdateRecord) {
@@ -344,20 +389,21 @@ export default function({
 
             const isAllowedToDelete = await attributePermissionDomain.getAttributePermission(
                 AttributePermissionsActions.DELETE_VALUE,
-                infos.userId,
+                ctx.userId,
                 attribute,
                 library,
-                recordId
+                recordId,
+                ctx
             );
 
             if (!isAllowedToDelete) {
                 throw new PermissionError(AttributePermissionsActions.DELETE_VALUE);
             }
 
-            const attr = await attributeDomain.getAttributeProperties(attribute);
+            const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
             // Check if value ID actually exists
             if (value.id_value && attr.type !== AttributeTypes.SIMPLE) {
-                const existingVal = await valueRepo.getValueById(library, recordId, attr, value);
+                const existingVal = await valueRepo.getValueById({library, recordId, attribute: attr, value, ctx});
 
                 if (existingVal === null) {
                     throw new ValidationError({id: Errors.UNKNOWN_VALUE});
@@ -374,7 +420,7 @@ export default function({
                       })
                     : value;
 
-            const res = await valueRepo.deleteValue(library, recordId, attr, actionsListRes);
+            const res = await valueRepo.deleteValue({library, recordId, attribute: attr, value: actionsListRes, ctx});
             // Make sure attribute is returned here
             res.attribute = attribute;
 

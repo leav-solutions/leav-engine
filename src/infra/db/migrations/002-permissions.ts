@@ -10,7 +10,7 @@ interface IDeps {
 
 export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
-        async run() {
+        async run(ctx) {
             if (!(await dbService.collectionExists('core_permissions'))) {
                 await dbService.createCollection('core_permissions');
             }
@@ -19,11 +19,14 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
             const userGroupsAttrKey = 'user_groups';
 
             // Create user groups library, required for permissions
-            const checkLibExists = await dbService.execute(aql`
-                FOR t IN core_libraries
-                    FILTER t._key == ${userGroupsLibKey}
-                RETURN t._key
-            `);
+            const checkLibExists = await dbService.execute({
+                query: aql`
+                    FOR t IN core_libraries
+                        FILTER t._key == ${userGroupsLibKey}
+                    RETURN t._key
+                `,
+                ctx
+            });
             if (!checkLibExists.length) {
                 const libAttributes = [
                     {id: 'id'},
@@ -44,7 +47,10 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                 }
 
                 const libCollec = dbService.db.collection('core_libraries');
-                const libRes = await dbService.execute(aql`INSERT ${userGroupsLibParams} IN ${libCollec} RETURN NEW`);
+                const libRes = await dbService.execute({
+                    query: aql`INSERT ${userGroupsLibParams} IN ${libCollec} RETURN NEW`,
+                    ctx
+                });
 
                 const query = aql`
                     FOR attr IN ${libAttributes.map(attr => attr.id)}
@@ -62,30 +68,34 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                         RETURN NEW
                 `;
 
-                const libAttribRes = await dbService.execute(query);
+                const libAttribRes = await dbService.execute({query, ctx});
             }
 
             // Create user categories tree, required for permissions
-            const checkTreeExists = await dbService.execute(aql`
-                FOR t IN core_trees
-                    FILTER t._key == ${userGroupsTreeKey}
-                RETURN t._key
-            `);
+            const checkTreeExists = await dbService.execute({
+                query: aql`
+                    FOR t IN core_trees
+                        FILTER t._key == ${userGroupsTreeKey}
+                    RETURN t._key
+                `,
+                ctx
+            });
 
             if (!checkTreeExists.length) {
-                await dbService.execute(
-                    aql`INSERT {
-                        _key: ${userGroupsTreeKey},
-                        label: {
-                        fr: "Groupes d'utilisateurs",
-                        en: 'Users groups'
-                        },
-                        libraries: [
-                            ${userGroupsLibKey}
-                        ],
-                        'system': true
-                    } IN core_trees`
-                );
+                await dbService.execute({
+                    query: aql`INSERT {
+                            _key: ${userGroupsTreeKey},
+                            label: {
+                            fr: "Groupes d'utilisateurs",
+                            en: 'Users groups'
+                            },
+                            libraries: [
+                                ${userGroupsLibKey}
+                            ],
+                            'system': true
+                        } IN core_trees`,
+                    ctx
+                });
 
                 const edgeCollecName = `core_edge_tree_${userGroupsTreeKey}`;
                 if (!(await dbService.collectionExists(edgeCollecName))) {
@@ -94,29 +104,36 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
 
                 // Add root element "all users"
                 const usersGroupsLibCollec = dbService.db.collection(userGroupsLibKey);
-                const rootElem = await dbService.execute(aql`
-                    INSERT {
-                        created_at: ${moment().unix()},
-                        modified_at: ${moment().unix()}
-                    } IN ${usersGroupsLibCollec}
-                    RETURN NEW
-                `);
+                const rootElem = await dbService.execute({
+                    query: aql`
+                        INSERT {
+                            created_at: ${moment().unix()},
+                            modified_at: ${moment().unix()}
+                        } IN ${usersGroupsLibCollec}
+                        RETURN NEW
+                    `,
+                    ctx
+                });
 
                 const usersGroupsEdgeCollec = dbService.db.collection(edgeCollecName);
-                await dbService.execute(
-                    aql`INSERT {
-                        _from: ${'core_trees/' + userGroupsTreeKey},
-                        _to: ${'users_groups/' + rootElem[0]._key}
-                    } IN ${usersGroupsEdgeCollec}`
-                );
+                await dbService.execute({
+                    query: aql`INSERT {
+                            _from: ${'core_trees/' + userGroupsTreeKey},
+                            _to: ${'users_groups/' + rootElem[0]._key}
+                        } IN ${usersGroupsEdgeCollec}`,
+                    ctx
+                });
             }
 
             // Create "users group" tree attribute and add it to users library
-            const checkAttributexists = await dbService.execute(aql`
-                FOR t IN core_attributes
-                    FILTER t._key == ${userGroupsAttrKey}
-                RETURN t._key
-            `);
+            const checkAttributexists = await dbService.execute({
+                query: aql`
+                    FOR t IN core_attributes
+                        FILTER t._key == ${userGroupsAttrKey}
+                    RETURN t._key
+                `,
+                ctx
+            });
             if (!checkAttributexists.length) {
                 const attrParams = {
                     _key: userGroupsAttrKey,
@@ -128,22 +145,25 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
 
                 // Insert in libraries collection
                 const col = dbService.db.collection('core_attributes');
-                const res = await dbService.execute(aql`INSERT ${attrParams} IN ${col} RETURN NEW`);
+                const res = await dbService.execute({query: aql`INSERT ${attrParams} IN ${col} RETURN NEW`, ctx});
 
-                await dbService.execute(aql`
-                    LET attrToInsert = {
-                        _from: 'core_libraries/users',
-                        _to: ${'core_attributes/' + userGroupsAttrKey}
-                    }
-                    UPSERT {
-                        _from: 'core_libraries/users',
-                        _to: ${'core_attributes/' + userGroupsAttrKey}
-                    }
-                    INSERT attrToInsert
-                    UPDATE attrToInsert
-                    IN 'core_edge_libraries_attributes'
-                    RETURN NEW
-                `);
+                await dbService.execute({
+                    query: aql`
+                        LET attrToInsert = {
+                            _from: 'core_libraries/users',
+                            _to: ${'core_attributes/' + userGroupsAttrKey}
+                        }
+                        UPSERT {
+                            _from: 'core_libraries/users',
+                            _to: ${'core_attributes/' + userGroupsAttrKey}
+                        }
+                        INSERT attrToInsert
+                        UPDATE attrToInsert
+                        IN 'core_edge_libraries_attributes'
+                        RETURN NEW
+                    `,
+                    ctx
+                });
             }
         }
     };

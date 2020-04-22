@@ -6,6 +6,7 @@ import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -16,38 +17,42 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
         library: string,
         recordId: number,
         attribute: IAttribute,
-        value: IValue
+        value: IValue,
+        ctx: IQueryInfos
     ): Promise<IValue> {
         const collec = dbService.db.collection(library);
 
-        const res = await dbService.execute(aql`
-            UPDATE ${{_key: recordId}}
-            WITH ${{[attribute.id]: value.value}}
-            IN ${collec}
-            OPTIONS { keepNull: false }
-            RETURN NEW`);
+        const res = await dbService.execute({
+            query: aql`
+                UPDATE ${{_key: recordId}}
+                WITH ${{[attribute.id]: value.value}}
+                IN ${collec}
+                OPTIONS { keepNull: false }
+                RETURN NEW`,
+            ctx
+        });
         const updatedDoc = res.length ? res[0] : {};
 
         return {value: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null};
     }
 
     return {
-        async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return _saveValue(library, recordId, attribute, value);
+        async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+            return _saveValue(library, recordId, attribute, value, ctx);
         },
-        async updateValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return _saveValue(library, recordId, attribute, value);
+        async updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+            return _saveValue(library, recordId, attribute, value, ctx);
         },
-        async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return _saveValue(library, recordId, attribute, {...value, value: null});
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+            return _saveValue(library, recordId, attribute, {...value, value: null}, ctx);
         },
-        async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+        async getValues({library, recordId, attribute, ctx}): Promise<IValue[]> {
             const query = aql`
                 FOR r IN ${dbService.db.collection(library)}
                     FILTER r._key == ${String(recordId)}
                     RETURN r.${attribute.id}
             `;
-            const res = await dbService.execute(query);
+            const res = await dbService.execute({query, ctx});
 
             return [
                 {
@@ -56,7 +61,7 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                 }
             ];
         },
-        async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        async getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
             return null;
         },
         filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
@@ -65,7 +70,7 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
 
             return query;
         },
-        async clearAllValues(attribute: IAttribute): Promise<boolean> {
+        async clearAllValues({attribute, ctx}): Promise<boolean> {
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
             // TODO: use aql template tag, and find out why it doesn't work :)
@@ -76,7 +81,7 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                 RETURN v
             `;
 
-            const libraries = await dbService.execute(query);
+            const libraries = await dbService.execute({query, ctx});
 
             for (const lib of libraries) {
                 const recordsCollec = dbService.db.collection(lib._key);
@@ -86,7 +91,7 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                     UPDATE r WITH {${attribute.id}: null} IN ${recordsCollec} OPTIONS {keepNull: false}
                 `;
 
-                await dbService.execute(clearQuery);
+                await dbService.execute({query: clearQuery, ctx});
             }
 
             return true;

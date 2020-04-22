@@ -2,15 +2,23 @@ import {aql} from 'arangojs';
 import {IPermission, IPermissionsTreeTarget, PermissionTypes} from '../../_types/permissions';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 
 export interface IPermissionRepo {
-    savePermission(permData: IPermission): Promise<IPermission>;
-    getPermissions(
-        type: PermissionTypes,
-        applyTo: string,
-        usersGroupId: number | null,
-        permissionTreeTarget?: IPermissionsTreeTarget
-    ): Promise<IPermission | null>;
+    savePermission({permData, ctx}: {permData: IPermission; ctx: IQueryInfos}): Promise<IPermission>;
+    getPermissions({
+        type,
+        applyTo,
+        usersGroupId,
+        permissionTreeTarget,
+        ctx
+    }: {
+        type: PermissionTypes;
+        applyTo: string;
+        usersGroupId: number | null;
+        permissionTreeTarget?: IPermissionsTreeTarget;
+        ctx: IQueryInfos;
+    }): Promise<IPermission | null>;
 }
 
 interface IDbPermissionsTreeTarget {
@@ -55,7 +63,7 @@ export default function({
     }
 
     return {
-        async savePermission(permData: IPermission): Promise<IPermission> {
+        async savePermission({permData, ctx}): Promise<IPermission> {
             const userGroupToSave = permData.usersGroup ? USERS_GROUP_LIB_NAME + '/' + permData.usersGroup : null;
 
             // Upsert in permissions collection
@@ -75,13 +83,16 @@ export default function({
                 permissionTreeTarget: dbPermData.permissionTreeTarget
             };
 
-            const res = await dbService.execute(aql`
-                UPSERT ${searchObj}
-                INSERT ${dbPermData}
-                UPDATE ${dbPermData}
-                IN ${col}
-                RETURN NEW
-            `);
+            const res = await dbService.execute({
+                query: aql`
+                    UPSERT ${searchObj}
+                    INSERT ${dbPermData}
+                    UPDATE ${dbPermData}
+                    IN ${col}
+                    RETURN NEW
+                `,
+                ctx
+            });
 
             const savedPerm = {
                 ...res[0],
@@ -91,12 +102,13 @@ export default function({
 
             return dbUtils.cleanup(savedPerm);
         },
-        async getPermissions(
-            type: PermissionTypes,
-            applyTo: string = null,
-            usersGroupId: number | null,
-            permissionTreeTarget: IPermissionsTreeTarget = null
-        ): Promise<IPermission | null> {
+        async getPermissions({
+            type,
+            applyTo = null,
+            usersGroupId,
+            permissionTreeTarget = null,
+            ctx
+        }): Promise<IPermission | null> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
 
             const dbTarget = permissionTreeTarget ? _toDbTreeTarget(permissionTreeTarget) : null;
@@ -112,7 +124,7 @@ export default function({
                 RETURN p
             `;
 
-            const res = await dbService.execute(query);
+            const res = await dbService.execute({query, ctx});
 
             return res.length
                 ? {

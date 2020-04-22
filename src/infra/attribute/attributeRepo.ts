@@ -7,19 +7,18 @@ import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 export interface IAttributeRepo {
-    getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>>;
-    updateAttribute(attrData: IAttributeForRepo): Promise<IAttribute>;
-    createAttribute(attrData: IAttributeForRepo): Promise<IAttribute>;
-    deleteAttribute(attrData: IAttribute): Promise<IAttribute>;
+    getAttributes({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;
+    updateAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
+    createAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
+    deleteAttribute({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): Promise<IAttribute>;
 
     /**
      * Get all libraries for which this attribute is enabled
-     *
-     * @param attribute
      */
-    getLibrariesUsingAttribute?(attribute: IAttribute): Promise<ILibrary[]>;
+    getLibrariesUsingAttribute?({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<ILibrary[]>;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
@@ -40,7 +39,7 @@ export default function({
     'core.infra.value': valueRepo = null
 }: IDeps = {}): IAttributeRepo {
     return {
-        async getAttributes(params: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
+        async getAttributes({params, ctx}): Promise<IList<IAttribute>> {
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -50,47 +49,63 @@ export default function({
             };
             const initializedParams = {...defaultParams, ...params};
 
-            return dbUtils.findCoreEntity<IAttribute>({...initializedParams, collectionName: ATTRIB_COLLECTION_NAME});
+            return dbUtils.findCoreEntity<IAttribute>({
+                ...initializedParams,
+                collectionName: ATTRIB_COLLECTION_NAME,
+                ctx
+            });
         },
-        async updateAttribute(attrData: IAttributeForRepo): Promise<IAttribute> {
+        async updateAttribute({attrData, ctx}): Promise<IAttribute> {
             const docToInsert = dbUtils.convertToDoc(attrData);
 
             // Insert in libraries collection
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
-            const res = await dbService.execute(aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`);
+            const res = await dbService.execute({
+                query: aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`,
+                ctx
+            });
 
             return dbUtils.cleanup(res.pop());
         },
-        async createAttribute(attrData: IAttributeForRepo): Promise<IAttribute> {
+        async createAttribute({attrData, ctx}): Promise<IAttribute> {
             const docToInsert = dbUtils.convertToDoc(attrData);
             // Insert in libraries collection
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
-            const res = await dbService.execute(aql`INSERT ${docToInsert} IN ${col} RETURN NEW`);
+            const res = await dbService.execute({
+                query: aql`INSERT ${docToInsert} IN ${col} RETURN NEW`,
+                ctx
+            });
 
             return dbUtils.cleanup(res.pop());
         },
-        async deleteAttribute(attrData: IAttribute): Promise<IAttribute> {
+        async deleteAttribute({attrData, ctx}): Promise<IAttribute> {
             // Delete links library<->attribute
             const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
             // Delete all values
-            await valueRepo.clearAllValues(attrData);
+            await valueRepo.clearAllValues({attribute: attrData, ctx});
 
-            const resDelEdges = await dbService.execute(aql`
+            const resDelEdges = await dbService.execute({
+                query: aql`
                     FOR e IN ${libAttributesCollec}
                         FILTER e._to == ${'core_attributes/' + attrData.id}
                         REMOVE e IN ${libAttributesCollec}
-                    `);
+                    `,
+                ctx
+            });
 
             // Delete attribute
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
 
-            const res = await dbService.execute(aql`REMOVE ${{_key: attrData.id}} IN ${col} RETURN OLD`);
+            const res = await dbService.execute({
+                query: aql`REMOVE ${{_key: attrData.id}} IN ${col} RETURN OLD`,
+                ctx
+            });
 
             // Return deleted attribute
             return dbUtils.cleanup(res.pop());
         },
-        async getLibrariesUsingAttribute(attribute: IAttribute): Promise<ILibrary[]> {
+        async getLibrariesUsingAttribute({attribute, ctx}): Promise<ILibrary[]> {
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
             // TODO: use aql template tag, and find out why it doesn't work :)
@@ -101,7 +116,7 @@ export default function({
                 RETURN v
             `;
 
-            const res = await dbService.execute(query);
+            const res = await dbService.execute({query, ctx});
 
             return res.map(dbUtils.cleanup);
         }

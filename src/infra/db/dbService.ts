@@ -1,9 +1,15 @@
 import {Database} from 'arangojs';
 import {AqlQuery, isAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
+import {IQueryInfos} from '_types/queryInfos';
 
 const MAX_ATTEMPTS = 10;
-
+export interface IExecute {
+    query: string | AqlQuery;
+    ctx: IQueryInfos;
+    withTotalCount?: boolean;
+    attempts?: number;
+}
 export interface IExecuteWithCount {
     totalCount: number;
     results: any[];
@@ -22,11 +28,7 @@ export interface IDbService {
      * @param attempts Used when we have to retry a query after a write-write conflict
      * @throws If query fails or we still have a conflict after all attempts
      */
-    execute?<T extends IExecuteWithCount | any[] = any[]>(
-        query: string | AqlQuery,
-        withTotalCount?: boolean,
-        attempts?: number
-    ): Promise<T>;
+    execute?<T extends IExecuteWithCount | any[] = any[]>(params: IExecute): Promise<T>;
 
     /**
      * Create a new collection in database
@@ -74,11 +76,12 @@ export default function({'core.infra.db': db = null, 'core.utils': utils = null}
 
     return {
         db,
-        async execute<T extends IExecuteWithCount | any[] = any[]>(
-            query: string | AqlQuery,
-            withTotalCount: boolean = false,
-            attempts: number = 0
-        ): Promise<T> {
+        async execute<T extends IExecuteWithCount | any[] = any[]>({
+            query,
+            ctx,
+            withTotalCount = false,
+            attempts = 0
+        }: IExecute): Promise<T> {
             try {
                 // Convert query to AqlQuery if we have a simple query to match query() types
                 const queryToRun = isAqlQuery(query)
@@ -101,7 +104,7 @@ export default function({'core.infra.db': db = null, 'core.utils': utils = null}
                 if (e.isArangoError && e.errorNum === 1200 && attempts < MAX_ATTEMPTS) {
                     const timeToWait = 2 ** attempts;
                     await _sleep(timeToWait);
-                    return this.execute(query, withTotalCount, attempts + 1);
+                    return this.execute({query, ctx, withTotalCount, attempts: attempts + 1});
                 }
 
                 e.message += `\nQuery was: ${JSON.stringify(query).replace(/\\n/g, ' ')}`;

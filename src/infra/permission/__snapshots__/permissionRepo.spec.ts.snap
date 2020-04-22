@@ -26,12 +26,12 @@ Object {
 
 exports[`PermissionRepo SavePermission Should save permission 1`] = `
 "
-                UPSERT @value0
-                INSERT @value1
-                UPDATE @value1
-                IN @@value2
-                RETURN NEW
-            "
+                    UPSERT @value0
+                    INSERT @value1
+                    UPDATE @value1
+                    IN @@value2
+                    RETURN NEW
+                "
 `;
 
 exports[`PermissionRepo SavePermission Should save permission 2`] = `

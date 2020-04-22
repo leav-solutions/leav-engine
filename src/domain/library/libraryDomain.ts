@@ -24,11 +24,11 @@ import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
 
 export interface ILibraryDomain {
-    getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>>;
-    saveLibrary(library: ILibrary, infos: IQueryInfos): Promise<ILibrary>;
-    deleteLibrary(id: string, infos: IQueryInfos): Promise<ILibrary>;
-    getLibraryProperties(id: string): Promise<ILibrary>;
-    getLibraryAttributes(id: string): Promise<IAttribute[]>;
+    getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
+    saveLibrary(library: ILibrary, ctx: IQueryInfos): Promise<ILibrary>;
+    deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary>;
+    getLibraryProperties(id: string, ctx: IQueryInfos): Promise<ILibrary>;
+    getLibraryAttributes(id: string, ctx: IQueryInfos): Promise<IAttribute[]>;
 }
 
 interface IDeps {
@@ -49,17 +49,17 @@ export default function({
     translator: translator
 }: IDeps = {}): ILibraryDomain {
     return {
-        async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
+        async getLibraries({params, ctx}): Promise<IList<ILibrary>> {
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
             }
 
-            const libsList = await libraryRepo.getLibraries(initializedParams);
+            const libsList = await libraryRepo.getLibraries({params: initializedParams, ctx});
 
             const libs = await Promise.all(
                 libsList.list.map(async lib => {
-                    lib.attributes = await libraryRepo.getLibraryAttributes(lib.id);
+                    lib.attributes = await libraryRepo.getLibraryAttributes({libId: lib.id, ctx});
 
                     return lib;
                 })
@@ -70,12 +70,15 @@ export default function({
                 list: libs
             };
         },
-        async getLibraryProperties(id: string): Promise<ILibrary> {
+        async getLibraryProperties(id: string, ctx): Promise<ILibrary> {
             if (!id) {
                 throw new ValidationError({id: Errors.MISSING_LIBRARY_ID});
             }
 
-            const libs = await libraryRepo.getLibraries({filters: {id}, strictFilters: true});
+            const libs = await libraryRepo.getLibraries({
+                params: {filters: {id}, strictFilters: true},
+                ctx
+            });
 
             if (!libs.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
@@ -85,17 +88,17 @@ export default function({
 
             return props;
         },
-        async getLibraryAttributes(id: string): Promise<IAttribute[]> {
-            const libs = await libraryRepo.getLibraries({filters: {id}});
+        async getLibraryAttributes(id: string, ctx): Promise<IAttribute[]> {
+            const libs = await libraryRepo.getLibraries({params: {filters: {id}}, ctx});
 
             if (!libs.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
-            return libraryRepo.getLibraryAttributes(id);
+            return libraryRepo.getLibraryAttributes({libId: id, ctx});
         },
-        async saveLibrary(libData: ILibrary, infos: IQueryInfos): Promise<ILibrary> {
-            const libs = await libraryRepo.getLibraries({filters: {id: libData.id}});
+        async saveLibrary(libData: ILibrary, ctx: IQueryInfos): Promise<ILibrary> {
+            const libs = await libraryRepo.getLibraries({params: {filters: {id: libData.id}}, ctx});
             const existingLib = !!libs.list.length;
             const errors = {} as any;
             const defaultParams = {
@@ -114,7 +117,7 @@ export default function({
             const defaultAttributes = getDefaultAttributes(dataToSave.behavior);
 
             // Check permissions
-            const permCheck = await checkSavePermission(existingLib, infos.userId, {permissionDomain});
+            const permCheck = await checkSavePermission(existingLib, ctx.userId, {permissionDomain}, ctx);
             if (!permCheck.canSave) {
                 throw new PermissionError(permCheck.action);
             }
@@ -124,7 +127,7 @@ export default function({
                 throw new ValidationError({id: Errors.INVALID_ID_FORMAT});
             }
 
-            validationErrors.push(await validatePermConf(dataToSave.permissions_conf, {attributeDomain}));
+            validationErrors.push(await validatePermConf(dataToSave.permissions_conf, {attributeDomain}, ctx));
 
             // New library? Link default attributes. Otherwise, save given attributes if any
             const attributesToSave =
@@ -136,11 +139,16 @@ export default function({
             delete dataToSave.attributes;
 
             validationErrors.push(
-                await validateLibAttributes(libAttributes, {attributeDomain}),
-                await validateRecordIdentityConf(dataToSave as ILibrary, libAttributes, {
-                    attributeDomain,
-                    libraryRepo
-                })
+                await validateLibAttributes(libAttributes, {attributeDomain}, ctx),
+                await validateRecordIdentityConf(
+                    dataToSave as ILibrary,
+                    libAttributes,
+                    {
+                        attributeDomain,
+                        libraryRepo
+                    },
+                    ctx
+                )
             );
 
             const mergedValidationErrors = validationErrors.reduce((acc, cur) => ({...acc, ...cur}), {});
@@ -149,28 +157,38 @@ export default function({
             }
 
             const lib = existingLib
-                ? await libraryRepo.updateLibrary(dataToSave as ILibrary)
-                : await libraryRepo.createLibrary(dataToSave as ILibrary);
+                ? await libraryRepo.updateLibrary({
+                      libData: dataToSave as ILibrary,
+                      ctx
+                  })
+                : await libraryRepo.createLibrary({
+                      libData: dataToSave as ILibrary,
+                      ctx
+                  });
 
             if (libAttributes.length) {
-                await libraryRepo.saveLibraryAttributes(dataToSave.id, libAttributes);
+                await libraryRepo.saveLibraryAttributes({
+                    libId: dataToSave.id,
+                    attributes: libAttributes,
+                    ctx
+                });
             }
 
-            await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils});
+            await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils}, ctx);
 
             return lib;
         },
-        async deleteLibrary(id: string, infos: IQueryInfos): Promise<ILibrary> {
+        async deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary> {
             // Check permissions
             const action = AdminPermissionsActions.DELETE_LIBRARY;
-            const canSaveLibrary = await permissionDomain.getAdminPermission(action, infos.userId);
+            const canSaveLibrary = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveLibrary) {
                 throw new PermissionError(action);
             }
 
             // Get library
-            const libraries = await this.getLibraries({filters: {id}});
+            const libraries = await this.getLibraries({params: {filters: {id}}, ctx});
 
             if (!libraries.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
@@ -181,9 +199,9 @@ export default function({
                 throw new ValidationError({id: Errors.SYSTEM_LIBRARY_DELETION});
             }
 
-            await runBehaviorPostDelete(lib, {treeRepo, utils});
+            await runBehaviorPostDelete(lib, {treeRepo, utils}, ctx);
 
-            return libraryRepo.deleteLibrary(id);
+            return libraryRepo.deleteLibrary({id, ctx});
         }
     };
 }

@@ -3,8 +3,13 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import attributeRepo from '../attribute/attributeRepo';
 import {IValueRepo} from '../value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeRepo', () => {
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: 'attributeRepoTest'
+    };
     describe('getAttribute', () => {
         test('Get all attributes', async function() {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
@@ -25,7 +30,7 @@ describe('AttributeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const trees = await repo.getAttributes();
+            const trees = await repo.getAttributes({ctx});
 
             expect(mockDbUtils.findCoreEntity.mock.calls.length).toBe(1);
             expect(trees).toEqual([
@@ -76,12 +81,12 @@ describe('AttributeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const updatedAttr = await attrRepo.updateAttribute(attrData);
+            const updatedAttr = await attrRepo.updateAttribute({attrData, ctx});
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(updatedAttr).toMatchObject(attrData);
         });
@@ -122,12 +127,12 @@ describe('AttributeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const createdAttr = await attrRepo.createAttribute(attrData);
+            const createdAttr = await attrRepo.createAttribute({attrData, ctx});
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^INSERT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(createdAttr).toMatchObject(attrData);
         });
@@ -178,18 +183,18 @@ describe('AttributeRepo', () => {
             });
             attrRepo.getAttributes = global.__mockPromise([attrData]);
 
-            const deleteRes = await attrRepo.deleteAttribute(attrData);
+            const deleteRes = await attrRepo.deleteAttribute({attrData, ctx});
 
             expect(mockDbServ.execute.mock.calls.length).toBe(2);
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/^REMOVE/);
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/^REMOVE/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
         });
     });
 });

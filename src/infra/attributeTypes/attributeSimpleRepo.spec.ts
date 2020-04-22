@@ -1,11 +1,16 @@
 import {Database} from 'arangojs';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleRepo from './attributeSimpleRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {
         id: 'test_attr',
         type: AttributeTypes.SIMPLE
+    };
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: 'attributeSimpleRepoTest'
     };
 
     describe('createValue', () => {
@@ -25,14 +30,20 @@ describe('AttributeIndexRepo', () => {
 
             const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
 
-            const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
-                value: 'test val'
+            const createdVal = await attrRepo.createValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    value: 'test val'
+                },
+                ctx
             });
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject(updatedValueData);
         });
@@ -49,12 +60,17 @@ describe('AttributeIndexRepo', () => {
 
             const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
 
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
+            const values = await attrRepo.getValues({
+                library: 'test_lib',
+                recordId: 123456,
+                attribute: mockAttribute,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
@@ -80,13 +96,19 @@ describe('AttributeIndexRepo', () => {
 
             const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
 
-            const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
-                value: 'test val'
+            const deletedVal = await attrRepo.deleteValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    value: 'test val'
+                },
+                ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(deletedVal).toMatchObject(deletedValueData);
         });
@@ -127,11 +149,14 @@ describe('AttributeIndexRepo', () => {
             };
 
             const attrTypeRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
-            const res = await attrTypeRepo.clearAllValues({id: 'test_attr', type: AttributeTypes.SIMPLE});
+            const res = await attrTypeRepo.clearAllValues({
+                attribute: {id: 'test_attr', type: AttributeTypes.SIMPLE},
+                ctx
+            });
 
             expect(res).toEqual(true);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
     });
 });

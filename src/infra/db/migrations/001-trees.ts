@@ -7,7 +7,7 @@ interface IDeps {
 
 export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
-        async run() {
+        async run(ctx) {
             if (!(await dbService.collectionExists('core_trees'))) {
                 await dbService.createCollection('core_trees');
             }

@@ -30,58 +30,49 @@ export interface IFindRecordParams {
 }
 
 export interface IRecordDomain {
-    /**
-     * Create new record
-     *
-     * @param library       Library ID
-     */
-    createRecord(library: string, infos: IQueryInfos): Promise<IRecord>;
+    createRecord(library: string, ctx: IQueryInfos): Promise<IRecord>;
 
     /**
      * Update record
      * Must be used to update metadata (modified_at, ...) only
-     *
-     * @param library       Library ID
-     * @param infos      Query context (userId...)
-     * @param recordData
      */
-    updateRecord(library: string, recordData: IRecord, infos: IQueryInfos): Promise<IRecord>;
+    updateRecord({
+        library,
+        recordData,
+        ctx
+    }: {
+        library: string;
+        recordData: IRecord;
+        ctx: IQueryInfos;
+    }): Promise<IRecord>;
 
-    /**
-     * Delete record
-     *
-     * @param library    Library ID
-     * @param id         Record ID
-     * @param infos      Query context (userId...)
-     * @param recordData
-     */
-    deleteRecord(library: string, id: number, infos: IQueryInfos): Promise<IRecord>;
+    deleteRecord({library, id, ctx}: {library: string; id: number; ctx: IQueryInfos}): Promise<IRecord>;
 
     /**
      * Search records
-     *
-     * @param library Library Id
-     * @param filters Filters to apply on records selection
-     * @param fields Fields to retrieve on each records
+     * Filters to apply on records selection
+     * Fields to retrieve on each records
      */
-    find(params: IFindRecordParams): Promise<IListWithCursor<IRecord>>;
+    find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
 
-    getRecordFieldValue(
-        library: string,
-        record: IRecord,
-        attributeId: string,
-        options?: IValuesOptions
-    ): Promise<IValue | IValue[]>;
+    getRecordFieldValue({
+        library,
+        record,
+        attributeId,
+        options,
+        ctx
+    }: {
+        library: string;
+        record: IRecord;
+        attributeId: string;
+        options?: IValuesOptions;
+        ctx: IQueryInfos;
+    }): Promise<IValue | IValue[]>;
 
-    /**
-     * Return record identity values
-     *
-     * @param record
-     */
-    getRecordIdentity(record: IRecord): Promise<IRecordIdentity>;
+    getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity>;
 
-    deactivateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord>;
-    activateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord>;
+    deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
+    activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
 }
 
 interface IDeps {
@@ -109,16 +100,19 @@ export default function({
      * @param attrProps
      * @param record
      * @param library
+     * @param ctx
      */
     const _runActionsList = async (
         isLinkAttribute: boolean,
         value: IValue,
         attrProps: IAttribute,
         record: IRecord,
-        library: string
+        library: string,
+        ctx: IQueryInfos
     ) =>
         !isLinkAttribute && value !== null && !!attrProps.actions_list && !!attrProps.actions_list.getValue
             ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
+                  ...ctx,
                   attribute: attrProps,
                   recordId: record.id,
                   library,
@@ -133,12 +127,14 @@ export default function({
      * @param attribute
      * @param library
      * @param options
+     * @param ctx
      */
     const _extractRecordValue = async (
         record: IRecord,
         attribute: IAttribute,
         library: string,
-        options: IValuesOptions
+        options: IValuesOptions,
+        ctx: IQueryInfos
     ): Promise<IValue[]> => {
         let values;
         if (typeof record[attribute.id] !== 'undefined') {
@@ -149,7 +145,13 @@ export default function({
                 }
             ];
         } else {
-            values = await valueDomain.getValues(library, record.id, attribute.id, options);
+            values = await valueDomain.getValues({
+                library,
+                recordId: record.id,
+                attribute: attribute.id,
+                options,
+                ctx
+            });
         }
         return values;
     };
@@ -166,7 +168,8 @@ export default function({
         attribute: IAttribute,
         value: IValue,
         record: IRecord,
-        library: string
+        library: string,
+        ctx: IQueryInfos
     ): Promise<IValue> => {
         let val = {...value}; // Don't mutate given value
 
@@ -190,7 +193,7 @@ export default function({
             attribute.id !== 'id' &&
             !!attribute.actions_list &&
             !!attribute.actions_list.getValue
-                ? await _runActionsList(isLinkAttribute, val, attribute, record, library)
+                ? await _runActionsList(isLinkAttribute, val, attribute, record, library, ctx)
                 : val;
 
         processedValue.raw_value = val.value;
@@ -199,34 +202,35 @@ export default function({
         return processedValue;
     };
 
-    const ret = {
-        async createRecord(library: string, infos: IQueryInfos): Promise<IRecord> {
+    return {
+        async createRecord(library: string, ctx: IQueryInfos): Promise<IRecord> {
             const recordData = {
                 created_at: moment().unix(),
-                created_by: infos.userId,
+                created_by: ctx.userId,
                 modified_at: moment().unix(),
-                modified_by: infos.userId,
+                modified_by: ctx.userId,
                 active: true
             };
 
-            return recordRepo.createRecord(library, recordData);
+            return recordRepo.createRecord({libraryId: library, recordData, ctx});
         },
-        async updateRecord(library: string, recordData: IRecord, infos: IQueryInfos): Promise<IRecord> {
+        async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             // Check permission
             const canUpdate = await recordPermissionDomain.getRecordPermission(
                 RecordPermissionsActions.DELETE,
-                infos.userId,
+                ctx.userId,
                 recordData.library,
-                recordData.id
+                recordData.id,
+                ctx
             );
 
             if (!canUpdate) {
                 throw new PermissionError(RecordPermissionsActions.DELETE);
             }
 
-            return recordRepo.updateRecord(library, recordData);
+            return recordRepo.updateRecord({libraryId: library, recordData, ctx});
         },
-        async deleteRecord(library: string, id: number, infos: IQueryInfos): Promise<IRecord> {
+        async deleteRecord({library, id, ctx}): Promise<IRecord> {
             // Get library
             // const lib = await this.getLibraries({id});
 
@@ -242,25 +246,26 @@ export default function({
             // Check permission
             const canDelete = await recordPermissionDomain.getRecordPermission(
                 RecordPermissionsActions.DELETE,
-                infos.userId,
+                ctx.userId,
                 library,
-                id
+                id,
+                ctx
             );
 
             if (!canDelete) {
                 throw new PermissionError(RecordPermissionsActions.DELETE);
             }
 
-            return recordRepo.deleteRecord(library, id);
+            return recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
         },
-        async find(params: IFindRecordParams): Promise<IListWithCursor<IRecord>> {
+        async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
             const {library, filters, pagination, withCount, retrieveInactive = false} = params;
             const fullFilters: IRecordFilterOption[] = [];
 
             // Hydrate filters with attribute properties and cast filters values if needed
             if (typeof filters !== 'undefined' && filters) {
                 for (const attrId of Object.keys(filters)) {
-                    const attribute = await attributeDomain.getAttributeProperties(attrId);
+                    const attribute = await attributeDomain.getAttributeProperties({id: attrId, ctx});
                     const value =
                         attribute.format === AttributeFormats.NUMERIC ? Number(filters[attrId]) : filters[attrId];
 
@@ -271,50 +276,88 @@ export default function({
                 }
             }
 
-            const records = await recordRepo.find(library, fullFilters, pagination, withCount, retrieveInactive);
+            const records = await recordRepo.find({
+                libraryId: library,
+                filters: fullFilters,
+                pagination,
+                withCount,
+                retrieveInactive,
+                ctx
+            });
 
             return records;
         },
-        async getRecordIdentity(record: IRecord): Promise<IRecordIdentity> {
-            const lib = await libraryDomain.getLibraryProperties(record.library);
+        async getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> {
+            const lib = await libraryDomain.getLibraryProperties(record.library, ctx);
             const conf = lib.recordIdentityConf || {};
 
             return {
                 id: record.id,
                 library: lib,
-                label: conf.label ? (await valueDomain.getValues(lib.id, record.id, conf.label)).pop().value : null,
-                color: conf.color ? (await valueDomain.getValues(lib.id, record.id, conf.color)).pop().value : null,
+                label: conf.label
+                    ? (
+                          await valueDomain.getValues({
+                              library: lib.id,
+                              recordId: record.id,
+                              attribute: conf.label,
+                              ctx
+                          })
+                      ).pop().value
+                    : null,
+                color: conf.color
+                    ? (
+                          await valueDomain.getValues({
+                              library: lib.id,
+                              recordId: record.id,
+                              attribute: conf.color,
+                              ctx
+                          })
+                      ).pop().value
+                    : null,
                 preview: conf.preview
-                    ? (await valueDomain.getValues(lib.id, record.id, conf.preview)).pop().value
+                    ? (
+                          await valueDomain.getValues({
+                              library: lib.id,
+                              recordId: record.id,
+                              attribute: conf.preview,
+                              ctx
+                          })
+                      ).pop().value
                     : null
             };
         },
-        async getRecordFieldValue(
-            library: string,
-            record: IRecord,
-            attributeId: string,
-            options?: IValuesOptions
-        ): Promise<IValue | IValue[]> {
-            const attrProps = await attributeDomain.getAttributeProperties(attributeId);
-            const values = await _extractRecordValue(record, attrProps, library, options);
+        async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[]> {
+            const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+            const values = await _extractRecordValue(record, attrProps, library, options, ctx);
             const forceArray = options?.forceArray ?? false;
 
             const formattedValues = await Promise.all(
-                values.map(v => _formatRecordValue(attrProps, v, record, library))
+                values.map(v => _formatRecordValue(attrProps, v, record, library, ctx))
             );
 
             return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0];
         },
-        async deactivateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord> {
-            const savedVal = await valueDomain.saveValue(record.library, record.id, 'active', {value: false}, infos);
+        async deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
+            const savedVal = await valueDomain.saveValue({
+                library: record.library,
+                recordId: record.id,
+                attribute: 'active',
+                value: {value: false},
+                ctx
+            });
 
             return {...record, active: savedVal.value};
         },
-        async activateRecord(record: IRecord, infos: IQueryInfos): Promise<IRecord> {
-            const savedVal = await valueDomain.saveValue(record.library, record.id, 'active', {value: true}, infos);
+        async activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
+            const savedVal = await valueDomain.saveValue({
+                library: record.library,
+                recordId: record.id,
+                attribute: 'active',
+                value: {value: true},
+                ctx
+            });
 
             return {...record, active: savedVal.value};
         }
     };
-    return ret;
 }

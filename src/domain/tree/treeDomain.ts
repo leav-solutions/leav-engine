@@ -19,45 +19,73 @@ import {IRecordDomain} from '../record/recordDomain';
 import validateFilesParent from './helpers/validateFilesParent';
 
 export interface ITreeDomain {
-    isElementPresent(treeId: string, element: ITreeElement): Promise<boolean>;
-    saveTree(tree: ITree, infos: IQueryInfos): Promise<ITree>;
-    deleteTree(id: string, infos: IQueryInfos): Promise<ITree>;
-    getTrees(params?: IGetCoreEntitiesParams): Promise<IList<ITree>>;
+    isElementPresent({
+        treeId,
+        element,
+        ctx
+    }: {
+        treeId: string;
+        element: ITreeElement;
+        ctx: IQueryInfos;
+    }): Promise<boolean>;
+    saveTree(tree: ITree, ctx: IQueryInfos): Promise<ITree>;
+    deleteTree(id: string, ctx: IQueryInfos): Promise<ITree>;
+    getTrees({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
 
     /**
      * Add an element to the tree
-     *
-     * @param element
-     * @param parent Parent must be a record or null to add element to root
+     * parent must be a record or null to add element to root
      */
-    addElement(
-        treeId: string,
-        element: ITreeElement,
-        parent: ITreeElement | null,
-        order?: number
-    ): Promise<ITreeElement>;
+    addElement({
+        treeId,
+        element,
+        parent,
+        order,
+        ctx
+    }: {
+        treeId: string;
+        element: ITreeElement;
+        parent: ITreeElement | null;
+        order?: number;
+        ctx: IQueryInfos;
+    }): Promise<ITreeElement>;
 
     /**
      * Move an element in the tree
      *
-     * @param element
-     * @param parentFrom A record or null to move from root
-     * @param parentTo A record or null to move to root
+     * parentFrom A record or null to move from root
+     * parentTo A record or null to move to root
      */
-    moveElement(
-        treeId: string,
-        element: ITreeElement,
-        parentTo: ITreeElement | null,
-        order?: number
-    ): Promise<ITreeElement>;
+    moveElement({
+        treeId,
+        element,
+        parentTo,
+        order,
+        ctx
+    }: {
+        treeId: string;
+        element: ITreeElement;
+        parentTo: ITreeElement | null;
+        order?: number;
+        ctx: IQueryInfos;
+    }): Promise<ITreeElement>;
 
     /**
      * Delete an element from the tree
      *
-     * @param element
-     * @param parent A record or null to delete from root
+     * parent A record or null to delete from root
      */
-    deleteElement(treeId: string, element: ITreeElement, deleteChildren: boolean | null): Promise<ITreeElement>;
+    deleteElement({
+        treeId,
+        element,
+        deleteChildren,
+        ctx
+    }: {
+        treeId: string;
+        element: ITreeElement;
+        deleteChildren: boolean | null;
+        ctx: IQueryInfos;
+    }): Promise<ITreeElement>;
 
     /**
      * Return the whole tree in the form:
@@ -73,37 +101,59 @@ export interface ITreeDomain {
      *      },
      *      { ... }
      * ]
-     *
-     * @param treeId
      */
-    getTreeContent(treeId: string, startingNode?: ITreeElement): Promise<ITreeNode[]>;
+    getTreeContent({
+        treeId,
+        startingNode,
+        ctx
+    }: {
+        treeId: string;
+        startingNode?: ITreeElement;
+        ctx: IQueryInfos;
+    }): Promise<ITreeNode[]>;
 
     /**
      * Retrieve first level children of an element
-     *
-     * @param treeId
-     * @param element
      */
-    getElementChildren(treeId: string, element: ITreeElement): Promise<ITreeNode[]>;
+    getElementChildren({
+        treeId,
+        element,
+        ctx
+    }: {
+        treeId: string;
+        element: ITreeElement;
+        ctx: IQueryInfos;
+    }): Promise<ITreeNode[]>;
 
     /**
      * Retrieve all ancestors of an element, including element itself and starting from the root
-     *
-     * @param treeId
-     * @param element
      */
-    getElementAncestors(treeId: string, element: ITreeElement): Promise<ITreeNode[]>;
+    getElementAncestors({
+        treeId,
+        element,
+        ctx
+    }: {
+        treeId: string;
+        element: ITreeElement;
+        ctx: IQueryInfos;
+    }): Promise<ITreeNode[]>;
 
     /**
      * Retrieve all records linked to an element via given attribute
-     *
-     * @param treeId
-     * @param attribute
-     * @param element
      */
-    getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]>;
+    getLinkedRecords({
+        treeId,
+        attribute,
+        element,
+        ctx
+    }: {
+        treeId: string;
+        attribute: string;
+        element: ITreeElement;
+        ctx: IQueryInfos;
+    }): Promise<IRecord[]>;
 
-    getLibraryTreeId(library: string): string;
+    getLibraryTreeId(library: string, ctx: IQueryInfos): string;
 }
 
 interface IDeps {
@@ -124,33 +174,36 @@ export default function({
     'core.domain.value': valueDomain = null,
     'core.utils': utils = null
 }: IDeps = {}): ITreeDomain {
-    async function _getTreeProps(treeId: string): Promise<ITree | null> {
-        const trees = await treeRepo.getTrees({filters: {id: treeId}});
+    async function _getTreeProps(treeId: string, ctx: IQueryInfos): Promise<ITree | null> {
+        const trees = await treeRepo.getTrees({params: {filters: {id: treeId}}, ctx});
 
         return trees.list.length ? trees.list[0] : null;
     }
 
-    async function _treeExists(treeId: string): Promise<boolean> {
-        const treeProps = await _getTreeProps(treeId);
+    async function _treeExists(treeId: string, ctx: IQueryInfos): Promise<boolean> {
+        const treeProps = await _getTreeProps(treeId, ctx);
 
         return !!treeProps;
     }
 
-    async function _treeElementExists(treeElement: ITreeElement) {
+    async function _treeElementExists(treeElement: ITreeElement, ctx: IQueryInfos) {
         const record = await recordDomain.find({
-            library: treeElement.library,
-            filters: {
-                id: `${treeElement.id}`
+            params: {
+                library: treeElement.library,
+                filters: {
+                    id: `${treeElement.id}`
+                },
+                retrieveInactive: true
             },
-            retrieveInactive: true
+            ctx
         });
 
         return !!record.list.length;
     }
 
     return {
-        async saveTree(treeData: ITree, infos: IQueryInfos): Promise<ITree> {
-            const trees = await treeRepo.getTrees({filters: {id: treeData.id}});
+        async saveTree(treeData: ITree, ctx: IQueryInfos): Promise<ITree> {
+            const trees = await treeRepo.getTrees({params: {filters: {id: treeData.id}}, ctx});
             const existingTree = !!trees.list.length;
 
             const defaultParams = {id: '', behavior: TreeBehavior.STANDARD, system: false, label: {fr: '', en: ''}};
@@ -162,7 +215,7 @@ export default function({
 
             // Check permissions
             const action = existingTree ? AdminPermissionsActions.EDIT_TREE : AdminPermissionsActions.CREATE_TREE;
-            const canSaveTree = await permissionDomain.getAdminPermission(action, infos.userId);
+            const canSaveTree = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
@@ -173,7 +226,7 @@ export default function({
             }
 
             // Check if all libraries exists
-            const libs = await libraryDomain.getLibraries();
+            const libs = await libraryDomain.getLibraries({ctx});
             const libsIds = libs.list.map(lib => lib.id);
 
             const unknownLibs = difference(dataToSave.libraries, libsIds);
@@ -197,21 +250,21 @@ export default function({
             }
 
             const savedTree = existingTree
-                ? await treeRepo.updateTree(dataToSave as ITree)
-                : await treeRepo.createTree(dataToSave as ITree);
+                ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
+                : await treeRepo.createTree({treeData: dataToSave as ITree, ctx});
 
             return savedTree;
         },
-        async deleteTree(id: string, infos: IQueryInfos): Promise<ITree> {
+        async deleteTree(id: string, ctx: IQueryInfos): Promise<ITree> {
             // Check permissions
             const action = AdminPermissionsActions.DELETE_TREE;
-            const canSaveTree = await permissionDomain.getAdminPermission(action, infos.userId);
+            const canSaveTree = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
             }
 
-            const trees = await this.getTrees({filters: {id}});
+            const trees = await this.getTrees({params: {filters: {id}}, ctx});
 
             if (!trees.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_TREE});
@@ -221,45 +274,40 @@ export default function({
                 throw new ValidationError({id: Errors.SYSTEM_TREE_DELETION});
             }
 
-            return treeRepo.deleteTree(id);
+            return treeRepo.deleteTree({id, ctx});
         },
-        async getTrees(params?: IGetCoreEntitiesParams): Promise<IList<ITree>> {
+        async getTrees({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
             }
 
-            return treeRepo.getTrees(initializedParams);
+            return treeRepo.getTrees({params: initializedParams, ctx});
         },
-        async addElement(
-            treeId: string,
-            element: ITreeElement,
-            parent: ITreeElement | null = null,
-            order: number = 0
-        ): Promise<ITreeElement> {
+        async addElement({treeId, element, parent = null, order = 0, ctx}): Promise<ITreeElement> {
             const errors: any = {};
-            const treeProps = await _getTreeProps(treeId);
+            const treeProps = await _getTreeProps(treeId, ctx);
             const treeExists = !!treeProps;
 
-            if (!(await _treeExists(treeId))) {
+            if (!(await _treeExists(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            if (!(await _treeElementExists(element))) {
+            if (!(await _treeElementExists(element, ctx))) {
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
-            if (parent !== null && !(await _treeElementExists(parent))) {
+            if (parent !== null && !(await _treeElementExists(parent, ctx))) {
                 errors.parent = Errors.UNKNOWN_PARENT;
             }
 
-            if (await treeRepo.isElementPresent(treeId, element)) {
+            if (await treeRepo.isElementPresent({treeId, element, ctx})) {
                 errors.element = Errors.ELEMENT_ALREADY_PRESENT;
             }
 
             // If files tree, check if parent is not a file
             if (treeExists && treeProps.behavior === TreeBehavior.FILES) {
-                const validateParentDir = await validateFilesParent(parent, {valueDomain});
+                const validateParentDir = await validateFilesParent(parent, {valueDomain}, ctx);
 
                 if (!validateParentDir.isValid) {
                     errors.parent = validateParentDir.message;
@@ -270,33 +318,28 @@ export default function({
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.addElement(treeId, element, parent, order);
+            return treeRepo.addElement({treeId, element, parent, order, ctx});
         },
-        async moveElement(
-            treeId: string,
-            element: ITreeElement,
-            parentTo: ITreeElement | null = null,
-            order: number = 0
-        ): Promise<ITreeElement> {
+        async moveElement({treeId, element, parentTo = null, order = 0, ctx}): Promise<ITreeElement> {
             const errors: any = {};
-            const treeProps = await _getTreeProps(treeId);
+            const treeProps = await _getTreeProps(treeId, ctx);
             const treeExists = !!treeProps;
 
-            if (!(await _treeExists(treeId))) {
+            if (!(await _treeExists(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            if (!(await _treeElementExists(element))) {
+            if (!(await _treeElementExists(element, ctx))) {
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
-            if (parentTo !== null && !(await _treeElementExists(parentTo))) {
+            if (parentTo !== null && !(await _treeElementExists(parentTo, ctx))) {
                 errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
             // If files tree, check if parent is not a file
             if (treeExists && treeProps.behavior === TreeBehavior.FILES) {
-                const validateParentDir = await validateFilesParent(parentTo, {valueDomain});
+                const validateParentDir = await validateFilesParent(parentTo, {valueDomain}, ctx);
                 if (!validateParentDir.isValid) {
                     errors.parent = validateParentDir.message;
                 }
@@ -306,20 +349,16 @@ export default function({
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.moveElement(treeId, element, parentTo, order);
+            return treeRepo.moveElement({treeId, element, parentTo, order, ctx});
         },
-        async deleteElement(
-            treeId: string,
-            element: ITreeElement,
-            deleteChildren: boolean | null = true
-        ): Promise<ITreeElement> {
+        async deleteElement({treeId, element, deleteChildren = true, ctx}): Promise<ITreeElement> {
             const errors: any = {};
 
-            if (!(await _treeExists(treeId))) {
+            if (!(await _treeExists(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            if (!(await _treeElementExists(element))) {
+            if (!(await _treeElementExists(element, ctx))) {
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
@@ -327,11 +366,11 @@ export default function({
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.deleteElement(treeId, element, deleteChildren);
+            return treeRepo.deleteElement({treeId, element, deleteChildren, ctx});
         },
-        async getTreeContent(treeId: string, startingNode: ITreeElement = null): Promise<ITreeNode[]> {
+        async getTreeContent({treeId, startingNode = null, ctx}): Promise<ITreeNode[]> {
             const errors: any = {};
-            if (!(await _treeExists(treeId))) {
+            if (!(await _treeExists(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
@@ -339,29 +378,29 @@ export default function({
                 throw new ValidationError(errors);
             }
 
-            const treeContent = await treeRepo.getTreeContent(treeId, startingNode);
+            const treeContent = await treeRepo.getTreeContent({treeId, startingNode, ctx});
 
             return treeContent;
         },
-        async getElementChildren(treeId: string, element: ITreeElement): Promise<ITreeNode[]> {
-            return treeRepo.getElementChildren(treeId, element);
+        async getElementChildren({treeId, element, ctx}): Promise<ITreeNode[]> {
+            return treeRepo.getElementChildren({treeId, element, ctx});
         },
-        async getElementAncestors(treeId: string, element: ITreeElement): Promise<ITreeNode[]> {
-            return treeRepo.getElementAncestors(treeId, element);
+        async getElementAncestors({treeId, element, ctx}): Promise<ITreeNode[]> {
+            return treeRepo.getElementAncestors({treeId, element, ctx});
         },
-        async getLinkedRecords(treeId: string, attribute: string, element: ITreeElement): Promise<IRecord[]> {
-            const attrs = await attributeDomain.getAttributes({filters: {id: attribute}});
+        async getLinkedRecords({treeId, attribute, element, ctx}): Promise<IRecord[]> {
+            const attrs = await attributeDomain.getAttributes({params: {filters: {id: attribute}}, ctx});
 
             if (!attrs.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
             }
 
-            return treeRepo.getLinkedRecords(treeId, attribute, element);
+            return treeRepo.getLinkedRecords({treeId, attribute, element, ctx});
         },
-        async isElementPresent(treeId: string, element: ITreeElement): Promise<boolean> {
-            return treeRepo.isElementPresent(treeId, element);
+        async isElementPresent({treeId, element, ctx}): Promise<boolean> {
+            return treeRepo.isElementPresent({treeId, element, ctx});
         },
-        getLibraryTreeId(library) {
+        getLibraryTreeId(library, ctx) {
             return utils.getLibraryTreeId(library);
         }
     };

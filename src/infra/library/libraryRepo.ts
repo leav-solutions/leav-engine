@@ -7,6 +7,7 @@ import {IList} from '../../_types/list';
 import {IAttributeRepo} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 
 const LIB_COLLECTION_NAME = 'core_libraries';
 export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
@@ -15,44 +16,50 @@ export interface ILibraryRepo {
     /**
      * Return libraries
      *
-     * @param filters                   Filters libraries returned
+     * filters                   Filters libraries returned
      * @return Promise<Array<object>>   All libraries data
      */
-    getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>>;
+    getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
 
     /**
      * Create new library
      *
-     * @param libData
      * @return Promise<object>  New library data
      */
-    createLibrary(libData: ILibrary): Promise<ILibrary>;
+    createLibrary({libData, ctx}: {libData: ILibrary; ctx: IQueryInfos}): Promise<ILibrary>;
 
     /**
      * Update existing library
      *
-     * @param libData   Must contain "id" key to identify library to update
+     * libData   Must contain "id" key to identify library to update
      * @return object   Updated library data
      */
-    updateLibrary(libData: ILibrary): Promise<ILibrary>;
+    updateLibrary({libData, ctx}: {libData: ILibrary; ctx: IQueryInfos}): Promise<ILibrary>;
 
     /**
      * Delete library
-     * @param id
+     *
      * @return {}   Deleted library data
      */
-    deleteLibrary(id: string): Promise<ILibrary>;
+    deleteLibrary({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<ILibrary>;
 
     /**
      * Link attributes to library
      *
-     * @param libId
-     * @param attributes Array of attributes IDs
+     * attributes Array of attributes IDs
      * @return array     List of linked attributes
      */
-    saveLibraryAttributes(libId: string, attributes: string[] | IAttribute[]): Promise<string[]>;
+    saveLibraryAttributes({
+        libId,
+        attributes,
+        ctx
+    }: {
+        libId: string;
+        attributes: string[];
+        ctx: IQueryInfos;
+    }): Promise<string[]>;
 
-    getLibraryAttributes(libId: string): Promise<IAttribute[]>;
+    getLibraryAttributes({libId, ctx}: {libId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
 }
 
 interface IDeps {
@@ -67,7 +74,7 @@ export default function({
     'core.infra.attribute': attributeRepo = null
 }: IDeps = {}): ILibraryRepo {
     return {
-        async getLibraries(params?: IGetCoreEntitiesParams): Promise<IList<ILibrary>> {
+        async getLibraries({params = {}, ctx}): Promise<IList<ILibrary>> {
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -77,9 +84,9 @@ export default function({
             };
 
             const initializedParams = {...defaultParams, ...params};
-            return dbUtils.findCoreEntity<ILibrary>({...initializedParams, collectionName: LIB_COLLECTION_NAME});
+            return dbUtils.findCoreEntity<ILibrary>({...initializedParams, collectionName: LIB_COLLECTION_NAME, ctx});
         },
-        async createLibrary(libData: ILibrary): Promise<ILibrary> {
+        async createLibrary({libData, ctx}): Promise<ILibrary> {
             const docToInsert = dbUtils.convertToDoc(libData);
 
             // Create new collection for library
@@ -87,30 +94,45 @@ export default function({
 
             // Insert in libraries collection
             const libCollc = dbService.db.collection(LIB_COLLECTION_NAME);
-            const libRes = await dbService.execute(aql`INSERT ${docToInsert} IN ${libCollc} RETURN NEW`);
+            const libRes = await dbService.execute({
+                query: aql`INSERT ${docToInsert} IN ${libCollc} RETURN NEW`,
+                ctx
+            });
 
             return dbUtils.cleanup(libRes.pop());
         },
-        async updateLibrary(libData: ILibrary): Promise<ILibrary> {
+        async updateLibrary({libData, ctx}): Promise<ILibrary> {
             const docToInsert = dbUtils.convertToDoc(libData);
             delete docToInsert.attributes; // Attributes have to be handled separately
 
             // Insert in libraries collection
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
-            const res = await dbService.execute(aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`);
+            const res = await dbService.execute({
+                query: aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`,
+                ctx
+            });
 
             return dbUtils.cleanup(res.pop());
         },
-        async deleteLibrary(id: string): Promise<ILibrary> {
+        async deleteLibrary({id, ctx}): Promise<ILibrary> {
             // Delete attributes linked to this library
-            const linkedAttributes = await attributeRepo.getAttributes({filters: {linked_library: id}});
+            const linkedAttributes = await attributeRepo.getAttributes({
+                params: {filters: {linked_library: id}},
+                ctx
+            });
             for (const linkedAttribute of linkedAttributes.list) {
-                attributeRepo.deleteAttribute(linkedAttribute);
+                attributeRepo.deleteAttribute({
+                    attrData: linkedAttribute,
+                    ctx
+                });
             }
 
             // Delete library
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
-            const res = await dbService.execute(aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`);
+            const res = await dbService.execute({
+                query: aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`,
+                ctx
+            });
 
             // Delete library's collection
             await dbService.dropCollection(id);
@@ -118,12 +140,12 @@ export default function({
             // Return deleted library
             return dbUtils.cleanup(res.pop());
         },
-        async saveLibraryAttributes(libId: string, attributes: string[]): Promise<string[]> {
+        async saveLibraryAttributes({libId, attributes, ctx}): Promise<string[]> {
             // TODO: in CONCAT, query will fail is using constant instead of hard coding 'core_attributes'
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
             // Get current library attributes
-            const currentAttrs = await this.getLibraryAttributes(libId);
+            const currentAttrs = await this.getLibraryAttributes({libId, ctx});
             const deletedAttrs = difference(
                 currentAttrs.filter(a => !a.system).map(a => a.id),
                 attributes
@@ -131,38 +153,44 @@ export default function({
 
             // Unlink attributes not used anymore
             if (deletedAttrs.length) {
-                const delLibAttribRes = await dbService.execute(aql`
-                    FOR attr IN ${deletedAttrs}
-                        FOR l in ${libAttribCollec}
-                            FILTER
-                                l._from == ${LIB_COLLECTION_NAME + '/' + libId}
-                                AND l._to == CONCAT('core_attributes/', attr)
-                            REMOVE l
-                            IN ${libAttribCollec}
-                            RETURN OLD
-                `);
+                const delLibAttribRes = await dbService.execute({
+                    query: aql`
+                        FOR attr IN ${deletedAttrs}
+                            FOR l in ${libAttribCollec}
+                                FILTER
+                                    l._from == ${LIB_COLLECTION_NAME + '/' + libId}
+                                    AND l._to == CONCAT('core_attributes/', attr)
+                                REMOVE l
+                                IN ${libAttribCollec}
+                                RETURN OLD
+                    `,
+                    ctx
+                });
             }
 
             // Save new ones
-            const libAttribRes = await dbService.execute(aql`
-                FOR attr IN ${attributes}
-                    LET attrToInsert = {
-                        _from: ${LIB_COLLECTION_NAME + '/' + libId},
-                        _to: CONCAT('core_attributes/', attr)
-                    }
-                    UPSERT {
-                        _from: ${LIB_COLLECTION_NAME + '/' + libId},
-                        _to: CONCAT('core_attributes/', attr)
-                    }
-                    INSERT attrToInsert
-                    UPDATE attrToInsert
-                    IN ${libAttribCollec}
-                    RETURN NEW
-            `);
+            const libAttribRes = await dbService.execute({
+                query: aql`
+                    FOR attr IN ${attributes}
+                        LET attrToInsert = {
+                            _from: ${LIB_COLLECTION_NAME + '/' + libId},
+                            _to: CONCAT('core_attributes/', attr)
+                        }
+                        UPSERT {
+                            _from: ${LIB_COLLECTION_NAME + '/' + libId},
+                            _to: CONCAT('core_attributes/', attr)
+                        }
+                        INSERT attrToInsert
+                        UPDATE attrToInsert
+                        IN ${libAttribCollec}
+                        RETURN NEW
+                `,
+                ctx
+            });
 
             return libAttribRes.map(res => res._to.split('/')[1]);
         },
-        async getLibraryAttributes(libId: string): Promise<IAttribute[]> {
+        async getLibraryAttributes({libId, ctx}): Promise<IAttribute[]> {
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
@@ -174,7 +202,7 @@ export default function({
                 RETURN v
             `;
 
-            const res = await dbService.execute(query);
+            const res = await dbService.execute({query, ctx});
 
             return res.map(dbUtils.cleanup);
         }

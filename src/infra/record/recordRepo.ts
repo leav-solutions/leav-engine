@@ -10,36 +10,45 @@ import {IRecord, IRecordFilterOption} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
 export interface IRecordRepo {
-    /**
-     * Create new record
-     *
-     * @param library       Library ID
-     * @param recordData
-     */
-    createRecord(library: string, recordData: IRecord): Promise<IRecord>;
-
-    updateRecord(library: string, recordData: IRecord): Promise<IRecord>;
-
-    /**
-     * Delete record
-     *
-     * @param library  Library ID
-     * @param id       Record ID
-     * @param recordData
-     */
-    deleteRecord(library: string, id: number): Promise<IRecord>;
-
-    find(
-        library: string,
-        filters?: IRecordFilterOption[],
-        pagination?: IPaginationParams | ICursorPaginationParams,
-        withCount?: boolean,
-        retrieveInactive?: boolean
-    ): Promise<IListWithCursor<IRecord>>;
+    createRecord({
+        libraryId,
+        recordData,
+        ctx
+    }: {
+        libraryId: string;
+        recordData: IRecord;
+        ctx: IQueryInfos;
+    }): Promise<IRecord>;
+    updateRecord({
+        libraryId,
+        recordData,
+        ctx
+    }: {
+        libraryId: string;
+        recordData: IRecord;
+        ctx: IQueryInfos;
+    }): Promise<IRecord>;
+    deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: number; ctx: IQueryInfos}): Promise<IRecord>;
+    find({
+        libraryId,
+        filters,
+        pagination,
+        withCount,
+        retrieveInactive,
+        ctx
+    }: {
+        libraryId: string;
+        filters?: IRecordFilterOption[];
+        pagination?: IPaginationParams | ICursorPaginationParams;
+        withCount?: boolean;
+        retrieveInactive?: boolean;
+        ctx: IQueryInfos;
+    }): Promise<IListWithCursor<IRecord>>;
 }
 
 interface IDeps {
@@ -72,19 +81,20 @@ export default function({
     };
 
     return {
-        async find(
-            library: string,
-            filters?: IRecordFilterOption[],
-            pagination?: IPaginationParams | ICursorPaginationParams,
-            withCount: boolean = false,
-            retrieveInactive: boolean = false
-        ): Promise<IListWithCursor<IRecord>> {
+        async find({
+            libraryId,
+            filters,
+            pagination,
+            withCount,
+            retrieveInactive = false,
+            ctx
+        }): Promise<IListWithCursor<IRecord>> {
             const queryParts = [];
             const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
             // Force disbaling count on cursor pagination as it's pointless
-            const countResults = withCount && !withCursorPagination;
+            const withTotalCount = withCount && !withCursorPagination;
 
-            const coll = dbService.db.collection(library);
+            const coll = dbService.db.collection(libraryId);
             queryParts.push(aql`FOR r IN ${coll}`);
 
             if (typeof filters !== 'undefined' && filters.length) {
@@ -122,13 +132,17 @@ export default function({
 
             // Force sorting on ID
             queryParts.push(aql`SORT r._key ASC`);
-            queryParts.push(aql`RETURN MERGE(r, {library: ${library}})`);
+            queryParts.push(aql`RETURN MERGE(r, {library: ${libraryId}})`);
 
             const fullQuery = aql.join(queryParts, '\n');
-            const records = await dbService.execute<IExecuteWithCount | any[]>(fullQuery, countResults);
+            const records = await dbService.execute<IExecuteWithCount | any[]>({
+                query: fullQuery,
+                withTotalCount,
+                ctx
+            });
 
-            const list: any[] = countResults ? (records as IExecuteWithCount).results : (records as any[]);
-            const totalCount = countResults ? (records as IExecuteWithCount).totalCount : null;
+            const list: any[] = withTotalCount ? (records as IExecuteWithCount).results : (records as any[]);
+            const totalCount = withTotalCount ? (records as IExecuteWithCount).totalCount : null;
 
             // TODO: detect if we reach end/begining of the list and should not provide a cursor
             const cursor: IPaginationCursors = pagination
@@ -145,8 +159,8 @@ export default function({
             };
             return returnVal;
         },
-        async createRecord(library: string, recordData: IRecord): Promise<IRecord> {
-            const collection = dbService.db.collection(library);
+        async createRecord({libraryId, recordData, ctx}): Promise<IRecord> {
+            const collection = dbService.db.collection(libraryId);
             let newRecord = await collection.save(recordData);
             newRecord = await collection.document(newRecord);
 
@@ -154,33 +168,39 @@ export default function({
 
             return dbUtils.cleanup(newRecord);
         },
-        async deleteRecord(library: string, id: number): Promise<IRecord> {
-            const collection = dbService.db.collection(library);
+        async deleteRecord({libraryId, recordId, ctx}): Promise<IRecord> {
+            const collection = dbService.db.collection(libraryId);
             const edgeCollection = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Delete record values
-            const deleteValuesRes = await dbService.execute(aql`
-                FOR l IN ${edgeCollection}
-                    FILTER l._from == ${library + '/' + id} OR l._to == ${library + '/' + id}
-                    REMOVE {_key: l._key} IN ${edgeCollection}
-                    RETURN OLD
-            `);
+            const deleteValuesRes = await dbService.execute({
+                query: aql`
+                    FOR l IN ${edgeCollection}
+                        FILTER l._from == ${libraryId + '/' + recordId} OR l._to == ${libraryId + '/' + recordId}
+                        REMOVE {_key: l._key} IN ${edgeCollection}
+                        RETURN OLD
+                `,
+                ctx
+            });
 
             // Delete record
-            const deletedRecord = await collection.remove({_key: String(id)});
+            const deletedRecord = await collection.remove({_key: String(recordId)});
 
             deletedRecord.library = deletedRecord._id.split('/')[0];
             return dbUtils.cleanup(deletedRecord);
         },
-        async updateRecord(library: string, recordData: IRecord): Promise<IRecord> {
-            const collection = dbService.db.collection(library);
+        async updateRecord({libraryId, recordData, ctx}): Promise<IRecord> {
+            const collection = dbService.db.collection(libraryId);
             const dataToSave = {...recordData};
             delete dataToSave.id; // Don't save ID
 
-            const updateRes = await dbService.execute(aql`
-                UPDATE {_key: ${recordData.id}} WITH ${dataToSave} IN ${collection}
-                RETURN NEW
-            `);
+            const updateRes = await dbService.execute({
+                query: aql`
+                    UPDATE {_key: ${recordData.id}} WITH ${dataToSave} IN ${collection}
+                    RETURN NEW
+                `,
+                ctx
+            });
 
             const updatedRecord = dbUtils.cleanup(updateRes[0]);
 

@@ -14,6 +14,7 @@ import {
 import {IRecord} from '../../../_types/record';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
+import {IQueryInfos} from '_types/queryInfos';
 
 interface IGetRecord {
     recordDomain: IRecordDomain;
@@ -26,18 +27,22 @@ export const getRecord = async (
     filePath: string,
     library: string,
     retrieveInactive: boolean,
-    deps: IGetRecord
+    deps: IGetRecord,
+    ctx: IQueryInfos
 ): Promise<IRecord> => {
     let recordsFind: IListWithCursor<IRecord>;
 
     try {
         recordsFind = await deps.recordDomain.find({
-            library,
-            filters: {
-                [FilesAttributes.FILE_NAME]: fileName,
-                [FilesAttributes.FILE_PATH]: filePath
+            params: {
+                library,
+                filters: {
+                    [FilesAttributes.FILE_NAME]: fileName,
+                    [FilesAttributes.FILE_PATH]: filePath
+                },
+                retrieveInactive
             },
-            retrieveInactive
+            ctx
         });
     } catch (e) {
         deps.logger.warn(`[FilesManager] Error when search record : ${join(filePath, fileName)}`);
@@ -61,17 +66,21 @@ export const getRecord = async (
 export const getParentRecord = async (
     fullParentPath: string,
     library: string,
-    deps: IHandleFileSystemDeps
+    deps: IHandleFileSystemDeps,
+    ctx: IQueryInfos
 ): Promise<IRecord | null> => {
     const parentPath = fullParentPath.split('/');
     const parentName = parentPath.pop();
 
     const folderParent = await deps.recordDomain.find({
-        library,
-        filters: {
-            [FilesAttributes.FILE_NAME]: parentName,
-            [FilesAttributes.FILE_PATH]: join(...parentPath)
-        }
+        params: {
+            library,
+            filters: {
+                [FilesAttributes.FILE_NAME]: parentName,
+                [FilesAttributes.FILE_PATH]: join(...parentPath)
+            }
+        },
+        ctx
     });
 
     const parent = folderParent.list[0] ?? null;
@@ -79,7 +88,12 @@ export const getParentRecord = async (
     return parent;
 };
 
-export const createRecordFile = async (recordData: IFilesAttributes, library: string, deps: IHandleFileSystemDeps) => {
+export const createRecordFile = async (
+    recordData: IFilesAttributes,
+    library: string,
+    deps: IHandleFileSystemDeps,
+    ctx: IQueryInfos
+) => {
     const {userId} = deps.config.filesManager;
     let newRecord: IRecord;
 
@@ -96,7 +110,12 @@ export const createRecordFile = async (recordData: IFilesAttributes, library: st
         }));
 
         try {
-            const responses = await deps.valueDomain.saveValueBatch(library, newRecord.id, values, {userId});
+            const responses = await deps.valueDomain.saveValueBatch({
+                library,
+                recordId: newRecord.id,
+                values,
+                ctx
+            });
             // check error in responses
         } catch (e) {
             deps.logger.warn(`[FilesManager] Error when save values for new record : ${newRecord.id}`);
@@ -114,7 +133,8 @@ export const updateRecordFile = async (
         valueDomain: IValueDomain;
         config: Config.IConfig;
         logger: winston.Winston;
-    }
+    },
+    ctx: IQueryInfos
 ) => {
     const {userId} = deps.config.filesManager;
 
@@ -125,7 +145,12 @@ export const updateRecordFile = async (
     }));
 
     try {
-        await deps.valueDomain.saveValueBatch(library, recordId, values, {userId});
+        await deps.valueDomain.saveValueBatch({
+            library,
+            recordId,
+            values,
+            ctx
+        });
     } catch (e) {
         deps.logger.warn(`[FilesManager] Error when update record: ${recordId}`);
     }
@@ -142,7 +167,8 @@ export const createFilesTreeElement = async (
     record: IRecord,
     parentRecords: IRecord,
     library: string,
-    deps: IHandleFileSystemDeps
+    deps: IHandleFileSystemDeps,
+    ctx: IQueryInfos
 ) => {
     const parentTreeElement = parentRecords
         ? {
@@ -152,29 +178,31 @@ export const createFilesTreeElement = async (
         : null;
 
     try {
-        await deps.treeDomain.addElement(
-            deps.utils.getLibraryTreeId(library),
-            {
+        await deps.treeDomain.addElement({
+            treeId: deps.utils.getLibraryTreeId(library),
+            element: {
                 id: record.id,
                 library
             },
-            parentTreeElement
-        );
+            parent: parentTreeElement,
+            ctx
+        });
     } catch (e) {
         deps.logger.warn(`[FilesManager] Error when create tree element, record id: ${record.id}`);
     }
 };
 
-export const deleteFilesTreeElement = async (recordId: number, library: string, deps: IHandleFileSystemDeps) => {
+export const deleteFilesTreeElement = async (recordId: number, library: string, deps: IHandleFileSystemDeps, ctx) => {
     try {
-        await deps.treeDomain.deleteElement(
-            deps.utils.getLibraryTreeId(library),
-            {
+        await deps.treeDomain.deleteElement({
+            treeId: deps.utils.getLibraryTreeId(library),
+            element: {
                 id: recordId,
                 library
             },
-            true
-        );
+            deleteChildren: true,
+            ctx
+        });
     } catch (e) {
         deps.logger.warn(`[FilesManager] Error when delete element from tree: ${recordId}`);
     }

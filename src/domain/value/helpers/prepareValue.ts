@@ -19,10 +19,11 @@ interface IPrepareValueParams {
         attributeDomain: IAttributeDomain;
         utils: IUtils;
     };
+    ctx: IQueryInfos;
 }
 
 export default async (params: IPrepareValueParams): Promise<IValue> => {
-    const {attributeProps, value, library, recordId, deps} = params;
+    const {attributeProps, value, library, recordId, deps, ctx} = params;
 
     // Execute actions list. Output value might be different from input value
     const preparedValue =
@@ -37,7 +38,7 @@ export default async (params: IPrepareValueParams): Promise<IValue> => {
     if (preparedValue.metadata) {
         try {
             for (const metaFieldName of Object.keys(preparedValue.metadata)) {
-                const metaFieldProps = await deps.attributeDomain.getAttributeProperties(metaFieldName);
+                const metaFieldProps = await deps.attributeDomain.getAttributeProperties({id: metaFieldName, ctx});
 
                 if (metaFieldProps?.actions_list?.[ActionsListEvents.SAVE_VALUE]) {
                     const processedMetaValue = await deps.actionsListDomain.runActionsList(

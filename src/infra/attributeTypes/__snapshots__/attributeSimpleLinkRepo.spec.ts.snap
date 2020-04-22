@@ -1,20 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AttributeIndexRepo getValues Should return values for simple link attribute 1`] = `
-"
-                FOR r IN @@value0
-                    FILTER r._key == @value1
-                    FOR l IN @@value2
-                        FILTER r.@value3 == l._key
-                        RETURN l
-            "
-`;
-
-exports[`AttributeIndexRepo getValues Should return values for simple link attribute 2`] = `
 Object {
-  "@value0": "test_lib",
-  "@value2": undefined,
-  "value1": 123456,
-  "value3": "test_simple_link_attr",
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "test_lib",
+    "@value2": undefined,
+    "value1": 123456,
+    "value3": "test_simple_link_attr",
+  },
+  "query": "
+                    FOR r IN @@value0
+                        FILTER r._key == @value1
+                        FOR l IN @@value2
+                            FILTER r.@value3 == l._key
+                            RETURN l
+                ",
 }
 `;
+
+exports[`AttributeIndexRepo getValues Should return values for simple link attribute 2`] = `undefined`;

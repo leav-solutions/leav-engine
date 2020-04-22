@@ -6,14 +6,18 @@ import {IQueryInfos} from '../../../_types/queryInfos';
 export default (
     library: string,
     recordId: number,
-    infos: IQueryInfos,
     deps: {
         recordRepo: IRecordRepo;
-    }
+    },
+    ctx: IQueryInfos
 ): Promise<IRecord> => {
-    return deps.recordRepo.updateRecord(library, {
-        id: recordId,
-        modified_at: moment().unix(),
-        modified_by: infos.userId
+    return deps.recordRepo.updateRecord({
+        libraryId: library,
+        recordData: {
+            id: recordId,
+            modified_at: moment().unix(),
+            modified_by: ctx.userId
+        },
+        ctx
     });
 };

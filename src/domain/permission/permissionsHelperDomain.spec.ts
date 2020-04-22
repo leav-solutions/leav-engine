@@ -10,8 +10,13 @@ import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import permissionsHelperDomain from './permissionsHelperDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('HeritedPermissionDomain', () => {
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'heritedPermissionDomainTest'
+    };
     describe('getHeritedPermissions', () => {
         test('Return record herited permission', async () => {
             const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
@@ -22,13 +27,14 @@ describe('HeritedPermissionDomain', () => {
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
             });
 
-            const perm = await permsHelperDomain.getHeritedPermissions(
-                PermissionTypes.RECORD,
-                'test_lib',
-                RecordPermissionsActions.ACCESS,
-                987654321,
-                {id: 12345, library: 'test', tree: 'test_tree'}
-            );
+            const perm = await permsHelperDomain.getHeritedPermissions({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                action: RecordPermissionsActions.ACCESS,
+                userGroupId: 987654321,
+                permissionTreeTarget: {id: 12345, library: 'test', tree: 'test_tree'},
+                ctx
+            });
 
             expect(perm).toBe(true);
             expect(mockRecordPermDomain.getHeritedRecordPermission).toHaveBeenCalled();
@@ -43,12 +49,13 @@ describe('HeritedPermissionDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const perm = await permsHelperDomain.getHeritedPermissions(
-                PermissionTypes.LIBRARY,
-                'test_lib',
-                LibraryPermissionsActions.ACCESS,
-                987654321
-            );
+            const perm = await permsHelperDomain.getHeritedPermissions({
+                type: PermissionTypes.LIBRARY,
+                applyTo: 'test_lib',
+                action: LibraryPermissionsActions.ACCESS,
+                userGroupId: 987654321,
+                ctx
+            });
 
             expect(perm).toBe(true);
             expect(mockPermDomain.getHeritedLibraryPermission).toHaveBeenCalled();
@@ -63,12 +70,13 @@ describe('HeritedPermissionDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const perm = await permsHelperDomain.getHeritedPermissions(
-                PermissionTypes.ADMIN,
-                'test_lib',
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                987654321
-            );
+            const perm = await permsHelperDomain.getHeritedPermissions({
+                type: PermissionTypes.ADMIN,
+                applyTo: 'test_lib',
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupId: 987654321,
+                ctx
+            });
 
             expect(perm).toBe(true);
             expect(mockPermDomain.getHeritedAdminPermission).toHaveBeenCalled();
@@ -85,11 +93,12 @@ describe('HeritedPermissionDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const perm = await permsHelperDomain.isAllowed(
-                PermissionTypes.ADMIN,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                123
-            );
+            const perm = await permsHelperDomain.isAllowed({
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userId: 123,
+                ctx
+            });
 
             expect(perm).toBe(true);
             expect(mockPermDomain.getAdminPermission).toHaveBeenCalled();
@@ -104,12 +113,13 @@ describe('HeritedPermissionDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const perm = await permsHelperDomain.isAllowed(
-                PermissionTypes.LIBRARY,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                123,
-                'test_lib'
-            );
+            const perm = await permsHelperDomain.isAllowed({
+                type: PermissionTypes.LIBRARY,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userId: 123,
+                applyTo: 'test_lib',
+                ctx
+            });
 
             expect(perm).toBe(true);
             expect(mockPermDomain.getLibraryPermission).toHaveBeenCalled();
@@ -124,15 +134,16 @@ describe('HeritedPermissionDomain', () => {
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
             });
 
-            const perm = await permsHelperDomain.isAllowed(
-                PermissionTypes.RECORD,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                123,
-                'test_lib',
-                {
+            const perm = await permsHelperDomain.isAllowed({
+                type: PermissionTypes.RECORD,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userId: 123,
+                applyTo: 'test_lib',
+                target: {
                     recordId: 1345
-                }
-            );
+                },
+                ctx
+            });
 
             expect(perm).toBe(true);
             expect(mockRecordPermDomain.getRecordPermission).toHaveBeenCalled();
@@ -149,23 +160,25 @@ describe('HeritedPermissionDomain', () => {
 
             // No target at all
             await expect(
-                permsHelperDomain.isAllowed(
-                    PermissionTypes.RECORD,
-                    AdminPermissionsActions.CREATE_ATTRIBUTE,
-                    123,
-                    'test_lib'
-                )
+                permsHelperDomain.isAllowed({
+                    type: PermissionTypes.RECORD,
+                    action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                    userId: 123,
+                    applyTo: 'test_lib',
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
 
             // Empty target
             await expect(
-                permsHelperDomain.isAllowed(
-                    PermissionTypes.RECORD,
-                    AdminPermissionsActions.CREATE_ATTRIBUTE,
-                    123,
-                    'test_lib',
-                    {}
-                )
+                permsHelperDomain.isAllowed({
+                    type: PermissionTypes.RECORD,
+                    action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                    userId: 123,
+                    applyTo: 'test_lib',
+                    target: {},
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -178,16 +191,17 @@ describe('HeritedPermissionDomain', () => {
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain
             });
 
-            const perm = await permsHelperDomain.isAllowed(
-                PermissionTypes.ATTRIBUTE,
-                AttributePermissionsActions.EDIT_VALUE,
-                123,
-                'test_lib',
-                {
+            const perm = await permsHelperDomain.isAllowed({
+                type: PermissionTypes.ATTRIBUTE,
+                action: AttributePermissionsActions.EDIT_VALUE,
+                userId: 123,
+                applyTo: 'test_lib',
+                target: {
                     recordId: 1345,
                     attributeId: 'test_attr'
-                }
-            );
+                },
+                ctx
+            });
 
             expect(perm).toBe(true);
             expect(mockAttrPermDomain.getAttributePermission).toHaveBeenCalled();
@@ -204,36 +218,39 @@ describe('HeritedPermissionDomain', () => {
 
             // No target at all
             await expect(
-                permsHelperDomain.isAllowed(
-                    PermissionTypes.ATTRIBUTE,
-                    AttributePermissionsActions.EDIT_VALUE,
-                    123,
-                    'test_lib'
-                )
+                permsHelperDomain.isAllowed({
+                    type: PermissionTypes.ATTRIBUTE,
+                    action: AttributePermissionsActions.EDIT_VALUE,
+                    userId: 123,
+                    applyTo: 'test_lib',
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
 
             // Missing record ID
             await expect(
-                permsHelperDomain.isAllowed(
-                    PermissionTypes.ATTRIBUTE,
-                    AttributePermissionsActions.EDIT_VALUE,
-                    123,
-                    'test_lib',
-                    {}
-                )
+                permsHelperDomain.isAllowed({
+                    type: PermissionTypes.ATTRIBUTE,
+                    action: AttributePermissionsActions.EDIT_VALUE,
+                    userId: 123,
+                    applyTo: 'test_lib',
+                    target: {},
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
 
             // Missing attribute ID
             await expect(
-                permsHelperDomain.isAllowed(
-                    PermissionTypes.ATTRIBUTE,
-                    AttributePermissionsActions.EDIT_VALUE,
-                    123,
-                    'test_lib',
-                    {
+                permsHelperDomain.isAllowed({
+                    type: PermissionTypes.ATTRIBUTE,
+                    action: AttributePermissionsActions.EDIT_VALUE,
+                    userId: 123,
+                    applyTo: 'test_lib',
+                    target: {
                         recordId: 12345
-                    }
-                )
+                    },
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
     });

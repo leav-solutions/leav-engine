@@ -4,14 +4,15 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IForm, IFormFilterOptions, IFormStrict} from '_types/forms';
 import {IList} from '_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
+import {IQueryInfos} from '_types/queryInfos';
 
 export const FORM_COLLECTION_NAME = 'core_forms';
 
 export interface IFormRepo {
-    getForms(params?: IGetCoreEntitiesParams): Promise<IList<IForm>>;
-    updateForm(formData: IFormStrict): Promise<IForm>;
-    createForm(formData: IFormStrict): Promise<IForm>;
-    deleteForm(formData: IForm): Promise<IForm>;
+    getForms({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IForm>>;
+    updateForm({formData, ctx}: {formData: IFormStrict; ctx: IQueryInfos}): Promise<IForm>;
+    createForm({formData, ctx}: {formData: IFormStrict; ctx: IQueryInfos}): Promise<IForm>;
+    deleteForm({formData, ctx}: {formData: IForm; ctx: IQueryInfos}): Promise<IForm>;
 }
 
 interface IDeps {
@@ -31,7 +32,7 @@ export default function({
     };
 
     return {
-        async getForms(params?: IGetCoreEntitiesParams): Promise<IList<IForm>> {
+        async getForms({params, ctx}): Promise<IList<IForm>> {
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -51,39 +52,49 @@ export default function({
 
             const res = await dbUtils.findCoreEntity<IForm>({
                 ...initializedParams,
-                collectionName: FORM_COLLECTION_NAME
+                collectionName: FORM_COLLECTION_NAME,
+                ctx
             });
 
             // Convert id to user friendly id
             return {...res, list: res.list.map(f => ({...f, id: _cleanKey(f.id)}))};
         },
-        async updateForm(formData: IForm): Promise<IForm> {
+        async updateForm({formData, ctx}): Promise<IForm> {
             const docToInsert = dbUtils.convertToDoc(formData);
             docToInsert._key = _generateKey(formData); // Prevent duplicates keys
 
             // Insert in libraries collection
             const col = dbService.db.collection(FORM_COLLECTION_NAME);
-            const res = await dbService.execute(aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`);
+            const res = await dbService.execute({
+                query: aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`,
+                ctx
+            });
 
             return _cleanDocForm(res.pop());
         },
-        async createForm(formData: IForm): Promise<IForm> {
+        async createForm({formData, ctx}): Promise<IForm> {
             const docToInsert = dbUtils.convertToDoc(formData);
             docToInsert._key = _generateKey(formData); // Prevent duplicates keys
 
             // Insert in libraries collection
             const col = dbService.db.collection(FORM_COLLECTION_NAME);
-            const res = await dbService.execute(aql`INSERT ${docToInsert} IN ${col} RETURN NEW`);
+            const res = await dbService.execute({
+                query: aql`INSERT ${docToInsert} IN ${col} RETURN NEW`,
+                ctx
+            });
 
             return _cleanDocForm(res.pop());
         },
-        async deleteForm(formData: IForm): Promise<IForm> {
+        async deleteForm({formData, ctx}): Promise<IForm> {
             const docToDelete = dbUtils.convertToDoc(formData);
             docToDelete._key = _generateKey(formData); // Prevent duplicates keys
 
             // Insert in libraries collection
             const col = dbService.db.collection(FORM_COLLECTION_NAME);
-            const res = await dbService.execute(aql`REMOVE ${docToDelete} IN ${col} RETURN OLD`);
+            const res = await dbService.execute({
+                query: aql`REMOVE ${docToDelete} IN ${col} RETURN OLD`,
+                ctx
+            });
 
             return _cleanDocForm(res.pop());
         }

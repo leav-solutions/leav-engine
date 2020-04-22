@@ -24,6 +24,7 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain from './valueDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('ValueDomain', () => {
     const mockRecordRepo: Mockify<IRecordRepo> = {
@@ -51,6 +52,10 @@ describe('ValueDomain', () => {
         type: AttributeTypes.SIMPLE
     };
 
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'valueDomainTest'
+    };
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -87,13 +92,13 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const savedValue = await valDomain.saveValue(
-                'test_lib',
-                12345,
-                'test_attr',
-                {value: 'test val'},
-                {userId: 1}
-            );
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {value: 'test val'},
+                ctx
+            });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
             expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(1);
@@ -132,17 +137,17 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const savedValue = await valDomain.saveValue(
-                'test_lib',
-                12345,
-                'test_attr',
-                {value: 'test val'},
-                {userId: 1}
-            );
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {value: 'test val'},
+                ctx
+            });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
-            expect(mockValRepo.createValue.mock.calls[0][3].modified_at).toBeDefined();
-            expect(mockValRepo.createValue.mock.calls[0][3].created_at).toBeDefined();
+            expect(mockValRepo.createValue.mock.calls[0][0].value.modified_at).toBeDefined();
+            expect(mockValRepo.createValue.mock.calls[0][0].value.created_at).toBeDefined();
 
             expect(savedValue).toMatchObject(savedValueData);
             expect(savedValue.id_value).toBeTruthy();
@@ -186,20 +191,20 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const savedValue = await valDomain.saveValue(
-                'test_lib',
-                12345,
-                'test_attr',
-                {
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {
                     id_value: 12345,
                     value: 'test val'
                 },
-                {userId: 1}
-            );
+                ctx
+            });
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
-            expect(mockValRepo.updateValue.mock.calls[0][3].modified_at).toBeDefined();
-            expect(mockValRepo.updateValue.mock.calls[0][3].created_at).toBeUndefined();
+            expect(mockValRepo.updateValue.mock.calls[0][0].value.modified_at).toBeDefined();
+            expect(mockValRepo.updateValue.mock.calls[0][0].value.created_at).toBeUndefined();
 
             expect(savedValue).toMatchObject(savedValueData);
             expect(savedValue.id_value).toBeTruthy();
@@ -231,7 +236,13 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {value: 'test val'},
+                    ctx
+                })
             ).rejects.toThrow();
         });
 
@@ -256,7 +267,13 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {value: 'test val'},
+                    ctx
+                })
             ).rejects.toThrow();
         });
 
@@ -281,16 +298,16 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'test_attr',
-                    {
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {
                         id_value: 12345,
                         value: 'test val'
                     },
-                    {userId: 1}
-                )
+                    ctx
+                })
             ).rejects.toThrow();
         });
 
@@ -325,18 +342,18 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const savedValue = await valDomain.saveValue(
-                'test_lib',
-                12345,
-                'test_attr',
-                {value: 'test val'},
-                {userId: 1}
-            );
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {value: 'test val'},
+                ctx
+            });
 
             expect(mockRecRepo.updateRecord).toBeCalled();
-            expect(mockRecRepo.updateRecord.mock.calls[0][1].modified_at).toBeDefined();
-            expect(Number.isInteger(mockRecRepo.updateRecord.mock.calls[0][1].modified_at)).toBe(true);
-            expect(mockRecRepo.updateRecord.mock.calls[0][1].modified_by).toBe(1);
+            expect(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_at).toBeDefined();
+            expect(Number.isInteger(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_by).toBe(1);
 
             expect(savedValue).toMatchObject(savedValueData);
         });
@@ -379,11 +396,11 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const savedValue = await valDomain.saveValue(
-                'test_lib',
-                12345,
-                'test_attr',
-                {
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {
                     value: 'test val',
                     version: {
                         my_tree: {
@@ -392,11 +409,11 @@ describe('ValueDomain', () => {
                         }
                     }
                 },
-                {userId: 1}
-            );
+                ctx
+            });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
-            expect(mockValRepo.createValue.mock.calls[0][3].version).toBeDefined();
+            expect(mockValRepo.createValue.mock.calls[0][0].value.version).toBeDefined();
             expect(savedValue.version).toBeTruthy();
         });
 
@@ -424,11 +441,11 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const savedValue = await valDomain.saveValue(
-                'test_lib',
-                12345,
-                'test_attr',
-                {
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {
                     value: 'test val',
                     version: {
                         my_tree: {
@@ -437,8 +454,8 @@ describe('ValueDomain', () => {
                         }
                     }
                 },
-                {userId: 1}
-            );
+                ctx
+            });
 
             expect(savedValue.version).toBeUndefined();
         });
@@ -480,7 +497,13 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {value: 'test val'},
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -513,11 +536,11 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'test_attr',
-                    {
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {
                         value: 'test val',
                         version: {
                             my_tree: {
@@ -526,8 +549,8 @@ describe('ValueDomain', () => {
                             }
                         }
                     },
-                    {userId: 1}
-                )
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -561,11 +584,11 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'test_attr',
-                    {
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {
                         value: 'test val',
                         version: {
                             my_tree: {
@@ -574,8 +597,8 @@ describe('ValueDomain', () => {
                             }
                         }
                     },
-                    {userId: 1}
-                )
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -616,7 +639,13 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {value: 'test val'},
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -660,7 +689,13 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, mockAttrTree.id, {value: 'lib1/123456'}, {userId: 1})
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: mockAttrTree.id,
+                    value: {value: 'lib1/123456'},
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -700,16 +735,16 @@ describe('ValueDomain', () => {
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
 
-                const savedValue = await valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'advanced_attribute_with_meta',
-                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    {userId: 1}
-                );
+                const savedValue = await valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'advanced_attribute_with_meta',
+                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    ctx
+                });
 
                 expect(mockValRepo.createValue.mock.calls.length).toBe(1);
-                expect(mockValRepo.createValue.mock.calls[0][3].metadata).toMatchObject({
+                expect(mockValRepo.createValue.mock.calls[0][0].value.metadata).toMatchObject({
                     meta_attribute: 'metadata value'
                 });
 
@@ -754,13 +789,13 @@ describe('ValueDomain', () => {
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
 
-                const saveVal = valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'advanced_attribute_with_meta',
-                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    {userId: 1}
-                );
+                const saveVal = valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'advanced_attribute_with_meta',
+                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    ctx
+                });
 
                 await expect(saveVal).rejects.toThrow(ValidationError);
                 await expect(saveVal).rejects.toHaveProperty('fields.metadata');
@@ -808,13 +843,13 @@ describe('ValueDomain', () => {
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
 
-                const saveVal = valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'advanced_attribute_with_meta',
-                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    {userId: 1}
-                );
+                const saveVal = valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'advanced_attribute_with_meta',
+                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    ctx
+                });
 
                 await expect(saveVal).rejects.toThrow(PermissionError);
                 await expect(saveVal).rejects.toHaveProperty('fields.metadata');
@@ -838,7 +873,7 @@ describe('ValueDomain', () => {
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
-                    getAttributeProperties: jest.fn().mockImplementation(id =>
+                    getAttributeProperties: jest.fn().mockImplementation(({id, ctx: ct}) =>
                         Promise.resolve(
                             id === attrWithMetadataId
                                 ? {...mockAttrAdvWithMetadata}
@@ -866,13 +901,13 @@ describe('ValueDomain', () => {
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
 
-                await valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    attrWithMetadataId,
-                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    {userId: 1}
-                );
+                await valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: attrWithMetadataId,
+                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    ctx
+                });
 
                 expect(mockActionsListDomain.runActionsList).toHaveBeenCalled();
                 expect(mockActionsListDomain.runActionsList.mock.calls[0][2].attribute.id).toBe('meta_attribute');
@@ -937,13 +972,13 @@ describe('ValueDomain', () => {
                     'core.utils': mockUtils as IUtils
                 });
 
-                const saveVal = valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'advanced_attribute_with_meta',
-                    {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    {userId: 1}
-                );
+                const saveVal = valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'advanced_attribute_with_meta',
+                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    ctx
+                });
 
                 await expect(saveVal).rejects.toThrow(ValidationError);
                 await expect(saveVal).rejects.toHaveProperty('fields.metadata');
@@ -992,10 +1027,10 @@ describe('ValueDomain', () => {
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementation(a => {
+                getAttributeProperties: jest.fn().mockImplementation(({id, ctx: ct}) => {
                     let attrProps;
 
-                    switch (a) {
+                    switch (id) {
                         case 'test_attr':
                         case 'test_attr2':
                             attrProps = {...mockAttrAdv};
@@ -1020,7 +1055,12 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1});
+            const res = await valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: 123456,
+                values,
+                ctx
+            });
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
             expect(mockValRepo.createValue.mock.calls.length).toBe(2);
@@ -1094,7 +1134,12 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1});
+            const res = await valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: 123456,
+                values,
+                ctx
+            });
 
             expect(res).toStrictEqual({
                 values: [],
@@ -1153,7 +1198,12 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1});
+            const res = await valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: 123456,
+                values,
+                ctx
+            });
 
             expect(res).toStrictEqual({
                 values: [],
@@ -1204,7 +1254,13 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, false);
+            const res = await valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: 123456,
+                values,
+                ctx,
+                keepEmpty: false
+            });
 
             expect(mockValRepo.deleteValue).toBeCalledTimes(1);
         });
@@ -1246,7 +1302,13 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const res = await valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, true);
+            const res = await valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: 123456,
+                values,
+                ctx,
+                keepEmpty: true
+            });
 
             expect(mockValRepo.deleteValue).toBeCalledTimes(0);
         });
@@ -1273,7 +1335,13 @@ describe('ValueDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            const saveVal = valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, true);
+            const saveVal = valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: 123456,
+                values,
+                ctx,
+                keepEmpty: true
+            });
 
             await expect(saveVal).rejects.toThrow(ValidationError);
             await expect(saveVal).rejects.toHaveProperty('fields.library');
@@ -1306,7 +1374,13 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo
             });
 
-            const saveVal = valDomain.saveValueBatch('test_lib', 123456, values, {userId: 1}, true);
+            const saveVal = valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: 123456,
+                values,
+                ctx,
+                keepEmpty: true
+            });
 
             await expect(saveVal).rejects.toThrow(ValidationError);
             await expect(saveVal).rejects.toHaveProperty('fields.recordId');
@@ -1338,13 +1412,13 @@ describe('ValueDomain', () => {
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain
             });
 
-            const deletedValue = await valDomain.deleteValue(
-                'test_lib',
-                12345,
-                'test_attr',
-                {value: 'test val'},
-                {userId: 1}
-            );
+            const deletedValue = await valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {value: 'test val'},
+                ctx
+            });
 
             expect(mockValRepo.deleteValue.mock.calls.length).toBe(1);
             expect(deletedValue).toMatchObject(deletedValueData);
@@ -1367,7 +1441,13 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1})
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {value: 'test val'},
+                    ctx
+                })
             ).rejects.toThrow();
         });
 
@@ -1385,7 +1465,13 @@ describe('ValueDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            const deleteVal = valDomain.deleteValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1});
+            const deleteVal = valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {value: 'test val'},
+                ctx
+            });
 
             await expect(deleteVal).rejects.toThrow(ValidationError);
             await expect(deleteVal).rejects.toHaveProperty('fields.library');
@@ -1410,7 +1496,13 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo
             });
 
-            const deleteVal = valDomain.deleteValue('test_lib', 12345, 'test_attr', {value: 'test val'}, {userId: 1});
+            const deleteVal = valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                value: {value: 'test val'},
+                ctx
+            });
 
             await expect(deleteVal).rejects.toThrow(ValidationError);
             await expect(deleteVal).rejects.toHaveProperty('fields.recordId');
@@ -1431,16 +1523,16 @@ describe('ValueDomain', () => {
             });
 
             await expect(
-                valDomain.saveValue(
-                    'test_lib',
-                    12345,
-                    'test_attr',
-                    {
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    value: {
                         id_value: 12345,
                         value: 'test val'
                     },
-                    {userId: 1}
-                )
+                    ctx
+                })
             ).rejects.toThrow();
         });
     });
@@ -1469,7 +1561,12 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain
             });
 
-            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr');
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                ctx
+            });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
             expect(resValue).toMatchObject(valueData);
@@ -1503,11 +1600,17 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain
             });
 
-            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                options: {version},
+                ctx
+            });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
-            expect(mockValRepo.getValues.mock.calls[0][3]).toBe(false);
-            expect(mockValRepo.getValues.mock.calls[0][4]).toMatchObject({version});
+            expect(mockValRepo.getValues.mock.calls[0][0].forceGetAllValues).toBe(false);
+            expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
             expect(resValue).toMatchObject(valueData);
         });
 
@@ -1577,10 +1680,16 @@ describe('ValueDomain', () => {
                 my_tree: {id: 9, library: 'my_lib'}
             };
 
-            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                options: {version},
+                ctx
+            });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
-            expect(mockValRepo.getValues.mock.calls[0][4]).toMatchObject({version});
+            expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
             expect(mockTreeRepo.getElementAncestors).toBeCalledTimes(1);
             expect(resValue.length).toBe(1);
             expect(resValue[0].value).toBe('val2');
@@ -1630,7 +1739,7 @@ describe('ValueDomain', () => {
             ];
 
             const mockTreeRepo: Mockify<ITreeRepo> = {
-                getElementAncestors: jest.fn().mockImplementation((treeId, elem) => {
+                getElementAncestors: jest.fn().mockImplementation(({treeId, element, ctx: ct}) => {
                     let parents;
                     switch (treeId) {
                         case 'my_tree':
@@ -1734,10 +1843,16 @@ describe('ValueDomain', () => {
                 third_tree: {id: 99, library: 'my_lib'}
             };
 
-            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                options: {version},
+                ctx
+            });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
-            expect(mockValRepo.getValues.mock.calls[0][4]).toMatchObject({version});
+            expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
             expect(mockTreeRepo.getElementAncestors).toBeCalledTimes(3);
             expect(resValue.length).toBe(2);
             expect(resValue[0].value).toBe('val2');
@@ -1815,7 +1930,13 @@ describe('ValueDomain', () => {
                 my_tree: {id: 9, library: 'my_lib'}
             };
 
-            const resValue = await valDomain.getValues('test_lib', 12345, 'test_attr', {version});
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                options: {version},
+                ctx
+            });
 
             expect(resValue.length).toBe(0);
         });
@@ -1839,7 +1960,14 @@ describe('ValueDomain', () => {
                 'core.infra.value': mockValRepo as IValueRepo
             });
 
-            await expect(valDomain.getValues('test_lib', 12345, 'test_attr')).rejects.toThrow();
+            await expect(
+                valDomain.getValues({
+                    library: 'test_lib',
+                    recordId: 12345,
+                    attribute: 'test_attr',
+                    ctx
+                })
+            ).rejects.toThrow();
         });
 
         test('Should throw if unknown library', async function() {
@@ -1859,7 +1987,12 @@ describe('ValueDomain', () => {
                 'core.infra.value': mockValRepo as IValueRepo
             });
 
-            const getVal = valDomain.getValues('test_lib', 12345, 'test_attr');
+            const getVal = valDomain.getValues({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                ctx
+            });
 
             await expect(getVal).rejects.toThrow(ValidationError);
             await expect(getVal).rejects.toHaveProperty('fields.library');
@@ -1887,7 +2020,12 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo
             });
 
-            const getVal = valDomain.getValues('test_lib', 12345, 'test_attr');
+            const getVal = valDomain.getValues({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: 'test_attr',
+                ctx
+            });
 
             await expect(getVal).rejects.toThrow(ValidationError);
             await expect(getVal).rejects.toHaveProperty('fields.recordId');

@@ -15,41 +15,24 @@ import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from 
 import {validateAttributeData} from './helpers/attributeValidationHelper';
 
 export interface IAttributeDomain {
-    /**
-     * Get attribute properties
-     *
-     * @param id
-     * @returns Promise<{}>
-     */
-    getAttributeProperties(id: string): Promise<IAttribute>;
+    getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
 
     /**
      * Get attributes list, filtered or not
-     *
-     * @param filters
-     * @returns Promise<[{}]>
      */
-    getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>>;
+    getAttributes({}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;
 
     /**
      * Save attribute.
      * If attribute doesn't exist => create a new one, otherwise update existing
-     *
-     * @param {} attrData
-     * @return Promise<{}>  Saved attribute
      */
-    saveAttribute(attrData: IAttribute, infos: IQueryInfos): Promise<IAttribute>;
+    saveAttribute({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): Promise<IAttribute>;
 
-    /**
-     * Delete an attribute
-     *
-     * @param id
-     */
-    deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute>;
+    deleteAttribute({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
 
-    getInputTypes(attrData: IAttribute): IOAllowedTypes;
+    getInputTypes({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): IOAllowedTypes;
 
-    getOutputTypes(attrData: IAttribute): IOAllowedTypes;
+    getOutputTypes({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): IOAllowedTypes;
 }
 
 interface IDeps {
@@ -70,8 +53,11 @@ export default function({
     config = null
 }: IDeps = {}): IAttributeDomain {
     return {
-        async getAttributeProperties(id: string): Promise<IAttribute> {
-            const attrs = await attributeRepo.getAttributes({filters: {id}, strictFilters: true});
+        async getAttributeProperties({id, ctx}): Promise<IAttribute> {
+            const attrs = await attributeRepo.getAttributes({
+                params: {filters: {id}, strictFilters: true},
+                ctx
+            });
 
             if (!attrs.list.length) {
                 throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
@@ -80,19 +66,22 @@ export default function({
 
             return props;
         },
-        async getAttributes(params?: IGetCoreEntitiesParams): Promise<IList<IAttribute>> {
+        async getAttributes({params, ctx}): Promise<IList<IAttribute>> {
             // TODO: possibility to search multiple IDs
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
             }
 
-            return attributeRepo.getAttributes(initializedParams);
+            return attributeRepo.getAttributes({params: initializedParams, ctx});
         },
-        async saveAttribute(attrData: IAttribute, infos: IQueryInfos): Promise<IAttribute> {
+        async saveAttribute({attrData, ctx}): Promise<IAttribute> {
             // TODO: Validate attribute data (linked library, linked tree...)
 
-            const attrs = await attributeRepo.getAttributes({filters: {id: attrData.id}, strictFilters: true});
+            const attrs = await attributeRepo.getAttributes({
+                params: {filters: {id: attrData.id}, strictFilters: true},
+                ctx
+            });
             const isExistingAttr = !!attrs.list.length;
 
             const defaultParams = {
@@ -117,7 +106,7 @@ export default function({
             const action = isExistingAttr
                 ? AdminPermissionsActions.EDIT_ATTRIBUTE
                 : AdminPermissionsActions.CREATE_ATTRIBUTE;
-            const canSavePermission = await permissionDomain.getAdminPermission(action, infos.userId);
+            const canSavePermission = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
@@ -127,35 +116,39 @@ export default function({
             attrToSave.actions_list = getActionsListToSave(attrToSave, attrProps, !isExistingAttr, utils);
 
             // Check settings validity
-            const validationErrors = await validateAttributeData(attrToSave, {
-                utils,
-                treeRepo,
-                config,
-                attributeRepo,
-                actionsListDomain
-            });
+            const validationErrors = await validateAttributeData(
+                attrToSave,
+                {
+                    utils,
+                    treeRepo,
+                    config,
+                    attributeRepo,
+                    actionsListDomain
+                },
+                ctx
+            );
 
             if (Object.keys(validationErrors).length) {
                 throw new ValidationError<IAttribute>(validationErrors);
             }
 
             const attr = isExistingAttr
-                ? await attributeRepo.updateAttribute(attrToSave)
-                : await attributeRepo.createAttribute(attrToSave);
+                ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
+                : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
             return attr;
         },
-        async deleteAttribute(id: string, infos: IQueryInfos): Promise<IAttribute> {
+        async deleteAttribute({id, ctx}): Promise<IAttribute> {
             // Check permissions
             const action = AdminPermissionsActions.DELETE_ATTRIBUTE;
-            const canSavePermission = await permissionDomain.getAdminPermission(action, infos.userId);
+            const canSavePermission = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
             }
 
             // Get attribute
-            const attr = await this.getAttributes({filters: {id}});
+            const attr = await this.getAttributes({params: {filters: {id}}, ctx});
 
             // Check if exists and can delete
             if (!attr.list.length) {
@@ -168,12 +161,12 @@ export default function({
                 throw new ValidationError<IAttribute>({id: Errors.SYSTEM_ATTRIBUTE_DELETION});
             }
 
-            return attributeRepo.deleteAttribute(attrProps);
+            return attributeRepo.deleteAttribute({attrData: attrProps, ctx});
         },
-        getInputTypes(attrData: IAttribute): IOAllowedTypes {
+        getInputTypes({attrData}): IOAllowedTypes {
             return getAllowedInputTypes(attrData);
         },
-        getOutputTypes(attrData: IAttribute): IOAllowedTypes {
+        getOutputTypes({attrData}): IOAllowedTypes {
             return getAllowedOutputTypes(attrData);
         }
     };

@@ -1,16 +1,18 @@
 import {IFileEventData} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {deleteFilesTreeElement, getInputData, getRecord} from '../handleFileUtilsHelper';
+import {IQueryInfos} from '_types/queryInfos';
 
 export const handleRemoveEvent = async (
     scanMsg: IFileEventData,
     {library}: IHandleFileSystemResources,
-    deps: IHandleFileSystemDeps
+    deps: IHandleFileSystemDeps,
+    ctx: IQueryInfos
 ) => {
     const {filePath, fileName} = getInputData(scanMsg.pathBefore);
     const {userId} = deps.config.filesManager;
 
-    const record = await getRecord(fileName, filePath, library, false, deps);
+    const record = await getRecord(fileName, filePath, library, false, deps, ctx);
 
     if (!record) {
         deps.logger.warn(
@@ -26,7 +28,7 @@ export const handleRemoveEvent = async (
         deps.logger.warn(`[FilesManager] Error when deactivate the record: ${record.id}`);
     }
 
-    await deleteFilesTreeElement(record.id, library, deps);
+    await deleteFilesTreeElement(record.id, library, deps, ctx);
 
     return true;
 };

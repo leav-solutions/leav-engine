@@ -40,7 +40,7 @@ export default function({
         process.stdout.write(msg);
     };
 
-    const _processLibraries = (libraries, infos: IQueryInfos): Promise<any[]> => {
+    const _processLibraries = (libraries, ctx: IQueryInfos): Promise<any[]> => {
         return Promise.all(
             libraries.map(lib => {
                 const libToSave = {...lib};
@@ -50,30 +50,30 @@ export default function({
                 delete libToSave.recordIdentityConf;
                 delete libToSave.permissions_conf;
 
-                return libraryDomain.saveLibrary(libToSave, infos);
+                return libraryDomain.saveLibrary(libToSave, ctx);
             })
         );
     };
 
-    const _processTrees = (trees, infos): Promise<any[]> => {
+    const _processTrees = (trees, ctx): Promise<any[]> => {
         return Promise.all(
             trees.map(tree => {
                 const treeToSave = {...tree};
                 delete treeToSave.content;
-                return treeDomain.saveTree(tree, infos);
+                return treeDomain.saveTree(tree, ctx);
             })
         );
     };
 
-    const _processAttributes = (attributes, infos): Promise<any[]> => {
+    const _processAttributes = (attributes, ctx): Promise<any[]> => {
         return Promise.all(
             attributes.map(attr => {
-                return attributeDomain.saveAttribute(attr, infos);
+                return attributeDomain.saveAttribute({attrData: attr, ctx});
             })
         );
     };
 
-    const _processLibrariesAttributes = (libraries, attributesById, infos: IQueryInfos): Promise<any[]> => {
+    const _processLibrariesAttributes = (libraries, attributesById, ctx: IQueryInfos): Promise<any[]> => {
         return Promise.all(
             libraries.map(lib => {
                 const libAttributes = lib.attributes.map(a => attributesById[a]);
@@ -83,15 +83,15 @@ export default function({
                     recordIdentityConf: lib.recordIdentityConf,
                     permissions_conf: lib.permissions_conf
                 };
-                return libraryDomain.saveLibrary(libToSave, infos);
+                return libraryDomain.saveLibrary(libToSave, ctx);
             })
         );
     };
 
-    const _processRecords = async (records, infos): Promise<{[key: number]: number}> => {
+    const _processRecords = async (records, ctx): Promise<{[key: number]: number}> => {
         let insertedRecords = 0;
         const _insertRecord = async (library, key) => {
-            const createdRecord = await recordDomain.createRecord(library, infos);
+            const createdRecord = await recordDomain.createRecord(library, ctx);
             recordsMapping[library] = recordsMapping[library] || {};
             recordsMapping[library][key] = createdRecord.id;
 
@@ -115,11 +115,11 @@ export default function({
         return recordsMapping;
     };
 
-    const _processTreeContent = (trees, recordsMapping): Promise<any[]> => {
-        return Promise.all(trees.map(tree => _saveTreeContent(tree.id, tree.content, null, recordsMapping)));
+    const _processTreeContent = (trees, recordsMapping, ctx): Promise<any[]> => {
+        return Promise.all(trees.map(tree => _saveTreeContent(tree.id, tree.content, null, recordsMapping, ctx)));
     };
 
-    const _processValues = async (values, attributesById, recordsMapping, infos): Promise<number> => {
+    const _processValues = async (values, attributesById, recordsMapping, ctx): Promise<number> => {
         let insertedValues = 0;
         const _insertValue = async valueData => {
             const attrType = attributesById[valueData.attribute].type;
@@ -139,13 +139,13 @@ export default function({
                 }
             }
 
-            await valueDomain.saveValue(
-                valueData.library,
-                recordsMapping[valueData.library][valueData.recordKey],
-                valueData.attribute,
-                {value: valueData.value, version},
-                infos
-            );
+            await valueDomain.saveValue({
+                library: valueData.library,
+                recordId: recordsMapping[valueData.library][valueData.recordKey],
+                attribute: valueData.attribute,
+                value: {value: valueData.value, version},
+                ctx
+            });
             insertedValues++;
             _writeToConsole(`${insertedValues} created values...`);
         };
@@ -208,13 +208,13 @@ export default function({
         }
     };
 
-    const _saveTreeContent = async (treeId, treeNodes, parent, recordsMapping) => {
+    const _saveTreeContent = async (treeId, treeNodes, parent, recordsMapping, ctx) => {
         for (const node of treeNodes) {
             const treeElem = {id: recordsMapping[node.library][node.recordKey], library: node.library};
-            await treeDomain.addElement(treeId, treeElem, parent);
+            await treeDomain.addElement({treeId, element: treeElem, parent, ctx});
 
             if (node.children.length) {
-                await _saveTreeContent(treeId, node.children, treeElem, recordsMapping);
+                await _saveTreeContent(treeId, node.children, treeElem, recordsMapping, ctx);
             }
         }
     };
@@ -222,8 +222,9 @@ export default function({
     return {
         async import(filepath: string, clear: boolean): Promise<void> {
             const startTime = now();
-            const infos: IQueryInfos = {
-                userId: 1
+            const ctx: IQueryInfos = {
+                userId: 1,
+                queryId: 'importerApp'
             };
 
             if (clear) {
@@ -240,17 +241,17 @@ export default function({
 
             // Create libraries
             console.info('Processing libraries...');
-            const libs = await _processLibraries(data.libraries, infos);
+            const libs = await _processLibraries(data.libraries, ctx);
             console.info(`Processed ${libs.length} libraries`);
 
             // Create trees
             console.info('Processing trees...');
-            const trees = await _processTrees(data.trees, infos);
+            const trees = await _processTrees(data.trees, ctx);
             console.info(`Processed ${trees.length} trees`);
 
             // Create attributes
             console.info('Processing attributes...');
-            const attributes = await _processAttributes(data.attributes, infos);
+            const attributes = await _processAttributes(data.attributes, ctx);
 
             const attrsById = attributes.reduce((attrs, a: any) => {
                 attrs[a.id] = a;
@@ -259,11 +260,11 @@ export default function({
             console.info(`Processed ${attributes.length} attributes`);
 
             console.info('Processing libraries attributes...');
-            await _processLibrariesAttributes(data.libraries, attrsById, infos);
+            await _processLibrariesAttributes(data.libraries, attrsById, ctx);
 
             // Create records
             console.info('Processing records...');
-            const recordsMapping = await _processRecords(data.records, infos);
+            const recordsMapping = await _processRecords(data.records, ctx);
             const recordsCount = Object.keys(recordsMapping).reduce((count, libName) => {
                 count = count + Object.keys(recordsMapping[libName]).length;
                 return count;
@@ -272,11 +273,11 @@ export default function({
 
             // Create tree content
             console.info('Processing trees content...');
-            await _processTreeContent(data.trees, recordsMapping);
+            await _processTreeContent(data.trees, recordsMapping, ctx);
 
             // Save values
             console.info('Processing values...');
-            const insertedValuesCount = await _processValues(data.values, attrsById, recordsMapping, infos);
+            const insertedValuesCount = await _processValues(data.values, attrsById, recordsMapping, ctx);
             _writeToConsole(`Processed ${insertedValuesCount} values \n`);
 
             const endTime = now();

@@ -5,6 +5,10 @@ import {IDbUtils} from '../db/dbUtils';
 import libraryRepo from './libraryRepo';
 
 describe('LibraryRepo', () => {
+    const ctx = {
+        userId: 0,
+        queryId: '123456'
+    };
     describe('getLibrary', () => {
         test('Should return all libs if no filter', async function() {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
@@ -25,7 +29,7 @@ describe('LibraryRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const trees = await repo.getLibraries();
+            const trees = await repo.getLibraries({ctx});
 
             expect(mockDbUtils.findCoreEntity.mock.calls.length).toBe(1);
             expect(trees).toEqual([
@@ -67,15 +71,15 @@ describe('LibraryRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const createdLib = await libRepo.createLibrary(libData);
+            const createdLib = await libRepo.createLibrary({libData, ctx});
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(mockDbServ.createCollection.mock.calls.length).toBe(1);
 
             // First call is to insert library
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^INSERT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(createdLib).toMatchObject(libData);
         });
@@ -100,14 +104,14 @@ describe('LibraryRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const updatedLib = await libRepo.updateLibrary(libData);
+            const updatedLib = await libRepo.updateLibrary({libData, ctx});
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(updatedLib).toMatchObject(libData);
         });
@@ -154,7 +158,7 @@ describe('LibraryRepo', () => {
             });
             libRepo.getLibraries = global.__mockPromise([libData]);
 
-            await libRepo.deleteLibrary(libData.id);
+            await libRepo.deleteLibrary({id: libData.id, ctx});
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(2);
@@ -162,9 +166,9 @@ describe('LibraryRepo', () => {
             expect(mockDbServ.dropCollection.mock.calls.length).toBe(1);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^REMOVE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
     });
 
@@ -216,22 +220,26 @@ describe('LibraryRepo', () => {
                 }
             ]);
 
-            const createdAttrs = await libRepo.saveLibraryAttributes('users', ['id', 'my_attr']);
+            const createdAttrs = await libRepo.saveLibraryAttributes({
+                libId: 'users',
+                attributes: ['id', 'my_attr'],
+                ctx
+            });
             expect(mockDbServ.execute.mock.calls.length).toBe(2);
 
             // First call is to delete unused attributes
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FOR attr/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/REMOVE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/FOR attr/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             // Second call is to save new attributes
             expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/FOR attr/);
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/UPSERT/);
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/FOR attr/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/UPSERT/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
 
             expect(createdAttrs).toEqual(['id', 'my_attr']);
         });
@@ -292,12 +300,12 @@ describe('LibraryRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const libAttrs = await libRepo.getLibraryAttributes('users');
+            const libAttrs = await libRepo.getLibraryAttributes({libId: 'users', ctx});
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
             // First call is to insert library
-            expect(mockDbServ.execute.mock.calls[0][0]).toMatch(/IN 1 OUTBOUND/);
-            expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/IN 1 OUTBOUND/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
 
             expect(libAttrs).toEqual(mockCleanupRes);
         });

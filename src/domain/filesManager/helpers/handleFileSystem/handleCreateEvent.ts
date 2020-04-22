@@ -10,16 +10,18 @@ import {
     updateRecordFile
 } from '../handleFileUtilsHelper';
 import {createPreview} from '../handlePreview';
+import {IQueryInfos} from '_types/queryInfos';
 
 export const handleCreateEvent = async (
     scanMsg: IFileEventData,
     resources: IHandleFileSystemResources,
-    deps: IHandleFileSystemDeps
+    deps: IHandleFileSystemDeps,
+    ctx: IQueryInfos
 ) => {
     const {filePath, fileName} = getInputData(scanMsg.pathAfter);
 
     // Search for existing record
-    let record = await getRecord(fileName, filePath, resources.library, true, deps);
+    let record = await getRecord(fileName, filePath, resources.library, true, deps, ctx);
 
     // Preview and Previews status
     const {previewsStatus, previews} = getPreviewsDatas(deps.previewVersions);
@@ -35,7 +37,7 @@ export const handleCreateEvent = async (
             HASH: scanMsg.hash
         };
 
-        await updateRecordFile(recordData, record.id, resources.library, deps);
+        await updateRecordFile(recordData, record.id, resources.library, deps, ctx);
 
         try {
             await deps.recordDomain.activateRecord(record, {userId});
@@ -55,17 +57,17 @@ export const handleCreateEvent = async (
         };
 
         try {
-            record = await createRecordFile(recordData, resources.library, deps);
+            record = await createRecordFile(recordData, resources.library, deps, ctx);
         } catch (e) {
             deps.logger.warn(`[FilesManager] Event ${scanMsg.event} - Error when create the record: ${e.message}`);
         }
     }
 
     // Find the parent folder
-    const parentRecords = await getParentRecord(filePath, resources.library, deps);
+    const parentRecords = await getParentRecord(filePath, resources.library, deps, ctx);
 
     // Link the child to his parent in the tree
-    await createFilesTreeElement(record, parentRecords, resources.library, deps);
+    await createFilesTreeElement(record, parentRecords, resources.library, deps, ctx);
 
     // Create the previews
     if (!scanMsg.isDirectory) {

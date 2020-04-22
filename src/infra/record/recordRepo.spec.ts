@@ -7,6 +7,10 @@ import {IDbUtils} from '../db/dbUtils';
 import recordRepo from './recordRepo';
 
 describe('RecordRepo', () => {
+    const ctx = {
+        userId: 0,
+        requestId: '123465'
+    };
     describe('createRecord', () => {
         test('Should create a new record', async function() {
             const recordData = {created_at: 1519303348, modified_at: 1519303348};
@@ -44,7 +48,7 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const createdRecord = await recRepo.createRecord('test', recordData);
+            const createdRecord = await recRepo.createRecord({libraryId: 'test', recordData, ctx});
             expect(mockDbCollec.save.mock.calls.length).toBe(1);
             expect(mockDbCollec.save).toBeCalledWith(recordData);
 
@@ -84,11 +88,11 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const updatedRecord = await recRepo.updateRecord('test', recordData);
+            const updatedRecord = await recRepo.updateRecord({libraryId: 'test', recordData, ctx});
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
 
@@ -145,13 +149,13 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const deleteRes = await recRepo.deleteRecord('users', recordData.id);
+            const deleteRes = await recRepo.deleteRecord({libraryId: 'users', recordId: recordData.id, ctx});
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/REMOVE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
             expect(mockDbCollec.remove).toBeCalledWith({_key: String(recordData.id)});
@@ -220,7 +224,13 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const records = await recRepo.find('test_lib', [], null, true);
+            const records = await recRepo.find({
+                libraryId: 'test_lib',
+                filters: [],
+                pagination: null,
+                withCount: true,
+                ctx
+            });
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
@@ -289,10 +299,16 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const records = await recRepo.find('test_lib', [], {limit: 2, offset: 0}, true);
+            const records = await recRepo.find({
+                libraryId: 'test_lib',
+                filters: [],
+                pagination: {limit: 2, offset: 0},
+                withCount: true,
+                ctx
+            });
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT');
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('LIMIT');
 
             expect(records.totalCount).toBe(5);
             expect(records.list.length).toBe(2);
@@ -352,11 +368,15 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const records = await recRepo.find('test_lib', [], {limit: 2, cursor: 'bmV4dDoyOjEzNDYzNDQ0'});
+            const records = await recRepo.find({
+                libraryId: 'test_lib',
+                filters: [],
+                pagination: {limit: 2, cursor: 'bmV4dDoyOjEzNDYzNDQ0'},
+                ctx
+            });
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT');
-            expect(mockDbServ.execute.mock.calls[0][1]).toBe(false); // No count
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('LIMIT');
+            expect(mockDbServ.execute.mock.calls[0][0].withTotalCount).not.toBe(true); // No count
 
             expect(records.list.length).toBe(2);
             expect(records.cursor.next).toBeTruthy();
@@ -396,13 +416,27 @@ describe('RecordRepo', () => {
             beforeEach(() => jest.clearAllMocks());
 
             test('Should not retrieve inactive records', async () => {
-                const records = await recRepo.find('test_lib', [], null, false, false);
-                expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('active == true');
+                const records = await recRepo.find({
+                    libraryId: 'test_lib',
+                    filters: [],
+                    pagination: null,
+                    withCount: false,
+                    retrieveInactive: false,
+                    ctx
+                });
+                expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('active == true');
             });
 
             test('Should retrieve inactive records if forced', async () => {
-                const records = await recRepo.find('test_lib', [], null, false, true);
-                expect(mockDbServ.execute.mock.calls[0][0].query).not.toMatch('active == true');
+                const records = await recRepo.find({
+                    libraryId: 'test_lib',
+                    filters: [],
+                    pagination: null,
+                    withCount: false,
+                    retrieveInactive: true,
+                    ctx
+                });
+                expect(mockDbServ.execute.mock.calls[0][0].query.query).not.toMatch('active == true');
             });
         });
     });
@@ -485,7 +519,13 @@ describe('RecordRepo', () => {
             filters[0].attribute.type = AttributeTypes.SIMPLE;
             filters[1].attribute.type = AttributeTypes.SIMPLE;
 
-            const records = await recRepo.find('test_lib', filters, null, true);
+            const records = await recRepo.find({
+                libraryId: 'test_lib',
+                filters,
+                pagination: null,
+                withCount: true,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
             expect(mockAttrSimpleRepo.filterQueryPart).toBeCalled();

@@ -5,6 +5,7 @@ import {IValue} from '../../_types/value';
 import {mockAttrTreeVersionableSimple} from '../../__tests__/mocks/attribute';
 import {ITreeRepo} from '../tree/treeRepo';
 import attributeTreeRepo from './attributeTreeRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 const mockAttrTreeRepo: Mockify<ITreeRepo> = {
     createTree: null,
@@ -66,6 +67,10 @@ describe('AttributeTreeRepo', () => {
             }
         })
     };
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: 'treeRepoTest'
+    };
 
     describe('createValue', () => {
         test('Should create a new advanced link value', async function() {
@@ -79,23 +84,29 @@ describe('AttributeTreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
-                value: 'categories/123456',
-                modified_at: 400999999,
-                created_at: 400999999,
-                metadata: {my_attribute: 'metadata value'},
-                version: {
-                    my_tree: {
-                        id: 1,
-                        library: 'test_lib'
+            const createdVal = await attrRepo.createValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    value: 'categories/123456',
+                    modified_at: 400999999,
+                    created_at: 400999999,
+                    metadata: {my_attribute: 'metadata value'},
+                    version: {
+                        my_tree: {
+                            id: 1,
+                            library: 'test_lib'
+                        }
                     }
-                }
+                },
+                ctx
             });
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/INSERT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject({
                 id_value: 978654321,
@@ -126,23 +137,29 @@ describe('AttributeTreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const savedVal = await attrRepo.updateValue('test_lib', 12345, mockAttribute, {
-                id_value: 987654,
-                value: 'categories/123456',
-                modified_at: 400999999,
-                metadata: {my_attribute: 'metadata value'},
-                version: {
-                    my_tree: {
-                        id: 1,
-                        library: 'test_lib'
+            const savedVal = await attrRepo.updateValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    id_value: 987654,
+                    value: 'categories/123456',
+                    modified_at: 400999999,
+                    metadata: {my_attribute: 'metadata value'},
+                    version: {
+                        my_tree: {
+                            id: 1,
+                            library: 'test_lib'
+                        }
                     }
-                }
+                },
+                ctx
             });
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(savedVal).toMatchObject(valueData);
         });
@@ -170,11 +187,17 @@ describe('AttributeTreeRepo', () => {
 
             const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
-                id_value: 445566,
-                value: 'categories/123456',
-                modified_at: 400999999,
-                created_at: 400999999
+            const deletedVal = await attrRepo.deleteValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    id_value: 445566,
+                    value: 'categories/123456',
+                    modified_at: 400999999,
+                    created_at: 400999999
+                },
+                ctx
             });
 
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
@@ -230,15 +253,21 @@ describe('AttributeTreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
-            const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id_value: 112233,
-                value: 'categories/123456'
+            const value = await attrRepo.getValueById({
+                library: 'test_lib',
+                recordId: 987654,
+                attribute: mockAttribute,
+                value: {
+                    id_value: 112233,
+                    value: 'categories/123456'
+                },
+                ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(value).toMatchObject({
                 id_value: 112233,
                 value: {
@@ -263,9 +292,15 @@ describe('AttributeTreeRepo', () => {
 
             const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const value = await attrRepo.getValueById('test_lib', 987654, mockAttribute, {
-                id_value: 112233,
-                value: 'categories/123456'
+            const value = await attrRepo.getValueById({
+                library: 'test_lib',
+                recordId: 987654,
+                attribute: mockAttribute,
+                value: {
+                    id_value: 112233,
+                    value: 'categories/123456'
+                },
+                ctx
             });
 
             expect(value).toBeNull();
@@ -344,12 +379,17 @@ describe('AttributeTreeRepo', () => {
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
+            const values = await attrRepo.getValues({
+                library: 'test_lib',
+                recordId: 123456,
+                attribute: mockAttribute,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
@@ -429,16 +469,23 @@ describe('AttributeTreeRepo', () => {
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttrTreeVersionableSimple, false, {
-                version: {
-                    my_tree: {library: 'my_lib', id: 1345}
-                }
+            const values = await attrRepo.getValues({
+                library: 'test_lib',
+                recordId: 123456,
+                attribute: mockAttrTreeVersionableSimple,
+                forceGetAllValues: false,
+                options: {
+                    version: {
+                        my_tree: {library: 'my_lib', id: 1345}
+                    }
+                },
+                ctx
             });
 
             expect(values.length).toBe(1);
             expect(values[0].id_value).toBe(112233);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('FILTER edge.version');
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
         test('Should return only first linked tree element if not multiple values', async function() {
@@ -468,10 +515,15 @@ describe('AttributeTreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal);
+            const values = await attrRepo.getValues({
+                library: 'test_lib',
+                recordId: 123456,
+                attribute: mockAttributeNotMultiVal,
+                ctx
+            });
 
             expect(values.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch('LIMIT 1');
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('LIMIT 1');
             expect(values[0]).toMatchObject({
                 id_value: 112233,
                 value: {
@@ -513,10 +565,16 @@ describe('AttributeTreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttributeNotMultiVal, true);
+            const values = await attrRepo.getValues({
+                library: 'test_lib',
+                recordId: 123456,
+                attribute: mockAttributeNotMultiVal,
+                forceGetAllValues: true,
+                ctx
+            });
 
             expect(values.length).toBe(2);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         });
     });
 });

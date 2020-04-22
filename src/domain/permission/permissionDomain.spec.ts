@@ -9,8 +9,13 @@ import {
     RecordPermissionsActions
 } from '../../_types/permissions';
 import permissionDomain from './permissionDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('PermissionDomain', () => {
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'permissionDomainTest'
+    };
     describe('savePermission', () => {
         test('Should save a new permission', async function() {
             const permData = {
@@ -63,41 +68,44 @@ describe('PermissionDomain', () => {
                 [RecordPermissionsActions.DELETE]: null
             });
 
-            const permAccess = await permDomain.getSimplePermission(
-                PermissionTypes.RECORD,
-                'test_lib',
-                RecordPermissionsActions.ACCESS,
-                12345,
-                {
+            const permAccess = await permDomain.getSimplePermission({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                action: RecordPermissionsActions.ACCESS,
+                usersGroupId: 12345,
+                permissionTreeTarget: {
                     id: '123',
                     library: 'category',
                     tree: 'categories'
-                }
-            );
+                },
+                ctx
+            });
 
-            const permEdit = await permDomain.getSimplePermission(
-                PermissionTypes.RECORD,
-                'test_lib',
-                RecordPermissionsActions.EDIT,
-                12345,
-                {
+            const permEdit = await permDomain.getSimplePermission({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                action: RecordPermissionsActions.EDIT,
+                usersGroupId: 12345,
+                permissionTreeTarget: {
                     id: '123',
                     library: 'category',
                     tree: 'categories'
-                }
-            );
+                },
+                ctx
+            });
 
-            const permDelete = await permDomain.getSimplePermission(
-                PermissionTypes.RECORD,
-                'test_lib',
-                RecordPermissionsActions.DELETE,
-                12345,
-                {
+            const permDelete = await permDomain.getSimplePermission({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                action: RecordPermissionsActions.DELETE,
+                usersGroupId: 12345,
+                permissionTreeTarget: {
                     id: '123',
                     library: 'category',
                     tree: 'categories'
-                }
-            );
+                },
+                ctx
+            });
 
             expect(permAccess).toBe(true);
             expect(permEdit).toBe(false);
@@ -123,17 +131,22 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain({'core.infra.permission': mockPermRepo as IPermissionRepo});
 
-            const perms = await permDomain.getPermissionsByActions(
-                PermissionTypes.RECORD,
-                'test_lib',
-                [RecordPermissionsActions.ACCESS, RecordPermissionsActions.EDIT, RecordPermissionsActions.DELETE],
-                12345,
-                {
+            const perms = await permDomain.getPermissionsByActions({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                actions: [
+                    RecordPermissionsActions.ACCESS,
+                    RecordPermissionsActions.EDIT,
+                    RecordPermissionsActions.DELETE
+                ],
+                usersGroupId: 12345,
+                permissionTreeTarget: {
                     id: '123',
                     library: 'category',
                     tree: 'categories'
-                }
-            );
+                },
+                ctx
+            });
 
             expect(perms).toEqual({
                 [RecordPermissionsActions.ACCESS]: true,
@@ -158,17 +171,22 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain({'core.infra.permission': mockPermRepo as IPermissionRepo});
 
-            const permEdit = await permDomain.getPermissionsByActions(
-                PermissionTypes.RECORD,
-                'test_lib',
-                [RecordPermissionsActions.ACCESS, RecordPermissionsActions.EDIT, RecordPermissionsActions.DELETE],
-                12345,
-                {
+            const permEdit = await permDomain.getPermissionsByActions({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                actions: [
+                    RecordPermissionsActions.ACCESS,
+                    RecordPermissionsActions.EDIT,
+                    RecordPermissionsActions.DELETE
+                ],
+                usersGroupId: 12345,
+                permissionTreeTarget: {
                     id: '123',
                     library: 'category',
                     tree: 'categories'
-                }
-            );
+                },
+                ctx
+            });
 
             expect(permEdit).toEqual({
                 [RecordPermissionsActions.ACCESS]: true,
@@ -184,17 +202,22 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain({'core.infra.permission': mockPermRepo as IPermissionRepo});
 
-            const permEdit = await permDomain.getPermissionsByActions(
-                PermissionTypes.RECORD,
-                'test_lib',
-                [RecordPermissionsActions.ACCESS, RecordPermissionsActions.EDIT, RecordPermissionsActions.DELETE],
-                12345,
-                {
+            const permEdit = await permDomain.getPermissionsByActions({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                actions: [
+                    RecordPermissionsActions.ACCESS,
+                    RecordPermissionsActions.EDIT,
+                    RecordPermissionsActions.DELETE
+                ],
+                usersGroupId: 12345,
+                permissionTreeTarget: {
                     id: '123',
                     library: 'category',
                     tree: 'categories'
-                }
-            );
+                },
+                ctx
+            });
 
             expect(permEdit).toEqual({
                 [RecordPermissionsActions.ACCESS]: null,
@@ -215,7 +238,7 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain({'core.infra.permission': mockPermRepo as IPermissionRepo, config});
 
-            const perm = permDomain.getDefaultPermission();
+            const perm = permDomain.getDefaultPermission(ctx);
 
             expect(perm).toBe(config.permissions.default);
         });
@@ -253,23 +276,24 @@ describe('PermissionDomain', () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {};
             const permDomain = permissionDomain({'core.infra.permission': mockPermRepo as IPermissionRepo});
 
-            permDomain.getSimplePermission = jest.fn().mockImplementation((type, applyTo, action, grpId, targ) => {
-                if (grpId === 1) {
-                    return true;
-                } else if (grpId === 0) {
-                    return false;
-                } else {
-                    return null;
-                }
-            });
+            permDomain.getSimplePermission = jest
+                .fn()
+                .mockImplementation(({type, applyTo, action, usersGroupId, permissionTreeTarget, ctx: ct}) => {
+                    if (usersGroupId === 1) {
+                        return true;
+                    } else if (usersGroupId === 0) {
+                        return false;
+                    } else {
+                        return null;
+                    }
+                });
 
-            const perm = await permDomain.getPermissionByUserGroups(
-                PermissionTypes.ADMIN,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                mockUserGroups,
-                null,
-                null
-            );
+            const perm = await permDomain.getPermissionByUserGroups({
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupsPaths: mockUserGroups,
+                ctx
+            });
 
             expect(perm).toBe(true);
         });
@@ -278,21 +302,22 @@ describe('PermissionDomain', () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {};
             const permDomain = permissionDomain({'core.infra.permission': mockPermRepo as IPermissionRepo});
 
-            permDomain.getSimplePermission = jest.fn().mockImplementation((type, applyTo, action, grpId, targ) => {
-                if (grpId === 0) {
-                    return false;
-                } else {
-                    return null;
-                }
-            });
+            permDomain.getSimplePermission = jest
+                .fn()
+                .mockImplementation(({type, applyTo, action, usersGroupId, permissionTreeTarget, ctx: ct}) => {
+                    if (usersGroupId === 0) {
+                        return false;
+                    } else {
+                        return null;
+                    }
+                });
 
-            const perm = await permDomain.getPermissionByUserGroups(
-                PermissionTypes.ADMIN,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                mockUserGroups,
-                null,
-                null
-            );
+            const perm = await permDomain.getPermissionByUserGroups({
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupsPaths: mockUserGroups,
+                ctx
+            });
 
             expect(perm).toBe(false);
         });
@@ -303,17 +328,16 @@ describe('PermissionDomain', () => {
 
             permDomain.getSimplePermission = jest
                 .fn()
-                .mockImplementation((type, applyTo, action, usersGroupId, permissionTreeTarget) => {
+                .mockImplementation(({type, applyTo, action, usersGroupId, permissionTreeTarget, ctx: ct}) => {
                     return usersGroupId === null ? false : null;
                 });
 
-            const perm = await permDomain.getPermissionByUserGroups(
-                PermissionTypes.ADMIN,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                mockUserGroups,
-                null,
-                null
-            );
+            const perm = await permDomain.getPermissionByUserGroups({
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupsPaths: mockUserGroups,
+                ctx
+            });
 
             expect(perm).toBe(false);
         });
@@ -324,17 +348,16 @@ describe('PermissionDomain', () => {
 
             permDomain.getSimplePermission = jest
                 .fn()
-                .mockImplementation((type, applyTo, action, usersGroupId, permissionTreeTarget) => {
+                .mockImplementation(({type, applyTo, action, usersGroupId, permissionTreeTarget, ctx: ct}) => {
                     return usersGroupId === null ? false : null;
                 });
 
-            const perm = await permDomain.getPermissionByUserGroups(
-                PermissionTypes.ADMIN,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                [],
-                null,
-                null
-            );
+            const perm = await permDomain.getPermissionByUserGroups({
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupsPaths: [],
+                ctx
+            });
 
             expect(perm).toBe(false);
         });
@@ -345,13 +368,12 @@ describe('PermissionDomain', () => {
 
             permDomain.getSimplePermission = global.__mockPromise(null);
 
-            const perm = await permDomain.getPermissionByUserGroups(
-                PermissionTypes.ADMIN,
-                AdminPermissionsActions.CREATE_ATTRIBUTE,
-                mockUserGroups,
-                null,
-                null
-            );
+            const perm = await permDomain.getPermissionByUserGroups({
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupsPaths: mockUserGroups,
+                ctx
+            });
 
             expect(perm).toBe(null);
         });
@@ -417,7 +439,11 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(true);
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
-            const perm = await permDomain.getAdminPermission(AdminPermissionsActions.CREATE_ATTRIBUTE, 12345);
+            const perm = await permDomain.getAdminPermission({
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(true);
         });
@@ -433,7 +459,11 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(null);
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
-            const perm = await permDomain.getAdminPermission(AdminPermissionsActions.CREATE_ATTRIBUTE, 12345);
+            const perm = await permDomain.getAdminPermission({
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(defaultPerm);
         });
@@ -501,7 +531,12 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(true);
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
-            const perm = await permDomain.getLibraryPermission(LibraryPermissionsActions.ACCESS, 'test_lib', 12345);
+            const perm = await permDomain.getLibraryPermission({
+                action: LibraryPermissionsActions.ACCESS,
+                libraryId: 'test_lib',
+                userId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(true);
         });
@@ -517,7 +552,12 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(null);
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
-            const perm = await permDomain.getLibraryPermission(LibraryPermissionsActions.ACCESS, 'test_lib', 12345);
+            const perm = await permDomain.getLibraryPermission({
+                action: LibraryPermissionsActions.ACCESS,
+                libraryId: 'test_lib',
+                userId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(defaultPerm);
         });
@@ -550,11 +590,12 @@ describe('PermissionDomain', () => {
             const permDomain = permissionDomain({'core.infra.tree': mockTreeRepo as ITreeRepo});
             permDomain.getPermissionByUserGroups = global.__mockPromise(true);
 
-            const perm = await permDomain.getHeritedLibraryPermission(
-                LibraryPermissionsActions.ACCESS,
-                'test_lib',
-                12345
-            );
+            const perm = await permDomain.getHeritedLibraryPermission({
+                action: LibraryPermissionsActions.ACCESS,
+                libraryId: 'test_lib',
+                userGroupId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(true);
         });
@@ -563,11 +604,12 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(null);
             permDomain.getDefaultPermission = global.__mockPromise(false);
 
-            const perm = await permDomain.getHeritedLibraryPermission(
-                LibraryPermissionsActions.ACCESS,
-                'test_lib',
-                12345
-            );
+            const perm = await permDomain.getHeritedLibraryPermission({
+                action: LibraryPermissionsActions.ACCESS,
+                libraryId: 'test_lib',
+                userGroupId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(false);
         });
@@ -600,7 +642,11 @@ describe('PermissionDomain', () => {
             const permDomain = permissionDomain({'core.infra.tree': mockTreeRepo as ITreeRepo});
             permDomain.getPermissionByUserGroups = global.__mockPromise(true);
 
-            const perm = await permDomain.getHeritedAdminPermission(AdminPermissionsActions.CREATE_ATTRIBUTE, 12345);
+            const perm = await permDomain.getHeritedAdminPermission({
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(true);
         });
@@ -609,7 +655,11 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(null);
             permDomain.getDefaultPermission = global.__mockPromise(false);
 
-            const perm = await permDomain.getHeritedAdminPermission(AdminPermissionsActions.CREATE_ATTRIBUTE, 12345);
+            const perm = await permDomain.getHeritedAdminPermission({
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                userGroupId: 12345,
+                ctx
+            });
 
             expect(perm).toBe(false);
         });

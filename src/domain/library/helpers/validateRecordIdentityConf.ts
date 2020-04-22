@@ -2,11 +2,13 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ILibrary} from '_types/library';
 import {ErrorFieldDetail, Errors} from '../../../_types/errors';
+import {IQueryInfos} from '_types/queryInfos';
 
 export default async (
     libData: ILibrary,
     libAttributes: string[],
-    deps: {attributeDomain: IAttributeDomain; libraryRepo: ILibraryRepo}
+    deps: {attributeDomain: IAttributeDomain; libraryRepo: ILibraryRepo},
+    ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<ILibrary>> => {
     const errors: ErrorFieldDetail<ILibrary> = {};
 
@@ -16,7 +18,7 @@ export default async (
 
     const allowedAttributes = libAttributes.length
         ? libAttributes
-        : (await deps.libraryRepo.getLibraryAttributes(libData.id)).map(a => a.id);
+        : (await deps.libraryRepo.getLibraryAttributes({libId: libData.id, ctx})).map(a => a.id);
 
     const unbindedAttrs = [];
     for (const identitiyField of Object.keys(libData.recordIdentityConf)) {

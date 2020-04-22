@@ -6,11 +6,11 @@ exports[`AttributeIndexRepo clearAllValues Should delete field of given attribut
 
 exports[`AttributeIndexRepo createValue Should create a new index value 1`] = `
 "
-            UPDATE @value0
-            WITH @value1
-            IN @@value2
-            OPTIONS { keepNull: false }
-            RETURN NEW"
+                UPDATE @value0
+                WITH @value1
+                IN @@value2
+                OPTIONS { keepNull: false }
+                RETURN NEW"
 `;
 
 exports[`AttributeIndexRepo createValue Should create a new index value 2`] = `
@@ -27,11 +27,11 @@ Object {
 
 exports[`AttributeIndexRepo deleteValue Should delete a value 1`] = `
 "
-            UPDATE @value0
-            WITH @value1
-            IN @@value2
-            OPTIONS { keepNull: false }
-            RETURN NEW"
+                UPDATE @value0
+                WITH @value1
+                IN @@value2
+                OPTIONS { keepNull: false }
+                RETURN NEW"
 `;
 
 exports[`AttributeIndexRepo deleteValue Should delete a value 2`] = `

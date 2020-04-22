@@ -12,9 +12,13 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import treeDomain from './treeDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('treeDomain', () => {
-    const queryInfos = {userId: 1};
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'treeDomainTest'
+    };
     const mockTree = {
         id: 'test',
         system: false,
@@ -48,7 +52,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils
             });
 
-            const newTree = await domain.saveTree(mockTree, queryInfos);
+            const newTree = await domain.saveTree(mockTree, ctx);
 
             expect(treeRepo.createTree.mock.calls.length).toBe(1);
             expect(treeRepo.updateTree.mock.calls.length).toBe(0);
@@ -56,7 +60,7 @@ describe('treeDomain', () => {
             expect(newTree).toMatchObject(mockTree);
 
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.CREATE_TREE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(AdminPermissionsActions.CREATE_TREE);
         });
 
         test('Should update existing tree', async () => {
@@ -76,7 +80,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils
             });
 
-            const newTree = await domain.saveTree(mockTree, queryInfos);
+            const newTree = await domain.saveTree(mockTree, ctx);
 
             expect(treeRepo.createTree.mock.calls.length).toBe(0);
             expect(treeRepo.updateTree.mock.calls.length).toBe(1);
@@ -84,7 +88,7 @@ describe('treeDomain', () => {
             expect(newTree).toMatchObject(mockTree);
 
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_TREE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(AdminPermissionsActions.EDIT_TREE);
         });
 
         test('Should throw if unknown libraries', async () => {
@@ -109,7 +113,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils
             });
 
-            await expect(domain.saveTree(treeData, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(domain.saveTree(treeData, ctx)).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if forbidden action', async () => {
@@ -129,7 +133,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils
             });
 
-            await expect(domain.saveTree(mockTree, queryInfos)).rejects.toThrow(PermissionError);
+            await expect(domain.saveTree(mockTree, ctx)).rejects.toThrow(PermissionError);
         });
 
         test('Should throw if invalid ID', async function() {
@@ -153,7 +157,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtilsInvalidID as IUtils
             });
 
-            await expect(domain.saveTree(mockTree, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(domain.saveTree(mockTree, ctx)).rejects.toThrow(ValidationError);
         });
 
         test('Should not save behavior on existing tree', async () => {
@@ -180,7 +184,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils
             });
 
-            await domain.saveTree({...mockFilesTree}, queryInfos);
+            await domain.saveTree({...mockFilesTree}, ctx);
             expect(treeRepo.updateTree.mock.calls[0][0].behavior).toBeUndefined();
         });
 
@@ -203,7 +207,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils
             });
 
-            await expect(domain.saveTree(treeToSave, queryInfos)).rejects.toHaveProperty('fields.libraries');
+            await expect(domain.saveTree(treeToSave, ctx)).rejects.toHaveProperty('fields.libraries');
         });
 
         test('On files behavior, throw if binding more than one library', async () => {
@@ -225,7 +229,7 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils
             });
 
-            await expect(domain.saveTree(treeToSave, queryInfos)).rejects.toHaveProperty('fields.libraries');
+            await expect(domain.saveTree(treeToSave, ctx)).rejects.toHaveProperty('fields.libraries');
         });
     });
 
@@ -245,12 +249,12 @@ describe('treeDomain', () => {
             });
             domain.getTrees = global.__mockPromise({list: [mockTree], totalCount: 1});
 
-            const deleteRes = await domain.deleteTree(mockTree.id, queryInfos);
+            const deleteRes = await domain.deleteTree(mockTree.id, ctx);
 
             expect(treeRepo.deleteTree.mock.calls.length).toBe(1);
 
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.DELETE_TREE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(AdminPermissionsActions.DELETE_TREE);
         });
 
         test('Should throw if unknown tree', async function() {
@@ -267,7 +271,7 @@ describe('treeDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
             domain.getTrees = global.__mockPromise({list: [], totalCount: 0});
-            await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if system tree', async function() {
@@ -286,7 +290,7 @@ describe('treeDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
             domain.getTrees = global.__mockPromise({list: [treeData], totalCount: 1});
-            await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if action forbidden', async function() {
@@ -305,7 +309,7 @@ describe('treeDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
             domain.getTrees = global.__mockPromise([treeData]);
-            await expect(domain.deleteTree(mockTree.id, queryInfos)).rejects.toThrow(PermissionError);
+            await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(PermissionError);
         });
     });
 
@@ -316,9 +320,9 @@ describe('treeDomain', () => {
             };
             const domain = treeDomain({'core.infra.tree': treeRepo as ITreeRepo});
 
-            const trees = await domain.getTrees({filters: {id: 'test'}});
+            const trees = await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
 
-            expect(treeRepo.getTrees.mock.calls[0][0].filters).toMatchObject({id: 'test'});
+            expect(treeRepo.getTrees.mock.calls[0][0].params.filters).toMatchObject({id: 'test'});
             expect(trees.list.length).toBe(2);
         });
 
@@ -328,9 +332,9 @@ describe('treeDomain', () => {
             };
             const domain = treeDomain({'core.infra.tree': treeRepo as ITreeRepo});
 
-            const trees = await domain.getTrees({filters: {id: 'test'}});
+            const trees = await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
 
-            expect(treeRepo.getTrees.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
+            expect(treeRepo.getTrees.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });
 
@@ -350,7 +354,12 @@ describe('treeDomain', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
 
-            const addedElement = await domain.addElement('test_tree', {id: 1345, library: 'lib1'}, null);
+            const addedElement = await domain.addElement({
+                treeId: 'test_tree',
+                element: {id: 1345, library: 'lib1'},
+                parent: null,
+                ctx
+            });
 
             expect(treeRepo.addElement).toBeCalled();
         });
@@ -368,7 +377,12 @@ describe('treeDomain', () => {
             });
 
             const rej = await expect(
-                domain.addElement('test_tree', {id: 1345, library: 'lib1'}, {id: 999, library: 'other_lib'})
+                domain.addElement({
+                    treeId: 'test_tree',
+                    element: {id: 1345, library: 'lib1'},
+                    parent: {id: 999, library: 'other_lib'},
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -391,7 +405,12 @@ describe('treeDomain', () => {
             });
 
             const rej = await expect(
-                domain.addElement('test_tree', {id: 1345, library: 'lib1'}, {id: 999, library: 'other_lib'})
+                domain.addElement({
+                    treeId: 'test_tree',
+                    element: {id: 1345, library: 'lib1'},
+                    parent: {id: 999, library: 'other_lib'},
+                    ctx
+                })
             ).rejects.toThrow();
         });
 
@@ -420,7 +439,12 @@ describe('treeDomain', () => {
             });
 
             await expect(
-                domain.addElement('test_tree', {id: 1345, library: 'lib1'}, {id: 999, library: 'other_lib'})
+                domain.addElement({
+                    treeId: 'test_tree',
+                    element: {id: 1345, library: 'lib1'},
+                    parent: {id: 999, library: 'other_lib'},
+                    ctx
+                })
             ).rejects.toHaveProperty('fields.parent');
         });
     });
@@ -440,14 +464,15 @@ describe('treeDomain', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
 
-            const addedElement = await domain.moveElement(
-                'test_tree',
-                {id: 1345, library: 'lib1'},
-                {
+            const addedElement = await domain.moveElement({
+                treeId: 'test_tree',
+                element: {id: 1345, library: 'lib1'},
+                parentTo: {
                     id: 999,
                     library: 'other_lib'
-                }
-            );
+                },
+                ctx
+            });
 
             expect(treeRepo.moveElement).toBeCalled();
         });
@@ -468,7 +493,12 @@ describe('treeDomain', () => {
             });
 
             const rej = await expect(
-                domain.moveElement('test_tree', {id: 1345, library: 'lib1'}, {id: 999, library: 'other_lib'})
+                domain.moveElement({
+                    treeId: 'test_tree',
+                    element: {id: 1345, library: 'lib1'},
+                    parentTo: {id: 999, library: 'other_lib'},
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -497,7 +527,12 @@ describe('treeDomain', () => {
             });
 
             await expect(
-                domain.moveElement('test_tree', {id: 1345, library: 'lib1'}, {id: 999, library: 'other_lib'})
+                domain.moveElement({
+                    treeId: 'test_tree',
+                    element: {id: 1345, library: 'lib1'},
+                    parentTo: {id: 999, library: 'other_lib'},
+                    ctx
+                })
             ).rejects.toHaveProperty('fields.parent');
         });
     });
@@ -518,7 +553,12 @@ describe('treeDomain', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
 
-            const addedElement = await domain.deleteElement('test_tree', {id: 1345, library: 'lib1'}, true);
+            const addedElement = await domain.deleteElement({
+                treeId: 'test_tree',
+                element: {id: 1345, library: 'lib1'},
+                deleteChildren: true,
+                ctx
+            });
 
             expect(treeRepo.deleteElement).toBeCalled();
         });
@@ -539,7 +579,12 @@ describe('treeDomain', () => {
             });
 
             const rej = await expect(
-                domain.deleteElement('test_tree', {id: 1345, library: 'lib1'}, true)
+                domain.deleteElement({
+                    treeId: 'test_tree',
+                    element: {id: 1345, library: 'lib1'},
+                    deleteChildren: true,
+                    ctx
+                })
             ).rejects.toThrow(ValidationError);
         });
     });
@@ -616,7 +661,7 @@ describe('treeDomain', () => {
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain
             });
 
-            const treeContent = await domain.getTreeContent('test_tree');
+            const treeContent = await domain.getTreeContent({treeId: 'test_tree', ctx});
 
             expect(treeRepo.getTreeContent.mock.calls.length).toBe(1);
             expect(treeContent[0].record).toMatchObject({
@@ -641,7 +686,9 @@ describe('treeDomain', () => {
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain
             });
 
-            const rej = await expect(domain.getTreeContent('test_tree')).rejects.toThrow(ValidationError);
+            const rej = await expect(domain.getTreeContent({treeId: 'test_tree', ctx})).rejects.toThrow(
+                ValidationError
+            );
         });
     });
 
@@ -656,7 +703,11 @@ describe('treeDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            const isPresent = await domain.isElementPresent('test_tree', {id: 12345, library: 'lib1'});
+            const isPresent = await domain.isElementPresent({
+                treeId: 'test_tree',
+                element: {id: 12345, library: 'lib1'},
+                ctx
+            });
 
             expect(isPresent).toBe(true);
         });

@@ -27,20 +27,26 @@ interface IValidateValueParams {
         valueRepo: IValueRepo;
         treeRepo: ITreeRepo;
     };
+    ctx: IQueryInfos;
 }
 
 const _validateLinkedRecord = async (
     value: IValue,
     attribute: IAttribute,
-    deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo}
+    deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo},
+    ctx: IQueryInfos
 ): Promise<ILinkRecordValidationResult> => {
-    const idAttrProps = await deps.attributeDomain.getAttributeProperties('id');
-    const records = await deps.recordRepo.find(attribute.linked_library, [
-        {
-            attribute: idAttrProps,
-            value: value.value
-        }
-    ]);
+    const idAttrProps = await deps.attributeDomain.getAttributeProperties({id: 'id', ctx});
+    const records = await deps.recordRepo.find({
+        libraryId: attribute.linked_library,
+        filters: [
+            {
+                attribute: idAttrProps,
+                value: value.value
+            }
+        ],
+        ctx
+    });
 
     return records.list.length
         ? {isValid: true}
@@ -56,16 +62,21 @@ const _validateLinkedRecord = async (
 const _validateTreeLinkedRecord = async (
     value: IValue,
     attribute: IAttribute,
-    deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo; treeRepo: ITreeRepo}
+    deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo; treeRepo: ITreeRepo},
+    ctx: IQueryInfos
 ): Promise<ILinkRecordValidationResult> => {
-    const idAttrProps = await deps.attributeDomain.getAttributeProperties('id');
+    const idAttrProps = await deps.attributeDomain.getAttributeProperties({id: 'id', ctx});
     const [library, recordId] = value.value.split('/');
-    const records = await deps.recordRepo.find(library, [
-        {
-            attribute: idAttrProps,
-            value: recordId
-        }
-    ]);
+    const records = await deps.recordRepo.find({
+        libraryId: library,
+        filters: [
+            {
+                attribute: idAttrProps,
+                value: recordId
+            }
+        ],
+        ctx
+    });
 
     if (!records.list.length) {
         return {
@@ -77,7 +88,11 @@ const _validateTreeLinkedRecord = async (
         };
     }
 
-    const isElementInTree = await deps.treeRepo.isElementPresent(attribute.linked_tree, {library, id: recordId});
+    const isElementInTree = await deps.treeRepo.isElementPresent({
+        treeId: attribute.linked_tree,
+        element: {library, id: recordId},
+        ctx
+    });
 
     if (!isElementInTree) {
         return {
@@ -97,10 +112,11 @@ const _mustCheckLinkedRecord = (attribute: IAttribute): boolean => {
 
 const _validateVersion = async (
     value: IValue,
-    deps: {treeRepo: ITreeRepo}
+    deps: {treeRepo: ITreeRepo},
+    ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<IValueVersion>> => {
     const trees = Object.keys(value.version);
-    const existingTrees = await deps.treeRepo.getTrees();
+    const existingTrees = await deps.treeRepo.getTrees({ctx});
     const existingTreesIds = existingTrees.list.map(t => t.id);
 
     const badElements: ErrorFieldDetail<IValueVersion> = await trees.reduce(async (prevErrors, treeName) => {
@@ -112,7 +128,11 @@ const _validateVersion = async (
             return errors;
         }
 
-        const isPresent = await deps.treeRepo.isElementPresent(treeName, value.version[treeName]);
+        const isPresent = await deps.treeRepo.isElementPresent({
+            treeId: treeName,
+            element: value.version[treeName],
+            ctx
+        });
         if (!isPresent) {
             errors[treeName] = {
                 msg: Errors.ELEMENT_NOT_IN_TREE,
@@ -144,19 +164,25 @@ const _validateMetadata = (attribute: IAttribute, value: IValue): ErrorFieldDeta
 
 export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IValue>> => {
     let errors: ErrorFieldDetail<IValue> = {};
-    const {attributeProps, value, library, recordId, deps} = params;
+    const {attributeProps, value, library, recordId, deps, ctx} = params;
     const valueExists = doesValueExist(value, attributeProps);
 
     // Check if value ID actually exists
     if (valueExists) {
-        const existingVal = await deps.valueRepo.getValueById(library, recordId, attributeProps, value);
+        const existingVal = await deps.valueRepo.getValueById({
+            library,
+            recordId,
+            attribute: attributeProps,
+            value,
+            ctx
+        });
         if (existingVal === null) {
             errors.id_value = Errors.UNKNOWN_VALUE;
         }
     }
 
     if (!!value.version) {
-        const badElements = await _validateVersion(value, deps);
+        const badElements = await _validateVersion(value, deps, ctx);
         if (Object.keys(badElements).length) {
             for (const badVersion of Object.keys(badElements)) {
                 errors[`version.${badVersion}`] = badElements[badVersion];
@@ -169,14 +195,19 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
 
     if (_mustCheckLinkedRecord(attributeProps)) {
         const linkedRecordValidationHandler: {
-            [type: string]: (value: IValue, attribute: IAttribute, deps: any) => Promise<ILinkRecordValidationResult>;
+            [type: string]: (
+                value: IValue,
+                attribute: IAttribute,
+                deps: any,
+                ctx: IQueryInfos
+            ) => Promise<ILinkRecordValidationResult>;
         } = {
             [AttributeTypes.SIMPLE_LINK]: _validateLinkedRecord,
             [AttributeTypes.ADVANCED_LINK]: _validateLinkedRecord,
             [AttributeTypes.TREE]: _validateTreeLinkedRecord
         };
 
-        const isValidLink = await linkedRecordValidationHandler[attributeProps.type](value, attributeProps, deps);
+        const isValidLink = await linkedRecordValidationHandler[attributeProps.type](value, attributeProps, deps, ctx);
 
         if (!isValidLink.isValid) {
             errors[attributeProps.id] = isValidLink.reason;

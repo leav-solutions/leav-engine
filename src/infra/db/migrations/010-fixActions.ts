@@ -24,7 +24,7 @@ export default function({
     'core.infra.db.dbService': dbService = null
 }: any) {
     return {
-        async run() {
+        async run(ctx) {
             const existingAttribute = await attributeDomain.getAttributes({}).catch(err => {
                 console.log(err.message);
             });
@@ -71,11 +71,12 @@ export default function({
                 const actionsList = {getValue, saveValue, deleteValue};
 
                 await dbService
-                    .execute(
-                        aql`UPDATE ${attribute.id} WITH {
-                        actions_list: ${actionsList}
-                    } IN core_attributes`
-                    )
+                    .execute({
+                        query: aql`UPDATE ${attribute.id} WITH {
+                            actions_list: ${actionsList}
+                        } IN core_attributes`,
+                        ctx
+                    })
                     .catch(err => {
                         console.log(err.message);
                     });

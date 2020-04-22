@@ -4,6 +4,7 @@ import {IMigration} from '_types/migration';
 import {IDbService} from '../dbService';
 import {MIGRATIONS_COLLECTION_NAME} from '../dbUtils';
 import loadMigrationFile from './loadMigrationFile';
+import {IQueryInfos} from '_types/queryInfos';
 
 interface IExecuteMigrationParams {
     files: string[];
@@ -15,10 +16,11 @@ interface IExecuteMigrationParams {
         dbService: IDbService;
         logger: Winston;
     };
+    ctx: IQueryInfos;
 }
 
 export default async (params: IExecuteMigrationParams): Promise<void> => {
-    const {files, executedMigrations, migrationsDir, prefix = null, deps} = params;
+    const {files, executedMigrations, migrationsDir, prefix = null, deps, ctx} = params;
 
     for (const file of files) {
         // Check if it's been run before
@@ -35,7 +37,7 @@ export default async (params: IExecuteMigrationParams): Promise<void> => {
 
                 // Run migration
                 const migration: IMigration = deps.depsManager.build(asFunction(importedFile.default));
-                await migration.run();
+                await migration.run(ctx);
 
                 // Store migration execution to DB
                 const collection = deps.dbService.db.collection(MIGRATIONS_COLLECTION_NAME);

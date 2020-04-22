@@ -85,25 +85,29 @@ export default function({
                 `,
                 resolvers: {
                     Query: {
-                        async forms(_, {filters, pagination, sort}) {
-                            return formDomain.getFormsByLib(filters.library, {
-                                filters,
-                                pagination,
-                                sort,
-                                withCount: true
+                        async forms(_, {filters, pagination, sort}, ctx) {
+                            return formDomain.getFormsByLib({
+                                library: filters.library,
+                                params: {
+                                    filters,
+                                    pagination,
+                                    sort,
+                                    withCount: true
+                                },
+                                ctx
                             });
                         }
                     },
                     Mutation: {
                         async saveForm(_, {form}, ctx) {
-                            return formDomain.saveForm(form, ctx);
+                            return formDomain.saveForm({form, ctx});
                         },
                         async deleteForm(_, {library, id}, ctx) {
-                            return formDomain.deleteForm(library, id, ctx);
+                            return formDomain.deleteForm({library, id, ctx});
                         }
                     },
                     Form: {
-                        library: (form: IForm) => libraryDomain.getLibraryProperties(form.library)
+                        library: (form: IForm, _, ctx) => libraryDomain.getLibraryProperties(form.library, ctx)
                     },
                     FormLayout: new GraphQLScalarType({
                         name: 'FormLayout',

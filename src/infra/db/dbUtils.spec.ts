@@ -13,7 +13,10 @@ import loadMigrationFile from './helpers/loadMigrationFile';
 
 describe('dbUtils', () => {
     const mockConf = {lang: {available: ['fr', 'en']}};
-
+    const ctx = {
+        userId: 0,
+        queryId: '123456'
+    };
     afterAll(() => {
         jest.clearAllMocks();
     });
@@ -94,15 +97,15 @@ describe('dbUtils', () => {
         });
 
         test('Find core entity without filters', async () => {
-            const res = await testDbUtils.findCoreEntity({collectionName: TREES_COLLECTION_NAME});
+            const res = await testDbUtils.findCoreEntity({collectionName: TREES_COLLECTION_NAME, ctx});
 
             expect(res.list).toHaveLength(1);
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars['@value0']).toBe('core_trees');
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars['@value0']).toBe('core_trees');
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(res.list[0]).toMatchObject({
                 id: 'categories',
@@ -116,23 +119,25 @@ describe('dbUtils', () => {
         test('Filter with a LIKE on ID', async function() {
             const res = await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
-                filters: {id: 'test'}
+                filters: {id: 'test'},
+                ctx
             });
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(FILTER LIKE){1}/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/(FILTER LIKE){1}/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should filter label on any language', async function() {
             const res = await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
-                filters: {label: 'test'}
+                filters: {label: 'test'},
+                ctx
             });
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(LIKE(.*)label\.(.*)OR LIKE(.*)label\.)/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/(LIKE(.*)label\.(.*)OR LIKE(.*)label\.)/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should limit results', async function() {
@@ -155,12 +160,13 @@ describe('dbUtils', () => {
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
-                pagination: {limit: 5, offset: 0}
+                pagination: {limit: 5, offset: 0},
+                ctx
             });
 
-            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatch(/LIMIT/);
-            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServLimit.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServLimit.execute.mock.calls[0][0].query.query).toMatch(/LIMIT/);
+            expect(mockDbServLimit.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServLimit.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should sort results', async function() {
@@ -186,12 +192,13 @@ describe('dbUtils', () => {
                 sort: {
                     field: 'system',
                     order: SortOrder.ASC
-                }
+                },
+                ctx
             });
 
-            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatch(/SORT/);
-            expect(mockDbServLimit.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServLimit.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServLimit.execute.mock.calls[0][0].query.query).toMatch(/SORT/);
+            expect(mockDbServLimit.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServLimit.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should convert ID key when sorting', async function() {
@@ -217,10 +224,11 @@ describe('dbUtils', () => {
                 sort: {
                     field: 'id',
                     order: SortOrder.ASC
-                }
+                },
+                ctx
             });
 
-            expect(mockDbServLimit.execute.mock.calls[0][0].bindVars.value1).toBe('_key');
+            expect(mockDbServLimit.execute.mock.calls[0][0].query.bindVars.value1).toBe('_key');
         });
 
         test('Should return an empty array if no results', async function() {
@@ -230,7 +238,7 @@ describe('dbUtils', () => {
             testDbUtils.convertToDoc = jest.fn();
 
             mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const res = await testDbUtils.findCoreEntity<ITree>({collectionName: TREES_COLLECTION_NAME});
+            const res = await testDbUtils.findCoreEntity<ITree>({collectionName: TREES_COLLECTION_NAME, ctx});
 
             expect(res.list).toBeInstanceOf(Array);
             expect(res.list.length).toBe(0);

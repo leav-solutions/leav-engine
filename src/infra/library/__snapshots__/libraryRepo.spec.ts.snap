@@ -34,15 +34,15 @@ exports[`LibraryRepo getLibraryAttributes Should get library attributes through 
 
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 1`] = `
 "
-                    FOR attr IN @value0
-                        FOR l in @@value1
-                            FILTER
-                                l._from == @value2
-                                AND l._to == CONCAT('core_attributes/', attr)
-                            REMOVE l
-                            IN @@value1
-                            RETURN OLD
-                "
+                        FOR attr IN @value0
+                            FOR l in @@value1
+                                FILTER
+                                    l._from == @value2
+                                    AND l._to == CONCAT('core_attributes/', attr)
+                                REMOVE l
+                                IN @@value1
+                                RETURN OLD
+                    "
 `;
 
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 2`] = `
@@ -57,20 +57,20 @@ Object {
 
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 3`] = `
 "
-                FOR attr IN @value0
-                    LET attrToInsert = {
-                        _from: @value1,
-                        _to: CONCAT('core_attributes/', attr)
-                    }
-                    UPSERT {
-                        _from: @value1,
-                        _to: CONCAT('core_attributes/', attr)
-                    }
-                    INSERT attrToInsert
-                    UPDATE attrToInsert
-                    IN @@value2
-                    RETURN NEW
-            "
+                    FOR attr IN @value0
+                        LET attrToInsert = {
+                            _from: @value1,
+                            _to: CONCAT('core_attributes/', attr)
+                        }
+                        UPSERT {
+                            _from: @value1,
+                            _to: CONCAT('core_attributes/', attr)
+                        }
+                        INSERT attrToInsert
+                        UPDATE attrToInsert
+                        IN @@value2
+                        RETURN NEW
+                "
 `;
 
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 4`] = `
