@@ -13,6 +13,7 @@ import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 export interface IPermissionTarget {
     attributeId?: string;
@@ -22,28 +23,38 @@ export interface IPermissionTarget {
 export interface IPermissionsHelperDomain {
     /**
      * Retrieve herited permission: ignore permission defined on given element, force retrieval of herited permission
-     *
-     * @param type
-     * @param applyTo
-     * @param actions
-     * @param userGroupId
-     * @param permissionTreeTarget
      */
-    getHeritedPermissions(
-        type: PermissionTypes,
-        applyTo: string,
-        action: PermissionsActions,
-        userGroupId: number,
-        permissionTreeTarget?: IPermissionsTreeTarget
-    ): Promise<boolean>;
+    getHeritedPermissions({
+        type,
+        applyTo,
+        action,
+        userGroupId,
+        permissionTreeTarget,
+        ctx
+    }: {
+        type: PermissionTypes;
+        applyTo: string;
+        action: PermissionsActions;
+        userGroupId: number;
+        permissionTreeTarget?: IPermissionsTreeTarget;
+        ctx: IQueryInfos;
+    }): Promise<boolean>;
 
-    isAllowed(
-        type: PermissionTypes,
-        action: PermissionsActions,
-        userId: number,
-        applyTo?: string,
-        target?: IPermissionTarget
-    ): Promise<boolean>;
+    isAllowed({
+        type,
+        action,
+        userId,
+        applyTo,
+        target,
+        ctx
+    }: {
+        type: PermissionTypes;
+        action: PermissionsActions;
+        userId: number;
+        applyTo?: string;
+        target?: IPermissionTarget;
+        ctx: IQueryInfos;
+    }): Promise<boolean>;
 }
 
 interface IDeps {
@@ -60,13 +71,7 @@ export default function({
     'core.domain.permission.attributePermission': attributePermissionDomain = null
 }: IDeps = {}): IPermissionsHelperDomain {
     return {
-        async getHeritedPermissions(
-            type: PermissionTypes,
-            applyTo: string,
-            action: PermissionsActions,
-            userGroupId: number,
-            permissionTreeTarget: IPermissionsTreeTarget
-        ): Promise<boolean> {
+        async getHeritedPermissions({type, applyTo, action, userGroupId, permissionTreeTarget, ctx}): Promise<boolean> {
             let perm;
             switch (type) {
                 case PermissionTypes.RECORD:
@@ -75,43 +80,45 @@ export default function({
                         userGroupId,
                         applyTo,
                         permissionTreeTarget.tree,
-                        {id: permissionTreeTarget.id, library: permissionTreeTarget.library}
+                        {id: permissionTreeTarget.id, library: permissionTreeTarget.library},
+                        ctx
                     );
                     break;
                 case PermissionTypes.ATTRIBUTE:
-                    perm = treePermissionDomain.getHeritedTreePermission({
-                        type: PermissionTypes.ATTRIBUTE,
-                        applyTo,
-                        action,
-                        userGroupId,
-                        permissionTreeTarget,
-                        getDefaultPermission: permissionDomain.getDefaultPermission
-                    });
+                    perm = treePermissionDomain.getHeritedTreePermission(
+                        {
+                            type: PermissionTypes.ATTRIBUTE,
+                            applyTo,
+                            action,
+                            userGroupId,
+                            permissionTreeTarget,
+                            getDefaultPermission: permissionDomain.getDefaultPermission
+                        },
+                        ctx
+                    );
                     break;
                 case PermissionTypes.LIBRARY:
-                    perm = await permissionDomain.getHeritedLibraryPermission(
-                        action as LibraryPermissionsActions,
-                        applyTo,
-                        userGroupId
-                    );
+                    action = action as LibraryPermissionsActions;
+                    perm = await permissionDomain.getHeritedLibraryPermission({
+                        action,
+                        libraryId: applyTo,
+                        userGroupId,
+                        ctx
+                    });
                     break;
                 case PermissionTypes.ADMIN:
-                    perm = await permissionDomain.getHeritedAdminPermission(
-                        action as AdminPermissionsActions,
-                        userGroupId
-                    );
+                    action = action as AdminPermissionsActions;
+                    perm = await permissionDomain.getHeritedAdminPermission({
+                        action,
+                        userGroupId,
+                        ctx
+                    });
                     break;
             }
 
             return perm;
         },
-        async isAllowed(
-            type: PermissionTypes,
-            action: PermissionsActions,
-            userId: number,
-            applyTo?: string,
-            target?: IPermissionTarget
-        ): Promise<boolean> {
+        async isAllowed({type, action, userId, applyTo, target, ctx}): Promise<boolean> {
             let perm;
             switch (type) {
                 case PermissionTypes.RECORD:
@@ -123,7 +130,8 @@ export default function({
                         action as RecordPermissionsActions,
                         userId,
                         applyTo,
-                        target.recordId
+                        target.recordId,
+                        ctx
                     );
                     break;
                 case PermissionTypes.ATTRIBUTE:
@@ -151,19 +159,27 @@ export default function({
                         userId,
                         target.attributeId,
                         applyTo,
-                        target.recordId
+                        target.recordId,
+                        ctx
                     );
 
                     break;
                 case PermissionTypes.LIBRARY:
-                    perm = await permissionDomain.getLibraryPermission(
-                        action as LibraryPermissionsActions,
-                        applyTo,
-                        userId
-                    );
+                    action = action as LibraryPermissionsActions;
+                    perm = await permissionDomain.getLibraryPermission({
+                        action,
+                        libraryId: applyTo,
+                        userId,
+                        ctx
+                    });
                     break;
                 case PermissionTypes.ADMIN:
-                    perm = await permissionDomain.getAdminPermission(action as AdminPermissionsActions, userId);
+                    action = action as AdminPermissionsActions;
+                    perm = await permissionDomain.getAdminPermission({
+                        action,
+                        userId,
+                        ctx
+                    });
                     break;
             }
 

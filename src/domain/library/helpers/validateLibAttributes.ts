@@ -2,10 +2,12 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {difference} from 'lodash';
 import {ILibrary} from '_types/library';
 import {ErrorFieldDetail, Errors} from '../../../_types/errors';
+import {IQueryInfos} from '_types/queryInfos';
 
 export default async (
     attributes: string[],
-    deps: {attributeDomain: IAttributeDomain}
+    deps: {attributeDomain: IAttributeDomain},
+    ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<ILibrary>> => {
     const errors: ErrorFieldDetail<ILibrary> = {};
 
@@ -13,7 +15,7 @@ export default async (
         return {};
     }
 
-    const availableAttributes = await deps.attributeDomain.getAttributes();
+    const availableAttributes = await deps.attributeDomain.getAttributes({ctx});
     const unknownAttrs = difference(
         attributes,
         availableAttributes.list.map(attr => attr.id)

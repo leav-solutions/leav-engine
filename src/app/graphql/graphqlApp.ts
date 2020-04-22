@@ -15,7 +15,6 @@ export interface IGraphqlApp extends IAppModule {
     SCHEMA_UPDATE_EVENT: string;
     generateSchema(): Promise<void>;
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
-    ctxToQueryInfos(ctx: any): IQueryInfos;
 }
 
 export interface IAppGraphQLSchema {
@@ -135,14 +134,6 @@ export default function({
             }
 
             return extractedFields;
-        },
-        ctxToQueryInfos(ctx: any): IQueryInfos {
-            const infos: IQueryInfos = {};
-
-            infos.userId = !!ctx.auth && ctx.auth.userId ? Number(ctx.auth.userId) : null;
-            infos.lang = ctx.lang ?? config.lang.default;
-
-            return infos;
         },
         extensionPoints: {
             registerGraphQLSchema: (schemaPart: IAppGraphQLSchema) => {

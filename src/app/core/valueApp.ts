@@ -157,13 +157,13 @@ export default function({
                                 metadata: utils.nameValArrayToObj(value.metadata)
                             };
 
-                            const savedVal = await valueDomain.saveValue(
+                            const savedVal = await valueDomain.saveValue({
                                 library,
                                 recordId,
                                 attribute,
-                                valToSave,
-                                graphqlApp.ctxToQueryInfos(ctx)
-                            );
+                                value: valToSave,
+                                ctx
+                            });
 
                             const formattedVersion: any = savedVal.version
                                 ? _convertVersionToGqlFormat(savedVal.version)
@@ -180,13 +180,13 @@ export default function({
                                 metadata: utils.nameValArrayToObj(val.metadata)
                             }));
 
-                            const savedValues = await valueDomain.saveValueBatch(
+                            const savedValues = await valueDomain.saveValueBatch({
                                 library,
                                 recordId,
-                                convertedValues,
-                                graphqlApp.ctxToQueryInfos(ctx),
-                                deleteEmpty
-                            );
+                                values: convertedValues,
+                                ctx,
+                                keepEmpty: deleteEmpty
+                            });
 
                             const res = {
                                 ...savedValues,
@@ -202,13 +202,7 @@ export default function({
                             return res;
                         },
                         async deleteValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
-                            return valueDomain.deleteValue(
-                                library,
-                                recordId,
-                                attribute,
-                                value,
-                                graphqlApp.ctxToQueryInfos(ctx)
-                            );
+                            return valueDomain.deleteValue({library, recordId, attribute, value, ctx});
                         }
                     },
                     ValueVersion: new GraphQLScalarType({
@@ -220,12 +214,12 @@ export default function({
                         parseLiteral: ast => ast
                     }),
                     GenericValue: {
-                        __resolveType: async fieldValue => {
+                        __resolveType: async (fieldValue, _, ctx) => {
                             const attribute = Array.isArray(fieldValue)
                                 ? fieldValue[0].attribute
                                 : fieldValue.attribute;
 
-                            const attrProps = await attributeDomain.getAttributeProperties(attribute);
+                            const attrProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
                             switch (attrProps.type) {
                                 case AttributeTypes.SIMPLE:

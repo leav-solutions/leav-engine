@@ -3,6 +3,7 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {
@@ -19,6 +20,10 @@ describe('AttributeIndexRepo', () => {
         filterQueryPart: null,
         clearAllValues: null
     };
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: 'attributeSimpleLinkRepoTest'
+    };
 
     describe('createValue', () => {
         test('Should create a simple link value', async function() {
@@ -34,13 +39,25 @@ describe('AttributeIndexRepo', () => {
 
             const attrRepo = attributeSimpleLinkRepo({'core.infra.attributeTypes.attributeSimple': attrSimpleRepo});
 
-            const createdVal = await attrRepo.createValue('test_lib', 12345, mockAttribute, {
-                value: 123456
+            const createdVal = await attrRepo.createValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    value: 123456
+                },
+                ctx
             });
 
             expect(attrSimpleRepo.createValue.mock.calls.length).toBe(1);
-            expect(attrSimpleRepo.createValue).toBeCalledWith('test_lib', 12345, mockAttribute, {
-                value: 123456
+            expect(attrSimpleRepo.createValue).toBeCalledWith({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    value: 123456
+                },
+                ctx
             });
 
             expect(createdVal).toMatchObject(updatedValueData);
@@ -60,13 +77,25 @@ describe('AttributeIndexRepo', () => {
 
             const attrRepo = attributeSimpleLinkRepo({'core.infra.attributeTypes.attributeSimple': attrSimpleRepo});
 
-            const deletedVal = await attrRepo.deleteValue('test_lib', 12345, mockAttribute, {
-                value: 123456
+            const deletedVal = await attrRepo.deleteValue({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    value: 123456
+                },
+                ctx
             });
 
             expect(attrSimpleRepo.deleteValue.mock.calls.length).toBe(1);
-            expect(attrSimpleRepo.deleteValue).toBeCalledWith('test_lib', 12345, mockAttribute, {
-                value: 123456
+            expect(attrSimpleRepo.deleteValue).toBeCalledWith({
+                library: 'test_lib',
+                recordId: 12345,
+                attribute: mockAttribute,
+                value: {
+                    value: 123456
+                },
+                ctx
             });
 
             expect(deletedVal).toMatchObject(deletedValueData);
@@ -112,7 +141,12 @@ describe('AttributeIndexRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const values = await attrRepo.getValues('test_lib', 123456, mockAttribute);
+            const values = await attrRepo.getValues({
+                library: 'test_lib',
+                recordId: 123456,
+                attribute: mockAttribute,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery

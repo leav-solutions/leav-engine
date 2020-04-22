@@ -42,17 +42,24 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
         },
         input_types: attributeData => attributeDomain.getInputTypes(attributeData),
         output_types: attributeData => attributeDomain.getOutputTypes(attributeData),
-        metadata_fields: async (attributeData: IAttribute) =>
+        metadata_fields: async (attributeData: IAttribute, _, ctx) =>
             !!attributeData.metadata_fields
                 ? Promise.all(
-                      attributeData.metadata_fields.map(attrId => attributeDomain.getAttributeProperties(attrId))
+                      attributeData.metadata_fields.map(attrId =>
+                          attributeDomain.getAttributeProperties({id: attrId, ctx})
+                      )
                   )
                 : null
     };
 
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
-            const attributes = await attributeDomain.getAttributes();
+            const attributes = await attributeDomain.getAttributes({
+                ctx: {
+                    userId: 0,
+                    queryId: 'attributeAppGenerateBaseSchema'
+                }
+            });
 
             const baseSchema = {
                 typeDefs: `
@@ -259,25 +266,22 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                 `,
                 resolvers: {
                     Query: {
-                        async attributes(parent, {filters, pagination, sort}) {
-                            return attributeDomain.getAttributes({filters, withCount: true, pagination, sort});
+                        async attributes(parent, {filters, pagination, sort}, ctx) {
+                            return attributeDomain.getAttributes({
+                                params: {filters, withCount: true, pagination, sort},
+                                ctx
+                            });
                         }
                     },
                     Mutation: {
                         async saveAttribute(parent, {attribute}, ctx): Promise<IAttribute> {
-                            const savedAttr = await attributeDomain.saveAttribute(
-                                attribute,
-                                graphqlApp.ctxToQueryInfos(ctx)
-                            );
+                            const savedAttr = await attributeDomain.saveAttribute({attrData: attribute, ctx});
                             graphqlApp.generateSchema();
 
                             return savedAttr;
                         },
                         async deleteAttribute(parent, {id}, ctx): Promise<IAttribute> {
-                            const deletedAttr = await attributeDomain.deleteAttribute(
-                                id,
-                                graphqlApp.ctxToQueryInfos(ctx)
-                            );
+                            const deletedAttr = await attributeDomain.deleteAttribute({id, ctx});
                             graphqlApp.generateSchema();
 
                             return deletedAttr;
@@ -300,7 +304,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                     StandardAttribute: {...commonResolvers},
                     LinkAttribute: {
                         ...commonResolvers,
-                        values_list: (attributeData: IAttribute, a2) => {
+                        values_list: (attributeData: IAttribute, a2, ctx) => {
                             if (!attributeData.values_list.enable) {
                                 return attributeData.values_list;
                             }
@@ -312,8 +316,11 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                                 values: (attributeData.values_list.values as string[])
                                     .map(async recId => {
                                         const record = await recordDomain.find({
-                                            library: attributeData.linked_library,
-                                            filters: {id: recId}
+                                            params: {
+                                                library: attributeData.linked_library,
+                                                filters: {id: recId}
+                                            },
+                                            ctx
                                         });
 
                                         return record.list.length ? record.list[0] : null;
@@ -334,12 +341,19 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                                     .map(async treeElem => {
                                         const [library, id] = treeElem.split('/');
                                         const record = await recordDomain.find({
-                                            library,
-                                            filters: {id}
+                                            params: {
+                                                library,
+                                                filters: {id}
+                                            },
+                                            ctx
                                         });
-                                        const isInTree = await treeDomain.isElementPresent(attributeData.linked_tree, {
-                                            library,
-                                            id: Number(id)
+                                        const isInTree = await treeDomain.isElementPresent({
+                                            treeId: attributeData.linked_tree,
+                                            element: {
+                                                library,
+                                                id: Number(id)
+                                            },
+                                            ctx
                                         });
                                         const ret = record.list.length && isInTree ? {record: record.list[0]} : null;
                                         return ret;

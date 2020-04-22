@@ -9,11 +9,16 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from './permissionDomain';
 import treePermissionDomain from './treePermissionDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('TreePermissionDomain', () => {
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'treePermissionDomainTest'
+    };
     describe('getTreePermission', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
-            getElementAncestors: jest.fn().mockImplementation((treeId, elem) => {
+            getElementAncestors: jest.fn().mockImplementation(({treeId, element}) => {
                 let parents;
                 switch (treeId) {
                     case 'categories':
@@ -79,11 +84,11 @@ describe('TreePermissionDomain', () => {
             }
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(attrId => Promise.resolve(mockAttrProps[attrId]))
+            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id]))
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation((lib, rec, attr) => {
+            getValues: jest.fn().mockImplementation(({library, recordId, attrribute}) => {
                 const val = {
                     id_value: 54321,
                     value: {
@@ -107,17 +112,15 @@ describe('TreePermissionDomain', () => {
         const mockPermMultipleDomain: Mockify<IPermissionDomain> = {
             getPermissionByUserGroups: jest
                 .fn()
-                .mockImplementation(
-                    (type, action, userGroups, applyTo, permissionTreeTarget: IPermissionsTreeTarget) => {
-                        if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
-                            return Promise.resolve(true);
-                        } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {
-                            return Promise.resolve(false);
-                        } else {
-                            return Promise.resolve(null);
-                        }
+                .mockImplementation(({type, action, userGroupsPaths, applyTo, permissionTreeTarget}) => {
+                    if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
+                        return Promise.resolve(true);
+                    } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {
+                        return Promise.resolve(false);
+                    } else {
+                        return Promise.resolve(null);
                     }
-                ),
+                }),
             getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
         };
 
@@ -184,7 +187,7 @@ describe('TreePermissionDomain', () => {
             ]
         };
         const mockTreeMultipleRepo: Mockify<ITreeRepo> = {
-            getElementAncestors: jest.fn().mockImplementation((treeId, elem) => Promise.resolve(ancestors[treeId]))
+            getElementAncestors: jest.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId]))
         };
 
         const attributesProps = {
@@ -205,7 +208,7 @@ describe('TreePermissionDomain', () => {
             }
         };
         const mockAttrMultipleDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(attrId => Promise.resolve(attributesProps[attrId]))
+            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(attributesProps[id]))
         };
 
         const values = {
@@ -238,7 +241,9 @@ describe('TreePermissionDomain', () => {
             }
         };
         const mockValueMultipleRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation((lib, rec, attr) => Promise.resolve([values[attr.id]]))
+            getValues: jest
+                .fn()
+                .mockImplementation(({library, recordId, attribute}) => Promise.resolve([values[attribute.id]]))
         };
 
         const mockPermConf = {
@@ -273,7 +278,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 
-            const perm = await treePermDomain.getTreePermission(params);
+            const perm = await treePermDomain.getTreePermission(params, ctx);
 
             expect(mockTreeRepo.getElementAncestors.mock.calls.length).toBe(2);
             expect(perm).toBe(true);
@@ -294,7 +299,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 
-            const perm = await treePermDomain.getTreePermission(params);
+            const perm = await treePermDomain.getTreePermission(params, ctx);
 
             expect(params.getDefaultPermission).toBeCalled();
             expect(perm).toBe(defaultPerm);
@@ -304,7 +309,7 @@ describe('TreePermissionDomain', () => {
             const mockRootLevelPermDomain: Mockify<IPermissionDomain> = {
                 getPermissionByUserGroups: jest
                     .fn()
-                    .mockImplementation((type, applyTo, action, usersGroupId, permissionTreeTarget) => {
+                    .mockImplementation(({type, action, userGroupsPaths, applyTo, permissionTreeTarget}) => {
                         return permissionTreeTarget.id === null ? true : null;
                     }),
                 getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
@@ -317,9 +322,12 @@ describe('TreePermissionDomain', () => {
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 
-            const perm = await treePermDomain.getTreePermission({
-                ...params
-            });
+            const perm = await treePermDomain.getTreePermission(
+                {
+                    ...params
+                },
+                ctx
+            );
 
             expect(perm).toBe(true);
         });
@@ -331,8 +339,8 @@ describe('TreePermissionDomain', () => {
             };
 
             const mockValueNoCatRepo: Mockify<IValueRepo> = {
-                getValues: jest.fn().mockImplementation((lib, rec, attr) => {
-                    switch (attr.id) {
+                getValues: jest.fn().mockImplementation(({library, recordId, attribute}) => {
+                    switch (attribute.id) {
                         case 'category':
                             return Promise.resolve([]);
                         case 'user_groups':
@@ -359,12 +367,15 @@ describe('TreePermissionDomain', () => {
                 'core.infra.value': mockValueNoCatRepo as IValueRepo
             });
 
-            const perm = await treePermDomain.getTreePermission({
-                ...params,
-                treeValues: {
-                    category: []
-                }
-            });
+            const perm = await treePermDomain.getTreePermission(
+                {
+                    ...params,
+                    treeValues: {
+                        category: []
+                    }
+                },
+                ctx
+            );
 
             expect(perm).toBe(defaultPerm);
         });
@@ -377,31 +388,34 @@ describe('TreePermissionDomain', () => {
                 'core.infra.value': mockValueMultipleRepo as IValueRepo
             });
 
-            const perm = await treePermDomain.getTreePermission({
-                ...params,
-                treeValues: {
-                    category: [
-                        {
-                            record: {
-                                id: 321654,
-                                library: 'category'
+            const perm = await treePermDomain.getTreePermission(
+                {
+                    ...params,
+                    treeValues: {
+                        category: [
+                            {
+                                record: {
+                                    id: 321654,
+                                    library: 'category'
+                                }
                             }
-                        }
-                    ],
-                    status: [
-                        {
-                            record: {
-                                id: 123456,
-                                library: 'status'
+                        ],
+                        status: [
+                            {
+                                record: {
+                                    id: 123456,
+                                    library: 'status'
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    },
+                    permissions_conf: {
+                        relation: PermissionsRelations.AND,
+                        permissionTreeAttributes: ['category', 'status']
+                    }
                 },
-                permissions_conf: {
-                    relation: PermissionsRelations.AND,
-                    permissionTreeAttributes: ['category', 'status']
-                }
-            });
+                ctx
+            );
 
             expect(mockTreeMultipleRepo.getElementAncestors.mock.calls.length).toBe(3);
             expect(perm).toBe(false);
@@ -415,31 +429,34 @@ describe('TreePermissionDomain', () => {
                 'core.infra.value': mockValueMultipleRepo as IValueRepo
             });
 
-            const perm = await treePermDomain.getTreePermission({
-                ...params,
-                treeValues: {
-                    category: [
-                        {
-                            record: {
-                                id: 321654,
-                                library: 'category'
+            const perm = await treePermDomain.getTreePermission(
+                {
+                    ...params,
+                    treeValues: {
+                        category: [
+                            {
+                                record: {
+                                    id: 321654,
+                                    library: 'category'
+                                }
                             }
-                        }
-                    ],
-                    status: [
-                        {
-                            record: {
-                                id: 123456,
-                                library: 'status'
+                        ],
+                        status: [
+                            {
+                                record: {
+                                    id: 123456,
+                                    library: 'status'
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    },
+                    permissions_conf: {
+                        relation: PermissionsRelations.OR,
+                        permissionTreeAttributes: ['category', 'status']
+                    }
                 },
-                permissions_conf: {
-                    relation: PermissionsRelations.OR,
-                    permissionTreeAttributes: ['category', 'status']
-                }
-            });
+                ctx
+            );
 
             expect(perm).toBe(true);
         });

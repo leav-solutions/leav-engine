@@ -134,8 +134,11 @@ describe('FilesManager', () => {
             });
 
             // expect to save record attribute
-            expect(mockValueDomain.saveValueBatch).toBeCalledWith(library, mockRecord.id, expect.anything(), {
-                userId: mockConfig.filesManager.userId
+            expect(mockValueDomain.saveValueBatch).toBeCalledWith({
+                library,
+                recordId: mockRecord.id,
+                values: expect.anything(),
+                ctx: expect.anything()
             });
 
             // expect to send a message to generate preview
@@ -166,12 +169,15 @@ describe('FilesManager', () => {
 
             // expect to search for the record
             expect(mockRecordDomain.find).toBeCalledWith({
-                library,
-                filters: {
-                    [FilesAttributes.FILE_NAME]: fileName,
-                    [FilesAttributes.FILE_PATH]: filePath
+                params: {
+                    library,
+                    filters: {
+                        [FilesAttributes.FILE_NAME]: fileName,
+                        [FilesAttributes.FILE_PATH]: filePath
+                    },
+                    retrieveInactive: false
                 },
-                retrieveInactive: false
+                ctx: expect.anything()
             });
 
             // expect to disable the record
@@ -180,14 +186,15 @@ describe('FilesManager', () => {
             });
 
             // expect to delete the record from the tree
-            expect(mockTreeDomain.deleteElement).toBeCalledWith(
-                libraryTreeId,
-                {
+            expect(mockTreeDomain.deleteElement).toBeCalledWith({
+                treeId: libraryTreeId,
+                element: {
                     id: mockRecord.id,
                     library
                 },
-                true
-            );
+                deleteChildren: true,
+                ctx: expect.anything()
+            });
         });
 
         test('UPDATE event', async () => {
@@ -211,19 +218,22 @@ describe('FilesManager', () => {
 
             // expect to search the record
             expect(mockRecordDomain.find).toBeCalledWith({
-                library,
-                filters: {
-                    [FilesAttributes.FILE_NAME]: fileName,
-                    [FilesAttributes.FILE_PATH]: filePath
+                params: {
+                    library,
+                    filters: {
+                        [FilesAttributes.FILE_NAME]: fileName,
+                        [FilesAttributes.FILE_PATH]: filePath
+                    },
+                    retrieveInactive: false
                 },
-                retrieveInactive: false
+                ctx: expect.anything()
             });
 
             // expect to update attribute
-            expect(mockValueDomain.saveValueBatch).toBeCalledWith(
+            expect(mockValueDomain.saveValueBatch).toBeCalledWith({
                 library,
-                mockRecord.id,
-                expect.arrayContaining([
+                recordId: mockRecord.id,
+                values: expect.arrayContaining([
                     {
                         attribute: FilesAttributes.INODE,
                         value: inode
@@ -233,10 +243,8 @@ describe('FilesManager', () => {
                         value: rootKey
                     }
                 ]),
-                {
-                    userId: mockConfig.filesManager.userId
-                }
-            );
+                ctx: expect.anything()
+            });
 
             // expect to send a message for generate preview
             expect(mockAmqpManager.publish).toBeCalledWith(
@@ -282,22 +290,28 @@ describe('FilesManager', () => {
 
             // search for the destination record
             expect(mockRecordDomain.find).toBeCalledWith({
-                library,
-                filters: {
-                    [FilesAttributes.FILE_NAME]: destFileName,
-                    [FilesAttributes.FILE_PATH]: filePath
+                params: {
+                    library,
+                    filters: {
+                        [FilesAttributes.FILE_NAME]: destFileName,
+                        [FilesAttributes.FILE_PATH]: filePath
+                    },
+                    retrieveInactive: false
                 },
-                retrieveInactive: false
+                ctx: expect.anything()
             });
 
             // search for the origin record
             expect(mockRecordDomain.find).toBeCalledWith({
-                library,
-                filters: {
-                    [FilesAttributes.FILE_NAME]: fileName,
-                    [FilesAttributes.FILE_PATH]: filePath
+                params: {
+                    library,
+                    filters: {
+                        [FilesAttributes.FILE_NAME]: fileName,
+                        [FilesAttributes.FILE_PATH]: filePath
+                    },
+                    retrieveInactive: false
                 },
-                retrieveInactive: false
+                ctx: expect.anything()
             });
 
             // disable the destination record
@@ -306,10 +320,10 @@ describe('FilesManager', () => {
             });
 
             // update the attributes of the origin record
-            expect(mockValueDomain.saveValueBatch).toBeCalledWith(
+            expect(mockValueDomain.saveValueBatch).toBeCalledWith({
                 library,
-                mockRecord.id,
-                [
+                recordId: mockRecord.id,
+                values: [
                     {
                         attribute: FilesAttributes.ROOT_KEY,
                         value: rootKey
@@ -323,21 +337,22 @@ describe('FilesManager', () => {
                         value: destFileName
                     }
                 ],
-                {userId: mockConfig.filesManager.userId}
-            );
+                ctx: expect.anything()
+            });
 
             // // move the element in the tree
-            expect(mockTreeDomain.moveElement).toBeCalledWith(
-                libraryTreeId,
-                {
+            expect(mockTreeDomain.moveElement).toBeCalledWith({
+                treeId: libraryTreeId,
+                element: {
                     id: mockRecord.id,
                     library
                 },
-                {
+                parentTo: {
                     id: mockDestRecord.id,
                     library
-                }
-            );
+                },
+                ctx: expect.anything()
+            });
         });
     });
 });

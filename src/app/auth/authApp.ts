@@ -7,6 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import * as winston from 'winston';
 import {IRecord} from '_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IQueryInfos} from '_types/queryInfos';
 
 export interface IAuthApp {
     registerRoute(server: Server): void;
@@ -39,14 +40,17 @@ export default function({
                 `,
                 resolvers: {
                     Query: {
-                        async me(parent, args, {auth}, info): Promise<IRecord> {
+                        async me(parent, args, ctx, info): Promise<IRecord> {
                             const queryFields = graphqlApp.getQueryFields(info);
 
                             const users = await recordDomain.find({
-                                library: 'users',
-                                filters: {id: auth.userId},
-                                withCount: false,
-                                retrieveInactive: true
+                                params: {
+                                    library: 'users',
+                                    filters: {id: ctx.userId},
+                                    withCount: false,
+                                    retrieveInactive: true
+                                },
+                                ctx
                             });
 
                             return users.list[0];
@@ -65,10 +69,17 @@ export default function({
                         return badData('Missing credentials');
                     }
                     // Get user id
+                    const ctx: IQueryInfos = {
+                        userId: 0,
+                        queryId: 'authenticate'
+                    };
                     try {
                         const users = await recordDomain.find({
-                            library: 'users',
-                            filters: {login}
+                            params: {
+                                library: 'users',
+                                filters: {login}
+                            },
+                            ctx
                         });
 
                         if (!users.list.length) {
@@ -77,7 +88,12 @@ export default function({
 
                         // Check password
                         const user = users.list[0];
-                        const userPwd = await valueDomain.getValues('users', user.id, 'password');
+                        const userPwd = await valueDomain.getValues({
+                            library: 'users',
+                            recordId: user.id,
+                            attribute: 'password',
+                            ctx
+                        });
                         const isValidPwd = await bcrypt.compare(password, userPwd[0].value);
 
                         if (!isValidPwd) {
@@ -126,7 +142,17 @@ export default function({
             if (!tokenPayload.userId) {
                 return false;
             }
-            const users = await recordDomain.find({library: 'users', filters: {id: tokenPayload.userId}});
+            const ctx: IQueryInfos = {
+                userId: 0,
+                queryId: 'validateToken'
+            };
+            const users = await recordDomain.find({
+                params: {
+                    library: 'users',
+                    filters: {id: tokenPayload.userId}
+                },
+                ctx
+            });
             return !!users.list.length;
         }
     };

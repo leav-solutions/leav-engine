@@ -14,6 +14,7 @@ import {ITree, ITreeFilterOptions} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
+import {IQueryInfos} from '_types/queryInfos';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
@@ -24,6 +25,7 @@ export interface IFindCoreEntityParams {
     withCount?: boolean;
     pagination?: IPaginationParams;
     sort?: ISortParams;
+    ctx: IQueryInfos;
 }
 
 export interface IDbUtils {
@@ -115,12 +117,18 @@ export default function({
          */
         async migrate(depsManager: AwilixContainer): Promise<void> {
             await _initMigrationsCollection();
-
+            const ctx: IQueryInfos = {
+                userId: 0,
+                queryId: 'run-migrations'
+            };
             // Load already ran migrations
-            const executedMigrations = await dbService.execute(`
-                FOR m IN core_db_migrations
-                RETURN m.file
-            `);
+            const executedMigrations = await dbService.execute({
+                query: `
+                    FOR m IN core_db_migrations
+                    RETURN m.file
+                `,
+                ctx
+            });
 
             const _runMigrationFiles = (files, folder, prefix = null) =>
                 runMigrationFiles({
@@ -128,7 +136,8 @@ export default function({
                     executedMigrations,
                     migrationsDir: folder,
                     prefix,
-                    deps: {depsManager, dbService, logger}
+                    deps: {depsManager, dbService, logger},
+                    ctx
                 });
 
             /*** Core migrations ***/
@@ -206,10 +215,14 @@ export default function({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
+                ctx: {}
             };
 
-            const {collectionName, filters, strictFilters, withCount, pagination, sort} = {...defaultParams, ...params};
+            const {collectionName, filters, strictFilters, withCount, pagination, sort, ctx} = {
+                ...defaultParams,
+                ...params
+            };
 
             const collec = dbService.db.collection(collectionName);
             const queryParts = [aql`FOR el IN ${collec}`];
@@ -239,7 +252,7 @@ export default function({
             queryParts.push(aql`RETURN el`);
 
             const query = aql.join(queryParts);
-            const res = await dbService.execute<IExecuteWithCount | any[]>(query, withCount);
+            const res = await dbService.execute<IExecuteWithCount | any[]>({query, withTotalCount: withCount, ctx});
 
             const results = !isArray(res) ? res.results : res;
 

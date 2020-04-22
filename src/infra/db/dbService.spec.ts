@@ -2,6 +2,10 @@ import {Database} from 'arangojs';
 import {IUtils} from 'utils/utils';
 import dbService from './dbService';
 describe('dbService', () => {
+    const ctx = {
+        userId: 0,
+        queryId: 'testDbService'
+    };
     describe('collectionExists', () => {
         test('Should check if a collection already exists', async () => {
             const mockDb = new Database();
@@ -31,7 +35,10 @@ describe('dbService', () => {
 
             const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
 
-            const res = await dbServ.execute('FOR e in elems RETURN e');
+            const res = await dbServ.execute({
+                query: 'FOR e in elems RETURN e',
+                ctx
+            });
 
             expect(mockDb.query).toBeCalled();
         });
@@ -57,7 +64,10 @@ describe('dbService', () => {
 
             const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
 
-            const res = await dbServ.execute('FOR e in elems RETURN e');
+            const res = await dbServ.execute({
+                query: 'FOR e in elems RETURN e',
+                ctx
+            });
 
             expect(mockDb.query).toBeCalledTimes(3);
         });
@@ -77,7 +87,12 @@ describe('dbService', () => {
 
             const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
 
-            await expect(dbServ.execute('FOR e in elems RETURN e')).rejects.toThrow();
+            await expect(
+                dbServ.execute({
+                    query: 'FOR e in elems RETURN e',
+                    ctx
+                })
+            ).rejects.toThrow();
             expect(mockDb.query).toBeCalledTimes(11);
         });
     });

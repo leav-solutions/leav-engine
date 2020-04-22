@@ -1,67 +1,95 @@
 import {IAttribute} from '_types/attribute';
 import {IValue, IValuesOptions} from '_types/value';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 export interface IValueRepo {
-    /**
-     * Create a new value
-     *
-     * @param library
-     * @param recordId
-     * @param attribute
-     * @param value
-     * @param {}
-     */
-    createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
+    createValue({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: IAttribute;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue>;
 
     /**
      * Update an existing value. Field "id" is expected on the value
-     * @param library
-     * @param recordId
-     * @param attribute
-     * @param value
-     * @param {}
      */
-    updateValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
+    updateValue({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: IAttribute;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue>;
 
     /**
      * Delete an existing value. Field "id" is expected on the value
-     *
-     * @param library
-     * @param recordId
-     * @param attribute
-     * @param value
-     * @param {}
      */
-    deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
+    deleteValue({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: IAttribute;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue>;
 
     /**
      * Get all values for given record and attribute
-     *
-     * @param library
-     * @param recordId
-     * @param attribute
      * @return Array<{}>    Return an empty array if no value found
      */
-    getValues(
-        library: string,
-        recordId: number,
-        attribute: IAttribute,
-        forceGetAllValues?: boolean,
-        options?: IValuesOptions
-    ): Promise<IValue[]>;
+    getValues({
+        library,
+        recordId,
+        attribute,
+        forceGetAllValues,
+        options,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: IAttribute;
+        forceGetAllValues?: boolean;
+        options?: IValuesOptions;
+        ctx: IQueryInfos;
+    }): Promise<IValue[]>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value
-     *
-     * @param library
-     * @param recordId
-     * @param attribute
-     * @param value
      * @return {}   Return null if no value found
      */
-    getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue>;
-    clearAllValues(attribute: IAttribute): Promise<boolean>;
+    getValueById({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: number;
+        attribute: IAttribute;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue>;
+    clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
 }
 
 interface IDeps {
@@ -70,35 +98,29 @@ interface IDeps {
 
 export default function({'core.infra.attributeTypes': attributeTypesRepo = null}: IDeps = {}): IValueRepo {
     return {
-        createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.createValue(library, recordId, attribute, value);
+            return typeRepo.createValue({library, recordId, attribute, value, ctx});
         },
-        updateValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.updateValue(library, recordId, attribute, value);
+            return typeRepo.updateValue({library, recordId, attribute, value, ctx});
         },
-        deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.deleteValue(library, recordId, attribute, value);
+            return typeRepo.deleteValue({library, recordId, attribute, value, ctx});
         },
-        getValues(
-            library: string,
-            recordId: number,
-            attribute: IAttribute,
-            forceGetAllValues?: boolean,
-            options?: IValuesOptions
-        ): Promise<IValue[]> {
+        getValues({library, recordId, attribute, forceGetAllValues, options, ctx}): Promise<IValue[]> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValues(library, recordId, attribute, forceGetAllValues, options);
+            return typeRepo.getValues({library, recordId, attribute, forceGetAllValues, options, ctx});
         },
-        getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValueById(library, recordId, attribute, value);
+            return typeRepo.getValueById({library, recordId, attribute, value, ctx});
         },
-        clearAllValues(attribute: IAttribute): Promise<boolean> {
+        clearAllValues({attribute, ctx}): Promise<boolean> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.clearAllValues(attribute);
+            return typeRepo.clearAllValues({attribute, ctx});
         }
     };
 }

@@ -12,6 +12,8 @@ import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../.
 import {IRecordDomain} from './../record/recordDomain';
 import {handleEventFileSystem} from './helpers/handleFileSystem';
 import {handlePreviewResponse} from './helpers/handlePreviewResponse';
+import {v4 as uuidv4} from 'uuid';
+import {IQueryInfos} from '_types/queryInfos';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -75,7 +77,10 @@ export default function({
 }: IDeps): IFilesManagerDomain {
     const _onMessage = async (msg: string): Promise<void> => {
         let msgBody: IFileEventData;
-
+        const ctx: IQueryInfos = {
+            userId: 0,
+            queryId: uuidv4()
+        };
         try {
             msgBody = JSON.parse(msg);
             _validateMsg(msgBody);
@@ -104,7 +109,8 @@ export default function({
                     logger,
                     config,
                     utils
-                }
+                },
+                ctx
             );
         } catch (e) {
             logger.error(

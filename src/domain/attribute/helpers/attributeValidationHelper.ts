@@ -8,6 +8,7 @@ import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {getAllowedOutputTypes, getDefaultActionsList} from './attributeALHelper';
+import {IQueryInfos} from '_types/queryInfos';
 
 const _validateSettings = (
     attrData: IAttribute,
@@ -17,7 +18,8 @@ const _validateSettings = (
         config: any;
         attributeRepo: IAttributeRepo;
         actionsListDomain: IActionsListDomain;
-    }
+    },
+    ctx: IQueryInfos
 ): ErrorFieldDetail<IAttribute> => {
     const errors: ErrorFieldDetail<IAttribute> = {};
 
@@ -48,7 +50,8 @@ const _validateVersionsConf = async (
         config: any;
         attributeRepo: IAttributeRepo;
         actionsListDomain: IActionsListDomain;
-    }
+    },
+    ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const errors: ErrorFieldDetail<IAttribute> = {};
     if (
@@ -57,7 +60,7 @@ const _validateVersionsConf = async (
         attrData.versions_conf.trees &&
         attrData.versions_conf.trees.length
     ) {
-        const existingTrees = await deps.treeRepo.getTrees();
+        const existingTrees = await deps.treeRepo.getTrees({ctx});
         const unknownTrees = difference(
             attrData.versions_conf.trees,
             existingTrees.list.map(a => a.id)
@@ -148,7 +151,8 @@ const _validateRequiredActions = (attrData: IAttribute): ErrorFieldDetail<IAttri
  */
 const _validateMetadataFields = async (
     attrData: IAttribute,
-    deps: {attributeRepo: IAttributeRepo}
+    deps: {attributeRepo: IAttributeRepo},
+    ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const metadataFieldsErrors: ErrorFieldDetail<IAttribute> = {};
     // Check metadata fields
@@ -158,8 +162,11 @@ const _validateMetadataFields = async (
         }
 
         const metadatableAttrs = await deps.attributeRepo.getAttributes({
-            filters: {type: [AttributeTypes.SIMPLE]},
-            strictFilters: true
+            params: {
+                filters: {type: [AttributeTypes.SIMPLE]},
+                strictFilters: true
+            },
+            ctx
         });
 
         const invalidAttributes = difference(
@@ -221,13 +228,14 @@ export const validateAttributeData = async (
         config: any;
         attributeRepo: IAttributeRepo;
         actionsListDomain: IActionsListDomain;
-    }
+    },
+    ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const validationFuncs = [
-        _validateSettings(attrData, deps),
-        _validateVersionsConf(attrData, deps),
+        _validateSettings(attrData, deps, ctx),
+        _validateVersionsConf(attrData, deps, ctx),
         _validateRequiredFields(attrData, deps),
-        _validateMetadataFields(attrData, deps),
+        _validateMetadataFields(attrData, deps, ctx),
         _validateInputType(attrData, deps),
         _validateRequiredActions(attrData)
     ];

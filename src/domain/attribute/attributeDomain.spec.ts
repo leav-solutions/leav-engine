@@ -10,9 +10,13 @@ import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from 
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import attributeDomain from './attributeDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('attributeDomain', () => {
-    const queryInfos = {userId: 1};
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'attributeDomainTest'
+    };
     const mockConf = {
         lang: {
             default: 'fr'
@@ -41,7 +45,7 @@ describe('attributeDomain', () => {
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 config: mockConf
             });
-            const attr = await attrDomain.getAttributes();
+            const attr = await attrDomain.getAttributes({ctx});
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
             expect(attr.list.length).toBe(2);
@@ -56,9 +60,9 @@ describe('attributeDomain', () => {
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 config: mockConf
             });
-            const attr = await attrDomain.getAttributes();
+            const attr = await attrDomain.getAttributes({ctx});
 
-            expect(mockAttrRepo.getAttributes.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
+            expect(mockAttrRepo.getAttributes.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });
 
@@ -72,10 +76,13 @@ describe('attributeDomain', () => {
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 config: mockConf
             });
-            const attr = await attrDomain.getAttributeProperties('test');
+            const attr = await attrDomain.getAttributeProperties({id: 'test', ctx});
 
             expect(mockAttrRepo.getAttributes.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getAttributes).toBeCalledWith({filters: {id: 'test'}, strictFilters: true});
+            expect(mockAttrRepo.getAttributes).toBeCalledWith({
+                params: {filters: {id: 'test'}, strictFilters: true},
+                ctx
+            });
             expect(attr).toMatchObject({id: 'test'});
         });
 
@@ -89,7 +96,7 @@ describe('attributeDomain', () => {
                 config: mockConf
             });
 
-            await expect(attrDomain.getAttributeProperties('test')).rejects.toThrow();
+            await expect(attrDomain.getAttributeProperties({id: 'test', ctx})).rejects.toThrow();
         });
     });
 
@@ -136,26 +143,31 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
-            const newAttr = await attrDomain.saveAttribute(
-                {
+            const newAttr = await attrDomain.saveAttribute({
+                attrData: {
                     id: 'test',
                     type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.TEXT,
                     label: {fr: 'Test'}
                 },
-                queryInfos
-            );
+                ctx
+            });
 
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.CREATE_ATTRIBUTE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.CREATE_ATTRIBUTE
+            );
 
             expect(newAttr).toMatchObject({
-                actions_list: {saveValue: [{is_system: true, id: 'validateFormat'}]},
-                format: 'text',
-                id: 'test',
-                type: 'advanced'
+                attrData: {
+                    actions_list: {saveValue: [{is_system: true, id: 'validateFormat'}]},
+                    format: 'text',
+                    id: 'test',
+                    type: 'advanced'
+                },
+                ctx
             });
         });
 
@@ -176,21 +188,23 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
-            const updatedLib = await attrDomain.saveAttribute(
-                {
+            const updatedLib = await attrDomain.saveAttribute({
+                attrData: {
                     id: 'test',
                     type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.TEXT,
                     actions_list: {saveValue: [{is_system: true, id: 'validateFormat', name: 'Validate Format'}]},
                     label: {fr: 'Test'}
                 },
-                queryInfos
-            );
+                ctx
+            });
 
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.EDIT_ATTRIBUTE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.EDIT_ATTRIBUTE
+            );
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
         });
@@ -217,36 +231,39 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([attrData]);
 
-            const updatedAttr = await attrDomain.saveAttribute(
-                {
+            const updatedAttr = await attrDomain.saveAttribute({
+                attrData: {
                     id: mockAttrAdvVersionable.id,
                     type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.NUMERIC,
                     versions_conf: null
                 },
-                queryInfos
-            );
+                ctx
+            });
 
             expect(mockAttrRepo.updateAttribute).toBeCalledWith({
-                _key: '',
-                id: 'advanced_attribute',
-                label: {
-                    fr: 'Mon Attribut',
-                    en: 'My Attribute'
+                attrData: {
+                    _key: '',
+                    id: 'advanced_attribute',
+                    label: {
+                        fr: 'Mon Attribut',
+                        en: 'My Attribute'
+                    },
+                    type: 'advanced',
+                    format: 'numeric',
+                    multiple_values: false,
+                    system: false,
+                    linked_library: null,
+                    linked_tree: null,
+                    embedded_fields: null,
+                    actions_list: null,
+                    permissions_conf: null,
+                    versions_conf: null,
+                    values_list: {
+                        enable: false
+                    }
                 },
-                type: 'advanced',
-                format: 'numeric',
-                multiple_values: false,
-                system: false,
-                linked_library: null,
-                linked_tree: null,
-                embedded_fields: null,
-                actions_list: null,
-                permissions_conf: null,
-                versions_conf: null,
-                values_list: {
-                    enable: false
-                }
+                ctx
             });
         });
 
@@ -282,8 +299,8 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([attrData]);
 
-            const updatedAttr = await attrDomain.saveAttribute(
-                {
+            const updatedAttr = await attrDomain.saveAttribute({
+                attrData: {
                     id: mockAttrAdvVersionable.id,
                     type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.NUMERIC,
@@ -301,10 +318,10 @@ describe('attributeDomain', () => {
                         [ActionsListEvents.DELETE_VALUE]: []
                     }
                 },
-                queryInfos
-            );
+                ctx
+            });
 
-            expect(mockAttrRepo.updateAttribute.mock.calls[0][0].actions_list).toEqual({
+            expect(mockAttrRepo.updateAttribute.mock.calls[0][0].attrData.actions_list).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [
                     {id: 'toJSON', name: 'To JSON', is_system: false},
                     {
@@ -348,7 +365,7 @@ describe('attributeDomain', () => {
                 label: {fr: 'Test'}
             };
 
-            await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if invalid ID', async function() {
@@ -379,7 +396,7 @@ describe('attributeDomain', () => {
                 label: {fr: 'Test'}
             };
 
-            await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if system action list is missing', async function() {
@@ -407,7 +424,7 @@ describe('attributeDomain', () => {
                 actions_list: {saveValue: [{is_system: true, id: 'toJSON', name: 'To JSON'}]}
             };
 
-            await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if forbidden action', async function() {
@@ -434,7 +451,7 @@ describe('attributeDomain', () => {
                 actions_list: {saveValue: [{is_system: true, id: 'toJSON', name: 'To JSON'}]},
                 label: {fr: 'Test'}
             };
-            await expect(attrDomain.saveAttribute(attrToSave, queryInfos)).rejects.toThrow(PermissionError);
+            await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(PermissionError);
         });
 
         test('Should throw if multiple values on simple or simple link attribute', async function() {
@@ -459,7 +476,7 @@ describe('attributeDomain', () => {
                 label: {fr: 'Test'},
                 multiple_values: true
             };
-            await expect(attrDomain.saveAttribute(attrToSaveSimple, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(attrDomain.saveAttribute({attrData: attrToSaveSimple, ctx})).rejects.toThrow(ValidationError);
 
             const attrToSaveSimpleLink = {
                 id: 'test',
@@ -467,7 +484,9 @@ describe('attributeDomain', () => {
                 label: {fr: 'Test'},
                 multiple_values: true
             };
-            await expect(attrDomain.saveAttribute(attrToSaveSimpleLink, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(attrDomain.saveAttribute({attrData: attrToSaveSimpleLink, ctx})).rejects.toThrow(
+                ValidationError
+            );
         });
 
         test('Should throw if using invalid tree on versions conf', async function() {
@@ -495,7 +514,9 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([{}]);
 
-            await expect(attrDomain.saveAttribute(mockAttrAdvVersionable, queryInfos)).rejects.toThrow(ValidationError);
+            await expect(attrDomain.saveAttribute({attrData: mockAttrAdvVersionable, ctx})).rejects.toThrow(
+                ValidationError
+            );
         });
 
         test('Check required fields at creation', async () => {
@@ -521,7 +542,7 @@ describe('attributeDomain', () => {
                 format: AttributeFormats.TEXT,
                 label: {fr: 'Test'}
             };
-            await expect(attrDomain.saveAttribute(attrWithNoType as IAttribute, queryInfos)).rejects.toThrow(
+            await expect(attrDomain.saveAttribute({attrData: attrWithNoType as IAttribute, ctx})).rejects.toThrow(
                 ValidationError
             );
 
@@ -530,7 +551,7 @@ describe('attributeDomain', () => {
                 type: AttributeTypes.SIMPLE,
                 label: {fr: 'Test'}
             };
-            await expect(attrDomain.saveAttribute(attrWithNoFormat as IAttribute, queryInfos)).rejects.toThrow(
+            await expect(attrDomain.saveAttribute({attrData: attrWithNoFormat as IAttribute, ctx})).rejects.toThrow(
                 ValidationError
             );
 
@@ -540,7 +561,7 @@ describe('attributeDomain', () => {
                 format: AttributeFormats.TEXT,
                 label: {en: 'Test'}
             };
-            await expect(attrDomain.saveAttribute(attrWithNoLabel as IAttribute, queryInfos)).rejects.toThrow(
+            await expect(attrDomain.saveAttribute({attrData: attrWithNoLabel as IAttribute, ctx})).rejects.toThrow(
                 ValidationError
             );
 
@@ -549,16 +570,16 @@ describe('attributeDomain', () => {
                 type: AttributeTypes.SIMPLE_LINK,
                 label: {fr: 'Test'}
             };
-            await expect(attrDomain.saveAttribute(attrWithNoLinkedLibrary as IAttribute, queryInfos)).rejects.toThrow(
-                ValidationError
-            );
+            await expect(
+                attrDomain.saveAttribute({attrData: attrWithNoLinkedLibrary as IAttribute, ctx})
+            ).rejects.toThrow(ValidationError);
 
             const attrWithNoLinkedTree: Partial<IAttribute> = {
                 id: 'test_attr',
                 type: AttributeTypes.TREE,
                 label: {fr: 'Test'}
             };
-            await expect(attrDomain.saveAttribute(attrWithNoLinkedTree as IAttribute, queryInfos)).rejects.toThrow(
+            await expect(attrDomain.saveAttribute({attrData: attrWithNoLinkedTree as IAttribute, ctx})).rejects.toThrow(
                 ValidationError
             );
         });
@@ -579,14 +600,14 @@ describe('attributeDomain', () => {
                 attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
                 await expect(
-                    attrDomain.saveAttribute(
-                        {
+                    attrDomain.saveAttribute({
+                        attrData: {
                             ...mockAttrSimple,
                             id: 'metadata_attribute',
                             metadata_fields: ['some_simple_attribute']
                         },
-                        queryInfos
-                    )
+                        ctx
+                    })
                 ).rejects.toThrow(ValidationError);
             });
 
@@ -594,7 +615,7 @@ describe('attributeDomain', () => {
                 const mockAttrRepo: Mockify<IAttributeRepo> = {
                     getAttributes: jest
                         .fn()
-                        .mockImplementation(({filters}) =>
+                        .mockImplementation(({params: {filters}, ctx: ct}) =>
                             filters.id === 'metadata_attribute'
                                 ? {list: [{...mockAttrAdv, id: 'metadata_attribute'}]}
                                 : {list: []}
@@ -611,14 +632,14 @@ describe('attributeDomain', () => {
                 attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
 
                 await expect(
-                    attrDomain.saveAttribute(
-                        {
+                    attrDomain.saveAttribute({
+                        attrData: {
                             ...mockAttrAdv,
                             id: 'metadata_attribute',
                             metadata_fields: ['some_invalid_attribute']
                         },
-                        queryInfos
-                    )
+                        ctx
+                    })
                 ).rejects.toThrow(ValidationError);
             });
         });
@@ -635,11 +656,13 @@ describe('attributeDomain', () => {
             });
             attrDomain.getAttributes = global.__mockPromise({list: [attrData], totalCount: 1});
 
-            const deleteRes = await attrDomain.deleteAttribute(attrData.id, queryInfos);
+            const deleteRes = await attrDomain.deleteAttribute({id: attrData.id, ctx});
 
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0]).toBe(AdminPermissionsActions.DELETE_ATTRIBUTE);
+            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.DELETE_ATTRIBUTE
+            );
         });
 
         test('Should throw if unknown attribute', async function() {
@@ -647,7 +670,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise([]);
 
-            await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow();
+            await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow();
         });
 
         test('Should throw if system attribute', async function() {
@@ -655,7 +678,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise({list: [{system: true}], totalCount: 1});
 
-            await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow();
+            await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow();
         });
 
         test('Should throw if forbidden action', async function() {
@@ -666,42 +689,54 @@ describe('attributeDomain', () => {
             });
             attrDomain.getAttributes = global.__mockPromise({list: [], totalCount: 0});
 
-            await expect(attrDomain.deleteAttribute(attrData.id, queryInfos)).rejects.toThrow(PermissionError);
+            await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow(PermissionError);
         });
     });
 
     describe('getInputType', () => {
         const attrDomain = attributeDomain();
         test('Return input type by format', async () => {
-            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.TEXT})).toEqual({
+            expect(
+                attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.TEXT}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
             });
-            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.DATE})).toEqual({
+            expect(
+                attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.DATE}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
             });
-            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toEqual({
+            expect(
+                attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.ENCRYPTED}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
             });
 
-            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toEqual({
+            expect(
+                attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.NUMERIC}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
             });
 
-            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toEqual({
+            expect(
+                attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.BOOLEAN}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
             });
 
-            expect(attrDomain.getInputTypes({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toEqual(
+            expect(
+                attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.EXTENDED}, ctx})
+            ).toEqual(
                 {
                     [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                     [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
@@ -714,7 +749,9 @@ describe('attributeDomain', () => {
     describe('getOutputType', () => {
         const attrDomain = attributeDomain();
         test('Return output type by format', async () => {
-            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.TEXT})).toEqual({
+            expect(
+                attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.TEXT}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [
                     ActionsListIOTypes.STRING,
@@ -724,7 +761,9 @@ describe('attributeDomain', () => {
                 ],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
             });
-            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.DATE})).toEqual({
+            expect(
+                attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.DATE}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [
                     ActionsListIOTypes.STRING,
@@ -734,7 +773,9 @@ describe('attributeDomain', () => {
                 ],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
             });
-            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.ENCRYPTED})).toEqual({
+            expect(
+                attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.ENCRYPTED}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [
                     ActionsListIOTypes.STRING,
@@ -745,7 +786,9 @@ describe('attributeDomain', () => {
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
             });
 
-            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toEqual({
+            expect(
+                attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.NUMERIC}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [
                     ActionsListIOTypes.STRING,
@@ -756,7 +799,9 @@ describe('attributeDomain', () => {
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
             });
 
-            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.BOOLEAN})).toEqual({
+            expect(
+                attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.BOOLEAN}, ctx})
+            ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.GET_VALUE]: [
                     ActionsListIOTypes.STRING,
@@ -767,7 +812,9 @@ describe('attributeDomain', () => {
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
             });
 
-            expect(attrDomain.getOutputTypes({...mockAttrSimple, format: AttributeFormats.EXTENDED})).toEqual(
+            expect(
+                attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.EXTENDED}, ctx})
+            ).toEqual(
                 {
                     [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                     [ActionsListEvents.GET_VALUE]: [

@@ -19,36 +19,39 @@ export default function({
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null
 }: IDeps = {}): IAttributeTypeRepo {
     return {
-        async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return attributeSimpleRepo.createValue(library, recordId, attribute, value);
+        async createValue(args): Promise<IValue> {
+            return attributeSimpleRepo.createValue(args);
         },
-        async updateValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return attributeSimpleRepo.updateValue(library, recordId, attribute, value);
+        async updateValue(args): Promise<IValue> {
+            return attributeSimpleRepo.updateValue(args);
         },
-        async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
-            return attributeSimpleRepo.deleteValue(library, recordId, attribute, value);
+        async deleteValue(args): Promise<IValue> {
+            return attributeSimpleRepo.deleteValue(args);
         },
-        async getValues(library: string, recordId: number, attribute: IAttribute): Promise<IValue[]> {
+        async getValues({library, recordId, attribute, ctx}): Promise<IValue[]> {
             const libCollec = dbService.db.collection(library);
             const linkedLibCollec = dbService.db.collection(attribute.linked_library);
 
-            const res = await dbService.execute(aql`
-                FOR r IN ${libCollec}
-                    FILTER r._key == ${recordId}
-                    FOR l IN ${linkedLibCollec}
-                        FILTER r.${attribute.id} == l._key
-                        RETURN l
-            `);
+            const res = await dbService.execute({
+                query: aql`
+                    FOR r IN ${libCollec}
+                        FILTER r._key == ${recordId}
+                        FOR l IN ${linkedLibCollec}
+                            FILTER r.${attribute.id} == l._key
+                            RETURN l
+                `,
+                ctx
+            });
 
             return res.slice(0, 1).map(r => ({id_value: null, value: dbUtils.cleanup(r)}));
         },
-        async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        async getValueById(args): Promise<IValue> {
             return null;
         },
-        filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
+        filterQueryPart(args): AqlQuery {
             return null;
         },
-        async clearAllValues(attribute: IAttribute): Promise<boolean> {
+        async clearAllValues(args): Promise<boolean> {
             return true;
         }
     };

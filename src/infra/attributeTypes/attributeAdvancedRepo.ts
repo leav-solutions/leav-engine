@@ -18,7 +18,7 @@ export default function({
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): IAttributeTypeRepo {
     return {
-        async createValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
@@ -27,10 +27,13 @@ export default function({
                 value: value.value
             };
 
-            const resVal = await dbService.execute(aql`
-                INSERT ${valueData}
-                IN ${valCollec}
-                RETURN NEW`);
+            const resVal = await dbService.execute({
+                query: aql`
+                    INSERT ${valueData}
+                    IN ${valCollec}
+                    RETURN NEW`,
+                ctx
+            });
             const savedVal = resVal.length ? resVal[0] : {};
 
             // Create the link record<->value and add some metadata on it
@@ -50,10 +53,13 @@ export default function({
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute(aql`
-                INSERT ${edgeData}
-                IN ${edgeCollec}
-                RETURN NEW`);
+            const resEdge = await dbService.execute({
+                query: aql`
+                    INSERT ${edgeData}
+                    IN ${edgeCollec}
+                    RETURN NEW`,
+                ctx
+            });
             const savedEdge = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
@@ -71,7 +77,7 @@ export default function({
 
             return res;
         },
-        async updateValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        async updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
@@ -80,11 +86,14 @@ export default function({
                 value: value.value
             };
 
-            const resVal = await dbService.execute(aql`
-                UPDATE ${{_key: value.id_value}}
-                WITH ${valueData}
-                IN ${valCollec}
-                RETURN NEW`);
+            const resVal = await dbService.execute({
+                query: aql`
+                    UPDATE ${{_key: value.id_value}}
+                    WITH ${valueData}
+                    IN ${valCollec}
+                    RETURN NEW`,
+                ctx
+            });
             const savedVal = resVal.length ? resVal[0] : {};
 
             // Update value's metadata on record<->value link
@@ -106,13 +115,16 @@ export default function({
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute(aql`
-                FOR e IN ${edgeCollec}
-                FILTER e._from == ${edgeFrom} AND e._to == ${edgeTo}
-                UPDATE e
-                    WITH ${edgeData}
-                    IN ${edgeCollec}
-                RETURN NEW`);
+            const resEdge = await dbService.execute({
+                query: aql`
+                    FOR e IN ${edgeCollec}
+                    FILTER e._from == ${edgeFrom} AND e._to == ${edgeTo}
+                    UPDATE e
+                        WITH ${edgeData}
+                        IN ${edgeCollec}
+                    RETURN NEW`,
+                ctx
+            });
             const savedEdge = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
@@ -130,7 +142,7 @@ export default function({
 
             return res;
         },
-        async deleteValue(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
@@ -152,13 +164,7 @@ export default function({
                 created_at: deletedEdge.created_at
             };
         },
-        async getValues(
-            library: string,
-            recordId: number,
-            attribute: IAttribute,
-            forceGetAllValues: boolean = false,
-            options?: IValuesOptions
-        ): Promise<IValue[]> {
+        async getValues({library, recordId, attribute, forceGetAllValues = false, options, ctx}): Promise<IValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const queryParts = [
@@ -180,7 +186,7 @@ export default function({
                 RETURN {value, edge}
             `);
             const query = aql.join(queryParts);
-            const res = await dbService.execute(query);
+            const res = await dbService.execute({query, ctx});
 
             return res.map(r => ({
                 id_value: r.value._key,
@@ -192,7 +198,7 @@ export default function({
                 version: dbUtils.convertValueVersionFromDb(r.edge.version)
             }));
         },
-        async getValueById(library: string, recordId: number, attribute: IAttribute, value: IValue): Promise<IValue> {
+        async getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
@@ -223,7 +229,7 @@ export default function({
 
             return query;
         },
-        async clearAllValues(attribute: IAttribute): Promise<boolean> {
+        async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
         }
     };

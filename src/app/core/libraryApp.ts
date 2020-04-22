@@ -38,7 +38,12 @@ export default function({
 
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
-            const libraries = await libraryDomain.getLibraries();
+            const libraries = await libraryDomain.getLibraries({
+                ctx: {
+                    userId: 0,
+                    queryId: 'libraryAppGenerateBaseSchema'
+                }
+            });
 
             const baseSchema = {
                 typeDefs: `
@@ -115,7 +120,10 @@ export default function({
                 resolvers: {
                     Query: {
                         async libraries(parent, {filters, pagination, sort}, ctx) {
-                            return libraryDomain.getLibraries({filters, withCount: true, pagination, sort});
+                            return libraryDomain.getLibraries({
+                                params: {filters, withCount: true, pagination, sort},
+                                ctx
+                            });
                         }
                     },
                     Mutation: {
@@ -126,13 +134,13 @@ export default function({
                                 }));
                             }
 
-                            const savedLib = await libraryDomain.saveLibrary(library, graphqlApp.ctxToQueryInfos(ctx));
+                            const savedLib = await libraryDomain.saveLibrary(library, ctx);
                             graphqlApp.generateSchema();
 
                             return savedLib;
                         },
                         async deleteLibrary(parent, {id}, ctx): Promise<ILibrary> {
-                            const deletedLib = await libraryDomain.deleteLibrary(id, graphqlApp.ctxToQueryInfos(ctx));
+                            const deletedLib = await libraryDomain.deleteLibrary(id, ctx);
                             graphqlApp.generateSchema();
 
                             return deletedLib;
@@ -140,7 +148,7 @@ export default function({
                     },
                     Library: {
                         attributes: async (parent, args, ctx, info) => {
-                            return libraryDomain.getLibraryAttributes(parent.id);
+                            return libraryDomain.getLibraryAttributes(parent.id, ctx);
                         },
                         /**
                          * Return library label, potentially filtered by requested language
@@ -215,7 +223,7 @@ export default function({
                 baseSchema.resolvers.Query[libQueryName] = async (
                     parent,
                     {filters, version, pagination, retrieveInactive = false},
-                    context,
+                    ctx,
                     info
                 ): Promise<IList<IRecord>> => {
                     const fields = graphqlApp.getQueryFields(info).map(f => f.name);
@@ -245,24 +253,34 @@ export default function({
                               }, {})
                             : null;
 
-                    context.version = formattedVersion;
+                    ctx.version = formattedVersion;
 
                     return recordDomain.find({
-                        library: lib.id,
-                        filters,
-                        pagination,
-                        options: {version: formattedVersion},
-                        withCount: fields.includes('totalCount'),
-                        retrieveInactive
+                        params: {
+                            library: lib.id,
+                            filters,
+                            pagination,
+                            options: {version: formattedVersion},
+                            withCount: fields.includes('totalCount'),
+                            retrieveInactive
+                        },
+                        ctx
                     });
                 };
                 baseSchema.resolvers[libTypeName] = {
-                    library: async rec => (rec.library ? libraryDomain.getLibraryProperties(rec.library) : null),
+                    library: async (rec, _, ctx) =>
+                        rec.library ? libraryDomain.getLibraryProperties(rec.library, ctx) : null,
                     whoAmI: recordDomain.getRecordIdentity,
                     property: async (parent, {attribute}, ctx) => {
-                        const res = await recordDomain.getRecordFieldValue(lib.id, parent, attribute, {
-                            version: ctx.version,
-                            forceArray: true
+                        const res = await recordDomain.getRecordFieldValue({
+                            library: lib.id,
+                            record: parent,
+                            attributeId: attribute,
+                            options: {
+                                version: ctx.version,
+                                forceArray: true
+                            },
+                            ctx
                         });
 
                         // We add attribute ID on value as it might be useful for nested resolvers (like tree ancestors)
@@ -284,8 +302,14 @@ export default function({
                         _,
                         ctx: {version: IValueVersion}
                     ) => {
-                        const val = await recordDomain.getRecordFieldValue(lib.id, parent, libAttr.id, {
-                            version: ctx.version
+                        const val = await recordDomain.getRecordFieldValue({
+                            library: lib.id,
+                            record: parent,
+                            attributeId: libAttr.id,
+                            options: {
+                                version: ctx.version
+                            },
+                            ctx
                         });
 
                         return Array.isArray(val) ? val.map(v => v.value) : val.value;

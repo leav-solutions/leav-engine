@@ -5,8 +5,14 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from './permissionDomain';
 import recordPermissionDomain from './recordPermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
+import {IQueryInfos} from '_types/queryInfos';
+import {isString} from 'util';
 
 describe('recordPermissionDomain', () => {
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'recordPermissionDomainTest'
+    };
     describe('getRecordPermission', () => {
         const defaultPerm = false;
 
@@ -38,13 +44,13 @@ describe('recordPermissionDomain', () => {
             }
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(attrId => Promise.resolve(mockAttrProps[attrId]))
+            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id]))
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation((lib, rec, attr) => {
+            getValues: jest.fn().mockImplementation(({library, recordId, attribute}) => {
                 let val;
-                switch (attr.id) {
+                switch (attribute.id) {
                     case 'category':
                         val = {
                             id_value: 12345,
@@ -86,7 +92,8 @@ describe('recordPermissionDomain', () => {
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',
-                123456
+                123456,
+                ctx
             );
 
             expect(mockTreePermDomain.getTreePermission.mock.calls.length).toBe(1);
@@ -114,7 +121,8 @@ describe('recordPermissionDomain', () => {
                 RecordPermissionsActions.ACCESS,
                 987654,
                 'test_lib',
-                123456
+                123456,
+                ctx
             );
 
             expect(mockPermDomain.getLibraryPermission).toBeCalled();
@@ -142,7 +150,8 @@ describe('recordPermissionDomain', () => {
                 12345,
                 'test_lib',
                 'test_tree',
-                {id: 54321, library: 'some_lib'}
+                {id: 54321, library: 'some_lib'},
+                ctx
             );
 
             expect(perm).toBe(true);

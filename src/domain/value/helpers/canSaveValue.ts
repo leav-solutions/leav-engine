@@ -18,7 +18,7 @@ interface ICanSaveValueParams {
     value: IValue;
     library: string;
     recordId: number;
-    infos?: IQueryInfos;
+    ctx?: IQueryInfos;
     keepEmpty: boolean;
     deps: {
         recordPermissionDomain: IRecordPermissionDomain;
@@ -31,7 +31,7 @@ const _canSaveMetadata = async (
     library: string,
     recordId: number,
     value: IValue,
-    infos: IQueryInfos,
+    ctx: IQueryInfos,
     deps: {attributePermissionDomain: IAttributePermissionDomain}
 ): Promise<{canSave: boolean; fields?: ErrorFieldDetail<IValue>; reason?: AttributePermissionsActions}> => {
     const permToCheck = valueExists ? AttributePermissionsActions.EDIT_VALUE : AttributePermissionsActions.CREATE_VALUE;
@@ -40,10 +40,11 @@ const _canSaveMetadata = async (
 
         const canUpdateField = await deps.attributePermissionDomain.getAttributePermission(
             permToCheck,
-            infos.userId,
+            ctx.userId,
             field,
             library,
-            recordId
+            recordId,
+            ctx
         );
 
         if (!canUpdateField) {
@@ -65,15 +66,16 @@ const _canSaveMetadata = async (
 };
 
 export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> => {
-    const {attributeProps, value, library, recordId, infos, deps, keepEmpty = false} = params;
+    const {attributeProps, value, library, recordId, ctx, deps, keepEmpty = false} = params;
     const valueExists = doesValueExist(value, attributeProps);
 
     // Check permission
     const canUpdateRecord = await deps.recordPermissionDomain.getRecordPermission(
         RecordPermissionsActions.EDIT,
-        infos.userId,
+        ctx.userId,
         library,
-        recordId
+        recordId,
+        ctx
     );
 
     if (!canUpdateRecord) {
@@ -89,10 +91,11 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
 
     const isAllowed = await deps.attributePermissionDomain.getAttributePermission(
         permToCheck,
-        infos.userId,
+        ctx.userId,
         attributeProps.id,
         library,
-        recordId
+        recordId,
+        ctx
     );
 
     if (!isAllowed) {
@@ -101,7 +104,7 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
 
     // Check metadata permissions
     if (value.metadata) {
-        return _canSaveMetadata(valueExists, library, recordId, value, infos, {
+        return _canSaveMetadata(valueExists, library, recordId, value, ctx, {
             attributePermissionDomain: deps.attributePermissionDomain
         });
     }

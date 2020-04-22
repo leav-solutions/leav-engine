@@ -13,6 +13,8 @@ import {
 } from '../../../_types/filesManager';
 import {getInputData, getRecord, updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
+import {v4 as uuidv4} from 'uuid';
+import {IQueryInfos} from '_types/queryInfos';
 
 export interface IHandlePreviewResponseDeps {
     recordDomain: IRecordDomain;
@@ -24,7 +26,10 @@ export interface IHandlePreviewResponseDeps {
 
 const onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
     let previewResponse: IPreviewResponse;
-
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: uuidv4()
+    };
     try {
         previewResponse = JSON.parse(msg);
     } catch (e) {
@@ -73,25 +78,39 @@ const onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePrev
         PREVIEWS: previews
     };
 
-    await updateRecordFile(recordData, recordId, library, {
-        valueDomain: deps.valueDomain,
-        config: deps.config,
-        logger: deps.logger
-    });
+    await updateRecordFile(
+        recordData,
+        recordId,
+        library,
+        {
+            valueDomain: deps.valueDomain,
+            config: deps.config,
+            logger: deps.logger
+        },
+        ctx
+    );
 };
 
 export const _getOriginalRecord = async (
     input: string,
     library: string,
-    deps: IHandlePreviewResponseDeps
+    deps: IHandlePreviewResponseDeps,
+    ctx: IQueryInfos
 ): Promise<IRecord> => {
     const {fileName, filePath} = getInputData(input);
 
-    const {list: recordFind} = await getRecord(fileName, filePath, library, false, {
-        recordDomain: deps.recordDomain,
-        config: deps.config,
-        logger: deps.logger
-    });
+    const {list: recordFind} = await getRecord(
+        fileName,
+        filePath,
+        library,
+        false,
+        {
+            recordDomain: deps.recordDomain,
+            config: deps.config,
+            logger: deps.logger
+        },
+        ctx
+    );
 
     return recordFind[0];
 };

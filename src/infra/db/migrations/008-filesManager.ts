@@ -32,8 +32,8 @@ export default function({
     config
 }: IDeps): IMigration {
     return {
-        async run() {
-            const existingAttributes = await attributeDomain.getAttributes();
+        async run(ctx) {
+            const existingAttributes = await attributeDomain.getAttributes({ctx});
             const attributesById: {[key: string]: IAttribute} = existingAttributes.list.reduce((attrs, curAttr) => {
                 attrs[curAttr.id] = curAttr;
                 return attrs;
@@ -42,189 +42,210 @@ export default function({
             // Create attributes needed for files manager
             if (typeof attributesById.root_key === 'undefined') {
                 attributesById.root_key = await attributeRepo.createAttribute({
-                    id: 'root_key',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.TEXT,
-                    label: {fr: 'Clé racine', en: 'Root key'},
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.SAVE_VALUE]: [
-                            {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
-                            }
-                        ],
-                        [ActionsListEvents.DELETE_VALUE]: []
+                    attrData: {
+                        id: 'root_key',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.TEXT,
+                        label: {fr: 'Clé racine', en: 'Root key'},
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
                     },
-                    multiple_values: false
+                    ctx
                 });
             }
 
             if (typeof attributesById.is_directory === 'undefined') {
                 attributesById.is_directory = await attributeRepo.createAttribute({
-                    id: 'is_directory',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.BOOLEAN,
-                    label: {fr: 'Dossier', en: 'Directory'},
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [
-                            {
-                                id: 'toBoolean',
-                                name: 'To Boolean',
-                                is_system: true
-                            }
-                        ],
-                        [ActionsListEvents.SAVE_VALUE]: [
-                            {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
-                            },
-                            {
-                                id: 'toBoolean',
-                                name: 'To Boolean',
-                                is_system: true
-                            }
-                        ],
-                        [ActionsListEvents.DELETE_VALUE]: []
+                    attrData: {
+                        id: 'is_directory',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.BOOLEAN,
+                        label: {fr: 'Dossier', en: 'Directory'},
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [
+                                {
+                                    id: 'toBoolean',
+                                    name: 'To Boolean',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                },
+                                {
+                                    id: 'toBoolean',
+                                    name: 'To Boolean',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
                     },
-                    multiple_values: false
+                    ctx
                 });
             }
 
             if (typeof attributesById.hash === 'undefined') {
                 attributesById.hash = await attributeRepo.createAttribute({
-                    id: 'hash',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.TEXT,
-                    label: {fr: 'Hash', en: 'Hash'},
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.SAVE_VALUE]: [
-                            {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
-                            }
-                        ],
-                        [ActionsListEvents.DELETE_VALUE]: []
+                    attrData: {
+                        id: 'hash',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.TEXT,
+                        label: {fr: 'Hash', en: 'Hash'},
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
                     },
-                    multiple_values: false
+                    ctx
                 });
             }
 
             if (typeof attributesById.file_path === 'undefined') {
                 attributesById.file_path = await attributeRepo.createAttribute({
-                    id: 'file_path',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.TEXT,
-                    label: {fr: 'Chemin du fichier', en: 'File path'},
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.SAVE_VALUE]: [
-                            {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
-                            }
-                        ],
-                        [ActionsListEvents.DELETE_VALUE]: []
+                    attrData: {
+                        id: 'file_path',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.TEXT,
+                        label: {fr: 'Chemin du fichier', en: 'File path'},
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
                     },
-                    multiple_values: false
+                    ctx
                 });
             }
 
             if (typeof attributesById.file_name === 'undefined') {
                 attributesById.file_name = await attributeRepo.createAttribute({
-                    id: 'file_name',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.TEXT,
-                    label: {fr: 'Nom du fichier', en: 'File name'},
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.SAVE_VALUE]: [
-                            {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
-                            }
-                        ],
-                        [ActionsListEvents.DELETE_VALUE]: []
+                    attrData: {
+                        id: 'file_name',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.TEXT,
+                        label: {fr: 'Nom du fichier', en: 'File name'},
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
                     },
-                    multiple_values: false
+                    ctx
                 });
             }
 
             if (typeof attributesById.inode === 'undefined') {
                 attributesById.inode = await attributeRepo.createAttribute({
-                    id: 'inode',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.NUMERIC,
-                    label: {fr: 'Inode', en: 'Inode'},
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.SAVE_VALUE]: [
+                    attrData: {
+                        id: 'inode',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.NUMERIC,
+                        label: {fr: 'Inode', en: 'Inode'},
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                },
+                                {
+                                    id: 'toNumber',
+                                    name: 'To Number',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
+                    },
+                    ctx
+                });
+            }
+
+            if (typeof attributesById.previews === 'undefined') {
+                attributesById.previews = await attributeRepo.createAttribute({
+                    attrData: {
+                        id: 'previews',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.EXTENDED,
+                        embedded_fields: [
                             {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
+                                id: 'small',
+                                format: AttributeFormats.TEXT
                             },
                             {
-                                id: 'toNumber',
-                                name: 'To Number',
-                                is_system: true
-                            }
-                        ],
-                        [ActionsListEvents.DELETE_VALUE]: []
-                    },
-                    multiple_values: false
-                });
-            }
-
-            if (typeof attributesById.previews === 'undefined') {
-                attributesById.previews = await attributeRepo.createAttribute({
-                    id: 'previews',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.EXTENDED,
-                    embedded_fields: [
-                        {
-                            id: 'small',
-                            format: AttributeFormats.TEXT
-                        },
-                        {
-                            id: 'medium',
-                            format: AttributeFormats.TEXT
-                        },
-                        {
-                            id: 'big',
-                            format: AttributeFormats.TEXT
-                        },
-                        {
-                            id: 'pages',
-                            format: AttributeFormats.TEXT
-                        }
-                    ],
-                    label: {fr: 'Aperçus', en: 'Previews'},
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.SAVE_VALUE]: [
+                                id: 'medium',
+                                format: AttributeFormats.TEXT
+                            },
                             {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
+                                id: 'big',
+                                format: AttributeFormats.TEXT
+                            },
+                            {
+                                id: 'pages',
+                                format: AttributeFormats.TEXT
                             }
                         ],
-                        [ActionsListEvents.DELETE_VALUE]: []
+                        label: {fr: 'Aperçus', en: 'Previews'},
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
                     },
-                    multiple_values: false
+                    ctx
                 });
             }
 
@@ -241,92 +262,104 @@ export default function({
                 ];
 
                 attributesById.previews_status = await attributeRepo.createAttribute({
-                    id: 'previews_status',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.EXTENDED,
-                    label: {fr: 'Statut des aperçus', en: 'Previews status'},
-                    embedded_fields: [
-                        {
-                            id: 'small',
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: previewStatusSubFields
-                        },
-                        {
-                            id: 'medium',
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: previewStatusSubFields
-                        },
-                        {
-                            id: 'big',
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: previewStatusSubFields
-                        },
-                        {
-                            id: 'pages',
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: previewStatusSubFields
-                        }
-                    ],
-                    actions_list: {
-                        [ActionsListEvents.GET_VALUE]: [],
-                        [ActionsListEvents.SAVE_VALUE]: [
+                    attrData: {
+                        id: 'previews_status',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.EXTENDED,
+                        label: {fr: 'Statut des aperçus', en: 'Previews status'},
+                        embedded_fields: [
                             {
-                                id: 'validateFormat',
-                                name: 'Validate Format',
-                                is_system: true
+                                id: 'small',
+                                format: AttributeFormats.EXTENDED,
+                                embedded_fields: previewStatusSubFields
+                            },
+                            {
+                                id: 'medium',
+                                format: AttributeFormats.EXTENDED,
+                                embedded_fields: previewStatusSubFields
+                            },
+                            {
+                                id: 'big',
+                                format: AttributeFormats.EXTENDED,
+                                embedded_fields: previewStatusSubFields
+                            },
+                            {
+                                id: 'pages',
+                                format: AttributeFormats.EXTENDED,
+                                embedded_fields: previewStatusSubFields
                             }
                         ],
-                        [ActionsListEvents.DELETE_VALUE]: []
+                        actions_list: {
+                            [ActionsListEvents.GET_VALUE]: [],
+                            [ActionsListEvents.SAVE_VALUE]: [
+                                {
+                                    id: 'validateFormat',
+                                    name: 'Validate Format',
+                                    is_system: true
+                                }
+                            ],
+                            [ActionsListEvents.DELETE_VALUE]: []
+                        },
+                        multiple_values: false
                     },
-                    multiple_values: false
+                    ctx
                 });
             }
 
             if (typeof attributesById.file_name === 'undefined') {
                 attributesById.file_name = await attributeRepo.createAttribute({
-                    id: 'file_name',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.TEXT,
-                    label: {fr: 'Nom du fichier', en: 'File name'},
-                    multiple_values: false
+                    attrData: {
+                        id: 'file_name',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.TEXT,
+                        label: {fr: 'Nom du fichier', en: 'File name'},
+                        multiple_values: false
+                    },
+                    ctx
                 });
             }
 
             if (typeof attributesById.inode === 'undefined') {
                 attributesById.inode = await attributeRepo.createAttribute({
-                    id: 'inode',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.NUMERIC,
-                    label: {fr: 'Inode', en: 'Inode'},
-                    multiple_values: false
+                    attrData: {
+                        id: 'inode',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.NUMERIC,
+                        label: {fr: 'Inode', en: 'Inode'},
+                        multiple_values: false
+                    },
+                    ctx
                 });
             }
 
             if (typeof attributesById.previews === 'undefined') {
                 attributesById.previews = await attributeRepo.createAttribute({
-                    id: 'previews',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.EXTENDED,
-                    embedded_fields: [
-                        {
-                            id: 'small',
-                            format: AttributeFormats.TEXT
-                        },
-                        {
-                            id: 'medium',
-                            format: AttributeFormats.TEXT
-                        },
-                        {
-                            id: 'big',
-                            format: AttributeFormats.TEXT
-                        }
-                    ],
-                    label: {fr: 'Aperçus', en: 'Previews'},
-                    multiple_values: false
+                    attrData: {
+                        id: 'previews',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.EXTENDED,
+                        embedded_fields: [
+                            {
+                                id: 'small',
+                                format: AttributeFormats.TEXT
+                            },
+                            {
+                                id: 'medium',
+                                format: AttributeFormats.TEXT
+                            },
+                            {
+                                id: 'big',
+                                format: AttributeFormats.TEXT
+                            }
+                        ],
+                        label: {fr: 'Aperçus', en: 'Previews'},
+                        multiple_values: false
+                    },
+                    ctx
                 });
             }
 
@@ -343,70 +376,83 @@ export default function({
                 ];
 
                 attributesById.previews_status = await attributeRepo.createAttribute({
-                    id: 'previews_status',
-                    system: true,
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.EXTENDED,
-                    label: {fr: 'Statut des aperçus', en: 'Previews status'},
-                    embedded_fields: [
-                        {
-                            id: 'small',
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: previewStatusSubFields
-                        },
-                        {
-                            id: 'medium',
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: previewStatusSubFields
-                        },
-                        {
-                            id: 'big',
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: previewStatusSubFields
-                        }
-                    ],
-                    multiple_values: false
+                    attrData: {
+                        id: 'previews_status',
+                        system: true,
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.EXTENDED,
+                        label: {fr: 'Statut des aperçus', en: 'Previews status'},
+                        embedded_fields: [
+                            {
+                                id: 'small',
+                                format: AttributeFormats.EXTENDED,
+                                embedded_fields: previewStatusSubFields
+                            },
+                            {
+                                id: 'medium',
+                                format: AttributeFormats.EXTENDED,
+                                embedded_fields: previewStatusSubFields
+                            },
+                            {
+                                id: 'big',
+                                format: AttributeFormats.EXTENDED,
+                                embedded_fields: previewStatusSubFields
+                            }
+                        ],
+                        multiple_values: false
+                    },
+                    ctx
                 });
             }
 
             // Create "files" library
             const filesLibraryId = 'files';
-            const existingLibrary = await libraryDomain.getLibraries({filters: {id: filesLibraryId}});
+            const existingLibrary = await libraryDomain.getLibraries({params: {filters: {id: filesLibraryId}}, ctx});
             if (!existingLibrary.list.length) {
                 await libraryRepo.createLibrary({
-                    id: filesLibraryId,
-                    system: true,
-                    behavior: LibraryBehavior.FILES,
-                    label: {fr: 'Fichiers', en: 'Files'}
+                    libData: {
+                        id: filesLibraryId,
+                        system: true,
+                        behavior: LibraryBehavior.FILES,
+                        label: {fr: 'Fichiers', en: 'Files'}
+                    },
+                    ctx
                 });
 
-                await libraryRepo.saveLibraryAttributes(filesLibraryId, [
-                    'id',
-                    'created_by',
-                    'created_at',
-                    'modified_by',
-                    'modified_at',
-                    'root_key',
-                    'is_directory',
-                    'hash',
-                    'file_path',
-                    'file_name',
-                    'inode',
-                    'previews',
-                    'previews_status'
-                ]);
+                await libraryRepo.saveLibraryAttributes({
+                    libId: filesLibraryId,
+                    attributes: [
+                        'id',
+                        'created_by',
+                        'created_at',
+                        'modified_by',
+                        'modified_at',
+                        'root_key',
+                        'is_directory',
+                        'hash',
+                        'file_path',
+                        'file_name',
+                        'inode',
+                        'previews',
+                        'previews_status'
+                    ],
+                    ctx
+                });
             }
 
             // Create tree linked to files library
             const filesTreeId = 'files_tree';
-            const existingTree = await treeDomain.getTrees({filters: {id: filesTreeId}});
+            const existingTree = await treeDomain.getTrees({params: {filters: {id: filesTreeId}}, ctx});
             if (!existingTree.list.length) {
                 await treeRepo.createTree({
-                    id: filesTreeId,
-                    system: true,
-                    behavior: TreeBehavior.FILES,
-                    label: {fr: 'Fichiers', en: 'Files'},
-                    libraries: [filesLibraryId]
+                    treeData: {
+                        id: filesTreeId,
+                        system: true,
+                        behavior: TreeBehavior.FILES,
+                        label: {fr: 'Fichiers', en: 'Files'},
+                        libraries: [filesLibraryId]
+                    },
+                    ctx
                 });
             }
         }

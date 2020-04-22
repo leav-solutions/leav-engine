@@ -37,7 +37,13 @@ export default function({
                         property(attribute: ID!): [GenericValue!]
                         ${await Promise.all(
                             systemAttributes.map(async a => {
-                                const attrProps = await attributeDomain.getAttributeProperties(a);
+                                const attrProps = await attributeDomain.getAttributeProperties({
+                                    id: a,
+                                    ctx: {
+                                        userId: 0,
+                                        queryId: 'recordAppGenerateBaseSchema'
+                                    }
+                                });
                                 return `${a}: ${await attributeApp.getGraphQLFormat(attrProps)}`;
                             })
                         )}
@@ -92,12 +98,12 @@ export default function({
                     },
                     Mutation: {
                         async createRecord(parent, {library}, ctx): Promise<IRecord> {
-                            const newRec = await recordDomain.createRecord(library, graphqlApp.ctxToQueryInfos(ctx));
+                            const newRec = await recordDomain.createRecord(library, ctx);
 
                             return newRec;
                         },
                         async deleteRecord(parent, {library, id}, ctx): Promise<IRecord> {
-                            return recordDomain.deleteRecord(library, id, graphqlApp.ctxToQueryInfos(ctx));
+                            return recordDomain.deleteRecord({library, id, ctx});
                         }
                     }
                 }

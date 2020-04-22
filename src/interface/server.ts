@@ -6,10 +6,10 @@ import {execute, GraphQLFormattedError} from 'graphql';
 import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 import {i18n} from 'i18next';
 import {IUtils} from 'utils/utils';
-import * as uuid from 'uuid';
 import * as winston from 'winston';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
-
+import {IQueryInfos} from '_types/queryInfos';
+import {v4 as uuidv4} from 'uuid';
 export interface IServer {
     init(): Promise<void>;
 }
@@ -64,7 +64,7 @@ export default function({
             return newError;
         }
 
-        const errId = uuid.v4();
+        const errId = uuidv4();
 
         // Error is logged with original message
         newError.message = `[${errId}] ${err.message}`;
@@ -131,10 +131,11 @@ export default function({
                     },
                     tracing: true,
                     cacheControl: false,
-                    context: ({request}) => {
+                    context: ({request}): IQueryInfos => {
                         return {
-                            auth: request.auth.isAuthenticated ? request.auth.credentials : false,
-                            lang: request.query.lang ?? config.lang.default
+                            userId: request.auth.isAuthenticated ? request.auth.credentials.userId : 0,
+                            lang: request.query.lang ?? config.lang.default,
+                            queryId: request.requestId || uuidv4()
                         };
                     },
                     // We're using a gateway here instead of a simple schema definition because we need to be able

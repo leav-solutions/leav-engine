@@ -4,8 +4,13 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import attributePermissionDomain from './attributePermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributePermissionDomain', () => {
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'attributePermissionDomainTest'
+    };
     describe('getAttributePermission', () => {
         const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
             getTreePermission: global.__mockPromise(true)
@@ -27,9 +32,9 @@ describe('AttributePermissionDomain', () => {
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation((lib, rec, attr) => {
+            getValues: jest.fn().mockImplementation(({library, recordId, attribute}) => {
                 let val;
-                switch (attr.id) {
+                switch (attribute.id) {
                     case 'category':
                         val = {
                             id_value: 12345,
@@ -82,7 +87,8 @@ describe('AttributePermissionDomain', () => {
                 12345,
                 'test_attr',
                 'test_lib',
-                987654
+                987654,
+                ctx
             );
 
             expect(mockPermDomain.getDefaultPermission.mock.calls.length).toBe(0);
@@ -109,7 +115,8 @@ describe('AttributePermissionDomain', () => {
                 12345,
                 'test_attr',
                 'test_lib',
-                987654
+                987654,
+                ctx
             );
 
             expect(mockPermDomain.getDefaultPermission.mock.calls.length).toBe(1);

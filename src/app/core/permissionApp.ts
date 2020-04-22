@@ -160,46 +160,49 @@ export default function({
                 resolvers: {
                     Query: {
                         async isAllowed(_, {type, applyTo, actions, target}, ctx) {
-                            const {userId} = graphqlApp.ctxToQueryInfos(ctx);
+                            const {userId} = ctx;
 
                             return Promise.all(
                                 actions.map(async action => {
-                                    const perm = await permissionsHelperDomain.isAllowed(
+                                    const perm = await permissionsHelperDomain.isAllowed({
                                         type,
                                         action,
                                         userId,
                                         applyTo,
-                                        target
-                                    );
+                                        target,
+                                        ctx
+                                    });
 
                                     return {name: action, allowed: perm};
                                 })
                             );
                         },
-                        async permissions(_, {type, applyTo, actions, usersGroup, permissionTreeTarget}) {
-                            const perms = await permissionDomain.getPermissionsByActions(
+                        async permissions(_, {type, applyTo, actions, usersGroup, permissionTreeTarget}, ctx) {
+                            const perms = await permissionDomain.getPermissionsByActions({
                                 type,
                                 applyTo,
                                 actions,
-                                usersGroup,
-                                permissionTreeTarget
-                            );
+                                usersGroupId: usersGroup,
+                                permissionTreeTarget,
+                                ctx
+                            });
 
                             return Object.keys(perms).reduce((permByActions, action) => {
                                 permByActions.push({name: action, allowed: perms[action]});
                                 return permByActions;
                             }, []);
                         },
-                        async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}) {
+                        async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}, ctx) {
                             return Promise.all(
                                 actions.map(async action => {
-                                    const perm = await permissionsHelperDomain.getHeritedPermissions(
+                                    const perm = await permissionsHelperDomain.getHeritedPermissions({
                                         type,
                                         applyTo,
                                         action,
                                         userGroupId,
-                                        permissionTreeTarget
-                                    );
+                                        permissionTreeTarget,
+                                        ctx
+                                    });
 
                                     return {name: action, allowed: perm};
                                 })
@@ -216,10 +219,7 @@ export default function({
                                 }, {})
                             };
 
-                            const savedPerm = await permissionDomain.savePermission(
-                                formattedPerm,
-                                graphqlApp.ctxToQueryInfos(ctx)
-                            );
+                            const savedPerm = await permissionDomain.savePermission(formattedPerm, ctx);
 
                             return _formatPerm(savedPerm);
                         }

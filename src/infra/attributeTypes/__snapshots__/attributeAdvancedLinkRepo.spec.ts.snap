@@ -2,9 +2,9 @@
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link value 1`] = `
 "
-                INSERT @value0
-                    IN @@value1
-                RETURN NEW"
+                    INSERT @value0
+                        IN @@value1
+                    RETURN NEW"
 `;
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link value 2`] = `
@@ -113,10 +113,10 @@ Object {
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 1`] = `
 "
-                UPDATE @value0
-                    WITH @value1
-                    IN @@value2
-                RETURN NEW"
+                    UPDATE @value0
+                        WITH @value1
+                        IN @@value2
+                    RETURN NEW"
 `;
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 2`] = `

@@ -1,3 +1,5 @@
+import {IQueryInfos} from '_types/queryInfos';
+
 export interface IMigration {
-    run(): Promise<void>;
+    run(ctx: IQueryInfos): Promise<void>;
 }

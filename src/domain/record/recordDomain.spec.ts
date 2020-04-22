@@ -9,10 +9,15 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('RecordDomain', () => {
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
         getRecordPermission: global.__mockPromise(true)
+    };
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'recordDomainTest'
     };
 
     describe('createRecord', () => {
@@ -25,12 +30,13 @@ describe('RecordDomain', () => {
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
             });
 
-            const createdRecord = await recDomain.createRecord('test', {userId: 1});
+            const createdRecord = await recDomain.createRecord('test', ctx);
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][1].created_at)).toBe(true);
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][1].modified_at)).toBe(true);
-            expect(recRepo.createRecord.mock.calls[0][1].created_by).toBe(1);
-            expect(recRepo.createRecord.mock.calls[0][1].modified_by).toBe(1);
+            expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
+            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe(1);
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe(1);
 
             expect(createdRecord).toMatchObject(createdRecordData);
         });
@@ -46,14 +52,15 @@ describe('RecordDomain', () => {
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
             });
 
-            const updatedRecord = await recDomain.updateRecord(
-                'test',
-                {id: 222435651, modified_at: 987654321},
-                {userId: 1}
-            );
+            const updatedRecord = await recDomain.updateRecord({
+                library: 'test',
+                recordData: {id: 222435651, modified_at: 987654321},
+                ctx
+            });
 
             expect(recRepo.updateRecord.mock.calls.length).toBe(1);
-            expect(Number.isInteger(recRepo.updateRecord.mock.calls[0][1].modified_at)).toBe(true);
+            expect(typeof recRepo.updateRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(recRepo.updateRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
 
             expect(updatedRecord).toMatchObject(updatedRecordData);
         });
@@ -72,7 +79,7 @@ describe('RecordDomain', () => {
                 'core.domain.permission.recordPermission': recordPermDomain as IRecordPermissionDomain
             });
 
-            const deleteRes = await recDomain.deleteRecord('test', recordData.id, {userId: 1});
+            const deleteRes = await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
 
             expect(recRepo.deleteRecord.mock.calls.length).toBe(1);
         });
@@ -101,7 +108,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({'core.infra.record': recRepo as IRecordRepo});
 
-            const findRes = await recDomain.find({library: 'test_lib'});
+            const findRes = await recDomain.find({params: {library: 'test_lib'}, ctx});
 
             expect(recRepo.find.mock.calls.length).toBe(1);
             expect(findRes).toEqual([
@@ -164,7 +171,7 @@ describe('RecordDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            const res = await recDomain.getRecordIdentity(record);
+            const res = await recDomain.getRecordIdentity(record, ctx);
 
             expect(res.id).toBe(222536283);
             expect(res.library).toMatchObject(libData);
@@ -200,7 +207,7 @@ describe('RecordDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            const res = await recDomain.getRecordIdentity(record);
+            const res = await recDomain.getRecordIdentity(record, ctx);
 
             expect(res.id).toBe(222536283);
             expect(res.library).toMatchObject(libData);
@@ -228,7 +235,12 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
 
-            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at');
+            const value = await recDomain.getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecord,
+                attributeId: 'created_at',
+                ctx
+            });
 
             expect(Array.isArray(value)).toBe(false);
             expect((value as IValue).value).toBe(2119477320);
@@ -256,7 +268,12 @@ describe('RecordDomain', () => {
                 'core.domain.value': mockValDomain as IValueDomain
             });
 
-            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'label');
+            const value = await recDomain.getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecord,
+                attributeId: 'label',
+                ctx
+            });
 
             expect(Array.isArray(value)).toBe(true);
             expect(value[0].value).toBe('MyLabel');
@@ -282,7 +299,12 @@ describe('RecordDomain', () => {
                 'core.domain.actionsList': mockALDomain as IActionsListDomain
             });
 
-            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at');
+            const value = await recDomain.getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecord,
+                attributeId: 'created_at',
+                ctx
+            });
 
             expect((value as IValue).value).toBe('1/3/37 00:42');
             expect((value as IValue).raw_value).toBe(2119477320);
@@ -299,7 +321,12 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
 
-            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_by');
+            const value = await recDomain.getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecord,
+                attributeId: 'created_by',
+                ctx
+            });
 
             expect((value as IValue).value.id).toBe(42);
             expect((value as IValue).value.library).toBe('users');
@@ -315,7 +342,13 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
 
-            const value = await recDomain.getRecordFieldValue('test_lib', mockRecord, 'created_at', {forceArray: true});
+            const value = await recDomain.getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecord,
+                attributeId: 'created_at',
+                options: {forceArray: true},
+                ctx
+            });
 
             expect(Array.isArray(value)).toBe(true);
             expect((value as IValue)[0].value).toBe(2119477320);
@@ -338,11 +371,12 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
 
-            const recordAfter = await recDomain.deactivateRecord(record, {userId: 1});
+            const recordAfter = await recDomain.deactivateRecord(record, ctx);
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][2]).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][3].value).toBe(false);
+            expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
     });
@@ -363,11 +397,13 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
 
-            const recordAfter = await recDomain.activateRecord(record, {userId: 1});
+            const recordAfter = await recDomain.activateRecord(record, ctx);
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][2]).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][3].value).toBe(true);
+            expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(true);
+
             expect(recordAfter.active).toBe(true);
         });
     });
@@ -391,8 +427,8 @@ describe('RecordDomain', () => {
             const recordAfter = await recDomain.deactivateRecord(record, {userId: 1});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][2]).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][3].value).toBe(false);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
     });
@@ -416,8 +452,8 @@ describe('RecordDomain', () => {
             const recordAfter = await recDomain.activateRecord(record, {userId: 1});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][2]).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][3].value).toBe(true);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(true);
             expect(recordAfter.active).toBe(true);
         });
     });

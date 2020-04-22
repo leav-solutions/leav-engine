@@ -8,12 +8,15 @@ interface IDeps {
 
 export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
-        async run() {
-            const res = await dbService.execute(aql`
-                FOR el in core_attributes
-                    FILTER el.versions_conf == null
-                    UPDATE el WITH {versions_conf: {versionable: false, trees: []}} IN core_attributes
-            `);
+        async run(ctx) {
+            const res = await dbService.execute({
+                query: aql`
+                    FOR el in core_attributes
+                        FILTER el.versions_conf == null
+                        UPDATE el WITH {versions_conf: {versionable: false, trees: []}} IN core_attributes
+                `,
+                ctx
+            });
         }
     };
 }

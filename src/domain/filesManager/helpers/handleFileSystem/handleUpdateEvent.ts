@@ -2,16 +2,18 @@ import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager'
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {getInputData, getPreviewsDatas, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
 import {createPreview} from '../handlePreview';
+import {IQueryInfos} from '_types/queryInfos';
 
 export const handleUpdateEvent = async (
     scanMsg: IFileEventData,
     {library}: IHandleFileSystemResources,
-    deps: IHandleFileSystemDeps
+    deps: IHandleFileSystemDeps,
+    ctx: IQueryInfos
 ) => {
     const {fileName, filePath} = getInputData(scanMsg.pathAfter);
 
     // Get the records
-    const record = await getRecord(fileName, filePath, library, false, deps);
+    const record = await getRecord(fileName, filePath, library, false, deps, ctx);
 
     if (!record) {
         deps.logger.warn(`[FilesManager] event ${scanMsg.event} - record not found : ${scanMsg.pathAfter}`);
@@ -29,7 +31,7 @@ export const handleUpdateEvent = async (
     };
 
     // Update datas
-    updateRecordFile(recordData, record.id, library, deps);
+    updateRecordFile(recordData, record.id, library, deps, ctx);
 
     // Regenerate Previews
     createPreview(record, scanMsg, library, deps.previewVersions, deps.amqpManager, deps.config);

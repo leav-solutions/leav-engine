@@ -8,7 +8,7 @@ interface IDeps {
 
 export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
-        async run() {
+        async run(ctx) {
             const docToUpdate = {
                 _key: 'password',
                 actions_list: {
@@ -24,7 +24,10 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                     ]
                 }
             };
-            const res = await dbService.execute(aql`UPDATE ${docToUpdate} IN core_attributes `);
+            const res = await dbService.execute({
+                query: aql`UPDATE ${docToUpdate} IN core_attributes `,
+                ctx
+            });
         }
     };
 }

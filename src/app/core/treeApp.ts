@@ -162,11 +162,11 @@ export default function({
                 `,
                 resolvers: {
                     Query: {
-                        async trees(parent, {filters, pagination, sort}) {
-                            return treeDomain.getTrees({filters, withCount: true, pagination, sort});
+                        async trees(parent, {filters, pagination, sort}, ctx) {
+                            return treeDomain.getTrees({params: {filters, withCount: true, pagination, sort}, ctx});
                         },
-                        async treeContent(_, {treeId, startAt}) {
-                            const res = await treeDomain.getTreeContent(treeId, startAt);
+                        async treeContent(_, {treeId, startAt}, ctx) {
+                            const res = await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
                             return res.map(r => ({...r, treeId}));
@@ -177,23 +177,27 @@ export default function({
                     },
                     Mutation: {
                         async saveTree(parent, {tree}, ctx): Promise<ITree> {
-                            return treeDomain.saveTree(tree, graphqlApp.ctxToQueryInfos(ctx));
+                            return treeDomain.saveTree(tree, ctx);
                         },
                         async deleteTree(parent, {id}, ctx): Promise<ITree> {
-                            return treeDomain.deleteTree(id, graphqlApp.ctxToQueryInfos(ctx));
+                            return treeDomain.deleteTree(id, ctx);
                         },
-                        async treeAddElement(_, {treeId, element, parent, order}): Promise<ITreeElement> {
+                        async treeAddElement(_, {treeId, element, parent, order}, ctx): Promise<ITreeElement> {
                             parent = parent || null;
-                            return treeDomain.addElement(treeId, element, parent, order);
+                            return treeDomain.addElement({treeId, element, parent, order, ctx});
                         },
-                        async treeMoveElement(_, {treeId, element, parentTo, order}): Promise<ITreeElement> {
+                        async treeMoveElement(_, {treeId, element, parentTo, order}, ctx): Promise<ITreeElement> {
                             parentTo = parentTo || null;
-                            return treeDomain.moveElement(treeId, element, parentTo, order);
+                            return treeDomain.moveElement({treeId, element, parentTo, order, ctx});
                         },
-                        async treeDeleteElement(_, {treeId, element, parent, deleteChildren}): Promise<ITreeElement> {
+                        async treeDeleteElement(
+                            _,
+                            {treeId, element, parent, deleteChildren},
+                            ctx
+                        ): Promise<ITreeElement> {
                             parent = parent || null;
                             deleteChildren = typeof deleteChildren !== 'undefined' ? deleteChildren : true;
-                            return treeDomain.deleteElement(treeId, element, deleteChildren);
+                            return treeDomain.deleteElement({treeId, element, deleteChildren, ctx});
                         }
                     },
                     FullTreeContent: new GraphQLScalarType({
@@ -211,12 +215,15 @@ export default function({
                         label: async (treeData, args) => {
                             return coreApp.filterSysTranslationField(treeData.label, args.lang || []);
                         },
-                        libraries: async (treeData, args) => {
+                        libraries: async (treeData, args, ctx) => {
                             return Promise.all(
                                 treeData.libraries.map(async libId => {
                                     const lib = await libraryDomain.getLibraries({
-                                        filters: {id: libId},
-                                        strictFilters: true
+                                        params: {
+                                            filters: {id: libId},
+                                            strictFilters: true
+                                        },
+                                        ctx
                                     });
                                     return lib.list[0];
                                 })
@@ -236,7 +243,7 @@ export default function({
 
                             const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info));
 
-                            const children = await treeDomain.getElementChildren(treeId, element);
+                            const children = await treeDomain.getElementChildren({treeId, element, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
                             return children.map(n => ({...n, treeId}));
@@ -249,7 +256,7 @@ export default function({
 
                             const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info));
 
-                            const ancestors = await treeDomain.getElementAncestors(treeId, element);
+                            const ancestors = await treeDomain.getElementAncestors({treeId, element, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
                             return ancestors.map(n => ({...n, treeId}));
@@ -260,11 +267,12 @@ export default function({
                                 id: parent.record.id,
                                 library: parent.record.library
                             };
-                            const records = await treeDomain.getLinkedRecords(
-                                attributeProps.linked_tree,
+                            const records = await treeDomain.getLinkedRecords({
+                                treeId: attributeProps.linked_tree,
                                 attribute,
-                                element
-                            );
+                                element,
+                                ctx
+                            });
 
                             return records;
                         }

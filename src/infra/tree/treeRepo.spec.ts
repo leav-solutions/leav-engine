@@ -2,6 +2,7 @@ import {Database} from 'arangojs';
 import {TreeBehavior} from '../../_types/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
 import treeRepo from './treeRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('TreeRepo', () => {
     const docTreeData = {
@@ -16,6 +17,10 @@ describe('TreeRepo', () => {
         system: false,
         libraries: ['test_lib', 'test_lib2'],
         label: {fr: 'test', en: 'test'}
+    };
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: '132456'
     };
     describe('createTree', () => {
         test('Should create a tree', async function() {
@@ -36,18 +41,21 @@ describe('TreeRepo', () => {
             });
 
             const createdTree = await repo.createTree({
-                id: 'test_tree',
-                behavior: TreeBehavior.STANDARD,
-                libraries: ['test_lib', 'test_lib2'],
-                system: false,
-                label: {fr: 'Test'}
+                treeData: {
+                    id: 'test_tree',
+                    behavior: TreeBehavior.STANDARD,
+                    libraries: ['test_lib', 'test_lib2'],
+                    system: false,
+                    label: {fr: 'Test'}
+                },
+                ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^INSERT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(mockDbServ.createCollection.mock.calls.length).toBe(1);
 
             expect(createdTree).toMatchObject(treeData);
@@ -72,18 +80,21 @@ describe('TreeRepo', () => {
             });
 
             const updatedTree = await repo.updateTree({
-                id: 'test_tree',
-                behavior: TreeBehavior.STANDARD,
-                libraries: ['test_lib', 'test_lib2'],
-                system: false,
-                label: {fr: 'Test'}
+                treeData: {
+                    id: 'test_tree',
+                    behavior: TreeBehavior.STANDARD,
+                    libraries: ['test_lib', 'test_lib2'],
+                    system: false,
+                    label: {fr: 'Test'}
+                },
+                ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(updatedTree).toMatchObject(treeData);
         });
@@ -109,7 +120,7 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const trees = await repo.getTrees();
+            const trees = await repo.getTrees({ctx});
 
             expect(mockDbUtils.findCoreEntity.mock.calls.length).toBe(1);
             expect(trees).toEqual([
@@ -142,13 +153,13 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const deletedTree = await repo.deleteTree('test_tree');
+            const deletedTree = await repo.deleteTree({id: 'test_tree', ctx});
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^REMOVE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(mockDbServ.dropCollection.mock.calls.length).toBe(1);
         });
     });
@@ -161,13 +172,18 @@ describe('TreeRepo', () => {
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
-            const addedElement = await repo.addElement('test_tree', {id: 13445, library: 'test_lib'}, null);
+            const addedElement = await repo.addElement({
+                treeId: 'test_tree',
+                element: {id: 13445, library: 'test_lib'},
+                parent: null,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/^INSERT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should add an element under another', async () => {
@@ -178,18 +194,19 @@ describe('TreeRepo', () => {
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const addedElement = await repo.addElement(
-                'test_tree',
-                {id: 13445, library: 'test_lib'},
-                {id: 6789, library: 'test_lib2'},
-                1
-            );
+            const addedElement = await repo.addElement({
+                treeId: 'test_tree',
+                element: {id: 13445, library: 'test_lib'},
+                parent: {id: 6789, library: 'test_lib2'},
+                order: 1,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/INSERT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/INSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
     });
 
@@ -201,21 +218,22 @@ describe('TreeRepo', () => {
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
-            const addedElement = await repo.moveElement(
-                'test_tree',
-                {id: 13445, library: 'test_lib'},
-                {
+            const addedElement = await repo.moveElement({
+                treeId: 'test_tree',
+                element: {id: 13445, library: 'test_lib'},
+                parentTo: {
                     id: 6789,
                     library: 'users'
                 },
-                1
-            );
+                order: 1,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
     });
 
@@ -227,18 +245,23 @@ describe('TreeRepo', () => {
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
-            const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, true);
+            const deletedElement = await repo.deleteElement({
+                treeId: 'test_tree',
+                element: {id: 13445, library: 'test_lib'},
+                deleteChildren: true,
+                ctx
+            });
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/REMOVE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/OUTBOUND/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/OUTBOUND/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(mockDbServ.execute.mock.calls.length).toBe(2);
             expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/REMOVE/);
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should delete an element and move its children up', async () => {
@@ -264,20 +287,25 @@ describe('TreeRepo', () => {
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ}) as any;
             repo.moveElement = global.__mockPromise([]);
 
-            const deletedElement = await repo.deleteElement('test_tree', {id: 13445, library: 'test_lib'}, false);
+            const deletedElement = await repo.deleteElement({
+                treeId: 'test_tree',
+                element: {id: 13445, library: 'test_lib'},
+                deleteChildren: false,
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(3);
             expect(repo.moveElement.mock.calls.length).toBe(2);
 
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/(?!REMOVE)/);
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatch(/OUTBOUND/);
-            expect(mockDbServ.execute.mock.calls[1][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[1][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/(?!REMOVE)/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/OUTBOUND/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
 
             expect(typeof mockDbServ.execute.mock.calls[2][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[2][0].query).toMatch(/REMOVE/);
-            expect(mockDbServ.execute.mock.calls[2][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[2][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[2][0].query.bindVars).toMatchSnapshot();
         });
     });
 
@@ -297,13 +325,17 @@ describe('TreeRepo', () => {
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const isPresent = await repo.isElementPresent('test_tree', {id: 13445, library: 'test_lib'});
+            const isPresent = await repo.isElementPresent({
+                treeId: 'test_tree',
+                element: {id: 13445, library: 'test_lib'},
+                ctx
+            });
 
             expect(isPresent).toBe(true);
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/FILTER/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/FILTER/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
         test('Should check if an element is present in the tree', async () => {
             const mockDbServ = {
@@ -313,7 +345,11 @@ describe('TreeRepo', () => {
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const isPresent = await repo.isElementPresent('test_tree', {id: 13445, library: 'test_lib'});
+            const isPresent = await repo.isElementPresent({
+                treeId: 'test_tree',
+                element: {id: 13445, library: 'test_lib'},
+                ctx
+            });
 
             expect(isPresent).toBe(false);
         });
@@ -413,12 +449,15 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const treeContent = await repo.getTreeContent('test_tree');
+            const treeContent = await repo.getTreeContent({
+                treeId: 'test_tree',
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1).toBe('core_trees/test_tree');
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1).toBe('core_trees/test_tree');
 
             expect(treeContent).toEqual([
                 {
@@ -490,11 +529,15 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
-            const treeContent = await repo.getTreeContent('test_tree', {id: 223588185, library: 'categories'});
+            const treeContent = await repo.getTreeContent({
+                treeId: 'test_tree',
+                startingNode: {id: 223588185, library: 'categories'},
+                ctx
+            });
 
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1).toBe('categories/223588185');
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1).toBe('categories/223588185');
         });
     });
     describe('getDefaultElement', () => {
@@ -552,12 +595,12 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const treeElement = await repo.getDefaultElement('test_tree');
+            const treeElement = await repo.getDefaultElement({id: 'test_tree', ctx});
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1).toBe('core_trees/test_tree');
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1).toBe('core_trees/test_tree');
 
             expect(treeElement).toEqual({
                 id: '223588194',
@@ -624,12 +667,16 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const values = await repo.getElementChildren('test_tree', {id: 123458, library: 'images'});
+            const values = await repo.getElementChildren({
+                treeId: 'test_tree',
+                element: {id: 123458, library: 'images'},
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(values).toEqual([
                 {
@@ -715,12 +762,16 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const values = await repo.getElementAncestors('test_tree', {id: 123458, library: 'images'});
+            const values = await repo.getElementAncestors({
+                treeId: 'test_tree',
+                element: {id: 123458, library: 'images'},
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(values).toEqual([
                 {
@@ -806,12 +857,17 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const values = await repo.getLinkedRecords('test_tree', 'test_attr', {id: 123458, library: 'images'});
+            const values = await repo.getLinkedRecords({
+                treeId: 'test_tree',
+                attribute: 'test_attr',
+                element: {id: 123458, library: 'images'},
+                ctx
+            });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(values).toEqual([
                 {

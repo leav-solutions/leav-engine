@@ -2,8 +2,13 @@ import {Database} from 'arangojs';
 import {IPermission, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {IDbUtils} from '../db/dbUtils';
 import permissionRepo from './permissionRepo';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('PermissionRepo', () => {
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: '123456'
+    };
     describe('SavePermission', () => {
         test('Should save permission', async () => {
             const permData = {
@@ -51,12 +56,12 @@ describe('PermissionRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const savedPerm = await permRepo.savePermission(permDataClean);
+            const savedPerm = await permRepo.savePermission({permData: permDataClean, ctx});
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/UPSERT/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPSERT/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(savedPerm).toMatchObject(permDataClean);
         });
@@ -107,10 +112,10 @@ describe('PermissionRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const savedPerm = await permRepo.savePermission(permDataClean);
+            const savedPerm = await permRepo.savePermission({permData: permDataClean, ctx});
 
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value0.usersGroup).toBe(null);
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1.usersGroup).toBe(null);
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value0.usersGroup).toBe(null);
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1.usersGroup).toBe(null);
             expect(mockDbUtils.cleanup.mock.calls[0][0].usersGroup).toBe(null);
 
             expect(savedPerm).toMatchObject(permDataClean);
@@ -162,14 +167,14 @@ describe('PermissionRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const savedPerm = await permRepo.savePermission(permDataClean);
+            const savedPerm = await permRepo.savePermission({permData: permDataClean, ctx});
 
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value0.permissionTreeTarget).toMatchObject({
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value0.permissionTreeTarget).toMatchObject({
                 id: null,
                 tree: 'test_tree'
             });
 
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars.value1.permissionTreeTarget).toMatchObject({
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1.permissionTreeTarget).toMatchObject({
                 id: null,
                 tree: 'test_tree'
             });
@@ -200,27 +205,39 @@ describe('PermissionRepo', () => {
             };
             const permRepo = permissionRepo({'core.infra.db.dbService': mockDbServ});
 
-            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 'test_lib', 12345, {
-                id: '123',
-                library: 'category',
-                tree: 'categories'
+            const perm = await permRepo.getPermissions({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                usersGroupId: 12345,
+                permissionTreeTarget: {
+                    id: '123',
+                    library: 'category',
+                    tree: 'categories'
+                },
+                ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/(?!FILTER)/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/(?!FILTER)/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should return null if no permissions', async () => {
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             const permRepo = permissionRepo({'core.infra.db.dbService': mockDbServ});
 
-            const perm = await permRepo.getPermissions(PermissionTypes.RECORD, 'test_lib', 12345, {
-                id: '123',
-                library: 'category',
-                tree: 'categories'
+            const perm = await permRepo.getPermissions({
+                type: PermissionTypes.RECORD,
+                applyTo: 'test_lib',
+                usersGroupId: 12345,
+                permissionTreeTarget: {
+                    id: '123',
+                    library: 'category',
+                    tree: 'categories'
+                },
+                ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);

@@ -17,6 +17,7 @@ import {RoutingKeys} from '../../../../_types/amqp';
 import * as Config from '../../../../_types/config';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewResponse} from '../../../../_types/filesManager';
 import {getAmqpChannel, getCoreContainer} from '../globalSetup';
+import {IQueryInfos} from '_types/queryInfos';
 
 // can't use the rootKey to find library
 const library = 'files';
@@ -564,13 +565,20 @@ const _useRecordDomain = async (path: string, name: string) => {
     const coreContainer = await getCoreContainer();
 
     const recordDomain: IRecordDomain = coreContainer.cradle['core.domain.record'];
+    const ctx: IQueryInfos = {
+        userId: 0,
+        queryId: 'fileManagerE2eTest'
+    };
 
     const recordsFind = await recordDomain.find({
-        library,
-        filters: {
-            [FilesAttributes.FILE_PATH]: path,
-            [FilesAttributes.FILE_NAME]: name
-        }
+        params: {
+            library,
+            filters: {
+                [FilesAttributes.FILE_PATH]: path,
+                [FilesAttributes.FILE_NAME]: name
+            }
+        },
+        ctx
     });
     return recordsFind;
 };

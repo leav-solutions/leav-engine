@@ -9,9 +9,13 @@ import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permis
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import libraryDomain from './libraryDomain';
+import {IQueryInfos} from '_types/queryInfos';
 
 describe('LibraryDomain', () => {
-    const queryInfos = {userId: 1};
+    const ctx: IQueryInfos = {
+        userId: 1,
+        queryId: 'libraryDomainTest'
+    };
     const mockAttrDomain: Mockify<IAttributeDomain> = {
         getAttributes: global.__mockPromise({
             list: [
@@ -44,7 +48,10 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-            const lib = await libDomain.getLibraries({withCount: true});
+            const lib = await libDomain.getLibraries({
+                params: {withCount: true},
+                ctx
+            });
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
             expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(2);
@@ -60,9 +67,9 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-            const lib = await libDomain.getLibraries({withCount: true});
+            const lib = await libDomain.getLibraries({params: {withCount: true}, ctx});
 
-            expect(mockLibRepo.getLibraries.mock.calls[0][0].sort).toMatchObject({field: 'id', order: 'asc'});
+            expect(mockLibRepo.getLibraries.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });
 
@@ -73,10 +80,13 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-            const lib = await libDomain.getLibraryProperties('test');
+            const lib = await libDomain.getLibraryProperties('test', ctx);
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraries).toBeCalledWith({filters: {id: 'test'}, strictFilters: true});
+            expect(mockLibRepo.getLibraries).toBeCalledWith({
+                params: {filters: {id: 'test'}, strictFilters: true},
+                ctx: expect.anything()
+            });
             expect(lib).toMatchObject({id: 'test', system: true});
         });
 
@@ -87,7 +97,7 @@ describe('LibraryDomain', () => {
 
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
 
-            await expect(libDomain.getLibraryProperties('test')).rejects.toThrow();
+            await expect(libDomain.getLibraryProperties('test', ctx)).rejects.toThrow();
         });
     });
 
@@ -123,10 +133,10 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-            const libAttrs = await libDomain.getLibraryAttributes('test');
+            const libAttrs = await libDomain.getLibraryAttributes('test', ctx);
 
             expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraryAttributes).toBeCalledWith('test');
+            expect(mockLibRepo.getLibraryAttributes.mock.calls[0][0].libId).toBe('test');
             expect(libAttrs).toEqual(attrs);
         });
 
@@ -137,7 +147,7 @@ describe('LibraryDomain', () => {
 
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
 
-            await expect(libDomain.getLibraryAttributes('test')).rejects.toThrow();
+            await expect(libDomain.getLibraryAttributes('test', ctx)).rejects.toThrow();
         });
     });
 
@@ -175,19 +185,19 @@ describe('LibraryDomain', () => {
                             {id: 'attr2', type: AttributeTypes.SIMPLE}
                         ]
                     },
-                    queryInfos
+                    ctx
                 );
 
                 expect(mockLibRepo.createLibrary.mock.calls.length).toBe(1);
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr1')).toBe(true);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('attr2')).toBe(true);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes.includes('attr1')).toBe(true);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes.includes('attr2')).toBe(true);
 
                 expect(newLib).toMatchObject({id: 'test', system: false});
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.CREATE_LIBRARY
                 );
             });
@@ -215,7 +225,7 @@ describe('LibraryDomain', () => {
                     'core.utils': mockUtilsInvalidID as IUtils
                 });
 
-                await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(ValidationError);
+                await expect(libDomain.saveLibrary({id: 'test'}, ctx)).rejects.toThrow(ValidationError);
             });
 
             test('Save behavior specific attributes', async () => {
@@ -243,10 +253,11 @@ describe('LibraryDomain', () => {
                         id: 'test',
                         behavior: LibraryBehavior.FILES
                     },
-                    queryInfos
+                    ctx
                 );
-
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1].includes('is_directory')).toBe(true);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes.includes('is_directory')).toBe(
+                    true
+                );
             });
 
             test('For FILES library, create linked tree', async () => {
@@ -274,7 +285,7 @@ describe('LibraryDomain', () => {
                         id: 'test',
                         behavior: LibraryBehavior.FILES
                     },
-                    queryInfos
+                    ctx
                 );
 
                 expect(mockTreeRepo.createTree).toBeCalled();
@@ -301,7 +312,7 @@ describe('LibraryDomain', () => {
                     'core.utils': mockUtils as IUtils
                 });
 
-                const updatedLib = await libDomain.saveLibrary({id: 'test'}, queryInfos);
+                const updatedLib = await libDomain.saveLibrary({id: 'test'}, ctx);
 
                 expect(mockLibRepo.createLibrary.mock.calls.length).toBe(0);
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
@@ -310,7 +321,7 @@ describe('LibraryDomain', () => {
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.EDIT_LIBRARY
                 );
             });
@@ -342,18 +353,18 @@ describe('LibraryDomain', () => {
                             {id: 'attr2', type: AttributeTypes.SIMPLE}
                         ]
                     },
-                    queryInfos
+                    ctx
                 );
 
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0]).toEqual('test');
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][1]).toEqual(['attr1', 'attr2']);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].libId).toEqual('test');
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes).toEqual(['attr1', 'attr2']);
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.EDIT_LIBRARY
                 );
             });
@@ -386,7 +397,7 @@ describe('LibraryDomain', () => {
                                 {id: 'attr4', type: AttributeTypes.SIMPLE}
                             ]
                         },
-                        queryInfos
+                        ctx
                     )
                 ).rejects.toThrow(ValidationError);
 
@@ -423,7 +434,7 @@ describe('LibraryDomain', () => {
                                 relation: PermissionsRelations.AND
                             }
                         },
-                        queryInfos
+                        ctx
                     )
                 ).rejects.toThrow(ValidationError);
 
@@ -456,7 +467,7 @@ describe('LibraryDomain', () => {
                             id: 'test',
                             recordIdentityConf: {label: 'unknownAttribute'}
                         },
-                        queryInfos
+                        ctx
                     )
                 ).rejects.toThrow(ValidationError);
 
@@ -482,7 +493,7 @@ describe('LibraryDomain', () => {
                     'core.utils': mockUtils as IUtils
                 });
 
-                await expect(libDomain.saveLibrary({id: 'test'}, queryInfos)).rejects.toThrow(PermissionError);
+                await expect(libDomain.saveLibrary({id: 'test'}, ctx)).rejects.toThrow(PermissionError);
             });
 
             test('Should not save behavior on existing library', async () => {
@@ -504,7 +515,7 @@ describe('LibraryDomain', () => {
                     'core.utils': mockUtils as IUtils
                 });
 
-                await libDomain.saveLibrary({id: 'test'}, queryInfos);
+                await libDomain.saveLibrary({id: 'test'}, ctx);
 
                 expect(mockLibRepo.updateLibrary.mock.calls[0][0].behavior).toBeUndefined();
             });
@@ -526,12 +537,12 @@ describe('LibraryDomain', () => {
             });
             libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
 
-            const deleteRes = await libDomain.deleteLibrary(libData.id, queryInfos);
+            const deleteRes = await libDomain.deleteLibrary(libData.id, ctx);
 
             expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0]).toBe(
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_LIBRARY
             );
         });
@@ -541,7 +552,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             libDomain.getLibraries = global.__mockPromise([]);
 
-            await expect(libDomain.deleteLibrary(libData.id, queryInfos)).rejects.toThrow();
+            await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
         });
 
         test('Should throw if system library', async function() {
@@ -549,7 +560,7 @@ describe('LibraryDomain', () => {
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
             libDomain.getLibraries = global.__mockPromise([{system: true}]);
 
-            await expect(libDomain.deleteLibrary(libData.id, queryInfos)).rejects.toThrow();
+            await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
         });
 
         test('Should throw if forbidden action', async function() {
@@ -564,7 +575,7 @@ describe('LibraryDomain', () => {
             });
             libDomain.getLibraries = global.__mockPromise([libData]);
 
-            await expect(libDomain.deleteLibrary(libData.id, queryInfos)).rejects.toThrow(PermissionError);
+            await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow(PermissionError);
         });
 
         test('When deleting a files library, delete linked tree', async () => {
@@ -588,7 +599,7 @@ describe('LibraryDomain', () => {
                 totalCount: 1
             });
 
-            await libDomain.deleteLibrary(libData.id, queryInfos);
+            await libDomain.deleteLibrary(libData.id, ctx);
 
             expect(mockTreeRepo.deleteTree).toBeCalled();
         });
