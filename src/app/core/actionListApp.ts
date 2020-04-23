@@ -86,11 +86,11 @@ export default function({'core.domain.actionsList': actionsListDomain = null, tr
                             const availableActions = actionsListDomain.getAvailableActions();
 
                             const translatedActionList = availableActions.map(action => {
-                                action.description = translator.t(('actions.descriptions.' + action.name) as string, {
+                                action.description = translator.t(('actions.descriptions.' + action.id) as string, {
                                     lng: ctx.lang,
                                     interpolation: {escapeValue: false}
                                 });
-                                action.name = translator.t(('actions.names.' + action.name) as string, {
+                                action.name = translator.t(('actions.names.' + action.id) as string, {
                                     lng: ctx.lang,
                                     interpolation: {escapeValue: false}
                                 });
