@@ -17,7 +17,10 @@ describe('PermissionsContent', () => {
         ...mockAttrSimple,
         label: {fr: 'Test 1', en: null},
         permissions_conf: {
-            permissionTreeAttributes: [{...mockAttrTree, id: 'tree1'}, {...mockAttrTree, id: 'tree2'}],
+            permissionTreeAttributes: [
+                {...mockAttrTree, id: 'tree1'},
+                {...mockAttrTree, id: 'tree2'}
+            ],
             relation: PermissionsRelation.and
         }
     };

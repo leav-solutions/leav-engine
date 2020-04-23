@@ -48,6 +48,7 @@
   "devDependencies": {
     "@apollo/react-testing": "3.0.0",
     "@casolutions/eslint-config": "2.0.0",
+    "@casolutions/prettier-config": "1.0.0",
     "@types/enzyme": "3.1.14",
     "@types/history": "4.7.2",
     "@types/i18next": "11.9.3",
@@ -86,5 +87,6 @@
       "pre-commit": "lint-staged && CI=true npm test"
     }
   },
-  "browserslist": []
+  "browserslist": [],
+  "prettier": "@casolutions/prettier-config"
 }
