@@ -13,7 +13,6 @@ import EditTree from '../../trees/EditTree';
 import Trees from '../../trees/Trees';
 import MainMenu from '../MainMenu';
 
-/* tslint:disable-next-line:variable-name */
 const LeftCol = styled.div`
     position: fixed;
     width: 250px;
@@ -21,7 +20,6 @@ const LeftCol = styled.div`
     min-height: 100vh;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const Content = styled.div`
     margin-left: 250px;
     padding: 20px;

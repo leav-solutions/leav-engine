@@ -13,5 +13,4 @@ export const getPluginsQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const LibrariesQuery = p => Query<GET_ALL_PLUGINS>(p);

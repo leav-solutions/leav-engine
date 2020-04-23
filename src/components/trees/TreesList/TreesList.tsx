@@ -15,7 +15,6 @@ interface ITreesListProps {
     filters?: any;
 }
 
-/* tslint:disable-next-line:variable-name */
 const TreesList = ({trees, loading, filters, onFiltersUpdate, onRowClick}: ITreesListProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;

@@ -12,13 +12,11 @@ interface ILinksFieldElementProps {
     readonly?: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const Row = styled(Table.Row)`
     position: relative;
     padding: 0;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const HoverMenu = styled(Menu)`
     &&& {
         position: absolute;
@@ -33,7 +31,6 @@ const HoverMenu = styled(Menu)`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 const LinksFieldElement = ({value, onDeleteLink, readonly = false}: ILinksFieldElementProps): JSX.Element => {
     const {t} = useTranslation();
     const [isHovering, setIsHovering] = useState<boolean>(false);

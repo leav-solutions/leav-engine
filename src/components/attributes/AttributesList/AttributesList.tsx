@@ -18,7 +18,6 @@ interface IAttributesListProps {
     actions?: JSX.Element;
 }
 
-/* tslint:disable-next-line:variable-name */
 const AttributesList = ({
     attributes = [],
     loading = false,

@@ -22,17 +22,14 @@ interface IEditRecordFormLinksProps {
     readonly?: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const ElementsCount = styled.div`
     float: right;
 `;
 
-// tslint:disable-next-line:variable-name
 const Wrapper = styled.div`
     margin-bottom: 1em;
 `;
 
-// tslint:disable-next-line:variable-name
 const AddButton = styled(Button)`
     &&& {
         margin-left: 1em;

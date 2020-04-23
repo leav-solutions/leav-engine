@@ -34,6 +34,7 @@ const _getEmbeddedFields = (level: number) => {
 /**
  * Generate a query with [depth] nested embedded_fields
  * for the attribute given
+ *
  * @param depth
  */
 export const generateEmbeddedFields = (depth: number) => {

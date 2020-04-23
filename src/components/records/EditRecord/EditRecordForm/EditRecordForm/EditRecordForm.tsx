@@ -33,7 +33,6 @@ export interface IEditRecordFormError {
     [fieldName: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditRecordForm = ({
     attributes,
     onIdentityUpdate,

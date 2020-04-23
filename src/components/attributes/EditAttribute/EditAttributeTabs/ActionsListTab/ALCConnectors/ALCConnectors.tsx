@@ -16,7 +16,6 @@ interface IConnector {
     iColor: number[];
 }
 
-/* tslint:disable-next-line:variable-name */
 const ConnectorsContainer = styled.div<IConnectorContainer>`
     width: 100%;
     display: flex;
@@ -26,7 +25,6 @@ const ConnectorsContainer = styled.div<IConnectorContainer>`
     height: 5px;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const Connector = styled.div<IConnector>`
     color: ${props => (props.iColor[2] > 200 && props.iColor[1] < 170 ? '#ffffff' : '#000000')};
     background-color: ${props => 'rgb(' + props.iColor[0] + ',' + props.iColor[1] + ',' + props.iColor[2] + ')'};

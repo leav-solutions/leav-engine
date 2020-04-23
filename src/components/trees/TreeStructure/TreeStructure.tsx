@@ -62,7 +62,6 @@ const _convertTreeRecord = (records: TREE_CONTENT_treeContent[]): TreeItem[] => 
     );
 };
 
-/* tslint:disable-next-line:variable-name */
 const RootElem = styled.div`
     height: 100%;
     padding-left: 1em;
@@ -71,7 +70,6 @@ const RootElem = styled.div`
     justify-content: center;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fakeRootLabel}: ITreeStructureProps) => {
     const fakeRootData = [
         {

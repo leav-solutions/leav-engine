@@ -16,7 +16,6 @@ interface IGeneratedPreviewProps {
     style?: CSSObject;
 }
 
-/* tslint:disable-next-line:variable-name */
 const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
     ${props => props.style || ''}
     background-color: ${props => props.bgColor};

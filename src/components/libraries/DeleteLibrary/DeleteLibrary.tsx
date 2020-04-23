@@ -17,7 +17,6 @@ interface IDeleteLibraryProps {
     filters?: any;
 }
 
-/* tslint:disable-next-line:variable-name */
 const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | null => {
     const {t} = useTranslation();
     const {lang} = useLang();

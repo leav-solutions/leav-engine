@@ -7,7 +7,6 @@ import {IUserContext} from '../UserContext/UserContext';
 import ProtectedRoute from './ProtectedRoute';
 
 describe('ProtectedRoute', () => {
-    /* tslint:disable-next-line:variable-name */
     const TestComp = () => <div>Test</div>;
     const defaultContext: IUserContext = {
         id: 1,

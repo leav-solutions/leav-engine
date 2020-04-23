@@ -33,5 +33,4 @@ export const getPermissionsQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const PermissionsQuery = p => Query<GET_PERMISSIONS, GET_PERMISSIONSVariables>(p);

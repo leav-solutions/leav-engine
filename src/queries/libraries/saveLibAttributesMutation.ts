@@ -15,5 +15,4 @@ export const saveLibAttributesMutation = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const SaveLibAttributesMutation = p => Mutation<SAVE_LIBRARY_ATTRIBUTES, SAVE_LIBRARY_ATTRIBUTESVariables>(p);

@@ -9,7 +9,6 @@ interface IAttributesSelectionListProps {
     toggleSelection: (attribute: GET_ATTRIBUTES_attributes_list) => void;
 }
 
-/* tslint:disable-next-line:variable-name */
 const AttributesSelectionList = (props: IAttributesSelectionListProps): JSX.Element => {
     const {t} = useTranslation();
     const {attributes, toggleSelection, selection} = props;

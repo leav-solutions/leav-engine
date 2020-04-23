@@ -9,7 +9,6 @@ interface IProtectedRouteProps extends RouteProps {
     component: any; // TODO: Forced to any to avoid error, check this error on new typescript versions (> 3.3)
 }
 
-/* tslint:disable-next-line:variable-name */
 function ProtectedRoute({component: Component, permissions, ...rest}: IProtectedRouteProps): JSX.Element {
     const userData = useUserData();
 

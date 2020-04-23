@@ -2,7 +2,6 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon} from 'semantic-ui-react';
 
-/* tslint:disable-next-line:variable-name */
 const ForbiddenRoute = (): JSX.Element => {
     const {t} = useTranslation();
     return (

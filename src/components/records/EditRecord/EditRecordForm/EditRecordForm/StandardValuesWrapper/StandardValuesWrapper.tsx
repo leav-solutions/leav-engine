@@ -28,13 +28,11 @@ const _prepareValues = (vals: IValue | IValue[]): IValue[] => {
     return values;
 };
 
-// tslint:disable-next-line:variable-name
 const FieldLabel = styled.label`
     font-weight: bold;
     margin-bottom: 0.5em;
 `;
 
-// tslint:disable-next-line:variable-name
 const InputWrapper = styled.div`
     position: relative;
 `;

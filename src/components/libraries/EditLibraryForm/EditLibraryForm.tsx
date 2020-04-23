@@ -20,7 +20,6 @@ interface IEditLibraryFormProps {
     location?: Location;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditLibraryForm = ({
     library,
     onSubmit,

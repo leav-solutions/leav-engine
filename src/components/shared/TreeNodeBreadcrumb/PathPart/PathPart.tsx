@@ -10,14 +10,12 @@ interface IPathPartProps {
     actions?: ITreeBreadcrumbMenuItem[];
 }
 
-/* tslint:disable-next-line:variable-name */
 const PathPartWrapper = styled.div`
     position: relative;
     padding-right: 60px;
     height: 30px;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const HoverDropdown = styled(Dropdown)`
     && {
         position: absolute;

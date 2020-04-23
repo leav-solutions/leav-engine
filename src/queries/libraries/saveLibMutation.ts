@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 import {SAVE_LIBRARY, SAVE_LIBRARYVariables} from '../../_gqlTypes/SAVE_LIBRARY';
 import {attributeDetailsFragment} from '../attributes/attributeFragments';
 
-/* tslint:disable-next-line:variable-name */
 export const SaveLibMutation = p => Mutation<SAVE_LIBRARY, SAVE_LIBRARYVariables>(p);
 
 export const saveLibQuery = gql`

@@ -38,7 +38,6 @@ function PermissionSelector({
     const inputVal = permValToInputVal(value);
     const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(heritValue)], 40);
 
-    /* tslint:disable-next-line:variable-name */
     const Wrapper = styled(as)`
         background: ${bgColor};
     `;

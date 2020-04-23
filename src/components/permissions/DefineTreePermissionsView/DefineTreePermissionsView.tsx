@@ -15,7 +15,6 @@ interface IDefineTreePermissionsViewProps {
     actions: PermissionsActions[];
 }
 
-/* tslint:disable-next-line:variable-name */
 const DefineTreePermissionsView = ({
     treeAttribute: tree,
     permissionType,

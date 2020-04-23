@@ -32,7 +32,6 @@ interface IEditionState {
     parent: TreeItem | null;
 }
 
-/* tslint:disable-next-line:variable-name */
 const LibIconLabel = styled(Label)`
     background-color: ${props => props.bgcolor};
 `;
@@ -46,7 +45,6 @@ const editionReducer = (prevState: IEditionState | undefined, newState: IEdition
     return {...newState};
 };
 
-/* tslint:disable-next-line:variable-name */
 const TreeStructureView = ({
     treeSettings,
     treeData,

@@ -15,7 +15,6 @@ interface ILibrariesListProps {
     filters?: any;
 }
 
-/* tslint:disable-next-line:variable-name */
 const LibrariesList = ({
     libraries,
     onRowClick,

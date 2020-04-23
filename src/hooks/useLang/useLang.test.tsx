@@ -4,7 +4,6 @@ import useLang from '.';
 import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 
 describe('useLang', () => {
-    /* tslint:disable-next-line:variable-name */
     const CompWithLang = () => {
         const lang = useLang();
 
@@ -24,7 +23,7 @@ describe('useLang', () => {
     test('Throw if no context provided', async () => {
         // Prevent Error about missing context type from appearing in the console.
         const errorLogger = console.error;
-        console.error = () => {}; // tslint:disable-line
+        console.error = jest.fn();
         expect(() => mount(<CompWithLang />)).toThrowError();
 
         console.error = errorLogger;

@@ -24,7 +24,6 @@ interface IAttributesFilters {
     isSystem?: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const Attributes = (props: IAttributesProps): JSX.Element => {
     const {t} = useTranslation();
     const {history} = props;

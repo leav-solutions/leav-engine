@@ -67,7 +67,7 @@ export const getRandomColor = (): string =>
 export const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80): string => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
-        // tslint:disable-next-line: no-bitwise
+        // eslint-disable-next-line no-bitwise
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
 

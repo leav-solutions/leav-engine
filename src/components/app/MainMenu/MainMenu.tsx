@@ -3,7 +3,6 @@ import {useTranslation} from 'react-i18next';
 import useUserData from '../../../hooks/useUserData';
 import AppMenu from '../AppMenu';
 
-/* tslint:disable-next-line:variable-name */
 const MainMenu = (): JSX.Element => {
     const userData = useUserData();
     const {t} = useTranslation();

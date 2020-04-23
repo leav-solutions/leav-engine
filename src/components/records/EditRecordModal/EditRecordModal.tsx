@@ -11,7 +11,6 @@ interface IEditRecordModalProps extends IEditRecordProps {
     onClose: (recordIdentity?: RecordIdentity_whoAmI) => void;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditRecordModal = ({open, recordId, library, version, onClose}: IEditRecordModalProps): JSX.Element => {
     const {t} = useTranslation();
     const [recordIdentity, setRecordIdentity] = useState<RecordIdentity_whoAmI>();

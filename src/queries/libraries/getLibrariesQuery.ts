@@ -43,5 +43,4 @@ export const getLibsQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const LibrariesQuery = p => Query<GET_LIBRARIES, GET_LIBRARIESVariables>(p);

@@ -9,7 +9,6 @@ interface IConfirmedButtonProps {
     children: JSX.Element;
 }
 
-/* tslint:disable-next-line:variable-name */
 const ConfirmedButton = (props: IConfirmedButtonProps): JSX.Element => {
     const {confirmMessage, children} = props;
     const {t} = useTranslation();

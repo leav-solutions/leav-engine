@@ -23,12 +23,10 @@ interface IEditLibraryPermissionsState {
     relation: PermissionsRelation;
 }
 
-/* tslint:disable-next-line:variable-name */
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const AccordionWithMargin = styled(Accordion)`
     margin-bottom: 1em;
 `;
@@ -40,7 +38,6 @@ const actions = [
     PermissionsActions.delete
 ];
 
-/* tslint:disable-next-line:variable-name */
 const EditLibraryPermissions = ({library, onSubmitSettings, readOnly}: IEditLibraryPermissionsProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;

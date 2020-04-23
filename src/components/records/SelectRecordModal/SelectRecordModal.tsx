@@ -11,7 +11,6 @@ interface IEditRecordFormSelectRecordProps {
     onClose: () => void;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditRecordFormSelectRecord = ({
     library,
     open,

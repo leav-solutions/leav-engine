@@ -11,7 +11,6 @@ interface IUnlinkLibAttributeProps {
     onUnlink: (attributesList: string[]) => void;
 }
 
-/* tslint:disable-next-line:variable-name */
 const UnlinkLibAttribute = (props: IUnlinkLibAttributeProps): JSX.Element => {
     const {t} = useTranslation();
     const {attribute, library, onUnlink} = props;

@@ -45,7 +45,6 @@ const LibLabel = styled.div`
 `;
 /* tslint:enable:variable-name */
 
-/* tslint:disable-next-line:variable-name */
 const RecordCard = ({record, style}: IRecordCardProps): JSX.Element => {
     const availableLanguages = useLang().lang;
     return (

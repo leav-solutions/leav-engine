@@ -11,7 +11,6 @@ interface IEditPermissionsProps {
     readOnly?: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditPermissions = ({permParams, readOnly}: IEditPermissionsProps): JSX.Element => {
     return (
         // Fetch policy is set to 'network only' to bypass the cache as it would be very challenging

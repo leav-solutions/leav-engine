@@ -1,7 +1,7 @@
-import React from 'react';
 import {useQuery} from '@apollo/react-hooks';
-import {Grid, Header, Icon} from 'semantic-ui-react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {Grid, Header, Icon} from 'semantic-ui-react';
 import {getPluginsQuery} from '../../queries/plugins/getPluginsQuery';
 import {GET_ALL_PLUGINS} from '../../_gqlTypes/GET_ALL_PLUGINS';
 import PluginsList from './PluginsList';
@@ -10,7 +10,6 @@ interface IPluginsExplorerProps {
     history: History;
 }
 
-/* tslint:disable-next-line:variable-name */
 const PluginsExplorer = ({history}: IPluginsExplorerProps): JSX.Element => {
     const {t} = useTranslation();
     const {loading, error, data} = useQuery<GET_ALL_PLUGINS>(getPluginsQuery);

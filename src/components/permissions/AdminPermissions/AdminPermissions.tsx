@@ -10,12 +10,10 @@ import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
 
-/* tslint:disable-next-line:variable-name */
 const PermBlockWrapper = styled.div`
     margin-top: 1em;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const AdminPermissions = (): JSX.Element => {
     const {t} = useTranslation();
     const usersGroupsTreeId = 'users_groups';

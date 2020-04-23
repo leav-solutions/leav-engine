@@ -10,5 +10,4 @@ export const deleteTreeQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const DeleteTreeMutation = p => Mutation<DELETE_TREE, DELETE_TREEVariables>(p);

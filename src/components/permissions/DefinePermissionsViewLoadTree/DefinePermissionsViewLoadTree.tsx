@@ -2,8 +2,8 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NodeData} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
-import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
 import useLang from '../../../hooks/useLang';
+import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
 import {localizedLabel} from '../../../utils/utils';
 import Loading from '../../shared/Loading';
 import TreeStructure from '../../trees/TreeStructure';
@@ -14,7 +14,6 @@ interface IDefinePermissionsViewLoadTreeProps {
     selectedNode: NodeData | null;
 }
 
-/* tslint:disable-next-line:variable-name */
 const DefinePermissionsViewLoadTree = ({
     treeId,
     onClick,

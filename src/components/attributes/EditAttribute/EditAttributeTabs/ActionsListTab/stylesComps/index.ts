@@ -14,7 +14,6 @@ interface IActionRow {
 
 //////////////////// ALCContainer
 
-/* tslint:disable-next-line:variable-name */
 export const ExternalContainer = styled.div`
     height: 100%;
     display: grid;
@@ -23,7 +22,6 @@ export const ExternalContainer = styled.div`
     overflow: hidden;
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const ReserveContainer = styled.div`
     position: relative;
     height: 100%;
@@ -34,7 +32,6 @@ export const ReserveContainer = styled.div`
     margin-right: 5px;
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const ListsContainer = styled.div`
     position: relative;
     max-height: 100%;
@@ -46,7 +43,6 @@ export const ListsContainer = styled.div`
 
 //////////////////// ALCReserve
 
-/* tslint:disable-next-line:variable-name */
 export const AvailableActionsContainer = styled.div`
     height: 100%;
     overflow-x: hidden;
@@ -58,7 +54,6 @@ export const AvailableActionsContainer = styled.div`
 
 //////////////////// ALCList
 
-/* tslint:disable-next-line:variable-name */
 export const ListContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -66,7 +61,6 @@ export const ListContainer = styled.div`
     width: 100%;
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const ListContent = styled.div`
     padding: 0 5px;
     position: relative;
@@ -79,14 +73,12 @@ export const ListContent = styled.div`
     overflow-y: auto;
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const HiddenDiv = styled.div<IHiddenDiv>`
     min-height: ${props => (props.extend && props.hover ? '50px' : '0px')};
     flex-grow: 1;
     height: 'auto';
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const ALCPlaceholder = styled.div`
     color: #c8c8c8;
     font-size: 1.2em;
@@ -102,7 +94,6 @@ export const ALCPlaceholder = styled.div`
 
 //////////////////// ALCCard
 
-/* tslint:disable-next-line:variable-name */
 export const ActionRow = styled.div<IActionRow>`
     background-color: ${props => (props.isDragging ? '#dddddd' : '#f9fafb')};
     border-style: solid;

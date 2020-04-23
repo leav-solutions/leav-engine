@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import {IColorDic} from '../../interfaces/interfaces';
 
 interface IConnectorRectProps {
@@ -9,7 +8,6 @@ interface IConnectorRectProps {
     colorTypeDictionnary: IColorDic;
 }
 
-/* tslint:disable-next-line:variable-name */
 const Rectangle = styled.div`
     width: 100%;
     height: 20px;

@@ -16,5 +16,4 @@ export const isAllowedQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const IsAllowedQuery = p => Query<IS_ALLOWED, IS_ALLOWEDVariables>(p);

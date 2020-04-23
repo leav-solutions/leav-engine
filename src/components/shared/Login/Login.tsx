@@ -55,7 +55,6 @@ const processLogin = (
         });
 };
 
-/* tslint:disable-next-line:variable-name */
 const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
     const {t} = useTranslation();
     const [login, setLogin] = useState('');

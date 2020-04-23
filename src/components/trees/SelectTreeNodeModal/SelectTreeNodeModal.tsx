@@ -15,7 +15,6 @@ interface ISelectTreeNodeModalProps {
     onClose: () => void;
 }
 
-/* tslint:disable-next-line:variable-name */
 const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeModalProps): JSX.Element => {
     const {t} = useTranslation();
     const [currentSelection, setCurrentSelection] = useState<NodeData[] | null>(null);

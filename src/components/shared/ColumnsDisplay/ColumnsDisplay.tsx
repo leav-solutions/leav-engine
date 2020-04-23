@@ -10,7 +10,6 @@ interface IColumnProps {
     columnsNumber: number;
 }
 
-/* tslint:disable-next-line:variable-name */
 const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
@@ -18,7 +17,6 @@ const Wrapper = styled.div`
     height: 100%;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const Column = styled.div<IColumnProps>`
     position: relative;
     padding-left: 1em;

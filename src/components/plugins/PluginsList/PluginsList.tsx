@@ -9,7 +9,6 @@ interface IPluginsListProps {
     loading?: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const PluginsList = ({plugins, loading}: IPluginsListProps): JSX.Element => {
     const {t} = useTranslation();
 

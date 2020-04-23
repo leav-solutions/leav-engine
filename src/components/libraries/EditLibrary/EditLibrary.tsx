@@ -19,7 +19,6 @@ interface IEditLibraryProps {
     i18n: i18n;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element => {
     const libraryId = match.params.id;
     const {lang} = useLang();
@@ -91,11 +90,6 @@ const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element
         return !!dataLibById && !!dataLibById.libraries && !dataLibById.libraries.list.length;
     };
 
-    /**
-     * Retrieve EditLibraryForm, wrapped by mutation component
-     * @param libToEdit
-     * @param history
-     */
     const _getEditLibraryForm = (libToEdit: GET_LIBRARIES_libraries_list | null) => {
         const onFormSubmit = async libData => {
             await saveLibrary({

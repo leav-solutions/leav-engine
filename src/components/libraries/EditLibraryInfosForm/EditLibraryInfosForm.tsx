@@ -21,7 +21,6 @@ interface IEditLibraryInfosFormProps {
 
 type LibraryFormValues = Omit<GET_LIBRARIES_libraries_list, 'gqlNames'>;
 
-/* tslint:disable-next-line:variable-name */
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
@@ -30,7 +29,7 @@ const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAIL
 const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
 
 // TODO: add validation, handle lang, getfielderror on attribute
-/* tslint:disable-next-line:variable-name */
+
 const EditLibraryInfosForm = ({
     library,
     onSubmit,

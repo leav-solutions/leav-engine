@@ -7,7 +7,6 @@ export interface ILangContext {
     defaultLang: AvailableLanguage;
 }
 
-/* tslint:disable-next-line:variable-name */
 const LangContext = React.createContext<ILangContext | null>(null);
 
 export default LangContext;

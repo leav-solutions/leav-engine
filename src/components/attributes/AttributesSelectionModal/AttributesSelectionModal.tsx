@@ -19,7 +19,6 @@ interface IAttributesSelectionProps {
     filter?: GET_ATTRIBUTESVariables;
 }
 
-/* tslint:disable-next-line:variable-name */
 const AttributesSelectionModal = ({
     openModal,
     selection,

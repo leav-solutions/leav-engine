@@ -9,7 +9,6 @@ interface ILibrariesSelectorFieldProps extends DropdownProps {
     libraries: GET_LIBRARIES_libraries_list[] | null;
 }
 
-/* tslint:disable-next-line:variable-name */
 const LibrariesSelectorField = ({loading, libraries, ...fieldProps}: ILibrariesSelectorFieldProps): JSX.Element => {
     const availableLanguages = useLang().lang;
     const options = !!libraries

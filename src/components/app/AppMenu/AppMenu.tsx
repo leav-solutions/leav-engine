@@ -12,7 +12,6 @@ export interface IAppMenuProps {
     items: IAppMenuItem[];
 }
 
-/* tslint:disable-next-line:variable-name */
 const AppMenu = (props: IAppMenuProps): JSX.Element => {
     const {items} = props;
     const {t} = useTranslation();

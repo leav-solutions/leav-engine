@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-
-import {IColorDic} from '../interfaces/interfaces';
-
 import ConnectorRect from '../ALCCard/ConnectorRect';
+import {IColorDic} from '../interfaces/interfaces';
 
 interface IALCOutputConnectorProps {
     connectionState: string | undefined;
@@ -23,7 +21,6 @@ interface ITopTriangle {
     connColor: number[];
 }
 
-/* tslint:disable-next-line:variable-name */
 const BottomConnector = styled.div<IBottomStyle>`
     height: 20px;
     position: relative;
@@ -37,7 +34,6 @@ const BottomConnector = styled.div<IBottomStyle>`
     margin-bottom: ${props => (props.connectionState && props.connectionState === 'neutral' ? '20px' : '5px')};
 `;
 
-/* tslint:disable-next-line:variable-name */
 const BottomTriangle = styled.div<ITopTriangle>`
     width: 0;
     height: 0;

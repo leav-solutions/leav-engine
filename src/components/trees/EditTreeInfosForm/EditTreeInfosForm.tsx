@@ -28,12 +28,10 @@ type TreeInfos = Override<
     }
 >;
 
-/* tslint:disable-next-line:variable-name */
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const EditTreeInfosForm = ({
     tree,
     onSubmit,

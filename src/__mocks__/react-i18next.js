@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const React = require('react');
 const reactI18next = require('react-i18next');
 
@@ -40,7 +41,7 @@ module.exports = {
         return {
             t: (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`,
             i18n: mockI18n
-        }
+        };
     },
     Trans: ({children}) => renderNodes(children),
     I18n: ({children}) =>

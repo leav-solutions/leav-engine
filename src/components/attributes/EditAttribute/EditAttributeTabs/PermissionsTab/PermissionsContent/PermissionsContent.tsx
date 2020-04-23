@@ -24,12 +24,10 @@ interface IPermissionsContentProps {
     readonly: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const AccordionWithMargin = styled(Accordion)`
     margin-bottom: 1em;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;

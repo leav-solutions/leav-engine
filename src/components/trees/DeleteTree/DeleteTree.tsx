@@ -1,23 +1,22 @@
+import {DataProxy} from 'apollo-cache';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {DataProxy} from 'apollo-cache';
+import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {DeleteTreeMutation, deleteTreeQuery} from '../../../queries/trees/deleteTreeMutation';
-import useLang from '../../../hooks/useLang';
+import {getTreesQuery, getTreesQueryName} from '../../../queries/trees/getTreesQuery';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
+import {addWildcardToFilters, localizedLabel} from '../../../utils/utils';
+import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
-import {clearCacheQueriesFromRegexp} from '../../../utils';
-import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {getTreesQuery, getTreesQueryName} from '../../../queries/trees/getTreesQuery';
-import {addWildcardToFilters, localizedLabel} from '../../../utils/utils';
 
 interface IDeleteTreeProps {
     tree?: GET_TREES_trees_list;
     filters?: any;
 }
 
-/* tslint:disable-next-line:variable-name */
 const DeleteTree = ({tree, filters}: IDeleteTreeProps): JSX.Element | null => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;

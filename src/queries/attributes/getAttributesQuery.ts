@@ -38,5 +38,4 @@ export const getAttributesQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const AttributesQuery = p => Query<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(p);

@@ -14,7 +14,6 @@ interface IEditRecordInputProps {
     onChange: (newValue: string) => void;
 }
 
-// tslint:disable-next-line:variable-name
 const ButtonsWrapper = styled(Button.Group)`
     &&& {
         position: absolute;
@@ -29,12 +28,10 @@ const ButtonsWrapper = styled(Button.Group)`
     }
 `;
 
-// tslint:disable-next-line:variable-name
 const InputWrapper = styled(Form.Field)`
     position: relative;
 `;
 
-// tslint:disable-next-line:variable-name
 const StyledInput = styled(Input)`
     & input:focus {
         padding-right: 120px;
@@ -42,7 +39,6 @@ const StyledInput = styled(Input)`
 `;
 StyledInput.displayName = 'Input';
 
-// tslint:disable-next-line:variable-name
 function EditRecordInput({
     value,
     attribute,

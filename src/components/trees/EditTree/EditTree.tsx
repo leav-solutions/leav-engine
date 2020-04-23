@@ -16,7 +16,6 @@ interface IEditTreeProps {
     location: Location;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
     const treeId = match.params.id;
     const userData = useUserData();

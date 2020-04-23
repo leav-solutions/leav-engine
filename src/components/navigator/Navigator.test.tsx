@@ -1,6 +1,5 @@
+import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {shallow, mount} from 'enzyme';
-
 import Navigator from '.';
 import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 
@@ -25,8 +24,7 @@ describe('Navigator', () => {
         expect(comp).toBeDefined();
     });
     test('it shows RootSelector if restrictToRoot is not defined', () => {
-        let comp: any;
-        comp = mount(
+        const comp = mount(
             <MockedLangContextProvider>
                 <Navigator />
             </MockedLangContextProvider>
@@ -34,8 +32,7 @@ describe('Navigator', () => {
         expect(comp.find('RootSelector')).toHaveLength(1);
     });
     test('it shows MainPanel if single restrictToRoot', () => {
-        let comp: any;
-        comp = mount(
+        const comp = mount(
             <MockedLangContextProvider>
                 <Navigator restrictToRoots={['test']} />
             </MockedLangContextProvider>
@@ -45,14 +42,13 @@ describe('Navigator', () => {
     });
     test('it shows RootSelector if multiple restrictToRoot', () => {
         const roots = ['test', 'test2'];
-        let comp: any;
-        comp = mount(
+        const comp = mount(
             <MockedLangContextProvider>
                 <Navigator restrictToRoots={roots} />
             </MockedLangContextProvider>
         );
         const rootSelector = comp.find('RootSelector');
         expect(rootSelector).toHaveLength(1);
-        expect(rootSelector.props().restrictToRoots).toEqual(roots);
+        expect(rootSelector.prop('restrictToRoots')).toEqual(roots);
     });
 });

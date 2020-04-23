@@ -22,5 +22,4 @@ export const getTreesQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const TreesQuery = p => Query<GET_TREES, GET_TREESVariables>(p);

@@ -19,7 +19,6 @@ interface IEditTreeFormProps {
     location?: Location;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditTreeForm = ({
     tree,
     onSubmit,

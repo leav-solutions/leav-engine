@@ -1,21 +1,20 @@
+import {DataProxy} from 'apollo-cache';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import useLang from '../../../hooks/useLang';
 import {DeleteAttributeMutation, deleteAttrQuery} from '../../../queries/attributes/deleteAttributeMutation';
+import {getAttributesQuery, getAttributesQueryName} from '../../../queries/attributes/getAttributesQuery';
+import {clearCacheQueriesFromRegexp} from '../../../utils';
+import {addWildcardToFilters} from '../../../utils/utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
-import {DataProxy} from 'apollo-cache';
-import {getAttributesQueryName, getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import useLang from '../../../hooks/useLang';
-import {addWildcardToFilters} from '../../../utils/utils';
-import {clearCacheQueriesFromRegexp} from '../../../utils';
 
 interface IDeleteAttributeProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
     filters?: any;
 }
 
-/* tslint:disable-next-line:variable-name */
 const DeleteAttribute = (props: IDeleteAttributeProps): JSX.Element => {
     const {attribute, filters} = props;
     const {t} = useTranslation();

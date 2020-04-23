@@ -4,7 +4,6 @@ import useUserData from '.';
 import MockedUserContextProvider from '../../__mocks__/MockedUserContextProvider';
 
 describe('useUserData', () => {
-    /* tslint:disable-next-line:variable-name */
     const CompWithUserData = () => {
         const userData = useUserData();
 
@@ -24,7 +23,7 @@ describe('useUserData', () => {
     test('Throw if no context provided', async () => {
         // Prevent Error about missing context type from appearing in the console.
         const errorLogger = console.error;
-        console.error = () => {}; // tslint:disable-line
+        console.error = jest.fn();
         expect(() => mount(<CompWithUserData />)).toThrowError();
 
         console.error = errorLogger;

@@ -19,7 +19,6 @@ interface IEditLibraryAttributesProps {
     readOnly: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const EditLibraryAttributes = ({library, readOnly}: IEditLibraryAttributesProps): JSX.Element | null => {
     const {t} = useTranslation();
     const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);

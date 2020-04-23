@@ -23,5 +23,4 @@ export const adminPermissionsQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const AdminPermissionsQuery = p => Query<ADMIN_PERMISSIONS>(p);

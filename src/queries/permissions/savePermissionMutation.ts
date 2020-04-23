@@ -21,5 +21,4 @@ export const savePermissionsQuery = gql`
     }
 `;
 
-/* tslint:disable-next-line:variable-name */
 export const SavePermissionsMutation = p => Mutation<SAVE_PERMISSION, SAVE_PERMISSIONVariables>(p);

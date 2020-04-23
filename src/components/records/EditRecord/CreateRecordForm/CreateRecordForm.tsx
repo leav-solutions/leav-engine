@@ -42,7 +42,6 @@ const _getVirginValue = (attribute): IValue | ILinkValue | ITreeLinkValue => {
     }
 };
 
-/* tslint:disable-next-line:variable-name */
 const CreateRecordForm = ({
     onSave,
     attributes,

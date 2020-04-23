@@ -15,7 +15,6 @@ interface ITreesProps {
     history: History;
 }
 
-/* tslint:disable-next-line:variable-name */
 const Trees = ({history}: ITreesProps): JSX.Element => {
     const {t} = useTranslation();
     const {lang} = useLang();

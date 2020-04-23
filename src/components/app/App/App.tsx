@@ -27,7 +27,6 @@ interface IAppProps {
     onTokenInvalid: (message?: string) => void;
 }
 
-/* tslint:disable-next-line:variable-name */
 const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
     const [fragmentMatcher, setFragmentMatcher] = useState<IntrospectionFragmentMatcher | null>(null);
 

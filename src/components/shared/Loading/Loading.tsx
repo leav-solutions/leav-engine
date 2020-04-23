@@ -6,7 +6,6 @@ interface ILoadingProps {
     withDimmer?: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const Loading = ({withDimmer}: ILoadingProps): JSX.Element => {
     const {t} = useTranslation();
     const loader = (

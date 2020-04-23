@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {IColorDic} from '../interfaces/interfaces';
 import ConnectorRect from '../ALCCard/ConnectorRect';
+import {IColorDic} from '../interfaces/interfaces';
 
 interface IALCInputConnectorProps {
     size: number;
@@ -19,7 +19,6 @@ interface ITopConnector {
     forList?: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
 const TopTriangle = styled.div<ITopTriangle>`
     display: inline-block;
     width: 0;
@@ -33,7 +32,6 @@ const TopTriangle = styled.div<ITopTriangle>`
                 : 'transparent'};
 `;
 
-/* tslint:disable-next-line:variable-name */
 const TopConnector = styled.div<ITopConnector>`
     position: absolute;
     top: ${props => (props.forList ? 'auto' : '-20px')};

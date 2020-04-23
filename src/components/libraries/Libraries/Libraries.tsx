@@ -16,7 +16,6 @@ interface ILibrariesProps {
     history: History;
 }
 
-/* tslint:disable-next-line:variable-name */
 const Libraries = ({history}: ILibrariesProps): JSX.Element => {
     const {t} = useTranslation();
     const {lang} = useLang();

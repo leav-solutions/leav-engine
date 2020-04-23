@@ -10,7 +10,6 @@ interface IInputTag {
     color: any;
 }
 
-/* tslint:disable-next-line:variable-name */
 const TypeTag = styled.span<IInputTag>`
     padding: 1px 2px;
     margin: 1px 2px;

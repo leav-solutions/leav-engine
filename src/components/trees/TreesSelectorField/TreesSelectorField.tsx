@@ -10,7 +10,6 @@ interface IAttributesSelectorFieldProps extends DropdownProps {
     trees: GET_TREES_trees_list[] | null;
 }
 
-/* tslint:disable-next-line:variable-name */
 const TreesSelectorField = ({loading, trees, ...fieldProps}: IAttributesSelectorFieldProps): JSX.Element => {
     const availableLanguages = useLang().lang;
     const options = !!trees

@@ -16,24 +16,20 @@ interface IEditPermissionsViewProps {
 const permissionForbiddenColor = '#FF0000';
 const permissionAllowedColor = '#99cc00';
 
-/* tslint:disable-next-line:variable-name */
 const ForbiddenIcon = styled(Icon)`
     color: ${permissionForbiddenColor};
 `;
 
-/* tslint:disable-next-line:variable-name */
 const AllowedIcon = styled(Icon)`
     color: ${permissionAllowedColor};
 `;
 
-/* tslint:disable-next-line:variable-name */
 const PermissionsHeader = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 `;
 
-/* tslint:disable-next-line:variable-name */
 const EditPermissionsView = ({
     permissions,
     heritedPermissions,
