@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 require('ts-node/register');
 
 const setupModule = require('./globalSetup');
