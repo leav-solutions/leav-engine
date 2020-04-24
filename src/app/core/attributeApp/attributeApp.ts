@@ -40,8 +40,8 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
         label: async (attributeData, args) => {
             return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
         },
-        input_types: attributeData => attributeDomain.getInputTypes(attributeData),
-        output_types: attributeData => attributeDomain.getOutputTypes(attributeData),
+        input_types: (attributeData, _, ctx) => attributeDomain.getInputTypes({attrData: attributeData, ctx}),
+        output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
             !!attributeData.metadata_fields
                 ? Promise.all(
