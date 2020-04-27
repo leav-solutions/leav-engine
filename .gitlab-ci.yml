@@ -8,7 +8,7 @@ tslint:
     stage: test
     image: node:alpine
     before_script:
-        - npm config set registry $NEXUS_URL && npm config set _auth $NEXUS_AUTH
+        - npm config set _auth $NEXUS_AUTH
         - npm install
     script:
         - npm run lint:test
@@ -16,7 +16,7 @@ tscheck:
     stage: test
     image: node:alpine
     before_script:
-        - npm config set registry $NEXUS_URL && npm config set _auth $NEXUS_AUTH
+        - npm config set _auth $NEXUS_AUTH
         - npm install
     script:
         - npm run tscheck
@@ -24,7 +24,7 @@ unitTests:
     stage: test
     image: node:alpine
     before_script:
-        - npm config set registry $NEXUS_URL && npm config set _auth $NEXUS_AUTH
+        - npm config set _auth $NEXUS_AUTH
         - npm install
     script:
         - npm run test
