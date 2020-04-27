@@ -49,9 +49,9 @@ export default function({
      * @param parent
      * @param info
      */
-    const _extractTreeIdFromParent = async (parent, info): Promise<string> => {
+    const _extractTreeIdFromParent = async (parent, info, ctx): Promise<string> => {
         const attribute = parent.attribute ?? _findParentAttribute(info.path);
-        const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+        const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
         return attributeProps.linked_tree;
     };
 
@@ -165,14 +165,14 @@ export default function({
                         async trees(parent, {filters, pagination, sort}, ctx) {
                             return treeDomain.getTrees({params: {filters, withCount: true, pagination, sort}, ctx});
                         },
-                        async treeContent(_, {treeId, startAt}, ctx) {
+                        async treeContent(_, {treeId, startAt}: {treeId: string; startAt: ITreeElement}, ctx) {
                             const res = await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
                             return res.map(r => ({...r, treeId}));
                         },
-                        async fullTreeContent(_, {treeId}) {
-                            return treeDomain.getTreeContent(treeId);
+                        async fullTreeContent(_, {treeId}: {treeId: string}, ctx) {
+                            return treeDomain.getTreeContent({treeId, ctx});
                         }
                     },
                     Mutation: {
@@ -241,7 +241,7 @@ export default function({
                                 library: parent.record.library
                             };
 
-                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info));
+                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
                             const children = await treeDomain.getElementChildren({treeId, element, ctx});
 
@@ -254,7 +254,7 @@ export default function({
                                 library: parent.record.library
                             };
 
-                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info));
+                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
                             const ancestors = await treeDomain.getElementAncestors({treeId, element, ctx});
 
