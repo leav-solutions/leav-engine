@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/app/App';
+import AuthHandler from './components/shared/AuthHandler';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
+    <React.Fragment>
+        <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} storage={window.sessionStorage} />
+    </React.Fragment>,
     document.getElementById('root')
 );
 
