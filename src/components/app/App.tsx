@@ -13,6 +13,7 @@ import {default as React, useCallback, useEffect, useState} from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import {getRecordIdentityCacheKey} from '../../utils/utils';
 import Router from '../Router';
+import './App.css';
 
 interface IAppProps {
     token: string;

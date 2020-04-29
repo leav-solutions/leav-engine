@@ -30,7 +30,6 @@ const processLogin = (
     })
         .then(
             response => {
-                console.log(response);
                 if (response.ok) {
                     return response;
                 } else {

@@ -1,25 +1,44 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import {Sidebar} from 'semantic-ui-react';
 import Home from '../Home';
+import LibraryList from '../LibraryList';
 import Setting from '../Setting';
 import SideBarMenu from '../SideBarMenu';
+import TopBar from '../TopBar';
 
 function Router(): JSX.Element {
+    const [sideBarVisible, setSideBarVisible] = useState<boolean>(false);
+
+    const toggleSidebarVisible = () => {
+        setSideBarVisible(visible => !visible);
+    };
+
+    const hideSideBar = () => setSideBarVisible(false);
+
     return (
         <BrowserRouter>
-            <div className="height100">
-                <SideBarMenu visible={true} />
-                <Sidebar.Pusher>
-                    <Switch>
-                        <Route exact path="/">
-                            <Home />
-                        </Route>
-                        <Route path="/setting">
-                            <Setting />
-                        </Route>
-                    </Switch>
-                </Sidebar.Pusher>
+            <div style={{height: '100vh'}}>
+                <TopBar toggleSidebarVisible={toggleSidebarVisible} />
+                <Sidebar.Pushable as={'div'} className="height100">
+                    <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
+
+                    <Sidebar.Pusher style={{margin: '1rem'}}>
+                        <Switch>
+                            <Route exact path="/">
+                                <Home />
+                            </Route>
+
+                            <Route exact path="/">
+                                <LibraryList />
+                            </Route>
+
+                            <Route path="/setting">
+                                <Setting />
+                            </Route>
+                        </Switch>
+                    </Sidebar.Pusher>
+                </Sidebar.Pushable>
             </div>
         </BrowserRouter>
     );

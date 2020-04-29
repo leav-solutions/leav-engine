@@ -1,9 +1,10 @@
 import {useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import React, {useEffect} from 'react';
-import {Header} from 'semantic-ui-react';
+import React, {useEffect, useState} from 'react';
+import {Container, Header} from 'semantic-ui-react';
 
 function Home(): JSX.Element {
+    const [files, setFiles] = useState<any>();
     const {loading, error, data} = useQuery(gql`
         {
             files {
@@ -18,12 +19,15 @@ function Home(): JSX.Element {
     `);
 
     useEffect(() => {
-        console.log(loading, data);
-    }, [loading, error, data]);
+        if (!loading) {
+            setFiles(data.files.list);
+        }
+    }, [loading, error, data, setFiles]);
 
     return (
         <div>
             <Header>Home</Header>
+            <Container>{files && files.map((file: any) => <div>file</div>)}</Container>
         </div>
     );
 }
