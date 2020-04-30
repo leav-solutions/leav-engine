@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import {Sidebar} from 'semantic-ui-react';
 import Home from '../Home';
-import LibraryList from '../LibraryList';
+import LibrariesList from '../LibrariesList';
 import Setting from '../Setting';
 import SideBarMenu from '../SideBarMenu';
 import TopBar from '../TopBar';
@@ -29,8 +29,8 @@ function Router(): JSX.Element {
                                 <Home />
                             </Route>
 
-                            <Route exact path="/">
-                                <LibraryList />
+                            <Route exact path="/LibrariesList">
+                                <LibrariesList />
                             </Route>
 
                             <Route path="/setting">

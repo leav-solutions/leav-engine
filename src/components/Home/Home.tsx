@@ -1,22 +1,11 @@
 import {useQuery} from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 import React, {useEffect, useState} from 'react';
 import {Container, Header} from 'semantic-ui-react';
+import {getQueryFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 
 function Home(): JSX.Element {
     const [files, setFiles] = useState<any>();
-    const {loading, error, data} = useQuery(gql`
-        {
-            files {
-                list {
-                    id
-                    inode
-                    is_directory
-                    previews
-                }
-            }
-        }
-    `);
+    const {loading, error, data} = useQuery(getQueryFromLibraryQuery('files'));
 
     useEffect(() => {
         if (!loading) {
