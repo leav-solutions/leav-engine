@@ -4,19 +4,20 @@ import {Container, Header} from 'semantic-ui-react';
 import {getQueryFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 
 function Home(): JSX.Element {
-    const [files, setFiles] = useState<any>();
-    const {loading, error, data} = useQuery(getQueryFromLibraryQuery('files'));
+    const lib = 'ubs';
+    const [items, setItems] = useState<any>();
+    const {loading, error, data} = useQuery(getQueryFromLibraryQuery(lib));
 
     useEffect(() => {
         if (!loading) {
-            setFiles(data.files.list);
+            setItems(data[lib].list);
         }
-    }, [loading, error, data, setFiles]);
+    }, [loading, error, data, setItems]);
 
     return (
         <div>
             <Header>Home</Header>
-            <Container>{files && files.map((file: any) => <div>file</div>)}</Container>
+            <Container>{items && items.map((item: any) => <div key={item.id}>{item.id}</div>)}</Container>
         </div>
     );
 }

@@ -1,19 +1,20 @@
 import {useQuery} from '@apollo/react-hooks';
 import React, {useEffect, useState} from 'react';
-import {Header} from 'semantic-ui-react';
+import {Card, Container, Divider, Header} from 'semantic-ui-react';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
+import {ILibrary} from '../../_types/types';
+import LibraryCard from './LibraryCard';
+import LibraryDetail from './LibraryDetail';
 
-interface ILibrariesListProps {}
-
-interface ILibrary {
+interface ILibSelected {
     id: string;
-    label: {
-        [x: string]: string;
-    };
+    query: string;
 }
 
-function LibrariesList({}: ILibrariesListProps): JSX.Element {
+function LibrariesList(): JSX.Element {
     const [libraries, setLibraries] = useState([]);
+    const [libSelected, setLibSelected] = useState<ILibSelected>();
+
     const {loading, data, error} = useQuery(getLibrariesListQuery);
 
     useEffect(() => {
@@ -26,15 +27,26 @@ function LibrariesList({}: ILibrariesListProps): JSX.Element {
         return <div>error</div>;
     }
 
+    const changeLibSelected = (newLibSelected: ILibSelected) => {
+        setLibSelected(newLibSelected);
+    };
+
     return (
-        <div>
+        <Container>
             <Header as="h2">Libraries List</Header>
-            <ul>
+            <Card.Group itemsPerRow={4}>
                 {libraries.map((lib: ILibrary) => (
-                    <li key={lib.id}>{lib.label.fr}</li>
+                    <LibraryCard lib={lib} changeLibSelected={changeLibSelected} />
                 ))}
-            </ul>
-        </div>
+            </Card.Group>
+
+            {libSelected && (
+                <>
+                    <Divider />
+                    <LibraryDetail libId={libSelected.id} libQueryName={libSelected.query} />
+                </>
+            )}
+        </Container>
     );
 }
 

@@ -3,6 +3,7 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import {Sidebar} from 'semantic-ui-react';
 import Home from '../Home';
 import LibrariesList from '../LibrariesList';
+import LibraryDetailWrapper from '../LibrariesList/LibraryDetailWrapper';
 import Setting from '../Setting';
 import SideBarMenu from '../SideBarMenu';
 import TopBar from '../TopBar';
@@ -31,6 +32,10 @@ function Router(): JSX.Element {
 
                             <Route exact path="/LibrariesList">
                                 <LibrariesList />
+                            </Route>
+
+                            <Route exact path="/LibrariesList/:libId/:libQueryName">
+                                <LibraryDetailWrapper />
                             </Route>
 
                             <Route path="/setting">

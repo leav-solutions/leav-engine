@@ -3,7 +3,9 @@
 exports[`LibrariesList Snapshot test 1`] = `
 initialize {
   "0": Object {
-    "attribs": Object {},
+    "attribs": Object {
+      "class": "ui container",
+    },
     "children": Array [
       Object {
         "attribs": Object {
@@ -21,16 +23,22 @@ initialize {
         "name": "h2",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Object {
-          "attribs": Object {},
+          "attribs": Object {
+            "class": "ui four cards",
+          },
           "children": Array [],
-          "name": "ul",
+          "name": "div",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": null,
           "parent": [Circular],
           "prev": [Circular],
           "type": "tag",
-          "x-attribsNamespace": Object {},
-          "x-attribsPrefix": Object {},
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
         },
         "parent": [Circular],
         "prev": null,
@@ -43,9 +51,11 @@ initialize {
         },
       },
       Object {
-        "attribs": Object {},
+        "attribs": Object {
+          "class": "ui four cards",
+        },
         "children": Array [],
-        "name": "ul",
+        "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": [Circular],
@@ -76,8 +86,12 @@ initialize {
           },
         },
         "type": "tag",
-        "x-attribsNamespace": Object {},
-        "x-attribsPrefix": Object {},
+        "x-attribsNamespace": Object {
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "class": undefined,
+        },
       },
     ],
     "name": "div",
@@ -100,8 +114,12 @@ initialize {
       "x-attribsPrefix": Object {},
     },
     "type": "tag",
-    "x-attribsNamespace": Object {},
-    "x-attribsPrefix": Object {},
+    "x-attribsNamespace": Object {
+      "class": undefined,
+    },
+    "x-attribsPrefix": Object {
+      "class": undefined,
+    },
   },
   "_root": [Circular],
   "length": 1,
