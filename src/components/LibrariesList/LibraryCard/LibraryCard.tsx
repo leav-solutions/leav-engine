@@ -12,7 +12,7 @@ function LibraryCard({lib, changeLibSelected}: ILibraryCardProps): JSX.Element {
     const history = useHistory();
 
     const goDetail = () => {
-        const detailUrl = `/LibrariesList/${lib.id}/${lib.gqlNames.query}`;
+        const detailUrl = `/library/list/${lib.id}/${lib.gqlNames.query}`;
         history.push(detailUrl);
     };
 

@@ -20,69 +20,9 @@ initialize {
         ],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
-        "next": Object {
-          "attribs": Object {
-            "class": "ui container",
-          },
-          "children": Array [],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": [Circular],
-          "type": "tag",
-          "x-attribsNamespace": Object {
-            "class": undefined,
-          },
-          "x-attribsPrefix": Object {
-            "class": undefined,
-          },
-        },
-        "parent": [Circular],
-        "prev": null,
-        "type": "tag",
-        "x-attribsNamespace": Object {
-          "class": undefined,
-        },
-        "x-attribsPrefix": Object {
-          "class": undefined,
-        },
-      },
-      Object {
-        "attribs": Object {
-          "class": "ui container",
-        },
-        "children": Array [],
-        "name": "div",
-        "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": [Circular],
-        "prev": Object {
-          "attribs": Object {
-            "class": "ui header",
-          },
-          "children": Array [
-            Object {
-              "data": "Home",
-              "next": null,
-              "parent": [Circular],
-              "prev": null,
-              "type": "text",
-            },
-          ],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": [Circular],
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": Object {
-            "class": undefined,
-          },
-          "x-attribsPrefix": Object {
-            "class": undefined,
-          },
-        },
+        "prev": null,
         "type": "tag",
         "x-attribsNamespace": Object {
           "class": undefined,

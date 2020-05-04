@@ -39,7 +39,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                 </Menu.Item>
             </NavLink>
 
-            <NavLink to="/LibrariesList" onClick={hide} activeClassName="nav-link-active">
+            <NavLink to="/library/list/" onClick={hide} activeClassName="nav-link-active">
                 <Menu.Item as="span">
                     <Icon name="list ul" />
                     Library List

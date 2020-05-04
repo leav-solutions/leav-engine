@@ -4,6 +4,7 @@ import {Sidebar} from 'semantic-ui-react';
 import Home from '../Home';
 import LibrariesList from '../LibrariesList';
 import LibraryDetailWrapper from '../LibrariesList/LibraryDetailWrapper';
+import LibraryItemsList from '../LibraryItemsList';
 import Setting from '../Setting';
 import SideBarMenu from '../SideBarMenu';
 import TopBar from '../TopBar';
@@ -30,12 +31,16 @@ function Router(): JSX.Element {
                                 <Home />
                             </Route>
 
-                            <Route exact path="/LibrariesList">
+                            <Route exact path="/library/list/">
                                 <LibrariesList />
                             </Route>
 
-                            <Route exact path="/LibrariesList/:libId/:libQueryName">
+                            <Route exact path="/library/list/:libId/:libQueryName">
                                 <LibraryDetailWrapper />
+                            </Route>
+
+                            <Route exact path="/library/:libQueryName/items">
+                                <LibraryItemsList />
                             </Route>
 
                             <Route path="/setting">
