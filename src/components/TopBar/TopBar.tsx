@@ -1,26 +1,12 @@
 import React from 'react';
-import {Icon, Menu} from 'semantic-ui-react';
+import {Menu} from 'semantic-ui-react';
+import UserMenu from './UserMenu';
 
 interface ITopBarProps {
     toggleSidebarVisible: () => void;
 }
 
 function TopBar({toggleSidebarVisible}: ITopBarProps): JSX.Element {
-    const nameIconStyle = {
-        borderRadius: '50%',
-        background: 'hsl(130, 52%, 58%)',
-        color: '#FFFFFF',
-        height: '2rem',
-        width: '2rem',
-        display: 'flex',
-        flexDirection: 'column' as 'column',
-        justifyContent: 'center',
-        textAlign: 'center' as 'center',
-        margin: '0 1rem',
-        fontWeight: 'bold' as 'bold',
-        fontSize: '.8rem'
-    };
-
     return (
         <Menu inverted style={{borderRadius: 0, margin: 0}}>
             <Menu.Menu>
@@ -34,11 +20,7 @@ function TopBar({toggleSidebarVisible}: ITopBarProps): JSX.Element {
             </Menu.Menu>
 
             <Menu.Menu>
-                <Menu.Item>
-                    <div style={nameIconStyle}>NU</div>
-                    <div>Name User</div>
-                    <Icon name="angle down" />
-                </Menu.Item>
+                <UserMenu />
             </Menu.Menu>
         </Menu>
     );

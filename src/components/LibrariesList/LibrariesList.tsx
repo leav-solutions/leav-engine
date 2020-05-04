@@ -36,7 +36,7 @@ function LibrariesList(): JSX.Element {
             <Header as="h2">Libraries List</Header>
             <Card.Group itemsPerRow={4}>
                 {libraries.map((lib: ILibrary) => (
-                    <LibraryCard lib={lib} changeLibSelected={changeLibSelected} />
+                    <LibraryCard key={lib.id} lib={lib} changeLibSelected={changeLibSelected} />
                 ))}
             </Card.Group>
 

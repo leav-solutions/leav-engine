@@ -1,5 +1,6 @@
 import {useQuery} from '@apollo/react-hooks';
 import React, {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
 import {Button, Divider, Grid, Header, Segment} from 'semantic-ui-react';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import {ILabel} from '../../../_types/types';
@@ -61,8 +62,10 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
 
                     <Grid.Column>
                         <Header as="h4">Your search saves</Header>
-                        <Segment>blabla</Segment>
-                        <Button icon="plus" content="Add Search" />
+                        <Segment>
+                            <Link to="">Search all</Link>
+                        </Segment>
+                        <Button icon="plus" content="Add Filter" />
                     </Grid.Column>
 
                     <Grid.Column>
