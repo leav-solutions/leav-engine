@@ -54,23 +54,27 @@ describe('unit tests sync-scan', () => {
             const res = await scan.filesystem(cfg.filesystem);
             expect(res.length).toBe(2);
 
-            expect({...res[0]}).toStrictEqual({
+            expect({...res[0], atimeMs: undefined, atime: undefined}).toStrictEqual({
                 ...fs.statSync(`${cfg.filesystem.absolutePath}/dir`),
                 name: 'dir',
                 type: 'directory',
                 path: '.',
                 level: 0,
-                trt: false
+                trt: false,
+                atimeMs: undefined,
+                atime: undefined
             });
 
-            expect({...res[1]}).toStrictEqual({
+            expect({...res[1], atimeMs: undefined, atime: undefined}).toStrictEqual({
                 ...fs.statSync(`${cfg.filesystem.absolutePath}/dir/file`),
                 name: 'file',
                 type: 'file',
                 hash: 'd41d8cd98f00b204e9800998ecf8427e',
                 path: 'dir',
                 level: 1,
-                trt: false
+                trt: false,
+                atimeMs: undefined,
+                atime: undefined
             });
         } catch (e) {
             console.error(e);

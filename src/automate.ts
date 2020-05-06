@@ -60,7 +60,7 @@ const _getEventTypeAndDbElIdx = (fc: FileContent, dbEl: FullTreeContent) => {
     return {match, dbElIdx};
 };
 
-const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.Channel): Promise<void> => {
+const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.ConfirmChannel): Promise<void> => {
     for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
         await remove(
             de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
@@ -76,7 +76,7 @@ const _trtFile = async (
     dbElIdx: number[],
     dbEl: FullTreeContent,
     fc: FileContent,
-    channel: amqp.Channel
+    channel: amqp.ConfirmChannel
 ): Promise<void> => {
     switch (match) {
         case Attr.INODE: // Identical inode only
@@ -121,7 +121,7 @@ const _process = async (
     fsEl: FilesystemContent,
     dbEl: FullTreeContent,
     level: number,
-    channel: amqp.Channel
+    channel: amqp.ConfirmChannel
 ): Promise<void> => {
     if (!fsEl.filter(fse => fse.level === level).length) {
         // delete all untreated elements in database before end of process
@@ -142,7 +142,11 @@ const _process = async (
     await _process(fsEl, dbEl, level + 1, channel);
 };
 
-export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, channel: amqp.Channel): Promise<void> => {
+export default async (
+    fsScan: FilesystemContent,
+    dbScan: FullTreeContent,
+    channel: amqp.ConfirmChannel
+): Promise<void> => {
     let dbEl: FullTreeContent;
 
     dbEl = _extractChildrenDbElems(dbScan, dbEl);

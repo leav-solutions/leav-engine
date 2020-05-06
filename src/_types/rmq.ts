@@ -2,7 +2,7 @@ import * as amqp from 'amqplib';
 
 export interface RMQConn {
     connection: amqp.Connection;
-    channel: amqp.Channel;
+    channel: amqp.ConfirmChannel;
 }
 
 export interface RMQMsg {
