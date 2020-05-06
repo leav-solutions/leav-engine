@@ -6,7 +6,7 @@ module.exports = {
         treeId: 'files_tree'
     },
     filesystem: {
-        absolutePath: '/home/jrmy/dev/docker-compose/files'
+        absolutePath: '/Users/jrmy/dev/docker-compose/files'
     },
     rmq: {
         connOpt: {

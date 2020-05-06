@@ -2,12 +2,20 @@ import * as amqp from 'amqplib';
 import {RMQConn, RMQMsg} from '../_types/rmq';
 import * as Config from '../_types/config';
 
-export const send = async ({exchange, routingKey}: Config.RMQ, msg: string, channel: amqp.Channel): Promise<void> => {
-    await channel.checkExchange(exchange);
-    await channel.publish(exchange, routingKey, Buffer.from(msg), {
-        persistent: true
+export const send = ({exchange, routingKey}: Config.RMQ, msg: string, channel: amqp.ConfirmChannel): Promise<void> =>
+    new Promise(async (resolve, reject) => {
+        await channel.checkExchange(exchange);
+
+        channel.publish(
+            exchange,
+            routingKey,
+            Buffer.from(msg),
+            {
+                persistent: true
+            },
+            (err, ok) => (err ? reject(err) : resolve())
+        );
     });
-};
 
 export const generateMsg = (
     event: string,
@@ -34,7 +42,7 @@ export const generateMsg = (
 
 export const init = async ({connOpt, exchange, type}: Config.RMQ): Promise<RMQConn> => {
     const connection: amqp.Connection = await amqp.connect(connOpt);
-    const channel: amqp.Channel = await connection.createChannel();
+    const channel: amqp.ConfirmChannel = await connection.createConfirmChannel();
 
     await channel.assertExchange(exchange, type, {durable: true});
 

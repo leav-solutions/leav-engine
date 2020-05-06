@@ -21,6 +21,7 @@ import {Config} from './_types/config';
         await rmqConn.connection.close();
     } catch (e) {
         console.error(e);
+        process.exit(1);
     }
 })();
 

@@ -15,7 +15,7 @@ let rmqConn: RMQConn;
 let inodes: number[];
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
-    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 beforeAll(async () => {
