@@ -5,19 +5,18 @@ import {ILibrary} from '../../../_types/types';
 
 interface ILibraryCardProps {
     lib: ILibrary;
-    changeLibSelected: (libSelected: any) => void;
 }
 
-function LibraryCard({lib, changeLibSelected}: ILibraryCardProps): JSX.Element {
+function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
     const history = useHistory();
 
     const goDetail = () => {
-        const detailUrl = `/library/list/${lib.id}/${lib.gqlNames.query}`;
+        const detailUrl = `/library/detail/${lib.id}/${lib.gqlNames.query}`;
         history.push(detailUrl);
     };
 
     const handleChangeLibSelected = () => {
-        changeLibSelected({id: lib.id, query: lib.gqlNames.query});
+        history.push(`/library/list/${lib.id}/${lib.gqlNames.query}`);
     };
 
     return (

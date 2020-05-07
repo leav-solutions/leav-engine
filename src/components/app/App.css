@@ -3,6 +3,10 @@
   height: 100%;
 }
 
+.height-full-page {
+  min-height: 100vh;
+}
+
 .nav-link-active  span{
   background: gray !important;
 }

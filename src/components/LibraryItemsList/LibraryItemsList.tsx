@@ -1,24 +1,21 @@
 import {useLazyQuery} from '@apollo/react-hooks';
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Button, Dimmer, Header, Icon, Loader, Menu, Search, Segment, Table} from 'semantic-ui-react';
+import {Button, Header, Icon, Menu, Search} from 'semantic-ui-react';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
-import {ILabel} from '../../_types/types';
-
-interface IItems {
-    id: string;
-    label: ILabel;
-}
+import {IItems} from '../../_types/types';
+import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
+import LibraryItemsListTable from './LibraryItemsListTable';
 
 function LibraryItemsList(): JSX.Element {
     const {libQueryName} = useParams();
     const history = useHistory();
 
     const [items, setItems] = useState<IItems[]>();
-    const [totalCount, setTotalCount] = useState<number>();
+    const [totalCount, setTotalCount] = useState<number>(0);
     const [offset, setOffset] = useState<number>(0);
 
-    const pagination = 20;
+    const [pagination, setPagination] = useState(20);
 
     const [getRecord, {called, loading, data, error}] = useLazyQuery(
         getRecordsFromLibraryQuery(libQueryName || '', pagination, offset)
@@ -38,17 +35,7 @@ function LibraryItemsList(): JSX.Element {
 
     useEffect(() => {
         getRecord();
-    }, [offset]);
-
-    if (loading) {
-        return (
-            <Segment style={{height: '20rem'}}>
-                <Dimmer active inverted>
-                    <Loader inverted size="massive" />
-                </Dimmer>
-            </Segment>
-        );
-    }
+    }, [offset, pagination, getRecord]);
 
     if (error) {
         return <div>ERROR</div>;
@@ -66,8 +53,14 @@ function LibraryItemsList(): JSX.Element {
                 </Menu.Item>
 
                 <Menu.Item>
-                    <span>/ {totalCount} results</span>
-                    <Icon name="angle down" />
+                    <LibraryItemsListMenuPagination
+                        totalCount={totalCount}
+                        offset={offset}
+                        setOffset={setOffset}
+                        pagination={pagination}
+                        setPagination={setPagination}
+                        nbItems={items?.length || 0}
+                    />
                 </Menu.Item>
 
                 <Menu.Item>
@@ -93,56 +86,14 @@ function LibraryItemsList(): JSX.Element {
                     </Menu.Item>
                 </Menu.Menu>
             </Menu>
-
             <Header>Items from {libQueryName}</Header>
-            <Table>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Id</Table.HeaderCell>
-                        <Table.HeaderCell>label</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {items &&
-                        items?.map((item: any) => (
-                            <Table.Row key={item.id}>
-                                <Table.Cell>{item.whoAmI?.id}</Table.Cell>
-                                <Table.Cell>{item.whoAmI?.label}</Table.Cell>
-                            </Table.Row>
-                        ))}
-                </Table.Body>
-                <Table.Footer>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan="3">
-                            <Menu floated="right" pagination>
-                                <Menu.Item
-                                    as="a"
-                                    icon
-                                    onClick={() => setOffset(offset >= pagination ? offset - pagination : 0)}
-                                >
-                                    <Icon name="chevron left" />
-                                </Menu.Item>
-
-                                {totalCount &&
-                                    [...Array(Math.round(totalCount / pagination))].map((e, index) => (
-                                        <Menu.Item
-                                            key={index}
-                                            as="a"
-                                            active={Math.round(offset / pagination) === index}
-                                            onClick={() => setOffset(index * pagination)}
-                                        >
-                                            {index + 1}
-                                        </Menu.Item>
-                                    ))}
-
-                                <Menu.Item as="a" icon onClick={() => setOffset(offset + pagination)}>
-                                    <Icon name="chevron right" />
-                                </Menu.Item>
-                            </Menu>
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Footer>
-            </Table>
+            <LibraryItemsListTable
+                items={items}
+                totalCount={totalCount}
+                pagination={pagination}
+                offset={offset}
+                setOffset={setOffset}
+            />
         </div>
     );
 }

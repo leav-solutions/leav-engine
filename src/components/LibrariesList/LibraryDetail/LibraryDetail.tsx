@@ -63,7 +63,7 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
                     <Grid.Column>
                         <Header as="h4">Your search saves</Header>
                         <Segment>
-                            <Link to={`/library/${libQueryName}/items`}>Search all</Link>
+                            <Link to={`/library/items/${libQueryName}`}>Search all</Link>
                         </Segment>
                         <Button icon="plus" content="Add Filter" />
                     </Grid.Column>

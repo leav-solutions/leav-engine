@@ -20,12 +20,12 @@ function Router(): JSX.Element {
 
     return (
         <BrowserRouter>
-            <div style={{height: '100vh'}}>
+            <div style={{minHeight: '100vh'}}>
                 <TopBar toggleSidebarVisible={toggleSidebarVisible} />
-                <Sidebar.Pushable as={'div'} className="height100">
+                <Sidebar.Pushable as={'div'} className="height-full-page">
                     <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
 
-                    <Sidebar.Pusher style={{margin: '1rem'}}>
+                    <Sidebar.Pusher style={{margin: '1rem 2rem'}}>
                         <Switch>
                             <Route exact path="/">
                                 <Home />
@@ -35,11 +35,15 @@ function Router(): JSX.Element {
                                 <LibrariesList />
                             </Route>
 
-                            <Route exact path="/library/list/:libId/:libQueryName">
+                            <Route exact path="/library/detail/:libId/:libQueryName">
                                 <LibraryDetailWrapper />
                             </Route>
 
-                            <Route exact path="/library/:libQueryName/items">
+                            <Route exact path="/library/list/:libId/:libQueryName">
+                                <LibrariesList />
+                            </Route>
+
+                            <Route exact path="/library/items/:libQueryName">
                                 <LibraryItemsList />
                             </Route>
 

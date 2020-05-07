@@ -4,7 +4,7 @@ import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragm
 import LibraryItemsList from './LibraryItemsList';
 
 jest.mock('react-router-dom', () => ({
-    useParams: jest.fn(() => ({libQueryName: 'test'})),
+    useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test'})),
     useHistory: jest.fn()
 }));
 
