@@ -1,4 +1,3 @@
-
 .height100 {
   height: 100%;
 }
@@ -9,4 +8,28 @@
 
 .nav-link-active  span{
   background: gray !important;
+}
+
+.table-items {
+  max-height: 70vh;
+  overflow-y: scroll;
+}
+
+.table-items tbody {
+  display: block;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.table-items thead,
+.table-items tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  position: relative;
+}
+
+.table-items-buttons {
+  position: absolute;
+  top: 10%;
 }

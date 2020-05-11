@@ -16,13 +16,18 @@ export interface IPreview {
     small: string;
     medium: string;
     big: string;
+    pages: string;
 }
 
-export interface IItems {
+export interface IItem {
     id: string;
-    whoAmI: {
-        id: string;
-        label: string;
-        preview: IPreview;
-    };
+    label?: string;
+    preview?: IPreview;
+}
+
+export enum PreviewAttributes {
+    'small',
+    'medium',
+    'big',
+    'pages'
 }

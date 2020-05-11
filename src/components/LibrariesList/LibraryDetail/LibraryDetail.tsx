@@ -70,7 +70,6 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
 
                     <Grid.Column>
                         <Header as="h4">Last views</Header>
-                        <Segment>blabla</Segment>
                     </Grid.Column>
                 </Grid>
             </Segment>

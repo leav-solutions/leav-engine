@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Button, Header, Icon, Menu, Search} from 'semantic-ui-react';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
-import {IItems} from '../../_types/types';
+import {IItem} from '../../_types/types';
 import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
 import LibraryItemsListTable from './LibraryItemsListTable';
 
@@ -11,7 +11,7 @@ function LibraryItemsList(): JSX.Element {
     const {libQueryName} = useParams();
     const history = useHistory();
 
-    const [items, setItems] = useState<IItems[]>();
+    const [items, setItems] = useState<IItem[]>();
     const [totalCount, setTotalCount] = useState<number>(0);
     const [offset, setOffset] = useState<number>(0);
 
@@ -27,8 +27,8 @@ function LibraryItemsList(): JSX.Element {
 
     useEffect(() => {
         if (!loading && called) {
-            const itemsFromQuery: IItems[] = data ? data[libQueryName || ''].list : [];
-            setItems(itemsFromQuery);
+            const itemsFromQuery = data ? data[libQueryName || ''].list : [];
+            setItems(itemsFromQuery.map((i: any) => i.whoAmI) as IItem[]);
             setTotalCount(data[libQueryName || ''].totalCount);
         }
     }, [loading, data, libQueryName, called]);
@@ -89,6 +89,7 @@ function LibraryItemsList(): JSX.Element {
             <Header>Items from {libQueryName}</Header>
             <LibraryItemsListTable
                 items={items}
+                setItems={setItems}
                 totalCount={totalCount}
                 pagination={pagination}
                 offset={offset}

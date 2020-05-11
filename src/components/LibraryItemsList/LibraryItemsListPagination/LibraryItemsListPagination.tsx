@@ -37,7 +37,12 @@ function LibraryItemsListPagination({
                       }
 
                       return (
-                          <Menu.Item key={index} as="a" active={isActive} onClick={() => setOffset(index * pagination)}>
+                          <Menu.Item
+                              key={index}
+                              as="a"
+                              active={isActive}
+                              onClick={() => !isActive && setOffset(index * pagination)}
+                          >
                               {isActive ? (
                                   <InputValue
                                       index={index}
@@ -72,7 +77,7 @@ const InputValue = ({index, setOffset, pagination, totalCount}: any) => {
         event.preventDefault();
         const newOffSet = (parseInt(value) - 1) * pagination;
 
-        if (newOffSet > 0 && newOffSet <= totalCount) {
+        if (newOffSet >= 0 && newOffSet <= totalCount) {
             setOffset(newOffSet);
         }
     };
