@@ -1,5 +1,7 @@
 import {aql} from 'arangojs';
+import {IUtils} from 'utils/utils';
 import {IList} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {IAttribute} from '../../_types/attribute';
 import {ILibrary} from '../../_types/library';
@@ -7,7 +9,6 @@ import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IAttributeRepo {
     getAttributes({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;
@@ -27,6 +28,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.value'?: IValueRepo;
+    'core.utils'?: IUtils;
 }
 
 interface IAttributeForRepo extends IAttribute {
@@ -36,10 +38,30 @@ interface IAttributeForRepo extends IAttribute {
 export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.value': valueRepo = null
+    'core.infra.value': valueRepo = null,
+    'core.utils': utils = null
 }: IDeps = {}): IAttributeRepo {
     return {
         async getAttributes({params, ctx}): Promise<IList<IAttribute>> {
+            const _generateLibrariesFilterConds = (filterKey: string, filterVal: string | boolean | string[]) => {
+                if (typeof filterVal === 'boolean') {
+                    return aql``;
+                }
+
+                const libs = utils.forceArray(filterVal);
+
+                const valParts = libs.map(l => aql`v._key == ${l}`);
+                const libKeyCond = aql.join(valParts, ' OR ');
+
+                // Check if there is links between given libraries and attribute
+                return aql`LENGTH(
+                    FOR v IN 1 INBOUND el
+                    core_edge_libraries_attributes
+                    FILTER ${libKeyCond}
+                    RETURN v._key
+                ) > 0`;
+            };
+
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -52,6 +74,7 @@ export default function({
             return dbUtils.findCoreEntity<IAttribute>({
                 ...initializedParams,
                 collectionName: ATTRIB_COLLECTION_NAME,
+                customFilterConditions: {libraries: _generateLibrariesFilterConds},
                 ctx
             });
         },

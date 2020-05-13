@@ -1,4 +1,5 @@
 import {aql} from 'arangojs';
+import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {CollectionType} from 'arangojs/lib/cjs/collection';
 import {AwilixContainer} from 'awilix';
 import {readdirSync} from 'fs';
@@ -10,11 +11,12 @@ import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 import {IForm} from '_types/forms';
 import {ILibrary, ILibraryFilterOptions} from '_types/library';
 import {IList, IPaginationParams, ISortParams} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
+import {IKeyValue} from '_types/shared';
 import {ITree, ITreeFilterOptions} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
-import {IQueryInfos} from '_types/queryInfos';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
@@ -25,6 +27,9 @@ export interface IFindCoreEntityParams {
     withCount?: boolean;
     pagination?: IPaginationParams;
     sort?: ISortParams;
+    customFilterConditions?: IKeyValue<
+        (filterKey: string, filterVal: string | boolean | string[], strictFilters: boolean) => GeneratedAqlQuery
+    >;
     ctx: IQueryInfos;
 }
 
@@ -80,7 +85,7 @@ export default function({
         filterKey: string,
         filterVal: string | boolean | string[],
         strictFilters: boolean
-    ): any {
+    ): GeneratedAqlQuery {
         const queryParts = [];
 
         // If value is an array (types or formats for example),
@@ -209,20 +214,16 @@ export default function({
         async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
             params: IFindCoreEntityParams
         ): Promise<IList<T>> {
-            const defaultParams: IFindCoreEntityParams = {
-                collectionName: null,
-                filters: null,
-                strictFilters: false,
-                withCount: false,
-                pagination: null,
-                sort: null,
-                ctx: {}
-            };
-
-            const {collectionName, filters, strictFilters, withCount, pagination, sort, ctx} = {
-                ...defaultParams,
-                ...params
-            };
+            const {
+                collectionName = null,
+                filters = null,
+                strictFilters = false,
+                withCount = false,
+                pagination = null,
+                sort = null,
+                customFilterConditions = {},
+                ctx = {}
+            } = params;
 
             const collec = dbService.db.collection(collectionName);
             const queryParts = [aql`FOR el IN ${collec}`];
@@ -233,7 +234,16 @@ export default function({
 
                 for (const filterKey of filtersKeys) {
                     const filterVal = dbFilters[filterKey];
-                    const conds = _getFilterCondition(filterKey, filterVal, strictFilters);
+
+                    // Caller can define some custom functions to generate filter condition (like looking on edges to
+                    // filter on libraries linked to an attribute). So, if a custom function is define for this filter,
+                    // we use it, otherwise we use the standard filters
+                    const filterCondsFunc =
+                        typeof customFilterConditions[filterKey] !== 'undefined'
+                            ? customFilterConditions[filterKey]
+                            : _getFilterCondition;
+                    const conds = filterCondsFunc(filterKey, filterVal, strictFilters);
+
                     if (conds.query) {
                         queryParts.push(aql`FILTER`, conds);
                     }

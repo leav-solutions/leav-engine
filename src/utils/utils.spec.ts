@@ -151,4 +151,18 @@ describe('Utils', () => {
             ]);
         });
     });
+
+    describe('forceArray', () => {
+        test('If value is not an array, return an array', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.forceArray('foo')).toEqual(['foo']);
+        });
+
+        test('If value is already an array, just return value', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.forceArray(['foo'])).toEqual(['foo']);
+        });
+    });
 });

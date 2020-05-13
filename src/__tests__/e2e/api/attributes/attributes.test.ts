@@ -46,14 +46,14 @@ describe('Attributes', () => {
         expect(res.data.errors).toBeUndefined();
 
         // Check if new attribute is in attributes list
-        const libsRes = await makeGraphQlCall(`{ attributes { list {id} } }`);
+        const libsRes = await makeGraphQlCall('{ attributes { list {id} } }');
 
         expect(libsRes.status).toBe(200);
         expect(libsRes.data.data.attributes.list.filter(lib => lib.id === testAttrName).length).toBe(1);
     });
 
     test('Get Attribute by ID', async () => {
-        const res = await makeGraphQlCall(`{attributes(filters: {id: "modified_at"}) { list {id} }}`);
+        const res = await makeGraphQlCall('{attributes(filters: {id: "modified_at"}) { list {id} }}');
 
         expect(res.status).toBe(200);
         expect(res.data.data.attributes.list.length).toBe(1);
@@ -61,7 +61,7 @@ describe('Attributes', () => {
     });
 
     test('Return only request language on label', async () => {
-        const res = await makeGraphQlCall(`{attributes(filters: {id: "modified_at"}) { list {id label(lang: [fr])}}}`);
+        const res = await makeGraphQlCall('{attributes(filters: {id: "modified_at"}) { list {id label(lang: [fr])}}}');
 
         expect(res.status).toBe(200);
         expect(res.data.data.attributes.list.length).toBe(1);
@@ -70,8 +70,21 @@ describe('Attributes', () => {
         expect(res.data.errors).toBeUndefined();
     });
 
+    test('Filter attributes by libraries', async () => {
+        // Search attribute "login" linked to a library different than users, should not find anything
+        const res = await makeGraphQlCall(`{
+            usersAttrs: attributes(filters: {id: "login", libraries: ["users"]}) {list {id}},
+            usersGroupsAttrs: attributes(filters: {id: "login", libraries: ["users_groups"]}) {list {id}}
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.usersGroupsAttrs.list.length).toBe(0);
+        expect(res.data.data.usersAttrs.list.length).toBe(1);
+        expect(res.data.errors).toBeUndefined();
+    });
+
     test('Get error if deleting system attribute', async () => {
-        const res = await makeGraphQlCall(`mutation {deleteAttribute(id: "modified_by") { id }}`);
+        const res = await makeGraphQlCall('mutation {deleteAttribute(id: "modified_by") { id }}');
 
         expect(res.status).toBe(200);
         expect(res.data.data).toBeNull();

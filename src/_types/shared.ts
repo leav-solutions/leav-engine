@@ -19,3 +19,7 @@ export interface IExtensionPoints {
 export interface IAppModule {
     extensionPoints?: IExtensionPoints;
 }
+
+export interface IKeyValue<T> {
+    [key: string]: T;
+}

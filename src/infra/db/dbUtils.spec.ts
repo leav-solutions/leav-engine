@@ -1,10 +1,11 @@
-import {Database, DocumentCollection} from 'arangojs';
+import {aql, Database, DocumentCollection} from 'arangojs';
 import {asFunction, AwilixContainer} from 'awilix';
 import {resolve} from 'dns';
 import {readdirSync} from 'fs';
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import {Winston} from 'winston';
 import {ITree} from '_types/tree';
+import {ATTRIB_COLLECTION_NAME} from '../../infra/attributeTypes/attributeTypesRepo';
 import {TREES_COLLECTION_NAME} from '../../infra/tree/treeRepo';
 import {SortOrder} from '../../_types/list';
 import {IDbService} from './dbService';
@@ -242,6 +243,38 @@ describe('dbUtils', () => {
 
             expect(res.list).toBeInstanceOf(Array);
             expect(res.list.length).toBe(0);
+        });
+
+        test('Should use custom filter condtion supplied', async () => {
+            const mockDbServCustom = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        _key: 'test_attr',
+                        _id: 'core_attributes/test_attr',
+                        _rev: '_Wm_Qdtu--_',
+                        label: {
+                            fr: 'Test'
+                        }
+                    }
+                ])
+            };
+            testDbUtils = dbUtils({'core.infra.db.dbService': mockDbServCustom, config: mockConf});
+            testDbUtils.cleanup = jest.fn();
+            testDbUtils.convertToDoc = jest.fn().mockReturnValue({
+                libraries: ['test']
+            });
+
+            const customFilter = jest.fn(() => aql`CUSTOM FILTER`);
+            await testDbUtils.findCoreEntity({
+                collectionName: ATTRIB_COLLECTION_NAME,
+                filters: {libraries: ['test']},
+                customFilterConditions: {libraries: customFilter},
+                ctx
+            });
+
+            expect(customFilter).toBeCalled();
+            expect(mockDbServCustom.execute.mock.calls[0][0].query.query).toMatch(/(CUSTOM FILTER){1}/);
         });
     });
 

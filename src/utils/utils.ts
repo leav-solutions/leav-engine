@@ -36,6 +36,8 @@ export interface IUtils {
     getLibraryTreeId(library: string): string;
 
     graphqlParseLiteral(typeName: string, ast: ValueNode, variables?: {[key: string]: any}): any;
+
+    forceArray<T>(val: T | T[]): T[];
 }
 
 export default function(): IUtils {
@@ -85,6 +87,9 @@ export default function(): IUtils {
         getLibraryTreeId(library) {
             return `${library}_tree`;
         },
-        graphqlParseLiteral
+        graphqlParseLiteral,
+        forceArray<T>(val: T | T[]): T[] {
+            return Array.isArray(val) ? val : [val];
+        }
     };
 }
