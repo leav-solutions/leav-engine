@@ -3,18 +3,16 @@ import Maybe from 'graphql/tsutils/Maybe';
 import {FormFieldType, FormLayoutElementType, IFormLayoutElement} from '../../../../_types/forms';
 
 export const validateFormLayout = (layout: Maybe<IFormLayoutElement[]>) => {
-    let tab;
-    let layoutElement;
-
-    tab = Joi.object().keys({
+    const tab = Joi.object().keys({
         title: Joi.string().required(),
         content: Joi.array().items(Joi.link('#layoutElement'))
     });
 
-    layoutElement = Joi.object({
+    const layoutElement = Joi.object({
         id: Joi.string().required(),
+        order: Joi.number(),
         type: Joi.string().allow(...Object.values(FormLayoutElementType)),
-        title: Joi.string(),
+        settings: Joi.object(),
         tabs: Joi.array().items(tab)
     }).id('layoutElement');
 
