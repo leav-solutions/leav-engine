@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/check-indentation */
+
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, omit} from 'lodash';
@@ -379,6 +381,7 @@ export default function({
                 throw new ValidationError(errors);
             }
 
+            console.log('TREEE ID', treeId);
             const treeContent = await treeRepo.getTreeContent({treeId, startingNode, ctx});
 
             return treeContent;
@@ -387,6 +390,7 @@ export default function({
             return treeRepo.getElementChildren({treeId, element, ctx});
         },
         async getElementAncestors({treeId, element, ctx}): Promise<ITreeNode[]> {
+            console.log('GET ANCESTORS', treeId, element);
             return treeRepo.getElementAncestors({treeId, element, ctx});
         },
         async getLinkedRecords({treeId, attribute, element, ctx}): Promise<IRecord[]> {
