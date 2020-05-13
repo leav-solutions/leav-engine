@@ -1,4 +1,5 @@
 import {IAppGraphQLSchema} from 'app/graphql/graphqlApp';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {GraphQLScalarType} from 'graphql';
@@ -11,12 +12,14 @@ export interface ICoreFormApp {
 }
 
 interface IDeps {
+    'core.domain.attribute'?: IAttributeDomain;
     'core.domain.form'?: IFormDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.utils'?: IUtils;
 }
 
 export default function({
+    'core.domain.attribute': attributeDomain = null,
     'core.domain.form': formDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.utils': utils = null
@@ -33,7 +36,7 @@ export default function({
                         library: Library!,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        dependencyAttributes: [Attribute],
+                        dependencyAttributes: [Attribute!],
                         layout: FormLayout,
                         fields: FormFields
                     }
@@ -107,13 +110,23 @@ export default function({
                         }
                     },
                     Form: {
-                        library: (form: IForm, _, ctx) => libraryDomain.getLibraryProperties(form.library, ctx)
+                        library: (form: IForm, _, ctx) => libraryDomain.getLibraryProperties(form.library, ctx),
+                        dependencyAttributes: (form: IForm, _, ctx) => {
+                            return Promise.all(
+                                form.dependencyAttributes.map(attr =>
+                                    attributeDomain.getAttributeProperties({id: attr, ctx})
+                                )
+                            );
+                        }
                     },
                     FormLayout: new GraphQLScalarType({
                         name: 'FormLayout',
                         description: 'Form Layout',
                         serialize: val => val,
-                        parseValue: val => val,
+                        parseValue: val => {
+                            validateFormLayout(val);
+                            return val;
+                        },
                         parseLiteral: (ast, variables) => {
                             const parsedVal = utils.graphqlParseLiteral('JSON', ast, variables);
                             validateFormLayout(parsedVal);
