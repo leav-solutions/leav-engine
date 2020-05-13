@@ -381,7 +381,6 @@ export default function({
                 throw new ValidationError(errors);
             }
 
-            console.log('TREEE ID', treeId);
             const treeContent = await treeRepo.getTreeContent({treeId, startingNode, ctx});
 
             return treeContent;
@@ -390,7 +389,6 @@ export default function({
             return treeRepo.getElementChildren({treeId, element, ctx});
         },
         async getElementAncestors({treeId, element, ctx}): Promise<ITreeNode[]> {
-            console.log('GET ANCESTORS', treeId, element);
             return treeRepo.getElementAncestors({treeId, element, ctx});
         },
         async getLinkedRecords({treeId, attribute, element, ctx}): Promise<IRecord[]> {
