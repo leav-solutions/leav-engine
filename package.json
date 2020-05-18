@@ -30,7 +30,7 @@
         "typescript": "^3.9.2"
     },
     "publishConfig": {
-        "registry": "http://nexus.cacom.fr:8081/repository/NpmHostRepository"
+        "@casolutions:registry": "http://nexus.cacom.fr:8081/repository/NpmHostRepository"
     },
     "prettier": "@casolutions/prettier-config"
 }
