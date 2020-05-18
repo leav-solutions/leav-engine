@@ -1,0 +1,36 @@
+{
+    "name": "@casolutions/config-manager",
+    "version": "1.0.0",
+    "description": "Module to load project configuration, allowing config overrides based on environment",
+    "main": "build/index.js",
+    "scripts": {
+        "test": "jest -c jest-config.json",
+        "prepublishOnly": "npm run build",
+        "build": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.cacom.fr:dev/leav/config-manager.git"
+    },
+    "keywords": [
+        "config",
+        "configuration",
+        "settings"
+    ],
+    "author": "Teddy Paul",
+    "license": "ISC",
+    "devDependencies": {
+        "@casolutions/eslint-config": "^2.0.0",
+        "@casolutions/prettier-config": "^1.0.0",
+        "@types/jest": "^25.2.2",
+        "eslint": "^7.0.0",
+        "jest": "^26.0.1",
+        "prettier": "^2.0.5",
+        "ts-jest": "^26.0.0",
+        "typescript": "^3.9.2"
+    },
+    "publishConfig": {
+        "registry": "http://nexus.cacom.fr:8081/repository/NpmHostRepository"
+    },
+    "prettier": "@casolutions/prettier-config"
+}
