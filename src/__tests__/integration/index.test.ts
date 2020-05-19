@@ -22,6 +22,10 @@ beforeAll(async () => {
     try {
         cfg = await getConfig();
         rmqConn = await rmq.init(cfg.rmq);
+
+        // As queue is only used in tests to consume messages, it's not created in rmq.init. Thus, we have to do it here
+        await rmqConn.channel.assertQueue(cfg.rmq.queue);
+        await rmqConn.channel.bindQueue(cfg.rmq.queue, cfg.rmq.exchange, cfg.rmq.routingKey);
     } catch (e) {
         console.error(e);
     }
@@ -29,6 +33,9 @@ beforeAll(async () => {
 
 afterAll(async done => {
     try {
+        await rmqConn.channel.deleteExchange(cfg.rmq.exchange);
+        await rmqConn.channel.deleteQueue(cfg.rmq.queue);
+
         await rmqConn.connection.close();
         done();
     } catch (e) {
