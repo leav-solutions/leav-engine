@@ -1,3 +1,5 @@
+const rootPath = require('app-root-path');
+
 module.exports = {
     graphql: {
         uri: 'http://core.leav.localhost/graphql',
@@ -6,7 +8,7 @@ module.exports = {
         treeId: 'files_tree'
     },
     filesystem: {
-        absolutePath: '/Users/jrmy/dev/docker-compose/files'
+        absolutePath: rootPath.path + '/src/__tests__/_fixtures'
     },
     rmq: {
         connOpt: {
@@ -15,8 +17,8 @@ module.exports = {
             username: 'guest',
             password: 'guest'
         },
-        queue: 'files_events',
-        exchange: 'leav_core',
+        queue: 'files_events_test_sync_scan',
+        exchange: 'leav_core_test_sync_scan',
         routingKey: 'files.event',
         rootKey: 'files1',
         type: 'direct'

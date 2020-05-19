@@ -1,15 +1,15 @@
-import {FullTreeContent} from './_types/queries';
-import {FilesystemContent} from './_types/filesystem';
-import {RMQConn} from './_types/rmq';
-import * as scan from './scan';
 import automate from './automate';
+import {getConfig} from './config';
 import * as rmq from './rmq';
-import config from './config';
+import * as scan from './scan';
 import {Config} from './_types/config';
+import {FilesystemContent} from './_types/filesystem';
+import {FullTreeContent} from './_types/queries';
+import {RMQConn} from './_types/rmq';
 
 (async function() {
     try {
-        const cfg: Config = await config;
+        const cfg: Config = await getConfig();
 
         const rmqConn: RMQConn = await rmq.init(cfg.rmq);
 

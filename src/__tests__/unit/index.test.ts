@@ -1,10 +1,10 @@
 import fs from 'fs';
-import config from '../../config';
-import {Config} from '../../_types/config';
-import * as rmq from '../../rmq';
-import {RMQConn} from '../../_types/rmq';
-import * as scan from '../../scan';
 import automate from '../../automate';
+import {getConfig} from '../../config';
+import * as rmq from '../../rmq';
+import * as scan from '../../scan';
+import {Config} from '../../_types/config';
+import {RMQConn} from '../../_types/rmq';
 
 let cfg: Config;
 let rmqConn: RMQConn;
@@ -15,7 +15,7 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 
 beforeAll(async () => {
     try {
-        cfg = await config;
+        cfg = await getConfig();
         rmqConn = await rmq.init(cfg.rmq);
     } catch (e) {
         console.error(e);

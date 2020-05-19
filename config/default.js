@@ -18,6 +18,6 @@ module.exports = {
         exchange: process.env.RMQ_EXCHANGE,
         routingKey: process.env.RMQ_ROUTING_KEY,
         rootKey: process.env.RMQ_ROOT_KEY,
-        type: process.env.RMQ_TYPE
+        type: 'direct'
     }
 };

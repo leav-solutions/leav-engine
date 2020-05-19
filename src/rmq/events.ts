@@ -1,7 +1,6 @@
 import * as amqp from 'amqplib';
-import {Config} from '../_types/config';
-import config from '../config';
 import {generateMsg, send} from '.';
+import {getConfig} from '../config';
 
 export const create = async (
     path: string,
@@ -10,12 +9,12 @@ export const create = async (
     channel: amqp.ConfirmChannel,
     hash?: string
 ) => {
-    const cfg: Config = await config;
+    const cfg = await getConfig();
     await send(cfg.rmq, generateMsg('CREATE', null, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
 };
 
 export const remove = async (path: string, inode: number, isDirectory: boolean, channel: amqp.ConfirmChannel) => {
-    const cfg: Config = await config;
+    const cfg = await getConfig();
     await send(cfg.rmq, generateMsg('REMOVE', path, null, inode, isDirectory, cfg.rmq.rootKey), channel);
 };
 
@@ -26,7 +25,7 @@ export const move = async (
     isDirectory: boolean,
     channel: amqp.ConfirmChannel
 ) => {
-    const cfg: Config = await config;
+    const cfg = await getConfig();
     await send(cfg.rmq, generateMsg('MOVE', pathBefore, pathAfter, inode, isDirectory, cfg.rmq.rootKey), channel);
 };
 
@@ -37,6 +36,6 @@ export const update = async (
     channel: amqp.ConfirmChannel,
     hash: string
 ) => {
-    const cfg: Config = await config;
+    const cfg = await getConfig();
     await send(cfg.rmq, generateMsg('UPDATE', path, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
 };

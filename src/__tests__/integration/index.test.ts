@@ -1,14 +1,14 @@
 import fs from 'fs';
-import * as rmq from '../../rmq';
-import {RMQConn} from '../../_types/rmq';
-import {FullTreeContent} from '../../_types/queries';
-import {FilesystemContent} from '../../_types/filesystem';
-import * as scan from '../../scan';
 import automate from '../../automate';
+import {getConfig} from '../../config';
+import * as rmq from '../../rmq';
+import * as scan from '../../scan';
+import {Config} from '../../_types/config';
+import {FilesystemContent} from '../../_types/filesystem';
+import {FullTreeContent} from '../../_types/queries';
+import {RMQConn} from '../../_types/rmq';
 import test4Db from './database/test4';
 import test5Db from './database/test5';
-import config from '../../config';
-import {Config} from '../../_types/config';
 
 let cfg: Config;
 let rmqConn: RMQConn;
@@ -20,7 +20,7 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 
 beforeAll(async () => {
     try {
-        cfg = await config;
+        cfg = await getConfig();
         rmqConn = await rmq.init(cfg.rmq);
     } catch (e) {
         console.error(e);
