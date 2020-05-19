@@ -1,12 +1,12 @@
 import {connect, Options} from 'amqplib';
 import {Database} from 'arangojs';
-import {config} from '../../../config';
+import {getConfig} from '../../../config';
 import {init as initDI} from '../../../depsManager';
 import * as Config from '../../../_types/config';
 
 export async function setup() {
     try {
-        const conf: Config.IConfig = await config;
+        const conf = await getConfig();
 
         await _resetAmqpQueues(conf);
         await _initDB(conf);
@@ -70,7 +70,7 @@ export const getCoreContainer = async () => {
 };
 
 export const getAmqpChannel = async () => {
-    const conf: Config.IConfig = await config;
+    const conf = await getConfig();
 
     // reset amqp queue
     const amqpConfig: Options.Connect = {

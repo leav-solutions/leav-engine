@@ -1,11 +1,11 @@
 import {Database} from 'arangojs';
-import {config} from '../../../config';
+import {getConfig} from '../../../config';
 import {init as initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 
 export async function setup() {
     try {
-        const conf: any = await config;
+        const conf = await getConfig();
 
         // Init DB
         const db = new Database({

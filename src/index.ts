@@ -1,6 +1,6 @@
 import {IFilesManagerInterface} from 'interface/filesManager';
 import * as Config from '_types/config';
-import {config} from './config';
+import {getConfig} from './config';
 import {init as initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
 import {initDb} from './infra/db/db';
@@ -10,7 +10,7 @@ import {initPlugins} from './pluginsLoader';
     let conf: Config.IConfig;
 
     try {
-        conf = await config;
+        conf = await getConfig();
     } catch (e) {
         console.log('config error', e);
         process.exit(1);

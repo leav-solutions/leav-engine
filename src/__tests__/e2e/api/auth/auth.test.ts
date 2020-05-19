@@ -1,10 +1,10 @@
 import axios from 'axios';
-import {config} from '../../../../config';
+import {getConfig} from '../../../../config';
 import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Auth', () => {
     test('Authenticate', async () => {
-        const conf: any = await config;
+        const conf = await getConfig();
         const url = `http://${conf.server.host}:${conf.server.port}/auth/authenticate`;
 
         const res = await axios.post(url, {

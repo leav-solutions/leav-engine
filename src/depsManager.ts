@@ -8,7 +8,7 @@ import {
     ModuleDescriptor
 } from 'awilix';
 import {realpathSync} from 'fs';
-import {config} from './config';
+import {getConfig} from './config';
 
 const _registerModules = async (
     container: AwilixContainer,
@@ -72,7 +72,7 @@ export async function init(additionalModulesToRegister?: {
     await _registerModules(coreContainer, srcFolder, modulesGlob, 'core');
 
     // Add a few extra dependencies
-    coreContainer.register('config', asValue(await config));
+    coreContainer.register('config', asValue(await getConfig()));
     coreContainer.register('pluginsFolder', asValue(pluginsFolder));
 
     for (const [modKey, mod] of Object.entries(additionalModulesToRegister)) {

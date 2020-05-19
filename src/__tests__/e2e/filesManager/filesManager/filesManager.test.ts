@@ -11,13 +11,12 @@ import {
     writeFileSync
 } from 'fs';
 import {join} from 'path';
-import {config} from '../../../../config';
+import {IQueryInfos} from '_types/queryInfos';
+import {getConfig} from '../../../../config';
 import {IRecordDomain} from '../../../../domain/record/recordDomain';
 import {RoutingKeys} from '../../../../_types/amqp';
-import * as Config from '../../../../_types/config';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewResponse} from '../../../../_types/filesManager';
 import {getAmqpChannel, getCoreContainer} from '../globalSetup';
-import {IQueryInfos} from '_types/queryInfos';
 
 // can't use the rootKey to find library
 const library = 'files';
@@ -51,7 +50,7 @@ describe('FilesManager', () => {
     let channel: Channel;
 
     beforeEach(async () => {
-        const conf: Config.IConfig = await config;
+        const conf = await getConfig();
 
         const rand = Math.random()
             .toString()
@@ -300,7 +299,7 @@ describe('FilesManager with real files', () => {
     let channel: Channel;
 
     beforeEach(async done => {
-        const conf: Config.IConfig = await config;
+        const conf = await getConfig();
 
         const rand = Math.random()
             .toString()

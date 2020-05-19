@@ -1,10 +1,10 @@
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
 import {AttributeFormats, AttributeTypes, IAttributeVersionsConf} from '_types/attribute';
-import {config} from '../../../config';
+import {getConfig} from '../../../config';
 
 async function _getAuthToken() {
-    const conf: any = await config;
+    const conf = await getConfig();
 
     const token = jwt.sign(
         {
@@ -23,7 +23,7 @@ async function _getAuthToken() {
 }
 
 async function _getGraphQLUrl() {
-    const conf: any = await config;
+    const conf = await getConfig();
 
     return `http://${conf.server.host}:${conf.server.port}/graphql`;
 }
@@ -53,7 +53,7 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
         }) { id }
     }`);
 
-    await makeGraphQlCall(`mutation { refreshSchema }`);
+    await makeGraphQlCall('mutation { refreshSchema }');
 
     return saveLibRes.data.data;
 }
@@ -85,7 +85,7 @@ export async function gqlSaveAttribute(
         ) { id }
     }`;
     const saveAttrRes = await makeGraphQlCall(query);
-    await makeGraphQlCall(`mutation { refreshSchema }`);
+    await makeGraphQlCall('mutation { refreshSchema }');
 
     return saveAttrRes.data.data;
 }

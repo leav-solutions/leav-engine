@@ -63,6 +63,7 @@
         "watch": "^1.0.2"
     },
     "dependencies": {
+        "@casolutions/config-manager": "^1.0.0",
         "@hapi/boom": "^7.4.2",
         "@hapi/hapi": "^18.4.1",
         "@hapi/inert": "^5.2.2",
