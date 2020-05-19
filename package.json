@@ -2,11 +2,12 @@
   "name": "manual-scan",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "start:dev": "NODE_ENV=development ts-node src/index.ts",
     "test:integration": "NODE_ENV=test jest -c jest-integration.config.json",
-    "test:unit": "NODE_ENV=test jest -c jest-unit.config.json"
+    "test:unit": "NODE_ENV=test jest -c jest-unit.config.json",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
