@@ -20,10 +20,12 @@ describe('test checkEvent', () => {
     // disable console info in tests
     console.info = jest.fn();
 
-    (createHash as jest.FunctionLike) = jest.fn(() => ({digest: jest.fn}));
+    (createHash as jest.FunctionLike) = jest.fn(() => ({digest: jest.fn, update: jest.fn}));
     (createReadStream as jest.FunctionLike) = jest.fn(() => ({
         on: jest.fn(() => ({
-            on: jest.fn((...args) => args[1]())
+            on: jest.fn(() => ({
+                on: jest.fn((...args) => args[1]())
+            }))
         }))
     }));
 
