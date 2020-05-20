@@ -18,12 +18,19 @@ export interface TREE_CONTENT_treeContent_record_whoAmI_library {
     label: any | null;
 }
 
+export interface TREE_CONTENT_treeContent_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface TREE_CONTENT_treeContent_record_whoAmI {
     id: string;
     library: TREE_CONTENT_treeContent_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: TREE_CONTENT_treeContent_record_whoAmI_preview | null;
 }
 
 export interface TREE_CONTENT_treeContent_record {
@@ -42,12 +49,19 @@ export interface TREE_CONTENT_treeContent_children_record_whoAmI_library {
     label: any | null;
 }
 
+export interface TREE_CONTENT_treeContent_children_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface TREE_CONTENT_treeContent_children_record_whoAmI {
     id: string;
     library: TREE_CONTENT_treeContent_children_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: TREE_CONTENT_treeContent_children_record_whoAmI_preview | null;
 }
 
 export interface TREE_CONTENT_treeContent_children_record {

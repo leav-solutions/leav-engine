@@ -1,6 +1,7 @@
 import {FormikErrors, FormikTouched} from 'formik';
 import {i18n} from 'i18next';
 import {get} from 'lodash';
+import {join} from 'path';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
 import {
@@ -230,4 +231,10 @@ export const isValueNull = (val: IGenericValue): boolean => {
         (isLinkValue(val) && val.linkValue === null) ||
         (isTreeValue(val) && val.treeValue === null)
     );
+};
+
+export const urlCore = process.env.REACT_APP_CORE_URL || '';
+
+export const getAbsoluteUrlCore = (relativeUrl: string) => {
+    return join(urlCore, relativeUrl).replace(':/', '://');
 };

@@ -98,12 +98,19 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValu
     label: any | null;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI {
     id: string;
     library: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_preview | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues {
@@ -168,12 +175,19 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
     label: any | null;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI {
     id: string;
     library: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_preview | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record {
@@ -185,12 +199,19 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
     label: any | null;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI {
     id: string;
     library: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record {

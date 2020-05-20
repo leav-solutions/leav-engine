@@ -11,12 +11,19 @@ export interface RecordIdentity_whoAmI_library {
     label: any | null;
 }
 
+export interface RecordIdentity_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface RecordIdentity_whoAmI {
     id: string;
     library: RecordIdentity_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: RecordIdentity_whoAmI_preview | null;
 }
 
 export interface RecordIdentity {

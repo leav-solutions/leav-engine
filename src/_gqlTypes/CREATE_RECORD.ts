@@ -13,12 +13,19 @@ export interface CREATE_RECORD_createRecord_whoAmI_library {
     label: any | null;
 }
 
+export interface CREATE_RECORD_createRecord_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface CREATE_RECORD_createRecord_whoAmI {
     id: string;
     library: CREATE_RECORD_createRecord_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: CREATE_RECORD_createRecord_whoAmI_preview | null;
 }
 
 export interface CREATE_RECORD_createRecord {
