@@ -32,6 +32,7 @@ export interface IDbService {
 
     /**
      * Create a new collection in database
+     *
      * @param name Collection name
      * @param type Document or edge collection?
      * @throws If collection already exists
@@ -40,6 +41,7 @@ export interface IDbService {
 
     /**
      * Delete a collection in database
+     *
      * @param name Collection name
      * @param type Document or edge collection?
      * @throws If collection already exists
@@ -48,6 +50,7 @@ export interface IDbService {
 
     /**
      * Check if collection already exists
+     *
      * @param name
      */
     collectionExists?(name: string): Promise<boolean>;

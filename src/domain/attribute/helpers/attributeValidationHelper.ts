@@ -146,6 +146,7 @@ const _validateRequiredActions = (attrData: IAttribute): ErrorFieldDetail<IAttri
 
 /**
  * Check if metadata fields are valid
+ *
  * @param attrData
  * @param deps
  */

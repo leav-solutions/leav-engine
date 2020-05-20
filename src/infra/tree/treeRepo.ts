@@ -1,12 +1,12 @@
 import {aql} from 'arangojs';
 import {IList} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ITree, ITreeElement, ITreeNode} from '_types/tree';
 import {collectionTypes, IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface ITreeRepo {
     getDefaultElement({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<ITreeElement>;
@@ -81,6 +81,7 @@ export interface ITreeRepo {
         ctx: IQueryInfos;
     }): Promise<boolean>;
 
+    /* eslint-disable jsdoc/check-indentation */
     /**
      * Return the whole tree in the form:
      * [

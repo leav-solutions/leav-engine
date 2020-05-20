@@ -92,3 +92,10 @@ export interface IPreviewResponse {
     input: string;
     results?: IPreviewResponseResult[];
 }
+
+export enum PreviewSizes {
+    small = '32',
+    medium = '256',
+    big = '1024',
+    pages = '0'
+}

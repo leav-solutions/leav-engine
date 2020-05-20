@@ -2,6 +2,7 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {IRecord} from '_types/record';
+import {PreviewSizes} from '../../_types/filesManager';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 
@@ -54,7 +55,11 @@ export default function({
                         library: Library!,
                         label: String,
                         color: String,
-                        preview: String
+                        preview: Preview
+                    }
+
+                     type Preview {
+                        ${Object.keys(PreviewSizes).map(sizeName => `${sizeName}: String,`)}
                     }
 
                     type RecordIdentityConf {

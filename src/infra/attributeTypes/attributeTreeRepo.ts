@@ -1,7 +1,6 @@
 import {aql} from 'arangojs';
 import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IAttribute} from '../../_types/attribute';
-import {IValue, IValuesOptions} from '../../_types/value';
+import {IValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
@@ -115,8 +114,7 @@ export default function({
                 _key: value.id_value
             };
 
-            let deletedEdge;
-            deletedEdge = await edgeCollec.removeByExample(edgeData);
+            const deletedEdge = await edgeCollec.removeByExample(edgeData);
 
             return {
                 id_value: value.id_value

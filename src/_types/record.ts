@@ -1,5 +1,6 @@
 import {IAttribute} from './attribute';
 import {ILibrary} from './library';
+import {IPreview} from './preview';
 
 export interface IRecord {
     id?: number;
@@ -28,7 +29,7 @@ export interface IRecordIdentity {
     library: ILibrary;
     label?: string;
     color?: string;
-    preview?: string;
+    preview?: IPreview;
 }
 
 export interface IRecordIdentityConf {

@@ -3,8 +3,10 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAmqpManager} from 'infra/amqpManager/amqpManager';
 import {IUtils} from 'utils/utils';
+import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
 import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {RoutingKeys} from '../../_types/amqp';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
@@ -12,8 +14,6 @@ import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../.
 import {IRecordDomain} from './../record/recordDomain';
 import {handleEventFileSystem} from './helpers/handleFileSystem';
 import {handlePreviewResponse} from './helpers/handlePreviewResponse';
-import {v4 as uuidv4} from 'uuid';
-import {IQueryInfos} from '_types/queryInfos';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -42,7 +42,7 @@ const systemPreviewVersions: IPreviewVersion[] = [
         density: 300,
         sizes: [
             {
-                size: 32,
+                size: 64,
                 name: 'small'
             },
             {
@@ -78,7 +78,7 @@ export default function({
     const _onMessage = async (msg: string): Promise<void> => {
         let msgBody: IFileEventData;
         const ctx: IQueryInfos = {
-            userId: 0,
+            userId: config.filesManager.userId,
             queryId: uuidv4()
         };
         try {

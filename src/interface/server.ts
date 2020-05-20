@@ -1,4 +1,5 @@
 import * as hapi from '@hapi/hapi';
+import inert from '@hapi/inert';
 import {ApolloServer} from 'apollo-server-hapi';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
@@ -81,12 +82,25 @@ export default function({
         async init(): Promise<void> {
             const server: hapi.Server = new hapi.Server({
                 host: config.server.host,
-                port: config.server.port
+                port: config.server.port,
+                routes: {
+                    files: {
+                        relativeTo: '/'
+                    }
+                }
             });
 
             try {
                 // Auth Check
-                await server.register(hapiAuthJwt2);
+                await server.register([
+                    {
+                        plugin: hapiAuthJwt2
+                    },
+                    {
+                        plugin: inert
+                    }
+                ]);
+
                 server.auth.strategy('core', config.auth.scheme, {
                     key: config.auth.key,
                     validate: async (decode, request) => {
@@ -169,6 +183,23 @@ export default function({
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');
             }
+
+            // Add route for previews
+            server.route({
+                method: 'GET',
+                path: '/previews/{file*}',
+                handler: {
+                    directory: {
+                        path: '/results'
+                    }
+                },
+                config: {
+                    auth: {
+                        strategy: 'core',
+                        mode: 'optional'
+                    }
+                }
+            });
         }
     };
 }
