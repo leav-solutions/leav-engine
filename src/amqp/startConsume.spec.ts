@@ -1,9 +1,10 @@
+import {IConfig} from 'types/types';
+import * as config from '../../config/config_spec.json';
 import {getConfig} from './../getConfig/getConfig';
-import {startConsume} from './startConsume';
-import {initAmqp} from './init/init';
 import {consume} from './consume/consume';
 import {getChannel} from './getChannel/getChannel';
-import * as config from '../../config/config_spec.json';
+import {initAmqp} from './init/init';
+import {startConsume} from './startConsume';
 
 describe('test startConsume', () => {
     test('call other functions', async () => {
@@ -12,7 +13,7 @@ describe('test startConsume', () => {
         (consume as jest.FunctionLike) = jest.fn();
         (getConfig as jest.FunctionLike) = jest.fn(() => config);
 
-        await startConsume(config);
+        await startConsume(config as IConfig);
 
         expect(getChannel).toBeCalled();
         expect(initAmqp).toBeCalledTimes(2);

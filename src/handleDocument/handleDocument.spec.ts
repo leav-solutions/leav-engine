@@ -1,8 +1,8 @@
-import {getImageArgs} from './../getArgs/getImageArgs/getImageArgs';
-import {IVersion} from '../types/types';
+import {execFile} from 'child_process';
 import {unlink} from 'fs';
 import {getConfig} from '../getConfig/getConfig';
-import {execFile} from 'child_process';
+import {IVersion} from '../types/types';
+import {getImageArgs} from './../getArgs/getImageArgs/getImageArgs';
 import {handleDocument} from './handleDocument';
 
 import config = require('../../config/config_spec.json');
@@ -36,7 +36,7 @@ describe('getDocumentArgs', () => {
         ],
     };
 
-    (async () => handleDocument(input, output, size, name, version, rootPaths))();
+    (async () => handleDocument({input, output, size, name, version, rootPaths, results: []}))();
 
     test('check unoconv command', () => {
         expect(execFile).toHaveBeenCalledWith(

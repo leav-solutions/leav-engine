@@ -1,5 +1,5 @@
 import {Channel} from 'amqplib';
-import {IResult} from '../../types/types';
+import {IResponse} from '../../types/types';
 import {sendResponse} from './sendResponse';
 
 describe('test sendResponse', () => {
@@ -7,21 +7,18 @@ describe('test sendResponse', () => {
         publish: jest.fn(),
     };
 
-    const responses: IResult[] = [
-        {
-            error: 0,
-            params: {
-                output: 'test',
-                size: 800,
-                name: 'big',
-            },
-        },
-    ];
+    const response: IResponse = {
+        context: 'context',
+        input: 'myInput',
+        results: [],
+    };
 
     const exchange = 'exchange';
     const routingKey = 'routingKey';
 
     test('use channel publish', async () => {
-        sendResponse(channel as Channel, responses, {exchange, routingKey}, 'context');
+        await sendResponse(channel as Channel, {exchange, routingKey}, response);
+
+        expect(channel.publish).toBeCalled();
     });
 });

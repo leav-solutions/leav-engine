@@ -1,5 +1,5 @@
 import {Channel} from 'amqplib';
-import {initAmqp, assertExchange, assertQueue, bindQueue} from './init';
+import {assertExchange, assertQueue, bindQueue, initAmqp} from './init';
 
 const exchange = 'exchange';
 const queue = 'queue';
@@ -10,7 +10,7 @@ describe('test assertExchange', () => {
         assertExchange: jest.fn(),
     };
     test('assert exchange', async () => {
-        await assertExchange(channel as Channel, exchange);
+        await assertExchange(channel as Channel, 'direct', exchange);
 
         expect(channel.assertExchange).toBeCalledWith(exchange, expect.anything(), expect.anything());
     });
@@ -49,9 +49,9 @@ describe('test initAmqp', () => {
         (assertQueue as jest.FunctionLike) = jest.fn();
         (bindQueue as jest.FunctionLike) = jest.fn();
 
-        await initAmqp(channel as Channel, {exchange, queue, routingKey});
+        await initAmqp(channel as Channel, 'direct', {exchange, queue, routingKey});
 
-        expect(assertExchange).toBeCalledWith(channel as Channel, exchange);
+        expect(assertExchange).toBeCalledWith(channel as Channel, 'direct', exchange);
         expect(assertQueue).toBeCalledWith(channel as Channel, queue);
         expect(bindQueue).toBeCalledWith(channel as Channel, queue, exchange, routingKey);
     });
