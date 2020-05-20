@@ -1,10 +1,10 @@
-import * as fs from 'fs';
+import {loadConfig} from '@casolutions/config-manager';
 import {getConfig} from './getConfig';
 
 describe('test getConfig', () => {
     afterAll(() => jest.resetAllMocks());
 
-    test('give config return config', async () => {
+    test('Memoize config', async () => {
         const config = {
             rootPath: 'test',
             ICCPath: 'test',
@@ -20,13 +20,13 @@ describe('test getConfig', () => {
             },
         };
 
-        const configPath = './test.json';
+        const mockLoadConfig = jest.fn(() => config);
 
-        (fs.existsSync as jest.FunctionLike) = jest.fn(() => true);
-        (fs.readFileSync as jest.FunctionLike) = jest.fn(() => JSON.stringify(config));
+        (loadConfig as jest.FunctionLike) = mockLoadConfig;
 
-        const newConfig = getConfig(configPath);
+        await getConfig();
+        await getConfig();
 
-        expect(newConfig).toEqual(config);
+        expect(mockLoadConfig).toBeCalledTimes(1);
     });
 });

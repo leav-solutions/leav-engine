@@ -5,7 +5,8 @@ export const getChannel = async (amqpConfig: Options.Connect) => {
         const connection = await connect(amqpConfig);
         return connection.createChannel();
     } catch (e) {
-        console.error("101 - Can't connect to rabbitMQ");
+        console.error("101 - Can't connect to rabbitMQ", e.message);
         process.exit(101);
+        throw e;
     }
 };

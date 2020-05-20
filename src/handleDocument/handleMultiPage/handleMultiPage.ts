@@ -24,9 +24,9 @@ export const handleMultiPage = async (
         await _split(folderDestinationPath, nbDigit, pdfFile);
     } catch (e) {
         const {error, params} = e;
-        const result: IResult = {error, params};
+        const errorResult: IResult = {error, params};
 
-        results.push(result);
+        results.push(errorResult);
         return;
     }
 
@@ -67,7 +67,7 @@ const _createFolderRec = async (folderDestinationPath: string) => {
 };
 
 const _countPage = async (pdfFile: string) => {
-    const {result: resultCountPage, error: errorCountPage} = await new Promise(resolve =>
+    const {result: resultCountPage, error: errorCountPage} = await new Promise(resolve => {
         execFile(
             'gs',
             [
@@ -78,8 +78,8 @@ const _countPage = async (pdfFile: string) => {
                 `(${pdfFile}) (r) file runpdfbegin pdfpagecount = quit`,
             ],
             (err, stdout) => resolve({result: stdout, error: err}),
-        ),
-    );
+        );
+    });
 
     if (errorCountPage) {
         const errorId = handleError(errorCountPage);

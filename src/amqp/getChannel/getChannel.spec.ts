@@ -1,6 +1,5 @@
-import {Options, connect} from 'amqplib';
+import {connect, Options} from 'amqplib';
 import {getChannel} from './getChannel';
-import * as config from '../../../config/config_spec.json';
 
 describe('getChannel', () => {
     test('should use connect', async () => {
@@ -10,10 +9,10 @@ describe('getChannel', () => {
         }));
 
         const amqpConfig: Options.Connect = {
-            protocol: config.amqp.protocol,
-            hostname: config.amqp.hostname,
-            username: config.amqp.username,
-            password: config.amqp.password,
+            protocol: 'amqp',
+            hostname: 'localhost',
+            username: 'guest',
+            password: 'guest',
         };
 
         await getChannel(amqpConfig);

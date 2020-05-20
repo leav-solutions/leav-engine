@@ -1,39 +1,15 @@
-import * as fs from 'fs';
+import {loadConfig} from '@casolutions/config-manager';
+import * as rootPath from 'app-root-path';
+import {env} from '../env';
 import {IConfig} from '../types/types';
 
 let initialized = false;
-let config: IConfig = {
-    inputRootPath: '',
-    outputRootPath: '',
-    ICCPath: '',
-    amqp: {
-        protocol: '',
-        hostname: '',
-        port: 0,
-        username: '',
-        password: '',
-        type: '',
-        consume: {
-            queue: '',
-            exchange: '',
-            routingKey: '',
-        },
-        publish: {
-            queue: '',
-            exchange: '',
-            routingKey: '',
-        },
-    },
-};
+let config: IConfig;
 
-export const getConfig = (configPath?: string) => {
+export const getConfig = async (): Promise<IConfig> => {
     if (!initialized) {
-        if (!fs.existsSync(configPath)) {
-            console.error('Config file not found');
-            process.exit(1);
-        }
+        config = await loadConfig<IConfig>(rootPath.path + '/config', env);
 
-        config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         initialized = true;
         return config;
     } else {

@@ -1,12 +1,17 @@
+import {Channel, ConsumeMessage, Options} from 'amqplib';
 import * as fs from 'fs';
 import * as path from 'path';
-import {Channel, Options, ConsumeMessage} from 'amqplib';
-import {IConfig, IMessageConsume} from '../../types/types';
 import {getChannel} from '../../amqp/getChannel/getChannel';
-
-import configIntegration = require('../../../config/config_integration.json');
+import {getConfig} from '../../getConfig/getConfig';
+import {IConfig, IMessageConsume} from '../../types/types';
 
 describe('test preview generation', () => {
+    let config;
+
+    beforeAll(async () => {
+        config = await getConfig();
+    });
+
     test('jpg with clip to png', async done => {
         const output = '/src/files/test/preview/jpg.clip.png';
         const msgSend: IMessageConsume = {
@@ -25,8 +30,9 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
+
             const {
                 responses: [responses],
             } = JSON.parse(msg.content.toString());
@@ -39,14 +45,14 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 
     test('jpg to png', async done => {
@@ -67,7 +73,7 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
                 responses: [responses],
@@ -81,14 +87,14 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 
     test('png to png', async done => {
@@ -109,7 +115,7 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
                 responses: [responses],
@@ -123,14 +129,14 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 
     test('png with transparent to png', async done => {
@@ -151,7 +157,7 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
 
             const {
@@ -166,14 +172,14 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 
     test('pdf to png', async done => {
@@ -194,7 +200,7 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
 
             const {
@@ -209,14 +215,14 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 
     test('docx to png', async done => {
@@ -238,7 +244,7 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
                 responses: [responses],
@@ -252,14 +258,14 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 
     // this test can take time
@@ -286,7 +292,7 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
                 responses: [responses],
@@ -300,15 +306,15 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 
     test('docx with multi page to png', async done => {
@@ -334,7 +340,7 @@ describe('test preview generation', () => {
             ],
         };
 
-        await consumeResponse(configIntegration, (msg, channel) => {
+        await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
                 responses: [responses],
@@ -348,15 +354,15 @@ describe('test preview generation', () => {
                     }),
                 }),
             );
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, output))).toBeTruthy();
-            expect(fs.existsSync(path.join(configIntegration.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
+            expect(fs.existsSync(path.join(config.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
 
             channel.close();
 
             done();
         });
 
-        await sendTestMessage(configIntegration, msgSend);
+        await sendTestMessage(config, msgSend);
     });
 });
 

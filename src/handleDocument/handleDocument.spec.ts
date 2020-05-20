@@ -5,10 +5,8 @@ import {IVersion} from '../types/types';
 import {getImageArgs} from './../getArgs/getImageArgs/getImageArgs';
 import {handleDocument} from './handleDocument';
 
-import config = require('../../config/config_spec.json');
-
 describe('getDocumentArgs', () => {
-    afterAll(() => jest.resetAllMocks());
+    const mockconf = {amqp: {hostname: 'localhost'}};
 
     (execFile as jest.FunctionLike) = jest.fn((...args) => args[3]());
     (unlink as jest.FunctionLike) = jest.fn((...args) => args[1]());
@@ -19,7 +17,7 @@ describe('getDocumentArgs', () => {
             args: [`${output}.pdf[0]`, 'png:' + output],
         },
     ]);
-    (getConfig as jest.FunctionLike) = jest.fn(() => config);
+    (getConfig as jest.FunctionLike) = jest.fn(() => mockconf);
 
     const input = 'test.docx';
     const output = 'test.png';
@@ -37,6 +35,8 @@ describe('getDocumentArgs', () => {
     };
 
     (async () => handleDocument({input, output, size, name, version, rootPaths, results: []}))();
+
+    afterAll(() => jest.resetAllMocks());
 
     test('check unoconv command', () => {
         expect(execFile).toHaveBeenCalledWith(

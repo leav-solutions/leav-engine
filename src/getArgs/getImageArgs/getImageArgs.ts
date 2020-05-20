@@ -1,13 +1,13 @@
-import {handleError} from './../../utils/log';
-import {ErrorPreview} from './../../types/ErrorPreview';
-import {getSvgCommand} from './../getSvgCommand/getSvgCommand';
 import {execFile} from 'child_process';
-import {getConfig} from './../../getConfig/getConfig';
-import {getPsdArgs} from './getPsdArgs/getPsdArgs';
-import {getJpgArgs} from './getJpgArgs/getJpgArgs';
-import {handleBackground} from './handleBackground/handleBackground';
-import {IExec, IArgs, IVersion} from '../../types/types';
 import {join} from 'path';
+import {IArgs, IExec, IVersion} from '../../types/types';
+import {getConfig} from './../../getConfig/getConfig';
+import {ErrorPreview} from './../../types/ErrorPreview';
+import {handleError} from './../../utils/log';
+import {getSvgCommand} from './../getSvgCommand/getSvgCommand';
+import {getJpgArgs} from './getJpgArgs/getJpgArgs';
+import {getPsdArgs} from './getPsdArgs/getPsdArgs';
+import {handleBackground} from './handleBackground/handleBackground';
 
 export const getImageArgs = async (
     ext: string,
@@ -51,7 +51,7 @@ export const getImageArgs = async (
         }
 
         if (colorspace.indexOf('CMYK') > -1) {
-            const config = getConfig();
+            const config = await getConfig();
             const profileArgs = [
                 '-profile', // use profile option
                 join(config.ICCPath, 'EuroscaleCoated.icc'), // profile value

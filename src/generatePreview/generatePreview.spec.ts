@@ -1,5 +1,4 @@
 import {execFile} from 'child_process';
-import * as config from '../../config/config_spec.json';
 import {IConfig, IMessageConsume} from '../types/types';
 import {getArgs} from './../getArgs/getArgs';
 import {getConfig} from './../getConfig/getConfig';
@@ -7,12 +6,14 @@ import {handleDocument} from './../handleDocument/handleDocument';
 import {generatePreview} from './generatePreview';
 
 describe('generatePreview', () => {
+    const mockconf = {inputRootPath: 'input_path', outputRootPath: 'output_path', amqp: {hostname: 'localhost'}};
+
     console.info = jest.fn();
     (execFile as jest.FunctionLike) = jest.fn(() => '');
     (getArgs as jest.FunctionLike) = jest.fn(() => []);
     (handleDocument as jest.FunctionLike) = jest.fn(() => []);
 
-    (getConfig as jest.FunctionLike) = jest.fn(() => config);
+    (getConfig as jest.FunctionLike) = jest.fn(() => mockconf);
 
     const msgContent: IMessageConsume = {
         input: 'test.jpg',
@@ -43,7 +44,7 @@ describe('generatePreview', () => {
     test('result generatePreview', async () => {
         const type = 'image';
 
-        const results = await generatePreview(msgContent, type, config as IConfig);
+        const results = await generatePreview(msgContent, type, mockconf as IConfig);
         const firstResult = results[0];
 
         expect(firstResult.params.output).toEqual(expect.stringContaining('test.800.jpg'));
