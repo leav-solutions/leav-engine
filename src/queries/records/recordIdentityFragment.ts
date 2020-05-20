@@ -10,7 +10,12 @@ export const recordIdentityFragment = gql`
             }
             label
             color
-            preview
+            preview {
+                small
+                medium
+                pages
+                big
+            }
         }
     }
 `;

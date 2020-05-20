@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import useLang from '../../../hooks/useLang';
-import {localizedLabel} from '../../../utils/utils';
+import {getAbsoluteUrlCore, localizedLabel} from '../../../utils/utils';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import RecordPreview from '../RecordPreview';
 
@@ -50,7 +50,11 @@ const RecordCard = ({record, style}: IRecordCardProps): JSX.Element => {
     return (
         <Wrapper recordColor={record.color} style={style} className="ui fluid">
             <PreviewWrapper className="ui">
-                <RecordPreview label={record.label || record.id} color={record.color} image={record.preview} />
+                <RecordPreview
+                    label={record.label || record.id}
+                    color={record.color}
+                    image={record.preview?.small ? getAbsoluteUrlCore(record.preview.small) : ''}
+                />
             </PreviewWrapper>
             <CardPart className="ui">
                 <RecordLabel>{record.label || record.id}</RecordLabel>

@@ -21,12 +21,19 @@ export interface ValueDetails_LinkValue_linkValue_whoAmI_library {
     label: any | null;
 }
 
+export interface ValueDetails_LinkValue_linkValue_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface ValueDetails_LinkValue_linkValue_whoAmI {
     id: string;
     library: ValueDetails_LinkValue_linkValue_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: ValueDetails_LinkValue_linkValue_whoAmI_preview | null;
 }
 
 export interface ValueDetails_LinkValue_linkValue {
@@ -47,12 +54,19 @@ export interface ValueDetails_TreeValue_treeValue_record_whoAmI_library {
     label: any | null;
 }
 
+export interface ValueDetails_TreeValue_treeValue_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface ValueDetails_TreeValue_treeValue_record_whoAmI {
     id: string;
     library: ValueDetails_TreeValue_treeValue_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: ValueDetails_TreeValue_treeValue_record_whoAmI_preview | null;
 }
 
 export interface ValueDetails_TreeValue_treeValue_record {
@@ -64,12 +78,19 @@ export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_librar
     label: any | null;
 }
 
+export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
 export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI {
     id: string;
     library: ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: string | null;
+    preview: ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_preview | null;
 }
 
 export interface ValueDetails_TreeValue_treeValue_ancestors_record {

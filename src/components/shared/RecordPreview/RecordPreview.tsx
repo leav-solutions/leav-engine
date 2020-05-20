@@ -32,9 +32,25 @@ const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
 `;
 GeneratedPreview.displayName = 'GeneratedPreview';
 
+const ImagePreview = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2rem;
+    width: 2rem;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+`;
+ImagePreview.displayName = 'ImagePreview';
+
 function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.Element {
     if (image) {
-        return <Image src={image} avatar style={style} />;
+        return (
+            <ImagePreview>
+                <Image src={image} style={{...style, height: '1rem'}} />
+            </ImagePreview>
+        );
     }
 
     const initial = label[0].toLocaleUpperCase();

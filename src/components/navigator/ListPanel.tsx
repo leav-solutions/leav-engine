@@ -1,14 +1,14 @@
-import React, {useMemo} from 'react';
-import gql from 'graphql-tag';
 import {useQuery} from '@apollo/react-hooks';
-import {Table, Checkbox, Pagination, Select} from 'semantic-ui-react';
+import gql from 'graphql-tag';
+import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
-import {IListProps} from './MainPanel';
-import {ActionTypes} from './NavigatorReducer';
+import {Checkbox, Pagination, Select, Table} from 'semantic-ui-react';
+import {IGetRecordData} from '../../_types/records';
 import Loading from '../shared/Loading';
 import RecordCard from '../shared/RecordCard';
+import {IListProps} from './MainPanel';
 import styles from './MainPanel.module.css';
-import {IGetRecordData} from '../../_types/records';
+import {ActionTypes} from './NavigatorReducer';
 
 export default function ListPanel({state, dispatch}: IListProps) {
     return !state.execSearch ? (
@@ -149,7 +149,12 @@ function ListLoader({selectedRootQuery, selectedRootFilter, filters, dispatch, l
                         id,
                         label,
                         color,
-                        preview,
+                        preview {
+                            small
+                            medium
+                            pages
+                            big
+                        },
                         library{
                             id,
                             label

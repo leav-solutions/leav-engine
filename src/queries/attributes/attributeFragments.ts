@@ -60,7 +60,12 @@ export const attributeValuesListDetailsFragment = gql`
                         }
                         label
                         color
-                        preview
+                        preview {
+                            small
+                            medium
+                            pages
+                            big
+                        }
                     }
                 }
             }
@@ -79,7 +84,12 @@ export const attributeValuesListDetailsFragment = gql`
                             }
                             label
                             color
-                            preview
+                            preview {
+                                small
+                                medium
+                                pages
+                                big
+                            }
                         }
                     }
                     ancestors {
@@ -92,7 +102,12 @@ export const attributeValuesListDetailsFragment = gql`
                                 }
                                 label
                                 color
-                                preview
+                                preview {
+                                    small
+                                    medium
+                                    pages
+                                    big
+                                }
                             }
                         }
                     }

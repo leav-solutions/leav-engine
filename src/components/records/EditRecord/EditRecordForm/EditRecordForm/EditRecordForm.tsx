@@ -5,7 +5,9 @@ import useLang from '../../../../../hooks/useLang';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {deleteValueQuery} from '../../../../../queries/values/deleteValueMutation';
 import {saveValueQuery} from '../../../../../queries/values/saveValueMutation';
-import {isLinkAttribute, isLinkValue, isTreeValue, versionObjToGraphql} from '../../../../../utils';
+import {isLinkAttribute, versionObjToGraphql} from '../../../../../utils';
+import {isLinkValue, isTreeValue} from '../../../../../utils/utils';
+import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {
     GET_LIBRARIES_libraries_list,
     GET_LIBRARIES_libraries_list_attributes
@@ -121,10 +123,10 @@ const EditRecordForm = ({
         });
     };
 
-    const _getInput = attribute => {
+    const _getInput = (attribute: GET_LIBRARIES_libraries_list_attributes) => {
         const values = recordData[attribute.id];
 
-        if (isLinkAttribute(attribute, false)) {
+        if (isLinkAttribute(attribute as GET_ATTRIBUTES_attributes_list, false)) {
             const _handleLinkChange = (value: ILinkValue | ITreeLinkValue) => {
                 if (
                     (isLinkValue(value) && value.linkValue === null) ||
