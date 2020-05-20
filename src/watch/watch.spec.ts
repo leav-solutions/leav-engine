@@ -29,6 +29,8 @@ describe('test checkEvent', () => {
         }))
     }));
 
+    afterAll(() => jest.resetAllMocks());
+
     test('Init - add a file', async () => {
         (initRedis as jest.FunctionLike) = jest.fn();
         (sendToRabbitMQ as jest.FunctionLike) = jest.fn();

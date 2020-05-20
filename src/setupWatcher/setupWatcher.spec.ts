@@ -7,7 +7,6 @@ jest.mock('redis-typescript');
 
 describe('test init', () => {
     console.info = jest.fn();
-    const path = '/Users/smarzykmathieu/Dev/automate-scan/config/config.integration.test.json';
 
     test('startWatch', async () => {
         // block use of rabbitmq
@@ -23,7 +22,7 @@ describe('test init', () => {
         (existsSync as jest.FunctionLike) = jest.fn(() => true);
         (createClient as jest.FunctionLike) = jest.fn();
 
-        await startWatch(path);
+        await startWatch();
 
         expect(start).toBeCalled();
     });

@@ -1,21 +1,22 @@
-import * as amqp from 'amqplib/callback_api';
 import {Channel} from 'amqplib';
+import * as amqp from 'amqplib/callback_api';
 import * as fs from 'fs';
-import {startWatch} from '../../setupWatcher/setupWatcher';
+import {getConfig, startWatch} from '../../setupWatcher/setupWatcher';
 
 describe('integration test automate-scan', () => {
     console.info = jest.fn();
+    let config;
 
-    const path = '/Users/smarzykmathieu/Dev/automate-scan/config/config.integration.test.json';
-    const queue = 'test';
-    const exchange = 'test';
+    beforeAll(async () => {
+        config = await getConfig();
+    });
 
     test('create a file and check if event send to rabbitmq', async done => {
         // set max timeout in jest test
         jest.setTimeout(10000);
 
-        const pathTmpFile = './folder_to_watch/file_' + Math.random();
-        const watcher = await startWatch(path);
+        const pathTmpFile = config.rootPath + '/file_' + Math.random();
+        const watcher = await startWatch();
 
         // Need the watcher to work
         expect(watcher).toBeDefined();
@@ -25,7 +26,7 @@ describe('integration test automate-scan', () => {
             fs.writeFileSync(pathTmpFile, Math.random());
         });
 
-        await initRabbitMQ(queue, (channel: Channel, msg: string) => {
+        await initRabbitMQ((channel: Channel, msg: string) => {
             watcher.close();
             // Get the message consume
 
@@ -33,7 +34,7 @@ describe('integration test automate-scan', () => {
             fs.unlinkSync(pathTmpFile);
 
             // Test if the message is correct
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('create'));
+            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('CREATE'));
 
             done();
         });
@@ -42,11 +43,11 @@ describe('integration test automate-scan', () => {
     test('update a file and check if event send to rabbitmq', async done => {
         // set max timeout in jest test
         jest.setTimeout(15000);
-        const pathTmpFile = './folder_to_watch/file_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file_' + Math.random();
 
         fs.writeFileSync(pathTmpFile, Math.random());
 
-        const watcher = await startWatch(path);
+        const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
@@ -55,10 +56,10 @@ describe('integration test automate-scan', () => {
             fs.writeFileSync(pathTmpFile, Math.random());
         });
 
-        await initRabbitMQ(queue, (channel: Channel, msg: string) => {
+        await initRabbitMQ((channel: Channel, msg: string) => {
             watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('update'));
+            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('UPDATE'));
             fs.unlinkSync(pathTmpFile);
 
             done();
@@ -68,11 +69,11 @@ describe('integration test automate-scan', () => {
     test('delete a file and check if event send to rabbitmq', async done => {
         // set max timeout in jest test
         jest.setTimeout(15000);
-        const pathTmpFile = './folder_to_watch/file_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file_' + Math.random();
 
         fs.writeFileSync(pathTmpFile, Math.random());
 
-        const watcher = await startWatch(path);
+        const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
@@ -83,10 +84,10 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        await initRabbitMQ(queue, (channel: Channel, msg: string) => {
+        await initRabbitMQ((channel: Channel, msg: string) => {
             watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('delete'));
+            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('REMOVE'));
 
             done();
         });
@@ -96,12 +97,12 @@ describe('integration test automate-scan', () => {
         // set max timeout in jest test
         jest.setTimeout(15000);
 
-        const pathTmpFile = './folder_to_watch/file1_' + Math.random();
-        const newPathTmpFile = './folder_to_watch/file2_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file1_' + Math.random();
+        const newPathTmpFile = config.rootPath + '/file2_' + Math.random();
 
         fs.writeFileSync(pathTmpFile, Math.random());
 
-        const watcher = await startWatch(path);
+        const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
@@ -112,10 +113,10 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        await initRabbitMQ(queue, (channel: Channel, msg: string) => {
+        await initRabbitMQ((channel: Channel, msg: string) => {
             watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('move'));
+            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
             fs.unlinkSync(newPathTmpFile);
 
             done();
@@ -127,12 +128,12 @@ describe('integration test automate-scan', () => {
         jest.setTimeout(15000);
 
         const fileName = 'file_' + Math.random();
-        const pathTmpFile = './folder_to_watch/' + fileName;
-        const newPathTmpFile = './folder_to_watch/1/' + fileName;
+        const pathTmpFile = config.rootPath + '/' + fileName;
+        const newPathTmpFile = config.rootPath + '/1/' + fileName;
 
         fs.writeFileSync(pathTmpFile, Math.random());
 
-        const watcher = await startWatch(path);
+        const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
@@ -143,10 +144,10 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        await initRabbitMQ(queue, (channel: Channel, msg: string) => {
+        await initRabbitMQ((channel: Channel, msg: string) => {
             watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('move'));
+            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
             fs.unlinkSync(newPathTmpFile);
 
             done();
@@ -156,12 +157,12 @@ describe('integration test automate-scan', () => {
     test('move and rename a file and check if event send to rabbitmq', async done => {
         // set max timeout in jest test
         jest.setTimeout(15000);
-        const pathTmpFile = './folder_to_watch/file1_' + Math.random();
-        const newPathTmpFile = './folder_to_watch/1/file2_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file1_' + Math.random();
+        const newPathTmpFile = config.rootPath + '/1/file2_' + Math.random();
 
         fs.writeFileSync(pathTmpFile, Math.random());
 
-        const watcher = await startWatch(path);
+        const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
@@ -172,23 +173,28 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        initRabbitMQ(queue, (channel: Channel, msg: string) => {
+        await initRabbitMQ((channel: Channel, msg: string) => {
             watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('move'));
+            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
 
             fs.unlinkSync(newPathTmpFile);
-
-            channel.deleteQueue(queue);
-            channel.deleteExchange(exchange);
 
             done();
         });
     });
 });
 
-const initRabbitMQ = async (queue: string, callback: (channel: any, msg: string) => void) => {
-    amqp.connect('amqp://localhost', async (error0, connection) => {
+const initRabbitMQ = async (callback: (channel: any, msg: string) => void) => {
+    const config = await getConfig();
+    const amqpConfig = {
+        protocol: config.amqp.protocol,
+        hostname: config.amqp.hostname,
+        username: config.amqp.username,
+        password: config.amqp.password
+    };
+
+    amqp.connect(amqpConfig, async (error0, connection) => {
         if (error0) {
             throw error0;
         }
@@ -199,7 +205,7 @@ const initRabbitMQ = async (queue: string, callback: (channel: any, msg: string)
             }
 
             channel.consume(
-                queue,
+                config.amqp.queue,
                 msg => {
                     const msgText = msg.content.toString();
                     callback(channel, msgText);

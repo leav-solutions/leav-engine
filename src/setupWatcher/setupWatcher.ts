@@ -1,25 +1,22 @@
+import {loadConfig} from '@casolutions/config-manager';
 import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
+import * as rootPath from 'app-root-path';
 import * as Crypto from 'crypto';
 import * as fs from 'fs';
+import {env} from '../env';
 import {createClient} from '../redis/redis';
 import {IConfig} from '../types';
 import {start} from '../watch/watch';
 
-export const getConfig = (configPathArg?: string): IConfig => {
-    const configPath = configPathArg ? configPathArg : './config/config.json';
+export const getConfig = async (): Promise<IConfig> => loadConfig<IConfig>(rootPath.path + '/config', env);
 
-    const rawConfig = fs.readFileSync(configPath);
-    const config: IConfig = JSON.parse(rawConfig.toString());
-    return config;
-};
-
-export const startWatch = async (configPathArg?: string) => {
-    const config = getConfig(configPathArg);
+export const startWatch = async () => {
+    const config = await getConfig();
 
     // Check if rootPath exist
     if (!fs.existsSync(config.rootPath)) {
-        console.error('2 - rootPath folder not found');
+        console.error('2 - rootPath folder not found', config.rootPath);
         process.exit(2);
     }
 
