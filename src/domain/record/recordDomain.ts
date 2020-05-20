@@ -2,13 +2,16 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
+import {join} from 'path';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
+import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IRecord, IRecordFilterOption, IRecordIdentity} from '../../_types/record';
+import {IRecord, IRecordFilterOption, IRecordIdentity, IRecordIdentityConf} from '../../_types/record';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -314,16 +317,7 @@ export default function({
                           })
                       ).pop().value
                     : null,
-                preview: conf.preview
-                    ? (
-                          await valueDomain.getValues({
-                              library: lib.id,
-                              recordId: record.id,
-                              attribute: conf.preview,
-                              ctx
-                          })
-                      ).pop().value
-                    : null
+                preview: (await getPreviews({conf, lib, record, valueDomain, libraryDomain, ctx})) ?? null
             };
         },
         async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[]> {
@@ -361,3 +355,62 @@ export default function({
         }
     };
 }
+
+interface IGetPreview {
+    conf: IRecordIdentityConf;
+    lib: ILibrary;
+    record: IRecord;
+    valueDomain: IValueDomain;
+    libraryDomain: ILibraryDomain;
+    ctx: any;
+}
+
+const getPreviews = async ({conf, lib, record, valueDomain, libraryDomain, ctx}: IGetPreview) => {
+    const previewUrl = getPreviewUrl();
+    const confPreview = lib.behavior === LibraryBehavior.FILES ? 'previews' : conf.preview;
+
+    // can return a preview object or a full record for advance link
+    const valuePreview = (
+        await valueDomain.getValues({
+            library: lib.id,
+            recordId: record.id,
+            attribute: confPreview,
+            ctx
+        })
+    )?.pop();
+
+    const getPreviewFromRecord = async (valueRecord: IRecord) => {
+        let previewAttribute: string;
+
+        if (valueRecord.library) {
+            const valueLib = await libraryDomain.getLibraryProperties(valueRecord.library, ctx);
+            const valueConf = valueLib.recordIdentityConf || {};
+
+            return valueConf.preview;
+        } else {
+            previewAttribute = 'previews';
+        }
+
+        return valueRecord[previewAttribute];
+    };
+
+    const previews = valuePreview?.value.id ? await getPreviewFromRecord(valuePreview?.value) : valuePreview?.value;
+
+    // append preview url
+    return previews
+        ? Object.entries(previews)
+              .map(value => {
+                  const [key, url] = value;
+
+                  if (!url || url.toString() === '') {
+                      // avoid broken image
+                      return {[key]: null};
+                  }
+                  // add host url to preview
+                  const absoluteUrl = join(previewUrl, url.toString());
+
+                  return {[key]: absoluteUrl};
+              })
+              .reduce((obj, o) => ({...obj, ...o}))
+        : null;
+};

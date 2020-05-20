@@ -3,13 +3,14 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IValue} from '_types/value';
+import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('RecordDomain', () => {
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
@@ -160,7 +161,11 @@ describe('RecordDomain', () => {
                     ],
                     [
                         {
-                            value: 'http://fake-image.com/'
+                            value: {
+                                small: 'small_fake-image',
+                                medium: 'medium_fake-image',
+                                big: 'big_fake-image'
+                            }
                         }
                     ]
                 ])
@@ -177,7 +182,11 @@ describe('RecordDomain', () => {
             expect(res.library).toMatchObject(libData);
             expect(res.label).toBe('Label Value');
             expect(res.color).toBe('#123456');
-            expect(res.preview).toBe('http://fake-image.com/');
+            expect(res.preview).toEqual({
+                small: getPreviewUrl() + 'small_fake-image',
+                medium: getPreviewUrl() + 'medium_fake-image',
+                big: getPreviewUrl() + 'big_fake-image'
+            });
         });
 
         test('Return minimum identity if no config', async () => {

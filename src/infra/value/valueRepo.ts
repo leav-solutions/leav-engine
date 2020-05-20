@@ -54,6 +54,7 @@ export interface IValueRepo {
 
     /**
      * Get all values for given record and attribute
+     *
      * @return Array<{}>    Return an empty array if no value found
      */
     getValues({
@@ -74,6 +75,7 @@ export interface IValueRepo {
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value
+     *
      * @return {}   Return null if no value found
      */
     getValueById({

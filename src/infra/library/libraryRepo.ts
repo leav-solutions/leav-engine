@@ -17,6 +17,7 @@ export interface ILibraryRepo {
      * Return libraries
      *
      * filters                   Filters libraries returned
+     *
      * @return Promise<Array<object>>   All libraries data
      */
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -32,6 +33,7 @@ export interface ILibraryRepo {
      * Update existing library
      *
      * libData   Must contain "id" key to identify library to update
+     *
      * @return object   Updated library data
      */
     updateLibrary({libData, ctx}: {libData: ILibrary; ctx: IQueryInfos}): Promise<ILibrary>;
@@ -47,6 +49,7 @@ export interface ILibraryRepo {
      * Link attributes to library
      *
      * attributes Array of attributes IDs
+     *
      * @return array     List of linked attributes
      */
     saveLibraryAttributes({

@@ -52,6 +52,7 @@ describe('dbService', () => {
                 })
             };
 
+            /* eslint-disable no-throw-literal */
             mockDb.query = jest
                 .fn()
                 .mockImplementationOnce(q => {

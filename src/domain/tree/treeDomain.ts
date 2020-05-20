@@ -87,6 +87,7 @@ export interface ITreeDomain {
         ctx: IQueryInfos;
     }): Promise<ITreeElement>;
 
+    /* eslint-disable jsdoc/check-indentation */
     /**
      * Return the whole tree in the form:
      * [

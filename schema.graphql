@@ -836,7 +836,13 @@
                         library: Library!,
                         label: String,
                         color: String,
-                        preview: String
+                        preview: Preview
+                    }
+
+                    type Preview {
+                        small: String,
+                        medium: String,
+                        big: String,
                     }
 
                     type RecordIdentityConf {

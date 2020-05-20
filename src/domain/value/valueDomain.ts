@@ -162,7 +162,7 @@ export default function({
                     attr.versions_conf.trees.map(
                         async (treeName: string): Promise<IFindValueTree> => {
                             const treeElem =
-                                options.version && options.version[treeName]
+                                options?.version && options.version[treeName]
                                     ? options.version[treeName]
                                     : await treeRepo.getDefaultElement({id: treeName, ctx});
 
