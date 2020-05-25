@@ -1,18 +1,20 @@
 import {useQuery} from '@apollo/react-hooks';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {Card, Divider, Header} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import {ILibrary} from '../../_types/types';
 import LibraryCard from './LibraryCard';
 import LibraryDetail from './LibraryDetail';
 
-interface ILibSelected {
-    id: string;
-    query: string;
-}
+const LibrariesListWrapper = styled.div`
+    padding: 0.3rem;
+`;
 
 function LibrariesList(): JSX.Element {
+    const {t} = useTranslation();
     const [libraries, setLibraries] = useState([]);
 
     const {libId, libQueryName} = useParams();
@@ -30,8 +32,8 @@ function LibrariesList(): JSX.Element {
     }
 
     return (
-        <div style={{padding: '0.3rem'}}>
-            <Header as="h2">Libraries List</Header>
+        <LibrariesListWrapper>
+            <Header as="h2">{t('lib_list.header')}</Header>
             <Card.Group itemsPerRow={4}>
                 {libraries.map((lib: ILibrary) => (
                     <LibraryCard key={lib.id} lib={lib} />
@@ -44,7 +46,7 @@ function LibrariesList(): JSX.Element {
                     <LibraryDetail libId={libId} libQueryName={libQueryName} />
                 </>
             )}
-        </div>
+        </LibrariesListWrapper>
     );
 }
 

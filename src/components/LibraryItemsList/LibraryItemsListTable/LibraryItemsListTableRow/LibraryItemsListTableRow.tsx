@@ -3,11 +3,11 @@ import {Button, Checkbox, Table} from 'semantic-ui-react';
 import {getPreviewUrl} from '../../../../utils';
 import {IItem} from '../../../../_types/types';
 import LibraryItemsModal from './LibraryItemsModal';
+import RecordPreview from './RecordPreview';
 
 interface ILibraryItemsListTableRowProps {
     item: IItem;
 }
-
 function LibraryItemsListTableRow({item}: ILibraryItemsListTableRowProps): JSX.Element {
     const [isHover, setIsHover] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -17,11 +17,10 @@ function LibraryItemsListTableRow({item}: ILibraryItemsListTableRowProps): JSX.E
         <>
             <Table.Row key={item.id} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
                 <Table.Cell>
-                    {values.preview?.small ? (
-                        <img src={getPreviewUrl(values.preview?.small)} alt="preview" />
-                    ) : (
-                        <span>No Image</span>
-                    )}
+                    <RecordPreview
+                        label={values.label || values.id}
+                        image={values.preview?.small ? getPreviewUrl(values.preview.small) : ''}
+                    />
                 </Table.Cell>
                 <Table.Cell>
                     <Checkbox />
@@ -41,8 +40,6 @@ function LibraryItemsListTableRow({item}: ILibraryItemsListTableRowProps): JSX.E
                     </span>
                 </Table.Cell>
                 <Table.Cell>{values.label}</Table.Cell>
-                <Table.Cell>{''}</Table.Cell>
-                <Table.Cell>{''}</Table.Cell>
                 <Table.Cell>{''}</Table.Cell>
                 <Table.Cell>{''}</Table.Cell>
                 <Table.Cell>{''}</Table.Cell>

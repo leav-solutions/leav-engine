@@ -9,12 +9,12 @@ interface ILibraryCardProps {
 }
 
 interface IActionsWrapperProps {
-    display: boolean;
+    showActions?: boolean;
     style?: CSSObject;
 }
 
 const ActionsWrapper = styled.div<IActionsWrapperProps>`
-    opacity: ${({display}) => (display ? 1 : 0)};
+    opacity: ${({showActions}) => (showActions ? 1 : 0)};
 `;
 
 function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
@@ -40,7 +40,7 @@ function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
                 <Card.Meta>{lib.id}</Card.Meta>
 
                 <Card.Description>
-                    <ActionsWrapper display={showActions}>
+                    <ActionsWrapper showActions={showActions}>
                         <Button.Group fluid>
                             <Button icon="share" />
                             <Button icon="external share" onClick={goDetail} />

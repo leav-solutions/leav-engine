@@ -1,6 +1,7 @@
 import {useQuery} from '@apollo/react-hooks';
 import React, {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import {NavLink} from 'react-router-dom';
 import {Button, Divider, Grid, Header, Segment} from 'semantic-ui-react';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import {ILabel} from '../../../_types/types';
@@ -26,6 +27,7 @@ interface IDetails {
 const lang = 'en';
 
 function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element {
+    const {t} = useTranslation();
     const [details, setDetails] = useState<IDetails>();
 
     const {loading, data, error} = useQuery(getLibraryDetailQuery(libQueryName), {
@@ -46,37 +48,35 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
         return <div>error</div>;
     }
 
-    if (!loading) {
-        return (
-            <Segment>
-                <Header as="h3">{details?.label[lang] ?? 'Id: ' + details?.id}</Header>
+    return (
+        <Segment>
+            <Header as="h3">{details?.label[lang] ?? `${t('lib_detail.id')}: ${details?.id}`}</Header>
 
-                <Divider />
+            <Divider />
 
-                <Grid columns={3} divided>
-                    <Grid.Column>
-                        <Header as="h4">Library Information</Header>
-                        <Segment>{details?.totalCount ?? '0'} elements</Segment>
-                        <Button icon="plus" content="New" />
-                    </Grid.Column>
+            <Grid columns={3} divided>
+                <Grid.Column>
+                    <Header as="h4">{t('lib_detail.lib_info')}</Header>
+                    <Segment>
+                        {details?.totalCount ?? '0'} {t('lib_detail.elements')}
+                    </Segment>
+                    <Button icon="plus" content={t('lib_detail.new')} />
+                </Grid.Column>
 
-                    <Grid.Column>
-                        <Header as="h4">Your search saves</Header>
-                        <Segment>
-                            <Link to={`/library/items/${libQueryName}`}>Search all</Link>
-                        </Segment>
-                        <Button icon="plus" content="Add Filter" />
-                    </Grid.Column>
+                <Grid.Column>
+                    <Header as="h4">{t('lib_detail.search_saves')}</Header>
+                    <Segment>
+                        <NavLink to={`/library/items/${libQueryName}`}>{t('lib_detail.search_all')}</NavLink>
+                    </Segment>
+                    <Button icon="plus" content={t('lib_detail.add_filter')} />
+                </Grid.Column>
 
-                    <Grid.Column>
-                        <Header as="h4">Last views</Header>
-                    </Grid.Column>
-                </Grid>
-            </Segment>
-        );
-    } else {
-        return <div>loading</div>;
-    }
+                <Grid.Column>
+                    <Header as="h4">{t('lib_detail.last_views')}</Header>
+                </Grid.Column>
+            </Grid>
+        </Segment>
+    );
 }
 
 export default LibraryDetail;

@@ -14,15 +14,22 @@ function LibraryItemsListPagination({
     offset,
     setOffset
 }: ILibraryItemsListPaginationProps): JSX.Element {
+    const first = () => setOffset(0);
     const previous = () => setOffset(offset => (offset >= pagination ? offset - pagination : 0));
 
     const next = () =>
         setOffset(offset => (totalCount && offset + pagination < totalCount ? offset + pagination : offset));
 
+    const last = () => setOffset(pagination * Math.floor(totalCount / pagination));
+
     return (
         <>
+            <Menu.Item as="a" icon onClick={first}>
+                <Icon name="angle double left" />
+            </Menu.Item>
+
             <Menu.Item as="a" icon onClick={previous}>
-                <Icon name="chevron left" />
+                <Icon name="angle left" />
             </Menu.Item>
 
             {totalCount
@@ -59,7 +66,10 @@ function LibraryItemsListPagination({
                 : ''}
 
             <Menu.Item as="a" icon onClick={next}>
-                <Icon name="chevron right" />
+                <Icon name="angle right" />
+            </Menu.Item>
+            <Menu.Item as="a" icon onClick={last}>
+                <Icon name="angle double right" />
             </Menu.Item>
         </>
     );

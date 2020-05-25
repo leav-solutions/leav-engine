@@ -1,0 +1,75 @@
+{
+    "login": {
+        "header": "Authentification",
+        "email": "Adresse e-mail",
+        "password": "Mot de passe",
+        "submit": "Envoyer",
+        "apologize_header": "Nous sommes désolés,",
+        "apologize": "nous ne pouvons vous authentifier :",
+        "loading": {
+            "header": "Juste un instant,",
+            "text": "Nous sommes en train de vous authentifier..."
+        },
+        "error": {
+            "bad_credentials": "Paramètres d'authentification incorrects.",
+            "no_server_response": "Le serveur ne répond pas.",
+            "session_expired": "Votre session a expiré."
+        }
+    },
+    "home": {
+        "title": "Accueil"
+    },
+    "menu": {
+        "app_name": "Explorer",
+        "shortcuts": "Raccourcis",
+        "events": "Évènements",
+        "user_menu": {
+            "profil": "Profile",
+            "tasks": "Tâches",
+            "shortcuts": "Raccourcis",
+            "events": "Évènements",
+            "admin": "Admin",
+            "leav_engine": "LEAV-Engine 4.1",
+            "logout": "Déconnexion"
+        }
+    },
+    "sidebar": {
+        "close": "Fermer",
+        "home": "Accueil",
+        "lib_list": "Bibliothèques",
+        "setting": "Paramètre"
+    },
+    "lib_list": {
+        "header": "Bibliothèques"
+    },
+    "lib_detail": {
+        "id": "Identifiant",
+        "lib_info": "Informations",
+        "elements": "éléments",
+        "search_saves": "Vos recherches sauvegardés",
+        "search_all": "Tout",
+        "add_filter": "Ajouter un Filtre",
+        "last_views": "Derniers vues",
+        "new": "Nouveau"
+    },
+    "loading": "Chargement",
+    "items_list": {
+        "all_sheets": "Toutes les vues",
+        "filters": "Filtres",
+        "sorts": "Trier",
+        "groups": "Groupes",
+        "columns": "Colonnes",
+        "new": "Nouveau",
+        "header_table": "Éléments de {{libName}}",
+        "table": {
+            "preview": "Vignette",
+            "selected": "Sélectionner",
+            "id": "Identifiant",
+            "label": "Libellé",
+            "ad_label": "Libellé Pub",
+            "ean": "EAN",
+            "category": "Catégorie",
+            "op_code": "Code Opération"
+        }
+    }
+}

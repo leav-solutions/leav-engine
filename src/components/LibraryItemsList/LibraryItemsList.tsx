@@ -1,5 +1,6 @@
 import {useLazyQuery} from '@apollo/react-hooks';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {useHistory, useParams} from 'react-router-dom';
 import {Button, Header, Icon, Menu, Search} from 'semantic-ui-react';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
@@ -8,6 +9,7 @@ import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
 import LibraryItemsListTable from './LibraryItemsListTable';
 
 function LibraryItemsList(): JSX.Element {
+    const {t} = useTranslation();
     const {libQueryName} = useParams();
     const history = useHistory();
 
@@ -38,7 +40,7 @@ function LibraryItemsList(): JSX.Element {
     }, [offset, pagination, getRecord]);
 
     if (error) {
-        return <div>ERROR</div>;
+        return <div>error</div>;
     }
 
     return (
@@ -49,7 +51,7 @@ function LibraryItemsList(): JSX.Element {
                 </Menu.Item>
 
                 <Menu.Item>
-                    <Button icon="sidebar" content="All sheets" />
+                    <Button icon="sidebar" content={t('items_list.all_sheets')} />
                 </Menu.Item>
 
                 <Menu.Item>
@@ -69,16 +71,16 @@ function LibraryItemsList(): JSX.Element {
 
                 <Menu.Item>
                     <Button.Group>
-                        <Button>Filters</Button>
-                        <Button>Sorts</Button>
-                        <Button>Groups</Button>
-                        <Button>Columns</Button>
+                        <Button>{t('items_list.filters')}</Button>
+                        <Button>{t('items_list.sorts')}</Button>
+                        <Button>{t('items_list.groups')}</Button>
+                        <Button>{t('items_list.columns')}</Button>
                     </Button.Group>
                 </Menu.Item>
 
                 <Menu.Menu position="right">
                     <Menu.Item>
-                        <Button icon="plus" content="New" />
+                        <Button icon="plus" content={t('items_list.new')} />
                     </Menu.Item>
 
                     <Menu.Item>
@@ -86,7 +88,7 @@ function LibraryItemsList(): JSX.Element {
                     </Menu.Item>
                 </Menu.Menu>
             </Menu>
-            <Header>Items from {libQueryName}</Header>
+            <Header>{t('items_list.header_table', {libName: libQueryName})}</Header>
             <LibraryItemsListTable
                 items={items}
                 setItems={setItems}

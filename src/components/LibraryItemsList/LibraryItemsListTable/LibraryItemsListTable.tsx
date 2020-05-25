@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Dimmer, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import {IItem} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
@@ -22,20 +23,22 @@ function LibraryItemsListTable({
     offset,
     setOffset
 }: ILibraryItemsListTableProps): JSX.Element {
+    const {t: translate} = useTranslation();
+
+    const t = (trad: string, options = {}) => translate(`items_list.table.${trad}`, options);
+
     const [column, setColumn] = useState<string>();
     const [direction, setDirection] = useState<'ascending' | 'descending'>();
 
     const tableCells = [
-        {name: 'preview', display: 'Preview'},
-        {name: 'selected', display: 'Selected'},
-        {name: 'id', display: 'Id'},
-        {name: 'label', display: 'Label'},
-        {name: 'adLabel', display: 'Ad Label'},
-        {name: 'name', display: 'Designation'},
-        {name: 'ean', display: 'EAN'},
-        {name: 'category', display: 'Category'},
-        {name: 'opLabel', display: 'Operation Label'},
-        {name: 'opCode', display: 'Operation Code'}
+        {name: 'preview', display: t('preview')},
+        {name: 'selected', display: t('selected')},
+        {name: 'id', display: t('id')},
+        {name: 'label', display: t('label')},
+        {name: 'adLabel', display: t('ad_label')},
+        {name: 'ean', display: t('ean')},
+        {name: 'category', display: t('category')},
+        {name: 'opCode', display: t('op_code')}
     ];
 
     if (!items) {

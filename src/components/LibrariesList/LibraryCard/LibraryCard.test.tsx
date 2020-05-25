@@ -1,5 +1,6 @@
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
+import {Button} from 'semantic-ui-react';
 import {ILibrary} from '../../../_types/types';
 import LibraryCard from './LibraryCard';
 
@@ -8,12 +9,12 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('LibraryCard', () => {
-    test('Snapshot test', async () => {
+    test('Card should have actions', async () => {
         const lib = {
             label: {}
         };
-        const comp = render(<LibraryCard lib={lib as ILibrary} changeLibSelected={jest.fn} />);
+        const comp = mount(<LibraryCard lib={lib as ILibrary} />);
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find(Button.Group)).toHaveLength(1);
     });
 });

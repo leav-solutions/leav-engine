@@ -10,7 +10,7 @@ initialize {
       Object {
         "attribs": Object {
           "aria-hidden": "true",
-          "class": "chevron left icon",
+          "class": "angle double left icon",
         },
         "children": Array [],
         "name": "i",
@@ -39,7 +39,7 @@ initialize {
         Object {
           "attribs": Object {
             "aria-hidden": "true",
-            "class": "chevron right icon",
+            "class": "angle left icon",
           },
           "children": Array [],
           "name": "i",
@@ -60,7 +60,159 @@ initialize {
       ],
       "name": "a",
       "namespace": "http://www.w3.org/1999/xhtml",
-      "next": null,
+      "next": Object {
+        "attribs": Object {
+          "class": "icon item",
+        },
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "aria-hidden": "true",
+              "class": "angle right icon",
+            },
+            "children": Array [],
+            "name": "i",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "a",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle double right icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": null,
+          "prev": [Circular],
+          "root": Object {
+            "attribs": Object {},
+            "children": Array [
+              [Circular],
+              [Circular],
+              [Circular],
+              [Circular],
+            ],
+            "name": "root",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": null,
+            "type": "root",
+            "x-attribsNamespace": Object {},
+            "x-attribsPrefix": Object {},
+          },
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        "parent": null,
+        "prev": [Circular],
+        "root": Object {
+          "attribs": Object {},
+          "children": Array [
+            [Circular],
+            [Circular],
+            [Circular],
+            Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "root",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+          "x-attribsNamespace": Object {},
+          "x-attribsPrefix": Object {},
+        },
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "class": undefined,
+        },
+      },
       "parent": null,
       "prev": [Circular],
       "root": Object {
@@ -68,6 +220,168 @@ initialize {
         "children": Array [
           [Circular],
           [Circular],
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
         ],
         "name": "root",
         "namespace": "http://www.w3.org/1999/xhtml",
@@ -100,7 +414,1739 @@ initialize {
             Object {
               "attribs": Object {
                 "aria-hidden": "true",
-                "class": "chevron right icon",
+                "class": "angle left icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "parent": null,
+          "prev": [Circular],
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle right icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "parent": null,
+          "prev": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle double right icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": null,
+          "prev": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "root",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+      "x-attribsNamespace": Object {},
+      "x-attribsPrefix": Object {},
+    },
+    "type": "tag",
+    "x-attribsNamespace": Object {
+      "class": undefined,
+    },
+    "x-attribsPrefix": Object {
+      "class": undefined,
+    },
+  },
+  "1": Object {
+    "attribs": Object {
+      "class": "icon item",
+    },
+    "children": Array [
+      Object {
+        "attribs": Object {
+          "aria-hidden": "true",
+          "class": "angle left icon",
+        },
+        "children": Array [],
+        "name": "i",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+      },
+    ],
+    "name": "a",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": Object {
+      "attribs": Object {
+        "class": "icon item",
+      },
+      "children": Array [
+        Object {
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "angle right icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "a",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": Object {
+        "attribs": Object {
+          "class": "icon item",
+        },
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "aria-hidden": "true",
+              "class": "angle double right icon",
+            },
+            "children": Array [],
+            "name": "i",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "a",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": null,
+        "prev": [Circular],
+        "root": Object {
+          "attribs": Object {},
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": null,
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            [Circular],
+            [Circular],
+            [Circular],
+          ],
+          "name": "root",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+          "x-attribsNamespace": Object {},
+          "x-attribsPrefix": Object {},
+        },
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "class": undefined,
+        },
+      },
+      "parent": null,
+      "prev": [Circular],
+      "root": Object {
+        "attribs": Object {},
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": null,
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          [Circular],
+          [Circular],
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "root",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+        "x-attribsNamespace": Object {},
+        "x-attribsPrefix": Object {},
+      },
+      "type": "tag",
+      "x-attribsNamespace": Object {
+        "class": undefined,
+      },
+      "x-attribsPrefix": Object {
+        "class": undefined,
+      },
+    },
+    "parent": null,
+    "prev": Object {
+      "attribs": Object {
+        "class": "icon item",
+      },
+      "children": Array [
+        Object {
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "angle double left icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "a",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": null,
+      "prev": null,
+      "root": Object {
+        "attribs": Object {},
+        "children": Array [
+          [Circular],
+          [Circular],
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "root",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+        "x-attribsNamespace": Object {},
+        "x-attribsPrefix": Object {},
+      },
+      "type": "tag",
+      "x-attribsNamespace": Object {
+        "class": undefined,
+      },
+      "x-attribsPrefix": Object {
+        "class": undefined,
+      },
+    },
+    "root": Object {
+      "attribs": Object {},
+      "children": Array [
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle double left icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": null,
+          "prev": null,
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        [Circular],
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle right icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "parent": null,
+          "prev": [Circular],
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle double right icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": null,
+          "prev": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "root",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+      "x-attribsNamespace": Object {},
+      "x-attribsPrefix": Object {},
+    },
+    "type": "tag",
+    "x-attribsNamespace": Object {
+      "class": undefined,
+    },
+    "x-attribsPrefix": Object {
+      "class": undefined,
+    },
+  },
+  "2": Object {
+    "attribs": Object {
+      "class": "icon item",
+    },
+    "children": Array [
+      Object {
+        "attribs": Object {
+          "aria-hidden": "true",
+          "class": "angle right icon",
+        },
+        "children": Array [],
+        "name": "i",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+      },
+    ],
+    "name": "a",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": Object {
+      "attribs": Object {
+        "class": "icon item",
+      },
+      "children": Array [
+        Object {
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "angle double right icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "a",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": null,
+      "parent": null,
+      "prev": [Circular],
+      "root": Object {
+        "attribs": Object {},
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": null,
+            "prev": null,
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": null,
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          [Circular],
+          [Circular],
+        ],
+        "name": "root",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+        "x-attribsNamespace": Object {},
+        "x-attribsPrefix": Object {},
+      },
+      "type": "tag",
+      "x-attribsNamespace": Object {
+        "class": undefined,
+      },
+      "x-attribsPrefix": Object {
+        "class": undefined,
+      },
+    },
+    "parent": null,
+    "prev": Object {
+      "attribs": Object {
+        "class": "icon item",
+      },
+      "children": Array [
+        Object {
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "angle left icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "a",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": null,
+      "prev": Object {
+        "attribs": Object {
+          "class": "icon item",
+        },
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "aria-hidden": "true",
+              "class": "angle double left icon",
+            },
+            "children": Array [],
+            "name": "i",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "a",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": [Circular],
+        "parent": null,
+        "prev": null,
+        "root": Object {
+          "attribs": Object {},
+          "children": Array [
+            [Circular],
+            [Circular],
+            [Circular],
+            Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "root",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+          "x-attribsNamespace": Object {},
+          "x-attribsPrefix": Object {},
+        },
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "class": undefined,
+        },
+      },
+      "root": Object {
+        "attribs": Object {},
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": null,
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          [Circular],
+          [Circular],
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "root",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+        "x-attribsNamespace": Object {},
+        "x-attribsPrefix": Object {},
+      },
+      "type": "tag",
+      "x-attribsNamespace": Object {
+        "class": undefined,
+      },
+      "x-attribsPrefix": Object {
+        "class": undefined,
+      },
+    },
+    "root": Object {
+      "attribs": Object {},
+      "children": Array [
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle double left icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "parent": null,
+          "prev": null,
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle left icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": null,
+          "prev": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": null,
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        [Circular],
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle double right icon",
               },
               "children": Array [],
               "name": "i",
@@ -151,7 +2197,7 @@ initialize {
       "class": undefined,
     },
   },
-  "1": Object {
+  "3": Object {
     "attribs": Object {
       "class": "icon item",
     },
@@ -159,7 +2205,7 @@ initialize {
       Object {
         "attribs": Object {
           "aria-hidden": "true",
-          "class": "chevron right icon",
+          "class": "angle double right icon",
         },
         "children": Array [],
         "name": "i",
@@ -190,7 +2236,7 @@ initialize {
         Object {
           "attribs": Object {
             "aria-hidden": "true",
-            "class": "chevron left icon",
+            "class": "angle right icon",
           },
           "children": Array [],
           "name": "i",
@@ -213,10 +2259,324 @@ initialize {
       "namespace": "http://www.w3.org/1999/xhtml",
       "next": [Circular],
       "parent": null,
-      "prev": null,
+      "prev": Object {
+        "attribs": Object {
+          "class": "icon item",
+        },
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "aria-hidden": "true",
+              "class": "angle left icon",
+            },
+            "children": Array [],
+            "name": "i",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "a",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": [Circular],
+        "parent": null,
+        "prev": Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle double left icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": null,
+          "prev": null,
+          "root": Object {
+            "attribs": Object {},
+            "children": Array [
+              [Circular],
+              [Circular],
+              [Circular],
+              [Circular],
+            ],
+            "name": "root",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": null,
+            "prev": null,
+            "type": "root",
+            "x-attribsNamespace": Object {},
+            "x-attribsPrefix": Object {},
+          },
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        "root": Object {
+          "attribs": Object {},
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": null,
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            [Circular],
+            [Circular],
+            [Circular],
+          ],
+          "name": "root",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+          "x-attribsNamespace": Object {},
+          "x-attribsPrefix": Object {},
+        },
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "class": undefined,
+        },
+      },
       "root": Object {
         "attribs": Object {},
         "children": Array [
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": null,
+            "prev": null,
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": null,
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
           [Circular],
           [Circular],
         ],
@@ -248,7 +2608,249 @@ initialize {
             Object {
               "attribs": Object {
                 "aria-hidden": "true",
-                "class": "chevron left icon",
+                "class": "angle double left icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle right icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": [Circular],
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "parent": null,
+          "prev": null,
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle left icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "a",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle right icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": [Circular],
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "parent": null,
+          "prev": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle double left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": null,
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "root": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
+        Object {
+          "attribs": Object {
+            "class": "icon item",
+          },
+          "children": Array [
+            Object {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "angle right icon",
               },
               "children": Array [],
               "name": "i",
@@ -271,7 +2873,87 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": [Circular],
           "parent": null,
-          "prev": null,
+          "prev": Object {
+            "attribs": Object {
+              "class": "icon item",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "angle left icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": null,
+            "prev": Object {
+              "attribs": Object {
+                "class": "icon item",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "angle double left icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": null,
+              "prev": null,
+              "root": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "root": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
           "root": [Circular],
           "type": "tag",
           "x-attribsNamespace": Object {
@@ -301,7 +2983,7 @@ initialize {
     },
   },
   "_root": [Circular],
-  "length": 2,
+  "length": 4,
   "options": Object {
     "decodeEntities": true,
     "normalizeWhitespace": false,

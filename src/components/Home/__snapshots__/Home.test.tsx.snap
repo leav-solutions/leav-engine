@@ -11,7 +11,7 @@ initialize {
         },
         "children": Array [
           Object {
-            "data": "Home",
+            "data": "home.title",
             "next": null,
             "parent": [Circular],
             "prev": null,

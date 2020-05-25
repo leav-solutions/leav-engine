@@ -1,4 +1,5 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Icon, Menu, Sidebar} from 'semantic-ui-react';
 
@@ -8,6 +9,8 @@ interface ISideBarMenuProps {
 }
 
 function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
+    const {t} = useTranslation();
+
     const checkActive = (match: any, location: any) => {
         //some additional logic to verify you are in the home URI
         if (!location) return false;
@@ -29,27 +32,27 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
         >
             <Menu.Item as="div" onClick={hide}>
                 <Icon name="close" />
-                Close Sidebar
+                {t('sidebar.close')}
             </Menu.Item>
 
             <NavLink to="/" onClick={hide} strict activeClassName="nav-link-active" isActive={checkActive}>
                 <Menu.Item as="span">
                     <Icon name="home" />
-                    Home
+                    {t('sidebar.home')}
                 </Menu.Item>
             </NavLink>
 
             <NavLink to="/library/list/" onClick={hide} activeClassName="nav-link-active">
                 <Menu.Item as="span">
                     <Icon name="list ul" />
-                    Library List
+                    {t('sidebar.lib_list')}
                 </Menu.Item>
             </NavLink>
 
             <NavLink to="/setting" onClick={hide} activeClassName="nav-link-active">
                 <Menu.Item as="span">
                     <Icon name="setting" />
-                    Setting
+                    {t('sidebar.setting')}
                 </Menu.Item>
             </NavLink>
         </Sidebar>

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const prog = require('commander');
+const {program: prog} = require('commander');
 
 const _getFuncCompContent = name =>
     `import React from 'react';
@@ -46,12 +46,15 @@ prog.version('0.1.0')
     .usage('[options] <compName>')
     .option('-P, --parent <parent>', 'Parent folder (where the components will be created)')
     .option('-t, --type [type]', 'Component type (functional or class)', /^(func|class)$/i)
-    .action(name => {
-        if (!prog.parent) {
+    .action((command, args) => {
+        const name = args[0];
+        const parent = args[1];
+
+        if (!parent) {
             console.log('Missing --parent argument');
         }
 
-        const destDir = __dirname + '/../src/components/' + prog.parent + '/';
+        const destDir = __dirname + '/../src/components/' + parent + '/';
 
         const compFolder = destDir + name;
 

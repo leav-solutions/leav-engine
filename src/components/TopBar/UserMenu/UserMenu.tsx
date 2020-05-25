@@ -1,7 +1,9 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {Dropdown, Menu} from 'semantic-ui-react';
 
 function UserMenu(): JSX.Element {
+    const {t} = useTranslation();
     const userName = 'Name User';
     const iconContent = userName.split(' ').map(word => word[0]);
 
@@ -30,15 +32,15 @@ function UserMenu(): JSX.Element {
             <div style={nameIconStyle}>{iconContent}</div>
             <Dropdown item as={Menu.Item} text={userName}>
                 <Dropdown.Menu>
-                    <Dropdown.Item>Profil</Dropdown.Item>
-                    <Dropdown.Item>Tacks</Dropdown.Item>
-                    <Dropdown.Item>Shortcuts</Dropdown.Item>
-                    <Dropdown.Item>Events</Dropdown.Item>
-                    <Dropdown.Item>Admin</Dropdown.Item>
+                    <Dropdown.Item text={t('menu.user_menu.profil')} />
+                    <Dropdown.Item text={t('menu.user_menu.tasks')} />
+                    <Dropdown.Item text={t('menu.user_menu.shortcuts')} />
+                    <Dropdown.Item text={t('menu.user_menu.events')} />
+                    <Dropdown.Item text={t('menu.user_menu.admin')} />
                     <Dropdown.Divider />
-                    <Dropdown.Header>LEAV-Engine 4.1</Dropdown.Header>
+                    <Dropdown.Header>{t('menu.user_menu.leav_engine')} </Dropdown.Header>
                     <Dropdown.Divider />
-                    <Dropdown.Item icon="log out" text="Logout" />
+                    <Dropdown.Item icon="log out" text={t('menu.user_menu.logout')} />
                 </Dropdown.Menu>
             </Dropdown>
         </div>

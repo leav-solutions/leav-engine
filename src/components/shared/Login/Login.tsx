@@ -1,4 +1,5 @@
 import React, {useCallback, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
 import styles from './login.module.css';
 
@@ -55,6 +56,7 @@ const processLogin = (
 };
 
 const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
+    const {t} = useTranslation();
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +76,7 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
             <div className={styles.loginBackground} />
             <div className={`ui middle aligned center aligned grid ${styles.loginContainer}`}>
                 <div className={`column ${styles.loginBlock}`}>
-                    <h2 className={`${styles.loginHeader} ui image header`}>Authentification</h2>
+                    <h2 className={`${styles.loginHeader} ui image header`}>{t('login.header')}</h2>
                     <form className="ui large form">
                         <div className="ui segment">
                             <div className="field">
@@ -83,7 +85,7 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
                                     <input
                                         type="text"
                                         name="email"
-                                        placeholder="Email address"
+                                        placeholder={t('login.email')}
                                         autoFocus
                                         value={login}
                                         onChange={extractValueFromEventAndThen(setLogin)}
@@ -96,7 +98,7 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
                                     <input
                                         type="password"
                                         name="password"
-                                        placeholder="password"
+                                        placeholder={t('login.password')}
                                         value={password}
                                         onChange={extractValueFromEventAndThen(setPassword)}
                                     />
@@ -106,8 +108,8 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
                                 <div className="ui icon message teal">
                                     <i className="notched circle loading icon" />
                                     <div className="content">
-                                        <div className="header">Just a second,</div>
-                                        <p>we are authenticating you...</p>
+                                        <div className="header">{t('login.loading.header')}</div>
+                                        <p>{t('login.loading.text')}</p>
                                     </div>
                                 </div>
                             ) : (
@@ -123,7 +125,7 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
                                     labelPosition="left"
                                 >
                                     <i className="send icon" />
-                                    Submit
+                                    {t('login.submit')}
                                 </Button>
                             )}
                         </div>
@@ -132,9 +134,9 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
                         <div className="ui icon message red">
                             <i className="lock icon" />
                             <div className="content">
-                                <div className="header">We are sorry,</div>
-                                <p>we were not able to authenticate you :</p>
-                                <p>{loginError}</p>
+                                <div className="header">{t('login.apologize_header')}</div>
+                                <p>{t('login.apologize')}</p>
+                                <p>{t('login.error.' + loginError)}</p>
                             </div>
                         </div>
                     ) : null}
@@ -142,8 +144,8 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
                         <div className="ui icon message orange">
                             <i className="lock icon" />
                             <div className="content">
-                                <p>we were not able to authenticate you :</p>
-                                <p>{message}</p>
+                                <p>{t('login.apologize')}</p>
+                                <p>{t(message)}</p>
                             </div>
                         </div>
                     ) : null}

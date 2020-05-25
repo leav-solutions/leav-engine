@@ -1,0 +1,75 @@
+{
+    "login": {
+        "header": "Authentification",
+        "email": "Email address",
+        "password": "Password",
+        "submit": "Submit",
+        "apologize_header": "We are sorry,",
+        "apologize": "we were not able to authenticate you :",
+        "loading": {
+            "header": "Just a second,",
+            "text": "we are authenticating you..."
+        },
+        "error": {
+            "bad_credentials": "Invalid credentials.",
+            "no_server_response": "The server does not respond.",
+            "session_expired": "Your session has expired."
+        }
+    },
+    "menu": {
+        "app_name": "Explorer",
+        "shortcuts": "Shortcuts",
+        "events": "Events",
+        "user_menu": {
+            "profil": "Profil",
+            "tasks": "Tasks",
+            "shortcuts": "Shortcuts",
+            "events": "Events",
+            "admin": "Admin",
+            "leav_engine": "LEAV-Engine 4.1",
+            "logout": "Logout"
+        }
+    },
+    "sidebar": {
+        "close": "Close Sidebar",
+        "home": "Home",
+        "lib_list": "Libraries",
+        "setting": "Setting"
+    },
+    "home": {
+        "title": "Home"
+    },
+    "lib_list": {
+        "header": "Libraries List"
+    },
+    "lib_detail": {
+        "id": "Id",
+        "lib_info": "Library Information",
+        "elements": "elements",
+        "search_saves": "Your search saves",
+        "search_all": "Search All",
+        "add_filter": "Add Filter",
+        "last_views": "Last Views",
+        "new": "New"
+    },
+    "loading": "Loading",
+    "items_list": {
+        "all_sheets": "All sheets",
+        "filters": "Filters",
+        "sorts": "Sorts",
+        "groups": "Groups",
+        "columns": "Columns",
+        "new": "New",
+        "header_table": "Items from {{libName}}",
+        "table": {
+            "preview": "Preview",
+            "selected": "Selected",
+            "id": "Id",
+            "label": "Label",
+            "ad_label": "Ad Label",
+            "ean": "EAN",
+            "category": "Category",
+            "op_code": "Operation Code"
+        }
+    }
+}
