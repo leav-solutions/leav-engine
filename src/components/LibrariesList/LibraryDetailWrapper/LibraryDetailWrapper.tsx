@@ -12,10 +12,10 @@ function LibraryDetailWrapper(): JSX.Element {
     };
 
     return (
-        <>
+        <div className="wrapper-page">
             <Button icon="arrow left" onClick={goBack} />
             <LibraryDetail libId={libId ?? ''} libQueryName={libQueryName ?? ''} />
-        </>
+        </div>
     );
 }
 

@@ -59,17 +59,33 @@
         "sorts": "Sorts",
         "groups": "Groups",
         "columns": "Columns",
+        "display_type": "Display",
         "new": "New",
         "header_table": "Items from {{libName}}",
+        "show-filter-panel": "Show filters",
         "table": {
             "preview": "Preview",
             "selected": "Selected",
             "id": "Id",
+            "actions": "Actions",
+            "infos": "Informations",
             "label": "Label",
             "ad_label": "Ad Label",
             "ean": "EAN",
             "category": "Category",
-            "op_code": "Operation Code"
+            "op_code": "Operation Code",
+            "header-cell-menu": {
+                "sort-ascend": "Sort Ascend",
+                "sort-descend": "Sort Descend",
+                "cancel-sort": "Cancel Sort",
+                "sort-advance": "Sort Advance",
+                "regroup": "regroup",
+                "choose-columns": "Choose Columns"
+            }
         }
+    },
+    "items-list-row": {
+        "switch-to-selection-mode": "Switch to selection mode",
+        "edit": "Edit the record"
     }
 }

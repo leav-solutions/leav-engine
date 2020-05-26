@@ -1,45 +1,67 @@
 import React, {useState} from 'react';
-import {Button, Checkbox, Table} from 'semantic-ui-react';
-import {getPreviewUrl} from '../../../../utils';
+import {useTranslation} from 'react-i18next';
+import {Button, Checkbox, Popup, Table} from 'semantic-ui-react';
 import {IItem} from '../../../../_types/types';
+import RecordCard from '../../../shared/RecordCard';
 import LibraryItemsModal from './LibraryItemsModal';
-import RecordPreview from './RecordPreview';
 
 interface ILibraryItemsListTableRowProps {
     item: IItem;
+    modeSelection: boolean;
+    setModeSelection: (modeSelection: boolean) => void;
 }
-function LibraryItemsListTableRow({item}: ILibraryItemsListTableRowProps): JSX.Element {
+function LibraryItemsListTableRow({
+    item,
+    modeSelection,
+    setModeSelection
+}: ILibraryItemsListTableRowProps): JSX.Element {
+    const {t} = useTranslation();
+
     const [isHover, setIsHover] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [values, setValues] = useState(item);
 
+    const switchMode = () => {
+        setModeSelection(true);
+    };
+
+    const handleShowModal = () => {
+        setShowModal(true);
+    };
+
     return (
         <>
             <Table.Row key={item.id} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
-                <Table.Cell>
-                    <RecordPreview
-                        label={values.label || values.id}
-                        image={values.preview?.small ? getPreviewUrl(values.preview.small) : ''}
-                    />
-                </Table.Cell>
-                <Table.Cell>
-                    <Checkbox />
-                </Table.Cell>
+                {modeSelection && (
+                    <Table.Cell>
+                        <Checkbox />
+                    </Table.Cell>
+                )}
 
                 <Table.Cell>
-                    <span>{values.id}</span>
+                    <span></span>
                     <span className="table-items-buttons">
                         {isHover && (
                             <Button.Group size="small">
-                                <Button icon="check" />
-                                <Button icon="write" onClick={() => setShowModal(true)} />
+                                <Popup
+                                    content={t('items-list-row.switch-to-selection-mode')}
+                                    trigger={<Button icon="check" onClick={switchMode} />}
+                                />
+                                <Popup
+                                    content={t('items-list-row.edit')}
+                                    trigger={<Button icon="write" onClick={handleShowModal} />}
+                                />
                                 <Button icon="like" />
                                 <Button icon="ellipsis horizontal" />
                             </Button.Group>
                         )}
                     </span>
                 </Table.Cell>
-                <Table.Cell>{values.label}</Table.Cell>
+
+                <Table.Cell>
+                    <RecordCard record={{...item}} />
+                </Table.Cell>
+
                 <Table.Cell>{''}</Table.Cell>
                 <Table.Cell>{''}</Table.Cell>
                 <Table.Cell>{''}</Table.Cell>

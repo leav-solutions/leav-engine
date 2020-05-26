@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Dimmer, Loader, Menu, Segment, Table} from 'semantic-ui-react';
+import {Dimmer, Dropdown, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import {IItem} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
@@ -27,14 +26,11 @@ function LibraryItemsListTable({
 
     const t = (trad: string, options = {}) => translate(`items_list.table.${trad}`, options);
 
-    const [column, setColumn] = useState<string>();
-    const [direction, setDirection] = useState<'ascending' | 'descending'>();
+    const [modeSelection, setModeSelection] = useState<boolean>(false);
 
     const tableCells = [
-        {name: 'preview', display: t('preview')},
-        {name: 'selected', display: t('selected')},
-        {name: 'id', display: t('id')},
-        {name: 'label', display: t('label')},
+        {name: 'actions', display: t('actions')},
+        {name: 'infos', display: t('infos')},
         {name: 'adLabel', display: t('ad_label')},
         {name: 'ean', display: t('ean')},
         {name: 'category', display: t('category')},
@@ -51,34 +47,40 @@ function LibraryItemsListTable({
         );
     }
 
-    const handleSort = (clickedColumn: string) => () => {
-        if (column !== clickedColumn) {
-            setColumn(clickedColumn);
-            setItems(_.sortBy(items, [clickedColumn]));
-            setDirection('ascending');
-        } else {
-            setItems(items.reverse());
-            setDirection(direction === 'ascending' ? 'descending' : 'ascending');
-        }
-    };
-
     return (
-        <Table sortable selectable className="table-items">
+        <Table selectable className="table-items">
             <Table.Header>
                 <Table.Row>
+                    {modeSelection && <Table.HeaderCell>{t('selected')}</Table.HeaderCell>}
                     {tableCells.map(cell => (
-                        <Table.HeaderCell
-                            key={cell.name}
-                            sorted={column === cell.name ? direction : undefined}
-                            onClick={handleSort(cell.name)}
-                        >
-                            <span>{cell.display}</span>
+                        <Table.HeaderCell key={cell.name}>
+                            <Dropdown text={cell.display} key={cell.name}>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item text={t('header-cell-menu.sort-ascend')} />
+                                    <Dropdown.Item text={t('header-cell-menu.sort-descend')} />
+                                    <Dropdown.Item text={t('header-cell-menu.cancel-sort')} />
+                                    <Dropdown.Item text={t('header-cell-menu.sort-advance')} />
+                                    <Dropdown.Item text={t('header-cell-menu.regroup')} />
+                                    <Dropdown.Divider />
+                                    <Dropdown.Item text={t('header-cell-menu.regroup')} />
+                                    <Dropdown.Divider />
+                                    <Dropdown.Item text={t('header-cell-menu.choose-columns')} />
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </Table.HeaderCell>
                     ))}
                 </Table.Row>
             </Table.Header>
             <Table.Body>
-                {items && items?.map(item => <LibraryItemsListTableRow key={item.id} item={item} />)}
+                {items &&
+                    items?.map(item => (
+                        <LibraryItemsListTableRow
+                            key={item.id}
+                            item={item}
+                            modeSelection={modeSelection}
+                            setModeSelection={setModeSelection}
+                        />
+                    ))}
             </Table.Body>
 
             <Table.Footer>

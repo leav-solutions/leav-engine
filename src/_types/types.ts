@@ -23,11 +23,23 @@ export interface IItem {
     id: string;
     label?: string;
     preview?: IPreview;
+    color?: string;
+    library?: {
+        id: string;
+        label: ILabel;
+    };
 }
+
+export interface RecordIdentity_whoAmI extends IItem {}
 
 export enum PreviewAttributes {
     'small',
     'medium',
     'big',
     'pages'
+}
+
+export enum AvailableLanguage {
+    en = 'en',
+    fr = 'fr'
 }

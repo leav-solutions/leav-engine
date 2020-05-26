@@ -11,6 +11,10 @@ function Routes(): JSX.Element {
     return (
         <Switch>
             <Route exact path="/">
+                <LibrariesList />
+            </Route>
+
+            <Route path="/home">
                 <Home />
             </Route>
 
@@ -18,15 +22,15 @@ function Routes(): JSX.Element {
                 <LibrariesList />
             </Route>
 
-            <Route exact path="/library/detail/:libId/:libQueryName">
-                <LibraryDetailWrapper />
-            </Route>
-
             <Route exact path="/library/list/:libId/:libQueryName">
                 <LibrariesList />
             </Route>
 
-            <Route exact path="/library/items/:libQueryName">
+            <Route exact path="/library/detail/:libId/:libQueryName">
+                <LibraryDetailWrapper />
+            </Route>
+
+            <Route exact path="/library/items/:libId/:libQueryName">
                 <LibraryItemsList />
             </Route>
 

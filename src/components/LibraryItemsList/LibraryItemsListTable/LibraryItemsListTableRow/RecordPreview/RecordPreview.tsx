@@ -8,6 +8,7 @@ interface IRecordPreviewProps {
     color?: string;
     image?: string;
     style?: CSSObject;
+    tile?: boolean;
 }
 
 interface IGeneratedPreviewProps {
@@ -44,7 +45,14 @@ const ImagePreview = styled.div`
 `;
 ImagePreview.displayName = 'ImagePreview';
 
-function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.Element {
+function RecordPreviewWrapper({label, color, image, style, tile}: IRecordPreviewProps): JSX.Element {
+    if (tile) {
+        return RecordPreviewTile({label, color, image, style});
+    }
+    return RecordPreviewList({label, color, image, style});
+}
+
+function RecordPreviewList({label, color, image, style}: IRecordPreviewProps): JSX.Element {
     if (image) {
         return (
             <ImagePreview>
@@ -65,4 +73,49 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
     );
 }
 
-export default React.memo(RecordPreview);
+const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
+    ${props => props.style || ''}
+    background-color: ${props => props.bgColor};
+    color: ${props => props.fontColor};
+    font-size: 4em;
+    padding: 5px;
+    height: 10rem; 
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`;
+GeneratedPreviewTile.displayName = 'GeneratedPreviewTile';
+
+const ImagePreviewTile = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10rem;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+`;
+ImagePreviewTile.displayName = 'ImagePreviewTile';
+
+function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): JSX.Element {
+    if (image) {
+        return (
+            <ImagePreviewTile>
+                <Image src={image} wrapped ui={false} style={{...style}} />;
+            </ImagePreviewTile>
+        );
+    }
+
+    const initial = label[0].toLocaleUpperCase();
+
+    const bgColor = color || stringToColor(label);
+    const fontColor = getInvertColor(bgColor);
+
+    return (
+        <GeneratedPreviewTile className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
+            {initial}
+        </GeneratedPreviewTile>
+    );
+}
+
+export default React.memo(RecordPreviewWrapper);

@@ -1,4 +1,5 @@
-import {PreviewAttributes} from '../_types/types';
+import {i18n} from 'i18next';
+import {AvailableLanguage, PreviewAttributes} from '../_types/types';
 
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
     return `recordIdentity/${libId}/${recordId}`;
@@ -99,4 +100,23 @@ export function getRandomColor() {
 
 export const getPreviewSizes = (): Array<PreviewAttributes> => {
     return Object.keys(PreviewAttributes).filter(previewAttribute => !(parseInt(previewAttribute) + 1)) as any;
+};
+
+export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[]): string => {
+    if (!labels) {
+        return '';
+    }
+    const userLang = availableLanguages[0];
+    const fallbackLang = availableLanguages[1] ? availableLanguages[1] : '';
+
+    return labels[userLang] || labels[fallbackLang] || labels[Object.keys(labels)[0]] || '';
+};
+
+export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage[] => {
+    const userLang = i18next.language
+        ? i18next.language.split('-')[0]
+        : AvailableLanguage[process.env.REACT_APP_DEFAULT_LANG as AvailableLanguage] ?? AvailableLanguage.en;
+    const fallbackLang = i18next.options?.fallbackLng ? (i18next as any).options.fallbackLng[0] : '';
+
+    return [userLang, fallbackLang];
 };

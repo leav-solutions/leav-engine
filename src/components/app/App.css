@@ -2,8 +2,8 @@
   height: 100%;
 }
 
-.height-full-page {
-  min-height: 100vh;
+.minHeight100 {
+  min-height: 100%;
 }
 
 .nav-link-active  span{
@@ -32,4 +32,12 @@
 .table-items-buttons {
   position: absolute;
   top: 10%;
+}
+
+.wrapper-page {
+  padding: 1rem 1rem 0 1rem;
+}
+
+.pusher {
+  height: 100%;
 }

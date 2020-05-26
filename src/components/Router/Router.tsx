@@ -1,9 +1,17 @@
 import React, {useRef, useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {Ref, Sidebar, Sticky} from 'semantic-ui-react';
+import styled from 'styled-components';
 import SideBarMenu from '../SideBarMenu';
 import TopBar from '../TopBar';
 import Routes from './Routes';
+
+const PageWrapper = styled.div`
+    max-height: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+`;
 
 function Router(): JSX.Element {
     const [sideBarVisible, setSideBarVisible] = useState<boolean>(false);
@@ -18,22 +26,22 @@ function Router(): JSX.Element {
 
     return (
         <BrowserRouter>
-            <div style={{minHeight: '100vh'}}>
+            <PageWrapper>
                 <Sticky context={contextRef}>
                     <TopBar toggleSidebarVisible={toggleSidebarVisible} />
                 </Sticky>
-                <Sidebar.Pushable as={'div'} className="height-full-page">
+                <Sidebar.Pushable as={'div'} className="minHeight100">
                     <Sticky context={contextRef} styleElement={{position: ''}}>
                         <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
                     </Sticky>
 
                     <Ref innerRef={contextRef}>
-                        <Sidebar.Pusher style={{margin: '1rem 2rem'}}>
+                        <Sidebar.Pusher>
                             <Routes />
                         </Sidebar.Pusher>
                     </Ref>
                 </Sidebar.Pushable>
-            </div>
+            </PageWrapper>
         </BrowserRouter>
     );
 }

@@ -66,7 +66,7 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
                 <Grid.Column>
                     <Header as="h4">{t('lib_detail.search_saves')}</Header>
                     <Segment>
-                        <NavLink to={`/library/items/${libQueryName}`}>{t('lib_detail.search_all')}</NavLink>
+                        <NavLink to={`/library/items/${libId}/${libQueryName}`}>{t('lib_detail.search_all')}</NavLink>
                     </Segment>
                     <Button icon="plus" content={t('lib_detail.add_filter')} />
                 </Grid.Column>

@@ -1,26 +1,36 @@
-import React from 'react';
 import {shallow} from 'enzyme';
-import {act} from 'react-test-renderer';
+import React from 'react';
+import {act} from 'react-dom/test-utils';
 import AuthHandler from './AuthHandler';
 
+jest.mock('i18next', () => ({
+    use: jest.fn(() => ({
+        use: jest.fn(() => ({
+            use: jest.fn(() => ({
+                init: jest.fn()
+            }))
+        }))
+    }))
+}));
+
 const storageGen = () => {
-    let store = {};
+    let store: any = {};
 
     return {
-        key: nbr => {
+        key: (nbr: any) => {
             return nbr.toString;
         },
         length: 1,
-        setItem: (key, value) => {
+        setItem: (key: any, value: any) => {
             key = key;
             store[key] = value;
         },
-        removeItem: key => {
+        removeItem: (key: any) => {
             if (store[key]) {
                 store[key] = undefined;
             }
         },
-        getItem: key => {
+        getItem: (key: any) => {
             return store[key];
         },
         clear: () => {
@@ -31,8 +41,8 @@ const storageGen = () => {
 
 describe('AuthHandler', () => {
     test('renders login if no token in local storage, app otherwise', async () => {
-        let wrapper;
-        let storage;
+        let wrapper: any;
+        let storage: any;
 
         act(() => {
             storage = storageGen();

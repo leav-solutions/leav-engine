@@ -35,7 +35,6 @@
     },
     "sidebar": {
         "close": "Fermer",
-        "home": "Accueil",
         "lib_list": "Bibliothèques",
         "setting": "Paramètre"
     },
@@ -60,16 +59,32 @@
         "groups": "Groupes",
         "columns": "Colonnes",
         "new": "Nouveau",
+        "display_type": "Affichage",
         "header_table": "Éléments de {{libName}}",
+        "show-filter-panel": "Montrer les filtres",
         "table": {
             "preview": "Vignette",
             "selected": "Sélectionner",
             "id": "Identifiant",
+            "actions": "Actions",
+            "infos": "Informations",
             "label": "Libellé",
             "ad_label": "Libellé Pub",
             "ean": "EAN",
             "category": "Catégorie",
-            "op_code": "Code Opération"
+            "op_code": "Code Opération",
+            "header-cell-menu": {
+                "sort-ascend": "Tri Croissant",
+                "sort-descend": "Tri Décroissant",
+                "cancel-sort": "Annuler Tri",
+                "sort-advance": "Tri Avancé",
+                "regroup": "Régrouper",
+                "choose-columns": "Choix Colonnes"
+            }
         }
+    },
+    "items-list-row": {
+        "switch-to-selection-mode": "Passer au mode séléction",
+        "edit": "Éditer le record"
     }
 }

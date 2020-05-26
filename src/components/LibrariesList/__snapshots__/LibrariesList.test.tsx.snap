@@ -4,7 +4,7 @@ exports[`LibrariesList Snapshot test 1`] = `
 initialize {
   "0": Object {
     "attribs": Object {
-      "class": "sc-AxirZ bimOKN",
+      "class": "wrapper-page",
     },
     "children": Array [
       Object {

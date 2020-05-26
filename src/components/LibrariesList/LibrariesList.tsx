@@ -3,15 +3,10 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {Card, Divider, Header} from 'semantic-ui-react';
-import styled from 'styled-components';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import {ILibrary} from '../../_types/types';
 import LibraryCard from './LibraryCard';
 import LibraryDetail from './LibraryDetail';
-
-const LibrariesListWrapper = styled.div`
-    padding: 0.3rem;
-`;
 
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
@@ -23,7 +18,7 @@ function LibrariesList(): JSX.Element {
 
     useEffect(() => {
         if (!loading) {
-            setLibraries(data.libraries.list);
+            setLibraries(data?.libraries?.list);
         }
     }, [loading, data, error]);
 
@@ -32,7 +27,7 @@ function LibrariesList(): JSX.Element {
     }
 
     return (
-        <LibrariesListWrapper>
+        <div className="wrapper-page">
             <Header as="h2">{t('lib_list.header')}</Header>
             <Card.Group itemsPerRow={4}>
                 {libraries.map((lib: ILibrary) => (
@@ -46,7 +41,7 @@ function LibrariesList(): JSX.Element {
                     <LibraryDetail libId={libId} libQueryName={libQueryName} />
                 </>
             )}
-        </LibrariesListWrapper>
+        </div>
     );
 }
 
