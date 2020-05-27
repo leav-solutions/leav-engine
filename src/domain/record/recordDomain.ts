@@ -370,14 +370,16 @@ const getPreviews = async ({conf, lib, record, valueDomain, libraryDomain, ctx}:
     const confPreview = lib.behavior === LibraryBehavior.FILES ? 'previews' : conf.preview;
 
     // can return a preview object or a full record for advance link
-    const valuePreview = (
-        await valueDomain.getValues({
-            library: lib.id,
-            recordId: record.id,
-            attribute: confPreview,
-            ctx
-        })
-    )?.pop();
+    const valuePreview = confPreview
+        ? (
+              await valueDomain.getValues({
+                  library: lib.id,
+                  recordId: record.id,
+                  attribute: confPreview,
+                  ctx
+              })
+          )?.pop()
+        : null;
 
     const getPreviewFromRecord = async (valueRecord: IRecord) => {
         let previewAttribute: string;
