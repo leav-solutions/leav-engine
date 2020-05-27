@@ -87,5 +87,25 @@
     "items-list-row": {
         "switch-to-selection-mode": "Switch to selection mode",
         "edit": "Edit the record"
+    },
+    "filters": {
+        "filters": "Filters",
+        "contains": "Contains",
+        "not-contains": "Don't Contain",
+        "equal": "Is Equal",
+        "not-equal": "Isn't Equal",
+        "begin-with": "Begin With",
+        "end-with": "End With",
+        "is-empty": "Is Empty",
+        "is-not-empty": "Is Not Empty",
+        "greater-than": "Existing Value",
+        "less-than": "Existing Value",
+        "exist": "Existing Value",
+        "search-in": "Search In...",
+        "where": "Where",
+        "label": "Label",
+        "value": "Value",
+        "remove-filters": "Remove filters",
+        "apply": "Apply"
     }
 }

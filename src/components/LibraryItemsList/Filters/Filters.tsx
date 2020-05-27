@@ -1,5 +1,6 @@
 import {useQuery} from '@apollo/react-hooks';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
     Button,
     Container,
@@ -7,6 +8,7 @@ import {
     Dropdown,
     Grid,
     Header,
+    Icon,
     Input,
     List,
     Menu,
@@ -31,24 +33,6 @@ const Side = styled.div`
     height: 100%;
 `;
 
-const whereOptions = [
-    {text: 'Contain', value: 'contain'},
-    {text: "Don't Contain", value: 'not-contain'},
-    {text: 'Is Equal', value: 'is-equal'},
-    {text: 'Begin With', value: 'begin-with'},
-    {text: 'End With', value: 'end-with'},
-    {text: 'Is Empty', value: 'empty'},
-    {text: 'Is Not Empty', value: 'not-empty'},
-    {text: 'Existing Value', value: 'exist'},
-    {
-        text: 'divider',
-        value: 'divider',
-        content: <Dropdown.Divider />,
-        disabled: true
-    },
-    {text: 'Search In...', value: 'not-exist'}
-];
-
 interface IFilters {
     key: any;
     where: string;
@@ -57,13 +41,14 @@ interface IFilters {
 }
 
 function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersProps): JSX.Element {
+    const {t} = useTranslation();
     const [showAttr, setShowAttr] = useState(false);
     const [attrs, setAttrs] = useState<any>([]);
     const [show, setShow] = useState(showFilters);
     const [filters, setFilters] = useState<IFilters[]>([
         {
             key: 1,
-            where: 'contain',
+            where: 'contains',
             value: 'mon produit',
             attribute: 'ean'
         }
@@ -85,6 +70,21 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
     useEffect(() => {
         setShow(showFilters);
     }, [showFilters]);
+
+    const whereOptions = [
+        {text: t('filters.contains'), value: 'contains'},
+        {text: t('filters.not-contains'), value: 'notContains'},
+        {text: t('filters.equal'), value: 'equal'},
+        {text: t('filters.not-equal'), value: 'notEqual'},
+        {text: t('filters.begin-with'), value: 'beginWith'},
+        {text: t('filters.end-with'), value: 'endWith'},
+        {text: t('filters.is-empty'), value: 'empty'},
+        {text: t('filters.is-not-empty'), value: 'notEmpty'},
+        {text: t('filters.greater-than'), value: 'greaterThan'},
+        {text: t('filters.less-than'), value: 'lessThan'},
+        {text: t('filters.exist'), value: 'exist'},
+        {text: t('filters.search-in'), value: ''}
+    ];
 
     return (
         <Transition visible={show} onHide={() => setShowFilters(show => false)} animation="slide right" duration={100}>
@@ -118,7 +118,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
 
                         <List horizontal>
                             <List.Item>
-                                <Header as="h5">Filters</Header>
+                                <Header as="h5">{t('filters.filters')}</Header>
                             </List.Item>
                             <List.Item>
                                 <Button basic icon="plus" onClick={() => setShowAttr(true)} />
@@ -129,18 +129,23 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                             <Segment secondary color="green">
                                 <Grid columns={3}>
                                     <Grid.Row>
+                                        <Grid.Column width="1"></Grid.Column>
                                         <Grid.Column width="4">
-                                            <strong>Where</strong>
+                                            <strong>{t('filters.where')}</strong>
                                         </Grid.Column>
                                         <Grid.Column width="4">
-                                            <strong>Label</strong>
+                                            <strong>{t('filters.label')}</strong>
                                         </Grid.Column>
-                                        <Grid.Column>
-                                            <strong>Value</strong>
+                                        <Grid.Column width="6">
+                                            <strong>{t('filters.value')}</strong>
                                         </Grid.Column>
                                     </Grid.Row>
                                     {filters.map(filter => (
                                         <Grid.Row key={filter.key}>
+                                            <Grid.Column width="1">
+                                                <Icon name="remove" />
+                                            </Grid.Column>
+
                                             <Grid.Column width="4">
                                                 <Dropdown
                                                     floating
@@ -150,7 +155,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                                                 />
                                             </Grid.Column>
                                             <Grid.Column width="4">{filter.attribute}</Grid.Column>
-                                            <Grid.Column width="8">
+                                            <Grid.Column width="6">
                                                 <Input value={filter.value} fluid />
                                             </Grid.Column>
                                         </Grid.Row>
@@ -160,12 +165,12 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                                 <Grid columns={2}>
                                     <Grid.Column>
                                         <Button negative compact onClick={() => setFilters([])}>
-                                            Remove filters
+                                            {t('filters.remove-filters')}
                                         </Button>
                                     </Grid.Column>
                                     <Grid.Column>
                                         <Button positive compact>
-                                            Apply
+                                            {t('filters.apply')}
                                         </Button>
                                     </Grid.Column>
                                 </Grid>

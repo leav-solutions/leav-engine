@@ -86,5 +86,25 @@
     "items-list-row": {
         "switch-to-selection-mode": "Passer au mode séléction",
         "edit": "Éditer le record"
+    },
+    "filters": {
+        "filters": "Filtre",
+        "contains": "Contient",
+        "not-contains": "Ne contient pas",
+        "equal": "Est égal",
+        "not-equal": "N'est pas égal",
+        "begin-with": "Commence par",
+        "end-with": "Fini Par",
+        "is-empty": "Est Vide",
+        "is-not-empty": "N'est pas vide",
+        "greater-than": "Plus grand que",
+        "less-than": "Plus petit que",
+        "exist": "Valeur existante",
+        "search-in": "Chercher dedans...",
+        "where": "Où",
+        "label": "Libellé",
+        "value": "Valeur",
+        "remove-filters": "Supprimer les filtres",
+        "apply": "Appliquer"
     }
 }
