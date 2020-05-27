@@ -88,6 +88,12 @@
         "switch-to-selection-mode": "Switch to selection mode",
         "edit": "Edit the record"
     },
+    "items-menu-dropdown": {
+        "nb-elements": "{{nb1}} to {{nb2}} / {{nbItems}} results",
+        "select-all": "Select All ({{nb}})",
+        "select-visible": "Select Visible ({{nb}})",
+        "items-display": "Number of items per page"
+    },
     "filters": {
         "filters": "Filters",
         "contains": "Contains",

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Button, Dropdown, Label, Menu} from 'semantic-ui-react';
-import LibraryItemsListPagination from '../LibraryItemsListPagination';
+import {useTranslation} from 'react-i18next';
+import {Button, Dropdown} from 'semantic-ui-react';
 
 interface ILibraryItemsListMenuPaginationProps {
     totalCount: number;
@@ -14,64 +14,41 @@ interface ILibraryItemsListMenuPaginationProps {
 function LibraryItemsListMenuPagination({
     totalCount,
     offset,
-    setOffset,
     pagination,
     setPagination,
     nbItems
 }: ILibraryItemsListMenuPaginationProps): JSX.Element {
+    const {t} = useTranslation();
     const paginationOptions = [5, 10, 20, 50, 100];
 
     const offsetDisplay = totalCount > 0 ? offset + 1 : 0;
     const nextOffsetDisplay = offset + pagination > totalCount ? totalCount : offset + pagination;
 
-    const rowStyle = {display: 'flex', justifyContent: 'flex-start', alignItems: 'center'};
-
     return (
-        <Dropdown simple text={`${offsetDisplay} to ${nextOffsetDisplay} / ${totalCount} results`}>
+        <Dropdown
+            simple
+            text={t('items-list-row.nb-elements', {
+                nb1: offsetDisplay,
+                nb2: nextOffsetDisplay,
+                nbItems: totalCount
+            })}
+        >
             <Dropdown.Menu>
                 <Dropdown.Header>
                     <div>
-                        <Button>Select all ({totalCount})</Button>
-                        <Button>Select visible ({nbItems})</Button>
+                        <Button>{t('items-menu-dropdown.select-all', {nb: totalCount})}</Button>
+                        <Button>{t('items-menu-dropdown.select-visible', {nb: totalCount})}</Button>
                     </div>
-
-                    <div
-                        style={{
-                            ...rowStyle,
-                            position: 'relative',
-                            height: '5rem'
-                        }}
-                    >
-                        <Label basic>Go to page</Label>
-                        <Menu
-                            floated="right"
-                            pagination
-                            as="div"
-                            className="library-list-menu-pagination"
-                            style={{position: 'unset', opacity: 1, margin: '0 !important'}}
-                        >
-                            <LibraryItemsListPagination
-                                totalCount={totalCount}
-                                pagination={pagination}
-                                offset={offset}
-                                setOffset={setOffset}
-                            />
-                        </Menu>
-                    </div>
-
-                    <Button.Group as="div">
-                        <Label basic>Number of items per page</Label>
-                        {paginationOptions.map(pagOption => (
-                            <Button
-                                basic
-                                key={pagOption}
-                                active={pagination === pagOption}
-                                onClick={() => setPagination(pagOption)}
-                                content={pagOption}
-                            />
-                        ))}
-                    </Button.Group>
                 </Dropdown.Header>
+                <Dropdown.Header>{t('items-menu-dropdown.items-display')}</Dropdown.Header>
+                {paginationOptions.map(pagOption => (
+                    <Dropdown.Item
+                        key={pagOption}
+                        active={pagination === pagOption}
+                        onClick={() => setPagination(pagOption)}
+                        content={pagOption}
+                    />
+                ))}
             </Dropdown.Menu>
         </Dropdown>
     );

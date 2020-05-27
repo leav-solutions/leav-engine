@@ -1,12 +1,8 @@
-import {useQuery} from '@apollo/react-hooks';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Divider, Icon, Menu, Sidebar} from 'semantic-ui-react';
-import useLang from '../../hooks/useLang/__mocks__';
-import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
-import {localizedLabel} from '../../utils';
-import {AvailableLanguage, ILibrary} from '../../_types/types';
+import SideBarLibraryList from './SideBarLibraryList';
 
 interface ISideBarMenuProps {
     visible: boolean;
@@ -14,9 +10,6 @@ interface ISideBarMenuProps {
 }
 
 function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
-    const availableLanguages = useLang().lang as AvailableLanguage[];
-
-    const [libraries, setLibraries] = useState<ILibrary[]>([]);
     const {t} = useTranslation();
 
     const checkActive = (match: any, location: any) => {
@@ -25,18 +18,6 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
         const {pathname} = location;
         return pathname === '/';
     };
-
-    const {loading, data, error} = useQuery(getLibrariesListQuery);
-
-    useEffect(() => {
-        if (!loading) {
-            setLibraries(data?.libraries?.list ?? []);
-        }
-    }, [loading, data, error]);
-
-    if (error) {
-        return <div>error</div>;
-    }
 
     return (
         <Sidebar
@@ -80,19 +61,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
 
             <Divider />
 
-            {libraries.map(lib => (
-                <NavLink
-                    key={lib.id}
-                    to={`/library/items/${lib.id}/${lib.gqlNames.query}`}
-                    onClick={hide}
-                    activeClassName="nav-link-active"
-                >
-                    <Menu.Item as="span">
-                        <Icon name="database" />
-                        {localizedLabel(lib.label, availableLanguages)}
-                    </Menu.Item>
-                </NavLink>
-            ))}
+            <SideBarLibraryList hide={hide} />
         </Sidebar>
     );
 }

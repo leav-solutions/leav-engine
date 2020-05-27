@@ -84,8 +84,14 @@
         }
     },
     "items-list-row": {
+        "nb-elements": "{{nb1}} à {{nb2}} / {{nbItems}} résultats",
         "switch-to-selection-mode": "Passer au mode séléction",
         "edit": "Éditer le record"
+    },
+    "items-menu-dropdown": {
+        "select-all": "Tout sélectionner ({{nb}})",
+        "select-visible": "Sélectionner page ({{nb}})",
+        "items-display": "Nombre d'éléments par page"
     },
     "filters": {
         "filters": "Filtre",
