@@ -13,10 +13,13 @@ const TableWrapper = styled.div`
     margin-top: 0 !important;
 `;
 
-const HeaderTable = styled(Table)`
+const HeaderTable = styled(Segment)`
     margin-bottom: 0 !important;
     border-bottom: 0 !important;
     border-radius: 0 !important;
+
+    display: grid;
+    grid-template-columns: repeat(${({nbColumns, selection}) => (selection ? nbColumns + 1 : nbColumns)}, 1fr);
 `;
 
 const FooterTable = styled(Segment)`
@@ -68,32 +71,28 @@ function LibraryItemsListTable({
 
     return (
         <>
-            <HeaderTable fixed>
-                <Table.Header>
-                    <Table.Row>
-                        {modeSelection && <Table.HeaderCell>{t('selected')}</Table.HeaderCell>}
-                        {tableCells.map(cell => (
-                            <Table.HeaderCell key={cell.name}>
-                                <Dropdown text={cell.display} key={cell.name}>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item text={t('header-cell-menu.sort-ascend')} />
-                                        <Dropdown.Item text={t('header-cell-menu.sort-descend')} />
-                                        <Dropdown.Item text={t('header-cell-menu.cancel-sort')} />
-                                        <Dropdown.Item text={t('header-cell-menu.sort-advance')} />
-                                        <Dropdown.Item text={t('header-cell-menu.regroup')} />
-                                        <Dropdown.Divider />
-                                        <Dropdown.Item text={t('header-cell-menu.regroup')} />
-                                        <Dropdown.Divider />
-                                        <Dropdown.Item text={t('header-cell-menu.choose-columns')} />
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </Table.HeaderCell>
-                        ))}
-                    </Table.Row>
-                </Table.Header>
+            <HeaderTable secondary nbColumns={tableCells.length} selection={modeSelection ? 1 : 0} fixed>
+                {modeSelection && <Table.HeaderCell>{t('selected')}</Table.HeaderCell>}
+                {tableCells.map(cell => (
+                    <div key={cell.name}>
+                        <Dropdown text={cell.display} key={cell.name}>
+                            <Dropdown.Menu>
+                                <Dropdown.Item text={t('header-cell-menu.sort-ascend')} />
+                                <Dropdown.Item text={t('header-cell-menu.sort-descend')} />
+                                <Dropdown.Item text={t('header-cell-menu.cancel-sort')} />
+                                <Dropdown.Item text={t('header-cell-menu.sort-advance')} />
+                                <Dropdown.Item text={t('header-cell-menu.regroup')} />
+                                <Dropdown.Divider />
+                                <Dropdown.Item text={t('header-cell-menu.regroup')} />
+                                <Dropdown.Divider />
+                                <Dropdown.Item text={t('header-cell-menu.choose-columns')} />
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </div>
+                ))}
             </HeaderTable>
             <TableWrapper>
-                <Table fixed selectable className="table-items">
+                <Table fixed selectable className="table-items" celled>
                     <Table.Body>
                         {items &&
                             items?.map(item => (

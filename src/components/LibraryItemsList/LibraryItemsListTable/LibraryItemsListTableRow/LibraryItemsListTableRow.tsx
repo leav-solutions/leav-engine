@@ -22,7 +22,7 @@ const Actions = styled.div<ActionsProps>`
 interface ILibraryItemsListTableRowProps {
     item: IItem;
     modeSelection: boolean;
-    setModeSelection: (modeSelection: boolean) => void;
+    setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 function LibraryItemsListTableRow({
     item,
@@ -36,7 +36,7 @@ function LibraryItemsListTableRow({
     const [values, setValues] = useState(item);
 
     const switchMode = () => {
-        setModeSelection(true);
+        setModeSelection(mode => !mode);
     };
 
     const handleShowModal = () => {
@@ -60,7 +60,7 @@ function LibraryItemsListTableRow({
                                 <Button.Group size="small">
                                     <Popup
                                         content={t('items-list-row.switch-to-selection-mode')}
-                                        trigger={<Button icon="check" onClick={switchMode} />}
+                                        trigger={<Button active={modeSelection} icon="check" onClick={switchMode} />}
                                     />
                                     <Popup
                                         content={t('items-list-row.edit')}

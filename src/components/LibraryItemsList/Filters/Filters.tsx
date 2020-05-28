@@ -3,17 +3,18 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
     Button,
+    Checkbox,
     Container,
     Divider,
     Dropdown,
+    Form,
     Grid,
     Header,
-    Icon,
-    Input,
     List,
     Menu,
     Segment,
     Sidebar,
+    TextArea,
     Transition
 } from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -128,7 +129,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                         <Transition.Group>
                             <Segment secondary color="green">
                                 <Grid columns={3}>
-                                    <Grid.Row>
+                                    {/* <Grid.Row>
                                         <Grid.Column width="1"></Grid.Column>
                                         <Grid.Column width="4">
                                             <strong>{t('filters.where')}</strong>
@@ -139,11 +140,20 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                                         <Grid.Column width="6">
                                             <strong>{t('filters.value')}</strong>
                                         </Grid.Column>
-                                    </Grid.Row>
+                                    </Grid.Row> */}
                                     {filters.map(filter => (
                                         <Grid.Row key={filter.key}>
                                             <Grid.Column width="1">
-                                                <Icon name="remove" />
+                                                <Checkbox />
+                                            </Grid.Column>
+
+                                            <Grid.Column width="4">
+                                                <Dropdown
+                                                    floating
+                                                    inline
+                                                    defaultValue={filter.where}
+                                                    options={whereOptions}
+                                                />
                                             </Grid.Column>
 
                                             <Grid.Column width="4">
@@ -155,8 +165,14 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                                                 />
                                             </Grid.Column>
                                             <Grid.Column width="4">{filter.attribute}</Grid.Column>
-                                            <Grid.Column width="6">
-                                                <Input value={filter.value} fluid />
+                                            <Grid.Column width="1">
+                                                <Button icon="remove" basic negative compact size="mini" />
+                                            </Grid.Column>
+
+                                            <Grid.Column width="16">
+                                                <Form>
+                                                    <TextArea value={filter.value} />
+                                                </Form>
                                             </Grid.Column>
                                         </Grid.Row>
                                     ))}
