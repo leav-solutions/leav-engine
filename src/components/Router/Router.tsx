@@ -7,8 +7,7 @@ import TopBar from '../TopBar';
 import Routes from './Routes';
 
 const PageWrapper = styled.div`
-    max-height: 100%;
-    height: 100%;
+    height: 95%;
     padding: 0;
     margin: 0;
 `;

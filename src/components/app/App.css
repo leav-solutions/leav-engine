@@ -10,32 +10,9 @@
   background: gray !important;
 }
 
-.table-items {
-  max-height: 70vh;
-  overflow-y: scroll;
-}
-
-.table-items tbody {
-  display: block;
-  max-height: 60vh;
-  overflow: auto;
-}
-
-.table-items thead,
-.table-items tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-  position: relative;
-}
-
-.table-items-buttons {
-  position: absolute;
-  top: 10%;
-}
-
 .wrapper-page {
   padding: 1rem 1rem 0 1rem;
+  height: 100vh;
 }
 
 .pusher {

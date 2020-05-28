@@ -28,7 +28,7 @@ interface IFiltersProps {
 }
 
 const Side = styled.div`
-    border: 1px solid #ebebeb;
+    border-right: 1px solid #ebebeb;
     padding: 1rem 1rem 0 1rem;
     height: 100%;
 `;
