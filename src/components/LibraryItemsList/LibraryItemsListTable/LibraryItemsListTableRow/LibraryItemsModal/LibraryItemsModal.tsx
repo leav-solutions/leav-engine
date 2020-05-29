@@ -1,5 +1,7 @@
+import {useMutation} from '@apollo/react-hooks';
 import React, {useRef} from 'react';
 import {Button, Form, Header, Modal} from 'semantic-ui-react';
+import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
 import {IItem} from '../../../../../_types/types';
 import FormPreviewsModal from './FormPreviewsModal';
 
@@ -13,8 +15,24 @@ interface ILibraryItemsModalProps {
 function LibraryItemsModal({showModal, setShowModal, values, setValues}: ILibraryItemsModalProps): JSX.Element {
     const formRef = useRef<HTMLFormElement>(null);
 
+    const [saveValueBatch] = useMutation(saveValueBatchQuery);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        saveValueBatch({
+            variables: {
+                library: values?.library?.id,
+                recordId: values.id,
+                version: null,
+                values: [
+                    {
+                        attribute: 'label',
+                        value: values.label
+                    }
+                ]
+            }
+        });
     };
 
     const triggerSubmit = () => {

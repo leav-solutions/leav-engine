@@ -30,7 +30,7 @@ function UserMenu(): JSX.Element {
             }}
         >
             <div style={nameIconStyle}>{iconContent}</div>
-            <Dropdown item as={Menu.Item} text={userName}>
+            <Dropdown item as={Menu.Item} direction="left" text={userName}>
                 <Dropdown.Menu>
                     <Dropdown.Item text={t('menu.user_menu.profil')} />
                     <Dropdown.Item text={t('menu.user_menu.tasks')} />

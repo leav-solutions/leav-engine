@@ -505,7 +505,7 @@ initialize {
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": Object {
                               "attribs": Object {
-                                "class": "menu transition",
+                                "class": "menu transition left",
                               },
                               "children": Array [
                                 Object {
@@ -4232,7 +4232,7 @@ initialize {
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": Object {
                             "attribs": Object {
-                              "class": "menu transition",
+                              "class": "menu transition left",
                             },
                             "children": Array [
                               Object {
@@ -7969,7 +7969,7 @@ initialize {
                         },
                         Object {
                           "attribs": Object {
-                            "class": "menu transition",
+                            "class": "menu transition left",
                           },
                           "children": Array [
                             Object {
@@ -11778,7 +11778,7 @@ initialize {
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": Object {
                             "attribs": Object {
-                              "class": "menu transition",
+                              "class": "menu transition left",
                             },
                             "children": Array [
                               Object {
@@ -15505,7 +15505,7 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": Object {
                           "attribs": Object {
-                            "class": "menu transition",
+                            "class": "menu transition left",
                           },
                           "children": Array [
                             Object {
@@ -19242,7 +19242,7 @@ initialize {
                       },
                       Object {
                         "attribs": Object {
-                          "class": "menu transition",
+                          "class": "menu transition left",
                         },
                         "children": Array [
                           Object {
@@ -23437,7 +23437,7 @@ initialize {
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": Object {
                             "attribs": Object {
-                              "class": "menu transition",
+                              "class": "menu transition left",
                             },
                             "children": Array [
                               Object {
@@ -27164,7 +27164,7 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": Object {
                           "attribs": Object {
-                            "class": "menu transition",
+                            "class": "menu transition left",
                           },
                           "children": Array [
                             Object {
@@ -30901,7 +30901,7 @@ initialize {
                       },
                       Object {
                         "attribs": Object {
-                          "class": "menu transition",
+                          "class": "menu transition left",
                         },
                         "children": Array [
                           Object {
@@ -34710,7 +34710,7 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": Object {
                           "attribs": Object {
-                            "class": "menu transition",
+                            "class": "menu transition left",
                           },
                           "children": Array [
                             Object {
@@ -38437,7 +38437,7 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": Object {
                         "attribs": Object {
-                          "class": "menu transition",
+                          "class": "menu transition left",
                         },
                         "children": Array [
                           Object {
@@ -42174,7 +42174,7 @@ initialize {
                     },
                     Object {
                       "attribs": Object {
-                        "class": "menu transition",
+                        "class": "menu transition left",
                       },
                       "children": Array [
                         Object {
@@ -46209,7 +46209,7 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": Object {
                           "attribs": Object {
-                            "class": "menu transition",
+                            "class": "menu transition left",
                           },
                           "children": Array [
                             Object {
@@ -49936,7 +49936,7 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": Object {
                         "attribs": Object {
-                          "class": "menu transition",
+                          "class": "menu transition left",
                         },
                         "children": Array [
                           Object {
@@ -53673,7 +53673,7 @@ initialize {
                     },
                     Object {
                       "attribs": Object {
-                        "class": "menu transition",
+                        "class": "menu transition left",
                       },
                       "children": Array [
                         Object {
@@ -57482,7 +57482,7 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": Object {
                         "attribs": Object {
-                          "class": "menu transition",
+                          "class": "menu transition left",
                         },
                         "children": Array [
                           Object {
@@ -61209,7 +61209,7 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Object {
                       "attribs": Object {
-                        "class": "menu transition",
+                        "class": "menu transition left",
                       },
                       "children": Array [
                         Object {
@@ -64946,7 +64946,7 @@ initialize {
                   },
                   Object {
                     "attribs": Object {
-                      "class": "menu transition",
+                      "class": "menu transition left",
                     },
                     "children": Array [
                       Object {

@@ -55,6 +55,7 @@ const FormPreviewModal = ({values, setValues, previewAttribute, defaultPreview}:
         <Form.Field>
             <label>{previewAttribute}</label>
             <input
+                disabled
                 value={(values.preview && values.preview[att]) ?? ''}
                 onChange={e =>
                     setValues({

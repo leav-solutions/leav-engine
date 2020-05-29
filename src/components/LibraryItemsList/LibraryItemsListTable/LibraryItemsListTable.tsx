@@ -19,7 +19,7 @@ const HeaderTable = styled(Segment)`
     border-radius: 0 !important;
 
     display: grid;
-    grid-template-columns: repeat(${({nbColumns, selection}) => (selection ? nbColumns + 1 : nbColumns)}, 1fr);
+    grid-template-columns: repeat(${({columns, selection}) => (selection ? columns + 1 : columns)}, 1fr);
 `;
 
 const FooterTable = styled(Segment)`
@@ -71,8 +71,8 @@ function LibraryItemsListTable({
 
     return (
         <>
-            <HeaderTable secondary nbColumns={tableCells.length} selection={modeSelection ? 1 : 0} fixed>
-                {modeSelection && <Table.HeaderCell>{t('selected')}</Table.HeaderCell>}
+            <HeaderTable secondary columns={tableCells.length} selection={modeSelection ? 1 : 0}>
+                {modeSelection && <div>{t('selected')}</div>}
                 {tableCells.map(cell => (
                     <div key={cell.name}>
                         <Dropdown text={cell.display} key={cell.name}>
