@@ -3,12 +3,8 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {Modal} from 'semantic-ui-react';
 import {IItem} from '../../../../../_types/types';
-import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
+import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import LibraryItemsModal from './LibraryItemsModal';
-
-jest.mock('@apollo/react-hooks', () => ({
-    useMutation: jest.fn(() => [])
-}));
 
 describe('LibraryItemsModal', () => {
     test('Snapshot test', async () => {
@@ -20,14 +16,14 @@ describe('LibraryItemsModal', () => {
         let comp: any;
         await act(async () => {
             comp = mount(
-                <MockedLangContextProvider>
+                <MockedProviderWithFragments>
                     <LibraryItemsModal
                         showModal={false}
                         setShowModal={jest.fn()}
                         values={items}
                         setValues={jest.fn()}
                     />
-                </MockedLangContextProvider>
+                </MockedProviderWithFragments>
             );
         });
 

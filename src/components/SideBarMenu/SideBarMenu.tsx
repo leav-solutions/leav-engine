@@ -31,11 +31,6 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
             onHide={hide}
             width="thin"
         >
-            <Menu.Item as="div" onClick={hide}>
-                <Icon name="close" />
-                {t('sidebar.close')}
-            </Menu.Item>
-
             {false && (
                 <NavLink to="/" onClick={hide} strict activeClassName="nav-link-active" isActive={checkActive}>
                     <Menu.Item as="span">
