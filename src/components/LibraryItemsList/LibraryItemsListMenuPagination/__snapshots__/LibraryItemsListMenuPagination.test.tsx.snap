@@ -19,7 +19,7 @@ initialize {
         },
         "children": Array [
           Object {
-            "data": "items-list-row.nb-elements|0|NaN|",
+            "data": "items-list-row.nb-elements|0|0|0",
             "next": null,
             "parent": [Circular],
             "prev": null,
@@ -55,7 +55,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-all|",
+                            "data": "items-menu-dropdown.select-all|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -70,7 +70,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-visible|",
+                              "data": "items-menu-dropdown.select-visible|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -106,7 +106,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-visible|",
+                            "data": "items-menu-dropdown.select-visible|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -123,7 +123,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-all|",
+                              "data": "items-menu-dropdown.select-all|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -253,8 +253,8 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": Object {
                         "attribs": Object {
-                          "aria-checked": "false",
-                          "class": "item",
+                          "aria-checked": "true",
+                          "class": "active item",
                           "role": "option",
                         },
                         "children": Array [
@@ -539,8 +539,8 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Object {
                       "attribs": Object {
-                        "aria-checked": "false",
-                        "class": "item",
+                        "aria-checked": "true",
+                        "class": "active item",
                         "role": "option",
                       },
                       "children": Array [
@@ -731,7 +731,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-all|",
+                              "data": "items-menu-dropdown.select-all|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -746,7 +746,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-visible|",
+                                "data": "items-menu-dropdown.select-visible|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -782,7 +782,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-visible|",
+                              "data": "items-menu-dropdown.select-visible|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -799,7 +799,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-all|",
+                                "data": "items-menu-dropdown.select-all|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -933,8 +933,8 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": Object {
                     "attribs": Object {
-                      "aria-checked": "false",
-                      "class": "item",
+                      "aria-checked": "true",
+                      "class": "active item",
                       "role": "option",
                     },
                     "children": Array [
@@ -1128,7 +1128,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-all|",
+                                "data": "items-menu-dropdown.select-all|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -1143,7 +1143,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-visible|",
+                                  "data": "items-menu-dropdown.select-visible|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -1179,7 +1179,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-visible|",
+                                "data": "items-menu-dropdown.select-visible|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -1196,7 +1196,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-all|",
+                                  "data": "items-menu-dropdown.select-all|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -1306,8 +1306,8 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": Object {
                   "attribs": Object {
-                    "aria-checked": "false",
-                    "class": "item",
+                    "aria-checked": "true",
+                    "class": "active item",
                     "role": "option",
                   },
                   "children": Array [
@@ -1525,7 +1525,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-all|",
+                                  "data": "items-menu-dropdown.select-all|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -1540,7 +1540,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-visible|",
+                                    "data": "items-menu-dropdown.select-visible|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -1576,7 +1576,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-visible|",
+                                  "data": "items-menu-dropdown.select-visible|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -1593,7 +1593,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-all|",
+                                    "data": "items-menu-dropdown.select-all|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -1679,8 +1679,8 @@ initialize {
               },
               Object {
                 "attribs": Object {
-                  "aria-checked": "false",
-                  "class": "item",
+                  "aria-checked": "true",
+                  "class": "active item",
                   "role": "option",
                 },
                 "children": Array [
@@ -1922,7 +1922,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-all|",
+                                    "data": "items-menu-dropdown.select-all|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -1937,7 +1937,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-visible|",
+                                      "data": "items-menu-dropdown.select-visible|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -1973,7 +1973,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-visible|",
+                                    "data": "items-menu-dropdown.select-visible|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -1990,7 +1990,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-all|",
+                                      "data": "items-menu-dropdown.select-all|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -2176,8 +2176,8 @@ initialize {
                 "parent": [Circular],
                 "prev": Object {
                   "attribs": Object {
-                    "aria-checked": "false",
-                    "class": "item",
+                    "aria-checked": "true",
+                    "class": "active item",
                     "role": "option",
                   },
                   "children": Array [
@@ -2319,7 +2319,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-all|",
+                                      "data": "items-menu-dropdown.select-all|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -2334,7 +2334,7 @@ initialize {
                                     },
                                     "children": Array [
                                       Object {
-                                        "data": "items-menu-dropdown.select-visible|",
+                                        "data": "items-menu-dropdown.select-visible|0",
                                         "next": null,
                                         "parent": [Circular],
                                         "prev": null,
@@ -2370,7 +2370,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-visible|",
+                                      "data": "items-menu-dropdown.select-visible|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -2387,7 +2387,7 @@ initialize {
                                     },
                                     "children": Array [
                                       Object {
-                                        "data": "items-menu-dropdown.select-all|",
+                                        "data": "items-menu-dropdown.select-all|0",
                                         "next": null,
                                         "parent": [Circular],
                                         "prev": null,
@@ -2573,8 +2573,8 @@ initialize {
                   "parent": [Circular],
                   "prev": Object {
                     "attribs": Object {
-                      "aria-checked": "false",
-                      "class": "item",
+                      "aria-checked": "true",
+                      "class": "active item",
                       "role": "option",
                     },
                     "children": Array [
@@ -2716,7 +2716,7 @@ initialize {
                                     },
                                     "children": Array [
                                       Object {
-                                        "data": "items-menu-dropdown.select-all|",
+                                        "data": "items-menu-dropdown.select-all|0",
                                         "next": null,
                                         "parent": [Circular],
                                         "prev": null,
@@ -2731,7 +2731,7 @@ initialize {
                                       },
                                       "children": Array [
                                         Object {
-                                          "data": "items-menu-dropdown.select-visible|",
+                                          "data": "items-menu-dropdown.select-visible|0",
                                           "next": null,
                                           "parent": [Circular],
                                           "prev": null,
@@ -2767,7 +2767,7 @@ initialize {
                                     },
                                     "children": Array [
                                       Object {
-                                        "data": "items-menu-dropdown.select-visible|",
+                                        "data": "items-menu-dropdown.select-visible|0",
                                         "next": null,
                                         "parent": [Circular],
                                         "prev": null,
@@ -2784,7 +2784,7 @@ initialize {
                                       },
                                       "children": Array [
                                         Object {
-                                          "data": "items-menu-dropdown.select-all|",
+                                          "data": "items-menu-dropdown.select-all|0",
                                           "next": null,
                                           "parent": [Circular],
                                           "prev": null,
@@ -2973,7 +2973,7 @@ initialize {
                       },
                       "children": Array [
                         Object {
-                          "data": "items-menu-dropdown.select-all|",
+                          "data": "items-menu-dropdown.select-all|0",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -2988,7 +2988,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-visible|",
+                            "data": "items-menu-dropdown.select-visible|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -3024,7 +3024,7 @@ initialize {
                       },
                       "children": Array [
                         Object {
-                          "data": "items-menu-dropdown.select-visible|",
+                          "data": "items-menu-dropdown.select-visible|0",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -3041,7 +3041,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-all|",
+                            "data": "items-menu-dropdown.select-all|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -3171,8 +3171,8 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Object {
                       "attribs": Object {
-                        "aria-checked": "false",
-                        "class": "item",
+                        "aria-checked": "true",
+                        "class": "active item",
                         "role": "option",
                       },
                       "children": Array [
@@ -3457,8 +3457,8 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": Object {
                     "attribs": Object {
-                      "aria-checked": "false",
-                      "class": "item",
+                      "aria-checked": "true",
+                      "class": "active item",
                       "role": "option",
                     },
                     "children": Array [
@@ -3649,7 +3649,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-all|",
+                            "data": "items-menu-dropdown.select-all|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -3664,7 +3664,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-visible|",
+                              "data": "items-menu-dropdown.select-visible|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -3700,7 +3700,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-visible|",
+                            "data": "items-menu-dropdown.select-visible|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -3717,7 +3717,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-all|",
+                              "data": "items-menu-dropdown.select-all|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -3851,8 +3851,8 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": Object {
                   "attribs": Object {
-                    "aria-checked": "false",
-                    "class": "item",
+                    "aria-checked": "true",
+                    "class": "active item",
                     "role": "option",
                   },
                   "children": Array [
@@ -4046,7 +4046,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-all|",
+                              "data": "items-menu-dropdown.select-all|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -4061,7 +4061,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-visible|",
+                                "data": "items-menu-dropdown.select-visible|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -4097,7 +4097,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-visible|",
+                              "data": "items-menu-dropdown.select-visible|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -4114,7 +4114,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-all|",
+                                "data": "items-menu-dropdown.select-all|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -4224,8 +4224,8 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Object {
                 "attribs": Object {
-                  "aria-checked": "false",
-                  "class": "item",
+                  "aria-checked": "true",
+                  "class": "active item",
                   "role": "option",
                 },
                 "children": Array [
@@ -4443,7 +4443,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-all|",
+                                "data": "items-menu-dropdown.select-all|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -4458,7 +4458,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-visible|",
+                                  "data": "items-menu-dropdown.select-visible|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -4494,7 +4494,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-visible|",
+                                "data": "items-menu-dropdown.select-visible|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -4511,7 +4511,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-all|",
+                                  "data": "items-menu-dropdown.select-all|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -4597,8 +4597,8 @@ initialize {
             },
             Object {
               "attribs": Object {
-                "aria-checked": "false",
-                "class": "item",
+                "aria-checked": "true",
+                "class": "active item",
                 "role": "option",
               },
               "children": Array [
@@ -4840,7 +4840,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-all|",
+                                  "data": "items-menu-dropdown.select-all|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -4855,7 +4855,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-visible|",
+                                    "data": "items-menu-dropdown.select-visible|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -4891,7 +4891,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-visible|",
+                                  "data": "items-menu-dropdown.select-visible|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -4908,7 +4908,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-all|",
+                                    "data": "items-menu-dropdown.select-all|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -5094,8 +5094,8 @@ initialize {
               "parent": [Circular],
               "prev": Object {
                 "attribs": Object {
-                  "aria-checked": "false",
-                  "class": "item",
+                  "aria-checked": "true",
+                  "class": "active item",
                   "role": "option",
                 },
                 "children": Array [
@@ -5237,7 +5237,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-all|",
+                                    "data": "items-menu-dropdown.select-all|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -5252,7 +5252,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-visible|",
+                                      "data": "items-menu-dropdown.select-visible|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -5288,7 +5288,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-visible|",
+                                    "data": "items-menu-dropdown.select-visible|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -5305,7 +5305,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-all|",
+                                      "data": "items-menu-dropdown.select-all|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -5491,8 +5491,8 @@ initialize {
                 "parent": [Circular],
                 "prev": Object {
                   "attribs": Object {
-                    "aria-checked": "false",
-                    "class": "item",
+                    "aria-checked": "true",
+                    "class": "active item",
                     "role": "option",
                   },
                   "children": Array [
@@ -5634,7 +5634,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-all|",
+                                      "data": "items-menu-dropdown.select-all|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -5649,7 +5649,7 @@ initialize {
                                     },
                                     "children": Array [
                                       Object {
-                                        "data": "items-menu-dropdown.select-visible|",
+                                        "data": "items-menu-dropdown.select-visible|0",
                                         "next": null,
                                         "parent": [Circular],
                                         "prev": null,
@@ -5685,7 +5685,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-visible|",
+                                      "data": "items-menu-dropdown.select-visible|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -5702,7 +5702,7 @@ initialize {
                                     },
                                     "children": Array [
                                       Object {
-                                        "data": "items-menu-dropdown.select-all|",
+                                        "data": "items-menu-dropdown.select-all|0",
                                         "next": null,
                                         "parent": [Circular],
                                         "prev": null,
@@ -5846,7 +5846,7 @@ initialize {
           },
           "children": Array [
             Object {
-              "data": "items-list-row.nb-elements|0|NaN|",
+              "data": "items-list-row.nb-elements|0|0|0",
               "next": null,
               "parent": [Circular],
               "prev": null,
@@ -5901,7 +5901,7 @@ initialize {
                     },
                     "children": Array [
                       Object {
-                        "data": "items-menu-dropdown.select-all|",
+                        "data": "items-menu-dropdown.select-all|0",
                         "next": null,
                         "parent": [Circular],
                         "prev": null,
@@ -5916,7 +5916,7 @@ initialize {
                       },
                       "children": Array [
                         Object {
-                          "data": "items-menu-dropdown.select-visible|",
+                          "data": "items-menu-dropdown.select-visible|0",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -5952,7 +5952,7 @@ initialize {
                     },
                     "children": Array [
                       Object {
-                        "data": "items-menu-dropdown.select-visible|",
+                        "data": "items-menu-dropdown.select-visible|0",
                         "next": null,
                         "parent": [Circular],
                         "prev": null,
@@ -5969,7 +5969,7 @@ initialize {
                       },
                       "children": Array [
                         Object {
-                          "data": "items-menu-dropdown.select-all|",
+                          "data": "items-menu-dropdown.select-all|0",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -6099,8 +6099,8 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": Object {
                     "attribs": Object {
-                      "aria-checked": "false",
-                      "class": "item",
+                      "aria-checked": "true",
+                      "class": "active item",
                       "role": "option",
                     },
                     "children": Array [
@@ -6385,8 +6385,8 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": Object {
                   "attribs": Object {
-                    "aria-checked": "false",
-                    "class": "item",
+                    "aria-checked": "true",
+                    "class": "active item",
                     "role": "option",
                   },
                   "children": Array [
@@ -6577,7 +6577,7 @@ initialize {
                       },
                       "children": Array [
                         Object {
-                          "data": "items-menu-dropdown.select-all|",
+                          "data": "items-menu-dropdown.select-all|0",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -6592,7 +6592,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-visible|",
+                            "data": "items-menu-dropdown.select-visible|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -6628,7 +6628,7 @@ initialize {
                       },
                       "children": Array [
                         Object {
-                          "data": "items-menu-dropdown.select-visible|",
+                          "data": "items-menu-dropdown.select-visible|0",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -6645,7 +6645,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-all|",
+                            "data": "items-menu-dropdown.select-all|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -6779,8 +6779,8 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Object {
                 "attribs": Object {
-                  "aria-checked": "false",
-                  "class": "item",
+                  "aria-checked": "true",
+                  "class": "active item",
                   "role": "option",
                 },
                 "children": Array [
@@ -6974,7 +6974,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-all|",
+                            "data": "items-menu-dropdown.select-all|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -6989,7 +6989,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-visible|",
+                              "data": "items-menu-dropdown.select-visible|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -7025,7 +7025,7 @@ initialize {
                         },
                         "children": Array [
                           Object {
-                            "data": "items-menu-dropdown.select-visible|",
+                            "data": "items-menu-dropdown.select-visible|0",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -7042,7 +7042,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-all|",
+                              "data": "items-menu-dropdown.select-all|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -7152,8 +7152,8 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Object {
               "attribs": Object {
-                "aria-checked": "false",
-                "class": "item",
+                "aria-checked": "true",
+                "class": "active item",
                 "role": "option",
               },
               "children": Array [
@@ -7371,7 +7371,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-all|",
+                              "data": "items-menu-dropdown.select-all|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -7386,7 +7386,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-visible|",
+                                "data": "items-menu-dropdown.select-visible|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -7422,7 +7422,7 @@ initialize {
                           },
                           "children": Array [
                             Object {
-                              "data": "items-menu-dropdown.select-visible|",
+                              "data": "items-menu-dropdown.select-visible|0",
                               "next": null,
                               "parent": [Circular],
                               "prev": null,
@@ -7439,7 +7439,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-all|",
+                                "data": "items-menu-dropdown.select-all|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -7525,8 +7525,8 @@ initialize {
           },
           Object {
             "attribs": Object {
-              "aria-checked": "false",
-              "class": "item",
+              "aria-checked": "true",
+              "class": "active item",
               "role": "option",
             },
             "children": Array [
@@ -7768,7 +7768,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-all|",
+                                "data": "items-menu-dropdown.select-all|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -7783,7 +7783,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-visible|",
+                                  "data": "items-menu-dropdown.select-visible|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -7819,7 +7819,7 @@ initialize {
                             },
                             "children": Array [
                               Object {
-                                "data": "items-menu-dropdown.select-visible|",
+                                "data": "items-menu-dropdown.select-visible|0",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": null,
@@ -7836,7 +7836,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-all|",
+                                  "data": "items-menu-dropdown.select-all|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -8022,8 +8022,8 @@ initialize {
             "parent": [Circular],
             "prev": Object {
               "attribs": Object {
-                "aria-checked": "false",
-                "class": "item",
+                "aria-checked": "true",
+                "class": "active item",
                 "role": "option",
               },
               "children": Array [
@@ -8165,7 +8165,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-all|",
+                                  "data": "items-menu-dropdown.select-all|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -8180,7 +8180,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-visible|",
+                                    "data": "items-menu-dropdown.select-visible|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -8216,7 +8216,7 @@ initialize {
                               },
                               "children": Array [
                                 Object {
-                                  "data": "items-menu-dropdown.select-visible|",
+                                  "data": "items-menu-dropdown.select-visible|0",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": null,
@@ -8233,7 +8233,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-all|",
+                                    "data": "items-menu-dropdown.select-all|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -8419,8 +8419,8 @@ initialize {
               "parent": [Circular],
               "prev": Object {
                 "attribs": Object {
-                  "aria-checked": "false",
-                  "class": "item",
+                  "aria-checked": "true",
+                  "class": "active item",
                   "role": "option",
                 },
                 "children": Array [
@@ -8562,7 +8562,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-all|",
+                                    "data": "items-menu-dropdown.select-all|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -8577,7 +8577,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-visible|",
+                                      "data": "items-menu-dropdown.select-visible|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -8613,7 +8613,7 @@ initialize {
                                 },
                                 "children": Array [
                                   Object {
-                                    "data": "items-menu-dropdown.select-visible|",
+                                    "data": "items-menu-dropdown.select-visible|0",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": null,
@@ -8630,7 +8630,7 @@ initialize {
                                   },
                                   "children": Array [
                                     Object {
-                                      "data": "items-menu-dropdown.select-all|",
+                                      "data": "items-menu-dropdown.select-all|0",
                                       "next": null,
                                       "parent": [Circular],
                                       "prev": null,
@@ -8774,7 +8774,7 @@ initialize {
             },
             "children": Array [
               Object {
-                "data": "items-list-row.nb-elements|0|NaN|",
+                "data": "items-list-row.nb-elements|0|0|0",
                 "next": null,
                 "parent": [Circular],
                 "prev": null,

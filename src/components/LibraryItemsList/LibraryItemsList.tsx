@@ -31,6 +31,8 @@ function LibraryItemsList(): JSX.Element {
     const [offset, setOffset] = useState<number>(0);
     const [display, setDisplay] = useState<string>('list');
     const [showFilters, setShowFilters] = useState(false);
+    const [selected, setSelected] = useState<{[x: string]: boolean}>({});
+    const [modeSelection, setModeSelection] = useState<boolean>(false);
 
     const [pagination, setPagination] = useState(20);
 
@@ -43,10 +45,12 @@ function LibraryItemsList(): JSX.Element {
     }
 
     useEffect(() => {
-        if (!loading && called) {
+        if (!loading && called && data) {
+            console.log(data);
+
             const itemsFromQuery = data ? data[libQueryName || ''].list : [];
             setItems(itemsFromQuery.map((i: any) => i.whoAmI) as IItem[]);
-            setTotalCount(data[libQueryName || ''].totalCount);
+            setTotalCount(data[libQueryName]?.totalCount);
         }
     }, [loading, data, libQueryName, called]);
 
@@ -93,7 +97,6 @@ function LibraryItemsList(): JSX.Element {
                 <Menu>
                     {!showFilters && (
                         <>
-                            {' '}
                             <Menu.Item>
                                 <Popup
                                     content={t('items_list.show-filter-panel')}
@@ -107,12 +110,14 @@ function LibraryItemsList(): JSX.Element {
                     )}
                     <Menu.Item>
                         <LibraryItemsListMenuPagination
+                            items={items}
                             totalCount={totalCount}
                             offset={offset}
                             setOffset={setOffset}
                             pagination={pagination}
+                            setModeSelection={setModeSelection}
                             setPagination={setPagination}
-                            nbItems={items?.length || 0}
+                            setSelected={setSelected}
                         />
                     </Menu.Item>
 
@@ -146,6 +151,10 @@ function LibraryItemsList(): JSX.Element {
                         pagination={pagination}
                         offset={offset}
                         setOffset={setOffset}
+                        modeSelection={modeSelection}
+                        setModeSelection={setModeSelection}
+                        selected={selected}
+                        setSelected={setSelected}
                     />
                 )}
 

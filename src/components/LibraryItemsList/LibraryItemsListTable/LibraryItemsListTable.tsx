@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dimmer, Dropdown, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -35,21 +35,26 @@ interface ILibraryItemsListTableProps {
     pagination: number;
     offset: number;
     setOffset: React.Dispatch<React.SetStateAction<number>>;
+    modeSelection: boolean;
+    setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
+    selected: {[x: string]: boolean};
+    setSelected: React.Dispatch<React.SetStateAction<{[x: string]: boolean}>>;
 }
 
 function LibraryItemsListTable({
     items,
-    setItems,
     totalCount,
     pagination,
     offset,
-    setOffset
+    setOffset,
+    modeSelection,
+    setModeSelection,
+    selected,
+    setSelected
 }: ILibraryItemsListTableProps): JSX.Element {
     const {t: translate} = useTranslation();
 
     const t = (trad: string, options = {}) => translate(`items_list.table.${trad}`, options);
-
-    const [modeSelection, setModeSelection] = useState<boolean>(false);
 
     const tableCells = [
         {name: 'infos', display: t('infos')},
@@ -101,6 +106,8 @@ function LibraryItemsListTable({
                                     item={item}
                                     modeSelection={modeSelection}
                                     setModeSelection={setModeSelection}
+                                    selected={selected}
+                                    setSelected={setSelected}
                                 />
                             ))}
                     </Table.Body>

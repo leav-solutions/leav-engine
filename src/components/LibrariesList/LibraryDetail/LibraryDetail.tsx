@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Button, Divider, Grid, Header, Segment} from 'semantic-ui-react';
+import useLang from '../../../hooks/useLang/__mocks__';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import {ILabel} from '../../../_types/types';
 
@@ -24,11 +25,11 @@ interface IDetails {
     totalCount: number;
 }
 
-const lang = 'en';
-
 function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element {
     const {t} = useTranslation();
     const [details, setDetails] = useState<IDetails>();
+
+    const lang = useLang().defaultLang;
 
     const {loading, data, error} = useQuery(getLibraryDetailQuery(libQueryName), {
         variables: {

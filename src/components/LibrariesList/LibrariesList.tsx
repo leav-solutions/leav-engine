@@ -18,7 +18,7 @@ function LibrariesList(): JSX.Element {
 
     useEffect(() => {
         if (!loading) {
-            setLibraries(data?.libraries?.list);
+            setLibraries(data?.libraries?.list ?? []);
         }
     }, [loading, data, error]);
 

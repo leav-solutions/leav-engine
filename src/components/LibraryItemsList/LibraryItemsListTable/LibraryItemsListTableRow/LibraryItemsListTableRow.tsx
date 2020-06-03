@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, Grid, Popup, Table} from 'semantic-ui-react';
+import {Button, Checkbox, CheckboxProps, Grid, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {IItem} from '../../../../_types/types';
 import RecordCard from '../../../shared/RecordCard';
@@ -23,11 +23,15 @@ interface ILibraryItemsListTableRowProps {
     item: IItem;
     modeSelection: boolean;
     setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
+    selected: {[x: string]: boolean};
+    setSelected: React.Dispatch<React.SetStateAction<{[x: string]: boolean}>>;
 }
 function LibraryItemsListTableRow({
     item,
     modeSelection,
-    setModeSelection
+    setModeSelection,
+    selected,
+    setSelected
 }: ILibraryItemsListTableRowProps): JSX.Element {
     const {t} = useTranslation();
 
@@ -37,10 +41,15 @@ function LibraryItemsListTableRow({
 
     const switchMode = () => {
         setModeSelection(mode => !mode);
+        setSelected(s => ({...s, [item.id]: true}));
     };
 
     const handleShowModal = () => {
         setShowModal(true);
+    };
+
+    const handleCheckboxChange = (event: React.FormEvent<HTMLInputElement>, {checked}: CheckboxProps) => {
+        setSelected(s => ({...s, [item.id]: !!checked}));
     };
 
     return (
@@ -48,7 +57,7 @@ function LibraryItemsListTableRow({
             <Table.Row key={item.id} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
                 {modeSelection && (
                     <Table.Cell>
-                        <Checkbox />
+                        <Checkbox checked={selected[item.id] ?? false} onChange={handleCheckboxChange} />
                     </Table.Cell>
                 )}
 
