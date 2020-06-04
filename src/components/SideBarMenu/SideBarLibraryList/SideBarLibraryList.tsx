@@ -1,4 +1,4 @@
-import {useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {NavLink} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';

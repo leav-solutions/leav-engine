@@ -1,7 +1,7 @@
-import {wait} from '@apollo/react-testing';
 import {mount, render} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import wait from 'waait';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import LibrariesList from './LibrariesList';

@@ -1,4 +1,4 @@
-import {useLazyQuery} from '@apollo/react-hooks';
+import {useLazyQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
@@ -46,8 +46,6 @@ function LibraryItemsList(): JSX.Element {
 
     useEffect(() => {
         if (!loading && called && data) {
-            console.log(data);
-
             const itemsFromQuery = data ? data[libQueryName || ''].list : [];
             setItems(itemsFromQuery.map((i: any) => i.whoAmI) as IItem[]);
             setTotalCount(data[libQueryName]?.totalCount);

@@ -16,7 +16,6 @@ function SelectVue(): JSX.Element {
         <Dropdown
             value={currentVue}
             onChange={(e, {value}) => {
-                console.log(value, currentVue);
                 setCurrentVue(value);
             }}
             placeholder="Default view..."

@@ -1,4 +1,4 @@
-import {useMutation} from '@apollo/react-hooks';
+import {useMutation} from '@apollo/client';
 import React, {useRef} from 'react';
 import {Button, Form, Header, Modal} from 'semantic-ui-react';
 import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';

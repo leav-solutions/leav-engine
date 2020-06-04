@@ -1,9 +1,9 @@
-import {MockedProvider} from '@apollo/react-testing';
-import {InMemoryCache} from 'apollo-cache-inmemory';
+import {InMemoryCache} from '@apollo/client';
+import {MockedProvider} from '@apollo/client/testing';
 import React from 'react';
-import {attributesFragmentMatcher} from '../fragmentMatchers/attributesFragmentMatchers';
 
-export const getMockCacheWithFragments = () => new InMemoryCache({fragmentMatcher: attributesFragmentMatcher});
+// export const getMockCacheWithFragments = () => new InMemoryCache({fragmentMatcher: attributesFragmentMatcher});
+export const getMockCacheWithFragments = () => new InMemoryCache();
 
 function MockedProviderWithFragments({children, ...props}: any) {
     // Set a new cache for each test to avoid fetching data in cache and not in provided mocks

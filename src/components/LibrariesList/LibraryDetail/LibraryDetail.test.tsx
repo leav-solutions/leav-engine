@@ -1,8 +1,8 @@
-import {wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {Grid, Header} from 'semantic-ui-react';
+import wait from 'waait';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import LibraryDetail from './LibraryDetail';
