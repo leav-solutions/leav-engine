@@ -2,10 +2,11 @@ import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {NavLink} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';
-import useLang from '../../../hooks/useLang/__mocks__';
+import {getActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {getLibrariesListQuery} from '../../../queries/libraries/getLibrariesListQuery';
 import {localizedLabel} from '../../../utils';
-import {AvailableLanguage, ILibrary} from '../../../_types/types';
+import {ILibrary} from '../../../_types/types';
 
 interface ISideBarLibraryListProps {
     hide: () => void;
@@ -13,7 +14,9 @@ interface ISideBarLibraryListProps {
 
 function SideBarLibraryList({hide}: ISideBarLibraryListProps): JSX.Element {
     const [libraries, setLibraries] = useState<ILibrary[]>([]);
-    const availableLanguages = useLang().lang as AvailableLanguage[];
+
+    const {data: dataLang, client} = useQuery(getLang);
+    const {lang} = dataLang ?? {lang: []};
 
     const {loading, data, error} = useQuery(getLibrariesListQuery);
 
@@ -22,6 +25,14 @@ function SideBarLibraryList({hide}: ISideBarLibraryListProps): JSX.Element {
             setLibraries(data?.libraries?.list ?? []);
         }
     }, [loading, data, error]);
+
+    const changeActiveLibrary = (lib: ILibrary) => {
+        client.writeQuery({
+            query: getActiveLibrary,
+            data: {id: lib.id, queryName: lib.gqlNames.query, name: localizedLabel(lib.label, lang)}
+        });
+        hide();
+    };
 
     if (error) {
         return <div>error</div>;
@@ -33,12 +44,12 @@ function SideBarLibraryList({hide}: ISideBarLibraryListProps): JSX.Element {
                 <NavLink
                     key={lib.id}
                     to={`/library/items/${lib.id}/${lib.gqlNames.query}`}
-                    onClick={hide}
+                    onClick={() => changeActiveLibrary(lib)}
                     activeClassName="nav-link-active"
                 >
                     <Menu.Item as="span">
                         <Icon name="database" />
-                        {localizedLabel(lib.label, availableLanguages)}
+                        {localizedLabel(lib.label, lang)}
                     </Menu.Item>
                 </NavLink>
             ))}

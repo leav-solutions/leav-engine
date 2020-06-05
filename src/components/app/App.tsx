@@ -8,12 +8,9 @@ import {
 } from '@apollo/client';
 import {default as React} from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import i18n from '../../i18n';
-import {getRecordIdentityCacheKey, getSysTranslationQueryLanguage} from '../../utils/utils';
-import {AvailableLanguage} from '../../_types/types';
-import Router from '../Router';
-import LangContext from '../shared/LangContext';
+import {getRecordIdentityCacheKey} from '../../utils/utils';
 import './App.css';
+import AppHandler from './AppHandler';
 
 interface IAppProps {
     token: string;
@@ -116,19 +113,9 @@ function App({token, onTokenInvalid}: IAppProps) {
         })
     });
 
-    const lang = getSysTranslationQueryLanguage(i18n);
-    const availableLangs = process.env.REACT_APP_AVAILABLE_LANG
-        ? process.env.REACT_APP_AVAILABLE_LANG.split(',').map(l => AvailableLanguage[l as AvailableLanguage])
-        : [];
-    const defaultLang = process.env.REACT_APP_DEFAULT_LANG
-        ? AvailableLanguage[process.env.REACT_APP_DEFAULT_LANG as AvailableLanguage]
-        : AvailableLanguage.en;
-
     return (
         <ApolloProvider client={gqlClient}>
-            <LangContext.Provider value={{lang, availableLangs, defaultLang}}>
-                <Router />
-            </LangContext.Provider>
+            <AppHandler />
         </ApolloProvider>
     );
 }

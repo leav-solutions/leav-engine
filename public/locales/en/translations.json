@@ -52,6 +52,9 @@
         "last_views": "Last Views",
         "new": "New"
     },
+    "settings": {
+        "header": "Settings"
+    },
     "loading": "Loading",
     "items_list": {
         "all_sheets": "All sheets",
@@ -85,6 +88,7 @@
         }
     },
     "items-list-row": {
+        "nb-elements": "{{nb1}} to {{nb2}} / {{nbItems}} results",
         "switch-to-selection-mode": "Switch to selection mode",
         "edit": "Edit the record"
     },

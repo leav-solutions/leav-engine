@@ -1,7 +1,9 @@
+import {useQuery} from '@apollo/client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Divider, Icon, Menu, Sidebar} from 'semantic-ui-react';
+import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import SideBarLibraryList from './SideBarLibraryList';
 
 interface ISideBarMenuProps {
@@ -11,6 +13,9 @@ interface ISideBarMenuProps {
 
 function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
     const {t} = useTranslation();
+
+    const {data: activeLib} = useQuery(getActiveLibrary);
+    const {id, queryName, name} = activeLib ?? {};
 
     const checkActive = (match: any, location: any) => {
         //some additional logic to verify you are in the home URI
@@ -31,11 +36,17 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
             onHide={hide}
             width="thin"
         >
-            {false && (
-                <NavLink to="/" onClick={hide} strict activeClassName="nav-link-active" isActive={checkActive}>
+            {id && (
+                <NavLink
+                    to={`/library/items/${id}/${queryName}`}
+                    onClick={hide}
+                    strict
+                    activeClassName="nav-link-active"
+                    isActive={checkActive}
+                >
                     <Menu.Item as="span">
-                        <Icon name="home" />
-                        {t('sidebar.home')}
+                        <Icon name="database" />
+                        {name}
                     </Menu.Item>
                 </NavLink>
             )}

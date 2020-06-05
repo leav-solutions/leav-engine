@@ -19,6 +19,9 @@
     "home": {
         "title": "Accueil"
     },
+    "settings": {
+        "header": "Paramètres"
+    },
     "menu": {
         "app_name": "Explorer",
         "shortcuts": "Raccourcis",

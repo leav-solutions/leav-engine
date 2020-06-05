@@ -1,7 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {Grid, Header} from 'semantic-ui-react';
+import {Grid, Segment} from 'semantic-ui-react';
 import wait from 'waait';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
@@ -13,7 +13,7 @@ describe('LibraryDetail', () => {
     describe('test rendering', () => {
         const libId = 'test';
         const libQueryName = 'test';
-
+        const totalCount = 1;
         const mocks = [
             {
                 request: {
@@ -26,7 +26,7 @@ describe('LibraryDetail', () => {
                     data: {
                         [libQueryName]: {
                             __typename: 'number',
-                            totalCount: 1
+                            totalCount
                         },
                         libraries: {
                             __typename: 'LibrariesList',
@@ -35,7 +35,7 @@ describe('LibraryDetail', () => {
                                     __typename: 'Library',
                                     id: 'test',
                                     system: false,
-                                    label: {},
+                                    label: '',
                                     attributes: {
                                         __typename: 'Attribute',
                                         id: 'string',
@@ -70,7 +70,7 @@ describe('LibraryDetail', () => {
                 comp.update();
             });
 
-            expect(comp.find(Header).first().text()).toContain(libId);
+            expect(comp.find(Segment).first().text()).toContain(totalCount);
         });
     });
 });

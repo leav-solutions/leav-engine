@@ -102,7 +102,7 @@ export const getPreviewSizes = (): Array<PreviewAttributes> => {
     return Object.keys(PreviewAttributes).filter(previewAttribute => !(parseInt(previewAttribute) + 1)) as any;
 };
 
-export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[]): string => {
+export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[] | string[]): string => {
     if (!labels) {
         return '';
     }

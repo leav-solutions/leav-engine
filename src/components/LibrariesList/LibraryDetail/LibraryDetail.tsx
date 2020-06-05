@@ -3,8 +3,9 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Button, Divider, Grid, Header, Segment} from 'semantic-ui-react';
-import useLang from '../../../hooks/useLang/__mocks__';
+import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
+import {localizedLabel} from '../../../utils';
 import {ILabel} from '../../../_types/types';
 
 interface ILibraryDetailProps {
@@ -29,7 +30,7 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
     const {t} = useTranslation();
     const [details, setDetails] = useState<IDetails>();
 
-    const lang = useLang().defaultLang;
+    const {data: dataLang} = useQuery(getLang);
 
     const {loading, data, error} = useQuery(getLibraryDetailQuery(libQueryName), {
         variables: {
@@ -51,7 +52,9 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
 
     return (
         <Segment>
-            <Header as="h3">{details?.label[lang] ?? `${t('lib_detail.id')}: ${details?.id}`}</Header>
+            <Header as="h3">
+                {localizedLabel(details?.label, dataLang?.lang ?? []) ?? `${t('lib_detail.id')}: ${details?.id}`}
+            </Header>
 
             <Divider />
 

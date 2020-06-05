@@ -1,11 +1,11 @@
 import {mount} from 'enzyme';
 import 'jest-styled-components';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
 import {RecordIdentity_whoAmI} from '../../../_types/types';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
 import RecordCard from './RecordCard';
-
-jest.mock('../../../hooks/useLang');
 
 describe('RecordCard', () => {
     const mockRecord: RecordIdentity_whoAmI = {
@@ -18,14 +18,30 @@ describe('RecordCard', () => {
     };
 
     test('Snapshot test', async () => {
-        const comp = mount(<RecordCard record={mockRecord} />);
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <RecordCard record={mockRecord} />
+                </MockedProviderWithFragments>
+            );
+        });
 
         expect(comp.find(RecordPreview)).toHaveLength(1);
         expect(comp.text()).toMatch('Test Record');
     });
 
     test('Create wrapper', async () => {
-        const comp = mount(<RecordCard record={mockRecord} />);
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <RecordCard record={mockRecord} />
+                </MockedProviderWithFragments>
+            );
+        });
 
         expect(comp.find('Wrapper')).toHaveLength(1);
     });
