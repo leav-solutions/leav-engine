@@ -85,8 +85,8 @@ function LibraryItemsListTable({
                                 <Dropdown.Item text={t('header-cell-menu.sort-ascend')} />
                                 <Dropdown.Item text={t('header-cell-menu.sort-descend')} />
                                 <Dropdown.Item text={t('header-cell-menu.cancel-sort')} />
+                                <Dropdown.Divider />
                                 <Dropdown.Item text={t('header-cell-menu.sort-advance')} />
-                                <Dropdown.Item text={t('header-cell-menu.regroup')} />
                                 <Dropdown.Divider />
                                 <Dropdown.Item text={t('header-cell-menu.regroup')} />
                                 <Dropdown.Divider />

@@ -63,6 +63,8 @@
         "groups": "Groups",
         "columns": "Columns",
         "display_type": "Display",
+        "display-list": "List",
+        "display-tile": "Tile",
         "new": "New",
         "header_table": "Items from {{libName}}",
         "show-filter-panel": "Show filters",
@@ -116,6 +118,8 @@
         "label": "Label",
         "value": "Value",
         "remove-filters": "Remove filters",
-        "apply": "Apply"
+        "apply": "Apply",
+        "and": "And",
+        "or": "Or"
     }
 }

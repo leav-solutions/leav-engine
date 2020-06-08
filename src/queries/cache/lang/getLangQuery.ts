@@ -2,9 +2,9 @@ import gql from 'graphql-tag';
 
 export const getLangAll = gql`
     query GET_LANG_ALL {
-        lang
-        availableLangs
-        defaultLang
+        lang @client
+        availableLangs @client
+        defaultLang @client
     }
 `;
 

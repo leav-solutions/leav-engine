@@ -29,7 +29,11 @@ function SideBarLibraryList({hide}: ISideBarLibraryListProps): JSX.Element {
     const changeActiveLibrary = (lib: ILibrary) => {
         client.writeQuery({
             query: getActiveLibrary,
-            data: {id: lib.id, queryName: lib.gqlNames.query, name: localizedLabel(lib.label, lang)}
+            data: {
+                activeLibId: lib.id,
+                activeLibQueryName: lib.gqlNames.query,
+                activeLibName: localizedLabel(lib.label, lang)
+            }
         });
         hide();
     };

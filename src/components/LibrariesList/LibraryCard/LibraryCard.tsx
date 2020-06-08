@@ -47,9 +47,9 @@ function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
         client.writeQuery({
             query: getActiveLibrary,
             data: {
-                id: lib.id,
-                queryName: lib.gqlNames.query,
-                name: localizedLabel(lib.label, lang)
+                activeLibId: lib.id,
+                activeLibQueryName: lib.gqlNames.query,
+                activeLibName: localizedLabel(lib.label, lang)
             }
         });
     };

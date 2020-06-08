@@ -63,6 +63,8 @@
         "columns": "Colonnes",
         "new": "Nouveau",
         "display_type": "Affichage",
+        "display-list": "Liste",
+        "display-tile": "Mosaïque",
         "header_table": "Éléments de {{libName}}",
         "show-filter-panel": "Montrer les filtres",
         "table": {
@@ -114,6 +116,8 @@
         "label": "Libellé",
         "value": "Valeur",
         "remove-filters": "Supprimer les filtres",
-        "apply": "Appliquer"
+        "apply": "Appliquer",
+        "and": "Et",
+        "or": "Où"
     }
 }

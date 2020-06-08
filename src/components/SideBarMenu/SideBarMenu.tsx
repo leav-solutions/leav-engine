@@ -15,7 +15,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
     const {t} = useTranslation();
 
     const {data: activeLib} = useQuery(getActiveLibrary);
-    const {id, queryName, name} = activeLib ?? {};
+    const {activeLibId, activeLibQueryName, activeLibName} = activeLib ?? {};
 
     const checkActive = (match: any, location: any) => {
         //some additional logic to verify you are in the home URI
@@ -36,9 +36,9 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
             onHide={hide}
             width="thin"
         >
-            {id && (
+            {activeLibId && (
                 <NavLink
-                    to={`/library/items/${id}/${queryName}`}
+                    to={`/library/items/${activeLibId}/${activeLibQueryName}`}
                     onClick={hide}
                     strict
                     activeClassName="nav-link-active"
@@ -46,7 +46,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                 >
                     <Menu.Item as="span">
                         <Icon name="database" />
-                        {name}
+                        {activeLibName}
                     </Menu.Item>
                 </NavLink>
             )}

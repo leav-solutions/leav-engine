@@ -43,3 +43,32 @@ export enum AvailableLanguage {
     en = 'en',
     fr = 'fr'
 }
+
+export interface IFilters {
+    key: any;
+    operator?: operatorFilter;
+    where: whereFilter;
+    value: string;
+    attribute: string;
+    active: boolean;
+}
+
+export enum operatorFilter {
+    and = 'and',
+    or = 'or'
+}
+
+export enum whereFilter {
+    contains = 'contains',
+    notContains = 'notContains',
+    equal = 'equal',
+    notEqual = 'notEqual',
+    beginWith = 'beginWith',
+    endWith = 'endWith',
+    empty = 'empty',
+    notEmpty = 'notEmpty',
+    greaterThan = 'greaterThan',
+    lessThan = 'lessThan',
+    exist = 'exist',
+    searchIn = 'searchIn'
+}

@@ -1,10 +1,15 @@
+import {useQuery} from '@apollo/client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dropdown, Menu} from 'semantic-ui-react';
+import {getUser} from '../../../queries/cache/user/userQuery';
 
 function UserMenu(): JSX.Element {
     const {t} = useTranslation();
-    const userName = 'Name User';
+
+    const {data: dataUser} = useQuery(getUser);
+    const userName = dataUser?.userName ?? dataUser?.userId ?? '';
+
     const iconContent = userName.split(' ').map(word => word[0]);
 
     const nameIconStyle = {

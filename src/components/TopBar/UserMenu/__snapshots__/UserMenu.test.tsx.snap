@@ -11,15 +11,7 @@ initialize {
         "attribs": Object {
           "style": "border-radius:50%;background:hsl(130, 52%, 58%);color:#FFFFFF;height:2rem;width:2rem;display:flex;flex-direction:column;justify-content:center;text-align:center;font-weight:bold;font-size:.8rem",
         },
-        "children": Array [
-          Object {
-            "data": "NU",
-            "next": null,
-            "parent": [Circular],
-            "prev": null,
-            "type": "text",
-          },
-        ],
+        "children": Array [],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Object {
@@ -37,15 +29,7 @@ initialize {
                 "class": "text",
                 "role": "alert",
               },
-              "children": Array [
-                Object {
-                  "data": "Name User",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "text",
-                },
-              ],
+              "children": Array [],
               "name": "div",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Object {
@@ -7482,15 +7466,7 @@ initialize {
                   "class": "text",
                   "role": "alert",
                 },
-                "children": Array [
-                  Object {
-                    "data": "Name User",
-                    "next": null,
-                    "parent": [Circular],
-                    "prev": null,
-                    "type": "text",
-                  },
-                ],
+                "children": Array [],
                 "name": "div",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
@@ -11219,15 +11195,7 @@ initialize {
                     "class": "text",
                     "role": "alert",
                   },
-                  "children": Array [
-                    Object {
-                      "data": "Name User",
-                      "next": null,
-                      "parent": [Circular],
-                      "prev": null,
-                      "type": "text",
-                    },
-                  ],
+                  "children": Array [],
                   "name": "div",
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
@@ -11310,15 +11278,7 @@ initialize {
               "class": "text",
               "role": "alert",
             },
-            "children": Array [
-              Object {
-                "data": "Name User",
-                "next": null,
-                "parent": [Circular],
-                "prev": null,
-                "type": "text",
-              },
-            ],
+            "children": Array [],
             "name": "div",
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Object {
@@ -18755,15 +18715,7 @@ initialize {
                 "class": "text",
                 "role": "alert",
               },
-              "children": Array [
-                Object {
-                  "data": "Name User",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "text",
-                },
-              ],
+              "children": Array [],
               "name": "div",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": [Circular],
@@ -22492,15 +22444,7 @@ initialize {
                   "class": "text",
                   "role": "alert",
                 },
-                "children": Array [
-                  Object {
-                    "data": "Name User",
-                    "next": null,
-                    "parent": [Circular],
-                    "prev": null,
-                    "type": "text",
-                  },
-                ],
+                "children": Array [],
                 "name": "div",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
@@ -22547,15 +22491,7 @@ initialize {
           "attribs": Object {
             "style": "border-radius:50%;background:hsl(130, 52%, 58%);color:#FFFFFF;height:2rem;width:2rem;display:flex;flex-direction:column;justify-content:center;text-align:center;font-weight:bold;font-size:.8rem",
           },
-          "children": Array [
-            Object {
-              "data": "NU",
-              "next": null,
-              "parent": [Circular],
-              "prev": null,
-              "type": "text",
-            },
-          ],
+          "children": Array [],
           "name": "div",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": [Circular],
