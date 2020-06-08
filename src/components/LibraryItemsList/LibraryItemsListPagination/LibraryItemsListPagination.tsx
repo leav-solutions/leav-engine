@@ -15,10 +15,10 @@ function LibraryItemsListPagination({
     setOffset
 }: ILibraryItemsListPaginationProps): JSX.Element {
     const first = () => setOffset(0);
-    const previous = () => setOffset(offset => (offset >= pagination ? offset - pagination : 0));
+    const previous = () => setOffset(offset => (offset >= pagination ? offset - pagination - 1 : 0));
 
     const next = () =>
-        setOffset(offset => (totalCount && offset + pagination < totalCount ? offset + pagination : offset));
+        setOffset(offset => (totalCount && offset + pagination < totalCount ? offset + pagination - 1 : offset));
 
     const last = () => setOffset(pagination * Math.floor(totalCount / pagination));
 
@@ -35,6 +35,8 @@ function LibraryItemsListPagination({
             {totalCount
                 ? [...Array(Math.ceil(totalCount / pagination))].map((e, index) => {
                       const activePage = Math.round(offset / pagination);
+
+                      // change the number of items around the current page display
                       const range = 2;
 
                       const isActive = activePage === index;

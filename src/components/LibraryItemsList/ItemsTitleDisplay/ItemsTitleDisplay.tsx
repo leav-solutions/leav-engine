@@ -1,14 +1,33 @@
 import React from 'react';
-import {Card, Grid, Segment} from 'semantic-ui-react';
+import {Card, Grid, Menu, Segment} from 'semantic-ui-react';
 import {getPreviewUrl} from '../../../utils';
 import {IItem} from '../../../_types/types';
+import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import RecordPreview from '../LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
 
 interface IItemsTitleDisplayProps {
     items?: IItem[];
+    totalCount: number;
+    pagination: number;
+    offset: number;
+    setOffset: React.Dispatch<React.SetStateAction<number>>;
+    modeSelection: boolean;
+    setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
+    selected: {[x: string]: boolean};
+    setSelected: React.Dispatch<React.SetStateAction<{[x: string]: boolean}>>;
 }
 
-function ItemsTitleDisplay({items}: IItemsTitleDisplayProps): JSX.Element {
+function ItemsTitleDisplay({
+    items,
+    totalCount,
+    pagination,
+    offset,
+    setOffset,
+    modeSelection,
+    setModeSelection,
+    selected,
+    setSelected
+}: IItemsTitleDisplayProps): JSX.Element {
     return (
         <Segment>
             <Grid columns={7}>
@@ -32,6 +51,16 @@ function ItemsTitleDisplay({items}: IItemsTitleDisplayProps): JSX.Element {
                     </Grid.Column>
                 ))}
             </Grid>
+            <Segment secondary>
+                <Menu pagination>
+                    <LibraryItemsListPagination
+                        totalCount={totalCount}
+                        pagination={pagination}
+                        offset={offset}
+                        setOffset={setOffset}
+                    />
+                </Menu>
+            </Segment>
         </Segment>
     );
 }

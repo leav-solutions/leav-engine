@@ -28,7 +28,7 @@ function LibraryItemsListMenuPagination({
     const paginationOptions = [5, 10, 20, 50, 100];
 
     const offsetDisplay = totalCount > 0 ? offset + 1 : 0;
-    const nextOffsetDisplay = offset + pagination > totalCount ? totalCount : offset + pagination - 1;
+    const nextOffsetDisplay = offset + pagination > totalCount ? totalCount : offset + pagination;
 
     const selectAll = () => {};
     const selectVisible = () => {
@@ -61,7 +61,7 @@ function LibraryItemsListMenuPagination({
                     <Dropdown.Item
                         key={pagOption}
                         active={pagination === pagOption}
-                        onClick={() => setPagination(pagOption + 1)}
+                        onClick={() => setPagination(pagOption)}
                         content={pagOption}
                     />
                 ))}

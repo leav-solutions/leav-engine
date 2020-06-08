@@ -63,13 +63,13 @@ function LibraryItemsList(): JSX.Element {
     const displayOptions = [
         {
             key: 'list',
-            text: 'list',
+            text: t('items_list.display-list'),
             value: 'list',
             icon: 'list layout'
         },
         {
             key: 'tile',
-            text: 'tile',
+            text: t('items_list.display-tile'),
             value: 'tile',
             icon: 'th large',
             default: true
@@ -156,7 +156,19 @@ function LibraryItemsList(): JSX.Element {
                     />
                 )}
 
-                {display === 'tile' && <ItemsTitleDisplay items={items} />}
+                {display === 'tile' && (
+                    <ItemsTitleDisplay
+                        items={items}
+                        totalCount={totalCount}
+                        pagination={pagination}
+                        offset={offset}
+                        setOffset={setOffset}
+                        modeSelection={modeSelection}
+                        setModeSelection={setModeSelection}
+                        selected={selected}
+                        setSelected={setSelected}
+                    />
+                )}
             </div>
         </Wrapper>
     );
