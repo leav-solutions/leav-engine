@@ -14,11 +14,12 @@ initialize {
         "children": Array [
           Object {
             "attribs": Object {
-              "class": "ui fitted checkbox",
+              "class": "ui checked fitted checkbox",
             },
             "children": Array [
               Object {
                 "attribs": Object {
+                  "checked": "",
                   "class": "hidden",
                   "readonly": "",
                   "tabindex": "0",
@@ -43,12 +44,14 @@ initialize {
                 "prev": null,
                 "type": "tag",
                 "x-attribsNamespace": Object {
+                  "checked": undefined,
                   "class": undefined,
                   "readonly": undefined,
                   "tabindex": undefined,
                   "type": undefined,
                 },
                 "x-attribsPrefix": Object {
+                  "checked": undefined,
                   "class": undefined,
                   "readonly": undefined,
                   "tabindex": undefined,
@@ -64,6 +67,7 @@ initialize {
                 "parent": [Circular],
                 "prev": Object {
                   "attribs": Object {
+                    "checked": "",
                     "class": "hidden",
                     "readonly": "",
                     "tabindex": "0",
@@ -77,12 +81,14 @@ initialize {
                   "prev": null,
                   "type": "tag",
                   "x-attribsNamespace": Object {
+                    "checked": undefined,
                     "class": undefined,
                     "readonly": undefined,
                     "tabindex": undefined,
                     "type": undefined,
                   },
                   "x-attribsPrefix": Object {
+                    "checked": undefined,
                     "class": undefined,
                     "readonly": undefined,
                     "tabindex": undefined,
@@ -2140,11 +2146,12 @@ initialize {
           "children": Array [
             Object {
               "attribs": Object {
-                "class": "ui fitted checkbox",
+                "class": "ui checked fitted checkbox",
               },
               "children": Array [
                 Object {
                   "attribs": Object {
+                    "checked": "",
                     "class": "hidden",
                     "readonly": "",
                     "tabindex": "0",
@@ -2169,12 +2176,14 @@ initialize {
                   "prev": null,
                   "type": "tag",
                   "x-attribsNamespace": Object {
+                    "checked": undefined,
                     "class": undefined,
                     "readonly": undefined,
                     "tabindex": undefined,
                     "type": undefined,
                   },
                   "x-attribsPrefix": Object {
+                    "checked": undefined,
                     "class": undefined,
                     "readonly": undefined,
                     "tabindex": undefined,
@@ -2190,6 +2199,7 @@ initialize {
                   "parent": [Circular],
                   "prev": Object {
                     "attribs": Object {
+                      "checked": "",
                       "class": "hidden",
                       "readonly": "",
                       "tabindex": "0",
@@ -2203,12 +2213,14 @@ initialize {
                     "prev": null,
                     "type": "tag",
                     "x-attribsNamespace": Object {
+                      "checked": undefined,
                       "class": undefined,
                       "readonly": undefined,
                       "tabindex": undefined,
                       "type": undefined,
                     },
                     "x-attribsPrefix": Object {
+                      "checked": undefined,
                       "class": undefined,
                       "readonly": undefined,
                       "tabindex": undefined,
@@ -3256,11 +3268,12 @@ initialize {
             "children": Array [
               Object {
                 "attribs": Object {
-                  "class": "ui fitted checkbox",
+                  "class": "ui checked fitted checkbox",
                 },
                 "children": Array [
                   Object {
                     "attribs": Object {
+                      "checked": "",
                       "class": "hidden",
                       "readonly": "",
                       "tabindex": "0",
@@ -3285,12 +3298,14 @@ initialize {
                     "prev": null,
                     "type": "tag",
                     "x-attribsNamespace": Object {
+                      "checked": undefined,
                       "class": undefined,
                       "readonly": undefined,
                       "tabindex": undefined,
                       "type": undefined,
                     },
                     "x-attribsPrefix": Object {
+                      "checked": undefined,
                       "class": undefined,
                       "readonly": undefined,
                       "tabindex": undefined,
@@ -3306,6 +3321,7 @@ initialize {
                     "parent": [Circular],
                     "prev": Object {
                       "attribs": Object {
+                        "checked": "",
                         "class": "hidden",
                         "readonly": "",
                         "tabindex": "0",
@@ -3319,12 +3335,14 @@ initialize {
                       "prev": null,
                       "type": "tag",
                       "x-attribsNamespace": Object {
+                        "checked": undefined,
                         "class": undefined,
                         "readonly": undefined,
                         "tabindex": undefined,
                         "type": undefined,
                       },
                       "x-attribsPrefix": Object {
+                        "checked": undefined,
                         "class": undefined,
                         "readonly": undefined,
                         "tabindex": undefined,
@@ -4372,11 +4390,12 @@ initialize {
               "children": Array [
                 Object {
                   "attribs": Object {
-                    "class": "ui fitted checkbox",
+                    "class": "ui checked fitted checkbox",
                   },
                   "children": Array [
                     Object {
                       "attribs": Object {
+                        "checked": "",
                         "class": "hidden",
                         "readonly": "",
                         "tabindex": "0",
@@ -4401,12 +4420,14 @@ initialize {
                       "prev": null,
                       "type": "tag",
                       "x-attribsNamespace": Object {
+                        "checked": undefined,
                         "class": undefined,
                         "readonly": undefined,
                         "tabindex": undefined,
                         "type": undefined,
                       },
                       "x-attribsPrefix": Object {
+                        "checked": undefined,
                         "class": undefined,
                         "readonly": undefined,
                         "tabindex": undefined,
@@ -4422,6 +4443,7 @@ initialize {
                       "parent": [Circular],
                       "prev": Object {
                         "attribs": Object {
+                          "checked": "",
                           "class": "hidden",
                           "readonly": "",
                           "tabindex": "0",
@@ -4435,12 +4457,14 @@ initialize {
                         "prev": null,
                         "type": "tag",
                         "x-attribsNamespace": Object {
+                          "checked": undefined,
                           "class": undefined,
                           "readonly": undefined,
                           "tabindex": undefined,
                           "type": undefined,
                         },
                         "x-attribsPrefix": Object {
+                          "checked": undefined,
                           "class": undefined,
                           "readonly": undefined,
                           "tabindex": undefined,
@@ -5488,11 +5512,12 @@ initialize {
                 "children": Array [
                   Object {
                     "attribs": Object {
-                      "class": "ui fitted checkbox",
+                      "class": "ui checked fitted checkbox",
                     },
                     "children": Array [
                       Object {
                         "attribs": Object {
+                          "checked": "",
                           "class": "hidden",
                           "readonly": "",
                           "tabindex": "0",
@@ -5517,12 +5542,14 @@ initialize {
                         "prev": null,
                         "type": "tag",
                         "x-attribsNamespace": Object {
+                          "checked": undefined,
                           "class": undefined,
                           "readonly": undefined,
                           "tabindex": undefined,
                           "type": undefined,
                         },
                         "x-attribsPrefix": Object {
+                          "checked": undefined,
                           "class": undefined,
                           "readonly": undefined,
                           "tabindex": undefined,
@@ -5538,6 +5565,7 @@ initialize {
                         "parent": [Circular],
                         "prev": Object {
                           "attribs": Object {
+                            "checked": "",
                             "class": "hidden",
                             "readonly": "",
                             "tabindex": "0",
@@ -5551,12 +5579,14 @@ initialize {
                           "prev": null,
                           "type": "tag",
                           "x-attribsNamespace": Object {
+                            "checked": undefined,
                             "class": undefined,
                             "readonly": undefined,
                             "tabindex": undefined,
                             "type": undefined,
                           },
                           "x-attribsPrefix": Object {
+                            "checked": undefined,
                             "class": undefined,
                             "readonly": undefined,
                             "tabindex": undefined,
@@ -6604,11 +6634,12 @@ initialize {
                   "children": Array [
                     Object {
                       "attribs": Object {
-                        "class": "ui fitted checkbox",
+                        "class": "ui checked fitted checkbox",
                       },
                       "children": Array [
                         Object {
                           "attribs": Object {
+                            "checked": "",
                             "class": "hidden",
                             "readonly": "",
                             "tabindex": "0",
@@ -6633,12 +6664,14 @@ initialize {
                           "prev": null,
                           "type": "tag",
                           "x-attribsNamespace": Object {
+                            "checked": undefined,
                             "class": undefined,
                             "readonly": undefined,
                             "tabindex": undefined,
                             "type": undefined,
                           },
                           "x-attribsPrefix": Object {
+                            "checked": undefined,
                             "class": undefined,
                             "readonly": undefined,
                             "tabindex": undefined,
@@ -6654,6 +6687,7 @@ initialize {
                           "parent": [Circular],
                           "prev": Object {
                             "attribs": Object {
+                              "checked": "",
                               "class": "hidden",
                               "readonly": "",
                               "tabindex": "0",
@@ -6667,12 +6701,14 @@ initialize {
                             "prev": null,
                             "type": "tag",
                             "x-attribsNamespace": Object {
+                              "checked": undefined,
                               "class": undefined,
                               "readonly": undefined,
                               "tabindex": undefined,
                               "type": undefined,
                             },
                             "x-attribsPrefix": Object {
+                              "checked": undefined,
                               "class": undefined,
                               "readonly": undefined,
                               "tabindex": undefined,

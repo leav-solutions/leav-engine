@@ -1,6 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Container, Divider, Grid, Header, List, Menu, Segment, Sidebar, Transition} from 'semantic-ui-react';
+import {
+    Button,
+    Divider,
+    Dropdown,
+    Grid,
+    Header,
+    List,
+    Menu,
+    Modal,
+    Segment,
+    Sidebar,
+    Transition
+} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {IFilters, operatorFilter, whereFilter} from '../../../_types/types';
 import SelectVue from '../SelectVue';
@@ -26,10 +38,10 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
     const [show, setShow] = useState(showFilters);
     const [filters, setFilters] = useState<IFilters[]>([
         {
-            key: 1,
+            key: 0,
             where: whereFilter.contains,
             value: '',
-            attribute: 'ean',
+            attribute: 'id',
             active: true
         }
     ]);
@@ -61,79 +73,70 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
     return (
         <Transition visible={show} onHide={() => setShowFilters(show => false)} animation="slide right" duration={100}>
             <Sidebar.Pushable>
-                <Sidebar
-                    visible={showAttr}
-                    onHide={() => setShowAttr(false)}
-                    animation="push"
-                    width="wide"
-                    direction="right"
-                >
-                    <Container>
-                        <Button icon="close" onClick={() => setShowAttr(false)} />
+                <Modal open={showAttr} onClose={() => setShowAttr(false)}>
+                    <Modal.Header>{t('filters.modal-header')}</Modal.Header>
+                    <Modal.Content>
                         <AttributeList
                             libId={libId}
                             libQueryName={libQueryName}
                             setFilters={setFilters}
                             setShowAttr={setShowAttr}
                         />
-                    </Container>
-                </Sidebar>
-                <Sidebar.Pusher>
-                    <Side>
-                        <Menu>
-                            <Menu.Menu>
-                                <Menu.Item>
-                                    <Button icon="sidebar" onClick={() => setShow(false)} />
-                                </Menu.Item>
-                            </Menu.Menu>
-                            <Menu.Menu position="right">
-                                <Menu.Item>
-                                    <SelectVue />
-                                </Menu.Item>
-                            </Menu.Menu>
-                        </Menu>
+                    </Modal.Content>
+                </Modal>
+                <Side>
+                    <Menu>
+                        <Menu.Menu>
+                            <Menu.Item>
+                                <Button icon="sidebar" onClick={() => setShow(false)} />
+                            </Menu.Item>
+                        </Menu.Menu>
+                        <Menu.Menu position="right">
+                            <Menu.Item>
+                                <SelectVue />
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu>
 
-                        <List horizontal>
-                            <List.Item>
-                                <Header as="h5">{t('filters.filters')}</Header>
-                            </List.Item>
-                            <List.Item>
-                                <Button basic icon="plus" onClick={() => setShowAttr(true)} />
-                            </List.Item>
-                        </List>
+                    <List horizontal>
+                        <List.Item>
+                            <Header as="h5">{t('filters.filters')}</Header>
+                        </List.Item>
+                        <List.Item>
+                            <Button basic icon="plus" onClick={() => setShowAttr(true)} />
+                        </List.Item>
+                        <Dropdown />
+                    </List>
 
-                        <Transition.Group>
-                            <Segment secondary color="green">
-                                <Grid columns={3}>
-                                    {filters.map(filter => (
-                                        <FilterItem
-                                            key={filter.key}
-                                            filter={filter}
-                                            whereOptions={whereOptions}
-                                            operatorOptions={operatorOptions}
-                                        />
-                                    ))}
-                                </Grid>
-                                <Divider />
-                                <Grid columns={2}>
-                                    <Grid.Column>
-                                        <Button negative compact onClick={() => setFilters([])}>
-                                            {t('filters.remove-filters')}
-                                        </Button>
-                                    </Grid.Column>
-                                    <Grid.Column>
-                                        <Button positive compact>
-                                            {t('filters.apply')}
-                                        </Button>
-                                    </Grid.Column>
-                                </Grid>
-                            </Segment>
-                        </Transition.Group>
-                    </Side>
-                    <Transition visible={showAttr} animation="slide right" duration={100}>
-                        <Segment>attr list </Segment>
-                    </Transition>
-                </Sidebar.Pusher>
+                    <Transition.Group>
+                        <Segment secondary color="green">
+                            <Grid columns={3}>
+                                {filters.map(filter => (
+                                    <FilterItem
+                                        key={filter.key}
+                                        filter={filter}
+                                        setFilters={setFilters}
+                                        whereOptions={whereOptions}
+                                        operatorOptions={operatorOptions}
+                                    />
+                                ))}
+                            </Grid>
+                            <Divider />
+                            <Grid columns={2}>
+                                <Grid.Column>
+                                    <Button negative compact disabled={!filters.length} onClick={() => setFilters([])}>
+                                        {t('filters.remove-filters')}
+                                    </Button>
+                                </Grid.Column>
+                                <Grid.Column>
+                                    <Button positive compact disabled={!filters.length}>
+                                        {t('filters.apply')}
+                                    </Button>
+                                </Grid.Column>
+                            </Grid>
+                        </Segment>
+                    </Transition.Group>
+                </Side>
             </Sidebar.Pushable>
         </Transition>
     );

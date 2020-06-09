@@ -1,8 +1,15 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
-import {Container, Grid, Icon, List} from 'semantic-ui-react';
+import {Button, Container, List} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {getLibraryDetailQuery} from '../../../../queries/libraries/getLibraryDetailQuery';
 import {IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
+
+const Wrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
 
 interface IAttributeListProps {
     libId: string;
@@ -63,13 +70,13 @@ function Attribute({att, setFilters, setShowAttr}: IAttributeProps): JSX.Element
     return (
         <List.Item>
             <List.Icon name="square" size="large" verticalAlign="middle" />
-            <List.Content>
-                <Grid columns="2">
-                    <Grid.Column width="14">{att.id}</Grid.Column>
-                    <Grid.Column width="2">
-                        <Icon name="plus" onClick={addFilter} />
-                    </Grid.Column>
-                </Grid>
+            <List.Content verticalAlign="middle">
+                <Container>
+                    <Wrapper>
+                        <span>{att.id}</span>
+                        <Button floated="right" icon="plus" onClick={addFilter} />
+                    </Wrapper>
+                </Container>
             </List.Content>
         </List.Item>
     );

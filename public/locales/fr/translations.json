@@ -111,13 +111,14 @@
         "greater-than": "Plus grand que",
         "less-than": "Plus petit que",
         "exist": "Valeur existante",
-        "search-in": "Chercher dedans...",
+        "search-in": "Chercher dans...",
         "where": "Où",
         "label": "Libellé",
         "value": "Valeur",
         "remove-filters": "Supprimer les filtres",
         "apply": "Appliquer",
         "and": "Et",
-        "or": "Où"
+        "or": "Où",
+        "modal-header": "Attributs"
     }
 }

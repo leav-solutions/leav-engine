@@ -120,6 +120,7 @@
         "remove-filters": "Remove filters",
         "apply": "Apply",
         "and": "And",
-        "or": "Or"
+        "or": "Or",
+        "modal-header": "Attributs"
     }
 }
