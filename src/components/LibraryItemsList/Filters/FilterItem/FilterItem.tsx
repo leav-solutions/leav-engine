@@ -1,6 +1,6 @@
 import React from 'react';
-import {Button, Checkbox, Dropdown, Form, Grid, TextArea} from 'semantic-ui-react';
-import {IFilters} from '../../../../_types/types';
+import {Button, Checkbox, Dropdown, DropdownProps, Form, Grid, TextArea, TextAreaProps} from 'semantic-ui-react';
+import {IFilters, whereFilter} from '../../../../_types/types';
 
 interface IFilterItemProps {
     filter: IFilters;
@@ -30,6 +30,26 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
         });
     };
 
+    const updateFilterValue = (event: React.FormEvent<HTMLTextAreaElement>, data: TextAreaProps) => {
+        const newValue = (data?.value ?? '').toString();
+
+        setFilters(filters => {
+            const restFilters = filters.filter(f => f.key !== filter.key);
+            const currentFilter = filters.find(f => f.key === filter.key);
+            return currentFilter ? [...restFilters, {...currentFilter, value: newValue}] : restFilters;
+        });
+    };
+
+    const changeWhere = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+        const newWhere = (data?.value ?? '').toString();
+
+        setFilters(filters => {
+            const restFilters = filters.filter(f => f.key !== filter.key);
+            const currentFilter = filters.find(f => f.key === filter.key);
+            return currentFilter ? [...restFilters, {...currentFilter, where: whereFilter[newWhere]}] : restFilters;
+        });
+    };
+
     return (
         <Grid.Row key={filter.key}>
             <Grid.Column width="1">
@@ -43,7 +63,7 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
             </Grid.Column>
 
             <Grid.Column width="4">
-                <Dropdown floating inline defaultValue={filter.where} options={whereOptions} />
+                <Dropdown floating inline defaultValue={filter.where} onChange={changeWhere} options={whereOptions} />
             </Grid.Column>
             <Grid.Column width="4">{filter.attribute}</Grid.Column>
             <Grid.Column width="1">
@@ -52,7 +72,7 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
 
             <Grid.Column width="16">
                 <Form>
-                    <TextArea value={filter.value} />
+                    <TextArea value={filter.value} onChange={updateFilterValue} />
                 </Form>
             </Grid.Column>
         </Grid.Row>

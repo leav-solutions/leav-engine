@@ -70,6 +70,25 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
         {text: t('filters.or'), value: operatorFilter.or}
     ];
 
+    const applyFiler = () => {
+        let request: any = [];
+
+        for (let filter of filters) {
+            if (filter.operator) {
+                request.push({operator: filter.operator});
+            }
+
+            filter.value.split('\n').map((filterValue, index) => {
+                if (index > 0) {
+                    request.push({operator: operatorFilter.and});
+                }
+                request.push({field: filter.attribute, value: filterValue, operator: filter.where});
+            });
+        }
+
+        console.log(request);
+    };
+
     return (
         <Transition visible={show} onHide={() => setShowFilters(show => false)} animation="slide right" duration={100}>
             <Sidebar.Pushable>
@@ -129,7 +148,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                                     </Button>
                                 </Grid.Column>
                                 <Grid.Column>
-                                    <Button positive compact disabled={!filters.length}>
+                                    <Button positive compact disabled={!filters.length} onClick={applyFiler}>
                                         {t('filters.apply')}
                                     </Button>
                                 </Grid.Column>
