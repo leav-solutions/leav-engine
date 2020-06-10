@@ -71,12 +71,10 @@ function Attribute({att, setFilters, setShowAttr}: IAttributeProps): JSX.Element
         <List.Item>
             <List.Icon name="square" size="large" verticalAlign="middle" />
             <List.Content verticalAlign="middle">
-                <Container>
-                    <Wrapper>
-                        <span>{att.id}</span>
-                        <Button floated="right" icon="plus" onClick={addFilter} />
-                    </Wrapper>
-                </Container>
+                <Wrapper>
+                    <span>{att.id}</span>
+                    <Button floated="right" icon="plus" onClick={addFilter} />
+                </Wrapper>
             </List.Content>
         </List.Item>
     );

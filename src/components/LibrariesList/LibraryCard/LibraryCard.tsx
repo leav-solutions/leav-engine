@@ -3,7 +3,6 @@ import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {Button, Card} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
-import {getActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../../utils';
 import {ILibrary} from '../../../_types/types';
@@ -27,7 +26,6 @@ function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
 
     const goLib = () => {
         const detailUrl = `/library/items/${lib.id}/${lib.gqlNames.query}`;
-        changeActiveLibrary(lib);
         history.push(detailUrl);
     };
 
@@ -38,21 +36,10 @@ function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
     const displayActions = () => setShowActions(true);
     const hideActions = () => setShowActions(false);
 
-    const {data: dataLang, client} = useQuery(getLang);
+    const {data: dataLang} = useQuery(getLang);
 
     // handle case dataLang is null
     const {lang} = dataLang ?? {lang: []};
-
-    const changeActiveLibrary = (lib: ILibrary) => {
-        client.writeQuery({
-            query: getActiveLibrary,
-            data: {
-                activeLibId: lib.id,
-                activeLibQueryName: lib.gqlNames.query,
-                activeLibName: localizedLabel(lib.label, lang)
-            }
-        });
-    };
 
     return (
         <Card key={lib.id} as="div" onMouseEnter={displayActions} onMouseLeave={hideActions}>

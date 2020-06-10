@@ -30,8 +30,6 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
         });
     };
 
-    console.log(filter);
-
     return (
         <Grid.Row key={filter.key}>
             <Grid.Column width="1">

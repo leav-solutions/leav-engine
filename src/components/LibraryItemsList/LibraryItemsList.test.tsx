@@ -24,23 +24,21 @@ describe('LibraryItemsList', () => {
             result: {
                 data: {
                     [libQueryName]: {
-                        __typename: 'number',
+                        __typename: libQueryName,
                         totalCount: 1
                     },
                     libraries: {
-                        __typename: 'LibrariesList',
+                        __typename: libQueryName,
                         list: [
                             {
-                                __typename: 'Library',
-                                id: 'test',
-                                system: false,
-                                label: {},
-                                attributes: {
-                                    __typename: 'Attribute',
-                                    id: 'string',
-                                    type: 'string',
-                                    format: 'string',
-                                    label: {}
+                                __typename: libQueryName,
+                                id: '31662',
+                                whoAmI: {
+                                    __typename: 'RecordIdentity',
+                                    id: '31662',
+                                    label: 'test',
+                                    preview: null,
+                                    library: {__typename: 'Library', id: 'test', label: {fr: 'test'}}
                                 }
                             }
                         ]
@@ -52,7 +50,7 @@ describe('LibraryItemsList', () => {
 
     test('Snapshot test', async () => {
         const comp = render(
-            <MockedProviderWithFragments>
+            <MockedProviderWithFragments mocks={mocks}>
                 <LibraryItemsList />
             </MockedProviderWithFragments>
         );
@@ -65,7 +63,7 @@ describe('LibraryItemsList', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments>
+                <MockedProviderWithFragments mocks={mocks}>
                     <LibraryItemsList />
                 </MockedProviderWithFragments>
             );

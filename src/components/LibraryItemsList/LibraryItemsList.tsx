@@ -1,10 +1,13 @@
-import {useLazyQuery} from '@apollo/client';
+import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {Button, Dropdown, DropdownProps, Menu, Popup, Search} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
+import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
+import {localizedLabel} from '../../utils';
 import {IItem} from '../../_types/types';
 import Filters from './Filters';
 import ItemsTitleDisplay from './ItemsTitleDisplay';
@@ -36,7 +39,7 @@ function LibraryItemsList(): JSX.Element {
 
     const [pagination, setPagination] = useState(20);
 
-    const [getRecord, {called, loading, data, error}] = useLazyQuery(
+    const [getRecord, {called, loading, data, error, client}] = useLazyQuery(
         getRecordsFromLibraryQuery(libQueryName || '', pagination, offset)
     );
 
@@ -44,13 +47,27 @@ function LibraryItemsList(): JSX.Element {
         getRecord();
     }
 
+    const {data: dataLang} = useQuery(getLang);
+    const {lang} = dataLang ?? {lang: []};
+
     useEffect(() => {
-        if (!loading && called && data) {
+        if (!loading && called && data && client) {
             const itemsFromQuery = data ? data[libQueryName || ''].list : [];
             setItems(itemsFromQuery.map((i: any) => i.whoAmI) as IItem[]);
             setTotalCount(data[libQueryName]?.totalCount);
+
+            const label = data[libQueryName].list[0].whoAmI.library.label;
+
+            client.writeQuery({
+                query: getActiveLibrary,
+                data: {
+                    activeLibId: libId,
+                    activeLibQueryName: libQueryName,
+                    activeLibName: localizedLabel(label, lang)
+                }
+            });
         }
-    }, [loading, data, libQueryName, called]);
+    }, [loading, data, called, client, lang, libId, libQueryName]);
 
     useEffect(() => {
         getRecord();

@@ -19,6 +19,7 @@ export const getRecordsFromLibraryQuery = (libraryName: string, pagination: numb
                         }
                         library {
                             id
+                            label
                         }
                     }
                 }
