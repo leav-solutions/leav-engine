@@ -118,11 +118,14 @@
         "where": "Where",
         "label": "Label",
         "value": "Value",
-        "remove-filters": "Remove filters",
         "apply": "Apply",
         "and": "And",
         "or": "Or",
-        "modal-header": "Attributs"
+        "modal-header": "Attributs",
+        "filters-options": "Filters Options",
+        "add-filters": "Add filters",
+        "remove-filters": "Remove filters",
+        "add-separator": "Add request"
     },
     "filter-item": {
         "no-operator": "Si"

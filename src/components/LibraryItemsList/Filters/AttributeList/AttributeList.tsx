@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
-import {Button, Container, List} from 'semantic-ui-react';
+import {Button, Checkbox, CheckboxProps, Container, List} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLibraryDetailQuery} from '../../../../queries/libraries/getLibraryDetailQuery';
 import {IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
@@ -20,6 +20,7 @@ interface IAttributeListProps {
 
 function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttributeListProps): JSX.Element {
     const [attributes, setAttrs] = useState<any>([]);
+    const [attSelected, setAttSelected] = useState<string[]>([]);
 
     const {loading, data, error} = useQuery(getLibraryDetailQuery(libQueryName), {
         variables: {
@@ -33,38 +34,45 @@ function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttribut
             setAttrs(attributes);
         }
     }, [loading, data, error]);
+
+    const addFilters = () => {
+        setFilters(filters => {
+            const newFilters = attSelected.map((att, index) => ({
+                key: filters.length + index,
+                operator: operatorFilter.and,
+                where: whereFilter.contains,
+                value: '',
+                attribute: att,
+                active: true
+            }));
+
+            return [...filters, ...newFilters];
+        });
+        setShowAttr(false);
+    };
+
     return (
         <Container>
             <List divided>
                 {attributes &&
-                    attributes.map((att: any) => (
-                        <Attribute att={att} key={att.id} setFilters={setFilters} setShowAttr={setShowAttr} />
-                    ))}
+                    attributes.map((att: any) => <Attribute att={att} key={att.id} setAttSelected={setAttSelected} />)}
             </List>
+            <Button onClick={addFilters}>{'Add'}</Button>
         </Container>
     );
 }
 
 interface IAttributeProps {
     att: any;
-    setFilters: React.Dispatch<React.SetStateAction<IFilters[]>>;
-    setShowAttr: React.Dispatch<React.SetStateAction<boolean>>;
+    setAttSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }
-function Attribute({att, setFilters, setShowAttr}: IAttributeProps): JSX.Element {
-    const addFilter = () => {
-        setFilters(filters => [
-            ...filters,
-            {
-                key: filters.length,
-                operator: operatorFilter.and,
-                where: whereFilter.contains,
-                value: '',
-                attribute: att.id,
-                active: true
-            }
-        ]);
-
-        setShowAttr(false);
+function Attribute({att, setAttSelected}: IAttributeProps): JSX.Element {
+    const handleOnChange = (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
+        if (data.checked) {
+            setAttSelected(attSelected => [...attSelected, att.id]);
+        } else {
+            setAttSelected(attSelected => attSelected.filter(attId => attId !== att.id));
+        }
     };
 
     return (
@@ -73,7 +81,7 @@ function Attribute({att, setFilters, setShowAttr}: IAttributeProps): JSX.Element
             <List.Content verticalAlign="middle">
                 <Wrapper>
                     <span>{att.id}</span>
-                    <Button floated="right" icon="plus" onClick={addFilter} />
+                    <Checkbox onChange={handleOnChange} />
                 </Wrapper>
             </List.Content>
         </List.Item>

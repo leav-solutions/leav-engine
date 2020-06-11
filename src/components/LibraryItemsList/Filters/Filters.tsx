@@ -1,18 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-    Button,
-    Divider,
-    Dropdown,
-    Grid,
-    Header,
-    List,
-    Menu,
-    Modal,
-    Segment,
-    Sidebar,
-    Transition
-} from 'semantic-ui-react';
+import {Button, Divider, Dropdown, Menu, Modal, Sidebar, Transition} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {IFilters, IQueryFilter, operatorFilter, whereFilter} from '../../../_types/types';
 import SelectVue from '../SelectVue';
@@ -30,6 +18,16 @@ interface IFiltersProps {
 const Side = styled.div`
     border-right: 1px solid #ebebeb;
     padding: 1rem 1rem 0 1rem;
+    height: 100%;
+`;
+
+const FilterActions = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
+
+const FilterList = styled.div`
+    overflow: scroll;
     height: 100%;
 `;
 
@@ -71,9 +69,11 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
         {text: t('filters.or'), value: operatorFilter.or}
     ];
 
+    const resetFilters = () => setQueryFilters(null);
+
     const removeAllFilter = () => {
         setFilters([]);
-        setQueryFilters(null);
+        resetFilters();
     };
 
     const applyFiler = () => {
@@ -125,44 +125,40 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                         </Menu.Menu>
                     </Menu>
 
-                    <List horizontal>
-                        <List.Item>
-                            <Header as="h5">{t('filters.filters')}</Header>
-                        </List.Item>
-                        <List.Item>
-                            <Button basic icon="plus" onClick={() => setShowAttr(true)} />
-                        </List.Item>
-                        <Dropdown />
-                    </List>
+                    <Divider />
 
-                    <Transition.Group>
-                        <Segment secondary color="green">
-                            <Grid columns={3}>
-                                {filters.map(filter => (
-                                    <FilterItem
-                                        key={filter.key}
-                                        filter={filter}
-                                        setFilters={setFilters}
-                                        whereOptions={whereOptions}
-                                        operatorOptions={operatorOptions}
-                                    />
-                                ))}
-                            </Grid>
-                            <Divider />
-                            <Grid columns={2}>
-                                <Grid.Column>
-                                    <Button negative compact disabled={!filters.length} onClick={removeAllFilter}>
+                    <FilterList>
+                        <FilterActions>
+                            <Dropdown text={t('filters.filters-options')}>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => setShowAttr(true)}>
+                                        {t('filters.add-filters')}
+                                    </Dropdown.Item>
+                                    <Dropdown.Item disabled={!filters.length} onClick={removeAllFilter}>
                                         {t('filters.remove-filters')}
-                                    </Button>
-                                </Grid.Column>
-                                <Grid.Column>
-                                    <Button positive compact disabled={!filters.length} onClick={applyFiler}>
-                                        {t('filters.apply')}
-                                    </Button>
-                                </Grid.Column>
-                            </Grid>
-                        </Segment>
-                    </Transition.Group>
+                                    </Dropdown.Item>
+                                    <Dropdown.Item disabled={!filters.length}>
+                                        {t('filters.add-separator')}
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+
+                            <Button positive compact disabled={!filters.length} onClick={applyFiler}>
+                                {t('filters.apply')}
+                            </Button>
+                        </FilterActions>
+
+                        {filters.map(filter => (
+                            <FilterItem
+                                key={filter.key}
+                                filter={filter}
+                                setFilters={setFilters}
+                                whereOptions={whereOptions}
+                                operatorOptions={operatorOptions}
+                                resetFilters={resetFilters}
+                            />
+                        ))}
+                    </FilterList>
                 </Side>
             </Sidebar.Pushable>
         </Transition>

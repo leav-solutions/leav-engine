@@ -117,11 +117,14 @@
         "where": "Où",
         "label": "Libellé",
         "value": "Valeur",
-        "remove-filters": "Supprimer les filtres",
         "apply": "Appliquer",
         "and": "Et",
         "or": "Où",
-        "modal-header": "Attributs"
+        "modal-header": "Attributs",
+        "filters-options": "Options de Filtres",
+        "add-filters": "Ajouter des filtres",
+        "remove-filters": "Supprimer les filtres",
+        "add-separator": "Ajouter une requête"
     },
     "filter-item": {
         "no-operator": "Si"

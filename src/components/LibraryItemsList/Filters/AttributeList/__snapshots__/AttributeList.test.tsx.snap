@@ -15,7 +15,32 @@ initialize {
         "children": Array [],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
-        "next": null,
+        "next": Object {
+          "attribs": Object {
+            "class": "ui button",
+          },
+          "children": Array [
+            Object {
+              "data": "Add",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "button",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
+        },
         "parent": [Circular],
         "prev": null,
         "type": "tag",
@@ -26,6 +51,52 @@ initialize {
         "x-attribsPrefix": Object {
           "class": undefined,
           "role": undefined,
+        },
+      },
+      Object {
+        "attribs": Object {
+          "class": "ui button",
+        },
+        "children": Array [
+          Object {
+            "data": "Add",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "text",
+          },
+        ],
+        "name": "button",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": [Circular],
+        "prev": Object {
+          "attribs": Object {
+            "class": "ui divided list",
+            "role": "list",
+          },
+          "children": Array [],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "class": undefined,
+            "role": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+            "role": undefined,
+          },
+        },
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "class": undefined,
         },
       },
     ],
