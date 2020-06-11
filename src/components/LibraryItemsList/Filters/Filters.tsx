@@ -77,13 +77,15 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
             if (filter.operator) {
                 request.push({operator: filter.operator});
             }
+            request.push({parentheses: '('});
 
-            filter.value.split('\n').map((filterValue, index) => {
+            filter.value.split('\n').forEach((filterValue, index) => {
                 if (index > 0) {
-                    request.push({operator: operatorFilter.and});
+                    request.push({operator: operatorFilter.or});
                 }
                 request.push({field: filter.attribute, value: filterValue, operator: filter.where});
             });
+            request.push({parentheses: ')'});
         }
 
         console.log(request);

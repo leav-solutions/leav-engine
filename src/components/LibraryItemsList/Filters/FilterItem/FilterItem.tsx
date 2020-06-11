@@ -1,6 +1,11 @@
 import React from 'react';
 import {Button, Checkbox, Dropdown, DropdownProps, Form, Grid, TextArea, TextAreaProps} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {IFilters, whereFilter} from '../../../../_types/types';
+
+const Attribute = styled.div`
+    overflow: hidden;
+`;
 
 interface IFilterItemProps {
     filter: IFilters;
@@ -14,7 +19,9 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
-            return currentFilter ? [...restFilters, {...currentFilter, active: !currentFilter.active}] : restFilters;
+            return currentFilter
+                ? [...restFilters, {...currentFilter, active: !currentFilter.active}].sort((f1, f2) => f1.key - f2.key)
+                : restFilters;
         });
     };
 
@@ -36,7 +43,9 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
-            return currentFilter ? [...restFilters, {...currentFilter, value: newValue}] : restFilters;
+            return currentFilter
+                ? [...restFilters, {...currentFilter, value: newValue}].sort((f1, f2) => f1.key - f2.key)
+                : restFilters;
         });
     };
 
@@ -46,7 +55,9 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
-            return currentFilter ? [...restFilters, {...currentFilter, where: whereFilter[newWhere]}] : restFilters;
+            return currentFilter
+                ? [...restFilters, {...currentFilter, where: whereFilter[newWhere]}].sort((f1, f2) => f1.key - f2.key)
+                : restFilters;
         });
     };
 
@@ -56,7 +67,7 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
                 <Checkbox checked={filter.active} onChange={changeActive} />
             </Grid.Column>
 
-            <Grid.Column width="4">
+            <Grid.Column width="3">
                 {filter.operator && (
                     <Dropdown floating inline defaultValue={filter.operator} options={operatorOptions} />
                 )}
@@ -65,7 +76,9 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
             <Grid.Column width="4">
                 <Dropdown floating inline defaultValue={filter.where} onChange={changeWhere} options={whereOptions} />
             </Grid.Column>
-            <Grid.Column width="4">{filter.attribute}</Grid.Column>
+            <Grid.Column width="5">
+                <Attribute>{filter.attribute}</Attribute>
+            </Grid.Column>
             <Grid.Column width="1">
                 <Button icon="remove" basic negative compact size="mini" onClick={deleteFilterItem} />
             </Grid.Column>
