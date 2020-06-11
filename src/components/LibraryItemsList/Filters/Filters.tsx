@@ -14,7 +14,7 @@ import {
     Transition
 } from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IFilters, operatorFilter, whereFilter} from '../../../_types/types';
+import {IFilters, IQueryFilter, operatorFilter, whereFilter} from '../../../_types/types';
 import SelectVue from '../SelectVue';
 import AttributeList from './AttributeList';
 import FilterItem from './FilterItem';
@@ -24,6 +24,7 @@ interface IFiltersProps {
     setShowFilters: (showFilters: (x: boolean) => boolean) => void;
     libId: string;
     libQueryName: string;
+    setQueryFilters: React.Dispatch<React.SetStateAction<IQueryFilter[] | null>>;
 }
 
 const Side = styled.div`
@@ -32,7 +33,7 @@ const Side = styled.div`
     height: 100%;
 `;
 
-function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersProps): JSX.Element {
+function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilters}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();
     const [showAttr, setShowAttr] = useState(false);
     const [show, setShow] = useState(showFilters);
@@ -70,14 +71,19 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
         {text: t('filters.or'), value: operatorFilter.or}
     ];
 
+    const removeAllFilter = () => {
+        setFilters([]);
+        setQueryFilters(null);
+    };
+
     const applyFiler = () => {
-        let request: any = [];
+        let request: IQueryFilter[] = [];
 
         for (let filter of filters) {
             if (filter.operator) {
                 request.push({operator: filter.operator});
             }
-            request.push({parentheses: '('});
+            request.push({operator: '('});
 
             filter.value.split('\n').forEach((filterValue, index) => {
                 if (index > 0) {
@@ -85,10 +91,10 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                 }
                 request.push({field: filter.attribute, value: filterValue, operator: filter.where});
             });
-            request.push({parentheses: ')'});
+            request.push({operator: ')'});
         }
 
-        console.log(request);
+        setQueryFilters(request);
     };
 
     return (
@@ -106,7 +112,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                     </Modal.Content>
                 </Modal>
                 <Side>
-                    <Menu>
+                    <Menu style={{height: '5rem'}}>
                         <Menu.Menu>
                             <Menu.Item>
                                 <Button icon="sidebar" onClick={() => setShow(false)} />
@@ -145,7 +151,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName}: IFiltersPro
                             <Divider />
                             <Grid columns={2}>
                                 <Grid.Column>
-                                    <Button negative compact disabled={!filters.length} onClick={() => setFilters([])}>
+                                    <Button negative compact disabled={!filters.length} onClick={removeAllFilter}>
                                         {t('filters.remove-filters')}
                                     </Button>
                                 </Grid.Column>

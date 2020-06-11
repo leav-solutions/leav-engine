@@ -39,7 +39,9 @@
     "sidebar": {
         "close": "Fermer",
         "lib_list": "Bibliothèques",
-        "setting": "Paramètres"
+        "setting": "Paramètres",
+        "shortcuts": "Raccourcis",
+        "libraries": "Bibliothèques"
     },
     "lib_list": {
         "header": "Bibliothèques"
@@ -120,5 +122,8 @@
         "and": "Et",
         "or": "Où",
         "modal-header": "Attributs"
+    },
+    "filter-item": {
+        "no-operator": "Si"
     }
 }

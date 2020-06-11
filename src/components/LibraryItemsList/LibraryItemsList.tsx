@@ -8,7 +8,7 @@ import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibra
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {localizedLabel} from '../../utils';
-import {IItem} from '../../_types/types';
+import {IItem, IQueryFilter} from '../../_types/types';
 import Filters from './Filters';
 import ItemsTitleDisplay from './ItemsTitleDisplay';
 import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
@@ -36,11 +36,16 @@ function LibraryItemsList(): JSX.Element {
     const [showFilters, setShowFilters] = useState(false);
     const [selected, setSelected] = useState<{[x: string]: boolean}>({});
     const [modeSelection, setModeSelection] = useState<boolean>(false);
+    const [queryFilters, setQueryFilters] = useState<IQueryFilter[] | null>(null);
 
     const [pagination, setPagination] = useState(20);
 
-    const [getRecord, {called, loading, data, error, client}] = useLazyQuery(
-        getRecordsFromLibraryQuery(libQueryName || '', pagination, offset)
+    const [getRecord, {called, loading, data, error, client, refetch}] = useLazyQuery(
+        getRecordsFromLibraryQuery(libQueryName || '', pagination, offset),
+        {
+            variables: {filters: queryFilters},
+            errorPolicy: 'all'
+        }
     );
 
     if (!called) {
@@ -56,7 +61,7 @@ function LibraryItemsList(): JSX.Element {
             setItems(itemsFromQuery.map((i: any) => i.whoAmI) as IItem[]);
             setTotalCount(data[libQueryName]?.totalCount);
 
-            const label = data[libQueryName].list[0].whoAmI.library.label;
+            const label = data[libQueryName]?.list[0]?.whoAmI.library.label;
 
             client.writeQuery({
                 query: getActiveLibrary,
@@ -71,7 +76,7 @@ function LibraryItemsList(): JSX.Element {
 
     useEffect(() => {
         getRecord();
-    }, [offset, pagination, getRecord]);
+    }, [offset, pagination, queryFilters, getRecord]);
 
     if (error) {
         return <div>error</div>;
@@ -107,9 +112,10 @@ function LibraryItemsList(): JSX.Element {
                 setShowFilters={setShowFilters}
                 libId={libId}
                 libQueryName={libQueryName}
+                setQueryFilters={setQueryFilters}
             />
             <div className="wrapper-page">
-                <Menu>
+                <Menu style={{height: '5rem'}}>
                     {!showFilters && (
                         <>
                             <Menu.Item>
@@ -153,7 +159,7 @@ function LibraryItemsList(): JSX.Element {
                         />
 
                         <Menu.Item>
-                            <Button icon="redo"></Button>
+                            <Button icon="redo" onClick={() => refetch && refetch()}></Button>
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>

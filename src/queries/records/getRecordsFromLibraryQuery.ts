@@ -4,8 +4,11 @@ export const getRecordsFromLibraryQuery = (libraryName: string, pagination: numb
     const libQueryName = libraryName.toUpperCase();
 
     return gql`
-        query GET_RECORDS_FROM_${libQueryName} {
-            ${libraryName} (pagination: {limit: ${pagination}, offset: ${offset}}) {
+        query GET_RECORDS_FROM_${libQueryName}($filters: [FileFilter]) {
+            ${libraryName} (
+                pagination: {limit: ${pagination}, offset: ${offset}}
+                filters: $filters
+            ) {
                 totalCount
                 list {
                     id

@@ -19,7 +19,10 @@ describe('LibraryItemsList', () => {
     const mocks = [
         {
             request: {
-                query: getRecordsFromLibraryQuery(libQueryName, pagination, offset)
+                query: getRecordsFromLibraryQuery(libQueryName, pagination, offset),
+                variables: {
+                    filters: null
+                }
             },
             result: {
                 data: {

@@ -32,9 +32,10 @@
     },
     "sidebar": {
         "close": "Close Sidebar",
-        "home": "Home",
         "lib_list": "Libraries",
-        "setting": "Setting"
+        "setting": "Setting",
+        "shortcuts": "Shortcuts",
+        "libraries": "Libraries"
     },
     "home": {
         "title": "Home"
@@ -122,5 +123,8 @@
         "and": "And",
         "or": "Or",
         "modal-header": "Attributs"
+    },
+    "filter-item": {
+        "no-operator": "Si"
     }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, Dropdown, DropdownProps, Form, Grid, TextArea, TextAreaProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {IFilters, whereFilter} from '../../../../_types/types';
@@ -15,6 +16,8 @@ interface IFilterItemProps {
 }
 
 function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilterItemProps): JSX.Element {
+    const {t} = useTranslation();
+
     const changeActive = () => {
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
@@ -68,17 +71,21 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions}: IFilter
             </Grid.Column>
 
             <Grid.Column width="3">
-                {filter.operator && (
+                {filter.operator ? (
                     <Dropdown floating inline defaultValue={filter.operator} options={operatorOptions} />
+                ) : (
+                    t('filter-item.no-operator')
                 )}
+            </Grid.Column>
+
+            <Grid.Column width="5">
+                <Attribute>{filter.attribute}</Attribute>
             </Grid.Column>
 
             <Grid.Column width="4">
                 <Dropdown floating inline defaultValue={filter.where} onChange={changeWhere} options={whereOptions} />
             </Grid.Column>
-            <Grid.Column width="5">
-                <Attribute>{filter.attribute}</Attribute>
-            </Grid.Column>
+
             <Grid.Column width="1">
                 <Button icon="remove" basic negative compact size="mini" onClick={deleteFilterItem} />
             </Grid.Column>

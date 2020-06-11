@@ -54,8 +54,8 @@ export interface IFilters {
 }
 
 export enum operatorFilter {
-    and = 'and',
-    or = 'or'
+    and = 'AND',
+    or = 'OR'
 }
 
 export enum whereFilter {
@@ -71,4 +71,10 @@ export enum whereFilter {
     lessThan = 'lessThan',
     exist = 'exist',
     searchIn = 'searchIn'
+}
+
+export interface IQueryFilter {
+    field?: any;
+    value?: any;
+    operator: operatorFilter | whereFilter | '(' | ')';
 }
