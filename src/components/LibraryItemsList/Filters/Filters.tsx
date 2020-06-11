@@ -27,8 +27,7 @@ const FilterActions = styled.div`
 `;
 
 const FilterList = styled.div`
-    overflow: scroll;
-    height: 100%;
+    overflow-y: auto;
 `;
 
 function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilters}: IFiltersProps): JSX.Element {
@@ -80,18 +79,20 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
         let request: IQueryFilter[] = [];
 
         for (let filter of filters) {
-            if (filter.operator) {
-                request.push({operator: filter.operator});
-            }
-            request.push({operator: '('});
-
-            filter.value.split('\n').forEach((filterValue, index) => {
-                if (index > 0) {
-                    request.push({operator: operatorFilter.or});
+            if (filter.active) {
+                if (filter.operator) {
+                    request.push({operator: filter.operator});
                 }
-                request.push({field: filter.attribute, value: filterValue, operator: filter.where});
-            });
-            request.push({operator: ')'});
+                request.push({operator: '('});
+
+                filter.value.split('\n').forEach((filterValue, index) => {
+                    if (index > 0) {
+                        request.push({operator: operatorFilter.or});
+                    }
+                    request.push({field: filter.attribute, value: filterValue, operator: filter.where});
+                });
+                request.push({operator: ')'});
+            }
         }
 
         setQueryFilters(request);
@@ -125,29 +126,27 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                         </Menu.Menu>
                     </Menu>
 
+                    <FilterActions>
+                        <Dropdown text={t('filters.filters-options')}>
+                            <Dropdown.Menu>
+                                <Dropdown.Item onClick={() => setShowAttr(true)}>
+                                    {t('filters.add-filters')}
+                                </Dropdown.Item>
+                                <Dropdown.Item disabled={!filters.length} onClick={removeAllFilter}>
+                                    {t('filters.remove-filters')}
+                                </Dropdown.Item>
+                                <Dropdown.Item disabled={!filters.length}>{t('filters.add-separator')}</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+
+                        <Button positive compact disabled={!filters.length} onClick={applyFiler}>
+                            {t('filters.apply')}
+                        </Button>
+                    </FilterActions>
+
                     <Divider />
 
                     <FilterList>
-                        <FilterActions>
-                            <Dropdown text={t('filters.filters-options')}>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => setShowAttr(true)}>
-                                        {t('filters.add-filters')}
-                                    </Dropdown.Item>
-                                    <Dropdown.Item disabled={!filters.length} onClick={removeAllFilter}>
-                                        {t('filters.remove-filters')}
-                                    </Dropdown.Item>
-                                    <Dropdown.Item disabled={!filters.length}>
-                                        {t('filters.add-separator')}
-                                    </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-
-                            <Button positive compact disabled={!filters.length} onClick={applyFiler}>
-                                {t('filters.apply')}
-                            </Button>
-                        </FilterActions>
-
                         {filters.map(filter => (
                             <FilterItem
                                 key={filter.key}

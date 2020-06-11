@@ -12,7 +12,7 @@ import {
     TextAreaProps
 } from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IFilters, whereFilter} from '../../../../_types/types';
+import {IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
 
 const Attribute = styled.div`
     overflow: hidden;
@@ -36,23 +36,50 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
-            return currentFilter
+
+            const newFilters = currentFilter
                 ? [...restFilters, {...currentFilter, active: !currentFilter.active}].sort((f1, f2) => f1.key - f2.key)
                 : restFilters;
+
+            let firstFind = false;
+
+            console.log('before', newFilters);
+            const newNewFilters = newFilters.map(f => {
+                if (!firstFind && f.active) {
+                    if (f.operator) {
+                        delete f.operator;
+                    }
+                    firstFind = true;
+                } else if (firstFind && !f.operator) {
+                    f.operator = operatorFilter.and;
+                }
+
+                return f;
+            });
+
+            console.log(newNewFilters);
+
+            return newNewFilters;
         });
     };
 
     const deleteFilterItem = () => {
         setFilters(filters => {
-            const final = filters.filter(f => f.key !== filter.key);
+            let newFilters = filters.filter(f => f.key !== filter.key);
+            const activeFilters = filters.filter(f => f.active);
 
-            if (final.length && final[0].operator) {
-                delete final[0].operator;
-            } else if (!final.length) {
+            if (activeFilters.length && activeFilters[0].operator) {
+                newFilters = newFilters.map(f => {
+                    if (f.key === activeFilters[0].key) {
+                        delete f.operator;
+                    }
+                    return f;
+                });
+            } else if (!activeFilters.length) {
                 resetFilters();
             }
 
-            return final;
+            return newFilters;
         });
     };
 
