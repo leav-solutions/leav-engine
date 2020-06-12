@@ -28,7 +28,7 @@ function AppHandler(): JSX.Element {
     // Add active library info to the cache
     client.writeQuery({
         query: getActiveLibrary,
-        data: {activeLibId: '', activeLibQueryName: '', activeLibName: ''}
+        data: {activeLibId: '', activeLibQueryName: '', activeLibName: '', activeLibFilterName: ''}
     });
 
     // Add user info to the cache

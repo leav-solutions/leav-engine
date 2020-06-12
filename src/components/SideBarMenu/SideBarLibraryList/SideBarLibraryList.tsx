@@ -34,7 +34,7 @@ function SideBarLibraryList({hide}: ISideBarLibraryListProps): JSX.Element {
             {libraries.map(lib => (
                 <NavLink
                     key={lib.id}
-                    to={`/library/items/${lib.id}/${lib.gqlNames.query}`}
+                    to={`/library/items/${lib.id}/${lib.gqlNames.query}/${lib.gqlNames.filter}`}
                     onClick={hide}
                     activeClassName="nav-link-active"
                 >

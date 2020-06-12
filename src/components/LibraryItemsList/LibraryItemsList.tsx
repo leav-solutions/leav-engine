@@ -2,7 +2,7 @@ import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
-import {Button, Dropdown, DropdownProps, Menu, Popup, Search} from 'semantic-ui-react';
+import {Button, Dropdown, DropdownProps, Menu, Popup} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
@@ -13,6 +13,7 @@ import Filters from './Filters';
 import ItemsTitleDisplay from './ItemsTitleDisplay';
 import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
 import LibraryItemsListTable from './LibraryItemsListTable';
+import SearchItems from './SearchItems';
 import SelectVue from './SelectVue';
 
 interface IWrapperProps {
@@ -27,7 +28,7 @@ const Wrapper = styled.div<IWrapperProps>`
 
 function LibraryItemsList(): JSX.Element {
     const {t} = useTranslation();
-    const {libId, libQueryName} = useParams();
+    const {libId, libQueryName, filterName} = useParams();
 
     const [items, setItems] = useState<IItem[]>();
     const [totalCount, setTotalCount] = useState<number>(0);
@@ -41,10 +42,9 @@ function LibraryItemsList(): JSX.Element {
     const [pagination, setPagination] = useState(20);
 
     const [getRecord, {called, loading, data, error, client, refetch}] = useLazyQuery(
-        getRecordsFromLibraryQuery(libQueryName || '', pagination, offset),
+        getRecordsFromLibraryQuery(libQueryName || '', filterName, pagination, offset),
         {
-            variables: {filters: queryFilters},
-            errorPolicy: 'all'
+            variables: {filters: queryFilters}
         }
     );
 
@@ -68,11 +68,12 @@ function LibraryItemsList(): JSX.Element {
                 data: {
                     activeLibId: libId,
                     activeLibQueryName: libQueryName,
-                    activeLibName: localizedLabel(label, lang)
+                    activeLibName: localizedLabel(label, lang),
+                    activeLibFilterName: filterName
                 }
             });
         }
-    }, [loading, data, called, client, lang, libId, libQueryName]);
+    }, [loading, data, called, client, lang, libId, libQueryName, filterName]);
 
     useEffect(() => {
         getRecord();
@@ -143,7 +144,7 @@ function LibraryItemsList(): JSX.Element {
                     </Menu.Item>
 
                     <Menu.Item>
-                        <Search />
+                        <SearchItems setQueryFilters={setQueryFilters} />
                     </Menu.Item>
 
                     <Menu.Menu position="right">

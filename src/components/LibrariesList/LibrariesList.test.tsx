@@ -32,7 +32,8 @@ describe('LibrariesList', () => {
                                 label: {},
                                 gqlNames: {
                                     __typename: 'Test',
-                                    query: 'test'
+                                    query: 'test',
+                                    filter: 'TestFilter'
                                 },
                                 attributes: {
                                     __typename: 'Attribute',

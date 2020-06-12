@@ -25,7 +25,7 @@ function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
     const [showActions, setShowActions] = useState<boolean>(false);
 
     const goLib = () => {
-        const detailUrl = `/library/items/${lib.id}/${lib.gqlNames.query}`;
+        const detailUrl = `/library/items/${lib.id}/${lib.gqlNames.query}/${lib.gqlNames.filter}`;
         history.push(detailUrl);
     };
 

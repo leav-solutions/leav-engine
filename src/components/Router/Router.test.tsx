@@ -29,7 +29,8 @@ describe('Router', () => {
                                 id: 'test',
                                 label: 'test',
                                 gqlNames: {
-                                    query: 'test'
+                                    query: 'test',
+                                    filter: 'TestFilter'
                                 }
                             }
                         ]

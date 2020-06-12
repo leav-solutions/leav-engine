@@ -7,53 +7,31 @@ import Filters from './Filters';
 import LibraryItemsList from './LibraryItemsList';
 
 jest.mock('react-router-dom', () => ({
-    useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test'})),
+    useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'})),
     useHistory: jest.fn()
 }));
 
 describe('LibraryItemsList', () => {
     const libQueryName = 'test';
+    const libQueryFilter = 'TestFilter';
     const pagination = 20;
     const offset = 0;
 
     const mocks = [
         {
             request: {
-                query: getRecordsFromLibraryQuery(libQueryName, pagination, offset),
-                variables: {
-                    filters: null
-                }
+                query: getRecordsFromLibraryQuery(libQueryName || '', libQueryFilter, pagination, offset),
+                variables: {filters: null}
             },
             result: {
-                data: {
-                    [libQueryName]: {
-                        __typename: libQueryName,
-                        totalCount: 1
-                    },
-                    libraries: {
-                        __typename: libQueryName,
-                        list: [
-                            {
-                                __typename: libQueryName,
-                                id: '31662',
-                                whoAmI: {
-                                    __typename: 'RecordIdentity',
-                                    id: '31662',
-                                    label: 'test',
-                                    preview: null,
-                                    library: {__typename: 'Library', id: 'test', label: {fr: 'test'}}
-                                }
-                            }
-                        ]
-                    }
-                }
+                data: {}
             }
         }
     ];
 
     test('Snapshot test', async () => {
         const comp = render(
-            <MockedProviderWithFragments mocks={mocks}>
+            <MockedProviderWithFragments mocks={mocks} addTypename={true}>
                 <LibraryItemsList />
             </MockedProviderWithFragments>
         );
@@ -66,7 +44,7 @@ describe('LibraryItemsList', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
+                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
                     <LibraryItemsList />
                 </MockedProviderWithFragments>
             );

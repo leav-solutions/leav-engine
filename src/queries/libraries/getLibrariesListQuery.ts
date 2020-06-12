@@ -8,6 +8,7 @@ export const getLibrariesListQuery = gql`
                 label
                 gqlNames {
                     query
+                    filter
                 }
             }
         }

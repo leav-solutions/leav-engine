@@ -26,9 +26,7 @@ const FilterActions = styled.div`
     justify-content: space-between;
 `;
 
-const FilterList = styled.div`
-    overflow-y: auto;
-`;
+const FilterList = styled.div``;
 
 function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilters}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();

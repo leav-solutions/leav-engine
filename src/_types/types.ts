@@ -9,6 +9,7 @@ export interface ILibrary {
     label: ILabel;
     gqlNames: {
         query: string;
+        filter: string;
     };
 }
 

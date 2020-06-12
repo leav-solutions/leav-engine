@@ -5,5 +5,6 @@ export const getActiveLibrary = gql`
         activeLibId @client
         activeLibQueryName @client
         activeLibName @client
+        activeLibFilterName @client
     }
 `;

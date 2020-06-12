@@ -18,6 +18,11 @@ const Attribute = styled.div`
     overflow: hidden;
 `;
 
+const Wrapper = styled.div`
+    display: flex;
+    justify-content: space-around;
+`;
+
 interface IFilterItemProps {
     filter: IFilters;
     setFilters: React.Dispatch<React.SetStateAction<IFilters[]>>;
@@ -119,26 +124,25 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
                         <Checkbox checked={filter.active} onChange={changeActive} />
                     </Grid.Column>
 
-                    <Grid.Column width="3">
-                        {filter.operator ? (
-                            <Dropdown floating inline defaultValue={filter.operator} options={operatorOptions} />
-                        ) : (
-                            t('filter-item.no-operator')
-                        )}
-                    </Grid.Column>
+                    <Grid.Column width="12">
+                        <Wrapper>
+                            {filter.operator ? (
+                                <Dropdown floating inline defaultValue={filter.operator} options={operatorOptions} />
+                            ) : (
+                                t('filter-item.no-operator')
+                            )}
 
-                    <Grid.Column width="5">
-                        <Attribute>{filter.attribute}</Attribute>
-                    </Grid.Column>
+                            <Attribute>{filter.attribute}</Attribute>
 
-                    <Grid.Column width="4">
-                        <Dropdown
-                            floating
-                            inline
-                            defaultValue={filter.where}
-                            onChange={changeWhere}
-                            options={whereOptions}
-                        />
+                            <Dropdown
+                                floating
+                                inline
+                                defaultValue={filter.where}
+                                onChange={changeWhere}
+                                options={whereOptions}
+                                direction="left"
+                            />
+                        </Wrapper>
                     </Grid.Column>
 
                     <Grid.Column width="1">
