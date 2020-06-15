@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Divider, Dropdown, Menu, Modal, Sidebar, Transition} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IFilters, IQueryFilter, operatorFilter, whereFilter} from '../../../_types/types';
-import SelectVue from '../SelectVue';
+import {AttributeFormat, IFilters, IQueryFilter, operatorFilter, whereFilter} from '../../../_types/types';
+import SelectView from '../SelectView';
 import AttributeList from './AttributeList';
 import FilterItem from './FilterItem';
 
@@ -24,9 +24,14 @@ const Side = styled.div`
 const FilterActions = styled.div`
     display: flex;
     justify-content: space-between;
+    align-items: center;
 `;
 
-const FilterList = styled.div``;
+const FilterList = styled.div`
+    height: 85%;
+    overflow-y: scroll;
+    padding: 0.3rem 0.3rem 0.3rem 0;
+`;
 
 function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilters}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();
@@ -38,7 +43,8 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
             where: whereFilter.contains,
             value: '',
             attribute: 'id',
-            active: true
+            active: true,
+            type: AttributeFormat.text
         }
     ]);
 
@@ -77,7 +83,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
         let request: IQueryFilter[] = [];
 
         for (let filter of filters) {
-            if (filter.active) {
+            if (filter.active && filter.value !== '') {
                 if (filter.operator) {
                     request.push({operator: filter.operator});
                 }
@@ -93,11 +99,13 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
             }
         }
 
+        console.log(request);
+
         setQueryFilters(request);
     };
 
     return (
-        <Transition visible={show} onHide={() => setShowFilters(show => false)} animation="slide right" duration={100}>
+        <Transition visible={show} onHide={() => setShowFilters(show => false)} animation="slide right" duration={10}>
             <Sidebar.Pushable>
                 <Modal open={showAttr} onClose={() => setShowAttr(false)}>
                     <Modal.Header>{t('filters.modal-header')}</Modal.Header>
@@ -119,7 +127,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                         </Menu.Menu>
                         <Menu.Menu position="right">
                             <Menu.Item>
-                                <SelectVue />
+                                <SelectView />
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu>

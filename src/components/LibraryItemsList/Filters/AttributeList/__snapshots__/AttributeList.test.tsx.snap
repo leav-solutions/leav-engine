@@ -21,7 +21,7 @@ initialize {
           },
           "children": Array [
             Object {
-              "data": "Add",
+              "data": "attribute-list.add",
               "next": null,
               "parent": [Circular],
               "prev": null,
@@ -59,7 +59,7 @@ initialize {
         },
         "children": Array [
           Object {
-            "data": "Add",
+            "data": "attribute-list.add",
             "next": null,
             "parent": [Circular],
             "prev": null,

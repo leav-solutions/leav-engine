@@ -21,7 +21,7 @@ function Routes(): JSX.Element {
                 <LibrariesList />
             </Route>
 
-            <Route exact path="/library/list/:libId/:libQueryName">
+            <Route exact path="/library/list/:libId/:libQueryName/:filterName">
                 <LibrariesList />
             </Route>
 

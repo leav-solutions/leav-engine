@@ -1,5 +1,5 @@
 import {i18n} from 'i18next';
-import {AvailableLanguage, PreviewAttributes} from '../_types/types';
+import {AttributeFormat, AvailableLanguage, PreviewAttributes, whereFilter} from '../_types/types';
 
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
     return `recordIdentity/${libId}/${recordId}`;
@@ -119,4 +119,17 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
     const fallbackLang = i18next.options?.fallbackLng ? (i18next as any).options.fallbackLng[0] : '';
 
     return [userLang, fallbackLang];
+};
+
+export const allowedTypeOperator = {
+    [AttributeFormat.text]: [
+        whereFilter.equal,
+        whereFilter.notEqual,
+        whereFilter.beginWith,
+        whereFilter.endWith,
+        whereFilter.contains,
+        whereFilter.notContains
+    ],
+    [AttributeFormat.numeric]: [whereFilter.equal, whereFilter.notEqual, whereFilter.greaterThan, whereFilter.lessThan],
+    [AttributeFormat.boolean]: [whereFilter.equal, whereFilter.notEqual]
 };

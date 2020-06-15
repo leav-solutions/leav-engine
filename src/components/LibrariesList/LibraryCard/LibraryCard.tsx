@@ -30,7 +30,7 @@ function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
     };
 
     const handleChangeLibSelected = () => {
-        history.push(`/library/list/${lib.id}/${lib.gqlNames.query}`);
+        history.push(`/library/list/${lib.id}/${lib.gqlNames.query}/${lib.gqlNames.filter}`);
     };
 
     const displayActions = () => setShowActions(true);

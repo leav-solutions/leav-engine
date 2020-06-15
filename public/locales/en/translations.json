@@ -128,6 +128,9 @@
         "add-separator": "Add request"
     },
     "filter-item": {
-        "no-operator": "Si"
+        "no-operator": "If"
+    },
+    "attribute-list": {
+        "add": "Add filters"
     }
 }

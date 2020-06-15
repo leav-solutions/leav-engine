@@ -1,9 +1,11 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, CheckboxProps, Container, List} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLibraryDetailQuery} from '../../../../queries/libraries/getLibraryDetailQuery';
-import {IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
+import {allowedTypeOperator} from '../../../../utils';
+import {AttributeFormat, IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
 
 const Wrapper = styled.div`
     display: flex;
@@ -19,8 +21,10 @@ interface IAttributeListProps {
 }
 
 function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttributeListProps): JSX.Element {
+    const {t} = useTranslation();
+
     const [attributes, setAttrs] = useState<any>([]);
-    const [attSelected, setAttSelected] = useState<string[]>([]);
+    const [attSelected, setAttSelected] = useState<{id: string; format: AttributeFormat}[]>([]);
 
     const {loading, data, error} = useQuery(getLibraryDetailQuery(libQueryName), {
         variables: {
@@ -37,14 +41,20 @@ function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttribut
 
     const addFilters = () => {
         setFilters(filters => {
-            const newFilters = attSelected.map((att, index) => ({
-                key: filters.length + index,
-                operator: operatorFilter.and,
-                where: whereFilter.contains,
-                value: '',
-                attribute: att,
-                active: true
-            }));
+            const newFilters = attSelected.map((att, index) => {
+                // take the first operator for the format of the attribute
+                const defaultWhereOperator = allowedTypeOperator[AttributeFormat[att.format]][0];
+
+                return {
+                    key: filters.length + index,
+                    operator: operatorFilter.and,
+                    where: whereFilter[defaultWhereOperator],
+                    value: '',
+                    attribute: att.id,
+                    active: true,
+                    type: att.format
+                };
+            });
 
             return [...filters, ...newFilters];
         });
@@ -55,21 +65,27 @@ function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttribut
         <Container>
             <List divided>
                 {attributes &&
-                    attributes.map((att: any) => <Attribute att={att} key={att.id} setAttSelected={setAttSelected} />)}
+                    attributes.map(
+                        (att: any) =>
+                            Object.values(AttributeFormat).includes(att.format) && (
+                                <Attribute att={att} key={att.id} setAttSelected={setAttSelected} />
+                            )
+                    )}
             </List>
-            <Button onClick={addFilters}>{'Add'}</Button>
+            <Button onClick={addFilters}>{t('attribute-list.add')}</Button>
         </Container>
     );
 }
 
 interface IAttributeProps {
     att: any;
-    setAttSelected: React.Dispatch<React.SetStateAction<string[]>>;
+    setAttSelected: React.Dispatch<React.SetStateAction<{id: string; format: AttributeFormat}[]>>;
 }
 function Attribute({att, setAttSelected}: IAttributeProps): JSX.Element {
+    '';
     const handleOnChange = (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
         if (data.checked) {
-            setAttSelected(attSelected => [...attSelected, att.id]);
+            setAttSelected(attSelected => [...attSelected, {id: att.id, format: att.format}]);
         } else {
             setAttSelected(attSelected => attSelected.filter(attId => attId !== att.id));
         }

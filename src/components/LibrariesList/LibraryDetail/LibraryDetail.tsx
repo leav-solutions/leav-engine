@@ -11,6 +11,7 @@ import {ILabel} from '../../../_types/types';
 interface ILibraryDetailProps {
     libId: string;
     libQueryName: string;
+    filterName: string;
 }
 
 interface IDetails {
@@ -26,7 +27,7 @@ interface IDetails {
     totalCount: number;
 }
 
-function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element {
+function LibraryDetail({libId, libQueryName, filterName}: ILibraryDetailProps): JSX.Element {
     const {t} = useTranslation();
     const [details, setDetails] = useState<IDetails>();
 
@@ -70,7 +71,9 @@ function LibraryDetail({libId, libQueryName}: ILibraryDetailProps): JSX.Element 
                 <Grid.Column>
                     <Header as="h4">{t('lib_detail.search_saves')}</Header>
                     <Segment>
-                        <NavLink to={`/library/items/${libId}/${libQueryName}`}>{t('lib_detail.search_all')}</NavLink>
+                        <NavLink to={`/library/items/${libId}/${libQueryName}/${filterName}`}>
+                            {t('lib_detail.search_all')}
+                        </NavLink>
                     </Segment>
                     <Button icon="plus" content={t('lib_detail.add_filter')} />
                 </Grid.Column>

@@ -52,6 +52,13 @@ export interface IFilters {
     value: string;
     attribute: string;
     active: boolean;
+    type: AttributeFormat;
+}
+
+export enum AttributeFormat {
+    text = 'text',
+    numeric = 'numeric',
+    boolean = 'boolean'
 }
 
 export enum operatorFilter {

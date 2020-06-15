@@ -7,9 +7,13 @@ import TopBar from '../TopBar';
 import Routes from './Routes';
 
 const PageWrapper = styled.div`
-    height: 95%;
+    height: 100%;
     padding: 0;
     margin: 0;
+`;
+
+const TopBarWrapper = styled.div`
+    height: 3.5rem;
 `;
 
 function Router(): JSX.Element {
@@ -26,10 +30,12 @@ function Router(): JSX.Element {
     return (
         <BrowserRouter>
             <PageWrapper>
-                <Sticky context={contextRef}>
-                    <TopBar toggleSidebarVisible={toggleSidebarVisible} />
-                </Sticky>
-                <Sidebar.Pushable as={'div'} className="minHeight100">
+                <TopBarWrapper>
+                    <Sticky context={contextRef}>
+                        <TopBar toggleSidebarVisible={toggleSidebarVisible} />
+                    </Sticky>
+                </TopBarWrapper>
+                <Sidebar.Pushable as={'div'} className="page-content">
                     <Sticky context={contextRef} styleElement={{position: ''}}>
                         <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
                     </Sticky>

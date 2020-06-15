@@ -1,8 +1,6 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
-import {Button, Dropdown, DropdownProps, Menu, Popup} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
@@ -11,10 +9,8 @@ import {localizedLabel} from '../../utils';
 import {IItem, IQueryFilter} from '../../_types/types';
 import Filters from './Filters';
 import ItemsTitleDisplay from './ItemsTitleDisplay';
-import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
 import LibraryItemsListTable from './LibraryItemsListTable';
-import SearchItems from './SearchItems';
-import SelectVue from './SelectVue';
+import MenuItemList from './MenuItemList';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -24,10 +20,11 @@ interface IWrapperProps {
 const Wrapper = styled.div<IWrapperProps>`
     display: ${({showSide}) => (showSide ? 'grid' : 'inherit')};
     grid-template-columns: 25rem auto;
+    grid-template-rows: 100%;
+    height: 100%;
 `;
 
 function LibraryItemsList(): JSX.Element {
-    const {t} = useTranslation();
     const {libId, libQueryName, filterName} = useParams();
 
     const [items, setItems] = useState<IItem[]>();
@@ -83,29 +80,6 @@ function LibraryItemsList(): JSX.Element {
         return <div>error</div>;
     }
 
-    const displayOptions = [
-        {
-            key: 'list',
-            text: t('items_list.display-list'),
-            value: 'list',
-            icon: 'list layout'
-        },
-        {
-            key: 'tile',
-            text: t('items_list.display-tile'),
-            value: 'tile',
-            icon: 'th large',
-            default: true
-        }
-    ];
-
-    const changeDisplay = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newDisplay = data.value?.toString();
-        if (newDisplay) {
-            setDisplay(newDisplay);
-        }
-    };
-
     return (
         <Wrapper showSide={showFilters}>
             <Filters
@@ -116,55 +90,21 @@ function LibraryItemsList(): JSX.Element {
                 setQueryFilters={setQueryFilters}
             />
             <div className="wrapper-page">
-                <Menu style={{height: '5rem'}}>
-                    {!showFilters && (
-                        <>
-                            <Menu.Item>
-                                <Popup
-                                    content={t('items_list.show-filter-panel')}
-                                    trigger={<Button icon="sidebar" onClick={() => setShowFilters(show => !show)} />}
-                                />
-                            </Menu.Item>
-                            <Menu.Item>
-                                <SelectVue />
-                            </Menu.Item>
-                        </>
-                    )}
-                    <Menu.Item>
-                        <LibraryItemsListMenuPagination
-                            items={items}
-                            totalCount={totalCount}
-                            offset={offset}
-                            setOffset={setOffset}
-                            pagination={pagination}
-                            setModeSelection={setModeSelection}
-                            setPagination={setPagination}
-                            setSelected={setSelected}
-                        />
-                    </Menu.Item>
-
-                    <Menu.Item>
-                        <SearchItems setQueryFilters={setQueryFilters} />
-                    </Menu.Item>
-
-                    <Menu.Menu position="right">
-                        <Menu.Item>
-                            <Button icon="plus" content={t('items_list.new')} />
-                        </Menu.Item>
-
-                        <Dropdown
-                            text={t('items_list.display_type')}
-                            item
-                            options={displayOptions}
-                            onChange={changeDisplay}
-                        />
-
-                        <Menu.Item>
-                            <Button icon="redo" onClick={() => refetch && refetch()}></Button>
-                        </Menu.Item>
-                    </Menu.Menu>
-                </Menu>
-
+                <MenuItemList
+                    showFilters={showFilters}
+                    setShowFilters={setShowFilters}
+                    items={items}
+                    setDisplay={setDisplay}
+                    totalCount={totalCount}
+                    offset={offset}
+                    setOffset={setOffset}
+                    pagination={pagination}
+                    setModeSelection={setModeSelection}
+                    setPagination={setPagination}
+                    setSelected={setSelected}
+                    setQueryFilters={setQueryFilters}
+                    refetch={refetch}
+                />
                 {display === 'list' && (
                     <LibraryItemsListTable
                         items={items}
@@ -179,7 +119,6 @@ function LibraryItemsList(): JSX.Element {
                         setSelected={setSelected}
                     />
                 )}
-
                 {display === 'tile' && (
                     <ItemsTitleDisplay
                         items={items}

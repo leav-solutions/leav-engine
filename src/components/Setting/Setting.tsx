@@ -2,8 +2,13 @@ import {useQuery} from '@apollo/client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Container, Dropdown, DropdownProps, Header, Segment} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {getAvailableLangs, getLangAndDefaultLang} from '../../queries/cache/lang/getLangQuery';
 import {AvailableLanguage} from '../../_types/types';
+
+const Wrapper = styled.div`
+    margin: 1rem 0;
+`;
 
 function Setting(): JSX.Element {
     const {t, i18n: i18nClient} = useTranslation();
@@ -38,11 +43,22 @@ function Setting(): JSX.Element {
 
     return (
         <Container>
-            <Header>{t('settings.header')}</Header>
-
-            <Segment>
-                <Dropdown selection fluid options={langOption} defaultValue={lang[0]} onChange={changeLang} />
-            </Segment>
+            <Wrapper>
+                <Segment>
+                    <Header>{t('settings.header')}</Header>
+                    <Dropdown
+                        selection
+                        fluid
+                        options={langOption}
+                        defaultValue={lang[0]}
+                        onChange={changeLang}
+                        labeled
+                        button
+                        className="icon"
+                        icon="flag"
+                    />
+                </Segment>
+            </Wrapper>
         </Container>
     );
 }

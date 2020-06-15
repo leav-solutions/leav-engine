@@ -12,6 +12,7 @@ import {
     TextAreaProps
 } from 'semantic-ui-react';
 import styled from 'styled-components';
+import {allowedTypeOperator} from '../../../../utils';
 import {IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
 
 const Attribute = styled.div`
@@ -20,7 +21,12 @@ const Attribute = styled.div`
 
 const Wrapper = styled.div`
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const TextAreaWrapper = styled.div`
+    margin: 1rem 0 0 0;
 `;
 
 interface IFilterItemProps {
@@ -37,6 +43,10 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
 
     const textAreaRef = useRef(null);
 
+    const whereOptionsByType = whereOptions.filter(whereOption =>
+        allowedTypeOperator[filter.type]?.includes(whereOption.value)
+    );
+
     const changeActive = () => {
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
@@ -48,7 +58,6 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
 
             let firstFind = false;
 
-            console.log('before', newFilters);
             const newNewFilters = newFilters.map(f => {
                 if (!firstFind && f.active) {
                     if (f.operator) {
@@ -61,8 +70,6 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
 
                 return f;
             });
-
-            console.log(newNewFilters);
 
             return newNewFilters;
         });
@@ -110,15 +117,28 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
+
             return currentFilter
                 ? [...restFilters, {...currentFilter, where: whereFilter[newWhere]}].sort((f1, f2) => f1.key - f2.key)
                 : restFilters;
         });
     };
 
+    const handleOperatorChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+        const newOperator = (data.value as operatorFilter) ?? operatorFilter.and;
+
+        setFilters(filters => {
+            const restFilters = filters.filter(f => f.key !== filter.key);
+            const currentFilter = filters.find(f => f.key === filter.key);
+            return currentFilter
+                ? [...restFilters, {...currentFilter, operator: newOperator}].sort((f1, f2) => f1.key - f2.key)
+                : restFilters;
+        });
+    };
+
     return (
         <Segment secondary disabled={!filter.active}>
-            <Grid columns={3}>
+            <Grid columns={3} verticalAlign="top">
                 <Grid.Row key={filter.key}>
                     <Grid.Column width="1">
                         <Checkbox checked={filter.active} onChange={changeActive} />
@@ -127,7 +147,13 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
                     <Grid.Column width="12">
                         <Wrapper>
                             {filter.operator ? (
-                                <Dropdown floating inline defaultValue={filter.operator} options={operatorOptions} />
+                                <Dropdown
+                                    floating
+                                    inline
+                                    defaultValue={filter.operator}
+                                    options={operatorOptions}
+                                    onChange={handleOperatorChange}
+                                />
                             ) : (
                                 t('filter-item.no-operator')
                             )}
@@ -139,7 +165,7 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
                                 inline
                                 defaultValue={filter.where}
                                 onChange={changeWhere}
-                                options={whereOptions}
+                                options={whereOptionsByType}
                                 direction="left"
                             />
                         </Wrapper>
@@ -151,12 +177,14 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
 
                     <Grid.Column width="16">
                         <Form>
-                            <TextArea
-                                ref={textAreaRef}
-                                rows={textAreaRows}
-                                value={filter.value}
-                                onChange={updateFilterValue}
-                            />
+                            <TextAreaWrapper>
+                                <TextArea
+                                    ref={textAreaRef}
+                                    rows={textAreaRows}
+                                    value={filter.value}
+                                    onChange={updateFilterValue}
+                                />
+                            </TextAreaWrapper>
                         </Form>
                     </Grid.Column>
                 </Grid.Row>

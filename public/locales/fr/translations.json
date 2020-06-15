@@ -128,5 +128,8 @@
     },
     "filter-item": {
         "no-operator": "Si"
+    },
+    "attribute-list": {
+        "add": "Ajoute les filtres"
     }
 }

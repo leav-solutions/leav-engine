@@ -35,7 +35,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
             onHide={hide}
             width="wide"
         >
-            <Menu.Item header content={'sidebar.shortcut'} />
+            <Menu.Item header content={t('sidebar.shortcuts')} />
             {activeLibId && (
                 <NavLink
                     to={`/library/items/${activeLibId}/${activeLibQueryName}/${activeLibFilterName}`}
@@ -61,13 +61,13 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
             <NavLink to="/setting" onClick={hide} activeClassName="nav-link-active">
                 <Menu.Item as="span">
                     <Icon name="setting" />
-                    {t('sidebar.setting')}p
+                    {t('sidebar.setting')}
                 </Menu.Item>
             </NavLink>
 
             <Divider />
 
-            <Menu.Item header>{'sidebar.libraries'}</Menu.Item>
+            <Menu.Item header>{t('sidebar.libraries')}</Menu.Item>
             <SideBarLibraryList hide={hide} />
         </Sidebar>
     );

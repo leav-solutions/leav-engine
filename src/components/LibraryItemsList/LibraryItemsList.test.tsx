@@ -20,11 +20,31 @@ describe('LibraryItemsList', () => {
     const mocks = [
         {
             request: {
-                query: getRecordsFromLibraryQuery(libQueryName || '', libQueryFilter, pagination, offset),
-                variables: {filters: null}
+                query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, pagination, offset),
+                variables: {
+                    filters: null
+                }
             },
             result: {
-                data: {}
+                data: {
+                    [libQueryName]: {
+                        totalCount: 1
+                    },
+                    libraries: {
+                        list: [
+                            {
+                                id: '31662',
+                                label: libQueryFilter,
+                                whoAmI: {
+                                    id: '31662',
+                                    label: 'test',
+                                    preview: null,
+                                    library: {id: 'test', label: {fr: 'test'}}
+                                }
+                            }
+                        ]
+                    }
+                }
             }
         }
     ];

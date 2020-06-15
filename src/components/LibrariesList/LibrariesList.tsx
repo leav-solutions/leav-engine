@@ -12,7 +12,7 @@ function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
     const [libraries, setLibraries] = useState([]);
 
-    const {libId, libQueryName} = useParams();
+    const {libId, libQueryName, filterName} = useParams();
 
     const {loading, data, error} = useQuery(getLibrariesListQuery);
 
@@ -38,7 +38,7 @@ function LibrariesList(): JSX.Element {
             {libId && libQueryName && (
                 <>
                     <Divider />
-                    <LibraryDetail libId={libId} libQueryName={libQueryName} />
+                    <LibraryDetail libId={libId} libQueryName={libQueryName} filterName={filterName} />
                 </>
             )}
         </div>
