@@ -15,14 +15,12 @@ import styled from 'styled-components';
 import {allowedTypeOperator} from '../../../../utils';
 import {IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
 
-const Attribute = styled.div`
-    overflow: hidden;
-`;
+const Attribute = styled.div``;
 
 const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: top;
 `;
 
 const TextAreaWrapper = styled.div`

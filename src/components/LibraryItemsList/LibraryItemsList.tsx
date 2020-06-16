@@ -34,7 +34,7 @@ function LibraryItemsList(): JSX.Element {
     const [showFilters, setShowFilters] = useState(false);
     const [selected, setSelected] = useState<{[x: string]: boolean}>({});
     const [modeSelection, setModeSelection] = useState<boolean>(false);
-    const [queryFilters, setQueryFilters] = useState<IQueryFilter[] | null>(null);
+    const [queryFilters, setQueryFilters] = useState<IQueryFilter[]>([]);
 
     const [pagination, setPagination] = useState(20);
 

@@ -47,7 +47,7 @@ function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttribut
 
                 return {
                     key: filters.length + index,
-                    operator: operatorFilter.and,
+                    operator: filters.length ? operatorFilter.and : undefined,
                     where: whereFilter[defaultWhereOperator],
                     value: '',
                     attribute: att.id,

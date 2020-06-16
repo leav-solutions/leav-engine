@@ -7,7 +7,7 @@ import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
 
 const TableWrapper = styled.div`
-    height: calc(100% - 20rem);
+    height: calc(100% - 16rem);
     overflow: auto;
     padding: 0 !important;
     margin-top: 0 !important;

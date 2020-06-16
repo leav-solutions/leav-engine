@@ -21,11 +21,7 @@ function SearchItems({setQueryFilters}: ISearchItemsProps): JSX.Element {
     const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const searchQuery: IQueryFilter[] = [
-            {field: 'id', value: search, operator: whereFilter.contains}
-            // {operator: operatorFilter.or},
-            // {field: 'label', value: '', operator: whereFilter.contains}
-        ];
+        const searchQuery: IQueryFilter[] = [{field: {base: 'id'}, value: search, operator: whereFilter.contains}];
         setQueryFilters(searchQuery);
     };
 

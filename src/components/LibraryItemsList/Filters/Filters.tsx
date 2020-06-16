@@ -12,7 +12,7 @@ interface IFiltersProps {
     setShowFilters: (showFilters: (x: boolean) => boolean) => void;
     libId: string;
     libQueryName: string;
-    setQueryFilters: React.Dispatch<React.SetStateAction<IQueryFilter[] | null>>;
+    setQueryFilters: React.Dispatch<React.SetStateAction<IQueryFilter[]>>;
 }
 
 const Side = styled.div`
@@ -72,7 +72,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
         {text: t('filters.or'), value: operatorFilter.or}
     ];
 
-    const resetFilters = () => setQueryFilters(null);
+    const resetFilters = () => setQueryFilters([]);
 
     const removeAllFilter = () => {
         setFilters([]);
@@ -83,17 +83,20 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
         let request: IQueryFilter[] = [];
 
         for (let filter of filters) {
-            if (filter.active && filter.value !== '') {
+            if (filter.active && filter.value) {
+                console.log(filter);
                 if (filter.operator) {
                     request.push({operator: filter.operator});
                 }
                 request.push({operator: '('});
 
                 filter.value.split('\n').forEach((filterValue, index) => {
-                    if (index > 0) {
-                        request.push({operator: operatorFilter.or});
+                    if (filterValue) {
+                        if (index > 0) {
+                            request.push({operator: operatorFilter.or});
+                        }
+                        request.push({field: {base: filter.attribute}, value: filterValue, operator: filter.where});
                     }
-                    request.push({field: filter.attribute, value: filterValue, operator: filter.where});
                 });
                 request.push({operator: ')'});
             }
@@ -145,7 +148,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                             </Dropdown.Menu>
                         </Dropdown>
 
-                        <Button positive compact disabled={!filters.length} onClick={applyFiler}>
+                        <Button positive compact onClick={applyFiler}>
                             {t('filters.apply')}
                         </Button>
                     </FilterActions>

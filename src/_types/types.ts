@@ -82,7 +82,7 @@ export enum whereFilter {
 }
 
 export interface IQueryFilter {
-    field?: any;
+    field?: {base: string; linked?: string};
     value?: any;
     operator: operatorFilter | whereFilter | '(' | ')';
 }

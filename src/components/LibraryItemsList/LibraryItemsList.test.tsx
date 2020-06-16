@@ -22,7 +22,7 @@ describe('LibraryItemsList', () => {
             request: {
                 query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, pagination, offset),
                 variables: {
-                    filters: null
+                    filters: []
                 }
             },
             result: {
