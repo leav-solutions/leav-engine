@@ -4,7 +4,7 @@ exports[`LibraryItemsListTableRow Snapshot test 1`] = `
 initialize {
   "0": Object {
     "attribs": Object {
-      "class": "",
+      "class": "sc-fzozJi dxCFNi",
     },
     "children": Array [
       Object {
@@ -330,7 +330,7 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Object {
                       "attribs": Object {
-                        "class": "sc-fzozJi fFTGKA",
+                        "class": "sc-fzoLsD cPWHiF",
                         "display": "0",
                       },
                       "children": Array [
@@ -1009,7 +1009,7 @@ initialize {
                   },
                   Object {
                     "attribs": Object {
-                      "class": "sc-fzozJi fFTGKA",
+                      "class": "sc-fzoLsD cPWHiF",
                       "display": "0",
                     },
                     "children": Array [
@@ -2485,7 +2485,7 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": Object {
                         "attribs": Object {
-                          "class": "sc-fzozJi fFTGKA",
+                          "class": "sc-fzoLsD cPWHiF",
                           "display": "0",
                         },
                         "children": Array [
@@ -3164,7 +3164,7 @@ initialize {
                     },
                     Object {
                       "attribs": Object {
-                        "class": "sc-fzozJi fFTGKA",
+                        "class": "sc-fzoLsD cPWHiF",
                         "display": "0",
                       },
                       "children": Array [
@@ -4572,7 +4572,7 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": Object {
                           "attribs": Object {
-                            "class": "sc-fzozJi fFTGKA",
+                            "class": "sc-fzoLsD cPWHiF",
                             "display": "0",
                           },
                           "children": Array [
@@ -5251,7 +5251,7 @@ initialize {
                       },
                       Object {
                         "attribs": Object {
-                          "class": "sc-fzozJi fFTGKA",
+                          "class": "sc-fzoLsD cPWHiF",
                           "display": "0",
                         },
                         "children": Array [
@@ -6659,7 +6659,7 @@ initialize {
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": Object {
                             "attribs": Object {
-                              "class": "sc-fzozJi fFTGKA",
+                              "class": "sc-fzoLsD cPWHiF",
                               "display": "0",
                             },
                             "children": Array [
@@ -7338,7 +7338,7 @@ initialize {
                         },
                         Object {
                           "attribs": Object {
-                            "class": "sc-fzozJi fFTGKA",
+                            "class": "sc-fzoLsD cPWHiF",
                             "display": "0",
                           },
                           "children": Array [
@@ -8746,7 +8746,7 @@ initialize {
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": Object {
                               "attribs": Object {
-                                "class": "sc-fzozJi fFTGKA",
+                                "class": "sc-fzoLsD cPWHiF",
                                 "display": "0",
                               },
                               "children": Array [
@@ -9425,7 +9425,7 @@ initialize {
                           },
                           Object {
                             "attribs": Object {
-                              "class": "sc-fzozJi fFTGKA",
+                              "class": "sc-fzoLsD cPWHiF",
                               "display": "0",
                             },
                             "children": Array [

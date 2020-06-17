@@ -1,6 +1,7 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
+import {Menu} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
@@ -11,6 +12,7 @@ import Filters from './Filters';
 import ItemsTitleDisplay from './ItemsTitleDisplay';
 import LibraryItemsListTable from './LibraryItemsListTable';
 import MenuItemList from './MenuItemList';
+import MenuItemListSelected from './MenuItemListSelected';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -90,21 +92,32 @@ function LibraryItemsList(): JSX.Element {
                 setQueryFilters={setQueryFilters}
             />
             <div className="wrapper-page">
-                <MenuItemList
-                    showFilters={showFilters}
-                    setShowFilters={setShowFilters}
-                    items={items}
-                    setDisplay={setDisplay}
-                    totalCount={totalCount}
-                    offset={offset}
-                    setOffset={setOffset}
-                    pagination={pagination}
-                    setModeSelection={setModeSelection}
-                    setPagination={setPagination}
-                    setSelected={setSelected}
-                    setQueryFilters={setQueryFilters}
-                    refetch={refetch}
-                />
+                <Menu style={{height: '5rem'}}>
+                    {modeSelection ? (
+                        <MenuItemListSelected
+                            selected={selected}
+                            setSelected={setSelected}
+                            setModeSelection={setModeSelection}
+                        />
+                    ) : (
+                        <MenuItemList
+                            showFilters={showFilters}
+                            setShowFilters={setShowFilters}
+                            items={items}
+                            setDisplay={setDisplay}
+                            totalCount={totalCount}
+                            offset={offset}
+                            setOffset={setOffset}
+                            pagination={pagination}
+                            setModeSelection={setModeSelection}
+                            setPagination={setPagination}
+                            setSelected={setSelected}
+                            setQueryFilters={setQueryFilters}
+                            refetch={refetch}
+                        />
+                    )}
+                </Menu>
+
                 {display === 'list' && (
                     <LibraryItemsListTable
                         items={items}

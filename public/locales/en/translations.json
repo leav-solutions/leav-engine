@@ -132,5 +132,9 @@
     },
     "attribute-list": {
         "add": "Add filters"
+    },
+    "menu-selection": {
+        "nb-selected": "{{nb}} items selected",
+        "quit": "Quit selection mode"
     }
 }

@@ -63,7 +63,7 @@ function MenuItemList({
     };
 
     return (
-        <Menu style={{height: '5rem'}}>
+        <>
             {!showFilters && (
                 <>
                     <Menu.Item>
@@ -105,7 +105,7 @@ function MenuItemList({
                     <Button icon="redo" onClick={() => refetch && refetch()}></Button>
                 </Menu.Item>
             </Menu.Menu>
-        </Menu>
+        </>
     );
 }
 
