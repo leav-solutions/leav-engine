@@ -97,12 +97,16 @@ function LibraryItemsListTableRow({
                                 ) : (
                                     <Button.Group size="small">
                                         <Popup
+                                            hoverable={false}
+                                            onMouseLeave={() => setIsHover(false)}
                                             content={t('items-list-row.switch-to-selection-mode')}
                                             trigger={
                                                 <Button active={modeSelection} icon="check" onClick={switchMode} />
                                             }
                                         />
                                         <Popup
+                                            hoverable={false}
+                                            onMouseLeave={() => setIsHover(false)}
                                             content={t('items-list-row.edit')}
                                             trigger={<Button icon="write" onClick={handleShowModal} />}
                                         />

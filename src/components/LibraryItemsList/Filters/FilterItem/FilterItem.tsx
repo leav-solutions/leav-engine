@@ -13,7 +13,7 @@ import {
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 import {allowedTypeOperator} from '../../../../utils';
-import {IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
+import {conditionFilter, FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../../_types/types';
 
 const Attribute = styled.div``;
 
@@ -28,21 +28,39 @@ const TextAreaWrapper = styled.div`
 `;
 
 interface IFilterItemProps {
-    filter: IFilters;
-    setFilters: React.Dispatch<React.SetStateAction<IFilters[]>>;
-    whereOptions: Array<any>;
-    operatorOptions: Array<any>;
+    filter: IFilter;
+    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
+    whereOptions: {
+        text: string;
+        value: conditionFilter;
+    }[];
+    operatorOptions: {
+        text: string;
+        value: operatorFilter;
+    }[];
     resetFilters: () => void;
+    updateFilters: () => void;
+    filterOperator: operatorFilter;
+    setFilterOperator: React.Dispatch<React.SetStateAction<operatorFilter>>;
 }
 
-function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFilters}: IFilterItemProps): JSX.Element {
+function FilterItem({
+    filter,
+    setFilters,
+    whereOptions,
+    operatorOptions,
+    resetFilters,
+    updateFilters,
+    filterOperator,
+    setFilterOperator
+}: IFilterItemProps): JSX.Element {
     const {t} = useTranslation();
     const [textAreaRows, setTextAreaRows] = useState<number>(1);
 
     const textAreaRef = useRef(null);
 
     const whereOptionsByType = whereOptions.filter(whereOption =>
-        allowedTypeOperator[filter.type]?.includes(whereOption.value)
+        allowedTypeOperator[filter.format]?.includes(whereOption.value)
     );
 
     const changeActive = () => {
@@ -50,39 +68,53 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
 
-            const newFilters = currentFilter
-                ? [...restFilters, {...currentFilter, active: !currentFilter.active}].sort((f1, f2) => f1.key - f2.key)
-                : restFilters;
+            let newNewFilters: (IFilter | IFilterSeparator)[] = [];
+            if (currentFilter && currentFilter.type === FilterTypes.filter) {
+                const newFilters = currentFilter
+                    ? [...restFilters, {...currentFilter, active: !currentFilter.active}].sort(
+                          (f1, f2) => f1.key - f2.key
+                      )
+                    : restFilters;
 
-            let firstFind = false;
-
-            const newNewFilters = newFilters.map(f => {
-                if (!firstFind && f.active) {
-                    if (f.operator) {
-                        delete f.operator;
+                let firstFind = false;
+                newNewFilters = newFilters.map(f => {
+                    if (!firstFind && f.type === FilterTypes.filter && f.active) {
+                        if (f.operator) {
+                            f.operator = false;
+                        }
+                        firstFind = true;
+                    } else if (firstFind && f.type === FilterTypes.filter && !f.operator) {
+                        f.operator = true;
                     }
-                    firstFind = true;
-                } else if (firstFind && !f.operator) {
-                    f.operator = operatorFilter.and;
-                }
 
-                return f;
-            });
+                    return f;
+                });
+            }
 
             return newNewFilters;
         });
+
+        updateFilters();
     };
 
     const deleteFilterItem = () => {
         setFilters(filters => {
             let newFilters = filters.filter(f => f.key !== filter.key);
-            const activeFilters = filters.filter(f => f.active);
+            const activeFilters = (filters as IFilter[]).filter(f => f.type === FilterTypes.filter && f.active);
 
             if (activeFilters.length && activeFilters[0].operator) {
+                const separators = filters.filter(filter => filter.type === FilterTypes.separator);
+
                 newFilters = newFilters.map(f => {
-                    if (f.key === activeFilters[0].key) {
-                        delete f.operator;
+                    const lastFilterIsSeparatorCondition = separators.some(separator => separator.key === f.key - 1);
+
+                    if (
+                        f.type === FilterTypes.filter &&
+                        (f.key === activeFilters[0].key || lastFilterIsSeparatorCondition)
+                    ) {
+                        f.operator = false;
                     }
+
                     return f;
                 });
             } else if (!activeFilters.length) {
@@ -91,6 +123,8 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
 
             return newFilters;
         });
+
+        updateFilters();
     };
 
     const updateFilterValue = (event: React.FormEvent<HTMLTextAreaElement>, data: TextAreaProps) => {
@@ -109,15 +143,17 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
         setTextAreaRows(rows <= 10 ? rows : 10);
     };
 
-    const changeWhere = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newWhere = (data?.value ?? '').toString();
+    const changeCondition = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+        const newCondition = (data?.value ?? '').toString();
 
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
 
             return currentFilter
-                ? [...restFilters, {...currentFilter, where: whereFilter[newWhere]}].sort((f1, f2) => f1.key - f2.key)
+                ? [...restFilters, {...currentFilter, where: conditionFilter[newCondition]}].sort(
+                      (f1, f2) => f1.key - f2.key
+                  )
                 : restFilters;
         });
     };
@@ -125,13 +161,7 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
     const handleOperatorChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
         const newOperator = (data.value as operatorFilter) ?? operatorFilter.and;
 
-        setFilters(filters => {
-            const restFilters = filters.filter(f => f.key !== filter.key);
-            const currentFilter = filters.find(f => f.key === filter.key);
-            return currentFilter
-                ? [...restFilters, {...currentFilter, operator: newOperator}].sort((f1, f2) => f1.key - f2.key)
-                : restFilters;
-        });
+        setFilterOperator(newOperator);
     };
 
     return (
@@ -148,7 +178,7 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
                                 <Dropdown
                                     floating
                                     inline
-                                    defaultValue={filter.operator}
+                                    value={filterOperator}
                                     options={operatorOptions}
                                     onChange={handleOperatorChange}
                                 />
@@ -161,8 +191,8 @@ function FilterItem({filter, setFilters, whereOptions, operatorOptions, resetFil
                             <Dropdown
                                 floating
                                 inline
-                                defaultValue={filter.where}
-                                onChange={changeWhere}
+                                defaultValue={filter.condition}
+                                onChange={changeCondition}
                                 options={whereOptionsByType}
                                 direction="left"
                             />

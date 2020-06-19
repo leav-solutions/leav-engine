@@ -1,5 +1,5 @@
 import {i18n} from 'i18next';
-import {AttributeFormat, AvailableLanguage, PreviewAttributes, whereFilter} from '../_types/types';
+import {AttributeFormat, AvailableLanguage, conditionFilter, PreviewAttributes} from '../_types/types';
 
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
     return `recordIdentity/${libId}/${recordId}`;
@@ -123,13 +123,18 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
 
 export const allowedTypeOperator = {
     [AttributeFormat.text]: [
-        whereFilter.equal,
-        whereFilter.notEqual,
-        whereFilter.beginWith,
-        whereFilter.endWith,
-        whereFilter.contains,
-        whereFilter.notContains
+        conditionFilter.contains,
+        conditionFilter.notContains,
+        conditionFilter.equal,
+        conditionFilter.notEqual,
+        conditionFilter.beginWith,
+        conditionFilter.endWith
     ],
-    [AttributeFormat.numeric]: [whereFilter.equal, whereFilter.notEqual, whereFilter.greaterThan, whereFilter.lessThan],
-    [AttributeFormat.boolean]: [whereFilter.equal, whereFilter.notEqual]
+    [AttributeFormat.numeric]: [
+        conditionFilter.equal,
+        conditionFilter.notEqual,
+        conditionFilter.greaterThan,
+        conditionFilter.lessThan
+    ],
+    [AttributeFormat.boolean]: [conditionFilter.equal, conditionFilter.notEqual]
 };

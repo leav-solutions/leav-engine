@@ -2,10 +2,19 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Divider, Dropdown, Menu, Modal, Sidebar, Transition} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {AttributeFormat, IFilters, IQueryFilter, operatorFilter, whereFilter} from '../../../_types/types';
+import {
+    conditionFilter,
+    FilterTypes,
+    IFilter,
+    IFilterSeparator,
+    IQueryFilter,
+    operatorFilter
+} from '../../../_types/types';
 import SelectView from '../SelectView';
 import AttributeList from './AttributeList';
 import FilterItem from './FilterItem';
+import FilterSeparator from './Filters/FilterSeparator';
+import {getRequestFromFilter} from './Filters/FilterSeparator/getRequestFromFilter';
 
 interface IFiltersProps {
     showFilters: boolean;
@@ -18,7 +27,7 @@ interface IFiltersProps {
 const Side = styled.div`
     border-right: 1px solid #ebebeb;
     padding: 1rem 1rem 0 1rem;
-    height: 100%;
+    height: 93%;
 `;
 
 const FilterActions = styled.div`
@@ -35,36 +44,32 @@ const FilterList = styled.div`
 
 function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilters}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();
+
     const [showAttr, setShowAttr] = useState(false);
     const [show, setShow] = useState(showFilters);
-    const [filters, setFilters] = useState<IFilters[]>([
-        {
-            key: 0,
-            where: whereFilter.contains,
-            value: '',
-            attribute: 'id',
-            active: true,
-            type: AttributeFormat.text
-        }
-    ]);
+
+    const [separatorOperator, setSeparatorOperator] = useState<operatorFilter>(operatorFilter.or);
+    const [filterOperator, setFilterOperator] = useState<operatorFilter>(operatorFilter.and);
+
+    const [filters, setFilters] = useState<(IFilter | IFilterSeparator)[]>([]);
 
     useEffect(() => {
         setShow(showFilters);
     }, [showFilters]);
 
     const whereOptions = [
-        {text: t('filters.contains'), value: whereFilter.contains},
-        {text: t('filters.not-contains'), value: whereFilter.notContains},
-        {text: t('filters.equal'), value: whereFilter.equal},
-        {text: t('filters.not-equal'), value: whereFilter.notEqual},
-        {text: t('filters.begin-with'), value: whereFilter.beginWith},
-        {text: t('filters.end-with'), value: whereFilter.endWith},
-        {text: t('filters.is-empty'), value: whereFilter.empty},
-        {text: t('filters.is-not-empty'), value: whereFilter.notEmpty},
-        {text: t('filters.greater-than'), value: whereFilter.greaterThan},
-        {text: t('filters.less-than'), value: whereFilter.lessThan},
-        {text: t('filters.exist'), value: whereFilter.exist},
-        {text: t('filters.search-in'), value: whereFilter.searchIn}
+        {text: t('filters.contains'), value: conditionFilter.contains},
+        {text: t('filters.not-contains'), value: conditionFilter.notContains},
+        {text: t('filters.equal'), value: conditionFilter.equal},
+        {text: t('filters.not-equal'), value: conditionFilter.notEqual},
+        {text: t('filters.begin-with'), value: conditionFilter.beginWith},
+        {text: t('filters.end-with'), value: conditionFilter.endWith},
+        {text: t('filters.is-empty'), value: conditionFilter.empty},
+        {text: t('filters.is-not-empty'), value: conditionFilter.notEmpty},
+        {text: t('filters.greater-than'), value: conditionFilter.greaterThan},
+        {text: t('filters.less-than'), value: conditionFilter.lessThan},
+        {text: t('filters.exist'), value: conditionFilter.exist},
+        {text: t('filters.search-in'), value: conditionFilter.searchIn}
     ];
 
     const operatorOptions = [
@@ -79,32 +84,91 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
         resetFilters();
     };
 
-    const applyFiler = () => {
-        let request: IQueryFilter[] = [];
+    const addSeparator = () => {
+        // use only 1 separator
+        const filterSeparators = filters.filter(filter => filter.type === FilterTypes.separator);
 
-        for (let filter of filters) {
-            if (filter.active && filter.value) {
-                console.log(filter);
-                if (filter.operator) {
-                    request.push({operator: filter.operator});
-                }
-                request.push({operator: '('});
-
-                filter.value.split('\n').forEach((filterValue, index) => {
-                    if (filterValue) {
-                        if (index > 0) {
-                            request.push({operator: operatorFilter.or});
-                        }
-                        request.push({field: {base: filter.attribute}, value: filterValue, operator: filter.where});
-                    }
-                });
-                request.push({operator: ')'});
-            }
+        if (filterSeparators.length === 0) {
+            const newSeparator: IFilterSeparator = {
+                type: FilterTypes.separator,
+                key: filters.length,
+                active: false
+            };
+            setFilters(fs => [...fs, newSeparator]);
         }
+    };
 
-        console.log(request);
-
+    const applyFilters = () => {
+        const request = getRequestFromFilter(filters, filterOperator, separatorOperator);
         setQueryFilters(request);
+    };
+
+    useEffect(() => {
+        setFilterOperator(fo => {
+            if (fo === separatorOperator) {
+                if (fo === operatorFilter.and) {
+                    return operatorFilter.or;
+                } else {
+                    return operatorFilter.and;
+                }
+            }
+            return fo;
+        });
+    }, [separatorOperator]);
+
+    useEffect(() => {
+        setSeparatorOperator(so => {
+            if (so === filterOperator) {
+                if (so === operatorFilter.and) {
+                    return operatorFilter.or;
+                } else {
+                    return operatorFilter.and;
+                }
+            }
+            return so;
+        });
+    }, [filterOperator]);
+
+    const updateFilters = () => {
+        setFilters(filters => {
+            let newFilters = filters.sort((a, b) => a.key - b.key);
+
+            let noOperator = true;
+            newFilters = newFilters.map((filter, index) => {
+                if (filter.key !== index) {
+                    filter.key = index;
+                }
+
+                if (filter.type === FilterTypes.filter) {
+                    if (noOperator && filter.active) {
+                        filter.operator = false;
+                        noOperator = false;
+                    } else if (!filter.operator) {
+                        filter.operator = true;
+                    }
+                } else if (filter.type === FilterTypes.separator) {
+                    noOperator = true;
+
+                    const conditionBefore = (filters.filter(
+                        f => f.type === FilterTypes.filter && f.key < filter.key
+                    ) as IFilter[]).some(f => f.active);
+
+                    const conditionAfter = (filters.filter(
+                        f => f.type === FilterTypes.filter && f.key > filter.key
+                    ) as IFilter[]).some(f => f.active);
+
+                    if (conditionBefore && conditionAfter) {
+                        filter.active = true;
+                    } else {
+                        filter.active = false;
+                    }
+                }
+
+                return filter;
+            });
+
+            return newFilters;
+        });
     };
 
     return (
@@ -118,6 +182,8 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                             libQueryName={libQueryName}
                             setFilters={setFilters}
                             setShowAttr={setShowAttr}
+                            filterOperator={filterOperator}
+                            updateFilters={updateFilters}
                         />
                     </Modal.Content>
                 </Modal>
@@ -144,11 +210,13 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                                 <Dropdown.Item disabled={!filters.length} onClick={removeAllFilter}>
                                     {t('filters.remove-filters')}
                                 </Dropdown.Item>
-                                <Dropdown.Item disabled={!filters.length}>{t('filters.add-separator')}</Dropdown.Item>
+                                <Dropdown.Item disabled={!filters.length} onClick={addSeparator}>
+                                    {t('filters.add-separator')}
+                                </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
 
-                        <Button positive compact onClick={applyFiler}>
+                        <Button positive compact onClick={applyFilters}>
                             {t('filters.apply')}
                         </Button>
                     </FilterActions>
@@ -156,16 +224,31 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                     <Divider />
 
                     <FilterList>
-                        {filters.map(filter => (
-                            <FilterItem
-                                key={filter.key}
-                                filter={filter}
-                                setFilters={setFilters}
-                                whereOptions={whereOptions}
-                                operatorOptions={operatorOptions}
-                                resetFilters={resetFilters}
-                            />
-                        ))}
+                        {filters.map(filter =>
+                            filter.type === FilterTypes.filter ? (
+                                <FilterItem
+                                    key={filter.key}
+                                    filter={filter}
+                                    setFilters={setFilters}
+                                    whereOptions={whereOptions}
+                                    operatorOptions={operatorOptions}
+                                    resetFilters={resetFilters}
+                                    updateFilters={updateFilters}
+                                    filterOperator={filterOperator}
+                                    setFilterOperator={setFilterOperator}
+                                />
+                            ) : (
+                                <FilterSeparator
+                                    key={filter.key}
+                                    separator={filter}
+                                    operatorOptions={operatorOptions}
+                                    setFilters={setFilters}
+                                    separatorOperator={separatorOperator}
+                                    setSeparatorOperator={setSeparatorOperator}
+                                    updateFilters={updateFilters}
+                                />
+                            )
+                        )}
                     </FilterList>
                 </Side>
             </Sidebar.Pushable>

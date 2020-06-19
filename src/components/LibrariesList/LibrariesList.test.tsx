@@ -70,7 +70,7 @@ describe('LibrariesList', () => {
         });
 
         await act(async () => {
-            await wait();
+            await wait(1);
             comp.update();
         });
 

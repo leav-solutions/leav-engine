@@ -5,7 +5,14 @@ import {Button, Checkbox, CheckboxProps, Container, List} from 'semantic-ui-reac
 import styled from 'styled-components';
 import {getLibraryDetailQuery} from '../../../../queries/libraries/getLibraryDetailQuery';
 import {allowedTypeOperator} from '../../../../utils';
-import {AttributeFormat, IFilters, operatorFilter, whereFilter} from '../../../../_types/types';
+import {
+    AttributeFormat,
+    conditionFilter,
+    FilterTypes,
+    IFilter,
+    IFilterSeparator,
+    operatorFilter
+} from '../../../../_types/types';
 
 const Wrapper = styled.div`
     display: flex;
@@ -16,11 +23,20 @@ const Wrapper = styled.div`
 interface IAttributeListProps {
     libId: string;
     libQueryName: string;
-    setFilters: React.Dispatch<React.SetStateAction<IFilters[]>>;
+    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
     setShowAttr: React.Dispatch<React.SetStateAction<boolean>>;
+    filterOperator: operatorFilter;
+    updateFilters: () => void;
 }
 
-function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttributeListProps): JSX.Element {
+function AttributeList({
+    libId,
+    libQueryName,
+    setFilters,
+    setShowAttr,
+    filterOperator,
+    updateFilters
+}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
     const [attributes, setAttrs] = useState<any>([]);
@@ -41,24 +57,33 @@ function AttributeList({libId, libQueryName, setFilters, setShowAttr}: IAttribut
 
     const addFilters = () => {
         setFilters(filters => {
-            const newFilters = attSelected.map((att, index) => {
+            const separators = filters.filter(filter => filter.type === FilterTypes.separator);
+            const newFilters: IFilter[] = attSelected.map((att, index) => {
                 // take the first operator for the format of the attribute
                 const defaultWhereOperator = allowedTypeOperator[AttributeFormat[att.format]][0];
 
+                // if the new filter is after a separator, don't set operator
+                // separator key is the filters length when separator was add
+                const lastFilterIsSeparatorCondition = separators.some(
+                    separator => separator.key === filters.length + index - 1
+                );
+
                 return {
+                    type: FilterTypes.filter,
                     key: filters.length + index,
-                    operator: filters.length ? operatorFilter.and : undefined,
-                    where: whereFilter[defaultWhereOperator],
+                    operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
+                    condition: conditionFilter[defaultWhereOperator],
                     value: '',
                     attribute: att.id,
                     active: true,
-                    type: att.format
+                    format: att.format
                 };
             });
 
-            return [...filters, ...newFilters];
+            return [...filters, ...newFilters] as (IFilter | IFilterSeparator)[];
         });
         setShowAttr(false);
+        updateFilters();
     };
 
     return (
@@ -82,7 +107,6 @@ interface IAttributeProps {
     setAttSelected: React.Dispatch<React.SetStateAction<{id: string; format: AttributeFormat}[]>>;
 }
 function Attribute({att, setAttSelected}: IAttributeProps): JSX.Element {
-    '';
     const handleOnChange = (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
         if (data.checked) {
             setAttSelected(attSelected => [...attSelected, {id: att.id, format: att.format}]);

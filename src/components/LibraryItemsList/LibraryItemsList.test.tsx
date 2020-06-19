@@ -1,15 +1,49 @@
-import {mount, render} from 'enzyme';
+import {render} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import LibraryItemsList from '.';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import Filters from './Filters';
-import LibraryItemsList from './LibraryItemsList';
 
 jest.mock('react-router-dom', () => ({
     useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'})),
     useHistory: jest.fn()
 }));
+
+jest.mock(
+    './Filters',
+    () =>
+        function Filters() {
+            return <div>Filters</div>;
+        }
+);
+jest.mock(
+    './ItemsTitleDisplay',
+    () =>
+        function ItemsTitleDisplay() {
+            return <div>ItemsTitleDisplay</div>;
+        }
+);
+jest.mock(
+    './LibraryItemsListTable',
+    () =>
+        function LibraryItemsListTable() {
+            return <div>LibraryItemsListTable</div>;
+        }
+);
+jest.mock(
+    './MenuItemList',
+    () =>
+        function MenuItemList() {
+            return <div>MenuItemList</div>;
+        }
+);
+jest.mock(
+    './MenuItemListSelected',
+    () =>
+        function MenuItemListSelected() {
+            return <div>MenuItemListSelected</div>;
+        }
+);
 
 describe('LibraryItemsList', () => {
     const libQueryName = 'test';
@@ -55,21 +89,6 @@ describe('LibraryItemsList', () => {
                 <LibraryItemsList />
             </MockedProviderWithFragments>
         );
-
         expect(comp).toMatchSnapshot();
-    });
-
-    test('should call have filter panel', async () => {
-        let comp: any;
-
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
-                    <LibraryItemsList />
-                </MockedProviderWithFragments>
-            );
-        });
-
-        expect(comp.find(Filters)).toHaveLength(1);
     });
 });

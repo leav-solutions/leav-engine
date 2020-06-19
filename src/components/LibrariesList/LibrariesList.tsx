@@ -10,7 +10,7 @@ import LibraryDetail from './LibraryDetail';
 
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
-    const [libraries, setLibraries] = useState([]);
+    const [libraries, setLibraries] = useState<ILibrary[]>([]);
 
     const {libId, libQueryName, filterName} = useParams();
 
@@ -30,7 +30,7 @@ function LibrariesList(): JSX.Element {
         <div className="wrapper-page">
             <Header as="h2">{t('lib_list.header')}</Header>
             <Card.Group itemsPerRow={4}>
-                {libraries.map((lib: ILibrary) => (
+                {libraries.map(lib => (
                     <LibraryCard key={lib.id} lib={lib} />
                 ))}
             </Card.Group>

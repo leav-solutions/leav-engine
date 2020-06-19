@@ -45,14 +45,26 @@ export enum AvailableLanguage {
     fr = 'fr'
 }
 
-export interface IFilters {
-    key: any;
-    operator?: operatorFilter;
-    where: whereFilter;
+export enum FilterTypes {
+    filter = 'filter',
+    separator = 'separator'
+}
+
+export interface IFilter {
+    type: FilterTypes.filter;
+    key: number;
+    operator?: boolean;
+    condition: conditionFilter;
     value: string;
     attribute: string;
     active: boolean;
-    type: AttributeFormat;
+    format: AttributeFormat;
+}
+
+export interface IFilterSeparator {
+    type: FilterTypes.separator;
+    key: number;
+    active: boolean;
 }
 
 export enum AttributeFormat {
@@ -63,10 +75,12 @@ export enum AttributeFormat {
 
 export enum operatorFilter {
     and = 'AND',
-    or = 'OR'
+    or = 'OR',
+    openParent = 'OPEN_PARENT',
+    closeParent = 'CLOSE_PARENT'
 }
 
-export enum whereFilter {
+export enum conditionFilter {
     contains = 'contains',
     notContains = 'notContains',
     equal = 'equal',
@@ -84,5 +98,6 @@ export enum whereFilter {
 export interface IQueryFilter {
     field?: {base: string; linked?: string};
     value?: any;
-    operator: operatorFilter | whereFilter | '(' | ')';
+    condition?: conditionFilter;
+    operator?: operatorFilter;
 }

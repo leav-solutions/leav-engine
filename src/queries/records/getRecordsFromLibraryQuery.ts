@@ -4,7 +4,7 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
     const libQueryName = libraryName.toUpperCase();
 
     return gql`
-        query GET_RECORDS_FROM_${libQueryName}($filters: [${filterName}]) {
+        query ${'GET_RECORDS_FROM_' + libQueryName}($filters: [${filterName}]) {
             ${libraryName} (
                 pagination: {limit: ${pagination}, offset: ${offset}}
                 filters: $filters

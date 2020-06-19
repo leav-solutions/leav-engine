@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Input, InputOnChangeData} from 'semantic-ui-react';
-import {IQueryFilter, whereFilter} from '../../../_types/types';
+import {conditionFilter, IQueryFilter} from '../../../_types/types';
 
 interface ISearchItemsProps {
     setQueryFilters: React.Dispatch<React.SetStateAction<IQueryFilter[] | null>>;
@@ -21,7 +21,7 @@ function SearchItems({setQueryFilters}: ISearchItemsProps): JSX.Element {
     const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const searchQuery: IQueryFilter[] = [{field: {base: 'id'}, value: search, operator: whereFilter.contains}];
+        const searchQuery: IQueryFilter[] = [{field: {base: 'id'}, value: search, condition: conditionFilter.contains}];
         setQueryFilters(searchQuery);
     };
 
