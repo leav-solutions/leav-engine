@@ -1,18 +1,22 @@
 import React, {useState} from 'react';
 import {Input, InputOnChangeData} from 'semantic-ui-react';
 import {conditionFilter, IQueryFilter} from '../../../_types/types';
+import {LibraryItemListReducerAction, LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 interface ISearchItemsProps {
-    setQueryFilters: React.Dispatch<React.SetStateAction<IQueryFilter[] | null>>;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
-function SearchItems({setQueryFilters}: ISearchItemsProps): JSX.Element {
+function SearchItems({dispatchItems}: ISearchItemsProps): JSX.Element {
     const [search, setSearch] = useState<string>('');
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
         const newSearch = data.value;
         if (newSearch === '') {
-            setQueryFilters(null);
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
+                queryFilters: []
+            });
         } else {
             setSearch(data.value ?? '');
         }
@@ -22,7 +26,11 @@ function SearchItems({setQueryFilters}: ISearchItemsProps): JSX.Element {
         event.preventDefault();
 
         const searchQuery: IQueryFilter[] = [{field: {base: 'id'}, value: search, condition: conditionFilter.contains}];
-        setQueryFilters(searchQuery);
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
+            queryFilters: searchQuery
+        });
     };
 
     return (

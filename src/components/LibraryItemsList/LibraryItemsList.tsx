@@ -1,15 +1,17 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import {Menu} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
+import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {localizedLabel} from '../../utils';
-import {IItem, IQueryFilter} from '../../_types/types';
+import {displayListItemTypes, IItem, orderSearch} from '../../_types/types';
 import Filters from './Filters';
 import ItemsTitleDisplay from './ItemsTitleDisplay';
+import reducer, {initialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
 import LibraryItemsListTable from './LibraryItemsListTable';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
@@ -27,123 +29,101 @@ const Wrapper = styled.div<IWrapperProps>`
 `;
 
 function LibraryItemsList(): JSX.Element {
-    const {libId, libQueryName, filterName} = useParams();
+    const {libId} = useParams();
 
-    const [items, setItems] = useState<IItem[]>();
-    const [totalCount, setTotalCount] = useState<number>(0);
-    const [offset, setOffset] = useState<number>(0);
-    const [display, setDisplay] = useState<string>('list');
-    const [showFilters, setShowFilters] = useState(false);
-    const [selected, setSelected] = useState<{[x: string]: boolean}>({});
-    const [modeSelection, setModeSelection] = useState<boolean>(false);
-    const [queryFilters, setQueryFilters] = useState<IQueryFilter[]>([]);
-
-    const [pagination, setPagination] = useState(20);
-
-    const [getRecord, {called, loading, data, error, client, refetch}] = useLazyQuery(
-        getRecordsFromLibraryQuery(libQueryName || '', filterName, pagination, offset),
-        {
-            variables: {filters: queryFilters}
-        }
-    );
-
-    if (!called) {
-        getRecord();
-    }
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
 
-    useEffect(() => {
-        if (!loading && called && data && client) {
-            const itemsFromQuery = data ? data[libQueryName || ''].list : [];
-            setItems(itemsFromQuery.map((i: any) => i.whoAmI) as IItem[]);
-            setTotalCount(data[libQueryName]?.totalCount);
+    const {loading: loadingLib, data: dataLib, error: errorLib} = useQuery(getLibraryDetailExtendsQuery, {
+        variables: {
+            libId
+        }
+    });
 
-            const label = data[libQueryName]?.list[0]?.whoAmI.library.label;
+    useEffect(() => {
+        if (!loadingLib) {
+            const {query, filter, searchableFields} = dataLib?.libraries?.list[0]?.gqlNames;
+            const firstAttribute = dataLib?.libraries?.list[0]?.attributes[0];
+            dispatch({
+                type: LibraryItemListReducerActionTypes.SET_LIB_INFOS,
+                libQuery: query,
+                libFilter: filter,
+                libSearchableField: searchableFields,
+                itemsSortField: firstAttribute.id,
+                itemsSortOrder: orderSearch.asc
+            });
+        }
+    }, [dispatch, loadingLib, dataLib]);
+
+    const [
+        getRecord,
+        {called: calledItem, loading: loadingItem, data: dataItem, error: errorItem, client, refetch}
+    ] = useLazyQuery(
+        state.libFilter && state.libQuery && state.libSearchableField
+            ? getRecordsFromLibraryQuery(state.libQuery || '', state.libFilter, state.libSearchableField)
+            : getLibraryDetailExtendsQuery,
+        {
+            variables: {
+                limit: state.pagination,
+                offset: state.offset,
+                filters: state.queryFilters,
+                sortField: state.itemsSortField,
+                sortOrder: state.itemsSortOrder
+            }
+        }
+    );
+
+    useEffect(() => {
+        if (!loadingItem && calledItem && dataItem && client && state.libFilter) {
+            const itemsFromQuery = dataItem ? dataItem[state.libQuery || ''].list : [];
+
+            dispatch({
+                type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
+                items: itemsFromQuery.map((i: any) => i.whoAmI) as IItem[],
+                totalCount: dataItem[state.libQuery]?.totalCount
+            });
+
+            const label = dataItem[state.libQuery]?.list[0]?.whoAmI.library.label;
 
             client.writeQuery({
                 query: getActiveLibrary,
                 data: {
                     activeLibId: libId,
-                    activeLibQueryName: libQueryName,
+                    activeLibQueryName: state.libQuery,
                     activeLibName: localizedLabel(label, lang),
-                    activeLibFilterName: filterName
+                    activeLibFilterName: state.libFilter
                 }
             });
         }
-    }, [loading, data, called, client, lang, libId, libQueryName, filterName]);
+    }, [loadingItem, dataItem, calledItem, client, lang, libId, state.libQuery, state.libFilter]);
 
     useEffect(() => {
         getRecord();
-    }, [offset, pagination, queryFilters, getRecord]);
+    }, [state.offset, state.pagination, state.queryFilters, state.itemsSortField, state.itemsSortOrder, getRecord]);
 
-    if (error) {
+    if (errorItem || errorLib) {
         return <div>error</div>;
     }
 
     return (
-        <Wrapper showSide={showFilters}>
-            <Filters
-                showFilters={showFilters}
-                setShowFilters={setShowFilters}
-                libId={libId}
-                libQueryName={libQueryName}
-                setQueryFilters={setQueryFilters}
-            />
+        <Wrapper showSide={state.showFilters}>
+            <Filters stateItems={state} dispatchItems={dispatch} libId={libId} libQueryName={state.libQuery} />
             <div className="wrapper-page">
                 <Menu style={{height: '5rem'}}>
-                    {modeSelection ? (
-                        <MenuItemListSelected
-                            selected={selected}
-                            setSelected={setSelected}
-                            setModeSelection={setModeSelection}
-                        />
+                    {state.selectionMode ? (
+                        <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
                     ) : (
-                        <MenuItemList
-                            showFilters={showFilters}
-                            setShowFilters={setShowFilters}
-                            items={items}
-                            setDisplay={setDisplay}
-                            totalCount={totalCount}
-                            offset={offset}
-                            setOffset={setOffset}
-                            pagination={pagination}
-                            setModeSelection={setModeSelection}
-                            setPagination={setPagination}
-                            setSelected={setSelected}
-                            setQueryFilters={setQueryFilters}
-                            refetch={refetch}
-                        />
+                        <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
                     )}
                 </Menu>
 
-                {display === 'list' && (
-                    <LibraryItemsListTable
-                        items={items}
-                        setItems={setItems}
-                        totalCount={totalCount}
-                        pagination={pagination}
-                        offset={offset}
-                        setOffset={setOffset}
-                        modeSelection={modeSelection}
-                        setModeSelection={setModeSelection}
-                        selected={selected}
-                        setSelected={setSelected}
-                    />
+                {state.displayType === displayListItemTypes.listMedium && (
+                    <LibraryItemsListTable stateItems={state} dispatchItems={dispatch} />
                 )}
-                {display === 'tile' && (
-                    <ItemsTitleDisplay
-                        items={items}
-                        totalCount={totalCount}
-                        pagination={pagination}
-                        offset={offset}
-                        setOffset={setOffset}
-                        modeSelection={modeSelection}
-                        setModeSelection={setModeSelection}
-                        selected={selected}
-                        setSelected={setSelected}
-                    />
+                {state.displayType === displayListItemTypes.tile && (
+                    <ItemsTitleDisplay stateItems={state} dispatchItems={dispatch} />
                 )}
             </div>
         </Wrapper>

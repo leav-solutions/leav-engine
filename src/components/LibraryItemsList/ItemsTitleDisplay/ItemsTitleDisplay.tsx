@@ -1,37 +1,20 @@
 import React from 'react';
 import {Card, Grid, Menu, Segment} from 'semantic-ui-react';
 import {getPreviewUrl} from '../../../utils';
-import {IItem} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
+import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import RecordPreview from '../LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
 
 interface IItemsTitleDisplayProps {
-    items?: IItem[];
-    totalCount: number;
-    pagination: number;
-    offset: number;
-    setOffset: React.Dispatch<React.SetStateAction<number>>;
-    modeSelection: boolean;
-    setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
-    selected: {[x: string]: boolean};
-    setSelected: React.Dispatch<React.SetStateAction<{[x: string]: boolean}>>;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
-function ItemsTitleDisplay({
-    items,
-    totalCount,
-    pagination,
-    offset,
-    setOffset,
-    modeSelection,
-    setModeSelection,
-    selected,
-    setSelected
-}: IItemsTitleDisplayProps): JSX.Element {
+function ItemsTitleDisplay({stateItems, dispatchItems}: IItemsTitleDisplayProps): JSX.Element {
     return (
         <Segment>
             <Grid columns={7}>
-                {items?.map(item => (
+                {stateItems.items?.map(item => (
                     <Grid.Column key={item.id}>
                         <Card>
                             <RecordPreview
@@ -53,12 +36,7 @@ function ItemsTitleDisplay({
             </Grid>
             <Segment secondary>
                 <Menu pagination>
-                    <LibraryItemsListPagination
-                        totalCount={totalCount}
-                        pagination={pagination}
-                        offset={offset}
-                        setOffset={setOffset}
-                    />
+                    <LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />
                 </Menu>
             </Segment>
         </Segment>

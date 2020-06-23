@@ -2,26 +2,24 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Divider, Dropdown, Menu, Modal, Sidebar, Transition} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../_types/types';
 import {
-    conditionFilter,
-    FilterTypes,
-    IFilter,
-    IFilterSeparator,
-    IQueryFilter,
-    operatorFilter
-} from '../../../_types/types';
+    LibraryItemListReducerAction,
+    LibraryItemListReducerActionTypes,
+    LibraryItemListState
+} from '../LibraryItemsListReducer';
 import SelectView from '../SelectView';
 import AttributeList from './AttributeList';
 import FilterItem from './FilterItem';
 import FilterSeparator from './Filters/FilterSeparator';
 import {getRequestFromFilter} from './Filters/FilterSeparator/getRequestFromFilter';
+import {getConditionOptions, getOperatorOptions} from './FiltersOptions';
 
 interface IFiltersProps {
-    showFilters: boolean;
-    setShowFilters: (showFilters: (x: boolean) => boolean) => void;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     libId: string;
     libQueryName: string;
-    setQueryFilters: React.Dispatch<React.SetStateAction<IQueryFilter[]>>;
 }
 
 const Side = styled.div`
@@ -42,42 +40,24 @@ const FilterList = styled.div`
     padding: 0.3rem 0.3rem 0.3rem 0;
 `;
 
-function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilters}: IFiltersProps): JSX.Element {
+function Filters({stateItems, dispatchItems, libId, libQueryName}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();
 
     const [showAttr, setShowAttr] = useState(false);
-    const [show, setShow] = useState(showFilters);
 
     const [separatorOperator, setSeparatorOperator] = useState<operatorFilter>(operatorFilter.or);
     const [filterOperator, setFilterOperator] = useState<operatorFilter>(operatorFilter.and);
 
     const [filters, setFilters] = useState<(IFilter | IFilterSeparator)[]>([]);
 
-    useEffect(() => {
-        setShow(showFilters);
-    }, [showFilters]);
+    const conditionOptions = getConditionOptions(t);
+    const operatorOptions = getOperatorOptions(t);
 
-    const whereOptions = [
-        {text: t('filters.contains'), value: conditionFilter.contains},
-        {text: t('filters.not-contains'), value: conditionFilter.notContains},
-        {text: t('filters.equal'), value: conditionFilter.equal},
-        {text: t('filters.not-equal'), value: conditionFilter.notEqual},
-        {text: t('filters.begin-with'), value: conditionFilter.beginWith},
-        {text: t('filters.end-with'), value: conditionFilter.endWith},
-        {text: t('filters.is-empty'), value: conditionFilter.empty},
-        {text: t('filters.is-not-empty'), value: conditionFilter.notEmpty},
-        {text: t('filters.greater-than'), value: conditionFilter.greaterThan},
-        {text: t('filters.less-than'), value: conditionFilter.lessThan},
-        {text: t('filters.exist'), value: conditionFilter.exist},
-        {text: t('filters.search-in'), value: conditionFilter.searchIn}
-    ];
-
-    const operatorOptions = [
-        {text: t('filters.and'), value: operatorFilter.and},
-        {text: t('filters.or'), value: operatorFilter.or}
-    ];
-
-    const resetFilters = () => setQueryFilters([]);
+    const resetFilters = () =>
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
+            queryFilters: []
+        });
 
     const removeAllFilter = () => {
         setFilters([]);
@@ -100,7 +80,10 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
 
     const applyFilters = () => {
         const request = getRequestFromFilter(filters, filterOperator, separatorOperator);
-        setQueryFilters(request);
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
+            queryFilters: request
+        });
     };
 
     useEffect(() => {
@@ -171,8 +154,15 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
         });
     };
 
+    const handleHide = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTER,
+            showFilter: false
+        });
+    };
+
     return (
-        <Transition visible={show} onHide={() => setShowFilters(show => false)} animation="slide right" duration={10}>
+        <Transition visible={stateItems.showFilters} onHide={handleHide} animation="slide right" duration={10}>
             <Sidebar.Pushable>
                 <Modal open={showAttr} onClose={() => setShowAttr(false)}>
                     <Modal.Header>{t('filters.modal-header')}</Modal.Header>
@@ -191,7 +181,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                     <Menu style={{height: '5rem'}}>
                         <Menu.Menu>
                             <Menu.Item>
-                                <Button icon="sidebar" onClick={() => setShow(false)} />
+                                <Button icon="sidebar" onClick={handleHide} />
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position="right">
@@ -230,7 +220,7 @@ function Filters({showFilters, setShowFilters, libId, libQueryName, setQueryFilt
                                     key={filter.key}
                                     filter={filter}
                                     setFilters={setFilters}
-                                    whereOptions={whereOptions}
+                                    whereOptions={conditionOptions}
                                     operatorOptions={operatorOptions}
                                     resetFilters={resetFilters}
                                     updateFilters={updateFilters}

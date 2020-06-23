@@ -1,40 +1,50 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Dropdown} from 'semantic-ui-react';
-import {IItem} from '../../../_types/types';
+import {
+    LibraryItemListReducerAction,
+    LibraryItemListReducerActionTypes,
+    LibraryItemListState
+} from '../LibraryItemsListReducer';
 
 interface ILibraryItemsListMenuPaginationProps {
-    items?: IItem[];
-    totalCount: number;
-    offset: number;
-    setOffset: React.Dispatch<React.SetStateAction<number>>;
-    pagination: number;
-    setPagination: (pagination: number) => void;
-    setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
-    setSelected: React.Dispatch<React.SetStateAction<{[x: string]: boolean}>>;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
 function LibraryItemsListMenuPagination({
-    items,
-    totalCount,
-    offset,
-    pagination,
-    setPagination,
-    setModeSelection,
-    setSelected
+    stateItems,
+    dispatchItems
 }: ILibraryItemsListMenuPaginationProps): JSX.Element {
     const {t} = useTranslation();
 
     const paginationOptions = [5, 10, 20, 50, 100];
 
-    const offsetDisplay = totalCount > 0 ? offset + 1 : 0;
-    const nextOffsetDisplay = offset + pagination > totalCount ? totalCount : offset + pagination;
+    const offsetDisplay = stateItems.itemsTotalCount > 0 ? stateItems.offset + 1 : 0;
+    const nextOffsetDisplay =
+        stateItems.offset + stateItems.pagination > stateItems.itemsTotalCount
+            ? stateItems.itemsTotalCount
+            : stateItems.offset + stateItems.pagination;
 
     const selectAll = () => {};
     const selectVisible = () => {
-        setSelected({});
-        items?.map(item => setSelected(s => ({...s, [item.id]: true})));
-        setModeSelection(true);
+        const newItemSelected = {};
+
+        if (stateItems.items) {
+            for (const item of stateItems.items) {
+                newItemSelected[item.id] = true;
+            }
+        }
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+            itemsSelected: {}
+        });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
+            selectionMode: true
+        });
     };
 
     return (
@@ -43,16 +53,18 @@ function LibraryItemsListMenuPagination({
             text={t('items-list-row.nb-elements', {
                 nb1: offsetDisplay,
                 nb2: nextOffsetDisplay,
-                nbItems: totalCount
+                nbItems: stateItems.itemsTotalCount
             })}
         >
             <Dropdown.Menu>
                 <Dropdown.Header>
                     <div>
-                        <Button onClick={selectAll}>{t('items-menu-dropdown.select-all', {nb: totalCount})}</Button>
+                        <Button onClick={selectAll}>
+                            {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
+                        </Button>
 
                         <Button onClick={selectVisible}>
-                            {t('items-menu-dropdown.select-visible', {nb: items?.length})}
+                            {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
                         </Button>
                     </div>
                 </Dropdown.Header>
@@ -60,8 +72,13 @@ function LibraryItemsListMenuPagination({
                 {paginationOptions.map(pagOption => (
                     <Dropdown.Item
                         key={pagOption}
-                        active={pagination === pagOption}
-                        onClick={() => setPagination(pagOption)}
+                        active={stateItems.pagination === pagOption}
+                        onClick={() =>
+                            dispatchItems({
+                                type: LibraryItemListReducerActionTypes.SET_PAGINATION,
+                                pagination: pagOption
+                            })
+                        }
                         content={pagOption}
                     />
                 ))}

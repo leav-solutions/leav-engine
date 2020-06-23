@@ -33,7 +33,8 @@ describe('LibrariesList', () => {
                                 gqlNames: {
                                     __typename: 'Test',
                                     query: 'test',
-                                    filter: 'TestFilter'
+                                    filter: 'TestFilter',
+                                    searchableFields: 'TestSearch'
                                 },
                                 attributes: {
                                     __typename: 'Attribute',
@@ -49,6 +50,7 @@ describe('LibrariesList', () => {
             }
         }
     ];
+
     test('Snapshot test', async () => {
         const comp = render(
             <MockedProviderWithFragments mocks={mocks}>
@@ -77,7 +79,7 @@ describe('LibrariesList', () => {
         expect(comp.find(LibraryCard)).toHaveLength(1);
     });
 
-    test("shouldn't call LibraryCard", async () => {
+    test("shouldn't call LibraryDetail", async () => {
         let comp: any;
         await act(async () => {
             comp = mount(
@@ -89,8 +91,7 @@ describe('LibrariesList', () => {
 
         // wait for the query to respond
         await act(async () => {
-            // wait 0 isn't enough, it fail sometimes
-            await wait(2);
+            await wait(1);
             comp.update();
         });
 

@@ -8,14 +8,6 @@ import SideBarMenu from '../SideBarMenu';
 import Router from './Router';
 
 describe('Router', () => {
-    const mockResolvers = {
-        activeLib: {
-            id: 'test',
-            queryName: 'test',
-            name: 'test'
-        }
-    };
-
     const mocks = [
         {
             request: {
@@ -30,7 +22,8 @@ describe('Router', () => {
                                 label: 'test',
                                 gqlNames: {
                                     query: 'test',
-                                    filter: 'TestFilter'
+                                    filter: 'TestFilter',
+                                    searchableFields: 'TestSearchableFields'
                                 }
                             }
                         ]

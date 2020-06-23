@@ -1,26 +1,43 @@
 import React, {useState} from 'react';
 import {Icon, Menu} from 'semantic-ui-react';
+import {
+    LibraryItemListReducerAction,
+    LibraryItemListReducerActionTypes,
+    LibraryItemListState
+} from '../LibraryItemsListReducer';
 
 interface ILibraryItemsListPaginationProps {
-    totalCount: number;
-    pagination: number;
-    offset: number;
-    setOffset: React.Dispatch<React.SetStateAction<number>>;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
-function LibraryItemsListPagination({
-    totalCount,
-    pagination,
-    offset,
-    setOffset
-}: ILibraryItemsListPaginationProps): JSX.Element {
-    const first = () => setOffset(0);
-    const previous = () => setOffset(offset => (offset >= pagination ? offset - pagination - 1 : 0));
+function LibraryItemsListPagination({stateItems, dispatchItems}: ILibraryItemsListPaginationProps): JSX.Element {
+    const first = () =>
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_OFFSET,
+            offset: 0
+        });
+
+    const previous = () =>
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_OFFSET,
+            offset: stateItems.offset >= stateItems.pagination ? stateItems.offset - stateItems.pagination - 1 : 0
+        });
 
     const next = () =>
-        setOffset(offset => (totalCount && offset + pagination < totalCount ? offset + pagination - 1 : offset));
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_OFFSET,
+            offset:
+                stateItems.itemsTotalCount && stateItems.offset + stateItems.pagination < stateItems.itemsTotalCount
+                    ? stateItems.offset + stateItems.pagination - 1
+                    : stateItems.offset
+        });
 
-    const last = () => setOffset(pagination * Math.floor(totalCount / pagination));
+    const last = () =>
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_OFFSET,
+            offset: stateItems.pagination * Math.floor(stateItems.itemsTotalCount / stateItems.pagination)
+        });
 
     return (
         <>
@@ -32,9 +49,9 @@ function LibraryItemsListPagination({
                 <Icon name="angle left" />
             </Menu.Item>
 
-            {totalCount
-                ? [...Array(Math.ceil(totalCount / pagination))].map((e, index) => {
-                      const activePage = Math.round(offset / pagination);
+            {stateItems.itemsTotalCount
+                ? [...Array(Math.ceil(stateItems.itemsTotalCount / stateItems.pagination))].map((e, index) => {
+                      const activePage = Math.round(stateItems.offset / stateItems.pagination);
 
                       // change the number of items around the current page display
                       const range = 2;
@@ -50,15 +67,16 @@ function LibraryItemsListPagination({
                               key={index}
                               as="a"
                               active={isActive}
-                              onClick={() => !isActive && setOffset(index * pagination)}
+                              onClick={() =>
+                                  !isActive &&
+                                  dispatchItems({
+                                      type: LibraryItemListReducerActionTypes.SET_OFFSET,
+                                      offset: index * stateItems.pagination
+                                  })
+                              }
                           >
                               {isActive ? (
-                                  <InputValue
-                                      index={index}
-                                      setOffset={setOffset}
-                                      pagination={pagination}
-                                      totalCount={totalCount}
-                                  />
+                                  <InputValue index={index} stateItems={stateItems} dispatchItems={dispatchItems} />
                               ) : (
                                   index + 1
                               )}
@@ -77,20 +95,29 @@ function LibraryItemsListPagination({
     );
 }
 
-const InputValue = ({index, setOffset, pagination, totalCount}: any) => {
-    const [value, setValue] = useState(index + 1);
+interface InputValueProps {
+    index: number;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+}
+
+const InputValue = ({index, stateItems, dispatchItems}: InputValueProps) => {
+    const [value, setValue] = useState<number>(index + 1);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
-        setValue(newValue);
+        setValue(parseInt(newValue));
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const newOffSet = (parseInt(value) - 1) * pagination;
+        const newOffSet = (value - 1) * stateItems.pagination;
 
-        if (newOffSet >= 0 && newOffSet <= totalCount) {
-            setOffset(newOffSet);
+        if (newOffSet >= 0 && newOffSet <= stateItems.itemsTotalCount) {
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_OFFSET,
+                offset: newOffSet
+            });
         }
     };
 

@@ -10,6 +10,7 @@ export interface ILibrary {
     gqlNames: {
         query: string;
         filter: string;
+        searchableFields: string;
     };
 }
 
@@ -76,8 +77,8 @@ export enum AttributeFormat {
 export enum operatorFilter {
     and = 'AND',
     or = 'OR',
-    openParent = 'OPEN_PARENT',
-    closeParent = 'CLOSE_PARENT'
+    openParent = 'OPEN_BRACKET',
+    closeParent = 'CLOSE_BRACKET'
 }
 
 export enum conditionFilter {
@@ -100,4 +101,16 @@ export interface IQueryFilter {
     value?: any;
     condition?: conditionFilter;
     operator?: operatorFilter;
+}
+
+export enum orderSearch {
+    desc = 'desc',
+    asc = 'asc'
+}
+
+export enum displayListItemTypes {
+    listSmall = 'listSmall',
+    listMedium = 'listMedium',
+    listBig = 'listBig',
+    tile = 'tile'
 }

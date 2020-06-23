@@ -1,42 +1,23 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Dropdown, DropdownProps, Menu, Popup} from 'semantic-ui-react';
-import {IItem} from '../../../_types/types';
+import {displayListItemTypes} from '../../../_types/types';
 import LibraryItemsListMenuPagination from '../LibraryItemsListMenuPagination';
+import {
+    LibraryItemListReducerAction,
+    LibraryItemListReducerActionTypes,
+    LibraryItemListState
+} from '../LibraryItemsListReducer';
 import SearchItems from '../SearchItems';
 import SelectView from '../SelectView';
 
 interface IMenuItemListProps {
-    showFilters: boolean;
-    setShowFilters: any;
-    items: IItem[] | undefined;
-    setDisplay: any;
-    totalCount: number;
-    offset: number;
-    setOffset: any;
-    pagination: number;
-    setModeSelection: any;
-    setPagination: any;
-    setSelected: any;
-    setQueryFilters: any;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     refetch: any;
 }
 
-function MenuItemList({
-    showFilters,
-    setShowFilters,
-    items,
-    setDisplay,
-    totalCount,
-    offset,
-    setOffset,
-    pagination,
-    setModeSelection,
-    setPagination,
-    setSelected,
-    setQueryFilters,
-    refetch
-}: IMenuItemListProps): JSX.Element {
+function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
 
     const displayOptions = [
@@ -58,18 +39,28 @@ function MenuItemList({
     const changeDisplay = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
         const newDisplay = data.value?.toString();
         if (newDisplay) {
-            setDisplay(newDisplay);
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE,
+                displayType: displayListItemTypes.listMedium
+            });
         }
+    };
+
+    const toggleShowFilter = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTER,
+            showFilter: !stateItems.showFilters
+        });
     };
 
     return (
         <>
-            {!showFilters && (
+            {!stateItems.showFilters && (
                 <>
                     <Menu.Item>
                         <Popup
                             content={t('items_list.show-filter-panel')}
-                            trigger={<Button icon="sidebar" onClick={() => setShowFilters(show => !show)} />}
+                            trigger={<Button icon="sidebar" onClick={toggleShowFilter} />}
                         />
                     </Menu.Item>
                     <Menu.Item>
@@ -78,20 +69,11 @@ function MenuItemList({
                 </>
             )}
             <Menu.Item>
-                <LibraryItemsListMenuPagination
-                    items={items}
-                    totalCount={totalCount}
-                    offset={offset}
-                    setOffset={setOffset}
-                    pagination={pagination}
-                    setModeSelection={setModeSelection}
-                    setPagination={setPagination}
-                    setSelected={setSelected}
-                />
+                <LibraryItemsListMenuPagination stateItems={stateItems} dispatchItems={dispatchItems} />
             </Menu.Item>
 
             <Menu.Item>
-                <SearchItems setQueryFilters={setQueryFilters} />
+                <SearchItems dispatchItems={dispatchItems} />
             </Menu.Item>
 
             <Menu.Menu position="right">

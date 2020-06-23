@@ -1,33 +1,50 @@
 import {render} from 'enzyme';
 import React from 'react';
+import {displayListItemTypes} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
+import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import LibraryItemsListTable from './LibraryItemsListTable';
 
-describe('LibraryItemsListTable', () => {
-    test('Snapshot test', async () => {
-        const setItems = jest.fn();
-        const totalCount = 0;
-        const pagination = 20;
-        const offset = 0;
-        const setOffset = jest.fn();
-        const modeSelection = false;
-        const setModeSelection = jest.fn();
-        const selected = {};
-        const setSelected = jest.fn();
+jest.mock(
+    './LibraryItemsListTableRow',
+    () =>
+        function LibraryItemsListTableRow() {
+            return <div>LibraryItemsListTableRow</div>;
+        }
+);
 
+jest.mock(
+    '../LibraryItemsListPagination',
+    () =>
+        function LibraryItemsListPagination() {
+            return <div>LibraryItemsListPagination</div>;
+        }
+);
+
+describe('LibraryItemsListTable', () => {
+    const stateItems: LibraryItemListState = {
+        libQuery: 'test',
+        libFilter: 'test',
+        libSearchableField: 'test',
+        itemsSortField: 'test',
+        itemsSortOrder: 'test',
+        items: [],
+        itemsTotalCount: 0,
+        offset: 0,
+        pagination: 20,
+        displayType: displayListItemTypes.listMedium,
+        showFilters: false,
+        selectionMode: false,
+        itemsSelected: {},
+        queryFilters: []
+    };
+
+    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
+
+    test('Snapshot test', async () => {
         const comp = render(
             <MockedProviderWithFragments>
-                <LibraryItemsListTable
-                    setItems={setItems}
-                    totalCount={totalCount}
-                    pagination={pagination}
-                    offset={offset}
-                    setOffset={setOffset}
-                    modeSelection={modeSelection}
-                    setModeSelection={setModeSelection}
-                    selected={selected}
-                    setSelected={setSelected}
-                />
+                <LibraryItemsListTable stateItems={stateItems} dispatchItems={dispatchItems} />
             </MockedProviderWithFragments>
         );
 

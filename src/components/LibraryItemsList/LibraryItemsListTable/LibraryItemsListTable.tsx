@@ -2,8 +2,13 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dimmer, Dropdown, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IItem} from '../../../_types/types';
+import {orderSearch} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
+import {
+    LibraryItemListReducerAction,
+    LibraryItemListReducerActionTypes,
+    LibraryItemListState
+} from '../LibraryItemsListReducer';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
 
 const TableWrapper = styled.div`
@@ -29,29 +34,11 @@ const FooterTable = styled(Segment)`
 `;
 
 interface ILibraryItemsListTableProps {
-    items?: IItem[];
-    setItems: (items: IItem[]) => void;
-    totalCount: number;
-    pagination: number;
-    offset: number;
-    setOffset: React.Dispatch<React.SetStateAction<number>>;
-    modeSelection: boolean;
-    setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
-    selected: {[x: string]: boolean};
-    setSelected: React.Dispatch<React.SetStateAction<{[x: string]: boolean}>>;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
-function LibraryItemsListTable({
-    items,
-    totalCount,
-    pagination,
-    offset,
-    setOffset,
-    modeSelection,
-    setModeSelection,
-    selected,
-    setSelected
-}: ILibraryItemsListTableProps): JSX.Element {
+function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTableProps): JSX.Element {
     const {t: translate} = useTranslation();
 
     const t = (trad: string, options = {}) => translate(`items_list.table.${trad}`, options);
@@ -64,7 +51,7 @@ function LibraryItemsListTable({
         {name: 'opCode', display: t('op_code')}
     ];
 
-    if (!items) {
+    if (!stateItems.items) {
         return (
             <Segment style={{height: '20rem'}}>
                 <Dimmer active inverted>
@@ -74,6 +61,22 @@ function LibraryItemsListTable({
         );
     }
 
+    const handleSort = (attId: string, order: orderSearch) => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS,
+            itemsSortField: 'infos' === attId ? 'id' : attId,
+            itemsSortOrder: order
+        });
+    };
+
+    const handleDesc = (attId: string) => {
+        handleSort(attId, orderSearch.desc);
+    };
+
+    const handleAsc = (attId: string) => {
+        handleSort(attId, orderSearch.asc);
+    };
+
     return (
         <>
             <HeaderTable secondary columns={tableCells.length}>
@@ -81,8 +84,14 @@ function LibraryItemsListTable({
                     <div key={cell.name}>
                         <Dropdown text={cell.display} key={cell.name}>
                             <Dropdown.Menu>
-                                <Dropdown.Item text={t('header-cell-menu.sort-ascend')} />
-                                <Dropdown.Item text={t('header-cell-menu.sort-descend')} />
+                                <Dropdown.Item
+                                    text={t('header-cell-menu.sort-ascend')}
+                                    onClick={() => handleAsc(cell.name)}
+                                />
+                                <Dropdown.Item
+                                    text={t('header-cell-menu.sort-descend')}
+                                    onClick={() => handleDesc(cell.name)}
+                                />
                                 <Dropdown.Item text={t('header-cell-menu.cancel-sort')} />
                                 <Dropdown.Divider />
                                 <Dropdown.Item text={t('header-cell-menu.sort-advance')} />
@@ -98,15 +107,13 @@ function LibraryItemsListTable({
             <TableWrapper>
                 <Table fixed selectable className="table-items" celled>
                     <Table.Body>
-                        {items &&
-                            items?.map(item => (
+                        {stateItems.items &&
+                            stateItems.items?.map(item => (
                                 <LibraryItemsListTableRow
                                     key={item.id}
                                     item={item}
-                                    modeSelection={modeSelection}
-                                    setModeSelection={setModeSelection}
-                                    selected={selected}
-                                    setSelected={setSelected}
+                                    stateItems={stateItems}
+                                    dispatchItems={dispatchItems}
                                 />
                             ))}
                     </Table.Body>
@@ -114,18 +121,11 @@ function LibraryItemsListTable({
             </TableWrapper>
 
             <FooterTable secondary>
-                <>
-                    <div>
-                        <Menu pagination>
-                            <LibraryItemsListPagination
-                                totalCount={totalCount}
-                                pagination={pagination}
-                                offset={offset}
-                                setOffset={setOffset}
-                            />
-                        </Menu>
-                    </div>
-                </>
+                <div>
+                    <Menu pagination>
+                        <LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />
+                    </Menu>
+                </div>
             </FooterTable>
         </>
     );

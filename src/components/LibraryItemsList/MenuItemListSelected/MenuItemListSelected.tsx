@@ -1,33 +1,43 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Menu} from 'semantic-ui-react';
+import {
+    LibraryItemListReducerAction,
+    LibraryItemListReducerActionTypes,
+    LibraryItemListState
+} from '../LibraryItemsListReducer';
 
 interface IMenuItemListSelectedProps {
-    selected: {[x: string]: boolean};
-    setSelected: React.Dispatch<React.SetStateAction<{[x: string]: boolean}>>;
-    setModeSelection: React.Dispatch<React.SetStateAction<boolean>>;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
-function MenuItemListSelected({selected, setSelected, setModeSelection}: IMenuItemListSelectedProps): JSX.Element {
+function MenuItemListSelected({stateItems, dispatchItems}: IMenuItemListSelectedProps): JSX.Element {
     const {t} = useTranslation();
 
     const [countItemsSelected, setCountItemsSelected] = useState(0);
 
     const disableModeSelection = () => {
-        setModeSelection(false);
-        setSelected({});
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
+            selectionMode: false
+        });
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+            itemsSelected: {}
+        });
     };
 
     useEffect(() => {
         let count = 0;
-        for (const itemId in selected) {
-            if (selected[itemId]) {
+        for (const itemId in stateItems.itemsSelected) {
+            if (stateItems.itemsSelected[itemId]) {
                 count++;
             }
         }
 
         setCountItemsSelected(count);
-    }, [selected, setCountItemsSelected]);
+    }, [stateItems.itemsSelected, setCountItemsSelected]);
 
     return (
         <>

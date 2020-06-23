@@ -1,13 +1,20 @@
 import gql from 'graphql-tag';
 
-export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, pagination: number, offset = 0) => {
+export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, searchableFields?: string) => {
     const libQueryName = libraryName.toUpperCase();
 
     return gql`
-        query ${'GET_RECORDS_FROM_' + libQueryName}($filters: [${filterName}]) {
+        query ${'GET_RECORDS_FROM_' + libQueryName} (
+            $limit: Int!
+            $offset: Int
+            $filters: [${filterName}]
+            $sortField: ${searchableFields}!
+            $sortOrder: SortOrder!
+        ) {
             ${libraryName} (
-                pagination: {limit: ${pagination}, offset: ${offset}}
+                pagination: {limit: $limit, offset: $offset}
                 filters: $filters
+                sort: {field: $sortField, order: $sortOrder}
             ) {
                 totalCount
                 list {

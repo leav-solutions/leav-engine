@@ -1,7 +1,9 @@
 import {render} from 'enzyme';
 import React from 'react';
 import LibraryItemsList from '.';
+import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
+import {orderSearch} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 
 jest.mock('react-router-dom', () => ({
@@ -46,18 +48,33 @@ jest.mock(
 );
 
 describe('LibraryItemsList', () => {
+    const libId = 'libIdTest';
     const libQueryName = 'test';
     const libQueryFilter = 'TestFilter';
+    const libSearchableFields = 'TestSearchableFields';
     const pagination = 20;
     const offset = 0;
+    const itemsSortField = 'id';
+    const itemsSortOrder = orderSearch.asc;
 
     const mocks = [
         {
             request: {
-                query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, pagination, offset),
-                variables: {
-                    filters: []
-                }
+                query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, libSearchableFields),
+                variables: [
+                    {
+                        variables: {
+                            libId
+                        }
+                    },
+                    {
+                        limit: pagination,
+                        offset,
+                        filters: [],
+                        sortField: itemsSortField,
+                        sortOrder: itemsSortOrder
+                    }
+                ]
             },
             result: {
                 data: {
@@ -77,6 +94,42 @@ describe('LibraryItemsList', () => {
                                 }
                             }
                         ]
+                    }
+                }
+            }
+        },
+        {
+            request: {
+                query: getLibraryDetailExtendsQuery,
+                variables: {
+                    libId
+                }
+            },
+            result: {
+                data: {
+                    libraries: {
+                        list: {
+                            id: libId,
+                            system: false,
+                            label: {
+                                fr: 'test'
+                            },
+                            attributes: [
+                                {
+                                    id: 'test',
+                                    type: '',
+                                    format: '',
+                                    label: {
+                                        fr: ''
+                                    }
+                                }
+                            ],
+                            gqlNames: {
+                                query: libQueryName,
+                                filter: libQueryFilter,
+                                searchableFields: libSearchableFields
+                            }
+                        }
                     }
                 }
             }

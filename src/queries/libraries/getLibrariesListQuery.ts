@@ -9,6 +9,7 @@ export const getLibrariesListQuery = gql`
                 gqlNames {
                     query
                     filter
+                    searchableFields
                 }
             }
         }
