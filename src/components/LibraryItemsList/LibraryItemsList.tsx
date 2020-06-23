@@ -8,11 +8,10 @@ import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {localizedLabel} from '../../utils';
-import {displayListItemTypes, IItem, orderSearch} from '../../_types/types';
+import {IItem, orderSearch} from '../../_types/types';
+import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
-import ItemsTitleDisplay from './ItemsTitleDisplay';
 import reducer, {initialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
-import LibraryItemsListTable from './LibraryItemsListTable';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 
@@ -119,12 +118,7 @@ function LibraryItemsList(): JSX.Element {
                     )}
                 </Menu>
 
-                {state.displayType === displayListItemTypes.listMedium && (
-                    <LibraryItemsListTable stateItems={state} dispatchItems={dispatch} />
-                )}
-                {state.displayType === displayListItemTypes.tile && (
-                    <ItemsTitleDisplay stateItems={state} dispatchItems={dispatch} />
-                )}
+                <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
             </div>
         </Wrapper>
     );

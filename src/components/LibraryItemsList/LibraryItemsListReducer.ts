@@ -40,7 +40,7 @@ export const initialState: LibraryItemListState = {
     itemsTotalCount: 0,
     offset: 0,
     pagination: 20,
-    displayType: displayListItemTypes.listMedium,
+    displayType: displayListItemTypes.listSmall,
     showFilters: false,
     selectionMode: false,
     itemsSelected: {},

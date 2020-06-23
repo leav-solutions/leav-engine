@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, CheckboxProps, Grid, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IItem} from '../../../../_types/types';
+import {displayListItemTypes, IItem} from '../../../../_types/types';
 import RecordCard from '../../../shared/RecordCard';
 import {
     LibraryItemListReducerAction,
@@ -11,11 +11,26 @@ import {
 } from '../../LibraryItemsListReducer';
 import LibraryItemsModal from './LibraryItemsModal';
 
+const getRowHeight = (displayType: displayListItemTypes) => {
+    switch (displayType) {
+        case displayListItemTypes.listSmall:
+            return '3rem';
+        case displayListItemTypes.listMedium:
+            return '6rem';
+        case displayListItemTypes.listBig:
+            return '9rem';
+        case displayListItemTypes.tile:
+            return '0rem';
+    }
+};
+
 interface RowProps {
     selected: boolean;
+    size: displayListItemTypes;
 }
 
 const TableRow = styled(Table.Row)<RowProps>`
+    height: ${({size}) => getRowHeight(size)};
     background: ${({selected}) => (selected ? 'hsla(202, 100%, 50%, 0.15)' : 'none')};
 `;
 
@@ -95,6 +110,7 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
                 onMouseLeave={() => setIsHover(false)}
                 selected={isSelected}
                 onClick={handleClickRow}
+                size={stateItems.displayType}
             >
                 <Table.Cell>
                     <Grid>

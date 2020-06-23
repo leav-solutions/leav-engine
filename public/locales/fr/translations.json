@@ -65,8 +65,6 @@
         "columns": "Colonnes",
         "new": "Nouveau",
         "display_type": "Affichage",
-        "display-list": "Liste",
-        "display-tile": "Mosaïque",
         "header_table": "Éléments de {{libName}}",
         "show-filter-panel": "Montrer les filtres",
         "table": {
@@ -88,6 +86,12 @@
                 "regroup": "Régrouper",
                 "choose-columns": "Choix Colonnes"
             }
+        },
+        "display": {
+            "list-small": "Liste (petit)",
+            "list-medium": "Liste (Moyen)",
+            "list-big": "Liste (Grand)",
+            "tile": "Mosaïque"
         }
     },
     "items-list-row": {

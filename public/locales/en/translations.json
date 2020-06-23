@@ -64,8 +64,6 @@
         "groups": "Groups",
         "columns": "Columns",
         "display_type": "Display",
-        "display-list": "List",
-        "display-tile": "Tile",
         "new": "New",
         "header_table": "Items from {{libName}}",
         "show-filter-panel": "Show filters",
@@ -88,6 +86,12 @@
                 "regroup": "regroup",
                 "choose-columns": "Choose Columns"
             }
+        },
+        "display": {
+            "list-small": "List small",
+            "list-medium": "List medium",
+            "list-big": "List big",
+            "display-tile": "Tile"
         }
     },
     "items-list-row": {

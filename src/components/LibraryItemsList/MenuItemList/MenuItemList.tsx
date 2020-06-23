@@ -22,15 +22,27 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
 
     const displayOptions = [
         {
-            key: 'list',
-            text: t('items_list.display-list'),
-            value: 'list',
+            key: 'list-small',
+            text: t('items_list.display.list-small'),
+            value: displayListItemTypes.listSmall,
+            icon: 'list layout'
+        },
+        {
+            key: 'list-medium',
+            text: t('items_list.display.list-medium'),
+            value: displayListItemTypes.listMedium,
+            icon: 'list layout'
+        },
+        {
+            key: 'list-big',
+            text: t('items_list.display.list-big'),
+            value: displayListItemTypes.listBig,
             icon: 'list layout'
         },
         {
             key: 'tile',
-            text: t('items_list.display-tile'),
-            value: 'tile',
+            text: t('items_list.display.tile'),
+            value: displayListItemTypes.tile,
             icon: 'th large',
             default: true
         }
@@ -38,10 +50,11 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
 
     const changeDisplay = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
         const newDisplay = data.value?.toString();
+
         if (newDisplay) {
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE,
-                displayType: displayListItemTypes.listMedium
+                displayType: displayListItemTypes[newDisplay]
             });
         }
     };
@@ -81,7 +94,13 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
                     <Button icon="plus" content={t('items_list.new')} />
                 </Menu.Item>
 
-                <Dropdown text={t('items_list.display_type')} item options={displayOptions} onChange={changeDisplay} />
+                <Dropdown
+                    text={t('items_list.display_type')}
+                    item
+                    options={displayOptions}
+                    defaultValue={stateItems.displayType}
+                    onChange={changeDisplay}
+                />
 
                 <Menu.Item>
                     <Button icon="redo" onClick={() => refetch && refetch()}></Button>

@@ -8,6 +8,43 @@ import LibrariesList from '../../LibrariesList';
 import RouteNotFound from '../RouteNotFound';
 import Routes from './Routes';
 
+jest.mock(
+    '../../Home',
+    () =>
+        function Home() {
+            return <div>Home</div>;
+        }
+);
+
+jest.mock(
+    '../../LibrariesList',
+    () =>
+        function LibrariesList() {
+            return <div>LibrariesList</div>;
+        }
+);
+jest.mock(
+    '../../LibraryItemsList',
+    () =>
+        function LibraryItemsList() {
+            return <div>LibraryItemsList</div>;
+        }
+);
+jest.mock(
+    '../../Setting',
+    () =>
+        function Setting() {
+            return <div>Setting</div>;
+        }
+);
+jest.mock(
+    '../RouteNotFound',
+    () =>
+        function RouteNotFound() {
+            return <div>RouteNotFound</div>;
+        }
+);
+
 describe('Routes', () => {
     const mock = [
         {
