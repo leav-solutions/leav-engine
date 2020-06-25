@@ -118,12 +118,12 @@
         "less-than": "Plus petit que",
         "exist": "Valeur existante",
         "search-in": "Chercher dans...",
-        "where": "Où",
+        "where": "Ou",
         "label": "Libellé",
         "value": "Valeur",
         "apply": "Appliquer",
         "and": "Et",
-        "or": "Où",
+        "or": "Ou",
         "modal-header": "Attributs",
         "filters-options": "Options de Filtres",
         "add-filters": "Ajouter des filtres",
@@ -138,6 +138,12 @@
     },
     "menu-selection": {
         "nb-selected": "{{nb}} éléments sélectionné(s)",
-        "quit": "Quitter le mode sélection"
+        "quit": "Quitter le mode sélection",
+        "actions": "Actions"
+    },
+    "table-columns-selection": {
+        "header": "Colonnes disponible",
+        "cancel": "Annuler",
+        "submit": "Mettre à jour les colonnes"
     }
 }

@@ -1,4 +1,4 @@
-import {displayListItemTypes, IItem, IQueryFilter, orderSearch} from '../../_types/types';
+import {displayListItemTypes, IAttribute, IItem, IItemsColumn, IQueryFilter, OrderSearch} from '../../_types/types';
 
 export enum LibraryItemListReducerActionTypes {
     SET_LIB_INFOS = 'SET_LIB_INFOS',
@@ -8,10 +8,12 @@ export enum LibraryItemListReducerActionTypes {
     SET_OFFSET = 'SET_OFFSET',
     SET_PAGINATION = 'SET_PAGINATION',
     SET_DISPLAY_TYPE = 'SET_DISPLAY_TYPE',
-    SET_SHOW_FILTER = 'SET_SHOW_FILTER',
+    SET_SHOW_FILTERS = 'SET_SHOW_FILTER',
     SET_SELECTION_MODE = 'SET_SELECTION_MODE',
     SET_ITEMS_SELECTED = 'SET_ITEMS_SELECTED',
-    SET_QUERY_FILTERS = 'SET_QUERY_FILTERS'
+    SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
+    SET_ATTRIBUTES = 'SET_ATTRIBUTES',
+    SET_COLUMNS = 'SET_COLUMNS'
 }
 
 export interface LibraryItemListState {
@@ -19,7 +21,7 @@ export interface LibraryItemListState {
     libFilter: string;
     libSearchableField: string;
     itemsSortField: string;
-    itemsSortOrder: string;
+    itemsSortOrder: OrderSearch;
     items?: IItem[];
     itemsTotalCount: number;
     offset: number;
@@ -29,6 +31,8 @@ export interface LibraryItemListState {
     selectionMode: boolean;
     itemsSelected: {[x: string]: boolean};
     queryFilters: IQueryFilter[];
+    attributes: IAttribute[];
+    columns: IItemsColumn[];
 }
 
 export const initialState: LibraryItemListState = {
@@ -36,7 +40,7 @@ export const initialState: LibraryItemListState = {
     libFilter: '',
     libSearchableField: '',
     itemsSortField: '',
-    itemsSortOrder: '',
+    itemsSortOrder: OrderSearch.asc,
     itemsTotalCount: 0,
     offset: 0,
     pagination: 20,
@@ -44,7 +48,9 @@ export const initialState: LibraryItemListState = {
     showFilters: false,
     selectionMode: false,
     itemsSelected: {},
-    queryFilters: []
+    queryFilters: [],
+    attributes: [],
+    columns: []
 };
 
 export type LibraryItemListReducerAction =
@@ -54,12 +60,13 @@ export type LibraryItemListReducerAction =
           libFilter: string;
           libSearchableField: string;
           itemsSortField: string;
-          itemsSortOrder: orderSearch;
+          itemsSortOrder: OrderSearch;
+          attributes: IAttribute[];
       }
     | {
           type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS;
           itemsSortField: string;
-          itemsSortOrder: orderSearch;
+          itemsSortOrder: OrderSearch;
       }
     | {
           type: LibraryItemListReducerActionTypes.SET_ITEMS;
@@ -83,8 +90,8 @@ export type LibraryItemListReducerAction =
           displayType: displayListItemTypes;
       }
     | {
-          type: LibraryItemListReducerActionTypes.SET_SHOW_FILTER;
-          showFilter: boolean;
+          type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS;
+          showFilters: boolean;
       }
     | {
           type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE;
@@ -97,13 +104,21 @@ export type LibraryItemListReducerAction =
     | {
           type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS;
           queryFilters: IQueryFilter[];
+      }
+    | {
+          type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES;
+          attributes: IAttribute[];
+      }
+    | {
+          type: LibraryItemListReducerActionTypes.SET_COLUMNS;
+          columns: IItemsColumn[];
       };
 
-const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction) => {
+const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
     switch (action.type) {
         case LibraryItemListReducerActionTypes.SET_LIB_INFOS:
-            const {libQuery, libFilter, libSearchableField, itemsSortField, itemsSortOrder} = action;
-            return {...state, libQuery, libFilter, libSearchableField, itemsSortField, itemsSortOrder};
+            const {libQuery, libFilter, libSearchableField, itemsSortField, itemsSortOrder, attributes} = action;
+            return {...state, libQuery, libFilter, libSearchableField, itemsSortField, itemsSortOrder, attributes};
         case LibraryItemListReducerActionTypes.SET_SEARCH_INFOS:
             return {...state, itemsSortField: action.itemsSortField, itemsSortOrder: action.itemsSortOrder};
         case LibraryItemListReducerActionTypes.SET_ITEMS:
@@ -116,14 +131,18 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
             return {...state, pagination: action.pagination};
         case LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE:
             return {...state, displayType: action.displayType};
-        case LibraryItemListReducerActionTypes.SET_SHOW_FILTER:
-            return {...state, showFilter: action.showFilter};
+        case LibraryItemListReducerActionTypes.SET_SHOW_FILTERS:
+            return {...state, showFilters: action.showFilters};
         case LibraryItemListReducerActionTypes.SET_SELECTION_MODE:
             return {...state, selectionMode: action.selectionMode};
         case LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED:
             return {...state, itemsSelected: action.itemsSelected};
         case LibraryItemListReducerActionTypes.SET_QUERY_FILTERS:
             return {...state, queryFilters: action.queryFilters};
+        case LibraryItemListReducerActionTypes.SET_ATTRIBUTES:
+            return {...state, attributes: action.attributes};
+        case LibraryItemListReducerActionTypes.SET_COLUMNS:
+            return {...state, columns: action.columns};
         default:
             return state;
     }

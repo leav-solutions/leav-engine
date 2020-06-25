@@ -5,7 +5,7 @@ initialize {
   "0": Object {
     "attribs": Object {
       "aria-expanded": "false",
-      "class": "ui simple dropdown",
+      "class": "ui dropdown",
       "role": "listbox",
       "tabindex": "0",
     },

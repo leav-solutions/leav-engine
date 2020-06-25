@@ -3,7 +3,7 @@ import React from 'react';
 import LibraryItemsList from '.';
 import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
-import {orderSearch} from '../../_types/types';
+import {OrderSearch} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 
 jest.mock('react-router-dom', () => ({
@@ -55,7 +55,7 @@ describe('LibraryItemsList', () => {
     const pagination = 20;
     const offset = 0;
     const itemsSortField = 'id';
-    const itemsSortOrder = orderSearch.asc;
+    const itemsSortOrder = OrderSearch.asc;
 
     const mocks = [
         {

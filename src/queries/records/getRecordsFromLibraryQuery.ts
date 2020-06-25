@@ -1,7 +1,15 @@
 import gql from 'graphql-tag';
+import {IItemsColumn} from '../../_types/types';
 
-export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, searchableFields?: string) => {
+export const getRecordsFromLibraryQuery = (
+    libraryName: string,
+    filterName: string,
+    searchableFields?: string,
+    columns?: IItemsColumn[]
+) => {
     const libQueryName = libraryName.toUpperCase();
+
+    const fields = columns?.map(col => col.id);
 
     return gql`
         query ${'GET_RECORDS_FROM_' + libQueryName} (
@@ -18,10 +26,11 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
             ) {
                 totalCount
                 list {
-                    id
+                    ${fields}
                     whoAmI {
                         id
                         label
+                        color
                         preview {
                             small
                             medium

@@ -1,14 +1,15 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dimmer, Dropdown, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {orderSearch} from '../../../_types/types';
+import {OrderSearch} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../LibraryItemsListReducer';
+import ChooseTableColumns from './ChooseTableColumns';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
 
 const TableWrapper = styled.div`
@@ -19,12 +20,19 @@ const TableWrapper = styled.div`
 `;
 
 const HeaderTable = styled(Segment)`
-    margin-bottom: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
     border-bottom: 0 !important;
     border-radius: 0 !important;
 
     display: grid;
     grid-template-columns: repeat(${({columns}) => columns}, 1fr);
+`;
+
+const HeaderTableCell = styled.div`
+    padding: 1rem;
+    justify-self: start;
+    align-self: center;
 `;
 
 const FooterTable = styled(Segment)`
@@ -33,23 +41,63 @@ const FooterTable = styled(Segment)`
     border-radius: 0 !important;
 `;
 
+interface ITableHeader {
+    name: string;
+    display: string;
+}
+
 interface ILibraryItemsListTableProps {
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
+const initialColumnsLimit = 5;
+
 function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTableProps): JSX.Element {
-    const {t: translate} = useTranslation();
+    const {t} = useTranslation();
 
-    const t = (trad: string, options = {}) => translate(`items_list.table.${trad}`, options);
+    const [tableColumns, setTableColumn] = useState<ITableHeader[]>([]);
+    const [openChangeColumns, setOpenChangeColumns] = useState(false);
 
-    const tableCells = [
-        {name: 'infos', display: t('infos')},
-        {name: 'adLabel', display: t('ad_label')},
-        {name: 'ean', display: t('ean')},
-        {name: 'category', display: t('category')},
-        {name: 'opCode', display: t('op_code')}
-    ];
+    useEffect(() => {
+        if (stateItems.attributes.length && !stateItems.columns.length) {
+            // initialise columns in state
+            const initialTableColumns = stateItems.attributes.reduce(
+                (acc, attribute, index) =>
+                    index < initialColumnsLimit
+                        ? [
+                              ...acc,
+                              {
+                                  name: attribute.id,
+                                  display: attribute.label.fr || attribute.label.en
+                              }
+                          ]
+                        : acc,
+                [{name: 'infos', display: t('items_list.table.infos')}]
+            );
+
+            setTableColumn(initialTableColumns);
+            const columns = initialTableColumns.map(col => ({id: col.name}));
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_COLUMNS,
+                columns
+            });
+        } else if (stateItems.attributes.length && stateItems.columns.length) {
+            setTableColumn(
+                stateItems.columns.map(col => {
+                    const attribute = stateItems.attributes.find(att => att.id === col.id);
+                    if (attribute) {
+                        return {
+                            name: attribute.id,
+                            display: attribute.label.fr || attribute.label.en
+                        };
+                    }
+                    // only the infos columns isn't in attributes
+                    return {name: 'infos', display: t('items_list.table.infos')};
+                })
+            );
+        }
+    }, [t, dispatchItems, stateItems.columns, stateItems.attributes]);
 
     if (!stateItems.items) {
         return (
@@ -61,7 +109,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
         );
     }
 
-    const handleSort = (attId: string, order: orderSearch) => {
+    const handleSort = (attId: string, order: OrderSearch) => {
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS,
             itemsSortField: 'infos' === attId ? 'id' : attId,
@@ -70,38 +118,46 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     };
 
     const handleDesc = (attId: string) => {
-        handleSort(attId, orderSearch.desc);
+        handleSort(attId, OrderSearch.desc);
     };
 
     const handleAsc = (attId: string) => {
-        handleSort(attId, orderSearch.asc);
+        handleSort(attId, OrderSearch.asc);
     };
-
     return (
         <>
-            <HeaderTable secondary columns={tableCells.length}>
-                {tableCells.map(cell => (
-                    <div key={cell.name}>
+            <ChooseTableColumns
+                stateItems={stateItems}
+                dispatchItems={dispatchItems}
+                openChangeColumns={openChangeColumns}
+                setOpenChangeColumns={setOpenChangeColumns}
+            />
+            <HeaderTable secondary columns={tableColumns.length}>
+                {tableColumns.map(cell => (
+                    <HeaderTableCell key={cell.name}>
                         <Dropdown text={cell.display} key={cell.name}>
                             <Dropdown.Menu>
                                 <Dropdown.Item
-                                    text={t('header-cell-menu.sort-ascend')}
+                                    text={t('items_list.table.header-cell-menu.sort-ascend')}
                                     onClick={() => handleAsc(cell.name)}
                                 />
                                 <Dropdown.Item
-                                    text={t('header-cell-menu.sort-descend')}
+                                    text={t('items_list.table.header-cell-menu.sort-descend')}
                                     onClick={() => handleDesc(cell.name)}
                                 />
-                                <Dropdown.Item text={t('header-cell-menu.cancel-sort')} />
+                                <Dropdown.Item text={t('items_list.table.header-cell-menu.cancel-sort')} />
                                 <Dropdown.Divider />
-                                <Dropdown.Item text={t('header-cell-menu.sort-advance')} />
+                                <Dropdown.Item text={t('items_list.table.header-cell-menu.sort-advance')} />
                                 <Dropdown.Divider />
-                                <Dropdown.Item text={t('header-cell-menu.regroup')} />
+                                <Dropdown.Item text={t('items_list.table.header-cell-menu.regroup')} />
                                 <Dropdown.Divider />
-                                <Dropdown.Item text={t('header-cell-menu.choose-columns')} />
+                                <Dropdown.Item
+                                    text={t('items_list.table.header-cell-menu.choose-columns')}
+                                    onClick={() => setOpenChangeColumns(true)}
+                                />
                             </Dropdown.Menu>
                         </Dropdown>
-                    </div>
+                    </HeaderTableCell>
                 ))}
             </HeaderTable>
             <TableWrapper>

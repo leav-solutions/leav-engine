@@ -7,8 +7,12 @@ import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibra
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
+import {
+    IGetRecordsFromLibraryQuery,
+    IGetRecordsFromLibraryQueryVariables
+} from '../../queries/records/getRecordsFromLibraryQueryTypes';
 import {localizedLabel} from '../../utils';
-import {IItem, orderSearch} from '../../_types/types';
+import {AttributeFormat, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
 import reducer, {initialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
@@ -45,13 +49,30 @@ function LibraryItemsList(): JSX.Element {
         if (!loadingLib) {
             const {query, filter, searchableFields} = dataLib?.libraries?.list[0]?.gqlNames;
             const firstAttribute = dataLib?.libraries?.list[0]?.attributes[0];
+
+            const attributes = dataLib?.libraries?.list[0]?.attributes.reduce((acc, attribute) => {
+                if (Object.values(AttributeFormat).includes(attribute.format)) {
+                    return [
+                        ...acc,
+                        {
+                            id: attribute.id,
+                            type: attribute.type,
+                            format: attribute.format,
+                            label: attribute.label
+                        }
+                    ];
+                }
+                return acc;
+            }, []);
+
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_LIB_INFOS,
                 libQuery: query,
                 libFilter: filter,
                 libSearchableField: searchableFields,
                 itemsSortField: firstAttribute.id,
-                itemsSortOrder: orderSearch.asc
+                itemsSortOrder: OrderSearch.asc,
+                attributes
             });
         }
     }, [dispatch, loadingLib, dataLib]);
@@ -59,9 +80,14 @@ function LibraryItemsList(): JSX.Element {
     const [
         getRecord,
         {called: calledItem, loading: loadingItem, data: dataItem, error: errorItem, client, refetch}
-    ] = useLazyQuery(
+    ] = useLazyQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
         state.libFilter && state.libQuery && state.libSearchableField
-            ? getRecordsFromLibraryQuery(state.libQuery || '', state.libFilter, state.libSearchableField)
+            ? getRecordsFromLibraryQuery(
+                  state.libQuery || '',
+                  state.libFilter,
+                  state.libSearchableField,
+                  state.columns.filter(col => state.attributes.find(att => att.id === col.id))
+              )
             : getLibraryDetailExtendsQuery,
         {
             variables: {
@@ -78,9 +104,28 @@ function LibraryItemsList(): JSX.Element {
         if (!loadingItem && calledItem && dataItem && client && state.libFilter) {
             const itemsFromQuery = dataItem ? dataItem[state.libQuery || ''].list : [];
 
+            const items = itemsFromQuery.map(item => ({
+                ...{
+                    id: item.whoAmI.id,
+                    label: localizedLabel(item.whoAmI.label, lang),
+                    color: item.whoAmI.color,
+                    preview: item.whoAmI.preview,
+                    library: {
+                        id: item.whoAmI.library.id,
+                        label: item.whoAmI.library.label
+                    }
+                },
+                ...Object.keys(item).reduce((acc, key) => {
+                    acc[key] = item[key];
+                    return acc;
+                }, {})
+            }));
+
+            console.log(items);
+
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
-                items: itemsFromQuery.map((i: any) => i.whoAmI) as IItem[],
+                items: items as IItem[],
                 totalCount: dataItem[state.libQuery]?.totalCount
             });
 

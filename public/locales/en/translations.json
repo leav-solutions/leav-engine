@@ -139,6 +139,12 @@
     },
     "menu-selection": {
         "nb-selected": "{{nb}} items selected",
-        "quit": "Quit selection mode"
+        "quit": "Quit selection mode",
+        "actions": "Actions"
+    },
+    "table-columns-selection": {
+        "header": "Columns available",
+        "cancel": "Cancel",
+        "submit": "Update Columns"
     }
 }

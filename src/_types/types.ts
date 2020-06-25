@@ -22,6 +22,7 @@ export interface IPreview {
 }
 
 export interface IItem {
+    [x: string]: any;
     id: string;
     label?: string;
     preview?: IPreview;
@@ -103,7 +104,7 @@ export interface IQueryFilter {
     operator?: operatorFilter;
 }
 
-export enum orderSearch {
+export enum OrderSearch {
     desc = 'desc',
     asc = 'asc'
 }
@@ -113,4 +114,15 @@ export enum displayListItemTypes {
     listMedium = 'listMedium',
     listBig = 'listBig',
     tile = 'tile'
+}
+
+export interface IAttribute {
+    id: string;
+    type: string;
+    format: string;
+    label: ILabel;
+}
+
+export interface IItemsColumn {
+    id: string;
 }

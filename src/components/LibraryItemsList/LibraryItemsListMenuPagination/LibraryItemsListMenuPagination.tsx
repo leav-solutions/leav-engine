@@ -38,7 +38,7 @@ function LibraryItemsListMenuPagination({
 
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {}
+            itemsSelected: newItemSelected
         });
 
         dispatchItems({
@@ -49,7 +49,6 @@ function LibraryItemsListMenuPagination({
 
     return (
         <Dropdown
-            simple
             text={t('items-list-row.nb-elements', {
                 nb1: offsetDisplay,
                 nb2: nextOffsetDisplay,

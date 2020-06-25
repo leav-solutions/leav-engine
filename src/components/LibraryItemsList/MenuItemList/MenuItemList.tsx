@@ -61,8 +61,8 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
 
     const toggleShowFilter = () => {
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTER,
-            showFilter: !stateItems.showFilters
+            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS,
+            showFilters: !stateItems.showFilters
         });
     };
 

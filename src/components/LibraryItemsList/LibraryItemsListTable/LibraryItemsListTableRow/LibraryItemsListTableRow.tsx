@@ -55,37 +55,8 @@ interface ILibraryItemsListTableRowProps {
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryItemsListTableRowProps): JSX.Element {
-    const {t} = useTranslation();
-
     const [isHover, setIsHover] = useState(false);
-    const [showRecordEdition, setShowModalEdition] = useState(false);
-    const [values, setValues] = useState(item);
     const [isSelected, setIsSelect] = useState<boolean>(!!stateItems.itemsSelected[item.id]);
-
-    const switchMode = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: !stateItems.selectionMode
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {...stateItems.itemsSelected, [item.id]: true}
-        });
-    };
-
-    const handleShowModal = () => {
-        setShowModalEdition(true);
-    };
-
-    const handleCheckboxChange = (event: React.FormEvent<HTMLInputElement>, {checked}: CheckboxProps) => {
-        setIsSelect(s => !s);
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {...stateItems.itemsSelected, [item.id]: !!checked}
-        });
-    };
 
     const handleClickRow = () => {
         if (stateItems.selectionMode) {
@@ -112,50 +83,109 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
                 onClick={handleClickRow}
                 size={stateItems.displayType}
             >
-                <Table.Cell>
-                    <Grid>
-                        <Grid.Row>
-                            <RecordCard record={{...item}} />
-
-                            <Actions display={isHover ? 1 : 0}>
-                                {stateItems.selectionMode ? (
-                                    <Button.Group size="small">
-                                        <Checkbox onChange={handleCheckboxChange} checked={isSelected} />
-                                    </Button.Group>
-                                ) : (
-                                    <Button.Group size="small">
-                                        <Popup
-                                            hoverable={false}
-                                            onMouseLeave={() => setIsHover(false)}
-                                            content={t('items-list-row.switch-to-selection-mode')}
-                                            trigger={
-                                                <Button
-                                                    active={stateItems.selectionMode}
-                                                    icon="check"
-                                                    onClick={switchMode}
-                                                />
-                                            }
-                                        />
-                                        <Popup
-                                            hoverable={false}
-                                            onMouseLeave={() => setIsHover(false)}
-                                            content={t('items-list-row.edit')}
-                                            trigger={<Button icon="write" onClick={handleShowModal} />}
-                                        />
-                                        <Button icon="like" />
-                                        <Button icon="ellipsis horizontal" />
-                                    </Button.Group>
-                                )}
-                            </Actions>
-                        </Grid.Row>
-                    </Grid>
-                </Table.Cell>
-
-                <Table.Cell>{''}</Table.Cell>
-                <Table.Cell>{''}</Table.Cell>
-                <Table.Cell>{''}</Table.Cell>
-                <Table.Cell>{''}</Table.Cell>
+                {stateItems.columns.map(column =>
+                    column.id === 'infos' ? (
+                        <InfosRow
+                            key={column.id}
+                            item={item}
+                            stateItems={stateItems}
+                            dispatchItems={dispatchItems}
+                            isSelected={isSelected}
+                            setIsSelect={setIsSelect}
+                            isHover={isHover}
+                            setIsHover={setIsHover}
+                        />
+                    ) : (
+                        <Table.Cell key={column.id}>
+                            <div>{item[column.id]}</div>
+                        </Table.Cell>
+                    )
+                )}
             </TableRow>
+        </>
+    );
+}
+
+interface IInfosRow {
+    item: IItem;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+    isSelected: boolean;
+    setIsSelect: any;
+    isHover: boolean;
+    setIsHover: any;
+}
+
+const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, isHover, setIsHover}: IInfosRow) => {
+    const {t} = useTranslation();
+
+    const [showRecordEdition, setShowModalEdition] = useState(false);
+    const [values, setValues] = useState(item);
+
+    const handleShowModal = () => {
+        setShowModalEdition(true);
+    };
+
+    const handleCheckboxChange = (event: React.FormEvent<HTMLInputElement>, {checked}: CheckboxProps) => {
+        setIsSelect(s => !s);
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+            itemsSelected: {...stateItems.itemsSelected, [item.id]: !!checked}
+        });
+    };
+
+    const switchMode = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
+            selectionMode: !stateItems.selectionMode
+        });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+            itemsSelected: {...stateItems.itemsSelected, [item.id]: true}
+        });
+    };
+    return (
+        <>
+            <Table.Cell>
+                <Grid>
+                    <Grid.Row>
+                        <RecordCard record={{...item}} />
+
+                        <Actions display={isHover ? 1 : 0}>
+                            {stateItems.selectionMode ? (
+                                <Button.Group size="small">
+                                    <Checkbox onChange={handleCheckboxChange} checked={isSelected} />
+                                </Button.Group>
+                            ) : (
+                                <Button.Group size="small">
+                                    <Popup
+                                        hoverable={false}
+                                        onMouseLeave={() => setIsHover(false)}
+                                        content={t('items-list-row.switch-to-selection-mode')}
+                                        trigger={
+                                            <Button
+                                                active={stateItems.selectionMode}
+                                                icon="check"
+                                                onClick={switchMode}
+                                            />
+                                        }
+                                    />
+                                    <Popup
+                                        hoverable={false}
+                                        onMouseLeave={() => setIsHover(false)}
+                                        content={t('items-list-row.edit')}
+                                        trigger={<Button icon="write" onClick={handleShowModal} />}
+                                    />
+                                    <Button icon="like" />
+                                    <Button icon="ellipsis horizontal" />
+                                </Button.Group>
+                            )}
+                        </Actions>
+                    </Grid.Row>
+                </Grid>
+            </Table.Cell>
 
             <LibraryItemsModal
                 showModal={showRecordEdition}
@@ -165,6 +195,6 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
             />
         </>
     );
-}
+};
 
 export default LibraryItemsListTableRow;

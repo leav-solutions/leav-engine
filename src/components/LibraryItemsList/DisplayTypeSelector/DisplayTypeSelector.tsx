@@ -14,9 +14,7 @@ function DisplayTypeSelector({stateItems, dispatchItems}: IDisplayTypeSelectorPr
         case displayListItemTypes.tile:
             return <ItemsTitleDisplay stateItems={stateItems} dispatchItems={dispatchItems} />;
         case displayListItemTypes.listSmall:
-            return <LibraryItemsListTable stateItems={stateItems} dispatchItems={dispatchItems} />;
         case displayListItemTypes.listMedium:
-            return <LibraryItemsListTable stateItems={stateItems} dispatchItems={dispatchItems} />;
         case displayListItemTypes.listBig:
             return <LibraryItemsListTable stateItems={stateItems} dispatchItems={dispatchItems} />;
     }

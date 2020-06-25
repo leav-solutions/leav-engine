@@ -156,8 +156,8 @@ function Filters({stateItems, dispatchItems, libId, libQueryName}: IFiltersProps
 
     const handleHide = () => {
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTER,
-            showFilter: false
+            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS,
+            showFilters: false
         });
     };
 
