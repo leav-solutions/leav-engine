@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Divider, Dropdown, Menu, Modal, Sidebar, Transition} from 'semantic-ui-react';
+import {Button, Divider, Dropdown, Menu, Sidebar, Transition} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../_types/types';
 import {
@@ -18,8 +18,6 @@ import {getConditionOptions, getOperatorOptions} from './FiltersOptions';
 interface IFiltersProps {
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-    libId: string;
-    libQueryName: string;
 }
 
 const Side = styled.div`
@@ -40,7 +38,7 @@ const FilterList = styled.div`
     padding: 0.3rem 0.3rem 0.3rem 0;
 `;
 
-function Filters({stateItems, dispatchItems, libId, libQueryName}: IFiltersProps): JSX.Element {
+function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();
 
     const [showAttr, setShowAttr] = useState(false);
@@ -164,19 +162,14 @@ function Filters({stateItems, dispatchItems, libId, libQueryName}: IFiltersProps
     return (
         <Transition visible={stateItems.showFilters} onHide={handleHide} animation="slide right" duration={10}>
             <Sidebar.Pushable>
-                <Modal open={showAttr} onClose={() => setShowAttr(false)}>
-                    <Modal.Header>{t('filters.modal-header')}</Modal.Header>
-                    <Modal.Content>
-                        <AttributeList
-                            libId={libId}
-                            libQueryName={libQueryName}
-                            setFilters={setFilters}
-                            setShowAttr={setShowAttr}
-                            filterOperator={filterOperator}
-                            updateFilters={updateFilters}
-                        />
-                    </Modal.Content>
-                </Modal>
+                <AttributeList
+                    stateItems={stateItems}
+                    setFilters={setFilters}
+                    showAttr={showAttr}
+                    setShowAttr={setShowAttr}
+                    updateFilters={updateFilters}
+                />
+
                 <Side>
                     <Menu style={{height: '5rem'}}>
                         <Menu.Menu>

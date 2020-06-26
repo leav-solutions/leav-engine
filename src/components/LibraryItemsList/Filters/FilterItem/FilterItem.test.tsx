@@ -1,4 +1,4 @@
-import {mount, render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {Checkbox, Dropdown, TextArea} from 'semantic-ui-react';
@@ -10,7 +10,7 @@ describe('FilterItem', () => {
     const mockFilter: IFilter = {
         type: FilterTypes.filter,
         key: 1,
-        operator: operatorFilter.and,
+        operator: false,
         condition: conditionFilter.contains,
         value: '',
         attribute: 'test',
@@ -21,25 +21,6 @@ describe('FilterItem', () => {
     const whereOptions = [{text: 'Contains', value: conditionFilter.contains}];
 
     const operatorOptions = [{text: 'AND', value: operatorFilter.and}];
-
-    test('Snapshot test', async () => {
-        const comp = render(
-            <MockedProviderWithFragments>
-                <FilterItem
-                    filter={mockFilter}
-                    whereOptions={whereOptions}
-                    operatorOptions={operatorOptions}
-                    setFilters={jest.fn()}
-                    resetFilters={jest.fn()}
-                    updateFilters={jest.fn()}
-                    filterOperator={operatorFilter.and}
-                    setFilterOperator={jest.fn()}
-                />
-            </MockedProviderWithFragments>
-        );
-
-        expect(comp).toMatchSnapshot();
-    });
 
     test('should have a Checkbox', async () => {
         let comp: any;
@@ -64,7 +45,7 @@ describe('FilterItem', () => {
         expect(comp.find(Checkbox)).toHaveLength(1);
     });
 
-    test('should have two Dropdown', async () => {
+    test('should have Dropdown', async () => {
         let comp: any;
 
         await act(async () => {
@@ -84,7 +65,7 @@ describe('FilterItem', () => {
             );
         });
 
-        expect(comp.find(Dropdown)).toHaveLength(2);
+        expect(comp.find(Dropdown)).toHaveLength(1);
     });
 
     test('should have a TextArea', async () => {

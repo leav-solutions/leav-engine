@@ -1,7 +1,10 @@
+import {useQuery} from '@apollo/client';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, CheckboxProps, List, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {getLang} from '../../../../queries/cache/lang/getLangQuery';
+import {localizedLabel} from '../../../../utils';
 import {IAttribute} from '../../../../_types/types';
 import {
     LibraryItemListReducerAction,
@@ -13,6 +16,10 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+`;
+
+const Small = styled.small`
+    opacity: 0.5;
 `;
 
 interface IChooseTableColumnsProps {
@@ -29,6 +36,9 @@ function ChooseTableColumns({
     setOpenChangeColumns
 }: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
+
+    const {data: dataLang} = useQuery(getLang);
+    const {lang} = dataLang ?? {lang: []};
 
     const [columns, setColumns] = useState(stateItems.columns);
 
@@ -62,7 +72,13 @@ function ChooseTableColumns({
                     {stateItems.attributes.map(attribute => (
                         <List.Item key={attribute.id}>
                             <Wrapper>
-                                <div>{attribute.id}</div>
+                                {localizedLabel(attribute.label, lang) ? (
+                                    <span>
+                                        {localizedLabel(attribute.label, lang)} <Small>{attribute.id}</Small>
+                                    </span>
+                                ) : (
+                                    <span>{attribute.id}</span>
+                                )}
                                 <Checkbox
                                     checked={!!columns.find(col => attribute.id === col.id)}
                                     onClick={(event, data) => handleColumnsUpdate(attribute, data)}

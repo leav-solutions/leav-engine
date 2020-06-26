@@ -33,6 +33,12 @@ const HeaderTableCell = styled.div`
     padding: 1rem;
     justify-self: start;
     align-self: center;
+    word-break: keep-all;
+    white-space: nowrap;
+`;
+
+const TableStyled = styled(Table)`
+    border-radius: 0 !important;
 `;
 
 const FooterTable = styled(Segment)`
@@ -77,6 +83,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
             );
 
             setTableColumn(initialTableColumns);
+
             const columns = initialTableColumns.map(col => ({id: col.name}));
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_COLUMNS,
@@ -161,7 +168,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 ))}
             </HeaderTable>
             <TableWrapper>
-                <Table fixed selectable className="table-items" celled>
+                <TableStyled fixed selectable className="table-items" celled>
                     <Table.Body>
                         {stateItems.items &&
                             stateItems.items?.map(item => (
@@ -173,7 +180,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                                 />
                             ))}
                     </Table.Body>
-                </Table>
+                </TableStyled>
             </TableWrapper>
 
             <FooterTable secondary>

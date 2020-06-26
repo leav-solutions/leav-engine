@@ -1,6 +1,9 @@
-import {shallow} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
+import {Checkbox} from 'semantic-ui-react';
 import {AttributeFormat, displayListItemTypes, IAttribute, OrderSearch} from '../../../../_types/types';
+import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 
@@ -39,15 +42,21 @@ describe('ChooseTableColumns', () => {
         ];
         const stateMock = {...stateItems, attributes: attributesMock};
 
-        const comp = shallow(
-            <ChooseTableColumns
-                stateItems={stateMock}
-                dispatchItems={dispatchItems}
-                openChangeColumns={false}
-                setOpenChangeColumns={jest.fn()}
-            />
-        );
+        let comp: any;
 
-        expect(comp.find('Checkbox')).toHaveLength(1);
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <ChooseTableColumns
+                        stateItems={stateMock}
+                        dispatchItems={dispatchItems}
+                        openChangeColumns={true}
+                        setOpenChangeColumns={jest.fn()}
+                    />
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(comp.find(Checkbox)).toHaveLength(1);
     });
 });

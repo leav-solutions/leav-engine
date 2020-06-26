@@ -97,7 +97,7 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
                         />
                     ) : (
                         <Table.Cell key={column.id}>
-                            <div>{item[column.id]}</div>
+                            <div>{item[column.id]?.toString() ?? item[column.id]}</div>
                         </Table.Cell>
                     )
                 )}

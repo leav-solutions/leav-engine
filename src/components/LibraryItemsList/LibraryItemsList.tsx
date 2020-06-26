@@ -74,6 +74,11 @@ function LibraryItemsList(): JSX.Element {
                 itemsSortOrder: OrderSearch.asc,
                 attributes
             });
+
+            dispatch({
+                type: LibraryItemListReducerActionTypes.SET_COLUMNS,
+                columns: []
+            });
         }
     }, [dispatch, loadingLib, dataLib]);
 
@@ -121,8 +126,6 @@ function LibraryItemsList(): JSX.Element {
                 }, {})
             }));
 
-            console.log(items);
-
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
                 items: items as IItem[],
@@ -153,7 +156,7 @@ function LibraryItemsList(): JSX.Element {
 
     return (
         <Wrapper showSide={state.showFilters}>
-            <Filters stateItems={state} dispatchItems={dispatch} libId={libId} libQueryName={state.libQuery} />
+            <Filters stateItems={state} dispatchItems={dispatch} />
             <div className="wrapper-page">
                 <Menu style={{height: '5rem'}}>
                     {state.selectionMode ? (

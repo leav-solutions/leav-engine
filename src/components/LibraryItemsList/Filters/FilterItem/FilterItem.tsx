@@ -6,25 +6,52 @@ import {
     Dropdown,
     DropdownProps,
     Form,
-    Grid,
+    Modal,
     Segment,
     TextArea,
     TextAreaProps
 } from 'semantic-ui-react';
-import styled from 'styled-components';
+import styled, {CSSObject} from 'styled-components';
 import {allowedTypeOperator} from '../../../../utils';
 import {conditionFilter, FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../../_types/types';
 
 const Attribute = styled.div``;
 
-const Wrapper = styled.div`
+const TextAreaWrapper = styled.div`
+    margin: 1rem 0 0 0;
+`;
+
+const Grid = styled.div`
     display: flex;
+    flex-flow: column;
+`;
+
+const GridRow = styled.div`
+    display: flex;
+    flex-flow: row nowrap;
     justify-content: space-between;
+`;
+
+interface GridColumnProps {
+    flex?: number;
+    style?: CSSObject;
+}
+
+const GridColumn = styled.div<GridColumnProps>`
+    flex: ${({flex}) => flex ?? 1};
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
     align-items: top;
 `;
 
-const TextAreaWrapper = styled.div`
-    margin: 1rem 0 0 0;
+const CustomButton = styled.button`
+    border: none;
+    background: none;
+`;
+
+const CustomForm = styled(Form)`
+    width: 100%;
 `;
 
 interface IFilterItemProps {
@@ -55,7 +82,9 @@ function FilterItem({
     setFilterOperator
 }: IFilterItemProps): JSX.Element {
     const {t} = useTranslation();
+
     const [textAreaRows, setTextAreaRows] = useState<number>(1);
+    const [showModal, setShowModal] = useState(false);
 
     const textAreaRef = useRef(null);
 
@@ -165,15 +194,18 @@ function FilterItem({
     };
 
     return (
-        <Segment secondary disabled={!filter.active}>
-            <Grid columns={3} verticalAlign="top">
-                <Grid.Row key={filter.key}>
-                    <Grid.Column width="1">
-                        <Checkbox checked={filter.active} onChange={changeActive} />
-                    </Grid.Column>
+        <>
+            <Modal open={showModal} onClose={() => setShowModal(false)} closeIcon>
+                <Modal.Content>content</Modal.Content>
+            </Modal>
+            <Segment secondary disabled={!filter.active}>
+                <Grid>
+                    <GridRow key={filter.key}>
+                        <GridColumn>
+                            <Checkbox checked={filter.active} onChange={changeActive} />
+                        </GridColumn>
 
-                    <Grid.Column width="12">
-                        <Wrapper>
+                        <GridColumn flex={5}>
                             {filter.operator ? (
                                 <Dropdown
                                     floating
@@ -186,7 +218,9 @@ function FilterItem({
                                 t('filter-item.no-operator')
                             )}
 
-                            <Attribute>{filter.attribute}</Attribute>
+                            <Attribute>
+                                <CustomButton onClick={() => setShowModal(true)}>{filter.attribute}</CustomButton>
+                            </Attribute>
 
                             <Dropdown
                                 floating
@@ -196,15 +230,12 @@ function FilterItem({
                                 options={whereOptionsByType}
                                 direction="left"
                             />
-                        </Wrapper>
-                    </Grid.Column>
+                        </GridColumn>
 
-                    <Grid.Column width="1">
                         <Button icon="remove" basic negative compact size="mini" onClick={deleteFilterItem} />
-                    </Grid.Column>
-
-                    <Grid.Column width="16">
-                        <Form>
+                    </GridRow>
+                    <GridRow>
+                        <CustomForm>
                             <TextAreaWrapper>
                                 <TextArea
                                     ref={textAreaRef}
@@ -213,11 +244,11 @@ function FilterItem({
                                     onChange={updateFilterValue}
                                 />
                             </TextAreaWrapper>
-                        </Form>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
-        </Segment>
+                        </CustomForm>
+                    </GridRow>
+                </Grid>
+            </Segment>
+        </>
     );
 }
 

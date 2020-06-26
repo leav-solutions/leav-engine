@@ -1,7 +1,9 @@
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
-import {displayListItemTypes} from '../../../_types/types';
+import {displayListItemTypes, IItem, OrderSearch} from '../../../_types/types';
+import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
+import RecordPreview from '../LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
 import ItemsTitleDisplay from './ItemsTitleDisplay';
 
 jest.mock(
@@ -18,22 +20,31 @@ describe('ItemsTitleDisplay', () => {
         libFilter: 'test',
         libSearchableField: 'test',
         itemsSortField: 'test',
-        itemsSortOrder: 'test',
-        items: [],
+        itemsSortOrder: OrderSearch.asc,
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listMedium,
+        displayType: displayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},
-        queryFilters: []
+        queryFilters: [],
+        attributes: [],
+        columns: []
     };
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
-    test('Snapshot test', async () => {
-        const comp = render(<ItemsTitleDisplay stateItems={stateItems} dispatchItems={dispatchItems} />);
+    test('Check render', async () => {
+        const itemsMock: IItem[] = [
+            {
+                id: 'test'
+            }
+        ];
 
-        expect(comp).toMatchSnapshot();
+        const stateMock = {...stateItems, items: itemsMock};
+        const comp = mount(<ItemsTitleDisplay stateItems={stateMock} dispatchItems={dispatchItems} />);
+
+        expect(comp.find(RecordPreview)).toHaveLength(1);
+        expect(comp.find(LibraryItemsListPagination)).toHaveLength(1);
     });
 });

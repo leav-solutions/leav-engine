@@ -119,7 +119,7 @@ export enum displayListItemTypes {
 export interface IAttribute {
     id: string;
     type: string;
-    format: string;
+    format: AttributeFormat;
     label: ILabel;
 }
 

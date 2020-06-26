@@ -1,18 +1,29 @@
 import {useQuery} from '@apollo/client';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, CheckboxProps, Container, List} from 'semantic-ui-react';
+import {
+    Button,
+    Checkbox,
+    CheckboxProps,
+    Container,
+    Divider,
+    Input,
+    InputOnChangeData,
+    List,
+    Modal
+} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {getLibraryDetailQuery} from '../../../../queries/libraries/getLibraryDetailQuery';
-import {allowedTypeOperator} from '../../../../utils';
+import {getLang} from '../../../../queries/cache/lang/getLangQuery';
+import {allowedTypeOperator, localizedLabel} from '../../../../utils';
 import {
     AttributeFormat,
     conditionFilter,
     FilterTypes,
+    IAttribute,
     IFilter,
-    IFilterSeparator,
-    operatorFilter
+    IFilterSeparator
 } from '../../../../_types/types';
+import {LibraryItemListState} from '../../LibraryItemsListReducer';
 
 const Wrapper = styled.div`
     display: flex;
@@ -20,40 +31,32 @@ const Wrapper = styled.div`
     align-items: center;
 `;
 
+const Small = styled.small`
+    opacity: 0.5;
+`;
+
 interface IAttributeListProps {
-    libId: string;
-    libQueryName: string;
+    stateItems: LibraryItemListState;
     setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
+    showAttr: boolean;
     setShowAttr: React.Dispatch<React.SetStateAction<boolean>>;
-    filterOperator: operatorFilter;
     updateFilters: () => void;
 }
 
 function AttributeList({
-    libId,
-    libQueryName,
+    stateItems,
     setFilters,
+    showAttr,
     setShowAttr,
-    filterOperator,
     updateFilters
 }: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [attributes, setAttrs] = useState<any>([]);
+    const {data: dataLang} = useQuery(getLang);
+    const {lang} = dataLang ?? {lang: []};
+
+    const [attributes, setAttributes] = useState<IAttribute[]>(stateItems.attributes);
     const [attSelected, setAttSelected] = useState<{id: string; format: AttributeFormat}[]>([]);
-
-    const {loading, data, error} = useQuery(getLibraryDetailQuery(libQueryName), {
-        variables: {
-            libId
-        }
-    });
-
-    useEffect(() => {
-        if (!loading) {
-            const attributes = data?.libraries?.list[0]?.attributes;
-            setAttrs(attributes);
-        }
-    }, [loading, data, error]);
 
     const addFilters = () => {
         setFilters(filters => {
@@ -86,27 +89,46 @@ function AttributeList({
         updateFilters();
     };
 
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
+        const attributesFilter = stateItems.attributes.filter(
+            att =>
+                localizedLabel(att.label, lang).indexOf(data.value ?? '') !== -1 ||
+                att.id.indexOf(data.value ?? '') !== -1
+        );
+        setAttributes(attributesFilter);
+    };
+
     return (
-        <Container>
-            <List divided>
-                {attributes &&
-                    attributes.map(
-                        (att: any) =>
-                            Object.values(AttributeFormat).includes(att.format) && (
-                                <Attribute att={att} key={att.id} setAttSelected={setAttSelected} />
-                            )
-                    )}
-            </List>
-            <Button onClick={addFilters}>{t('attribute-list.add')}</Button>
-        </Container>
+        <Modal open={showAttr} onClose={() => setShowAttr(false)} closeIcon>
+            <Modal.Header>{t('filters.modal-header')}</Modal.Header>
+            <Modal.Content>
+                <Container>
+                    <Input icon="search" onChange={handleChange} />
+
+                    <Divider />
+
+                    <List divided>
+                        {attributes &&
+                            attributes.map(
+                                att =>
+                                    Object.values(AttributeFormat).includes(att.format) && (
+                                        <Attribute att={att} key={att.id} setAttSelected={setAttSelected} lang={lang} />
+                                    )
+                            )}
+                    </List>
+                    <Button onClick={addFilters}>{t('attribute-list.add')}</Button>
+                </Container>
+            </Modal.Content>
+        </Modal>
     );
 }
 
 interface IAttributeProps {
     att: any;
     setAttSelected: React.Dispatch<React.SetStateAction<{id: string; format: AttributeFormat}[]>>;
+    lang: any;
 }
-function Attribute({att, setAttSelected}: IAttributeProps): JSX.Element {
+function Attribute({att, setAttSelected, lang}: IAttributeProps): JSX.Element {
     const handleOnChange = (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
         if (data.checked) {
             setAttSelected(attSelected => [...attSelected, {id: att.id, format: att.format}]);
@@ -116,15 +138,23 @@ function Attribute({att, setAttSelected}: IAttributeProps): JSX.Element {
     };
 
     return (
-        <List.Item>
-            <List.Icon name="square" size="large" verticalAlign="middle" />
-            <List.Content verticalAlign="middle">
-                <Wrapper>
-                    <span>{att.id}</span>
-                    <Checkbox onChange={handleOnChange} />
-                </Wrapper>
-            </List.Content>
-        </List.Item>
+        <>
+            <List.Item>
+                <List.Icon name="square" size="large" verticalAlign="middle" />
+                <List.Content verticalAlign="middle">
+                    <Wrapper>
+                        {localizedLabel(att.label, lang) ? (
+                            <span>
+                                {localizedLabel(att.label, lang)} <Small>{att.id}</Small>
+                            </span>
+                        ) : (
+                            <span>{att.id}</span>
+                        )}
+                        <Checkbox onChange={handleOnChange} />
+                    </Wrapper>
+                </List.Content>
+            </List.Item>
+        </>
     );
 }
 
