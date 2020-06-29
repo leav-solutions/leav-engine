@@ -7,9 +7,10 @@ import UserMenu from './UserMenu';
 
 interface ITopBarProps {
     toggleSidebarVisible: () => void;
+    toggleUserPanelVisible: () => void;
 }
 
-function TopBar({toggleSidebarVisible}: ITopBarProps): JSX.Element {
+function TopBar({toggleSidebarVisible, toggleUserPanelVisible}: ITopBarProps): JSX.Element {
     const {t} = useTranslation();
 
     const {data: activeLib} = useQuery(getActiveLibrary);
@@ -28,7 +29,9 @@ function TopBar({toggleSidebarVisible}: ITopBarProps): JSX.Element {
             </Menu.Menu>
 
             <Menu.Menu>
-                <UserMenu />
+                <div onClick={toggleUserPanelVisible}>
+                    <UserMenu />
+                </div>
             </Menu.Menu>
         </Menu>
     );

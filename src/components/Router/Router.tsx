@@ -4,6 +4,7 @@ import {Ref, Sidebar, Sticky} from 'semantic-ui-react';
 import styled from 'styled-components';
 import SideBarMenu from '../SideBarMenu';
 import TopBar from '../TopBar';
+import UserPanel from '../UserPanel';
 import Routes from './Routes';
 
 const PageWrapper = styled.div`
@@ -18,6 +19,7 @@ const TopBarWrapper = styled.div`
 
 function Router(): JSX.Element {
     const [sideBarVisible, setSideBarVisible] = useState<boolean>(false);
+    const [userPanelVisible, setUserPanelVisible] = useState<boolean>(false);
 
     const contextRef = useRef();
 
@@ -27,17 +29,27 @@ function Router(): JSX.Element {
 
     const hideSideBar = () => setSideBarVisible(false);
 
+    const toggleUserPanelVisible = () => {
+        setUserPanelVisible(visible => !visible);
+    };
+
+    const hideUserPanel = () => setUserPanelVisible(false);
+
     return (
         <BrowserRouter>
             <PageWrapper>
                 <TopBarWrapper>
                     <Sticky context={contextRef}>
-                        <TopBar toggleSidebarVisible={toggleSidebarVisible} />
+                        <TopBar
+                            toggleSidebarVisible={toggleSidebarVisible}
+                            toggleUserPanelVisible={toggleUserPanelVisible}
+                        />
                     </Sticky>
                 </TopBarWrapper>
                 <Sidebar.Pushable as={'div'} className="page-content">
                     <Sticky context={contextRef} styleElement={{position: ''}}>
                         <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
+                        <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
                     </Sticky>
 
                     <Ref innerRef={contextRef}>

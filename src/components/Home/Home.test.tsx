@@ -4,13 +4,13 @@ import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragm
 import Home from './Home';
 
 describe('Home', () => {
-    test('Snapshot test', async () => {
+    test('Should display home title', async () => {
         const comp = render(
             <MockedProviderWithFragments>
                 <Home />
             </MockedProviderWithFragments>
         );
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.text()).toContain('home.title');
     });
 });

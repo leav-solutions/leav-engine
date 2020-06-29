@@ -168,7 +168,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 ))}
             </HeaderTable>
             <TableWrapper>
-                <TableStyled fixed selectable className="table-items" celled>
+                <TableStyled fixed selectable className="table-items" celled striped>
                     <Table.Body>
                         {stateItems.items &&
                             stateItems.items?.map(item => (

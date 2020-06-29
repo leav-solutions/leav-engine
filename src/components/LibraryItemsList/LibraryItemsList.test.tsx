@@ -1,5 +1,6 @@
-import {render} from 'enzyme';
+import {shallow} from 'enzyme';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
 import LibraryItemsList from '.';
 import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
@@ -44,6 +45,13 @@ jest.mock(
     () =>
         function MenuItemListSelected() {
             return <div>MenuItemListSelected</div>;
+        }
+);
+jest.mock(
+    './DisplayTypeSelector',
+    () =>
+        function DisplayTypeSelector() {
+            return <div>DisplayTypeSelector</div>;
         }
 );
 
@@ -108,40 +116,51 @@ describe('LibraryItemsList', () => {
             result: {
                 data: {
                     libraries: {
-                        list: {
-                            id: libId,
-                            system: false,
-                            label: {
-                                fr: 'test'
-                            },
-                            attributes: [
-                                {
-                                    id: 'test',
-                                    type: '',
-                                    format: '',
-                                    label: {
-                                        fr: ''
+                        list: [
+                            {
+                                id: 'files',
+                                system: true,
+                                label: {
+                                    fr: 'Fichiers',
+                                    en: 'Files'
+                                },
+                                attributes: [
+                                    {
+                                        id: 'test',
+                                        type: '',
+                                        format: '',
+                                        label: {
+                                            fr: 'Actif',
+                                            en: 'Active'
+                                        }
                                     }
+                                ],
+                                gqlNames: {
+                                    query: 'files',
+                                    filter: 'FileFilter',
+                                    searchableFields: 'FileSearchableFields'
                                 }
-                            ],
-                            gqlNames: {
-                                query: libQueryName,
-                                filter: libQueryFilter,
-                                searchableFields: libSearchableFields
                             }
-                        }
+                        ]
                     }
                 }
             }
         }
     ];
 
-    test('Snapshot test', async () => {
-        const comp = render(
-            <MockedProviderWithFragments mocks={mocks} addTypename={true}>
-                <LibraryItemsList />
-            </MockedProviderWithFragments>
-        );
-        expect(comp).toMatchSnapshot();
+    test('should call Child', async () => {
+        let comp: any;
+
+        await act(async () => {
+            comp = shallow(
+                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                    <LibraryItemsList />
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(comp.html()).toContain('Filters');
+        expect(comp.html()).toContain('MenuItemList');
+        expect(comp.html()).toContain('DisplayTypeSelector');
     });
 });

@@ -1,4 +1,4 @@
-import {mount, render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
@@ -50,16 +50,6 @@ describe('LibrariesList', () => {
             }
         }
     ];
-
-    test('Snapshot test', async () => {
-        const comp = render(
-            <MockedProviderWithFragments mocks={mocks}>
-                <LibrariesList />
-            </MockedProviderWithFragments>
-        );
-
-        expect(comp).toMatchSnapshot();
-    });
 
     test('should call LibraryCard', async () => {
         let comp: any;

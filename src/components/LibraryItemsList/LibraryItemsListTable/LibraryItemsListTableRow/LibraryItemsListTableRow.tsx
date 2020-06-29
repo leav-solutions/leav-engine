@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, CheckboxProps, Grid, Popup, Table} from 'semantic-ui-react';
+import {Button, Checkbox, CheckboxProps, Grid, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {displayListItemTypes, IItem} from '../../../../_types/types';
 import RecordCard from '../../../shared/RecordCard';
@@ -21,6 +21,23 @@ const getRowHeight = (displayType: displayListItemTypes) => {
             return '9rem';
         case displayListItemTypes.tile:
             return '0rem';
+    }
+};
+
+const handleValueDisplay = (value: any) => {
+    switch (typeof value) {
+        case 'boolean':
+            return <Icon name={value ? 'check' : 'cancel'} />;
+        case 'string':
+            if (!!Date.parse(value)) {
+                const date = new Date(value);
+
+                return `${date.getHours()}:${date.getMinutes()} ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+            }
+            return value;
+        case 'number':
+        default:
+            return value;
     }
 };
 
@@ -97,7 +114,7 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
                         />
                     ) : (
                         <Table.Cell key={column.id}>
-                            <div>{item[column.id]?.toString() ?? item[column.id]}</div>
+                            <div>{handleValueDisplay(item[column.id])}</div>
                         </Table.Cell>
                     )
                 )}

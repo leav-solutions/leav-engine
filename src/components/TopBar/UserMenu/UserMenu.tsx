@@ -1,12 +1,9 @@
 import {useQuery} from '@apollo/client';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
-import {Dropdown, Menu} from 'semantic-ui-react';
+import {Menu} from 'semantic-ui-react';
 import {getUser} from '../../../queries/cache/user/userQuery';
 
 function UserMenu(): JSX.Element {
-    const {t} = useTranslation();
-
     const {data: dataUser} = useQuery(getUser);
     const userName = dataUser?.userName ?? dataUser?.userId ?? '';
 
@@ -31,23 +28,12 @@ function UserMenu(): JSX.Element {
             style={{
                 display: 'flex',
                 flexFlow: 'row nowrap',
-                alignItems: 'center'
+                alignItems: 'center',
+                cursor: 'pointer'
             }}
         >
             <div style={nameIconStyle}>{iconContent}</div>
-            <Dropdown item as={Menu.Item} direction="left" text={userName}>
-                <Dropdown.Menu>
-                    <Dropdown.Item text={t('menu.user_menu.profil')} />
-                    <Dropdown.Item text={t('menu.user_menu.tasks')} />
-                    <Dropdown.Item text={t('menu.user_menu.shortcuts')} />
-                    <Dropdown.Item text={t('menu.user_menu.events')} />
-                    <Dropdown.Item text={t('menu.user_menu.admin')} />
-                    <Dropdown.Divider />
-                    <Dropdown.Header>{t('menu.user_menu.leav_engine')} </Dropdown.Header>
-                    <Dropdown.Divider />
-                    <Dropdown.Item icon="log out" text={t('menu.user_menu.logout')} />
-                </Dropdown.Menu>
-            </Dropdown>
+            <Menu.Item>{userName}</Menu.Item>
         </div>
     );
 }

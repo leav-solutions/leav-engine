@@ -1,22 +1,12 @@
-import {mount, render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {Dropdown} from 'semantic-ui-react';
+import {Menu} from 'semantic-ui-react';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import UserMenu from './UserMenu';
 
 describe('UserMenu', () => {
-    test('Snapshot test', async () => {
-        const comp = render(
-            <MockedProviderWithFragments>
-                <UserMenu />
-            </MockedProviderWithFragments>
-        );
-
-        expect(comp).toMatchSnapshot();
-    });
-
-    test('should have a Dropdown', async () => {
+    test('should be an Menu Item', async () => {
         let comp: any;
 
         await act(async () => {
@@ -27,6 +17,6 @@ describe('UserMenu', () => {
             );
         });
 
-        expect(comp.find(Dropdown)).toHaveLength(1);
+        expect(comp.find(Menu.Item)).toHaveLength(1);
     });
 });
