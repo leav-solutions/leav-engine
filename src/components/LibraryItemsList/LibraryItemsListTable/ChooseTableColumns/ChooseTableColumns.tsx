@@ -1,26 +1,13 @@
-import {useQuery} from '@apollo/client';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, CheckboxProps, List, Modal} from 'semantic-ui-react';
-import styled from 'styled-components';
-import {getLang} from '../../../../queries/cache/lang/getLangQuery';
-import {localizedLabel} from '../../../../utils';
+import {Button, Modal} from 'semantic-ui-react';
 import {IAttribute} from '../../../../_types/types';
+import ListAttributes from '../../../ListAttributes';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../../LibraryItemsListReducer';
-
-const Wrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const Small = styled.small`
-    opacity: 0.5;
-`;
 
 interface IChooseTableColumnsProps {
     stateItems: LibraryItemListState;
@@ -37,15 +24,12 @@ function ChooseTableColumns({
 }: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [columns, setColumns] = useState<{id: string}[]>(stateItems.columns.map(column => ({id: column.id})));
 
-    const [columns, setColumns] = useState(stateItems.columns);
-
-    const handleColumnsUpdate = (attribute: IAttribute, data: CheckboxProps) => {
+    const handleColumnsUpdate = (attribute: IAttribute, checked: boolean) => {
         const restColumns = columns.filter(col => col.id !== attribute.id);
 
-        if (data.checked) {
+        if (checked) {
             setColumns([...restColumns, {id: attribute.id}]);
         } else {
             setColumns(restColumns);
@@ -68,25 +52,12 @@ function ChooseTableColumns({
         <Modal open={openChangeColumns} onClose={() => setOpenChangeColumns(false)} closeIcon size="small">
             <Modal.Header>{t('table-columns-selection.header')}</Modal.Header>
             <Modal.Content>
-                <List divided>
-                    {stateItems.attributes.map(attribute => (
-                        <List.Item key={attribute.id}>
-                            <Wrapper>
-                                {localizedLabel(attribute.label, lang) ? (
-                                    <span>
-                                        {localizedLabel(attribute.label, lang)} <Small>{attribute.id}</Small>
-                                    </span>
-                                ) : (
-                                    <span>{attribute.id}</span>
-                                )}
-                                <Checkbox
-                                    checked={!!columns.find(col => attribute.id === col.id)}
-                                    onClick={(event, data) => handleColumnsUpdate(attribute, data)}
-                                />
-                            </Wrapper>
-                        </List.Item>
-                    ))}
-                </List>
+                <ListAttributes
+                    attributes={stateItems.attributes}
+                    useCheckbox
+                    attributesChecked={columns}
+                    onCheckboxChange={handleColumnsUpdate}
+                />
             </Modal.Content>
             <Modal.Actions>
                 <Button onClick={handleCancel} secondary>

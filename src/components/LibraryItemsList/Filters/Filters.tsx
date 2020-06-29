@@ -9,7 +9,7 @@ import {
     LibraryItemListState
 } from '../LibraryItemsListReducer';
 import SelectView from '../SelectView';
-import AttributeList from './AttributeList';
+import AddFilter from './AddFilter';
 import FilterItem from './FilterItem';
 import FilterSeparator from './Filters/FilterSeparator';
 import {getRequestFromFilter} from './Filters/FilterSeparator/getRequestFromFilter';
@@ -162,7 +162,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     return (
         <Transition visible={stateItems.showFilters} onHide={handleHide} animation="slide right" duration={10}>
             <Sidebar.Pushable>
-                <AttributeList
+                <AddFilter
                     stateItems={stateItems}
                     setFilters={setFilters}
                     showAttr={showAttr}
@@ -174,7 +174,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     <Menu style={{height: '5rem'}}>
                         <Menu.Menu>
                             <Menu.Item>
-                                <Button icon="sidebar" onClick={handleHide} />
+                                <Button icon="filter" active onClick={handleHide} />
                             </Menu.Item>
                         </Menu.Menu>
                         <Menu.Menu position="right">
@@ -211,6 +211,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                             filter.type === FilterTypes.filter ? (
                                 <FilterItem
                                     key={filter.key}
+                                    stateItems={stateItems}
                                     filter={filter}
                                     setFilters={setFilters}
                                     whereOptions={conditionOptions}

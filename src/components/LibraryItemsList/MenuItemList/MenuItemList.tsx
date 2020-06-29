@@ -73,7 +73,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
                     <Menu.Item>
                         <Popup
                             content={t('items_list.show-filter-panel')}
-                            trigger={<Button icon="sidebar" onClick={toggleShowFilter} />}
+                            trigger={<Button icon="filter" onClick={toggleShowFilter} />}
                         />
                     </Menu.Item>
                     <Menu.Item>

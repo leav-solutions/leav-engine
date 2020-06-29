@@ -5,7 +5,7 @@ import {List} from 'semantic-ui-react';
 import {displayListItemTypes, OrderSearch} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListState} from '../../LibraryItemsListReducer';
-import AttributeList from './AttributeList';
+import AddFilter from './AddFilter';
 
 describe('AttributeList', () => {
     const stateItems: LibraryItemListState = {
@@ -32,7 +32,7 @@ describe('AttributeList', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <AttributeList
+                    <AddFilter
                         stateItems={stateItems}
                         setFilters={jest.fn()}
                         showAttr={true}

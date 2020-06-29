@@ -2,11 +2,38 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {Checkbox, Dropdown, TextArea} from 'semantic-ui-react';
-import {AttributeFormat, conditionFilter, FilterTypes, IFilter, operatorFilter} from '../../../../_types/types';
+import {
+    AttributeFormat,
+    conditionFilter,
+    displayListItemTypes,
+    FilterTypes,
+    IFilter,
+    operatorFilter,
+    OrderSearch
+} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
+import {LibraryItemListState} from '../../LibraryItemsListReducer';
 import FilterItem from './FilterItem';
 
 describe('FilterItem', () => {
+    const stateItems: LibraryItemListState = {
+        libQuery: 'test',
+        libFilter: 'test',
+        libSearchableField: 'test',
+        itemsSortField: 'test',
+        itemsSortOrder: OrderSearch.asc,
+        itemsTotalCount: 0,
+        offset: 0,
+        pagination: 20,
+        displayType: displayListItemTypes.listSmall,
+        showFilters: false,
+        selectionMode: false,
+        itemsSelected: {},
+        queryFilters: [],
+        attributes: [],
+        columns: []
+    };
+
     const mockFilter: IFilter = {
         type: FilterTypes.filter,
         key: 1,
@@ -29,6 +56,7 @@ describe('FilterItem', () => {
             comp = mount(
                 <MockedProviderWithFragments>
                     <FilterItem
+                        stateItems={stateItems}
                         filter={mockFilter}
                         whereOptions={whereOptions}
                         operatorOptions={operatorOptions}
@@ -52,6 +80,7 @@ describe('FilterItem', () => {
             comp = mount(
                 <MockedProviderWithFragments>
                     <FilterItem
+                        stateItems={stateItems}
                         filter={mockFilter}
                         whereOptions={whereOptions}
                         operatorOptions={operatorOptions}
@@ -75,11 +104,13 @@ describe('FilterItem', () => {
             comp = mount(
                 <MockedProviderWithFragments>
                     <FilterItem
+                        stateItems={stateItems}
                         filter={mockFilter}
                         whereOptions={whereOptions}
                         operatorOptions={operatorOptions}
                         setFilters={jest.fn()}
                         resetFilters={jest.fn()}
+                        updateFilters={jest.fn()}
                         filterOperator={operatorFilter.and}
                         setFilterOperator={jest.fn()}
                     />

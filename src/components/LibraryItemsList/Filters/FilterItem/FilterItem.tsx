@@ -1,19 +1,11 @@
 import React, {useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-    Button,
-    Checkbox,
-    Dropdown,
-    DropdownProps,
-    Form,
-    Modal,
-    Segment,
-    TextArea,
-    TextAreaProps
-} from 'semantic-ui-react';
+import {Button, Checkbox, Dropdown, DropdownProps, Form, Segment, TextArea, TextAreaProps} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {allowedTypeOperator} from '../../../../utils';
 import {conditionFilter, FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../../_types/types';
+import {LibraryItemListState} from '../../LibraryItemsListReducer';
+import ChangeAttribute from './ChangeAttribute';
 
 const Attribute = styled.div``;
 
@@ -55,6 +47,7 @@ const CustomForm = styled(Form)`
 `;
 
 interface IFilterItemProps {
+    stateItems: LibraryItemListState;
     filter: IFilter;
     setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
     whereOptions: {
@@ -72,6 +65,7 @@ interface IFilterItemProps {
 }
 
 function FilterItem({
+    stateItems,
     filter,
     setFilters,
     whereOptions,
@@ -195,9 +189,13 @@ function FilterItem({
 
     return (
         <>
-            <Modal open={showModal} onClose={() => setShowModal(false)} closeIcon>
-                <Modal.Content>content</Modal.Content>
-            </Modal>
+            <ChangeAttribute
+                stateItems={stateItems}
+                setFilters={setFilters}
+                filter={filter}
+                showModal={showModal}
+                setShowModal={setShowModal}
+            />
             <Segment secondary disabled={!filter.active}>
                 <Grid>
                     <GridRow key={filter.key}>
@@ -225,7 +223,7 @@ function FilterItem({
                             <Dropdown
                                 floating
                                 inline
-                                defaultValue={filter.condition}
+                                value={filter.condition}
                                 onChange={changeCondition}
                                 options={whereOptionsByType}
                                 direction="left"
