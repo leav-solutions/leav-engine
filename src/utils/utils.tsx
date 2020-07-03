@@ -136,5 +136,11 @@ export const allowedTypeOperator = {
         conditionFilter.greaterThan,
         conditionFilter.lessThan
     ],
-    [AttributeFormat.boolean]: [conditionFilter.equal, conditionFilter.notEqual]
+    [AttributeFormat.boolean]: [conditionFilter.equal, conditionFilter.notEqual],
+    [AttributeFormat.date]: [
+        conditionFilter.equal,
+        conditionFilter.notEqual,
+        conditionFilter.greaterThan,
+        conditionFilter.lessThan
+    ]
 };

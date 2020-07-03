@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, CheckboxProps, Grid, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {displayListItemTypes, IItem} from '../../../../_types/types';
+import {AttributeFormat, displayListItemTypes, IItem, IItemsColumn} from '../../../../_types/types';
 import RecordCard from '../../../shared/RecordCard';
 import {
     LibraryItemListReducerAction,
@@ -24,18 +24,12 @@ const getRowHeight = (displayType: displayListItemTypes) => {
     }
 };
 
-const handleValueDisplay = (value: any) => {
-    switch (typeof value) {
-        case 'boolean':
+const handleValueDisplay = (value: any, format: AttributeFormat) => {
+    switch (format) {
+        case AttributeFormat.boolean:
             return <Icon name={value ? 'check' : 'cancel'} />;
-        case 'string':
-            if (!!Date.parse(value)) {
-                const date = new Date(value);
-
-                return `${date.getHours()}:${date.getMinutes()} ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
-            }
-            return value;
-        case 'number':
+        case AttributeFormat.numeric:
+        case AttributeFormat.text:
         default:
             return value;
     }
@@ -47,23 +41,30 @@ interface RowProps {
 }
 
 const TableRow = styled(Table.Row)<RowProps>`
-    height: ${({size}) => getRowHeight(size)};
-    background: ${({selected}) => (selected ? 'hsla(202, 100%, 50%, 0.15)' : 'none')};
+    &&&&& {
+        height: ${({size}) => getRowHeight(size)};
+        background: ${({selected}) => (selected ? 'hsla(202, 100%, 50%, 0.15)' : 'none')};
+
+        .actions {
+            opacity: 0;
+        }
+
+        &:hover {
+            .actions {
+                opacity: 1;
+            }
+        }
+    }
 `;
 
-interface ActionsProps {
-    display: 1 | 0;
-}
-
-const Actions = styled.div<ActionsProps>`
+const Actions = styled.div`
     position: absolute;
     right: 0;
+    top: 0;
     padding: 0 1rem;
-    display: ${({display}) => (display ? 'flex' : 'none')};
+    display: flex;
     align-items: center;
-    &:hover {
-        display: block;
-    }
+    height: 100%;
 `;
 
 interface ILibraryItemsListTableRowProps {
@@ -113,15 +114,28 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
                             setIsHover={setIsHover}
                         />
                     ) : (
-                        <Table.Cell key={column.id}>
-                            <div>{handleValueDisplay(item[column.id])}</div>
-                        </Table.Cell>
+                        <Row key={column.id} item={item} column={column} stateItems={stateItems} />
                     )
                 )}
             </TableRow>
         </>
     );
 }
+
+interface RowsProps {
+    item: IItem;
+    column: IItemsColumn;
+    stateItems: LibraryItemListState;
+}
+
+const Row = ({item, column, stateItems}: RowsProps) => {
+    const currentAtt = stateItems.attributes.find(att => att.id === column.id);
+    return (
+        <Table.Cell>
+            <div>{handleValueDisplay(item[column.id], currentAtt?.format || AttributeFormat.text)}</div>
+        </Table.Cell>
+    );
+};
 
 interface IInfosRow {
     item: IItem;
@@ -170,7 +184,7 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, isH
                     <Grid.Row>
                         <RecordCard record={{...item}} />
 
-                        <Actions display={isHover ? 1 : 0}>
+                        <Actions className="actions">
                             {stateItems.selectionMode ? (
                                 <Button.Group size="small">
                                     <Checkbox onChange={handleCheckboxChange} checked={isSelected} />
@@ -179,7 +193,6 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, isH
                                 <Button.Group size="small">
                                     <Popup
                                         hoverable={false}
-                                        onMouseLeave={() => setIsHover(false)}
                                         content={t('items-list-row.switch-to-selection-mode')}
                                         trigger={
                                             <Button
@@ -191,7 +204,6 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, isH
                                     />
                                     <Popup
                                         hoverable={false}
-                                        onMouseLeave={() => setIsHover(false)}
                                         content={t('items-list-row.edit')}
                                         trigger={<Button icon="write" onClick={handleShowModal} />}
                                     />

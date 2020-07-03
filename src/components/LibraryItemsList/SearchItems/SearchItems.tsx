@@ -25,7 +25,7 @@ function SearchItems({dispatchItems}: ISearchItemsProps): JSX.Element {
     const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const searchQuery: IQueryFilter[] = [{field: {base: 'id'}, value: search, condition: conditionFilter.contains}];
+        const searchQuery: IQueryFilter[] = [{field: 'id', value: search, condition: conditionFilter.contains}];
 
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,

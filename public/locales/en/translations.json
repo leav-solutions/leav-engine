@@ -135,7 +135,8 @@
         "no-operator": "If"
     },
     "attribute-list": {
-        "add": "Add filters"
+        "add": "Add filters",
+        "cancel": "Cancel"
     },
     "menu-selection": {
         "nb-selected": "{{nb}} items selected",
@@ -146,5 +147,9 @@
         "header": "Columns available",
         "cancel": "Cancel",
         "submit": "Update Columns"
+    },
+    "change-attribute": {
+        "submit": "Change",
+        "cancel": "Cancel"
     }
 }

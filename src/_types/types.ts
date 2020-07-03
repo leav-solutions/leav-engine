@@ -72,6 +72,8 @@ export interface IFilterSeparator {
 export enum AttributeFormat {
     text = 'text',
     numeric = 'numeric',
+    date = 'date',
+    encrypted = 'encrypted',
     boolean = 'boolean'
 }
 
@@ -98,7 +100,7 @@ export enum conditionFilter {
 }
 
 export interface IQueryFilter {
-    field?: {base: string; linked?: string};
+    field?: string;
     value?: any;
     condition?: conditionFilter;
     operator?: operatorFilter;

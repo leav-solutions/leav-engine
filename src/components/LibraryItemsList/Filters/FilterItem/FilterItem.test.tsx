@@ -45,7 +45,7 @@ describe('FilterItem', () => {
         format: AttributeFormat.text
     };
 
-    const whereOptions = [{text: 'Contains', value: conditionFilter.contains}];
+    const conditionOptions = [{text: 'Contains', value: conditionFilter.contains}];
 
     const operatorOptions = [{text: 'AND', value: operatorFilter.and}];
 
@@ -58,7 +58,7 @@ describe('FilterItem', () => {
                     <FilterItem
                         stateItems={stateItems}
                         filter={mockFilter}
-                        whereOptions={whereOptions}
+                        conditionOptions={conditionOptions}
                         operatorOptions={operatorOptions}
                         setFilters={jest.fn()}
                         resetFilters={jest.fn()}
@@ -82,7 +82,7 @@ describe('FilterItem', () => {
                     <FilterItem
                         stateItems={stateItems}
                         filter={mockFilter}
-                        whereOptions={whereOptions}
+                        conditionOptions={conditionOptions}
                         operatorOptions={operatorOptions}
                         setFilters={jest.fn()}
                         resetFilters={jest.fn()}
@@ -106,7 +106,7 @@ describe('FilterItem', () => {
                     <FilterItem
                         stateItems={stateItems}
                         filter={mockFilter}
-                        whereOptions={whereOptions}
+                        conditionOptions={conditionOptions}
                         operatorOptions={operatorOptions}
                         setFilters={jest.fn()}
                         resetFilters={jest.fn()}

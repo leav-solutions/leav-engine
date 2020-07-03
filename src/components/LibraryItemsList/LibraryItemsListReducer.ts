@@ -3,6 +3,7 @@ import {displayListItemTypes, IAttribute, IItem, IItemsColumn, IQueryFilter, Ord
 export enum LibraryItemListReducerActionTypes {
     SET_LIB_INFOS = 'SET_LIB_INFOS',
     SET_SEARCH_INFOS = 'SET_SEARCH_INFOS',
+    CANCEL_SEARCH = 'CANCEL_SEARCH',
     SET_ITEMS = 'SET_ITEMS',
     SET_ITEMS_AND_TOTAL_COUNT = 'SET_ITEMS_AND_TOTAL_COUNT',
     SET_OFFSET = 'SET_OFFSET',
@@ -112,6 +113,10 @@ export type LibraryItemListReducerAction =
     | {
           type: LibraryItemListReducerActionTypes.SET_COLUMNS;
           columns: IItemsColumn[];
+      }
+    | {
+          type: LibraryItemListReducerActionTypes.CANCEL_SEARCH;
+          itemsSortField: string;
       };
 
 const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
@@ -143,6 +148,8 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
             return {...state, attributes: action.attributes};
         case LibraryItemListReducerActionTypes.SET_COLUMNS:
             return {...state, columns: action.columns};
+        case LibraryItemListReducerActionTypes.CANCEL_SEARCH:
+            return {...state, itemsSortField: action.itemsSortField, itemsSortOrder: OrderSearch.asc};
         default:
             return state;
     }

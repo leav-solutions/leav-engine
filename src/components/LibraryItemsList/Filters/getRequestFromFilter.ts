@@ -1,4 +1,4 @@
-import {FilterTypes, IFilter, IFilterSeparator, IQueryFilter, operatorFilter} from '../../../../../_types/types';
+import {FilterTypes, IFilter, IFilterSeparator, IQueryFilter, operatorFilter} from '../../../_types/types';
 
 export const getRequestFromFilter = (
     filters: (IFilter | IFilterSeparator)[],
@@ -64,7 +64,7 @@ const handleValueRequest = (filter: IFilter) => {
                 result.push({operator: operatorFilter.or});
             }
             result.push({
-                field: {base: filter.attribute},
+                field: filter.attribute,
                 value: filterValue,
                 condition: filter.condition
             });

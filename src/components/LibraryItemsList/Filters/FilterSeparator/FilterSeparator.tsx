@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dropdown, DropdownProps, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IFilter, IFilterSeparator, operatorFilter} from '../../../../../_types/types';
+import {IFilter, IFilterSeparator, operatorFilter} from '../../../../_types/types';
 
 const CustomSegment = styled(Segment)`
     display: flex;

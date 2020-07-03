@@ -1,5 +1,6 @@
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
 import {displayListItemTypes, OrderSearch} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../../LibraryItemsListReducer';
@@ -32,14 +33,28 @@ describe('LibraryItemsListTableRow', () => {
             label: 'test'
         };
 
-        const stateMock = {...stateItems, columns: [{id: 'infos'}]};
+        const stateMock = {...stateItems, columns: [{id: 'infos'}, {id: 'row1'}, {id: 'row2'}]};
 
-        const comp = render(
-            <MockedProviderWithFragments>
-                <LibraryItemsListTableRow item={itemMock} stateItems={stateMock} dispatchItems={dispatchItems} />
-            </MockedProviderWithFragments>
-        );
+        let comp: any;
 
-        expect(comp).toMatchSnapshot();
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    {/* table and tbody add to avoid warning */}
+                    <table>
+                        <tbody>
+                            <LibraryItemsListTableRow
+                                item={itemMock}
+                                stateItems={stateMock}
+                                dispatchItems={dispatchItems}
+                            />
+                        </tbody>
+                    </table>
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(comp.find('InfosRow')).toHaveLength(1);
+        expect(comp.find('Row')).toHaveLength(2);
     });
 });

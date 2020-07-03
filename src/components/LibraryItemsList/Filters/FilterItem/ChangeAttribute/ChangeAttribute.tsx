@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {allowedTypeOperator} from '../../../../../utils';
 import {AttributeFormat, conditionFilter, FilterTypes, IFilter, IFilterSeparator} from '../../../../../_types/types';
@@ -20,6 +21,7 @@ function ChangeAttribute({
     showModal,
     setShowModal
 }: IChangeAttributeProps): JSX.Element {
+    const {t} = useTranslation();
     const [attSelected, setAttSelected] = useState<string>(filter.attribute);
 
     const handleCancel = () => {
@@ -30,7 +32,7 @@ function ChangeAttribute({
         const newAtt = stateItems.attributes.find(a => a.id === attSelected);
 
         // take the first operator for the format of the attribute
-        const defaultWhereOperator = allowedTypeOperator[AttributeFormat[newAtt?.format ?? 0]][0];
+        const defaultConditionOperator = allowedTypeOperator[AttributeFormat[newAtt?.format ?? 0]][0];
 
         setFilters(filters =>
             filters.reduce((acc, f) => {
@@ -41,7 +43,7 @@ function ChangeAttribute({
                             ...f,
                             attribute: attSelected,
                             format: newAtt?.format,
-                            condition: conditionFilter[defaultWhereOperator]
+                            condition: conditionFilter[defaultConditionOperator]
                         } as IFilter
                     ];
                 }
@@ -62,11 +64,9 @@ function ChangeAttribute({
                 />
             </Modal.Content>
             <Modal.Actions>
-                <Button secondary onClick={handleCancel}>
-                    Cancel
-                </Button>
+                <Button onClick={handleCancel}>{t('change-attribute.cancel')}</Button>
                 <Button primary onClick={changeAttribute}>
-                    Change attribute
+                    {t('change-attribute.submit')}
                 </Button>
             </Modal.Actions>
         </Modal>

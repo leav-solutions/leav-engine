@@ -31,7 +31,7 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
             const separators = filters.filter(filter => filter.type === FilterTypes.separator);
             const newFilters: IFilter[] = attSelected.map((att, index) => {
                 // take the first operator for the format of the attribute
-                const defaultWhereOperator = allowedTypeOperator[AttributeFormat[att.format]][0];
+                const defaultConditionOptions = allowedTypeOperator[AttributeFormat[att.format]][0];
 
                 // if the new filter is after a separator, don't set operator
                 // separator key is the filters length when separator was add
@@ -43,7 +43,7 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
                     type: FilterTypes.filter,
                     key: filters.length + index,
                     operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
-                    condition: conditionFilter[defaultWhereOperator],
+                    condition: conditionFilter[defaultConditionOptions],
                     value: '',
                     attribute: att.id,
                     active: true,
@@ -54,6 +54,7 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
             return [...filters, ...newFilters] as (IFilter | IFilterSeparator)[];
         });
         setShowAttr(false);
+        setAttSelected([]);
         updateFilters();
     };
 
@@ -65,6 +66,10 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
         }
     };
 
+    const handleCancel = () => {
+        setShowAttr(false);
+    };
+
     return (
         <Modal open={showAttr} onClose={() => setShowAttr(false)} closeIcon>
             <Modal.Header>{t('filters.modal-header')}</Modal.Header>
@@ -72,7 +77,10 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
                 <ListAttributes attributes={stateItems.attributes} useCheckbox onCheckboxChange={handleChecked} />
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={addFilters}>{t('attribute-list.add')}</Button>
+                <Button onClick={handleCancel}>{t('attribute-list.cancel')}</Button>
+                <Button primary onClick={addFilters}>
+                    {t('attribute-list.add')}
+                </Button>
             </Modal.Actions>
         </Modal>
     );

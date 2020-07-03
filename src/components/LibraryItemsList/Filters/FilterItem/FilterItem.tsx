@@ -7,8 +7,6 @@ import {conditionFilter, FilterTypes, IFilter, IFilterSeparator, operatorFilter}
 import {LibraryItemListState} from '../../LibraryItemsListReducer';
 import ChangeAttribute from './ChangeAttribute';
 
-const Attribute = styled.div``;
-
 const TextAreaWrapper = styled.div`
     margin: 1rem 0 0 0;
 `;
@@ -50,7 +48,7 @@ interface IFilterItemProps {
     stateItems: LibraryItemListState;
     filter: IFilter;
     setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
-    whereOptions: {
+    conditionOptions: {
         text: string;
         value: conditionFilter;
     }[];
@@ -68,7 +66,7 @@ function FilterItem({
     stateItems,
     filter,
     setFilters,
-    whereOptions,
+    conditionOptions,
     operatorOptions,
     resetFilters,
     updateFilters,
@@ -82,8 +80,8 @@ function FilterItem({
 
     const textAreaRef = useRef(null);
 
-    const whereOptionsByType = whereOptions.filter(whereOption =>
-        allowedTypeOperator[filter.format]?.includes(whereOption.value)
+    const conditionOptionsByType = conditionOptions.filter(conditionOption =>
+        allowedTypeOperator[filter.format]?.includes(conditionOption.value)
     );
 
     const changeActive = () => {
@@ -169,16 +167,14 @@ function FilterItem({
     const changeCondition = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
         const newCondition = (data?.value ?? '').toString();
 
-        setFilters(filters => {
-            const restFilters = filters.filter(f => f.key !== filter.key);
-            const currentFilter = filters.find(f => f.key === filter.key);
-
-            return currentFilter
-                ? [...restFilters, {...currentFilter, where: conditionFilter[newCondition]}].sort(
-                      (f1, f2) => f1.key - f2.key
-                  )
-                : restFilters;
-        });
+        setFilters(filters =>
+            filters.reduce((acc, f) => {
+                if (f.key === filter.key) {
+                    return [...acc, {...filter, condition: conditionFilter[newCondition]}];
+                }
+                return [...acc, f];
+            }, [] as (IFilter | IFilterSeparator)[])
+        );
     };
 
     const handleOperatorChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
@@ -216,16 +212,14 @@ function FilterItem({
                                 t('filter-item.no-operator')
                             )}
 
-                            <Attribute>
-                                <CustomButton onClick={() => setShowModal(true)}>{filter.attribute}</CustomButton>
-                            </Attribute>
+                            <CustomButton onClick={() => setShowModal(true)}>{filter.attribute}</CustomButton>
 
                             <Dropdown
                                 floating
                                 inline
                                 value={filter.condition}
                                 onChange={changeCondition}
-                                options={whereOptionsByType}
+                                options={conditionOptionsByType}
                                 direction="left"
                             />
                         </GridColumn>

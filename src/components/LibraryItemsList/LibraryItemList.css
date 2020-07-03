@@ -1,0 +1,28 @@
+.wrapper-open {
+    display: grid;
+    grid-template-columns: 25rem auto;
+    grid-template-rows: 100%;
+    height: 100%;
+}
+
+.wrapper-close {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.wrapper-open .wrapper-page {
+    animation-name: filter-animation-open;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+}
+
+
+@keyframes filter-animation-open {
+    from {
+        margin-left: inherit;
+    }
+
+    to {
+        margin-left: 25rem;
+    }
+}

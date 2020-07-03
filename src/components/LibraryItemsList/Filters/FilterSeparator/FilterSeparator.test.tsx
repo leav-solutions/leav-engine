@@ -1,6 +1,6 @@
 import {render} from 'enzyme';
 import React from 'react';
-import {FilterTypes, operatorFilter} from '../../../../../_types/types';
+import {FilterTypes, operatorFilter} from '../../../../_types/types';
 import FilterSeparator from './FilterSeparator';
 
 describe('FilterSeparator', () => {

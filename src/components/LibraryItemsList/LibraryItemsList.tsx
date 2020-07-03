@@ -155,7 +155,7 @@ function LibraryItemsList(): JSX.Element {
     }
 
     return (
-        <Wrapper showSide={state.showFilters}>
+        <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
             <Filters stateItems={state} dispatchItems={dispatch} />
             <div className="wrapper-page">
                 <Menu style={{height: '5rem'}}>

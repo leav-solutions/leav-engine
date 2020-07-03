@@ -1,9 +1,34 @@
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
-import {displayListItemTypes} from '../../../_types/types';
+import {act} from 'react-dom/test-utils';
+import {displayListItemTypes, OrderSearch} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import Filters from './Filters';
+
+jest.mock(
+    './FilterSeparator',
+    () =>
+        function FilterSeparator() {
+            return <div>FilterSeparator</div>;
+        }
+);
+
+jest.mock(
+    './FilterItem',
+    () =>
+        function FilterItem() {
+            return <div>FilterItem</div>;
+        }
+);
+
+jest.mock(
+    './AddFilter',
+    () =>
+        function AddFilter() {
+            return <div>AddFilter</div>;
+        }
+);
 
 describe('Filters', () => {
     const stateItems: LibraryItemListState = {
@@ -11,27 +36,31 @@ describe('Filters', () => {
         libFilter: 'test',
         libSearchableField: 'test',
         itemsSortField: 'test',
-        itemsSortOrder: 'test',
-        items: [],
+        itemsSortOrder: OrderSearch.asc,
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listMedium,
+        displayType: displayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},
-        queryFilters: []
+        queryFilters: [],
+        attributes: [],
+        columns: []
     };
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
-    test('Snapshot test', async () => {
-        const comp = render(
-            <MockedProviderWithFragments>
-                <Filters stateItems={stateItems} dispatchItems={dispatchItems} libId="test" libQueryName="test" />
-            </MockedProviderWithFragments>
-        );
+    test('check child', async () => {
+        let comp: any;
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <Filters stateItems={stateItems} dispatchItems={dispatchItems} />
+                </MockedProviderWithFragments>
+            );
+        });
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find('AddFilter')).toHaveLength(1);
     });
 });

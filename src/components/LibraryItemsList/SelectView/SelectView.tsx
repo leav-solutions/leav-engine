@@ -1,30 +1,35 @@
 import React, {useState} from 'react';
 import {Dropdown, Icon} from 'semantic-ui-react';
 
-const defaultVues = [
+interface IView {
+    value: number;
+    text: string;
+    type: string;
+}
+
+const defaultViews: IView[] = [
+    {value: 0, text: 'My vue list 1', type: 'list'},
     {value: 1, text: 'My vue list 2', type: 'list'},
-    {value: 2, text: 'My vue list 3', type: 'list'},
+    {value: 2, text: 'My vue list 3', type: 'tile'},
     {value: 3, text: 'My vue list 4', type: 'list'},
     {value: 4, text: 'My vue tile 5', type: 'tile'}
 ];
 
 function SelectView(): JSX.Element {
-    const [vues] = useState(defaultVues);
-    const [currentVue, setCurrentVue] = useState<any>();
+    const [views] = useState(defaultViews);
+    const [currentView, setCurrentView] = useState<IView>();
+
+    const changeView = (view: IView) => {
+        setCurrentView(view);
+    };
 
     return (
-        <Dropdown
-            value={currentVue}
-            onChange={(e, {value}) => {
-                setCurrentVue(value);
-            }}
-            placeholder="Default view..."
-        >
+        <Dropdown text={currentView?.text ?? 'Default view...'}>
             <Dropdown.Menu>
-                {vues.map(vue => (
-                    <Dropdown.Item key={vue.value} value={vue.value}>
-                        <Icon name={vue.type === 'list' ? 'sidebar' : 'th large'} />
-                        {vue.text}
+                {views.map(view => (
+                    <Dropdown.Item key={view.value} value={view.value} onClick={() => changeView(view)}>
+                        <Icon name={view.type === 'list' ? 'sidebar' : 'th large'} />
+                        {view.text}
                     </Dropdown.Item>
                 ))}
 

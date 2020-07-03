@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Divider, Dropdown, Menu, Sidebar, Transition} from 'semantic-ui-react';
-import styled from 'styled-components';
+import {Button, Divider, Dropdown, Menu, Sidebar} from 'semantic-ui-react';
+import styled, {CSSObject} from 'styled-components';
 import {FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../_types/types';
 import {
     LibraryItemListReducerAction,
@@ -11,19 +11,28 @@ import {
 import SelectView from '../SelectView';
 import AddFilter from './AddFilter';
 import FilterItem from './FilterItem';
-import FilterSeparator from './Filters/FilterSeparator';
-import {getRequestFromFilter} from './Filters/FilterSeparator/getRequestFromFilter';
+import './Filters.css';
+import FilterSeparator from './FilterSeparator';
 import {getConditionOptions, getOperatorOptions} from './FiltersOptions';
+import {getRequestFromFilter} from './getRequestFromFilter';
 
-interface IFiltersProps {
-    stateItems: LibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+interface WrapperFilterProps {
+    visible: 1 | 0;
+    style?: CSSObject;
 }
+
+const WrapperFilter = styled.div<WrapperFilterProps>`
+    display: ${({visible}) => (visible ? 'flex' : 'none')};
+`;
+
+const CustomSidebarPushable = styled(Sidebar.Pushable)`
+    width: 100%;
+`;
 
 const Side = styled.div`
     border-right: 1px solid #ebebeb;
     padding: 1rem 1rem 0 1rem;
-    height: 93%;
+    height: 100%;
 `;
 
 const FilterActions = styled.div`
@@ -33,10 +42,15 @@ const FilterActions = styled.div`
 `;
 
 const FilterList = styled.div`
-    height: 85%;
+    height: calc(100% - 11rem);
     overflow-y: scroll;
     padding: 0.3rem 0.3rem 0.3rem 0;
 `;
+
+interface IFiltersProps {
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+}
 
 function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();
@@ -160,8 +174,11 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     };
 
     return (
-        <Transition visible={stateItems.showFilters} onHide={handleHide} animation="slide right" duration={10}>
-            <Sidebar.Pushable>
+        <WrapperFilter
+            visible={stateItems.showFilters ? 1 : 0}
+            className={stateItems.showFilters ? 'wrapped-filter-open' : 'wrapped-filter-close'}
+        >
+            <CustomSidebarPushable>
                 <AddFilter
                     stateItems={stateItems}
                     setFilters={setFilters}
@@ -214,7 +231,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                                     stateItems={stateItems}
                                     filter={filter}
                                     setFilters={setFilters}
-                                    whereOptions={conditionOptions}
+                                    conditionOptions={conditionOptions}
                                     operatorOptions={operatorOptions}
                                     resetFilters={resetFilters}
                                     updateFilters={updateFilters}
@@ -235,8 +252,8 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                         )}
                     </FilterList>
                 </Side>
-            </Sidebar.Pushable>
-        </Transition>
+            </CustomSidebarPushable>
+        </WrapperFilter>
     );
 }
 

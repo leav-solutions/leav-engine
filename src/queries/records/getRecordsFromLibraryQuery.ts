@@ -16,7 +16,7 @@ export const getRecordsFromLibraryQuery = (
             $limit: Int!
             $offset: Int
             $filters: [${filterName}]
-            $sortField: ${searchableFields}!
+            $sortField: String
             $sortOrder: SortOrder!
         ) {
             ${libraryName} (

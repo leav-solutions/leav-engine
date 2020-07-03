@@ -1,11 +1,11 @@
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import SelectView from './SelectView';
 
 describe('SelectView', () => {
     test('Snapshot test', async () => {
-        const comp = render(<SelectView />);
+        const comp = mount(<SelectView />);
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find('Dropdown')).toHaveLength(1);
     });
 });

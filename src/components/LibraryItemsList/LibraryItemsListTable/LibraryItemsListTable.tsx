@@ -13,20 +13,24 @@ import ChooseTableColumns from './ChooseTableColumns';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
 
 const TableWrapper = styled.div`
-    height: calc(100% - 16rem);
-    overflow: auto;
-    padding: 0 !important;
-    margin-top: 0 !important;
+    &&& {
+        height: calc(100% - 16rem);
+        overflow: auto;
+        padding: 0;
+        margin-top: 0;
+    }
 `;
 
 const HeaderTable = styled(Segment)`
-    margin: 0 !important;
-    padding: 0 !important;
-    border-bottom: 0 !important;
-    border-radius: 0 !important;
+    &&& {
+        margin: 0;
+        padding: 0;
+        border-bottom: 0;
+        border-radius: 0;
 
-    display: grid;
-    grid-template-columns: repeat(${({columns}) => columns}, 1fr);
+        display: grid;
+        grid-template-columns: repeat(${({columns}) => columns}, 1fr);
+    }
 `;
 
 const HeaderTableCell = styled.div`
@@ -38,13 +42,17 @@ const HeaderTableCell = styled.div`
 `;
 
 const TableStyled = styled(Table)`
-    border-radius: 0 !important;
+    &&& {
+        border-radius: 0;
+    }
 `;
 
 const FooterTable = styled(Segment)`
-    margin-top: 0 !important;
-    border-top: 0 !important;
-    border-radius: 0 !important;
+    &&& {
+        margin-top: 0;
+        border-top: 0;
+        border-radius: 0;
+    }
 `;
 
 interface ITableHeader {
@@ -131,6 +139,14 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     const handleAsc = (attId: string) => {
         handleSort(attId, OrderSearch.asc);
     };
+
+    const cancelSort = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.CANCEL_SEARCH,
+            itemsSortField: stateItems.attributes[0]?.id || ''
+        });
+    };
+
     return (
         <>
             <ChooseTableColumns
@@ -152,7 +168,10 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                                     text={t('items_list.table.header-cell-menu.sort-descend')}
                                     onClick={() => handleDesc(cell.name)}
                                 />
-                                <Dropdown.Item text={t('items_list.table.header-cell-menu.cancel-sort')} />
+                                <Dropdown.Item
+                                    text={t('items_list.table.header-cell-menu.cancel-sort')}
+                                    onClick={cancelSort}
+                                />
                                 <Dropdown.Divider />
                                 <Dropdown.Item text={t('items_list.table.header-cell-menu.sort-advance')} />
                                 <Dropdown.Divider />
@@ -168,7 +187,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 ))}
             </HeaderTable>
             <TableWrapper>
-                <TableStyled fixed selectable className="table-items" celled striped>
+                <TableStyled fixed selectable className="table-items" striped>
                     <Table.Body>
                         {stateItems.items &&
                             stateItems.items?.map(item => (

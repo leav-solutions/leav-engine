@@ -134,7 +134,8 @@
         "no-operator": "Si"
     },
     "attribute-list": {
-        "add": "Ajoute les filtres"
+        "add": "Ajoute les filtres",
+        "cancel": "Annuler"
     },
     "menu-selection": {
         "nb-selected": "{{nb}} éléments sélectionné(s)",
@@ -145,5 +146,9 @@
         "header": "Colonnes disponible",
         "cancel": "Annuler",
         "submit": "Mettre à jour les colonnes"
+    },
+    "change-attribute": {
+        "submit": "Changer",
+        "cancel": "Annuler"
     }
 }
