@@ -4,7 +4,7 @@ import {Checkbox, Container, Input, List, Radio} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../utils';
-import {AttributeFormat, IAttribute} from '../../_types/types';
+import {IAttribute} from '../../_types/types';
 
 const Wrapper = styled.div`
     display: flex;
@@ -27,7 +27,7 @@ const ListItem = styled(List.Item)`
         padding: 0.7rem 1rem;
 
         &:hover {
-            background: hsl(0, 0%, 90%);
+            background: hsla(205.7, 72.6%, 47.3%, 10%);
             border-radius: 0.25rem;
         }
     }
@@ -130,22 +130,19 @@ function ListAttributes({
 
             <List>
                 {attributes &&
-                    attributes.map(
-                        att =>
-                            Object.values(AttributeFormat).includes(att.format) && (
-                                <Attribute
-                                    key={att.id}
-                                    attrsChecked={attrsChecked}
-                                    setAttrsChecked={setAttrsChecked}
-                                    attribute={att}
-                                    attributeSelection={attributeSelection}
-                                    changeSelected={changeSelected}
-                                    useCheckbox={useCheckbox}
-                                    onCheckboxChange={onCheckboxChange}
-                                    lang={lang}
-                                />
-                            )
-                    )}
+                    attributes.map(att => (
+                        <Attribute
+                            key={att.id}
+                            attrsChecked={attrsChecked}
+                            setAttrsChecked={setAttrsChecked}
+                            attribute={att}
+                            attributeSelection={attributeSelection}
+                            changeSelected={changeSelected}
+                            useCheckbox={useCheckbox}
+                            onCheckboxChange={onCheckboxChange}
+                            lang={lang}
+                        />
+                    ))}
             </List>
         </Container>
     );

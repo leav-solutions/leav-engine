@@ -36,10 +36,16 @@ export interface IItem {
 export interface RecordIdentity_whoAmI extends IItem {}
 
 export enum PreviewAttributes {
-    'small',
-    'medium',
-    'big',
-    'pages'
+    small = 'small',
+    medium = 'medium',
+    big = 'big',
+    pages = 'pages'
+}
+
+export enum PreviewSize {
+    small = 'small',
+    medium = 'medium',
+    big = 'big'
 }
 
 export enum AvailableLanguage {
@@ -58,9 +64,9 @@ export interface IFilter {
     operator?: boolean;
     condition: conditionFilter;
     value: string;
-    attribute: string;
+    attributeId: string;
     active: boolean;
-    format: AttributeFormat;
+    format?: AttributeFormat;
 }
 
 export interface IFilterSeparator {
@@ -75,6 +81,14 @@ export enum AttributeFormat {
     date = 'date',
     encrypted = 'encrypted',
     boolean = 'boolean'
+}
+
+export enum AttributeType {
+    simple = 'simple',
+    simple_link = 'simple_link',
+    advanced = 'advanced',
+    advanced_link = 'advanced_link',
+    tree = 'tree'
 }
 
 export enum operatorFilter {
@@ -120,11 +134,14 @@ export enum displayListItemTypes {
 
 export interface IAttribute {
     id: string;
-    type: string;
-    format: AttributeFormat;
+    type: AttributeType;
+    format?: AttributeFormat;
     label: ILabel;
+    isLink: boolean;
+    isMultiple: boolean;
 }
 
 export interface IItemsColumn {
     id: string;
+    isLink: boolean;
 }

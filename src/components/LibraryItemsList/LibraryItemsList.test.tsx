@@ -59,7 +59,7 @@ describe('LibraryItemsList', () => {
     const libId = 'libIdTest';
     const libQueryName = 'test';
     const libQueryFilter = 'TestFilter';
-    const libSearchableFields = 'TestSearchableFields';
+    const columns = 'TestSearchableFields';
     const pagination = 20;
     const offset = 0;
     const itemsSortField = 'id';
@@ -68,7 +68,12 @@ describe('LibraryItemsList', () => {
     const mocks = [
         {
             request: {
-                query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, libSearchableFields),
+                query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, [
+                    {
+                        id: 'test',
+                        isLink: false
+                    }
+                ]),
                 variables: [
                     {
                         variables: {

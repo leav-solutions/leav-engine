@@ -22,7 +22,7 @@ function ChangeAttribute({
     setShowModal
 }: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
-    const [attSelected, setAttSelected] = useState<string>(filter.attribute);
+    const [attSelected, setAttSelected] = useState<string>(filter.attributeId);
 
     const handleCancel = () => {
         setShowModal(false);
@@ -41,7 +41,7 @@ function ChangeAttribute({
                         ...acc,
                         {
                             ...f,
-                            attribute: attSelected,
+                            attributeId: attSelected,
                             format: newAtt?.format,
                             condition: conditionFilter[defaultConditionOperator]
                         } as IFilter

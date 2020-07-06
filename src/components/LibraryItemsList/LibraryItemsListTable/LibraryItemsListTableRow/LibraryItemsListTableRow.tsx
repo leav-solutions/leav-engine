@@ -2,7 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, CheckboxProps, Grid, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {AttributeFormat, displayListItemTypes, IItem, IItemsColumn} from '../../../../_types/types';
+import {checkTypeIsLink, displayTypeToPreviewSize} from '../../../../utils';
+import {
+    AttributeFormat,
+    AttributeType,
+    displayListItemTypes,
+    IItem,
+    IItemsColumn,
+    PreviewSize
+} from '../../../../_types/types';
 import RecordCard from '../../../shared/RecordCard';
 import {
     LibraryItemListReducerAction,
@@ -24,14 +32,31 @@ const getRowHeight = (displayType: displayListItemTypes) => {
     }
 };
 
-const handleValueDisplay = (value: any, format: AttributeFormat) => {
-    switch (format) {
-        case AttributeFormat.boolean:
-            return <Icon name={value ? 'check' : 'cancel'} />;
-        case AttributeFormat.numeric:
-        case AttributeFormat.text:
-        default:
-            return value;
+const handleValueDisplay = (
+    value: any,
+    format: AttributeFormat,
+    type: AttributeType,
+    isMultiple: boolean,
+    size: PreviewSize
+) => {
+    if (value) {
+        switch (format) {
+            case AttributeFormat.boolean:
+                return <Icon name={value ? 'check' : 'cancel'} />;
+            case AttributeFormat.numeric:
+            case AttributeFormat.text:
+            default:
+                if (isMultiple) {
+                    return value?.map(val => handleValueDisplay(val, format, type, !!Array.isArray(val), size));
+                }
+
+                if (checkTypeIsLink(type)) {
+                    return <RecordCard record={{...value.whoAmI}} size={size} />;
+                }
+                return value;
+        }
+    } else {
+        return '-';
     }
 };
 
@@ -73,7 +98,6 @@ interface ILibraryItemsListTableRowProps {
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryItemsListTableRowProps): JSX.Element {
-    const [isHover, setIsHover] = useState(false);
     const [isSelected, setIsSelect] = useState<boolean>(!!stateItems.itemsSelected[item.id]);
 
     const handleClickRow = () => {
@@ -93,14 +117,7 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
 
     return (
         <>
-            <TableRow
-                key={item.id}
-                onMouseEnter={() => setIsHover(true)}
-                onMouseLeave={() => setIsHover(false)}
-                selected={isSelected}
-                onClick={handleClickRow}
-                size={stateItems.displayType}
-            >
+            <TableRow key={item.id} selected={isSelected} onClick={handleClickRow} size={stateItems.displayType}>
                 {stateItems.columns.map(column =>
                     column.id === 'infos' ? (
                         <InfosRow
@@ -110,8 +127,6 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
                             dispatchItems={dispatchItems}
                             isSelected={isSelected}
                             setIsSelect={setIsSelect}
-                            isHover={isHover}
-                            setIsHover={setIsHover}
                         />
                     ) : (
                         <Row key={column.id} item={item} column={column} stateItems={stateItems} />
@@ -132,7 +147,15 @@ const Row = ({item, column, stateItems}: RowsProps) => {
     const currentAtt = stateItems.attributes.find(att => att.id === column.id);
     return (
         <Table.Cell>
-            <div>{handleValueDisplay(item[column.id], currentAtt?.format || AttributeFormat.text)}</div>
+            <div>
+                {handleValueDisplay(
+                    item[column.id],
+                    currentAtt?.format || AttributeFormat.text,
+                    currentAtt?.type || AttributeType.simple,
+                    currentAtt?.isMultiple || false,
+                    displayTypeToPreviewSize(stateItems.displayType)
+                )}
+            </div>
         </Table.Cell>
     );
 };
@@ -142,12 +165,10 @@ interface IInfosRow {
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     isSelected: boolean;
-    setIsSelect: any;
-    isHover: boolean;
-    setIsHover: any;
+    setIsSelect: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, isHover, setIsHover}: IInfosRow) => {
+const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect}: IInfosRow) => {
     const {t} = useTranslation();
 
     const [showRecordEdition, setShowModalEdition] = useState(false);
@@ -182,7 +203,7 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, isH
             <Table.Cell>
                 <Grid>
                     <Grid.Row>
-                        <RecordCard record={{...item}} />
+                        <RecordCard record={{...item}} size={displayTypeToPreviewSize(stateItems.displayType)} />
 
                         <Actions className="actions">
                             {stateItems.selectionMode ? (

@@ -3,11 +3,12 @@ import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {getPreviewUrl, localizedLabel} from '../../../utils/utils';
-import {RecordIdentity_whoAmI} from '../../../_types/types';
+import {IPreview, PreviewSize, RecordIdentity_whoAmI} from '../../../_types/types';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
 
 interface IRecordCardProps {
     record: RecordIdentity_whoAmI;
+    size: PreviewSize;
     style?: CSSObject;
 }
 
@@ -42,10 +43,15 @@ const RecordLabel = styled.div`
 const LibLabel = styled.div`
     font-weight: normal;
     color: rgba(0, 0, 0, 0.4);
-    fontsize: 0.9em;
+    font-size: 0.9em;
 `;
 
-const RecordCard = ({record, style}: IRecordCardProps): JSX.Element => {
+const getPreviewBySize = (preview?: IPreview, size?: PreviewSize) => {
+    const previewBySize = preview && (size ? preview[size] ?? preview.small : preview.small);
+    return previewBySize ? getPreviewUrl(previewBySize) : '';
+};
+
+const RecordCard = ({record, size, style}: IRecordCardProps): JSX.Element => {
     const {data: dataLang} = useQuery(getLang);
 
     return (
@@ -54,7 +60,8 @@ const RecordCard = ({record, style}: IRecordCardProps): JSX.Element => {
                 <RecordPreview
                     label={record.label || record.id}
                     color={record.color}
-                    image={record.preview?.small ? getPreviewUrl(record.preview.small) : ''}
+                    image={getPreviewBySize(record.preview, size)}
+                    size={size}
                 />
             </PreviewWrapper>
             <CardPart className="ui">

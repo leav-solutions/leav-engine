@@ -24,14 +24,14 @@ interface IAttributeListProps {
 function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [attSelected, setAttSelected] = useState<{id: string; format: AttributeFormat}[]>([]);
+    const [attSelected, setAttSelected] = useState<{id: string; format?: AttributeFormat}[]>([]);
 
     const addFilters = () => {
         setFilters(filters => {
             const separators = filters.filter(filter => filter.type === FilterTypes.separator);
             const newFilters: IFilter[] = attSelected.map((att, index) => {
                 // take the first operator for the format of the attribute
-                const defaultConditionOptions = allowedTypeOperator[AttributeFormat[att.format]][0];
+                const defaultConditionOptions = att.format && allowedTypeOperator[AttributeFormat[att.format]][0];
 
                 // if the new filter is after a separator, don't set operator
                 // separator key is the filters length when separator was add
@@ -45,7 +45,7 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
                     operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
                     condition: conditionFilter[defaultConditionOptions],
                     value: '',
-                    attribute: att.id,
+                    attributeId: att.id,
                     active: true,
                     format: att.format
                 };
@@ -59,10 +59,12 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
     };
 
     const handleChecked = (attribute: IAttribute, checked: boolean) => {
-        if (checked) {
-            setAttSelected(attSelected => [...attSelected, {id: attribute.id, format: attribute.format}]);
-        } else {
-            setAttSelected(attSelected => attSelected.filter(att => att.id !== attribute.id));
+        if (attribute) {
+            if (checked) {
+                setAttSelected(attSelected => [...attSelected, {id: attribute.id, format: attribute.format}]);
+            } else {
+                setAttSelected(attSelected => attSelected.filter(att => att.id !== attribute.id));
+            }
         }
     };
 

@@ -11,8 +11,8 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
-import {localizedLabel} from '../../utils';
-import {AttributeFormat, IItem, OrderSearch} from '../../_types/types';
+import {checkTypeIsLink, localizedLabel} from '../../utils';
+import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
 import reducer, {initialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
@@ -50,20 +50,30 @@ function LibraryItemsList(): JSX.Element {
             const {query, filter, searchableFields} = dataLib?.libraries?.list[0]?.gqlNames;
             const firstAttribute = dataLib?.libraries?.list[0]?.attributes[0];
 
-            const attributes = dataLib?.libraries?.list[0]?.attributes.reduce((acc, attribute) => {
-                if (Object.values(AttributeFormat).includes(attribute.format)) {
-                    return [
-                        ...acc,
-                        {
-                            id: attribute.id,
-                            type: attribute.type,
-                            format: attribute.format,
-                            label: attribute.label
-                        }
-                    ];
-                }
-                return acc;
-            }, []);
+            const attributes: IAttribute[] = dataLib?.libraries?.list[0]?.attributes.reduce(
+                (acc: IAttribute[], attribute) => {
+                    if (
+                        (attribute.format === null ||
+                            (attribute.format && Object.values(AttributeFormat).includes(attribute.format))) &&
+                        attribute.type &&
+                        Object.values(AttributeType).includes(attribute.type)
+                    ) {
+                        return [
+                            ...acc,
+                            {
+                                id: attribute.id,
+                                type: attribute.type,
+                                format: attribute.format,
+                                label: attribute.label,
+                                isLink: checkTypeIsLink(attribute.type),
+                                isMultiple: attribute.multiple_values
+                            }
+                        ];
+                    }
+                    return acc;
+                },
+                []
+            );
 
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_LIB_INFOS,
@@ -90,7 +100,6 @@ function LibraryItemsList(): JSX.Element {
             ? getRecordsFromLibraryQuery(
                   state.libQuery || '',
                   state.libFilter,
-                  state.libSearchableField,
                   state.columns.filter(col => state.attributes.find(att => att.id === col.id))
               )
             : getLibraryDetailExtendsQuery,

@@ -80,8 +80,8 @@ function FilterItem({
 
     const textAreaRef = useRef(null);
 
-    const conditionOptionsByType = conditionOptions.filter(conditionOption =>
-        allowedTypeOperator[filter.format]?.includes(conditionOption.value)
+    const conditionOptionsByType = conditionOptions.filter(
+        conditionOption => filter.format && allowedTypeOperator[filter.format]?.includes(conditionOption.value)
     );
 
     const changeActive = () => {
@@ -212,7 +212,7 @@ function FilterItem({
                                 t('filter-item.no-operator')
                             )}
 
-                            <CustomButton onClick={() => setShowModal(true)}>{filter.attribute}</CustomButton>
+                            <CustomButton onClick={() => setShowModal(true)}>{filter.attributeId}</CustomButton>
 
                             <Dropdown
                                 floating

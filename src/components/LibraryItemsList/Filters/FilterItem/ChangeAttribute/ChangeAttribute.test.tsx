@@ -39,7 +39,7 @@ describe('ChangeAttribute', () => {
         operator: false,
         condition: conditionFilter.contains,
         value: '',
-        attribute: 'id',
+        attributeId: 'id',
         active: true,
         format: AttributeFormat.text
     };

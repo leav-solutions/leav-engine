@@ -150,5 +150,10 @@
     "change-attribute": {
         "submit": "Changer",
         "cancel": "Annuler"
+    },
+    "select-view": {
+        "add-view-tile": "Ajouter vue mosaïque",
+        "add-view-list": "Ajouter vue liste",
+        "default-view": "Vue par défault..."
     }
 }

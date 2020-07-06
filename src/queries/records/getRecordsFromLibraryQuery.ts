@@ -1,15 +1,33 @@
 import gql from 'graphql-tag';
 import {IItemsColumn} from '../../_types/types';
 
-export const getRecordsFromLibraryQuery = (
-    libraryName: string,
-    filterName: string,
-    searchableFields?: string,
-    columns?: IItemsColumn[]
-) => {
+export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, columns: IItemsColumn[]) => {
     const libQueryName = libraryName.toUpperCase();
 
-    const fields = columns?.map(col => col.id);
+    const fields = columns.map(col => {
+        if (col.isLink) {
+            return `${col.id} {
+                id
+                whoAmI {
+                    id
+                    label
+                    color
+                    library {
+                        id
+                        label
+                    }
+                    preview {
+                        small
+                        medium
+                        big 
+                        pages
+                    }
+                }
+            }`;
+        } else {
+            return col.id;
+        }
+    });
 
     return gql`
         query ${'GET_RECORDS_FROM_' + libQueryName} (

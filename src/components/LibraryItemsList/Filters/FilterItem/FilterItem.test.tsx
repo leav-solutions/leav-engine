@@ -40,7 +40,7 @@ describe('FilterItem', () => {
         operator: false,
         condition: conditionFilter.contains,
         value: '',
-        attribute: 'test',
+        attributeId: 'test',
         active: true,
         format: AttributeFormat.text
     };

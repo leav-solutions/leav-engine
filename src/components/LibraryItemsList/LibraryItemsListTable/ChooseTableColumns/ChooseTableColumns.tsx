@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
-import {IAttribute} from '../../../../_types/types';
+import {IAttribute, IItemsColumn} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
 import {
     LibraryItemListReducerAction,
@@ -24,13 +24,19 @@ function ChooseTableColumns({
 }: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [columns, setColumns] = useState<{id: string}[]>(stateItems.columns.map(column => ({id: column.id})));
+    const [columns, setColumns] = useState<IItemsColumn[]>(stateItems.columns);
 
     const handleColumnsUpdate = (attribute: IAttribute, checked: boolean) => {
         const restColumns = columns.filter(col => col.id !== attribute.id);
 
         if (checked) {
-            setColumns([...restColumns, {id: attribute.id}]);
+            setColumns([
+                ...restColumns,
+                {
+                    id: attribute.id,
+                    isLink: attribute.isLink
+                }
+            ]);
         } else {
             setColumns(restColumns);
         }
@@ -60,10 +66,8 @@ function ChooseTableColumns({
                 />
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={handleCancel} secondary>
-                    {t('table-columns-selection.cancel')}
-                </Button>
-                <Button onClick={handleSubmit} positive>
+                <Button onClick={handleCancel}>{t('table-columns-selection.cancel')}</Button>
+                <Button onClick={handleSubmit} primary>
                     {t('table-columns-selection.submit')}
                 </Button>
             </Modal.Actions>

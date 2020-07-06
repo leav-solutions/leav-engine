@@ -12,6 +12,7 @@ export const getLibraryDetailExtendsQuery = gql`
                     type
                     format
                     label
+                    multiple_values
                 }
                 gqlNames {
                     query

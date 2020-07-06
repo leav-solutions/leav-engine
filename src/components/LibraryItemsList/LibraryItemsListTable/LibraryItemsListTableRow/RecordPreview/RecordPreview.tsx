@@ -2,6 +2,7 @@ import React from 'react';
 import {Image} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../../../utils/utils';
+import {PreviewSize} from '../../../../../_types/types';
 
 interface IRecordPreviewProps {
     label: string;
@@ -9,11 +10,25 @@ interface IRecordPreviewProps {
     image?: string;
     style?: CSSObject;
     tile?: boolean;
+    size?: PreviewSize;
 }
+
+const getPreviewSize = (size?: PreviewSize) => {
+    switch (size) {
+        case PreviewSize.medium:
+            return '5rem';
+        case PreviewSize.big:
+            return '8rem';
+        case PreviewSize.small:
+        default:
+            return '2rem';
+    }
+};
 
 interface IGeneratedPreviewProps {
     bgColor: string;
     fontColor: string;
+    size?: PreviewSize;
     style?: CSSObject;
 }
 
@@ -22,8 +37,8 @@ const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
     background-color: ${props => props.bgColor};
     color: ${props => props.fontColor};
     font-size: 1.1em;
-    height: 2em;
-    width: 2em;
+    height: ${({size}) => getPreviewSize(size)};
+    width: ${({size}) => getPreviewSize(size)};
     padding: 5px;
     text-align: center;
     display: flex;
@@ -33,30 +48,42 @@ const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
 `;
 GeneratedPreview.displayName = 'GeneratedPreview';
 
-const ImagePreview = styled.div`
+interface IImagePreviewProps {
+    size?: PreviewSize;
+    style?: CSSObject;
+}
+
+const ImagePreview = styled.div<IImagePreviewProps>`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 2rem;
-    width: 2rem;
+    height: ${({size}) => getPreviewSize(size)};
+    width: ${({size}) => getPreviewSize(size)};
     overflow: hidden;
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.1);
 `;
 ImagePreview.displayName = 'ImagePreview';
 
-function RecordPreviewWrapper({label, color, image, style, tile}: IRecordPreviewProps): JSX.Element {
+function RecordPreviewWrapper({label, color, image, style, tile, size}: IRecordPreviewProps): JSX.Element {
     if (tile) {
-        return RecordPreviewTile({label, color, image, style});
+        return RecordPreviewTile({label, color, image, size, style});
     }
-    return RecordPreviewList({label, color, image, style});
+    return RecordPreviewList({label, color, image, size, style});
 }
 
-function RecordPreviewList({label, color, image, style}: IRecordPreviewProps): JSX.Element {
+function RecordPreviewList({label, color, image, size, style}: IRecordPreviewProps): JSX.Element {
     if (image) {
         return (
-            <ImagePreview>
-                <Image src={image} style={{...style, maxHeight: '1.5rem', maxWidth: '1.5rem'}} />
+            <ImagePreview size={size}>
+                <Image
+                    src={image}
+                    style={{
+                        ...style,
+                        maxHeight: `calc(${getPreviewSize(size)} - 0.5rem)`,
+                        maxWidth: `calc(${getPreviewSize(size)} - 0.5rem)`
+                    }}
+                />
             </ImagePreview>
         );
     }
@@ -67,7 +94,13 @@ function RecordPreviewList({label, color, image, style}: IRecordPreviewProps): J
     const fontColor = getInvertColor(bgColor);
 
     return (
-        <GeneratedPreview className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
+        <GeneratedPreview
+            className="initial"
+            bgColor={bgColor}
+            fontColor={fontColor}
+            size={size}
+            style={{...style, fontSize: `calc(${getPreviewSize(size)} - 1rem)`}}
+        >
             {initial}
         </GeneratedPreview>
     );

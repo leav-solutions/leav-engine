@@ -1,5 +1,13 @@
 import {i18n} from 'i18next';
-import {AttributeFormat, AvailableLanguage, conditionFilter, PreviewAttributes} from '../_types/types';
+import {
+    AttributeFormat,
+    AttributeType,
+    AvailableLanguage,
+    conditionFilter,
+    displayListItemTypes,
+    PreviewAttributes,
+    PreviewSize
+} from '../_types/types';
 
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
     return `recordIdentity/${libId}/${recordId}`;
@@ -143,4 +151,25 @@ export const allowedTypeOperator = {
         conditionFilter.greaterThan,
         conditionFilter.lessThan
     ]
+};
+
+export const checkTypeIsLink = (type: AttributeType) => {
+    if (type === AttributeType.simple_link || type === AttributeType.advanced_link) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
+export const displayTypeToPreviewSize = (displayType: displayListItemTypes) => {
+    switch (displayType) {
+        case displayListItemTypes.listSmall:
+            return PreviewSize.small;
+        case displayListItemTypes.listMedium:
+            return PreviewSize.medium;
+        case displayListItemTypes.listBig:
+            return PreviewSize.big;
+        default:
+            return PreviewSize.small;
+    }
 };

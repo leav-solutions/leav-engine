@@ -112,7 +112,7 @@ function App({token, onTokenInvalid}: IAppProps) {
                 switch (obj.__typename) {
                     case 'RecordIdentity':
                         res =
-                            !(obj as any).id || !(obj as any).library.id
+                            !(obj as any)?.id || !(obj as any)?.library?.id
                                 ? defaultDataIdFromObject(obj, {})
                                 : getRecordIdentityCacheKey((obj as any).library.id, (obj as any).id);
                         break;

@@ -64,7 +64,7 @@ const handleValueRequest = (filter: IFilter) => {
                 result.push({operator: operatorFilter.or});
             }
             result.push({
-                field: filter.attribute,
+                field: filter.attributeId,
                 value: filterValue,
                 condition: filter.condition
             });

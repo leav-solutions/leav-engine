@@ -83,16 +83,17 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                               ...acc,
                               {
                                   name: attribute.id,
-                                  display: attribute.label.fr || attribute.label.en
+                                  display: attribute.label.fr || attribute.label.en,
+                                  isLink: attribute.isLink
                               }
                           ]
                         : acc,
-                [{name: 'infos', display: t('items_list.table.infos')}]
+                [{name: 'infos', display: t('items_list.table.infos'), isLink: false}]
             );
 
             setTableColumn(initialTableColumns);
 
-            const columns = initialTableColumns.map(col => ({id: col.name}));
+            const columns = initialTableColumns.map(col => ({id: col.name, isLink: col.isLink}));
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_COLUMNS,
                 columns
