@@ -9,7 +9,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {FormFieldType, IField, IForm, IFormInputField, IFormStrict} from '../../_types/forms';
+import {FormElementTypes, IForm, IFormStrict} from '../../_types/forms';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {validateLibrary} from './helpers/validateLibrary';
@@ -44,10 +44,6 @@ export default function(deps: IDeps = {}): IFormDomain {
         'core.infra.form': formRepo = null,
         'core.utils': utils = null
     } = deps;
-
-    const _isInputField = (field: IField): field is IFormInputField => {
-        return field.type === FormFieldType.INPUT_FIELD;
-    };
 
     return {
         async getFormsByLib({library, params, ctx}): Promise<IList<IForm>> {
@@ -85,8 +81,7 @@ export default function(deps: IDeps = {}): IFormDomain {
                 system: false,
                 dependencyAttributes: [],
                 label: {fr: '', en: ''},
-                layout: [],
-                fields: []
+                elements: []
             };
 
             // Check if form exists
@@ -119,11 +114,11 @@ export default function(deps: IDeps = {}): IFormDomain {
             }
 
             // Extract attributes from form data
-            if (dataToSave.fields?.length) {
-                const attributes: string[] = dataToSave.fields.reduce((attrs, {fields}) => {
-                    for (const field of fields) {
-                        if (_isInputField(field)) {
-                            attrs.push(field.attribute);
+            if (dataToSave.elements?.length) {
+                const attributes: string[] = dataToSave.elements.reduce((attrs, {elements: elements}) => {
+                    for (const elem of elements) {
+                        if (elem.type === FormElementTypes.field && typeof elem.settings.attribute !== 'undefined') {
+                            attrs.push(elem.settings.attribute);
                         }
                     }
 
@@ -142,7 +137,7 @@ export default function(deps: IDeps = {}): IFormDomain {
 
                 if (invalidAttributes.length) {
                     throw new ValidationError({
-                        fields: {
+                        elements: {
                             msg: Errors.UNKNOWN_FORM_ATTRIBUTES,
                             vars: {attributes: invalidAttributes.join(', ')}
                         }
