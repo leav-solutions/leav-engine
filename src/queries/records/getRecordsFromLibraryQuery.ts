@@ -1,31 +1,55 @@
 import gql from 'graphql-tag';
-import {IItemsColumn} from '../../_types/types';
+import {AttributeType, IItemsColumn} from '../../_types/types';
 
 export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, columns: IItemsColumn[]) => {
     const libQueryName = libraryName.toUpperCase();
 
     const fields = columns.map(col => {
-        if (col.isLink) {
-            return `${col.id} {
-                id
-                whoAmI {
+        switch (col.type) {
+            case AttributeType.tree:
+                return `${col.id} {
+                    record {
+                        whoAmI {
+                            id
+                            label
+                            color
+                            library {
+                                id
+                                label
+                            }
+                            preview {
+                                small
+                                medium
+                                big 
+                                pages
+                            }
+                        }   
+                    }
+                }`;
+            case AttributeType.simple_link:
+            case AttributeType.advanced_link:
+                return `${col.id} {
                     id
-                    label
-                    color
-                    library {
+                    whoAmI {
                         id
                         label
+                        color
+                        library {
+                            id
+                            label
+                        }
+                        preview {
+                            small
+                            medium
+                            big 
+                            pages
+                        }
                     }
-                    preview {
-                        small
-                        medium
-                        big 
-                        pages
-                    }
-                }
-            }`;
-        } else {
-            return col.id;
+                }`;
+            case AttributeType.simple:
+            case AttributeType.advanced:
+            default:
+                return col.id;
         }
     });
 

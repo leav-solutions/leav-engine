@@ -1,7 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {displayListItemTypes, OrderSearch} from '../../../_types/types';
+import {DisplayListItemTypes, OrderSearch} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import Filters from './Filters';
@@ -40,7 +40,7 @@ describe('Filters', () => {
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listSmall,
+        displayType: DisplayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},

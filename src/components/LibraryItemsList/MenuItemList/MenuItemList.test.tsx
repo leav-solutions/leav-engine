@@ -1,6 +1,6 @@
 import {shallow} from 'enzyme';
 import React from 'react';
-import {displayListItemTypes} from '../../../_types/types';
+import {DisplayListItemTypes} from '../../../_types/types';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import MenuItemList from './MenuItemList';
 
@@ -21,7 +21,7 @@ describe('MenuItemList', () => {
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listMedium,
+        displayType: DisplayListItemTypes.listMedium,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},

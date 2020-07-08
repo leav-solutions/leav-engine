@@ -4,7 +4,7 @@ import {
     AttributeType,
     AvailableLanguage,
     conditionFilter,
-    displayListItemTypes,
+    DisplayListItemTypes,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -161,13 +161,13 @@ export const checkTypeIsLink = (type: AttributeType) => {
     }
 };
 
-export const displayTypeToPreviewSize = (displayType: displayListItemTypes) => {
+export const displayTypeToPreviewSize = (displayType: DisplayListItemTypes) => {
     switch (displayType) {
-        case displayListItemTypes.listSmall:
+        case DisplayListItemTypes.listSmall:
             return PreviewSize.small;
-        case displayListItemTypes.listMedium:
+        case DisplayListItemTypes.listMedium:
             return PreviewSize.medium;
-        case displayListItemTypes.listBig:
+        case DisplayListItemTypes.listBig:
             return PreviewSize.big;
         default:
             return PreviewSize.small;

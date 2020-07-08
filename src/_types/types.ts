@@ -99,18 +99,14 @@ export enum operatorFilter {
 }
 
 export enum conditionFilter {
-    contains = 'contains',
-    notContains = 'notContains',
-    equal = 'equal',
-    notEqual = 'notEqual',
-    beginWith = 'beginWith',
-    endWith = 'endWith',
-    empty = 'empty',
-    notEmpty = 'notEmpty',
-    greaterThan = 'greaterThan',
-    lessThan = 'lessThan',
-    exist = 'exist',
-    searchIn = 'searchIn'
+    contains = 'CONTAINS',
+    notContains = 'NOT_CONTAINS',
+    equal = 'EQUAL',
+    notEqual = 'NOT_EQUAL',
+    beginWith = 'BEGIN_WITH',
+    endWith = 'END_WITH',
+    greaterThan = 'GREATER_THAN',
+    lessThan = 'LESS_THAN'
 }
 
 export interface IQueryFilter {
@@ -125,7 +121,7 @@ export enum OrderSearch {
     asc = 'asc'
 }
 
-export enum displayListItemTypes {
+export enum DisplayListItemTypes {
     listSmall = 'listSmall',
     listMedium = 'listMedium',
     listBig = 'listBig',
@@ -136,12 +132,17 @@ export interface IAttribute {
     id: string;
     type: AttributeType;
     format?: AttributeFormat;
-    label: ILabel;
+    label: ILabel | string;
     isLink: boolean;
     isMultiple: boolean;
 }
 
 export interface IItemsColumn {
     id: string;
-    isLink: boolean;
+    type: AttributeType;
+}
+
+export interface IRecordEdition {
+    show: boolean;
+    item?: IItem;
 }

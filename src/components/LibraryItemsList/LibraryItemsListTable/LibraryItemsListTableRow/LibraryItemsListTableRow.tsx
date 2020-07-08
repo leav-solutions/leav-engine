@@ -6,7 +6,7 @@ import {checkTypeIsLink, displayTypeToPreviewSize} from '../../../../utils';
 import {
     AttributeFormat,
     AttributeType,
-    displayListItemTypes,
+    DisplayListItemTypes,
     IItem,
     IItemsColumn,
     PreviewSize
@@ -17,17 +17,16 @@ import {
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../../LibraryItemsListReducer';
-import LibraryItemsModal from './LibraryItemsModal';
 
-const getRowHeight = (displayType: displayListItemTypes) => {
+const getRowHeight = (displayType: DisplayListItemTypes) => {
     switch (displayType) {
-        case displayListItemTypes.listSmall:
+        case DisplayListItemTypes.listSmall:
             return '3rem';
-        case displayListItemTypes.listMedium:
+        case DisplayListItemTypes.listMedium:
             return '6rem';
-        case displayListItemTypes.listBig:
+        case DisplayListItemTypes.listBig:
             return '9rem';
-        case displayListItemTypes.tile:
+        case DisplayListItemTypes.tile:
             return '0rem';
     }
 };
@@ -39,7 +38,7 @@ const handleValueDisplay = (
     isMultiple: boolean,
     size: PreviewSize
 ) => {
-    if (value) {
+    if (value !== undefined && value !== null) {
         switch (format) {
             case AttributeFormat.boolean:
                 return <Icon name={value ? 'check' : 'cancel'} />;
@@ -48,21 +47,20 @@ const handleValueDisplay = (
             default:
                 if (isMultiple) {
                     return value?.map(val => handleValueDisplay(val, format, type, !!Array.isArray(val), size));
+                } else if (checkTypeIsLink(type)) {
+                    return <RecordCard record={{...value.whoAmI}} size={size} />;
+                } else if (type === AttributeType.tree) {
+                    return <RecordCard key={value?.record?.whoAmI?.id} record={{...value.record.whoAmI}} size={size} />;
                 }
 
-                if (checkTypeIsLink(type)) {
-                    return <RecordCard record={{...value.whoAmI}} size={size} />;
-                }
                 return value;
         }
-    } else {
-        return '-';
     }
 };
 
 interface RowProps {
     selected: boolean;
-    size: displayListItemTypes;
+    size: DisplayListItemTypes;
 }
 
 const TableRow = styled(Table.Row)<RowProps>`
@@ -96,8 +94,14 @@ interface ILibraryItemsListTableRowProps {
     item: IItem;
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+    showRecordEdition: (item: IItem) => void;
 }
-function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryItemsListTableRowProps): JSX.Element {
+function LibraryItemsListTableRow({
+    item,
+    stateItems,
+    dispatchItems,
+    showRecordEdition
+}: ILibraryItemsListTableRowProps): JSX.Element {
     const [isSelected, setIsSelect] = useState<boolean>(!!stateItems.itemsSelected[item.id]);
 
     const handleClickRow = () => {
@@ -127,6 +131,7 @@ function LibraryItemsListTableRow({item, stateItems, dispatchItems}: ILibraryIte
                             dispatchItems={dispatchItems}
                             isSelected={isSelected}
                             setIsSelect={setIsSelect}
+                            showRecordEdition={showRecordEdition}
                         />
                     ) : (
                         <Row key={column.id} item={item} column={column} stateItems={stateItems} />
@@ -166,17 +171,11 @@ interface IInfosRow {
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     isSelected: boolean;
     setIsSelect: React.Dispatch<React.SetStateAction<boolean>>;
+    showRecordEdition: (item: IItem) => void;
 }
 
-const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect}: IInfosRow) => {
+const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, showRecordEdition}: IInfosRow) => {
     const {t} = useTranslation();
-
-    const [showRecordEdition, setShowModalEdition] = useState(false);
-    const [values, setValues] = useState(item);
-
-    const handleShowModal = () => {
-        setShowModalEdition(true);
-    };
 
     const handleCheckboxChange = (event: React.FormEvent<HTMLInputElement>, {checked}: CheckboxProps) => {
         setIsSelect(s => !s);
@@ -198,6 +197,7 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect}: II
             itemsSelected: {...stateItems.itemsSelected, [item.id]: true}
         });
     };
+
     return (
         <>
             <Table.Cell>
@@ -226,7 +226,7 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect}: II
                                     <Popup
                                         hoverable={false}
                                         content={t('items-list-row.edit')}
-                                        trigger={<Button icon="write" onClick={handleShowModal} />}
+                                        trigger={<Button icon="write" onClick={() => showRecordEdition(item)} />}
                                     />
                                     <Button icon="like" />
                                     <Button icon="ellipsis horizontal" />
@@ -236,13 +236,6 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect}: II
                     </Grid.Row>
                 </Grid>
             </Table.Cell>
-
-            <LibraryItemsModal
-                showModal={showRecordEdition}
-                setShowModal={setShowModalEdition}
-                values={values}
-                setValues={setValues}
-            />
         </>
     );
 };

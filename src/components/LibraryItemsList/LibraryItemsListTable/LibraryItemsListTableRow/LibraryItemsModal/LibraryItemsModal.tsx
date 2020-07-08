@@ -7,12 +7,12 @@ import FormPreviewsModal from './FormPreviewsModal';
 
 interface ILibraryItemsModalProps {
     showModal: boolean;
-    setShowModal: (showModal: boolean) => void;
-    values: IItem;
-    setValues: React.Dispatch<React.SetStateAction<IItem>>;
+    closeModal: () => void;
+    values?: IItem;
+    updateValues: (newItem: IItem) => void;
 }
 
-function LibraryItemsModal({showModal, setShowModal, values, setValues}: ILibraryItemsModalProps): JSX.Element {
+function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibraryItemsModalProps): JSX.Element {
     const formRef = useRef<HTMLFormElement>(null);
 
     const [saveValueBatch] = useMutation(saveValueBatchQuery);
@@ -23,12 +23,12 @@ function LibraryItemsModal({showModal, setShowModal, values, setValues}: ILibrar
         saveValueBatch({
             variables: {
                 library: values?.library?.id,
-                recordId: values.id,
+                recordId: values?.id,
                 version: null,
                 values: [
                     {
                         attribute: 'label',
-                        value: values.label
+                        value: values?.label
                     }
                 ]
             }
@@ -39,35 +39,33 @@ function LibraryItemsModal({showModal, setShowModal, values, setValues}: ILibrar
         formRef.current?.dispatchEvent(new Event('submit'));
     };
 
-    const close = () => {
-        setShowModal(false);
-    };
-
     return (
-        <Modal open={showModal} onClose={close} closeIcon>
+        <Modal open={showModal} onClose={closeModal} closeIcon>
             <Modal.Header>Modal</Modal.Header>
-            <Modal.Content>
-                <Form as="div">
-                    <form ref={formRef} onSubmit={handleSubmit}>
-                        <Form.Field>
-                            <label>Id</label>
-                            <input disabled type="text" value={values.id} />
-                        </Form.Field>
-                        <Form.Field>
-                            <label>Label</label>
-                            <input
-                                type="text"
-                                value={values.label || ''}
-                                onChange={e => setValues({...values, label: e.target.value})}
-                            />
-                        </Form.Field>
-                        <Header as="h2">Preview</Header>
-                        <FormPreviewsModal values={values} setValues={setValues} />
-                    </form>
-                </Form>
-            </Modal.Content>
+            {values && (
+                <Modal.Content>
+                    <Form as="div">
+                        <form ref={formRef} onSubmit={handleSubmit}>
+                            <Form.Field>
+                                <label>Id</label>
+                                <input disabled type="text" value={values?.id} />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Label</label>
+                                <input
+                                    type="text"
+                                    value={values?.label || ''}
+                                    onChange={e => updateValues({...values, label: e.target.value})}
+                                />
+                            </Form.Field>
+                            <Header as="h2">Preview</Header>
+                            <FormPreviewsModal values={values} updateValues={updateValues} />
+                        </form>
+                    </Form>
+                </Modal.Content>
+            )}
             <Modal.Actions>
-                <Button secondary onClick={close}>
+                <Button secondary onClick={closeModal}>
                     Close
                 </Button>
                 <Button positive onClick={triggerSubmit}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Dropdown, DropdownProps, Menu, Popup} from 'semantic-ui-react';
-import {displayListItemTypes} from '../../../_types/types';
+import {DisplayListItemTypes} from '../../../_types/types';
 import LibraryItemsListMenuPagination from '../LibraryItemsListMenuPagination';
 import {
     LibraryItemListReducerAction,
@@ -24,25 +24,25 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
         {
             key: 'list-small',
             text: t('items_list.display.list-small'),
-            value: displayListItemTypes.listSmall,
+            value: DisplayListItemTypes.listSmall,
             icon: 'list layout'
         },
         {
             key: 'list-medium',
             text: t('items_list.display.list-medium'),
-            value: displayListItemTypes.listMedium,
+            value: DisplayListItemTypes.listMedium,
             icon: 'list layout'
         },
         {
             key: 'list-big',
             text: t('items_list.display.list-big'),
-            value: displayListItemTypes.listBig,
+            value: DisplayListItemTypes.listBig,
             icon: 'list layout'
         },
         {
             key: 'tile',
             text: t('items_list.display.tile'),
-            value: displayListItemTypes.tile,
+            value: DisplayListItemTypes.tile,
             icon: 'th large',
             default: true
         }
@@ -54,7 +54,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
         if (newDisplay) {
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE,
-                displayType: displayListItemTypes[newDisplay]
+                displayType: DisplayListItemTypes[newDisplay]
             });
         }
     };

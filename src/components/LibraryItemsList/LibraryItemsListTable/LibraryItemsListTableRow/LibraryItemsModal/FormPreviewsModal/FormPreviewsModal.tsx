@@ -5,10 +5,10 @@ import {IItem, IPreview, PreviewAttributes} from '../../../../../../_types/types
 
 interface IFormPreviewsModal {
     values: IItem;
-    setValues: (item: IItem) => void;
+    updateValues: (item: IItem) => void;
 }
 
-const FormPreviewsModal = ({values, setValues}: IFormPreviewsModal) => {
+const FormPreviewsModal = ({values, updateValues}: IFormPreviewsModal) => {
     const previewAttributes = getPreviewSizes();
 
     const defaultPreview: any = {};
@@ -31,7 +31,7 @@ const FormPreviewsModal = ({values, setValues}: IFormPreviewsModal) => {
                     <FormPreviewModal
                         key={previewAttribute}
                         values={values}
-                        setValues={setValues}
+                        updateValues={updateValues}
                         previewAttribute={previewAttribute}
                         defaultPreview={defaultPreview}
                     />
@@ -43,12 +43,12 @@ const FormPreviewsModal = ({values, setValues}: IFormPreviewsModal) => {
 
 interface IFormPreviewModal {
     values: IItem;
-    setValues: (item: IItem) => void;
+    updateValues: (item: IItem) => void;
     previewAttribute: PreviewAttributes;
     defaultPreview: any;
 }
 
-const FormPreviewModal = ({values, setValues, previewAttribute, defaultPreview}: IFormPreviewModal) => {
+const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPreview}: IFormPreviewModal) => {
     const att: 'small' | 'medium' | 'big' | 'pages' = previewAttribute as any;
 
     return (
@@ -58,7 +58,7 @@ const FormPreviewModal = ({values, setValues, previewAttribute, defaultPreview}:
                 disabled
                 value={(values.preview && values.preview[att]) ?? ''}
                 onChange={e =>
-                    setValues({
+                    updateValues({
                         ...values,
                         preview: values.preview
                             ? {...values.preview, [previewAttribute]: e.target.value}

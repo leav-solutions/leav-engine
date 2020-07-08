@@ -1,8 +1,8 @@
 import React from 'react';
-import {displayListItemTypes} from '../../../_types/types';
-import ItemsTitleDisplay from '../ItemsTitleDisplay';
+import {DisplayListItemTypes} from '../../../_types/types';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import LibraryItemsListTable from '../LibraryItemsListTable';
+import TileDisplay from '../TileDisplay';
 
 interface IDisplayTypeSelectorProps {
     stateItems: LibraryItemListState;
@@ -11,11 +11,11 @@ interface IDisplayTypeSelectorProps {
 
 function DisplayTypeSelector({stateItems, dispatchItems}: IDisplayTypeSelectorProps): JSX.Element {
     switch (stateItems.displayType) {
-        case displayListItemTypes.tile:
-            return <ItemsTitleDisplay stateItems={stateItems} dispatchItems={dispatchItems} />;
-        case displayListItemTypes.listSmall:
-        case displayListItemTypes.listMedium:
-        case displayListItemTypes.listBig:
+        case DisplayListItemTypes.tile:
+            return <TileDisplay stateItems={stateItems} dispatchItems={dispatchItems} />;
+        case DisplayListItemTypes.listSmall:
+        case DisplayListItemTypes.listMedium:
+        case DisplayListItemTypes.listBig:
             return <LibraryItemsListTable stateItems={stateItems} dispatchItems={dispatchItems} />;
     }
 }

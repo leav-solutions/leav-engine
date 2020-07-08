@@ -4,7 +4,7 @@ import {act} from 'react-dom/test-utils';
 import {
     AttributeFormat,
     conditionFilter,
-    displayListItemTypes,
+    DisplayListItemTypes,
     FilterTypes,
     IFilter,
     OrderSearch
@@ -24,7 +24,7 @@ describe('ChangeAttribute', () => {
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listSmall,
+        displayType: DisplayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},

@@ -8,7 +8,6 @@ import {
 } from '@apollo/client';
 import {onError} from '@apollo/link-error';
 import {default as React} from 'react';
-import 'semantic-ui-css/semantic.min.css';
 import {getRecordIdentityCacheKey} from '../../utils/utils';
 import './App.css';
 import AppHandler from './AppHandler';

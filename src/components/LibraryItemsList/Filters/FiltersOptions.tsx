@@ -9,12 +9,10 @@ export function getConditionOptions(t: TFunction) {
         {text: t('filters.not-equal'), value: conditionFilter.notEqual},
         {text: t('filters.begin-with'), value: conditionFilter.beginWith},
         {text: t('filters.end-with'), value: conditionFilter.endWith},
-        {text: t('filters.is-empty'), value: conditionFilter.empty},
-        {text: t('filters.is-not-empty'), value: conditionFilter.notEmpty},
         {text: t('filters.greater-than'), value: conditionFilter.greaterThan},
-        {text: t('filters.less-than'), value: conditionFilter.lessThan},
-        {text: t('filters.exist'), value: conditionFilter.exist},
-        {text: t('filters.search-in'), value: conditionFilter.searchIn}
+        {text: t('filters.less-than'), value: conditionFilter.lessThan}
+        // {text: t('filters.exist'), value: conditionFilter.exist},
+        // {text: t('filters.search-in'), value: conditionFilter.searchIn}
     ];
 
     return conditionOptions;

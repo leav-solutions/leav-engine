@@ -65,13 +65,6 @@ const ImagePreview = styled.div<IImagePreviewProps>`
 `;
 ImagePreview.displayName = 'ImagePreview';
 
-function RecordPreviewWrapper({label, color, image, style, tile, size}: IRecordPreviewProps): JSX.Element {
-    if (tile) {
-        return RecordPreviewTile({label, color, image, size, style});
-    }
-    return RecordPreviewList({label, color, image, size, style});
-}
-
 function RecordPreviewList({label, color, image, size, style}: IRecordPreviewProps): JSX.Element {
     if (image) {
         return (
@@ -93,13 +86,18 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 
+    const containerSize = getPreviewSize(size);
+
     return (
         <GeneratedPreview
             className="initial"
             bgColor={bgColor}
             fontColor={fontColor}
             size={size}
-            style={{...style, fontSize: `calc(${getPreviewSize(size)} - 1rem)`}}
+            style={{
+                ...style,
+                fontSize: containerSize > '4rem' ? `calc(${containerSize} - 3rem)` : `calc(${containerSize} - 1rem)`
+            }}
         >
             {initial}
         </GeneratedPreview>
@@ -117,6 +115,7 @@ const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-radius: 0.25rem 0.25rem 0 0;
 `;
 GeneratedPreviewTile.displayName = 'GeneratedPreviewTile';
 
@@ -127,6 +126,7 @@ const ImagePreviewTile = styled.div`
     height: 10rem;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
 `;
 ImagePreviewTile.displayName = 'ImagePreviewTile';
 
@@ -149,6 +149,13 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
             {initial}
         </GeneratedPreviewTile>
     );
+}
+
+function RecordPreviewWrapper({label, color, image, style, tile, size}: IRecordPreviewProps): JSX.Element {
+    if (tile) {
+        return RecordPreviewTile({label, color, image, size, style});
+    }
+    return RecordPreviewList({label, color, image, size, style});
 }
 
 export default React.memo(RecordPreviewWrapper);

@@ -2,7 +2,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {Checkbox} from 'semantic-ui-react';
-import {AttributeFormat, AttributeType, displayListItemTypes, IAttribute, OrderSearch} from '../../../../_types/types';
+import {AttributeFormat, AttributeType, DisplayListItemTypes, IAttribute, OrderSearch} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
@@ -17,7 +17,7 @@ describe('ChooseTableColumns', () => {
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listSmall,
+        displayType: DisplayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},

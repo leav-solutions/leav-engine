@@ -118,22 +118,27 @@ function LibraryItemsList(): JSX.Element {
         if (!loadingItem && calledItem && dataItem && client && state.libFilter) {
             const itemsFromQuery = dataItem ? dataItem[state.libQuery || ''].list : [];
 
-            const items = itemsFromQuery.map(item => ({
-                ...{
-                    id: item.whoAmI.id,
-                    label: localizedLabel(item.whoAmI.label, lang),
-                    color: item.whoAmI.color,
-                    preview: item.whoAmI.preview,
-                    library: {
-                        id: item.whoAmI.library.id,
-                        label: item.whoAmI.library.label
-                    }
-                },
-                ...Object.keys(item).reduce((acc, key) => {
-                    acc[key] = item[key];
-                    return acc;
-                }, {})
-            }));
+            const items = itemsFromQuery.map(item => {
+                return {
+                    ...{
+                        id: item.whoAmI.id,
+                        label:
+                            typeof item.whoAmI.label === 'string'
+                                ? item.whoAmI.label
+                                : localizedLabel(item.whoAmI.label, lang),
+                        color: item.whoAmI.color,
+                        preview: item.whoAmI.preview,
+                        library: {
+                            id: item.whoAmI.library.id,
+                            label: item.whoAmI.library.label
+                        }
+                    },
+                    ...Object.keys(item).reduce((acc, key) => {
+                        acc[key] = item[key];
+                        return acc;
+                    }, {})
+                };
+            });
 
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,

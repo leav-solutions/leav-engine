@@ -1,6 +1,6 @@
 import {mount} from 'enzyme';
 import React from 'react';
-import {displayListItemTypes, IItem, OrderSearch} from '../../../_types/types';
+import {DisplayListItemTypes, IItem, OrderSearch} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
@@ -46,7 +46,7 @@ describe('LibraryItemsListTable', () => {
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listSmall,
+        displayType: DisplayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},

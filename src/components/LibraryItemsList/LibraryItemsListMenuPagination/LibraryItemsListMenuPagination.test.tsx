@@ -2,7 +2,7 @@ import {mount, render} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {Dropdown} from 'semantic-ui-react';
-import {displayListItemTypes} from '../../../_types/types';
+import {DisplayListItemTypes} from '../../../_types/types';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
 
@@ -22,7 +22,7 @@ describe('LibraryItemsListMenuPagination', () => {
         itemsTotalCount: totalCount,
         offset: offset,
         pagination: pagination,
-        displayType: displayListItemTypes.listMedium,
+        displayType: DisplayListItemTypes.listMedium,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},

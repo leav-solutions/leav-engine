@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dimmer, Dropdown, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {OrderSearch} from '../../../_types/types';
+import {AttributeType, IRecordEdition, OrderSearch} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {
     LibraryItemListReducerAction,
@@ -11,6 +11,7 @@ import {
 } from '../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
+import LibraryItemsModal from './LibraryItemsListTableRow/LibraryItemsModal';
 
 const TableWrapper = styled.div`
     &&& {
@@ -18,6 +19,8 @@ const TableWrapper = styled.div`
         overflow: auto;
         padding: 0;
         margin-top: 0;
+
+        border: 1px solid rgba(34, 36, 38, 0.15);
     }
 `;
 
@@ -72,6 +75,9 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
     const [tableColumns, setTableColumn] = useState<ITableHeader[]>([]);
     const [openChangeColumns, setOpenChangeColumns] = useState(false);
+    const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
+        show: false
+    });
 
     useEffect(() => {
         if (stateItems.attributes.length && !stateItems.columns.length) {
@@ -83,17 +89,20 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                               ...acc,
                               {
                                   name: attribute.id,
-                                  display: attribute.label.fr || attribute.label.en,
-                                  isLink: attribute.isLink
+                                  display:
+                                      typeof attribute.label === 'string'
+                                          ? attribute.label
+                                          : attribute.label.fr || attribute.label.en,
+                                  type: attribute.type
                               }
                           ]
                         : acc,
-                [{name: 'infos', display: t('items_list.table.infos'), isLink: false}]
+                [{name: 'infos', display: t('items_list.table.infos'), type: AttributeType.simple}]
             );
 
             setTableColumn(initialTableColumns);
 
-            const columns = initialTableColumns.map(col => ({id: col.name, isLink: col.isLink}));
+            const columns = initialTableColumns.map(col => ({id: col.name, type: col.type}));
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_COLUMNS,
                 columns
@@ -105,7 +114,10 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     if (attribute) {
                         return {
                             name: attribute.id,
-                            display: attribute.label.fr || attribute.label.en
+                            display:
+                                typeof attribute.label === 'string'
+                                    ? attribute.label
+                                    : attribute.label.fr || attribute.label.en
                         };
                     }
                     // only the infos columns isn't in attributes
@@ -197,6 +209,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                                     item={item}
                                     stateItems={stateItems}
                                     dispatchItems={dispatchItems}
+                                    showRecordEdition={item => setRecordEdition(re => ({show: true, item}))}
                                 />
                             ))}
                     </Table.Body>
@@ -210,6 +223,13 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     </Menu>
                 </div>
             </FooterTable>
+
+            <LibraryItemsModal
+                showModal={recordEdition.show}
+                closeModal={() => setRecordEdition(re => ({...re, show: false}))}
+                values={recordEdition.item}
+                updateValues={item => setRecordEdition(re => ({...re, item}))}
+            />
         </>
     );
 }

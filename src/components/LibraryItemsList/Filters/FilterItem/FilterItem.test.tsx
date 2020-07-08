@@ -5,7 +5,7 @@ import {Checkbox, Dropdown, TextArea} from 'semantic-ui-react';
 import {
     AttributeFormat,
     conditionFilter,
-    displayListItemTypes,
+    DisplayListItemTypes,
     FilterTypes,
     IFilter,
     operatorFilter,
@@ -25,7 +25,7 @@ describe('FilterItem', () => {
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listSmall,
+        displayType: DisplayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},

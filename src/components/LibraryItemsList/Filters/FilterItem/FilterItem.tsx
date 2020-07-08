@@ -20,6 +20,7 @@ const GridRow = styled.div`
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
+    align-items: center;
 `;
 
 interface GridColumnProps {
@@ -32,12 +33,26 @@ const GridColumn = styled.div<GridColumnProps>`
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-around;
-    align-items: top;
+    align-items: center;
+
+    &:first-child {
+        justify-content: start;
+    }
+
+    &:last-child {
+        justify-content: end;
+    }
 `;
 
-const CustomButton = styled.button`
-    border: none;
+const CurrentAttribute = styled.span`
+    cursor: pointer;
     background: none;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+
+    &:hover {
+        background: hsla(0, 0%, 0%, 0.1);
+    }
 `;
 
 const CustomForm = styled(Form)`
@@ -212,7 +227,7 @@ function FilterItem({
                                 t('filter-item.no-operator')
                             )}
 
-                            <CustomButton onClick={() => setShowModal(true)}>{filter.attributeId}</CustomButton>
+                            <CurrentAttribute onClick={() => setShowModal(true)}>{filter.attributeId}</CurrentAttribute>
 
                             <Dropdown
                                 floating

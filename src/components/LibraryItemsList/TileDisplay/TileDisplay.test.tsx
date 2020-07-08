@@ -1,10 +1,11 @@
 import {mount} from 'enzyme';
 import React from 'react';
-import {displayListItemTypes, IItem, OrderSearch} from '../../../_types/types';
+import {DisplayListItemTypes, IItem, OrderSearch} from '../../../_types/types';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
 import RecordPreview from '../LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
-import ItemsTitleDisplay from './ItemsTitleDisplay';
+import TileDisplay from './TileDisplay';
 
 jest.mock(
     '../LibraryItemsListPagination',
@@ -14,7 +15,7 @@ jest.mock(
         }
 );
 
-describe('ItemsTitleDisplay', () => {
+describe('TileDisplay', () => {
     const stateItems: LibraryItemListState = {
         libQuery: 'test',
         libFilter: 'test',
@@ -24,7 +25,7 @@ describe('ItemsTitleDisplay', () => {
         itemsTotalCount: 0,
         offset: 0,
         pagination: 20,
-        displayType: displayListItemTypes.listSmall,
+        displayType: DisplayListItemTypes.listSmall,
         showFilters: false,
         selectionMode: false,
         itemsSelected: {},
@@ -42,7 +43,11 @@ describe('ItemsTitleDisplay', () => {
         ];
 
         const stateMock = {...stateItems, items: itemsMock};
-        const comp = mount(<ItemsTitleDisplay stateItems={stateMock} dispatchItems={dispatchItems} />);
+        const comp = mount(
+            <MockedProviderWithFragments>
+                <TileDisplay stateItems={stateMock} dispatchItems={dispatchItems} />
+            </MockedProviderWithFragments>
+        );
 
         expect(comp.find(RecordPreview)).toHaveLength(1);
         expect(comp.find(LibraryItemsListPagination)).toHaveLength(1);

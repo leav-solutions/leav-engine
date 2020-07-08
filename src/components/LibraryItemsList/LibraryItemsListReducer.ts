@@ -1,4 +1,4 @@
-import {displayListItemTypes, IAttribute, IItem, IItemsColumn, IQueryFilter, OrderSearch} from '../../_types/types';
+import {DisplayListItemTypes, IAttribute, IItem, IItemsColumn, IQueryFilter, OrderSearch} from '../../_types/types';
 
 export enum LibraryItemListReducerActionTypes {
     SET_LIB_INFOS = 'SET_LIB_INFOS',
@@ -27,7 +27,7 @@ export interface LibraryItemListState {
     itemsTotalCount: number;
     offset: number;
     pagination: number;
-    displayType: displayListItemTypes;
+    displayType: DisplayListItemTypes;
     showFilters: boolean;
     selectionMode: boolean;
     itemsSelected: {[x: string]: boolean};
@@ -45,7 +45,7 @@ export const initialState: LibraryItemListState = {
     itemsTotalCount: 0,
     offset: 0,
     pagination: 20,
-    displayType: displayListItemTypes.listSmall,
+    displayType: DisplayListItemTypes.listSmall,
     showFilters: false,
     selectionMode: false,
     itemsSelected: {},
@@ -88,7 +88,7 @@ export type LibraryItemListReducerAction =
       }
     | {
           type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE;
-          displayType: displayListItemTypes;
+          displayType: DisplayListItemTypes;
       }
     | {
           type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS;

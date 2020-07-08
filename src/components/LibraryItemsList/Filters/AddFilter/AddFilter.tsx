@@ -2,14 +2,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {allowedTypeOperator} from '../../../../utils';
-import {
-    AttributeFormat,
-    conditionFilter,
-    FilterTypes,
-    IAttribute,
-    IFilter,
-    IFilterSeparator
-} from '../../../../_types/types';
+import {AttributeFormat, FilterTypes, IAttribute, IFilter, IFilterSeparator} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
 import {LibraryItemListState} from '../../LibraryItemsListReducer';
 
@@ -43,7 +36,7 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
                     type: FilterTypes.filter,
                     key: filters.length + index,
                     operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
-                    condition: conditionFilter[defaultConditionOptions],
+                    condition: defaultConditionOptions,
                     value: '',
                     attributeId: att.id,
                     active: true,

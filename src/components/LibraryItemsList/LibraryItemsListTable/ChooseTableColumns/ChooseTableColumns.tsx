@@ -34,7 +34,7 @@ function ChooseTableColumns({
                 ...restColumns,
                 {
                     id: attribute.id,
-                    isLink: attribute.isLink
+                    type: attribute.type
                 }
             ]);
         } else {

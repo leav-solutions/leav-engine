@@ -20,10 +20,10 @@ jest.mock(
         }
 );
 jest.mock(
-    './ItemsTitleDisplay',
+    './TileDisplay',
     () =>
-        function ItemsTitleDisplay() {
-            return <div>ItemsTitleDisplay</div>;
+        function TileDisplay() {
+            return <div>TileDisplay</div>;
         }
 );
 jest.mock(
