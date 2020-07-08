@@ -1,4 +1,4 @@
-import {GraphQLScalarType} from 'graphql';
+import {GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
@@ -12,6 +12,28 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     config?: any;
 }
+
+const _parseLiteralAny = ast => {
+    switch (ast.kind) {
+        case Kind.BOOLEAN:
+        case Kind.STRING:
+            return ast.value;
+        case Kind.INT:
+        case Kind.FLOAT:
+            return Number(ast.value);
+        case Kind.LIST:
+            return ast.values.map(_parseLiteralAny);
+        case Kind.OBJECT:
+            return ast.fields.reduce((accumulator, field) => {
+                accumulator[field.name.value] = _parseLiteralAny(field.value);
+                return accumulator;
+            }, {});
+        case Kind.NULL:
+            return null;
+        default:
+            return ast.value;
+    }
+};
 
 export default function({'core.app.graphql': graphqlApp = null, config = null}: IDeps = ({} = {})): ICoreApp {
     return {
@@ -52,7 +74,7 @@ export default function({'core.app.graphql': graphqlApp = null, config = null}: 
                         description: 'Can be anything',
                         serialize: val => val,
                         parseValue: val => val,
-                        parseLiteral: ast => ast
+                        parseLiteral: _parseLiteralAny
                     }),
                     SystemTranslation: new GraphQLScalarType({
                         name: 'SystemTranslation',
