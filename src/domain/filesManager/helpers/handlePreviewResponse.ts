@@ -1,6 +1,8 @@
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IAmqpManager} from '../../../infra/amqpManager/amqpManager';
 import {RoutingKeys} from '../../../_types/amqp';
@@ -13,8 +15,6 @@ import {
 } from '../../../_types/filesManager';
 import {getInputData, getRecord, updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
-import {v4 as uuidv4} from 'uuid';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IHandlePreviewResponseDeps {
     recordDomain: IRecordDomain;
@@ -27,7 +27,7 @@ export interface IHandlePreviewResponseDeps {
 const onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
     let previewResponse: IPreviewResponse;
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: deps.config.filesManager.userId,
         queryId: uuidv4()
     };
     try {

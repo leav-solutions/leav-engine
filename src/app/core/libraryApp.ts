@@ -312,7 +312,7 @@ export default function({
                             ctx
                         });
 
-                        return Array.isArray(val) ? val.map(v => v.value) : val.value;
+                        return Array.isArray(val) ? val.map(v => v?.value) : val?.value;
                     };
                 }
             }
