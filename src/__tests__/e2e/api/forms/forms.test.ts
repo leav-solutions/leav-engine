@@ -37,17 +37,29 @@ describe('Forms', () => {
                     id: "${formName}"
                     library: "${libraryId}"
                     label: { fr: "Formulaire édition" }
-                    layout: [
-                        { id: "some_container", type: "fields_container" }
-                    ]
-                    fields: [
+                    elements: [
                         {
-                            fields: [
+                            elements: [
                                 {
-                                containerId: "some_container"
-                                attribute: "${fieldAttributeId}"
-                                type: "input_field"
-                                required: false
+                                    id: "some_container"
+                                    containerId: "__root"
+                                    order: 0
+                                    type: layout
+                                    uiElementType: "fields_container"
+                                    settings: []
+                                },
+                                {
+                                    id: "123456"
+                                    containerId: "some_container"
+                                    order: 0
+                                    uiElementType: "input"
+                                    type: field
+                                    settings: [
+                                        {
+                                            key: "attribute"
+                                            value: "${fieldAttributeId}"
+                                        }
+                                    ]
                                 }
                             ]
                         }
@@ -56,16 +68,18 @@ describe('Forms', () => {
             ) {
                 id
                 label
-                layout
-                fields
+                elements {
+                    elements {
+                        id
+                    }
+                }
             }
         }`);
 
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveForm.id).toBe(formName);
-        expect(typeof res.data.data.saveForm.layout).toBe('object');
-        expect(typeof res.data.data.saveForm.fields).toBe('object');
+        expect(typeof res.data.data.saveForm.elements[0].elements).toBe('object');
     });
 
     test('Send error if unknown attribute', async () => {
@@ -75,17 +89,29 @@ describe('Forms', () => {
                     id: "${formName}"
                     library: "${libraryId}"
                     label: { fr: "Formulaire édition" }
-                    layout: [
-                        { id: "some_container", type: "fields_container" }
-                    ]
-                    fields: [
+                    elements: [
                         {
-                            fields: [
+                            elements: [
                                 {
-                                containerId: "some_container"
-                                attribute: "forms_unknown_attribute"
-                                type: "input_field"
-                                required: false
+                                    id: "some_container"
+                                    containerId: "__root"
+                                    order: 0
+                                    type: layout
+                                    uiElementType: "fields_container"
+                                    settings: []
+                                },
+                                {
+                                    id: "123456"
+                                    containerId: "some_container"
+                                    order: 0
+                                    uiElementType: "input"
+                                    type: field
+                                    settings: [
+                                        {
+                                            key: "attribute"
+                                            value: "forms_unknown_attribute"
+                                        }
+                                    ]
                                 }
                             ]
                         }
@@ -94,13 +120,16 @@ describe('Forms', () => {
             ) {
                 id
                 label
-                layout
-                fields
+                elements {
+                    elements {
+                        id
+                    }
+                }
             }
         }`);
 
         expect(res.status).toBe(200);
-        expect(res.data.errors[0].extensions.fields.fields).toBeDefined();
+        expect(res.data.errors[0].extensions.fields.elements).toBeDefined();
     });
 
     test('Handle 2 forms with same id on different libraries', async () => {
@@ -117,8 +146,11 @@ describe('Forms', () => {
                 library {
                     id
                 }
-                layout
-                fields
+                elements {
+                    elements {
+                        id
+                    }
+                }
             }
         }`);
 
@@ -141,8 +173,11 @@ describe('Forms', () => {
                     dependencyAttributes {
                         id
                     }
-                    layout
-                    fields
+                    elements {
+                        elements {
+                            id
+                        }
+                    }
                 }
             }
         }`);

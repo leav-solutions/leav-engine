@@ -1,10 +1,23 @@
-import {FormFieldType, FormLayoutElementType, IFormInputField, IFormStrict} from '../../_types/forms';
+import {FormElementTypes, IFormElement, IFormStrict} from '../../_types/forms';
 
-const myField: IFormInputField = {
-    containerId: 'some_container',
-    attribute: 'test_attribute',
-    type: FormFieldType.INPUT_FIELD,
-    required: false
+const myField: IFormElement = {
+    id: '123456',
+    order: 0,
+    type: FormElementTypes.field,
+    uiElementType: 'input',
+    containerId: '987654',
+    settings: {
+        attribute: 'test_attribute'
+    }
+};
+
+const myLayoutElement: IFormElement = {
+    id: '987654',
+    order: 0,
+    type: FormElementTypes.layout,
+    uiElementType: 'container',
+    containerId: '__root',
+    settings: {}
 };
 
 export const mockForm: IFormStrict = {
@@ -13,11 +26,5 @@ export const mockForm: IFormStrict = {
     system: false,
     dependencyAttributes: [],
     label: {fr: 'Test Form'},
-    layout: [
-        {
-            id: 'some_container',
-            type: FormLayoutElementType.FIELDS_CONTAINER
-        }
-    ],
-    fields: [{fields: [myField]}]
+    elements: [{elements: [myField, myLayoutElement]}]
 };

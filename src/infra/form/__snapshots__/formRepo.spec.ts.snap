@@ -8,14 +8,26 @@ Object {
   "value0": Object {
     "_key": "my_lib__test_form",
     "dependencyAttributes": Array [],
-    "fields": Array [
+    "elements": Array [
       Object {
-        "fields": Array [
+        "elements": Array [
           Object {
-            "attribute": "test_attribute",
-            "containerId": "some_container",
-            "required": false,
-            "type": "input_field",
+            "containerId": "987654",
+            "id": "123456",
+            "order": 0,
+            "settings": Object {
+              "attribute": "test_attribute",
+            },
+            "type": "field",
+            "uiElementType": "input",
+          },
+          Object {
+            "containerId": "__root",
+            "id": "987654",
+            "order": 0,
+            "settings": Object {},
+            "type": "layout",
+            "uiElementType": "container",
           },
         ],
       },
@@ -24,12 +36,6 @@ Object {
     "label": Object {
       "fr": "Test Form",
     },
-    "layout": Array [
-      Object {
-        "id": "some_container",
-        "type": "fields_container",
-      },
-    ],
     "library": "my_lib",
     "system": false,
   },
@@ -44,14 +50,26 @@ Object {
   "value0": Object {
     "_key": "my_lib__test_form",
     "dependencyAttributes": Array [],
-    "fields": Array [
+    "elements": Array [
       Object {
-        "fields": Array [
+        "elements": Array [
           Object {
-            "attribute": "test_attribute",
-            "containerId": "some_container",
-            "required": false,
-            "type": "input_field",
+            "containerId": "987654",
+            "id": "123456",
+            "order": 0,
+            "settings": Object {
+              "attribute": "test_attribute",
+            },
+            "type": "field",
+            "uiElementType": "input",
+          },
+          Object {
+            "containerId": "__root",
+            "id": "987654",
+            "order": 0,
+            "settings": Object {},
+            "type": "layout",
+            "uiElementType": "container",
           },
         ],
       },
@@ -60,12 +78,6 @@ Object {
     "label": Object {
       "fr": "Test Form",
     },
-    "layout": Array [
-      Object {
-        "id": "some_container",
-        "type": "fields_container",
-      },
-    ],
     "library": "my_lib",
     "system": false,
   },
@@ -80,14 +92,26 @@ Object {
   "value0": Object {
     "_key": "my_lib__test_form",
     "dependencyAttributes": Array [],
-    "fields": Array [
+    "elements": Array [
       Object {
-        "fields": Array [
+        "elements": Array [
           Object {
-            "attribute": "test_attribute",
-            "containerId": "some_container",
-            "required": false,
-            "type": "input_field",
+            "containerId": "987654",
+            "id": "123456",
+            "order": 0,
+            "settings": Object {
+              "attribute": "test_attribute",
+            },
+            "type": "field",
+            "uiElementType": "input",
+          },
+          Object {
+            "containerId": "__root",
+            "id": "987654",
+            "order": 0,
+            "settings": Object {},
+            "type": "layout",
+            "uiElementType": "container",
           },
         ],
       },
@@ -96,12 +120,6 @@ Object {
     "label": Object {
       "fr": "Test Form",
     },
-    "layout": Array [
-      Object {
-        "id": "some_container",
-        "type": "fields_container",
-      },
-    ],
     "library": "my_lib",
     "system": false,
   },

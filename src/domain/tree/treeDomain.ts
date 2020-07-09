@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/check-indentation */
+
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, omit} from 'lodash';

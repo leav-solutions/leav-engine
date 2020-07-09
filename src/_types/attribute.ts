@@ -51,6 +51,7 @@ export interface IAttributeFilterOptions {
     label?: string;
     linked_library?: string;
     multiple_values?: boolean;
+    libraries?: string[];
 }
 
 export interface IValuesListConf {
