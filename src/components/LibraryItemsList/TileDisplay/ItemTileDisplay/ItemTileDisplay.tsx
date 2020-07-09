@@ -38,7 +38,7 @@ const ActionsWrapper = styled.div`
         .actions {
             animation: show-actions 300ms ease;
             opacity: 1;
-            background: hsla(0, 0%, 0%, 0.2);
+            background: hsla(0, 0%, 0%, 0.5);
         }
     }
 
@@ -49,7 +49,7 @@ const ActionsWrapper = styled.div`
         }
         to {
             opacity: 1;
-            background: hsla(0, 0%, 0%, 0.2);
+            background: hsla(0, 0%, 0%, 0.5);
         }
     }
 `;
@@ -64,9 +64,14 @@ const Selection = styled.div`
     justify-content: center;
 `;
 
-const CustomCheckbox = styled(Checkbox)`
+const CheckboxWrapper = styled.label`
     height: 100%;
     width: 100%;
+
+    input {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
 `;
 
 const Actions = styled.div`
@@ -84,6 +89,10 @@ const Actions = styled.div`
 
     padding: 2rem 5rem;
     border-radius: 0.25rem 0.25rem 0 0;
+`;
+
+const DiscreteId = styled.span`
+    color: hsl(0, 0%, 70%);
 `;
 
 function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
@@ -122,7 +131,9 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
                 <ActionsWrapper>
                     {stateItems.selectionMode ? (
                         <Selection>
-                            <CustomCheckbox checked={isSelected} onClick={handleClick} />
+                            <CheckboxWrapper>
+                                <input type="checkbox" checked={isSelected} onClick={handleClick} />
+                            </CheckboxWrapper>
                         </Selection>
                     ) : (
                         <Actions className="actions">
@@ -141,11 +152,7 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
             </ImageWrapper>
             <Card.Content>
                 <Card.Header>{item.label || item.id}</Card.Header>
-                {item.label && (
-                    <Card.Meta>
-                        <span className="date">{item.id}</span>
-                    </Card.Meta>
-                )}
+                <Card.Meta>{item.library?.id}</Card.Meta>
             </Card.Content>
         </CustomCard>
     );

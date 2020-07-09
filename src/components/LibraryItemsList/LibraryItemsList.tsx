@@ -48,7 +48,6 @@ function LibraryItemsList(): JSX.Element {
     useEffect(() => {
         if (!loadingLib) {
             const {query, filter, searchableFields} = dataLib?.libraries?.list[0]?.gqlNames;
-            const firstAttribute = dataLib?.libraries?.list[0]?.attributes[0];
 
             const attributes: IAttribute[] = dataLib?.libraries?.list[0]?.attributes.reduce(
                 (acc: IAttribute[], attribute) => {
@@ -80,7 +79,7 @@ function LibraryItemsList(): JSX.Element {
                 libQuery: query,
                 libFilter: filter,
                 libSearchableField: searchableFields,
-                itemsSortField: firstAttribute.id,
+                itemsSortField: 'id', // force the first sort by id
                 itemsSortOrder: OrderSearch.asc,
                 attributes
             });

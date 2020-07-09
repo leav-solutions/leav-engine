@@ -125,8 +125,7 @@ const ImagePreviewTile = styled.div`
     align-items: center;
     height: 10rem;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.25rem;
+    border-radius: 0.25rem 0.25rem 0 0;
 `;
 ImagePreviewTile.displayName = 'ImagePreviewTile';
 

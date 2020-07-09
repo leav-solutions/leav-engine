@@ -173,3 +173,15 @@ export const displayTypeToPreviewSize = (displayType: DisplayListItemTypes) => {
             return PreviewSize.small;
     }
 };
+
+export const getSortFieldByAttributeType = (attributeId: string, type: AttributeType) => {
+    attributeId = 'infos' === attributeId ? 'id' : attributeId;
+
+    switch (type) {
+        case AttributeType.tree:
+            const subFieldByDefault = 'id';
+            return `${attributeId}.${subFieldByDefault}`;
+        default:
+            return attributeId;
+    }
+};

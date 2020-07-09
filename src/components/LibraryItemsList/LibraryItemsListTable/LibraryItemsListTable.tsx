@@ -12,6 +12,7 @@ import {
 import ChooseTableColumns from './ChooseTableColumns';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
 import LibraryItemsModal from './LibraryItemsListTableRow/LibraryItemsModal';
+import {getSortFieldByAttributeType} from '../../../utils';
 
 const TableWrapper = styled.div`
     &&& {
@@ -61,6 +62,7 @@ const FooterTable = styled(Segment)`
 interface ITableHeader {
     name: string;
     display: string;
+    type: AttributeType;
 }
 
 interface ILibraryItemsListTableProps {
@@ -81,7 +83,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
     useEffect(() => {
         if (stateItems.attributes.length && !stateItems.columns.length) {
-            // initialise columns in state
+            // initialize columns in state
             const initialTableColumns = stateItems.attributes.reduce(
                 (acc, attribute, index) =>
                     index < initialColumnsLimit
@@ -117,11 +119,12 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             display:
                                 typeof attribute.label === 'string'
                                     ? attribute.label
-                                    : attribute.label.fr || attribute.label.en
+                                    : attribute.label.fr || attribute.label.en,
+                            type: attribute.type
                         };
                     }
                     // only the infos columns isn't in attributes
-                    return {name: 'infos', display: t('items_list.table.infos')};
+                    return {name: 'infos', display: t('items_list.table.infos'), type: AttributeType.simple};
                 })
             );
         }
@@ -137,20 +140,22 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
         );
     }
 
-    const handleSort = (attId: string, order: OrderSearch) => {
+    const handleSort = (attId: string, order: OrderSearch, attType: AttributeType) => {
+        const newSortField = getSortFieldByAttributeType(attId, attType);
+
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS,
-            itemsSortField: 'infos' === attId ? 'id' : attId,
+            itemsSortField: newSortField,
             itemsSortOrder: order
         });
     };
 
-    const handleDesc = (attId: string) => {
-        handleSort(attId, OrderSearch.desc);
+    const handleDesc = (attId: string, attType: AttributeType) => {
+        handleSort(attId, OrderSearch.desc, attType);
     };
 
-    const handleAsc = (attId: string) => {
-        handleSort(attId, OrderSearch.asc);
+    const handleAsc = (attId: string, attType: AttributeType) => {
+        handleSort(attId, OrderSearch.asc, attType);
     };
 
     const cancelSort = () => {
@@ -175,11 +180,11 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             <Dropdown.Menu>
                                 <Dropdown.Item
                                     text={t('items_list.table.header-cell-menu.sort-ascend')}
-                                    onClick={() => handleAsc(cell.name)}
+                                    onClick={() => handleAsc(cell.name, cell.type)}
                                 />
                                 <Dropdown.Item
                                     text={t('items_list.table.header-cell-menu.sort-descend')}
-                                    onClick={() => handleDesc(cell.name)}
+                                    onClick={() => handleDesc(cell.name, cell.type)}
                                 />
                                 <Dropdown.Item
                                     text={t('items_list.table.header-cell-menu.cancel-sort')}
