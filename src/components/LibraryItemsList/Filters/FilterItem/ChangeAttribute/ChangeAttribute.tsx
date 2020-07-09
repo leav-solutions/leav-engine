@@ -26,6 +26,7 @@ function ChangeAttribute({
 
     const handleCancel = () => {
         setShowModal(false);
+        setAttSelected(filter.attributeId);
     };
 
     const changeAttribute = () => {
@@ -55,7 +56,7 @@ function ChangeAttribute({
     };
 
     return (
-        <Modal open={showModal} onClose={() => setShowModal(false)} closeIcon>
+        <Modal open={showModal} onClose={handleCancel} closeIcon>
             <Modal.Content>
                 <ListAttributes
                     attributes={stateItems.attributes}

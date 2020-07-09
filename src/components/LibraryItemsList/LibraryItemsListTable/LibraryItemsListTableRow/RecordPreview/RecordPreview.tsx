@@ -134,7 +134,7 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
     if (image) {
         return (
             <ImagePreviewTile>
-                <Image src={image} wrapped ui={false} style={{...style}} />;
+                <Image src={image} wrapped ui={false} style={{...style}} />
             </ImagePreviewTile>
         );
     }

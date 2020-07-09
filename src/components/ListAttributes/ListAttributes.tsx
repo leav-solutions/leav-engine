@@ -95,7 +95,7 @@ function ListAttributes({
         if (searchRef) {
             searchRef?.current?.focus();
         }
-    }, []);
+    }, [searchRef]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
