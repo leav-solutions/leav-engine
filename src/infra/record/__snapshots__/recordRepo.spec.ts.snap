@@ -29,8 +29,8 @@ Object {
       "value1": "test_lib",
     },
     "query": "FOR r IN @@value0
-FILTER r.active == true
 SORT r._key ASC
+FILTER r.active == true
 RETURN MERGE(r, {library: @value1})",
   },
   "withTotalCount": true,
@@ -47,6 +47,7 @@ Object {
     "_source": [Function],
     "bindVars": Object {
       "@value0": "test_lib",
+      "@value2": "test_lib",
       "value1": Object {
         "bindVars": Object {
           "filterField0": "test_attr",
@@ -54,21 +55,20 @@ Object {
         },
         "query": "FILTER r.@filterField0 == @filterValue0",
       },
-      "value2": Object {
+      "value3": Object {
         "bindVars": Object {
           "filterField1": "test_attr2",
           "filterValue1": "test2",
         },
         "query": "FILTER r.@filterField1 == @filterValue1",
       },
-      "value3": "test_lib",
+      "value4": "test_lib",
     },
-    "query": "FOR r IN @@value0
-@value1
-@value2
-FILTER r.active == true
+    "query": "FOR r IN
+INTERSECTION((FOR r IN @@value0 @value1 RETURN r), (FOR r IN @@value2 @value3 RETURN r))
 SORT r._key ASC
-RETURN MERGE(r, {library: @value3})",
+FILTER r.active == true
+RETURN MERGE(r, {library: @value4})",
   },
   "withTotalCount": true,
 }

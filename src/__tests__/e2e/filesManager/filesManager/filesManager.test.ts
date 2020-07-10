@@ -17,6 +17,7 @@ import {IRecordDomain} from '../../../../domain/record/recordDomain';
 import {RoutingKeys} from '../../../../_types/amqp';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewResponse} from '../../../../_types/filesManager';
 import {getAmqpChannel, getCoreContainer} from '../globalSetup';
+import {Operator} from '_types/record';
 
 // can't use the rootKey to find library
 const library = 'files';
@@ -572,10 +573,11 @@ const _useRecordDomain = async (path: string, name: string) => {
     const recordsFind = await recordDomain.find({
         params: {
             library,
-            filters: {
-                [FilesAttributes.FILE_PATH]: path,
-                [FilesAttributes.FILE_NAME]: name
-            }
+            filters: [
+                {field: FilesAttributes.FILE_PATH, value: path},
+                {operator: Operator.AND},
+                {field: FilesAttributes.FILE_NAME, value: name}
+            ]
         },
         ctx
     });

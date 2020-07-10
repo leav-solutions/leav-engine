@@ -72,3 +72,14 @@ Object {
   "value2": "test_attr",
 }
 `;
+
+exports[`AttributeIndexRepo sortQueryPart Should return simple sort 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "value0": "_key",
+    "value1": "ASC",
+  },
+  "query": "SORT r.@value0 @value1",
+}
+`;

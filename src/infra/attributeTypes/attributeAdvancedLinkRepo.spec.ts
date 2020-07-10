@@ -1,4 +1,4 @@
-import {Database, EdgeCollection} from 'arangojs';
+import {aql, Database, EdgeCollection} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
@@ -92,7 +92,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(createdVal).toMatchObject({
                 id_value: 978654321,
-                value: 987654,
+                value: '987654',
                 attribute: 'test_adv_link_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -572,6 +572,43 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(values.length).toBe(2);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+        });
+    });
+    describe('filterQueryPart', () => {
+        test('Should return advanced link filter', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeAdvancedLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const filter = attrRepo.filterQueryPart(
+                [
+                    {id: 'label', type: AttributeTypes.ADVANCED_LINK},
+                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                ],
+                aql`== ${'MyLabel'}`,
+                0
+            );
+
+            expect(filter.query).toMatch(/^FILTER/);
+            expect(filter).toMatchSnapshot();
+        });
+    });
+    describe('sortQueryPart', () => {
+        test('Should return advanced link sort', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeAdvancedLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const filter = attrRepo.sortQueryPart({
+                attributes: [
+                    {id: 'label', type: AttributeTypes.ADVANCED_LINK},
+                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                ],
+                order: 'ASC'
+            });
+
+            expect(filter.query).toMatch(/^SORT/);
+            expect(filter).toMatchSnapshot();
         });
     });
 });

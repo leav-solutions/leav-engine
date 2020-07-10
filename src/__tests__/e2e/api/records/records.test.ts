@@ -10,7 +10,7 @@ describe('Records', () => {
                 saveLibrary(library: {id: "${testLibName}", label: {fr: "Test lib"}}) { id }
             }`);
 
-        await makeGraphQlCall(`mutation { refreshSchema }`);
+        await makeGraphQlCall('mutation { refreshSchema }');
 
         const resCrea = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}") { id }
@@ -41,7 +41,7 @@ describe('Records', () => {
 
     test('Get records filtered by ID', async () => {
         const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: id, value: "${recordId}"}]) { list {id} } }
+            `{ ${testLibNameType}(filters: [{field: "id", value: "${recordId}"}]) { list {id} } }
         `
         );
 
@@ -53,7 +53,7 @@ describe('Records', () => {
 
     test('Get library details on a record', async () => {
         const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: id, value: "${recordId}"}]) {
+            `{ ${testLibNameType}(filters: [{field: "id", value: "${recordId}"}]) {
                  list {
                      id
                      library { id }
@@ -70,7 +70,7 @@ describe('Records', () => {
     test('Get record identity', async () => {
         const res = await makeGraphQlCall(`
             {
-                ${testLibNameType}(filters: [{field: id, value: "${recordId}"}]) {
+                ${testLibNameType}(filters: [{field: "id", value: "${recordId}"}]) {
                     list {
                         id
                         whoAmI { id library { id } label }

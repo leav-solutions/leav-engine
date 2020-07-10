@@ -13,9 +13,34 @@ export interface IRecord {
     [attributeName: string]: any;
 }
 
+export enum Operator {
+    AND = 'AND',
+    OR = 'OR',
+    OPEN_BRACKET = 'OPEN_BRACKET',
+    CLOSE_BRACKET = 'CLOSE_BRACKET'
+}
+
+export enum Condition {
+    EQUAL = 'EQUAL',
+    NOT_EQUAL = 'NOT_EQUAL',
+    BEGIN_WITH = 'BEGIN_WITH',
+    END_WITH = 'END_WITH',
+    CONTAINS = 'CONTAINS',
+    NOT_CONTAINS = 'NOT_CONTAINS',
+    GREATER_THAN = 'GREATER_THAN',
+    LESS_THAN = 'LESS_THAN'
+}
+
 export interface IRecordFilterOption {
-    attribute: IAttribute;
-    value: string | number;
+    attributes?: IAttribute[];
+    value?: string | number;
+    condition?: Condition;
+    operator?: Operator;
+}
+
+export interface IRecordSort {
+    attributes: IAttribute[];
+    order: string;
 }
 
 export interface IQueryField {

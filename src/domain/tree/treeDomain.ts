@@ -193,9 +193,7 @@ export default function({
         const record = await recordDomain.find({
             params: {
                 library: treeElement.library,
-                filters: {
-                    id: `${treeElement.id}`
-                },
+                filters: [{field: 'id', value: `${treeElement.id}`}],
                 retrieveInactive: true
             },
             ctx

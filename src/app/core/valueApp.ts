@@ -73,8 +73,8 @@ export default function({
 
                     type Value implements GenericValue {
                         id_value: ID,
-                        value: String,
-                        raw_value: String,
+                        value: Any,
+                        raw_value: Any,
                         modified_at: Int,
                         created_at: Int,
                         version: ValueVersion,

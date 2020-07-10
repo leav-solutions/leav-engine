@@ -1,12 +1,12 @@
-import {aql} from 'arangojs';
-import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IAttribute} from '../../_types/attribute';
+import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IAttribute, AttributeFormats} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 import {IQueryInfos} from '_types/queryInfos';
+import {IRecordSort} from '_types/record';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -34,6 +34,20 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
         const updatedDoc = res.length ? res[0] : {};
 
         return {value: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null};
+    }
+
+    function _getExtendedFilterPart(attributes: IAttribute[]): GeneratedAqlQuery {
+        return aql`${
+            attributes
+                .map(a => a.id)
+                .reduce((acc, value, i) => {
+                    acc.push(aql`TRANSLATE(${value}, ${i ? acc[acc.length - 1] : aql`r`})`);
+                    if (i) {
+                        acc.shift();
+                    }
+                    return acc;
+                }, [])[0]
+        }`;
     }
 
     return {
@@ -64,9 +78,23 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
         async getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
             return null;
         },
-        filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
-            const fieldToUse = fieldName === 'id' ? '_key' : fieldName;
-            const query = aql`FILTER r.${fieldToUse} == ${value}`;
+        filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {
+            attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
+
+            const query: AqlQuery =
+                attributes[0].format !== AttributeFormats.EXTENDED
+                    ? aql`FILTER r.${attributes[0].id} ${queryPart}`
+                    : aql`FILTER ${_getExtendedFilterPart(attributes)} ${queryPart}`;
+
+            return query;
+        },
+        sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
+            attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
+
+            const query: AqlQuery =
+                attributes[0].format !== AttributeFormats.EXTENDED
+                    ? aql`SORT r.${attributes[0].id} ${order}`
+                    : aql`SORT ${_getExtendedFilterPart(attributes)} ${order}`;
 
             return query;
         },

@@ -1,10 +1,14 @@
-import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IValue, IValuesOptions} from '../../_types/value';
 import {IQueryInfos} from '_types/queryInfos';
+import {IRecordSort, Condition} from '../../_types/record';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {Console} from 'console';
 
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
+    getQueryPart?(value: string | number, condition: Condition): GeneratedAqlQuery;
 }
 
 /**
@@ -101,12 +105,13 @@ export interface IAttributeTypeRepo {
 
     /**
      * Return AQL query part to filter on this attribute. If will be concatenate with other filters and full query
-     *
-     * @param fieldName
-     * @param index Position in full query filters
-     * @param value Filter value
      */
-    filterQueryPart(fieldName: string, index: number, value: string | number): AqlQuery;
+    filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery;
+
+    /**
+     * Return AQL query part to sort on this attribute
+     */
+    sortQueryPart({attributes, order}: IRecordSort): AqlQuery;
 
     /**
      * Clear all values of given attribute. Can be used to cleanup values when an attribute is deleted for example.
@@ -135,6 +140,20 @@ export default function({
     'core.infra.attributeTypes.attributeTree': attributeTreeRepo = null
 }: IDeps = {}): IAttributeTypesRepo {
     return {
+        getQueryPart(value: string | number, condition: Condition = Condition.EQUAL): GeneratedAqlQuery {
+            const parts = {
+                [Condition.EQUAL]: aql.join([aql`==`, aql`${value}`]),
+                [Condition.NOT_EQUAL]: aql.join([aql`!=`, aql`${value}`]),
+                [Condition.BEGIN_WITH]: aql.join([aql`LIKE`, aql.literal(`"${value}%"`)]),
+                [Condition.END_WITH]: aql.join([aql`LIKE`, aql.literal(`"%${value}"`)]),
+                [Condition.CONTAINS]: aql.join([aql`LIKE`, aql.literal(`"%${value}%"`)]),
+                [Condition.NOT_CONTAINS]: aql.join([aql`NOT LIKE`, aql.literal(`"%${value}%"`)]),
+                [Condition.GREATER_THAN]: aql.join([aql`>`, aql`${value}`]),
+                [Condition.LESS_THAN]: aql.join([aql`<`, aql`${value}`])
+            };
+
+            return parts[condition];
+        },
         getTypeRepo(attribute) {
             let attrTypeRepo: IAttributeTypeRepo;
             switch (attribute.type) {

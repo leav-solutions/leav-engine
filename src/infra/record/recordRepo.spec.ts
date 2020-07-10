@@ -1,7 +1,7 @@
 import {Database} from 'arangojs';
 import {cloneDeep} from 'lodash';
 import {AttributeTypes} from '../../_types/attribute';
-import {IRecordFilterOption} from '../../_types/record';
+import {IRecordFilterOption, Operator} from '../../_types/record';
 import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbUtils} from '../db/dbUtils';
 import recordRepo from './recordRepo';
@@ -374,6 +374,7 @@ describe('RecordRepo', () => {
                 pagination: {limit: 2, cursor: 'bmV4dDoyOjEzNDYzNDQ0'},
                 ctx
             });
+
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('LIMIT');
             expect(mockDbServ.execute.mock.calls[0][0].withTotalCount).not.toBe(true); // No count
@@ -444,17 +445,22 @@ describe('RecordRepo', () => {
     describe('find with filters', () => {
         const mockFilters: IRecordFilterOption[] = [
             {
-                attribute: {
-                    id: 'test_attr',
-                    type: null
-                },
+                attributes: [
+                    {
+                        id: 'test_attr',
+                        type: null
+                    }
+                ],
                 value: 'test'
             },
+            {operator: Operator.AND},
             {
-                attribute: {
-                    id: 'test_attr2',
-                    type: null
-                },
+                attributes: [
+                    {
+                        id: 'test_attr2',
+                        type: null
+                    }
+                ],
                 value: 'test2'
             }
         ];
@@ -506,7 +512,8 @@ describe('RecordRepo', () => {
             };
 
             const mockAttrRepo: Mockify<IAttributeTypesRepo> = {
-                getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo)
+                getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo),
+                getQueryPart: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo)
             };
 
             const recRepo = recordRepo({
@@ -516,8 +523,8 @@ describe('RecordRepo', () => {
             });
 
             const filters = cloneDeep(mockFilters);
-            filters[0].attribute.type = AttributeTypes.SIMPLE;
-            filters[1].attribute.type = AttributeTypes.SIMPLE;
+            filters[0].attributes[0].type = AttributeTypes.SIMPLE;
+            filters[2].attributes[0].type = AttributeTypes.SIMPLE;
 
             const records = await recRepo.find({
                 libraryId: 'test_lib',

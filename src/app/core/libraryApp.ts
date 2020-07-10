@@ -10,6 +10,9 @@ import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICoreApp} from './coreApp';
+import {value} from '.';
+import {SlowBuffer} from 'buffer';
+import libraryRepo from 'infra/library';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -201,18 +204,40 @@ export default function({
                         list: [${libTypeName}!]!
                     }
 
-                    enum ${_getLibGqlSearchableFieldsType(libTypeName)} {
-                        ${lib.attributes.map(attr => attr.id).join(' ')}
+                    enum ${libTypeName}Operator {
+                        AND
+                        OR
+                        OPEN_BRACKET
+                        CLOSE_BRACKET
+                    }
+
+                    enum ${libTypeName}Condition {
+                        EQUAL
+                        NOT_EQUAL
+                        BEGIN_WITH
+                        END_WITH
+                        CONTAINS
+                        NOT_CONTAINS
+                        GREATER_THAN
+                        LESS_THAN
                     }
 
                     input ${libTypeName}Filter {
-                        field: ${_getLibGqlSearchableFieldsType(libTypeName)}!,
-                        value: String!
+                        field: String,
+                        value: String
+                        condition: ${libTypeName}Condition,
+                        operator: ${libTypeName}Operator
+                    }
+
+                    input Sort${libTypeName} {
+                        field: String,
+                        order: SortOrder!
                     }
 
                     extend type Query {
                         ${libQueryName}(
                             filters: [${_getLibGqlFilterType(libTypeName)}],
+                            sort: Sort${libTypeName}
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
                             retrieveInactive: Boolean
@@ -222,7 +247,7 @@ export default function({
 
                 baseSchema.resolvers.Query[libQueryName] = async (
                     parent,
-                    {filters, version, pagination, retrieveInactive = false},
+                    {filters, sort, version, pagination, retrieveInactive = false},
                     ctx,
                     info
                 ): Promise<IList<IRecord>> => {
@@ -233,16 +258,6 @@ export default function({
                         typeof pagination.cursor !== 'undefined'
                     ) {
                         throw new ValidationError({pagination: Errors.PAGINATION_OFFSET_AND_CURSOR});
-                    }
-
-                    if (typeof filters !== 'undefined') {
-                        filters = filters.reduce((allFilters, filter) => {
-                            allFilters[filter.field] = filter.value;
-
-                            return allFilters;
-                        }, {});
-                    } else {
-                        filters = {};
                     }
 
                     const formattedVersion =
@@ -259,6 +274,7 @@ export default function({
                         params: {
                             library: lib.id,
                             filters,
+                            sort,
                             pagination,
                             options: {version: formattedVersion},
                             withCount: fields.includes('totalCount'),

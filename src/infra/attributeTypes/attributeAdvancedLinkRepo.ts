@@ -1,9 +1,10 @@
-import {aql} from 'arangojs';
-import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IValue} from '_types/value';
+import {IRecordSort} from '_types/record';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IAttribute, AttributeFormats} from '../../_types/attribute';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -16,6 +17,21 @@ export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): IAttributeTypeRepo {
+    function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
+        return aql`${
+            attributes
+                .map(a => a.id)
+                .slice(2)
+                .reduce((acc, value, i) => {
+                    acc.push(aql`TRANSLATE(${value}, ${i ? acc[acc.length - 1] : aql`${linkedValue}`})`);
+                    if (i) {
+                        acc.shift();
+                    }
+                    return acc;
+                }, [])[0]
+        }`;
+    }
+
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -48,7 +64,7 @@ export default function({
 
             const res: IValue = {
                 id_value: savedEdge._key,
-                value: Number(savedEdge._to.split('/')[1]),
+                value: savedEdge._to.split('/')[1],
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
@@ -182,8 +198,47 @@ export default function({
                 metadata: res[0].edge.metadata
             };
         },
-        filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
-            return null;
+        sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
+            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const linked = !attributes[1]
+                ? {id: '_key', format: AttributeFormats.TEXT}
+                : attributes[1].id === 'id'
+                ? {...attributes[1], id: '_key'}
+                : attributes[1];
+
+            const linkedValue = aql`FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                ${collec}
+                FILTER e.attribute == ${attributes[0].id} RETURN v.${linked.id}
+            )`;
+
+            const query =
+                linked.format !== AttributeFormats.EXTENDED
+                    ? aql`SORT ${linkedValue} ${order}`
+                    : aql`SORT ${_getExtendedFilterPart(attributes, linkedValue)} ${order}`;
+
+            return query;
+        },
+        filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {
+            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const linked = !attributes[1]
+                ? {id: '_key', format: AttributeFormats.TEXT}
+                : attributes[1].id === 'id'
+                ? {...attributes[1], id: '_key'}
+                : attributes[1];
+
+            const linkedValue = aql`FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                ${collec}
+                FILTER e.attribute == ${attributes[0].id} RETURN v.${linked.id}
+            )`;
+
+            const query =
+                linked.format !== AttributeFormats.EXTENDED
+                    ? aql`FILTER ${linkedValue} ${queryPart}`
+                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} ${queryPart}`;
+
+            return query;
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;

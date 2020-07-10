@@ -6,11 +6,13 @@ import {
     IPaginationCursors,
     IPaginationParams
 } from '../../_types/list';
-import {IRecord, IRecordFilterOption} from '../../_types/record';
+import {IRecord, IRecordFilterOption, IRecordSort, Operator, Condition} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
+import {value} from 'app/core';
+import {AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -37,6 +39,7 @@ export interface IRecordRepo {
     find({
         libraryId,
         filters,
+        sort,
         pagination,
         withCount,
         retrieveInactive,
@@ -44,6 +47,7 @@ export interface IRecordRepo {
     }: {
         libraryId: string;
         filters?: IRecordFilterOption[];
+        sort?: IRecordSort;
         pagination?: IPaginationParams | ICursorPaginationParams;
         withCount?: boolean;
         retrieveInactive?: boolean;
@@ -80,29 +84,106 @@ export default function({
         };
     };
 
+    const _toReversePolishNotation = (filters: IRecordFilterOption[]): IRecordFilterOption[] => {
+        const stack = [];
+        const output = [];
+
+        for (const f of filters) {
+            if (typeof f.value !== 'undefined') {
+                output.push(f);
+            } else if (f.operator !== Operator.CLOSE_BRACKET) {
+                stack.push(f);
+            } else {
+                let e: IRecordFilterOption = stack.pop();
+                while (e && e.operator !== Operator.OPEN_BRACKET) {
+                    output.push(e);
+                    e = stack.pop();
+                }
+            }
+        }
+
+        return output.concat(stack.reverse());
+    };
+
+    const _findRequest = async (libraryId: string, filter?: IRecordFilterOption, index?: number): Promise<AqlQuery> => {
+        const queryParts = [];
+        const coll = dbService.db.collection(libraryId);
+        queryParts.push(aql`(FOR r IN ${coll}`);
+
+        if (typeof filter !== 'undefined') {
+            const filterQueryPart = attributeTypesRepo
+                .getTypeRepo(filter.attributes[0])
+                .filterQueryPart(
+                    filter.attributes,
+                    attributeTypesRepo.getQueryPart(filter.value, filter.condition),
+                    index
+                );
+
+            queryParts.push(filterQueryPart);
+        }
+
+        queryParts.push(aql`RETURN r)`);
+        return aql.join(queryParts);
+    };
+
     return {
         async find({
             libraryId,
             filters,
+            sort,
             pagination,
             withCount,
             retrieveInactive = false,
             ctx
         }): Promise<IListWithCursor<IRecord>> {
-            const queryParts = [];
             const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
             // Force disbaling count on cursor pagination as it's pointless
             const withTotalCount = withCount && !withCursorPagination;
-
             const coll = dbService.db.collection(libraryId);
-            queryParts.push(aql`FOR r IN ${coll}`);
+            let queryParts = [!filters.length ? aql`FOR r IN ${coll}` : aql`FOR r IN`];
 
             if (typeof filters !== 'undefined' && filters.length) {
-                for (const [i, filter] of filters.entries()) {
-                    const typeRepo = attributeTypesRepo.getTypeRepo(filter.attribute);
-                    const filterQueryPart = typeRepo.filterQueryPart(filter.attribute.id, i, filter.value);
-                    queryParts.push(filterQueryPart);
+                const rpn: IRecordFilterOption[] = _toReversePolishNotation(filters);
+
+                const stack = [];
+                for (const [i, filter] of rpn.entries()) {
+                    if (filter.attributes) {
+                        stack.push(filter);
+                    } else {
+                        let [f0, f1] = [stack.pop(), stack.pop()].reverse();
+                        const operator = filter.operator;
+
+                        if (f0.attributes) {
+                            f0 = await _findRequest(libraryId, f0, i);
+                        }
+                        if (f1.attributes) {
+                            f1 = await _findRequest(libraryId, f1, i);
+                        }
+
+                        const res =
+                            operator === Operator.AND
+                                ? aql`INTERSECTION(${f0}, ${f1})`
+                                : aql`APPEND(${f0}, ${f1}, true)`;
+
+                        stack.push(res);
+                    }
                 }
+
+                if (stack[0].attributes) {
+                    stack[0] = await _findRequest(libraryId, stack[0], 0);
+                }
+
+                queryParts = queryParts.concat([].concat.apply([], stack));
+            }
+
+            const sortQueryPart = sort
+                ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
+                : aql`SORT r._key ASC`;
+
+            queryParts.push(sortQueryPart as GeneratedAqlQuery);
+
+            if (!retrieveInactive) {
+                queryParts.push(aql`FILTER r.active == true`);
             }
 
             if (pagination) {
@@ -126,15 +207,10 @@ export default function({
                 }
             }
 
-            if (!retrieveInactive) {
-                queryParts.push(aql`FILTER r.active == true`);
-            }
-
-            // Force sorting on ID
-            queryParts.push(aql`SORT r._key ASC`);
             queryParts.push(aql`RETURN MERGE(r, {library: ${libraryId}})`);
 
             const fullQuery = aql.join(queryParts, '\n');
+
             const records = await dbService.execute<IExecuteWithCount | any[]>({
                 query: fullQuery,
                 withTotalCount,

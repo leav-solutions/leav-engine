@@ -26,6 +26,23 @@ Object {
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo filterQueryPart Should return advanced link filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "linked",
+    "value3": "MyLabel",
+  },
+  "query": "FILTER FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.@value2
+            ) == @value3",
+}
+`;
+
 exports[`AttributeAdvancedLinkRepo getValueByID Should return value 1`] = `
 "
                 FOR linkedRecord, edge
@@ -108,6 +125,23 @@ Object {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
   "value2": "test_adv_link_attr",
+}
+`;
+
+exports[`AttributeAdvancedLinkRepo sortQueryPart Should return advanced link sort 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "linked",
+    "value3": "ASC",
+  },
+  "query": "SORT FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.@value2
+            ) @value3",
 }
 `;
 

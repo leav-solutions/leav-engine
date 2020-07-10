@@ -32,6 +32,22 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
                 ]
             };
             break;
+        case AttributeFormats.BOOLEAN:
+            defaultActions = {
+                [ActionsListEvents.SAVE_VALUE]: [
+                    {
+                        id: 'toBoolean',
+                        name: 'To Boolean',
+                        is_system: true
+                    },
+                    {
+                        id: 'validateFormat',
+                        name: 'Validate Format',
+                        is_system: true
+                    }
+                ]
+            };
+            break;
         case AttributeFormats.ENCRYPTED:
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
@@ -67,7 +83,9 @@ export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig
                         id: 'validateFormat',
                         name: 'Validate Format',
                         is_system: true
-                    },
+                    }
+                ],
+                [ActionsListEvents.GET_VALUE]: [
                     {
                         id: 'toJSON',
                         name: 'To JSON',
@@ -141,6 +159,12 @@ export const getAllowedOutputTypes = (attribute: IAttribute): IOAllowedTypes => 
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
+            };
+            break;
+        case AttributeFormats.EXTENDED:
+            outputTypes = {
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.OBJECT],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.OBJECT]
             };
             break;
         default:

@@ -41,7 +41,7 @@ const _validateLinkedRecord = async (
         libraryId: attribute.linked_library,
         filters: [
             {
-                attribute: idAttrProps,
+                attributes: [idAttrProps],
                 value: value.value
             }
         ],
@@ -71,7 +71,7 @@ const _validateTreeLinkedRecord = async (
         libraryId: library,
         filters: [
             {
-                attribute: idAttrProps,
+                attributes: [idAttrProps],
                 value: recordId
             }
         ],

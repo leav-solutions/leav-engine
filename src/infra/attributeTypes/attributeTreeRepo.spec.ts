@@ -1,4 +1,4 @@
-import {Database} from 'arangojs';
+import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
@@ -575,6 +575,43 @@ describe('AttributeTreeRepo', () => {
 
             expect(values.length).toBe(2);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+        });
+    });
+    describe('filterQueryPart', () => {
+        test('Should return tree filter', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
+            const filter = attrRepo.filterQueryPart(
+                [
+                    {id: 'label', type: AttributeTypes.TREE},
+                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                ],
+                aql`== ${'MyLabel'}`,
+                0
+            );
+
+            expect(filter.query).toMatch(/^FILTER/);
+            expect(filter).toMatchSnapshot();
+        });
+    });
+    describe('sortQueryPart', () => {
+        test('Should return tree filter', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
+            const filter = attrRepo.sortQueryPart({
+                attributes: [
+                    {id: 'label', type: AttributeTypes.TREE},
+                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                ],
+                order: 'ASC'
+            });
+
+            expect(filter.query).toMatch(/^SORT/);
+            expect(filter).toMatchSnapshot();
         });
     });
 });
