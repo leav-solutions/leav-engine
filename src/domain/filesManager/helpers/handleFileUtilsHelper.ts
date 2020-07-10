@@ -3,6 +3,7 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {basename, dirname, join} from 'path';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {
     FilesAttributes,
@@ -14,7 +15,6 @@ import {
 import {IRecord, Operator} from '../../../_types/record';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
-import {IQueryInfos} from '_types/queryInfos';
 
 interface IGetRecord {
     recordDomain: IRecordDomain;
@@ -108,7 +108,7 @@ export const createRecordFile = async (
     if (newRecord.id) {
         const values: IValue[] = Object.keys(recordData).map(key => ({
             attribute: FilesAttributes[key],
-            value: recordData[key]
+            value: typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key]
         }));
 
         try {
@@ -143,7 +143,7 @@ export const updateRecordFile = async (
     // Update record file attributes
     const values: IValue[] = Object.keys(recordData).map(key => ({
         attribute: FilesAttributes[key],
-        value: recordData[key]
+        value: typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key]
     }));
 
     try {
