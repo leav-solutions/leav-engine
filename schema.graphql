@@ -313,6 +313,7 @@
                     input FileFilter {
                         field: FileSearchableFields!,
                         value: String!
+                        operator: String
                     }
 
                     extend type Query {

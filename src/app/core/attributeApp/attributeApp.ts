@@ -319,7 +319,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                                         const record = await recordDomain.find({
                                             params: {
                                                 library: attributeData.linked_library,
-                                                filters: {id: recId}
+                                                filters: [{field: 'id', value: recId}]
                                             },
                                             ctx
                                         });
@@ -344,7 +344,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                                         const record = await recordDomain.find({
                                             params: {
                                                 library,
-                                                filters: {id}
+                                                filters: [{field: 'id', value: id}]
                                             },
                                             ctx
                                         });

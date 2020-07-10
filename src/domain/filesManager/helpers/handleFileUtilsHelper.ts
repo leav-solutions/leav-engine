@@ -11,7 +11,7 @@ import {
     IPreviewsStatus,
     IPreviewVersion
 } from '../../../_types/filesManager';
-import {IRecord} from '../../../_types/record';
+import {IRecord, Operator} from '../../../_types/record';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
 import {IQueryInfos} from '_types/queryInfos';
@@ -36,10 +36,11 @@ export const getRecord = async (
         recordsFind = await deps.recordDomain.find({
             params: {
                 library,
-                filters: {
-                    [FilesAttributes.FILE_NAME]: fileName,
-                    [FilesAttributes.FILE_PATH]: filePath
-                },
+                filters: [
+                    {field: FilesAttributes.FILE_NAME, value: fileName},
+                    {operator: Operator.AND},
+                    {field: FilesAttributes.FILE_PATH, value: filePath}
+                ],
                 retrieveInactive
             },
             ctx
@@ -75,10 +76,11 @@ export const getParentRecord = async (
     const folderParent = await deps.recordDomain.find({
         params: {
             library,
-            filters: {
-                [FilesAttributes.FILE_NAME]: parentName,
-                [FilesAttributes.FILE_PATH]: join(...parentPath)
-            }
+            filters: [
+                {field: FilesAttributes.FILE_NAME, value: parentName},
+                {operator: Operator.AND},
+                {field: FilesAttributes.FILE_PATH, value: join(...parentPath)}
+            ]
         },
         ctx
     });

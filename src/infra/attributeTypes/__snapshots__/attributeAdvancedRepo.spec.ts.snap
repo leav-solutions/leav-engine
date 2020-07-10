@@ -62,19 +62,19 @@ Object {
 }
 `;
 
-exports[`AttributeStandardRepo filterQueryPart Should return simple filter 1`] = `
+exports[`AttributeStandardRepo filterQueryPart Should return advanced filter 1`] = `
 Object {
   "_source": [Function],
   "bindVars": Object {
     "@value0": "core_edge_values_links",
     "value1": "label",
-    "value2": "%MyLabel%",
+    "value2": "MyLabel",
   },
-  "query": "LET filterField0 = (
+  "query": "FILTER FIRST(
                 FOR v, e IN 1 OUTBOUND r._id
                 @@value0
                 FILTER e.attribute == @value1 RETURN v.value
-            ) FILTER filterField0 LIKE @value2",
+            ) == @value2",
 }
 `;
 
@@ -119,6 +119,22 @@ Object {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
   "value2": "test_attr",
+}
+`;
+
+exports[`AttributeStandardRepo sortQueryPart Should return advanced filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "ASC",
+  },
+  "query": "SORT FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.value
+            ) @value2",
 }
 `;
 

@@ -2,7 +2,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {join} from 'path';
 import * as Config from '_types/config';
-import {IRecord} from '_types/record';
+import {IRecord, Operator} from '../../_types/record';
 import {IValueDomain} from '../../domain/value/valueDomain';
 import {IAmqpManager} from '../../infra/amqpManager/amqpManager';
 import {IUtils} from '../../utils/utils';
@@ -171,10 +171,11 @@ describe('FilesManager', () => {
             expect(mockRecordDomain.find).toBeCalledWith({
                 params: {
                     library,
-                    filters: {
-                        [FilesAttributes.FILE_NAME]: fileName,
-                        [FilesAttributes.FILE_PATH]: filePath
-                    },
+                    filters: [
+                        {field: FilesAttributes.FILE_NAME, value: fileName},
+                        {operator: 'AND'},
+                        {field: FilesAttributes.FILE_PATH, value: filePath}
+                    ],
                     retrieveInactive: false
                 },
                 ctx: expect.anything()
@@ -220,10 +221,11 @@ describe('FilesManager', () => {
             expect(mockRecordDomain.find).toBeCalledWith({
                 params: {
                     library,
-                    filters: {
-                        [FilesAttributes.FILE_NAME]: fileName,
-                        [FilesAttributes.FILE_PATH]: filePath
-                    },
+                    filters: [
+                        {field: FilesAttributes.FILE_NAME, value: fileName},
+                        {operator: 'AND'},
+                        {field: FilesAttributes.FILE_PATH, value: filePath}
+                    ],
                     retrieveInactive: false
                 },
                 ctx: expect.anything()
@@ -292,10 +294,11 @@ describe('FilesManager', () => {
             expect(mockRecordDomain.find).toBeCalledWith({
                 params: {
                     library,
-                    filters: {
-                        [FilesAttributes.FILE_NAME]: destFileName,
-                        [FilesAttributes.FILE_PATH]: filePath
-                    },
+                    filters: [
+                        {field: FilesAttributes.FILE_NAME, value: destFileName},
+                        {operator: Operator.AND},
+                        {field: FilesAttributes.FILE_PATH, value: filePath}
+                    ],
                     retrieveInactive: false
                 },
                 ctx: expect.anything()
@@ -305,10 +308,11 @@ describe('FilesManager', () => {
             expect(mockRecordDomain.find).toBeCalledWith({
                 params: {
                     library,
-                    filters: {
-                        [FilesAttributes.FILE_NAME]: fileName,
-                        [FilesAttributes.FILE_PATH]: filePath
-                    },
+                    filters: [
+                        {field: FilesAttributes.FILE_NAME, value: fileName},
+                        {operator: Operator.AND},
+                        {field: FilesAttributes.FILE_PATH, value: filePath}
+                    ],
                     retrieveInactive: false
                 },
                 ctx: expect.anything()

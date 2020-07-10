@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AttributeIndexRepo filterQueryPart Should return simple link filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": undefined,
+    "value1": "label",
+    "value2": "linked",
+    "value3": "MyLabel",
+  },
+  "query": "FILTER 
+                FIRST(FOR l IN @@value0
+                    FILTER TO_STRING(r.@value1) == l._key
+                RETURN l.@value2)
+             == @value3",
+}
+`;
+
 exports[`AttributeIndexRepo getValues Should return values for simple link attribute 1`] = `
 Object {
   "_source": [Function],
@@ -20,3 +37,20 @@ Object {
 `;
 
 exports[`AttributeIndexRepo getValues Should return values for simple link attribute 2`] = `undefined`;
+
+exports[`AttributeIndexRepo sortQueryPart Should return simple link sort 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": undefined,
+    "value1": "label",
+    "value2": "linked",
+    "value3": "ASC",
+  },
+  "query": "SORT 
+                FIRST(FOR l IN @@value0
+                    FILTER TO_STRING(r.@value1) == l._key
+                RETURN l.@value2)
+             @value3",
+}
+`;

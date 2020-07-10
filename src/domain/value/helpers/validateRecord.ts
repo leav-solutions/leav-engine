@@ -12,7 +12,7 @@ export default async (
 ): Promise<void> => {
     const recordsRes = await deps.recordRepo.find({
         libraryId: library,
-        filters: [{attribute: {id: 'id', type: AttributeTypes.SIMPLE}, value: String(recordId)}],
+        filters: [{attributes: [{id: 'id', type: AttributeTypes.SIMPLE}], value: String(recordId)}],
         retrieveInactive: true,
         ctx
     });

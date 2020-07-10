@@ -1,4 +1,4 @@
-import {Database} from 'arangojs';
+import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
@@ -18,6 +18,7 @@ describe('AttributeIndexRepo', () => {
         getValueById: null,
         getValues: null,
         filterQueryPart: null,
+        sortQueryPart: null,
         clearAllValues: null
     };
     const ctx: IQueryInfos = {
@@ -164,6 +165,43 @@ describe('AttributeIndexRepo', () => {
                     modified_at: 1521475225
                 }
             });
+        });
+    });
+    describe('filterQueryPart', () => {
+        test('Should return simple link filter', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeSimpleLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const filter = attrRepo.filterQueryPart(
+                [
+                    {id: 'label', type: AttributeTypes.SIMPLE_LINK},
+                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                ],
+                aql`== ${'MyLabel'}`,
+                0
+            );
+
+            expect(filter.query).toMatch(/^FILTER/);
+            expect(filter).toMatchSnapshot();
+        });
+    });
+    describe('sortQueryPart', () => {
+        test('Should return simple link sort', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeSimpleLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const filter = attrRepo.sortQueryPart({
+                attributes: [
+                    {id: 'label', type: AttributeTypes.SIMPLE_LINK},
+                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                ],
+                order: 'ASC'
+            });
+
+            expect(filter.query).toMatch(/^SORT/);
+            expect(filter).toMatchSnapshot();
         });
     });
 });

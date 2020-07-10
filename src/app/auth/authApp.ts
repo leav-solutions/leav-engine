@@ -46,7 +46,7 @@ export default function({
                             const users = await recordDomain.find({
                                 params: {
                                     library: 'users',
-                                    filters: {id: ctx.userId},
+                                    filters: [{field: 'id', value: ctx.userId}],
                                     withCount: false,
                                     retrieveInactive: true
                                 },
@@ -77,7 +77,7 @@ export default function({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: {login}
+                                filters: [{field: 'login', value: login}]
                             },
                             ctx
                         });
@@ -149,7 +149,7 @@ export default function({
             const users = await recordDomain.find({
                 params: {
                     library: 'users',
-                    filters: {id: tokenPayload.userId}
+                    filters: [{field: 'id', value: tokenPayload.userId}]
                 },
                 ctx
             });

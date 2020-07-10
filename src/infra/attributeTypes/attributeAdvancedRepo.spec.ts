@@ -1,4 +1,4 @@
-import {Database} from 'arangojs';
+import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {AttributeTypes} from '../../_types/attribute';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
@@ -641,13 +641,34 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('filterQueryPart', () => {
-        test('Should return simple filter', () => {
+        test('Should return advanced filter', () => {
             const mockDbServ = {
                 db: new Database()
             };
             const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
-            const filter = attrRepo.filterQueryPart('label', 0, 'MyLabel');
+            const filter = attrRepo.filterQueryPart(
+                [{id: 'label', type: AttributeTypes.ADVANCED}],
+                aql`== ${'MyLabel'}`,
+                0
+            );
 
+            expect(filter.query).toMatch(/^FILTER/);
+            expect(filter).toMatchSnapshot();
+        });
+    });
+
+    describe('sortQueryPart', () => {
+        test('Should return advanced filter', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const filter = attrRepo.sortQueryPart({
+                attributes: [{id: 'label', type: AttributeTypes.ADVANCED}],
+                order: 'ASC'
+            });
+
+            expect(filter.query).toMatch(/^SORT/);
             expect(filter).toMatchSnapshot();
         });
     });

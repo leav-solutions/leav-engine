@@ -858,14 +858,14 @@ describe('attributeDomain', () => {
                 attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.EXTENDED}, ctx})
             ).toEqual(
                 {
-                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.OBJECT],
                     [ActionsListEvents.GET_VALUE]: [
                         ActionsListIOTypes.STRING,
                         ActionsListIOTypes.NUMBER,
                         ActionsListIOTypes.OBJECT,
                         ActionsListIOTypes.BOOLEAN
                     ],
-                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                    [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.OBJECT]
                 } // json
             );
         });

@@ -6,31 +6,65 @@ import {join} from 'path';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IRecord, IRecordFilterOption, IRecordIdentity, IRecordIdentityConf} from '../../_types/record';
+import {
+    IRecord,
+    IRecordFilterOption,
+    IRecordIdentity,
+    IRecordIdentityConf,
+    Operator,
+    Condition,
+    IRecordSort
+} from '../../_types/record';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
+import {Errors} from '../../_types/errors';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
  */
-export interface IRecordFiltersLight {
-    [attrId: string]: string;
+
+export type IRecordFiltersLight = Array<{
+    field?: string;
+    value?: string;
+    condition?: Condition;
+    operator?: Operator;
+}>;
+
+export interface IRecordSortLight {
+    field: string;
+    order: string;
 }
 
 export interface IFindRecordParams {
     library: string;
     filters?: IRecordFiltersLight;
+    sort?: IRecordSortLight;
     options?: IValuesOptions;
     pagination?: IPaginationParams | ICursorPaginationParams;
     withCount?: boolean;
     retrieveInactive?: boolean;
 }
+
+const allowedTypeOperator = {
+    string: [
+        Condition.EQUAL,
+        Condition.NOT_EQUAL,
+        Condition.BEGIN_WITH,
+        Condition.END_WITH,
+        Condition.CONTAINS,
+        Condition.NOT_CONTAINS
+    ],
+    number: [Condition.EQUAL, Condition.NOT_EQUAL, Condition.GREATER_THAN, Condition.LESS_THAN],
+    boolean: [Condition.EQUAL, Condition.NOT_EQUAL],
+    null: [Condition.EQUAL, Condition.NOT_EQUAL]
+};
 
 export interface IRecordDomain {
     createRecord(library: string, ctx: IQueryInfos): Promise<IRecord>;
@@ -112,8 +146,8 @@ export default function({
         record: IRecord,
         library: string,
         ctx: IQueryInfos
-    ) =>
-        !isLinkAttribute && value !== null && !!attrProps.actions_list && !!attrProps.actions_list.getValue
+    ) => {
+        return !isLinkAttribute && value !== null && !!attrProps.actions_list && !!attrProps.actions_list.getValue
             ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
                   ...ctx,
                   attribute: attrProps,
@@ -122,6 +156,7 @@ export default function({
                   value
               })
             : value;
+    };
 
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
@@ -205,6 +240,71 @@ export default function({
         return processedValue;
     };
 
+    const _checkLogicExpr = (filters: IRecordFilterOption[]) => {
+        const stack = [];
+        const output = [];
+
+        // convert to Reverse Polish Notation
+        for (const f of filters) {
+            if (typeof f.value !== 'undefined') {
+                output.push(f);
+            } else if (f.operator !== Operator.CLOSE_BRACKET) {
+                stack.push(f);
+            } else {
+                let e: IRecordFilterOption = stack.pop();
+                while (e && e.operator !== Operator.OPEN_BRACKET) {
+                    output.push(e);
+                    e = stack.pop();
+                }
+                if (!e) {
+                    throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
+                }
+            }
+        }
+
+        const rpn = output.concat(stack.reverse());
+
+        // validation filters logical expression (order)
+        let stackSize = 0;
+        for (const e of rpn) {
+            stackSize += typeof e.value !== 'undefined' ? 1 : -1;
+            if (stackSize <= 0) {
+                throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
+            }
+        }
+
+        if (stackSize !== 1) {
+            throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
+        }
+    };
+
+    const _getAttributesFromField = async (field: string, ctx: IQueryInfos): Promise<IAttribute[]> => {
+        const fields = field.split('.');
+        const attributes: IAttribute[] = [];
+
+        let linkedLibrary;
+        let extended = false;
+        for (const f of fields) {
+            if (linkedLibrary) {
+                const attrLinkedLibrary = await libraryDomain.getLibraryAttributes(linkedLibrary, ctx);
+                if (!attrLinkedLibrary.find(a => a.id === f)) {
+                    throw new ValidationError({id: Errors.INVALID_FILTER_FIELDS});
+                }
+            }
+
+            const attribute: IAttribute = !extended
+                ? await attributeDomain.getAttributeProperties({id: f, ctx})
+                : {id: f, type: AttributeTypes.SIMPLE, format: AttributeFormats.EXTENDED}; // not necessary extended
+
+            linkedLibrary = attribute.linked_library;
+            extended = attribute.format === AttributeFormats.EXTENDED;
+
+            attributes.push(attribute);
+        }
+
+        return attributes;
+    };
+
     return {
         async createRecord(library: string, ctx: IQueryInfos): Promise<IRecord> {
             const recordData = {
@@ -262,26 +362,55 @@ export default function({
             return recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
         },
         async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
-            const {library, filters, pagination, withCount, retrieveInactive = false} = params;
+            const {library, filters, sort, pagination, withCount, retrieveInactive = false} = params;
             const fullFilters: IRecordFilterOption[] = [];
+            let fullSort: IRecordSort;
 
             // Hydrate filters with attribute properties and cast filters values if needed
-            if (typeof filters !== 'undefined' && filters) {
-                for (const attrId of Object.keys(filters)) {
-                    const attribute = await attributeDomain.getAttributeProperties({id: attrId, ctx});
-                    const value =
-                        attribute.format === AttributeFormats.NUMERIC ? Number(filters[attrId]) : filters[attrId];
+            if (filters && typeof filters !== 'undefined' && filters.length) {
+                for (const f of filters) {
+                    let filter: IRecordFilterOption = {};
 
-                    fullFilters.push({
-                        attribute,
-                        value
-                    });
+                    if (!f.operator) {
+                        const attributes = await _getAttributesFromField(f.field, ctx);
+
+                        const value =
+                            attributes[attributes.length - 1].format === AttributeFormats.NUMERIC
+                                ? Number(f.value)
+                                : f.value;
+                        const valueType = !value
+                            ? 'null'
+                            : value === 'true' || value === 'false'
+                            ? 'boolean'
+                            : typeof value;
+
+                        if (f.condition && !allowedTypeOperator[valueType].includes(f.condition)) {
+                            throw new ValidationError({id: Errors.INVALID_FILTER_CONDITION_VALUE});
+                        }
+
+                        filter = {attributes, value, condition: f.condition};
+                    } else {
+                        filter = f;
+                    }
+
+                    fullFilters.push(filter);
                 }
+
+                _checkLogicExpr(fullFilters);
+            }
+
+            // Check sort fields
+            if (sort && typeof sort !== 'undefined') {
+                fullSort = {
+                    attributes: await _getAttributesFromField(sort.field, ctx),
+                    order: sort.order
+                };
             }
 
             const records = await recordRepo.find({
                 libraryId: library,
                 filters: fullFilters,
+                sort: fullSort,
                 pagination,
                 withCount,
                 retrieveInactive,

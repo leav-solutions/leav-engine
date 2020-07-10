@@ -1,9 +1,10 @@
-import {aql} from 'arangojs';
-import {AqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IRecordSort} from '_types/record';
+import {IAttribute, AttributeFormats} from '../../_types/attribute';
 
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -12,10 +13,26 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
 }
+
 export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): IAttributeTypeRepo {
+    function _getExtendedFilterPart(attributes: IAttribute[], advancedValue: GeneratedAqlQuery): GeneratedAqlQuery {
+        return aql`${
+            attributes
+                .map(a => a.id)
+                .slice(1)
+                .reduce((acc, value, i) => {
+                    acc.push(aql`TRANSLATE(${value}, ${i ? acc[acc.length - 1] : aql`${advancedValue}`})`);
+                    if (i) {
+                        acc.shift();
+                    }
+                    return acc;
+                }, [])[0]
+        }`;
+    }
+
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
@@ -216,14 +233,35 @@ export default function({
                 created_at: valueLinks[0].created_at
             };
         },
-        filterQueryPart(fieldName: string, index: number, value: string): AqlQuery {
+        sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
-            const filterName = aql.literal('filterField' + index);
-            const query = aql`LET ${filterName} = (
+
+            const advancedValue = aql`FIRST(
                 FOR v, e IN 1 OUTBOUND r._id
                 ${collec}
-                FILTER e.attribute == ${fieldName} RETURN v.value
-            ) FILTER ${filterName} LIKE ${'%' + value + '%'}`;
+                FILTER e.attribute == ${attributes[0].id} RETURN v.value
+            )`;
+
+            const query =
+                attributes[0].format !== AttributeFormats.EXTENDED
+                    ? aql`SORT ${advancedValue} ${order}`
+                    : aql`SORT ${_getExtendedFilterPart(attributes, advancedValue)} ${order}`;
+
+            return query;
+        },
+        filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {
+            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+
+            const advancedValue = aql`FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                ${collec}
+                FILTER e.attribute == ${attributes[0].id} RETURN v.value
+            )`;
+
+            const query =
+                attributes[0].format !== AttributeFormats.EXTENDED
+                    ? aql`FILTER ${advancedValue} ${queryPart}`
+                    : aql`FILTER ${_getExtendedFilterPart(attributes, advancedValue)} ${queryPart}`;
 
             return query;
         },

@@ -1,4 +1,4 @@
-import {Database} from 'arangojs';
+import {aql, Database} from 'arangojs';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleRepo from './attributeSimpleRepo';
 import {IQueryInfos} from '_types/queryInfos';
@@ -117,9 +117,22 @@ describe('AttributeIndexRepo', () => {
     describe('filterQueryPart', () => {
         test('Should return simple filter', () => {
             const attrRepo = attributeSimpleRepo();
-            const filter = attrRepo.filterQueryPart('id', 0, '123456');
+            const filter = attrRepo.filterQueryPart([{id: 'id', type: AttributeTypes.SIMPLE}], aql`== ${'123456'}`, 0);
 
             expect(filter.query).toMatch(/^FILTER/);
+            expect(filter).toMatchSnapshot();
+        });
+    });
+
+    describe('sortQueryPart', () => {
+        test('Should return simple sort', () => {
+            const attrRepo = attributeSimpleRepo();
+            const filter = attrRepo.sortQueryPart({
+                attributes: [{id: 'id', type: AttributeTypes.SIMPLE}],
+                order: 'ASC'
+            });
+
+            expect(filter.query).toMatch(/^SORT/);
             expect(filter).toMatchSnapshot();
         });
     });
