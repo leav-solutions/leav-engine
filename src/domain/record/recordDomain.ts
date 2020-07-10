@@ -9,22 +9,22 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
+    Condition,
     IRecord,
     IRecordFilterOption,
     IRecordIdentity,
     IRecordIdentityConf,
-    Operator,
-    Condition,
-    IRecordSort
+    IRecordSort,
+    Operator
 } from '../../_types/record';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import {Errors} from '../../_types/errors';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -423,29 +423,35 @@ export default function({
             const lib = await libraryDomain.getLibraryProperties(record.library, ctx);
             const conf = lib.recordIdentityConf || {};
 
+            let label = null;
+            if (conf.label) {
+                const labelValues = await valueDomain.getValues({
+                    library: lib.id,
+                    recordId: record.id,
+                    attribute: conf.label,
+                    ctx
+                });
+
+                label = labelValues.length ? labelValues.pop().value : null;
+            }
+
+            let color = null;
+            if (conf.color) {
+                const colorValues = await valueDomain.getValues({
+                    library: lib.id,
+                    recordId: record.id,
+                    attribute: conf.color,
+                    ctx
+                });
+
+                color = colorValues.length ? colorValues.pop().value : null;
+            }
+
             return {
                 id: record.id,
                 library: lib,
-                label: conf.label
-                    ? (
-                          await valueDomain.getValues({
-                              library: lib.id,
-                              recordId: record.id,
-                              attribute: conf.label,
-                              ctx
-                          })
-                      ).pop().value
-                    : null,
-                color: conf.color
-                    ? (
-                          await valueDomain.getValues({
-                              library: lib.id,
-                              recordId: record.id,
-                              attribute: conf.color,
-                              ctx
-                          })
-                      ).pop().value
-                    : null,
+                label,
+                color,
                 preview: (await getPreviews({conf, lib, record, valueDomain, libraryDomain, ctx})) ?? null
             };
         },
