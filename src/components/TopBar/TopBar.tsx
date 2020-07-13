@@ -19,7 +19,7 @@ function TopBar({toggleSidebarVisible, toggleUserPanelVisible}: ITopBarProps): J
     return (
         <Menu inverted size="huge" style={{borderRadius: 0, margin: 0}}>
             <Menu.Menu>
-                <Menu.Item name="toggle-sidebar" content="" icon="grid layout" onClick={toggleSidebarVisible} />
+                <Menu.Item name="toggle-sidebar" content="" icon="sidebar" onClick={toggleSidebarVisible} />
                 <Menu.Item name="Name" content={activeLibName !== '' ? activeLibName : t('menu.app_name')} />
             </Menu.Menu>
 

@@ -16,8 +16,8 @@ const WrapperItem = styled.div`
     display: grid;
     justify-items: center;
     align-items: start;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    grid-template-rows: repeat(auto-fit, auto);
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    grid-template-rows: repeat(auto-fill, auto);
     grid-gap: 1rem;
 `;
 

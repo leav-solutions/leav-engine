@@ -179,8 +179,10 @@ export const getSortFieldByAttributeType = (attributeId: string, type: Attribute
 
     switch (type) {
         case AttributeType.tree:
+        case AttributeType.simple_link:
             const subFieldByDefault = 'id';
             return `${attributeId}.${subFieldByDefault}`;
+        case AttributeType.advanced_link:
         default:
             return attributeId;
     }

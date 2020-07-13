@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Checkbox} from 'semantic-ui-react';
-import styled from 'styled-components';
+import {Button, Card, Icon} from 'semantic-ui-react';
+import styled, {CSSObject} from 'styled-components';
 import {getPreviewUrl} from '../../../../utils';
 import {IItem} from '../../../../_types/types';
 import {
@@ -64,13 +64,33 @@ const Selection = styled.div`
     justify-content: center;
 `;
 
-const CheckboxWrapper = styled.label`
+interface ICheckboxWrapper {
+    checked: boolean;
+    styled?: CSSObject;
+}
+
+const CheckboxWrapper = styled.span<ICheckboxWrapper>`
     height: 100%;
     width: 100%;
+    cursor: pointer;
 
-    input {
-        width: 1.5rem;
-        height: 1.5rem;
+    background: ${({checked}) => (checked ? 'hsla(0, 0%, 0%, 0.7)' : 'hsla(0, 0%, 0%, 0.1)')};
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: ${({checked}) => (checked ? 'hsla(0, 0%, 0%, 0.8)' : 'hsla(0, 0%, 0%, 0.3)')};
+    }
+
+    @keyframes show {
+        from {
+            background: hsla(0, 0%, 0%, 0.1);
+        }
+        to {
+            background: hsla(0, 0%, 0%, 0.5);
+        }
     }
 `;
 
@@ -89,10 +109,6 @@ const Actions = styled.div`
 
     padding: 2rem 5rem;
     border-radius: 0.25rem 0.25rem 0 0;
-`;
-
-const DiscreteId = styled.span`
-    color: hsl(0, 0%, 70%);
 `;
 
 function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
@@ -131,8 +147,8 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
                 <ActionsWrapper>
                     {stateItems.selectionMode ? (
                         <Selection>
-                            <CheckboxWrapper>
-                                <input type="checkbox" checked={isSelected} onClick={handleClick} />
+                            <CheckboxWrapper checked={isSelected} onClick={handleClick}>
+                                {isSelected && <Icon name="check" size="huge" color="grey" />}
                             </CheckboxWrapper>
                         </Selection>
                     ) : (

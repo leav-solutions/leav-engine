@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Divider, Dropdown, Menu, Sidebar} from 'semantic-ui-react';
+import {Button, Divider, Dropdown, Menu, Sidebar, Segment} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../_types/types';
 import {
@@ -216,7 +216,12 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                             </Dropdown.Menu>
                         </Dropdown>
 
-                        <Button positive compact onClick={applyFilters}>
+                        <Button
+                            positive
+                            disabled={!filters.filter(f => f.type === FilterTypes.filter).length}
+                            compact
+                            onClick={applyFilters}
+                        >
                             {t('filters.apply')}
                         </Button>
                     </FilterActions>
@@ -224,37 +229,123 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     <Divider />
 
                     <FilterList>
-                        {filters.map(filter =>
-                            filter.type === FilterTypes.filter ? (
-                                <FilterItem
-                                    key={filter.key}
-                                    stateItems={stateItems}
-                                    filter={filter}
-                                    setFilters={setFilters}
-                                    conditionOptions={conditionOptions}
-                                    operatorOptions={operatorOptions}
-                                    resetFilters={resetFilters}
-                                    updateFilters={updateFilters}
-                                    filterOperator={filterOperator}
-                                    setFilterOperator={setFilterOperator}
-                                />
-                            ) : (
-                                <FilterSeparator
-                                    key={filter.key}
-                                    separator={filter}
-                                    operatorOptions={operatorOptions}
-                                    setFilters={setFilters}
-                                    separatorOperator={separatorOperator}
-                                    setSeparatorOperator={setSeparatorOperator}
-                                    updateFilters={updateFilters}
-                                />
-                            )
-                        )}
+                        {
+                            <FilterElements
+                                filters={filters}
+                                setFilters={setFilters}
+                                stateItems={stateItems}
+                                conditionOptions={conditionOptions}
+                                operatorOptions={operatorOptions}
+                                resetFilters={resetFilters}
+                                updateFilters={updateFilters}
+                                filterOperator={filterOperator}
+                                setFilterOperator={setFilterOperator}
+                                separatorOperator={separatorOperator}
+                                setSeparatorOperator={setSeparatorOperator}
+                            />
+                        }
                     </FilterList>
                 </Side>
             </CustomSidebarPushable>
         </WrapperFilter>
     );
 }
+
+const FilterGroup = styled.div`
+    padding: 0.3rem;
+    border: 1px solid hsla(0, 0%, 90%);
+    border-radius: 0.25rem;
+`;
+
+interface IFilterElements {
+    filters: (IFilter | IFilterSeparator)[];
+    setFilters: any;
+    stateItems: any;
+    conditionOptions: any;
+    operatorOptions: any;
+    resetFilters: any;
+    updateFilters: any;
+    filterOperator: any;
+    setFilterOperator: any;
+    separatorOperator: any;
+    setSeparatorOperator: any;
+}
+
+const FilterElements = ({
+    filters,
+    setFilters,
+    stateItems,
+    conditionOptions,
+    operatorOptions,
+    resetFilters,
+    updateFilters,
+    filterOperator,
+    setFilterOperator,
+    separatorOperator,
+    setSeparatorOperator
+}: IFilterElements) => {
+    let lastType: string;
+
+    const result = filters
+        .reduce((acc, filter) => {
+            if (lastType !== filter.type) {
+                lastType = filter.type;
+                return [...acc, [filter]];
+            }
+            const lastArray = acc.pop();
+            if (lastArray) {
+                return [...acc, [...lastArray, filter]];
+            }
+            return [...acc, [filter]];
+        }, [] as (IFilter | IFilterSeparator)[][])
+        .map(arrayFilters => {
+            if (Array.isArray(arrayFilters)) {
+                if (arrayFilters[0].type === FilterTypes.filter) {
+                    return (
+                        <FilterGroup>
+                            {arrayFilters.map(filter =>
+                                filter.type === FilterTypes.filter ? (
+                                    <FilterItem
+                                        key={filter.key}
+                                        stateItems={stateItems}
+                                        filter={filter}
+                                        setFilters={setFilters}
+                                        conditionOptions={conditionOptions}
+                                        operatorOptions={operatorOptions}
+                                        resetFilters={resetFilters}
+                                        updateFilters={updateFilters}
+                                        filterOperator={filterOperator}
+                                        setFilterOperator={setFilterOperator}
+                                    />
+                                ) : (
+                                    <></>
+                                )
+                            )}
+                        </FilterGroup>
+                    );
+                }
+                return arrayFilters.map(filter =>
+                    filter.type === FilterTypes.separator ? (
+                        <>
+                            <FilterSeparator
+                                key={filter.key}
+                                separator={filter}
+                                operatorOptions={operatorOptions}
+                                setFilters={setFilters}
+                                separatorOperator={separatorOperator}
+                                setSeparatorOperator={setSeparatorOperator}
+                                updateFilters={updateFilters}
+                            />
+                        </>
+                    ) : (
+                        <></>
+                    )
+                );
+            }
+            return [];
+        })
+        .map(filters => (Array.isArray(filters) ? filters : [filters]));
+    return <>{result.reduce((acc, val) => acc.concat(<>{val}</>), [])}</>;
+};
 
 export default Filters;
