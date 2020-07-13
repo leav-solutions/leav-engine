@@ -33,7 +33,9 @@ function ChangeAttribute({
         const newAtt = stateItems.attributes.find(a => a.id === attSelected);
 
         // take the first operator for the format of the attribute
-        const defaultConditionOperator = allowedTypeOperator[AttributeFormat[newAtt?.format ?? 0]][0];
+        const defaultConditionOperator =
+            allowedTypeOperator[AttributeFormat[newAtt?.format ?? 0]] &&
+            allowedTypeOperator[AttributeFormat[newAtt?.format ?? 0]][0];
 
         setFilters(filters =>
             filters.reduce((acc, f) => {

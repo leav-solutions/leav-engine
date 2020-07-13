@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Divider, Dropdown, Menu, Sidebar, Segment} from 'semantic-ui-react';
+import {Button, Divider, Dropdown, Menu, Sidebar} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../_types/types';
 import {
@@ -45,6 +45,12 @@ const FilterList = styled.div`
     height: calc(100% - 11rem);
     overflow-y: scroll;
     padding: 0.3rem 0.3rem 0.3rem 0;
+`;
+
+const FilterGroup = styled.div`
+    padding: 0.2rem;
+    border: 1px solid hsla(0, 0%, 90%);
+    border-radius: 0.25rem;
 `;
 
 interface IFiltersProps {
@@ -251,12 +257,6 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     );
 }
 
-const FilterGroup = styled.div`
-    padding: 0.3rem;
-    border: 1px solid hsla(0, 0%, 90%);
-    border-radius: 0.25rem;
-`;
-
 interface IFilterElements {
     filters: (IFilter | IFilterSeparator)[];
     setFilters: any;
@@ -288,6 +288,7 @@ const FilterElements = ({
 
     const result = filters
         .reduce((acc, filter) => {
+            // Group filters by type
             if (lastType !== filter.type) {
                 lastType = filter.type;
                 return [...acc, [filter]];
@@ -298,54 +299,52 @@ const FilterElements = ({
             }
             return [...acc, [filter]];
         }, [] as (IFilter | IFilterSeparator)[][])
-        .map(arrayFilters => {
-            if (Array.isArray(arrayFilters)) {
-                if (arrayFilters[0].type === FilterTypes.filter) {
-                    return (
-                        <FilterGroup>
-                            {arrayFilters.map(filter =>
-                                filter.type === FilterTypes.filter ? (
-                                    <FilterItem
-                                        key={filter.key}
-                                        stateItems={stateItems}
-                                        filter={filter}
-                                        setFilters={setFilters}
-                                        conditionOptions={conditionOptions}
-                                        operatorOptions={operatorOptions}
-                                        resetFilters={resetFilters}
-                                        updateFilters={updateFilters}
-                                        filterOperator={filterOperator}
-                                        setFilterOperator={setFilterOperator}
-                                    />
-                                ) : (
-                                    <></>
-                                )
-                            )}
-                        </FilterGroup>
-                    );
-                }
-                return arrayFilters.map(filter =>
-                    filter.type === FilterTypes.separator ? (
-                        <>
-                            <FilterSeparator
-                                key={filter.key}
-                                separator={filter}
-                                operatorOptions={operatorOptions}
-                                setFilters={setFilters}
-                                separatorOperator={separatorOperator}
-                                setSeparatorOperator={setSeparatorOperator}
-                                updateFilters={updateFilters}
-                            />
-                        </>
-                    ) : (
-                        <></>
-                    )
+        .map((arrayFilters, index) => {
+            if (arrayFilters[0].type === FilterTypes.filter) {
+                return (
+                    <FilterGroup key={index}>
+                        {arrayFilters.map(filter =>
+                            filter.type === FilterTypes.filter ? (
+                                <FilterItem
+                                    key={filter.key}
+                                    stateItems={stateItems}
+                                    filter={filter}
+                                    setFilters={setFilters}
+                                    conditionOptions={conditionOptions}
+                                    operatorOptions={operatorOptions}
+                                    resetFilters={resetFilters}
+                                    updateFilters={updateFilters}
+                                    filterOperator={filterOperator}
+                                    setFilterOperator={setFilterOperator}
+                                />
+                            ) : (
+                                <></>
+                            )
+                        )}
+                    </FilterGroup>
                 );
             }
-            return [];
+            return arrayFilters.map(filter =>
+                filter.type === FilterTypes.separator ? (
+                    <>
+                        <FilterSeparator
+                            key={filter.key}
+                            separator={filter}
+                            operatorOptions={operatorOptions}
+                            setFilters={setFilters}
+                            separatorOperator={separatorOperator}
+                            setSeparatorOperator={setSeparatorOperator}
+                            updateFilters={updateFilters}
+                        />
+                    </>
+                ) : (
+                    <></>
+                )
+            );
         })
         .map(filters => (Array.isArray(filters) ? filters : [filters]));
-    return <>{result.reduce((acc, val) => acc.concat(<>{val}</>), [])}</>;
+
+    return <>{result.reduce((acc, val, index) => acc.concat(<div key={index}>{val}</div>), [])}</>;
 };
 
 export default Filters;

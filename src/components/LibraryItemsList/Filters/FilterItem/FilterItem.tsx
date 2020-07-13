@@ -180,12 +180,12 @@ function FilterItem({
     };
 
     const changeCondition = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newCondition = (data?.value ?? '').toString();
+        const newCondition = (data?.value ?? '').toString() as conditionFilter;
 
         setFilters(filters =>
             filters.reduce((acc, f) => {
                 if (f.key === filter.key) {
-                    return [...acc, {...filter, condition: conditionFilter[newCondition]}];
+                    return [...acc, {...filter, condition: newCondition}];
                 }
                 return [...acc, f];
             }, [] as (IFilter | IFilterSeparator)[])
