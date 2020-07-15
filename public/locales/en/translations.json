@@ -141,7 +141,10 @@
     "menu-selection": {
         "nb-selected": "{{nb}} items selected",
         "quit": "Quit selection mode",
-        "actions": "Actions"
+        "actions": "Actions",
+        "all-selected-enabled": "All selected mode enabled",
+        "all-selected-disabled": "All selected mode disabled",
+        "unselect-all": "Unselect All"
     },
     "table-columns-selection": {
         "header": "Columns available",

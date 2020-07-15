@@ -140,7 +140,11 @@
     "menu-selection": {
         "nb-selected": "{{nb}} éléments sélectionné(s)",
         "quit": "Quitter le mode sélection",
-        "actions": "Actions"
+        "actions": "Actions",
+        "all-selected-enabled": "Tout sélectionné actif",
+        "all-selected-disabled": "Tout sélectionné inactif",
+        "unselect-all": "Tout désélectionner"
+
     },
     "table-columns-selection": {
         "header": "Colonnes disponible",

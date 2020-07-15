@@ -116,7 +116,7 @@ function LibraryItemsListTableRow({
     };
 
     useEffect(() => {
-        setIsSelect(stateItems.itemsSelected[item.id]);
+        setIsSelect(!!stateItems.itemsSelected[item.id]);
     }, [stateItems.itemsSelected, item]);
 
     return (
@@ -183,6 +183,11 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, sho
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
             itemsSelected: {...stateItems.itemsSelected, [item.id]: !!checked}
+        });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
+            selectionMode: false
         });
     };
 

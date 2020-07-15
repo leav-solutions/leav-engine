@@ -1,11 +1,11 @@
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import {FilterTypes, operatorFilter} from '../../../../_types/types';
 import FilterSeparator from './FilterSeparator';
 
 describe('FilterSeparator', () => {
-    test('Snapshot test', async () => {
-        const comp = render(
+    test('have a Dropdown', async () => {
+        const comp = mount(
             <FilterSeparator
                 separator={{
                     type: FilterTypes.separator,
@@ -20,6 +20,6 @@ describe('FilterSeparator', () => {
             />
         );
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find('Dropdown')).toHaveLength(1);
     });
 });

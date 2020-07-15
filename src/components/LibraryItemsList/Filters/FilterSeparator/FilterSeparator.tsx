@@ -7,6 +7,9 @@ const CustomSegment = styled(Segment)`
     display: flex;
     justify-content: space-between;
     align-items: top;
+    &&& {
+        margin: 0.5rem 0.2rem;
+    }
 `;
 
 interface IFilterSeparatorProps {

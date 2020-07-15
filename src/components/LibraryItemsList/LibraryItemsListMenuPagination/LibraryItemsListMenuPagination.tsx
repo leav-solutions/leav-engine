@@ -26,7 +26,21 @@ function LibraryItemsListMenuPagination({
             ? stateItems.itemsTotalCount
             : stateItems.offset + stateItems.pagination;
 
-    const selectAll = () => {};
+    const selectAll = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+            itemsSelected: {}
+        });
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
+            allSelected: true
+        });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
+            selectionMode: true
+        });
+    };
     const selectVisible = () => {
         const newItemSelected = {};
 

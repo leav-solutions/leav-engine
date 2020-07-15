@@ -14,7 +14,8 @@ export enum LibraryItemListReducerActionTypes {
     SET_ITEMS_SELECTED = 'SET_ITEMS_SELECTED',
     SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
     SET_ATTRIBUTES = 'SET_ATTRIBUTES',
-    SET_COLUMNS = 'SET_COLUMNS'
+    SET_COLUMNS = 'SET_COLUMNS',
+    SET_ALL_SELECTED = 'SET_ALL_SELECTED'
 }
 
 export interface LibraryItemListState {
@@ -34,6 +35,7 @@ export interface LibraryItemListState {
     queryFilters: IQueryFilter[];
     attributes: IAttribute[];
     columns: IItemsColumn[];
+    allSelected: boolean;
 }
 
 export const initialState: LibraryItemListState = {
@@ -51,7 +53,8 @@ export const initialState: LibraryItemListState = {
     itemsSelected: {},
     queryFilters: [],
     attributes: [],
-    columns: []
+    columns: [],
+    allSelected: false
 };
 
 export type LibraryItemListReducerAction =
@@ -117,6 +120,10 @@ export type LibraryItemListReducerAction =
     | {
           type: LibraryItemListReducerActionTypes.CANCEL_SEARCH;
           itemsSortField: string;
+      }
+    | {
+          type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED;
+          allSelected: boolean;
       };
 
 const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
@@ -150,6 +157,12 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
             return {...state, columns: action.columns};
         case LibraryItemListReducerActionTypes.CANCEL_SEARCH:
             return {...state, itemsSortField: action.itemsSortField, itemsSortOrder: OrderSearch.asc};
+        case LibraryItemListReducerActionTypes.SET_ALL_SELECTED:
+            let finalState = {...state, allSelected: action.allSelected};
+            if (action.allSelected) {
+                finalState.itemsSelected = {};
+            }
+            return finalState;
         default:
             return state;
     }

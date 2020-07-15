@@ -26,6 +26,10 @@ function MenuItemListSelected({stateItems, dispatchItems}: IMenuItemListSelected
             type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
             itemsSelected: {}
         });
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
+            allSelected: false
+        });
     };
 
     useEffect(() => {
@@ -52,22 +56,60 @@ function MenuItemListSelected({stateItems, dispatchItems}: IMenuItemListSelected
             type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
             itemsSelected: newItemSelected
         });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
+            allSelected: false
+        });
+    };
+
+    const selectAll = () => {
+        // reset selected elements
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+            itemsSelected: {}
+        });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
+            allSelected: true
+        });
+    };
+
+    const unselectAll = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+            itemsSelected: {}
+        });
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
+            allSelected: false
+        });
     };
 
     return (
         <>
             <Menu.Item>
-                <Dropdown text={t('menu-selection.nb-selected', {nb: countItemsSelected})}>
+                <Dropdown
+                    text={
+                        stateItems.allSelected
+                            ? t('menu-selection.all-selected-enabled')
+                            : t('menu-selection.nb-selected', {nb: countItemsSelected})
+                    }
+                >
                     <Dropdown.Menu>
                         <Dropdown.Item
                             onClick={selectVisible}
                             text={t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
                         />
-                        <Dropdown.Item text={t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})} />
+                        <Dropdown.Item
+                            onClick={selectAll}
+                            text={t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
+                        />
+                        <Dropdown.Item onClick={unselectAll} text={t('menu-selection.unselect-all')} />
                     </Dropdown.Menu>
                 </Dropdown>
             </Menu.Item>
-
             <Menu.Item>
                 <Dropdown text={t('menu-selection.actions')}></Dropdown>
             </Menu.Item>
