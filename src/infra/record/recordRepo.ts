@@ -233,6 +233,7 @@ export default function({
                 list: list.map(dbUtils.cleanup),
                 cursor
             };
+
             return returnVal;
         },
         async createRecord({libraryId, recordData, ctx}): Promise<IRecord> {

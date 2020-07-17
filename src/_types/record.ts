@@ -33,7 +33,7 @@ export enum Condition {
 
 export interface IRecordFilterOption {
     attributes?: IAttribute[];
-    value?: string | number;
+    value?: string | number | boolean;
     condition?: Condition;
     operator?: Operator;
 }

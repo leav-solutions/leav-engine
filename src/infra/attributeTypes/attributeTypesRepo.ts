@@ -8,7 +8,7 @@ import {Console} from 'console';
 
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
-    getQueryPart?(value: string | number, condition: Condition): GeneratedAqlQuery;
+    getQueryPart?(value: string | number | boolean, condition: Condition): GeneratedAqlQuery;
 }
 
 /**
@@ -140,7 +140,7 @@ export default function({
     'core.infra.attributeTypes.attributeTree': attributeTreeRepo = null
 }: IDeps = {}): IAttributeTypesRepo {
     return {
-        getQueryPart(value: string | number, condition: Condition = Condition.EQUAL): GeneratedAqlQuery {
+        getQueryPart(value: string | number | boolean, condition: Condition = Condition.EQUAL): GeneratedAqlQuery {
             const parts = {
                 [Condition.EQUAL]: aql.join([aql`==`, aql`${value}`]),
                 [Condition.NOT_EQUAL]: aql.join([aql`!=`, aql`${value}`]),
