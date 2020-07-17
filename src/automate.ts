@@ -1,6 +1,6 @@
 import {FullTreeContent} from './_types/queries';
 import {FilesystemContent, FileContent} from './_types/filesystem';
-import {create, remove, move, update} from './rmq/events';
+import * as events from './rmq/events';
 import * as amqp from 'amqplib';
 
 enum Attr {
@@ -62,7 +62,7 @@ const _getEventTypeAndDbElIdx = (fc: FileContent, dbEl: FullTreeContent) => {
 
 const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.ConfirmChannel): Promise<void> => {
     for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
-        await remove(
+        await events.remove(
             de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
             de.record.inode,
             de.record.is_directory,
@@ -85,7 +85,7 @@ const _trtFile = async (
         case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
             const deName: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_name;
             const dePath: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_path;
-            await move(
+            await events.move(
                 dePath === '.' ? deName : `${dePath}/${deName}`,
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
@@ -96,7 +96,7 @@ const _trtFile = async (
         case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
             break;
         case 8: // hash changed
-            await update(
+            await events.update(
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
                 false, // isDirectory,
@@ -106,7 +106,7 @@ const _trtFile = async (
             break;
         default:
             // 0 or Attr.PATH - create
-            await create(
+            await events.create(
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
                 fc.type === 'directory' ? true : false,
