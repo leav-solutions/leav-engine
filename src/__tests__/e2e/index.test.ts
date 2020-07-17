@@ -43,7 +43,7 @@ afterAll(async done => {
     }
 });
 
-describe('integration tests sync-scan', () => {
+describe('e2e tests', () => {
     test('1 - check filesystem is empty', () => {
         expect.assertions(1);
         return expect(scan.filesystem(cfg.filesystem)).resolves.toHaveLength(0);

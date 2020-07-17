@@ -11,6 +11,9 @@ import {FilesystemContent, FileContent} from './_types/filesystem';
 import * as Config from './_types/config';
 import * as utils from './utils';
 
+export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
+export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);
+
 export const filesystem = ({absolutePath}: Config.Filesystem): Promise<FilesystemContent> =>
     new Promise((resolve, reject) => {
         let data = [];
@@ -22,23 +25,24 @@ export const filesystem = ({absolutePath}: Config.Filesystem): Promise<Filesyste
 
         const walker = walk.walk(absolutePath, {followLinks: false});
 
-        walker.on('directories', (root: any, dirStatsArray: FilesystemContent, next: any) => {
-            for (const dsa of dirStatsArray) {
-                dsa.path = root.replace(`${absolutePath}`, '').slice(1) || '.';
-                dsa.level = dsa.path === '.' ? 0 : dsa.path.split('/').length;
-                dsa.trt = false;
+        walker.on('directories', (root: string, directories: FilesystemContent, next: any) => {
+            for (const dir of directories) {
+                dir.path = getFilePath(root, absolutePath);
+                dir.level = getFileLevel(dir.path);
+                dir.trt = false;
             }
 
-            data = data.concat(dirStatsArray);
+            data = data.concat(directories);
             next();
         });
 
-        walker.on('file', async (root: any, fileStats: FileContent, next: any) => {
-            fileStats.hash = await utils.createHashFromFile(root + '/' + fileStats.name);
-            fileStats.path = root.replace(`${absolutePath}`, '').slice(1) || '.';
-            fileStats.level = fileStats.path === '.' ? 0 : fileStats.path.split('/').length;
-            fileStats.trt = false;
-            data.push(fileStats);
+        walker.on('file', async (root: string, file: FileContent, next: any) => {
+            file.hash = await utils.createHashFromFile(root + '/' + file.name);
+            file.path = getFilePath(root, absolutePath);
+            file.level = getFileLevel(file.path);
+            file.trt = false;
+
+            data.push(file);
             next();
         });
 
