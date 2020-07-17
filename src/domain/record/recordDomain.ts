@@ -373,16 +373,16 @@ export default function({
 
                     if (!f.operator) {
                         const attributes = await _getAttributesFromField(f.field, ctx);
+                        let value: any = f.value;
 
-                        const value =
-                            attributes[attributes.length - 1].format === AttributeFormats.NUMERIC
-                                ? Number(f.value)
-                                : f.value;
-                        const valueType = !value
-                            ? 'null'
-                            : value === 'true' || value === 'false'
-                            ? 'boolean'
-                            : typeof value;
+                        const lastAttr = attributes[attributes.length - 1];
+                        if (value && lastAttr.format === AttributeFormats.NUMERIC) {
+value = Number(f.value);
+} else if (value && lastAttr.format === AttributeFormats.BOOLEAN) {
+value = f.value === 'true';
+}
+
+                        const valueType = value === null ? 'null' : typeof value;
 
                         if (f.condition && !allowedTypeOperator[valueType].includes(f.condition)) {
                             throw new ValidationError({id: Errors.INVALID_FILTER_CONDITION_VALUE});

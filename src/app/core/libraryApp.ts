@@ -36,6 +36,7 @@ export default function({
     'core.app.core': coreApp = null
 }: IDeps = {}): ICoreLibraryApp {
     const _getLibGqlFilterType = libTypeName => libTypeName + 'Filter';
+    const _getLibGqlSortType = libTypeName => libTypeName + 'Sort';
     const _getLibGqlListType = libTypeName => libTypeName + 'List';
     const _getLibGqlSearchableFieldsType = libTypeName => libTypeName + 'SearchableFields';
 
@@ -222,14 +223,14 @@ export default function({
                         LESS_THAN
                     }
 
-                    input ${libTypeName}Filter {
+                    input ${_getLibGqlFilterType(libTypeName)} {
                         field: String,
                         value: String
                         condition: ${libTypeName}Condition,
                         operator: ${libTypeName}Operator
                     }
 
-                    input Sort${libTypeName} {
+                    input ${_getLibGqlSortType(libTypeName)} {
                         field: String,
                         order: SortOrder!
                     }
@@ -237,7 +238,7 @@ export default function({
                     extend type Query {
                         ${libQueryName}(
                             filters: [${_getLibGqlFilterType(libTypeName)}],
-                            sort: Sort${libTypeName}
+                            sort: ${_getLibGqlSortType(libTypeName)}
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
                             retrieveInactive: Boolean
