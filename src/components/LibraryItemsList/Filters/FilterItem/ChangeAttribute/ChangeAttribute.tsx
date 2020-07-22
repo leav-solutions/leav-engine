@@ -2,7 +2,14 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {allowedTypeOperator} from '../../../../../utils';
-import {AttributeFormat, conditionFilter, FilterTypes, IFilter, IFilterSeparator} from '../../../../../_types/types';
+import {
+    AttributeFormat,
+    ConditionFilter,
+    FilterTypes,
+    IAttribute,
+    IFilter,
+    IFilterSeparator
+} from '../../../../../_types/types';
 import ListAttributes from '../../../../ListAttributes';
 import {LibraryItemListState} from '../../../LibraryItemsListReducer';
 
@@ -23,6 +30,8 @@ function ChangeAttribute({
 }: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
     const [attSelected, setAttSelected] = useState<string>(filter.attributeId);
+
+    const [, setNewAttributes] = useState<IAttribute[]>([]);
 
     const handleCancel = () => {
         setShowModal(false);
@@ -46,7 +55,7 @@ function ChangeAttribute({
                             ...f,
                             attributeId: attSelected,
                             format: newAtt?.format,
-                            condition: conditionFilter[defaultConditionOperator]
+                            condition: ConditionFilter[defaultConditionOperator]
                         } as IFilter
                     ];
                 }
@@ -64,6 +73,7 @@ function ChangeAttribute({
                     attributes={stateItems.attributes}
                     attributeSelection={attSelected}
                     changeSelected={newAttSelected => setAttSelected(newAttSelected)}
+                    setNewAttributes={setNewAttributes}
                 />
             </Modal.Content>
             <Modal.Actions>

@@ -1,37 +1,27 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {Checkbox} from 'semantic-ui-react';
-import {AttributeFormat, AttributeType, DisplayListItemTypes, IAttribute, OrderSearch} from '../../../../_types/types';
+import {AttributeFormat, AttributeType, IAttribute} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListReducerAction, LibraryItemListState} from '../../LibraryItemsListReducer';
+import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 
-describe('ChooseTableColumns', () => {
-    const stateItems: LibraryItemListState = {
-        libQuery: 'test',
-        libFilter: 'test',
-        libSearchableField: 'test',
-        itemsSortField: 'test',
-        itemsSortOrder: OrderSearch.asc,
-        itemsTotalCount: 0,
-        offset: 0,
-        pagination: 20,
-        displayType: DisplayListItemTypes.listSmall,
-        showFilters: false,
-        selectionMode: false,
-        itemsSelected: {},
-        queryFilters: [],
-        attributes: [],
-        columns: []
-    };
+jest.mock(
+    '../../../ListAttributes',
+    () =>
+        function ListAttributes() {
+            return <div>ListAttributes</div>;
+        }
+);
 
+describe('ChooseTableColumns', () => {
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
     test('should render attributes', async () => {
         const attributesMock: IAttribute[] = [
             {
-                id: 'string',
+                id: 'test',
+                library: 'test_library',
                 type: AttributeType.simple,
                 format: AttributeFormat.text,
                 label: {
@@ -42,7 +32,7 @@ describe('ChooseTableColumns', () => {
                 isMultiple: false
             }
         ];
-        const stateMock = {...stateItems, attributes: attributesMock};
+        const stateMock = {...LibraryItemListInitialState, attributes: attributesMock};
 
         let comp: any;
 
@@ -59,6 +49,6 @@ describe('ChooseTableColumns', () => {
             );
         });
 
-        expect(comp.find(Checkbox)).toHaveLength(1);
+        expect(comp.find('ListAttributes')).toHaveLength(1);
     });
 });

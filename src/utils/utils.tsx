@@ -3,7 +3,7 @@ import {
     AttributeFormat,
     AttributeType,
     AvailableLanguage,
-    conditionFilter,
+    ConditionFilter,
     DisplayListItemTypes,
     PreviewAttributes,
     PreviewSize
@@ -131,25 +131,25 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
 
 export const allowedTypeOperator = {
     [AttributeFormat.text]: [
-        conditionFilter.contains,
-        conditionFilter.notContains,
-        conditionFilter.equal,
-        conditionFilter.notEqual,
-        conditionFilter.beginWith,
-        conditionFilter.endWith
+        ConditionFilter.contains,
+        ConditionFilter.notContains,
+        ConditionFilter.equal,
+        ConditionFilter.notEqual,
+        ConditionFilter.beginWith,
+        ConditionFilter.endWith
     ],
     [AttributeFormat.numeric]: [
-        conditionFilter.equal,
-        conditionFilter.notEqual,
-        conditionFilter.greaterThan,
-        conditionFilter.lessThan
+        ConditionFilter.equal,
+        ConditionFilter.notEqual,
+        ConditionFilter.greaterThan,
+        ConditionFilter.lessThan
     ],
-    [AttributeFormat.boolean]: [conditionFilter.equal, conditionFilter.notEqual],
+    [AttributeFormat.boolean]: [ConditionFilter.equal, ConditionFilter.notEqual],
     [AttributeFormat.date]: [
-        conditionFilter.equal,
-        conditionFilter.notEqual,
-        conditionFilter.greaterThan,
-        conditionFilter.lessThan
+        ConditionFilter.equal,
+        ConditionFilter.notEqual,
+        ConditionFilter.greaterThan,
+        ConditionFilter.lessThan
     ]
 };
 

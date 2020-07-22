@@ -3,7 +3,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {
     AttributeFormat,
-    conditionFilter,
+    ConditionFilter,
     DisplayListItemTypes,
     FilterTypes,
     IFilter,
@@ -37,7 +37,7 @@ describe('ChangeAttribute', () => {
         type: FilterTypes.filter,
         key: 0,
         operator: false,
-        condition: conditionFilter.contains,
+        condition: ConditionFilter.contains,
         value: '',
         attributeId: 'id',
         active: true,

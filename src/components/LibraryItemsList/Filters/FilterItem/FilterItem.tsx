@@ -1,15 +1,20 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, Dropdown, DropdownProps, Form, Segment, TextArea, TextAreaProps} from 'semantic-ui-react';
+import {Button, Checkbox, Dropdown, DropdownProps, Segment} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {allowedTypeOperator} from '../../../../utils';
-import {conditionFilter, FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../../_types/types';
+import {
+    AttributeFormat,
+    ConditionFilter,
+    FilterTypes,
+    IFilter,
+    IFilterSeparator,
+    OperatorFilter
+} from '../../../../_types/types';
 import {LibraryItemListState} from '../../LibraryItemsListReducer';
 import ChangeAttribute from './ChangeAttribute';
-
-const TextAreaWrapper = styled.div`
-    margin: 1rem 0 0 0;
-`;
+import FormBoolean from './FormBoolean';
+import FormText from './FormText';
 
 const Grid = styled.div`
     display: flex;
@@ -55,26 +60,22 @@ const CurrentAttribute = styled.span`
     }
 `;
 
-const CustomForm = styled(Form)`
-    width: 100%;
-`;
-
 interface IFilterItemProps {
     stateItems: LibraryItemListState;
     filter: IFilter;
     setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
     conditionOptions: {
         text: string;
-        value: conditionFilter;
+        value: ConditionFilter;
     }[];
     operatorOptions: {
         text: string;
-        value: operatorFilter;
+        value: OperatorFilter;
     }[];
     resetFilters: () => void;
     updateFilters: () => void;
-    filterOperator: operatorFilter;
-    setFilterOperator: React.Dispatch<React.SetStateAction<operatorFilter>>;
+    filterOperator: OperatorFilter;
+    setFilterOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
 }
 
 function FilterItem({
@@ -90,10 +91,7 @@ function FilterItem({
 }: IFilterItemProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [textAreaRows, setTextAreaRows] = useState<number>(1);
     const [showModal, setShowModal] = useState(false);
-
-    const textAreaRef = useRef(null);
 
     const conditionOptionsByType = conditionOptions.filter(
         conditionOption => filter.format && allowedTypeOperator[filter.format]?.includes(conditionOption.value)
@@ -163,9 +161,7 @@ function FilterItem({
         updateFilters();
     };
 
-    const updateFilterValue = (event: React.FormEvent<HTMLTextAreaElement>, data: TextAreaProps) => {
-        const newValue = (data?.value ?? '').toString();
-
+    const updateFilterValue = (newValue: any) => {
         setFilters(filters => {
             const restFilters = filters.filter(f => f.key !== filter.key);
             const currentFilter = filters.find(f => f.key === filter.key);
@@ -173,14 +169,10 @@ function FilterItem({
                 ? [...restFilters, {...currentFilter, value: newValue}].sort((f1, f2) => f1.key - f2.key)
                 : restFilters;
         });
-
-        const rows = newValue.split('\n').length;
-
-        setTextAreaRows(rows <= 10 ? rows : 10);
     };
 
     const changeCondition = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newCondition = (data?.value ?? '').toString() as conditionFilter;
+        const newCondition = (data?.value ?? '').toString() as ConditionFilter;
 
         setFilters(filters =>
             filters.reduce((acc, f) => {
@@ -193,7 +185,7 @@ function FilterItem({
     };
 
     const handleOperatorChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newOperator = (data.value as operatorFilter) ?? operatorFilter.and;
+        const newOperator = (data.value as OperatorFilter) ?? OperatorFilter.and;
 
         setFilterOperator(newOperator);
     };
@@ -242,21 +234,27 @@ function FilterItem({
                         <Button icon="remove" basic negative compact size="mini" onClick={deleteFilterItem} />
                     </GridRow>
                     <GridRow>
-                        <CustomForm>
-                            <TextAreaWrapper>
-                                <TextArea
-                                    ref={textAreaRef}
-                                    rows={textAreaRows}
-                                    value={filter.value}
-                                    onChange={updateFilterValue}
-                                />
-                            </TextAreaWrapper>
-                        </CustomForm>
+                        <SwitchFormFormat filter={filter} updateFilterValue={updateFilterValue} />
                     </GridRow>
                 </Grid>
             </Segment>
         </>
     );
 }
+
+interface ISwitchFormType {
+    filter: IFilter;
+    updateFilterValue: (newValue: any) => void;
+}
+
+const SwitchFormFormat = (props: ISwitchFormType) => {
+    switch (props.filter.format) {
+        case AttributeFormat.boolean:
+            return <FormBoolean {...props} />;
+        case AttributeFormat.text:
+        default:
+            return <FormText {...props} />;
+    }
+};
 
 export default FilterItem;

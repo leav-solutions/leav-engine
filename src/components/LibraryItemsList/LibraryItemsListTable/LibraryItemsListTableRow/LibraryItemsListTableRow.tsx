@@ -150,6 +150,15 @@ interface RowsProps {
 
 const Row = ({item, column, stateItems}: RowsProps) => {
     const currentAtt = stateItems.attributes.find(att => att.id === column.id);
+
+    if (column.originAttributeId && column.id) {
+        return (
+            <Table.Cell>
+                <div>{item[column.originAttributeId][column.id]}</div>
+            </Table.Cell>
+        );
+    }
+
     return (
         <Table.Cell>
             <div>

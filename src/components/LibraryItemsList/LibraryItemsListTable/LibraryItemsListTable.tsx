@@ -91,6 +91,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                               ...acc,
                               {
                                   name: attribute.id,
+                                  library: attribute.library,
                                   display:
                                       typeof attribute.label === 'string'
                                           ? attribute.label
@@ -99,12 +100,19 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                               }
                           ]
                         : acc,
-                [{name: 'infos', display: t('items_list.table.infos'), type: AttributeType.simple}]
+                [
+                    {
+                        name: 'infos',
+                        display: t('items_list.table.infos'),
+                        library: stateItems.attributes[0].library,
+                        type: AttributeType.simple
+                    }
+                ]
             );
 
             setTableColumn(initialTableColumns);
 
-            const columns = initialTableColumns.map(col => ({id: col.name, type: col.type}));
+            const columns = initialTableColumns.map(col => ({id: col.name, library: col.library, type: col.type}));
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_COLUMNS,
                 columns

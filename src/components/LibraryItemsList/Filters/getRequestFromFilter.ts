@@ -1,9 +1,10 @@
-import {FilterTypes, IFilter, IFilterSeparator, IQueryFilter, operatorFilter} from '../../../_types/types';
+import {FilterTypes, IFilter, IFilterSeparator, IQueryFilter, OperatorFilter} from '../../../_types/types';
+import {AttributeFormat} from './../../../_types/types';
 
 export const getRequestFromFilter = (
     filters: (IFilter | IFilterSeparator)[],
-    filterOperator: operatorFilter,
-    separatorOperator: operatorFilter
+    filterOperator: OperatorFilter,
+    separatorOperator: OperatorFilter
 ): IQueryFilter[] => {
     let request: IQueryFilter[] = [];
 
@@ -12,7 +13,7 @@ export const getRequestFromFilter = (
 
     if (hasSeparator && firstFilterIsFilterWithValue) {
         // Begin first group of filters
-        request.push({operator: operatorFilter.openParent});
+        request.push({operator: OperatorFilter.openParent});
     }
 
     for (let filter of filters) {
@@ -20,12 +21,12 @@ export const getRequestFromFilter = (
             if (filter.operator) {
                 request.push({operator: filterOperator});
             }
-            request.push({operator: operatorFilter.openParent});
+            request.push({operator: OperatorFilter.openParent});
 
             const requestValue = handleValueRequest(filter);
             request = [...request, ...requestValue];
 
-            request.push({operator: operatorFilter.closeParent});
+            request.push({operator: OperatorFilter.closeParent});
         } else if (filter.type === FilterTypes.separator && firstFilterIsFilterWithValue) {
             if (
                 filter.active &&
@@ -33,18 +34,18 @@ export const getRequestFromFilter = (
                 (filters[filter.key + 1] as IFilter)?.value
             ) {
                 // Close last group
-                request.push({operator: operatorFilter.closeParent});
+                request.push({operator: OperatorFilter.closeParent});
 
                 request.push({operator: separatorOperator});
 
                 // Begin new group
-                request.push({operator: operatorFilter.openParent});
+                request.push({operator: OperatorFilter.openParent});
             }
         }
     }
     if (hasSeparator && firstFilterIsFilterWithValue) {
         // Close last group
-        request.push({operator: operatorFilter.closeParent});
+        request.push({operator: OperatorFilter.closeParent});
     }
 
     if (!request.some(el => el.value)) {
@@ -58,19 +59,32 @@ const handleValueRequest = (filter: IFilter) => {
     const result: IQueryFilter[] = [];
     let firstValue = true;
 
-    filter.value.split('\n').forEach(filterValue => {
-        if (filterValue) {
-            if (!firstValue) {
-                result.push({operator: operatorFilter.or});
-            }
+    switch (filter.format) {
+        case AttributeFormat.text: {
+            filter.value.split('\n').forEach(filterValue => {
+                if (filterValue) {
+                    if (!firstValue) {
+                        result.push({operator: OperatorFilter.or});
+                    }
+                    result.push({
+                        field: filter.attributeId,
+                        value: filterValue,
+                        condition: filter.condition
+                    });
+                    firstValue = false;
+                }
+            });
+            break;
+        }
+        case AttributeFormat.boolean: {
             result.push({
                 field: filter.attributeId,
-                value: filterValue,
+                value: filter.value,
                 condition: filter.condition
             });
-            firstValue = false;
+            break;
         }
-    });
+    }
 
     return result;
 };

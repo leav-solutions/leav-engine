@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Divider, Dropdown, Menu, Sidebar} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
-import {FilterTypes, IFilter, IFilterSeparator, operatorFilter} from '../../../_types/types';
+import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -63,8 +63,8 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
 
     const [showAttr, setShowAttr] = useState(false);
 
-    const [separatorOperator, setSeparatorOperator] = useState<operatorFilter>(operatorFilter.or);
-    const [filterOperator, setFilterOperator] = useState<operatorFilter>(operatorFilter.and);
+    const [separatorOperator, setSeparatorOperator] = useState<OperatorFilter>(OperatorFilter.or);
+    const [filterOperator, setFilterOperator] = useState<OperatorFilter>(OperatorFilter.and);
 
     const [filters, setFilters] = useState<(IFilter | IFilterSeparator)[]>([]);
 
@@ -98,6 +98,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
 
     const applyFilters = () => {
         const request = getRequestFromFilter(filters, filterOperator, separatorOperator);
+
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
             queryFilters: request
@@ -107,10 +108,10 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     useEffect(() => {
         setFilterOperator(fo => {
             if (fo === separatorOperator) {
-                if (fo === operatorFilter.and) {
-                    return operatorFilter.or;
+                if (fo === OperatorFilter.and) {
+                    return OperatorFilter.or;
                 } else {
-                    return operatorFilter.and;
+                    return OperatorFilter.and;
                 }
             }
             return fo;
@@ -120,10 +121,10 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     useEffect(() => {
         setSeparatorOperator(so => {
             if (so === filterOperator) {
-                if (so === operatorFilter.and) {
-                    return operatorFilter.or;
+                if (so === OperatorFilter.and) {
+                    return OperatorFilter.or;
                 } else {
-                    return operatorFilter.and;
+                    return OperatorFilter.and;
                 }
             }
             return so;

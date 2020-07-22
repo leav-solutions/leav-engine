@@ -62,7 +62,7 @@ export interface IFilter {
     type: FilterTypes.filter;
     key: number;
     operator?: boolean;
-    condition: conditionFilter;
+    condition: ConditionFilter;
     value: string;
     attributeId: string;
     active: boolean;
@@ -91,14 +91,14 @@ export enum AttributeType {
     tree = 'tree'
 }
 
-export enum operatorFilter {
+export enum OperatorFilter {
     and = 'AND',
     or = 'OR',
     openParent = 'OPEN_BRACKET',
     closeParent = 'CLOSE_BRACKET'
 }
 
-export enum conditionFilter {
+export enum ConditionFilter {
     contains = 'CONTAINS',
     notContains = 'NOT_CONTAINS',
     equal = 'EQUAL',
@@ -112,8 +112,8 @@ export enum conditionFilter {
 export interface IQueryFilter {
     field?: string;
     value?: any;
-    condition?: conditionFilter;
-    operator?: operatorFilter;
+    condition?: ConditionFilter;
+    operator?: OperatorFilter;
 }
 
 export enum OrderSearch {
@@ -130,19 +130,39 @@ export enum DisplayListItemTypes {
 
 export interface IAttribute {
     id: string;
+    library: string;
     type: AttributeType;
     format?: AttributeFormat;
     label: ILabel | string;
     isLink: boolean;
     isMultiple: boolean;
+    linkedLibrary?: string;
+    linkedTree?: string;
+    originAttributeId?: string;
 }
 
 export interface IItemsColumn {
     id: string;
+    library: string;
     type: AttributeType;
+    originAttributeId?: string;
 }
 
 export interface IRecordEdition {
     show: boolean;
     item?: IItem;
+}
+
+export interface IAccordionActive {
+    id: string;
+    library: string;
+    depth: number;
+}
+
+export interface IAttributesChecked {
+    id: string;
+    library: string;
+    depth: number;
+    checked: boolean;
+    originAttributeId?: string;
 }

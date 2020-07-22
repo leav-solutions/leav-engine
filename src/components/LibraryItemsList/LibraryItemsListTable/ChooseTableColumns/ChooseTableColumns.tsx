@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
-import {IAttribute, IItemsColumn} from '../../../../_types/types';
+import {AttributeType, IAttribute, IAttributesChecked, IItemsColumn} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
 import {
     LibraryItemListReducerAction,
@@ -24,28 +24,47 @@ function ChooseTableColumns({
 }: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [columns, setColumns] = useState<IItemsColumn[]>(stateItems.columns);
+    const [attributesChecked, setAttributesChecked] = useState<IAttributesChecked[]>(
+        stateItems.columns.map(col => ({
+            id: col.id,
+            library: col.library,
+            depth: 0,
+            checked: true
+        }))
+    );
 
-    const handleColumnsUpdate = (attribute: IAttribute, checked: boolean) => {
-        const restColumns = columns.filter(col => col.id !== attribute.id);
-
-        if (checked) {
-            setColumns([
-                ...restColumns,
-                {
-                    id: attribute.id,
-                    type: attribute.type
-                }
-            ]);
-        } else {
-            setColumns(restColumns);
-        }
-    };
+    const [newAttributes, setNewAttributes] = useState<IAttribute[]>([]);
 
     const handleSubmit = () => {
+        const noDuplicateNewAttribute = newAttributes.filter(
+            newAttribute => !stateItems.attributes.find(attribute => attribute.id === newAttribute.id)
+        );
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
+            attributes: [...stateItems.attributes, ...noDuplicateNewAttribute]
+        });
+
+        const newColumns: IItemsColumn[] = attributesChecked.reduce((acc, attributeChecked) => {
+            if (attributeChecked.checked) {
+                const attribute = stateItems.attributes.find(
+                    attribute => attribute.id === attributeChecked.id && attribute.library === attributeChecked.library
+                );
+                return [
+                    ...acc,
+                    {
+                        id: attributeChecked.id,
+                        library: attributeChecked.library,
+                        type: attribute ? attribute.type : AttributeType.simple,
+                        originAttributeId: attributeChecked.originAttributeId
+                    }
+                ];
+            }
+            return acc;
+        }, [] as IItemsColumn[]);
+
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_COLUMNS,
-            columns
+            columns: newColumns
         });
         setOpenChangeColumns(false);
     };
@@ -61,8 +80,9 @@ function ChooseTableColumns({
                 <ListAttributes
                     attributes={stateItems.attributes}
                     useCheckbox
-                    attributesChecked={columns}
-                    onCheckboxChange={handleColumnsUpdate}
+                    attributesChecked={attributesChecked}
+                    setAttributesChecked={setAttributesChecked}
+                    setNewAttributes={setNewAttributes}
                 />
             </Modal.Content>
             <Modal.Actions>

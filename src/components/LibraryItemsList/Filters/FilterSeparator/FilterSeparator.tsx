@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dropdown, DropdownProps, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IFilter, IFilterSeparator, operatorFilter} from '../../../../_types/types';
+import {IFilter, IFilterSeparator, OperatorFilter} from '../../../../_types/types';
 
 const CustomSegment = styled(Segment)`
     display: flex;
@@ -16,11 +16,11 @@ interface IFilterSeparatorProps {
     separator: IFilterSeparator;
     operatorOptions: {
         text: string;
-        value: operatorFilter;
+        value: OperatorFilter;
     }[];
     setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
-    separatorOperator: operatorFilter;
-    setSeparatorOperator: React.Dispatch<React.SetStateAction<operatorFilter>>;
+    separatorOperator: OperatorFilter;
+    setSeparatorOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
     updateFilters: () => void;
 }
 
@@ -44,7 +44,7 @@ function FilterSeparator({
     };
 
     const changeOperator = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        setSeparatorOperator(data.value as operatorFilter);
+        setSeparatorOperator(data.value as OperatorFilter);
     };
 
     return (

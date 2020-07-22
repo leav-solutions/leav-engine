@@ -38,7 +38,7 @@ export interface LibraryItemListState {
     allSelected: boolean;
 }
 
-export const initialState: LibraryItemListState = {
+export const LibraryItemListInitialState: LibraryItemListState = {
     libQuery: '',
     libFilter: '',
     libSearchableField: '',

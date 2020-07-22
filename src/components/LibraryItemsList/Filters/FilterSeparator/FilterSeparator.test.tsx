@@ -1,6 +1,6 @@
 import {mount} from 'enzyme';
 import React from 'react';
-import {FilterTypes, operatorFilter} from '../../../../_types/types';
+import {FilterTypes, OperatorFilter} from '../../../../_types/types';
 import FilterSeparator from './FilterSeparator';
 
 describe('FilterSeparator', () => {
@@ -14,7 +14,7 @@ describe('FilterSeparator', () => {
                 }}
                 operatorOptions={[]}
                 setFilters={jest.fn()}
-                separatorOperator={operatorFilter.and}
+                separatorOperator={OperatorFilter.and}
                 setSeparatorOperator={jest.fn()}
                 updateFilters={jest.fn()}
             />

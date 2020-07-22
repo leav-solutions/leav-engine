@@ -4,11 +4,11 @@ import {act} from 'react-dom/test-utils';
 import {Checkbox, Dropdown, TextArea} from 'semantic-ui-react';
 import {
     AttributeFormat,
-    conditionFilter,
+    ConditionFilter,
     DisplayListItemTypes,
     FilterTypes,
     IFilter,
-    operatorFilter,
+    OperatorFilter,
     OrderSearch
 } from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
@@ -38,16 +38,16 @@ describe('FilterItem', () => {
         type: FilterTypes.filter,
         key: 1,
         operator: false,
-        condition: conditionFilter.contains,
+        condition: ConditionFilter.contains,
         value: '',
         attributeId: 'test',
         active: true,
         format: AttributeFormat.text
     };
 
-    const conditionOptions = [{text: 'Contains', value: conditionFilter.contains}];
+    const conditionOptions = [{text: 'Contains', value: ConditionFilter.contains}];
 
-    const operatorOptions = [{text: 'AND', value: operatorFilter.and}];
+    const operatorOptions = [{text: 'AND', value: OperatorFilter.and}];
 
     test('should have a Checkbox', async () => {
         let comp: any;
@@ -63,7 +63,7 @@ describe('FilterItem', () => {
                         setFilters={jest.fn()}
                         resetFilters={jest.fn()}
                         updateFilters={jest.fn()}
-                        filterOperator={operatorFilter.and}
+                        filterOperator={OperatorFilter.and}
                         setFilterOperator={jest.fn()}
                     />
                 </MockedProviderWithFragments>
@@ -87,7 +87,7 @@ describe('FilterItem', () => {
                         setFilters={jest.fn()}
                         resetFilters={jest.fn()}
                         updateFilters={jest.fn()}
-                        filterOperator={operatorFilter.and}
+                        filterOperator={OperatorFilter.and}
                         setFilterOperator={jest.fn()}
                     />
                 </MockedProviderWithFragments>
@@ -111,7 +111,7 @@ describe('FilterItem', () => {
                         setFilters={jest.fn()}
                         resetFilters={jest.fn()}
                         updateFilters={jest.fn()}
-                        filterOperator={operatorFilter.and}
+                        filterOperator={OperatorFilter.and}
                         setFilterOperator={jest.fn()}
                     />
                 </MockedProviderWithFragments>

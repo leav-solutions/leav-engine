@@ -1,31 +1,19 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {List} from 'semantic-ui-react';
-import {DisplayListItemTypes, OrderSearch} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListState} from '../../LibraryItemsListReducer';
+import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import AddFilter from './AddFilter';
 
-describe('AttributeList', () => {
-    const stateItems: LibraryItemListState = {
-        libQuery: 'test',
-        libFilter: 'test',
-        libSearchableField: 'test',
-        itemsSortField: 'test',
-        itemsSortOrder: OrderSearch.asc,
-        itemsTotalCount: 0,
-        offset: 0,
-        pagination: 20,
-        displayType: DisplayListItemTypes.listSmall,
-        showFilters: false,
-        selectionMode: false,
-        itemsSelected: {},
-        queryFilters: [],
-        attributes: [],
-        columns: []
-    };
+jest.mock(
+    '../../../ListAttributes',
+    () =>
+        function ListAttributes() {
+            return <div>ListAttributes</div>;
+        }
+);
 
+describe('AttributeList', () => {
     test('should have a List', async () => {
         let comp: any;
 
@@ -33,7 +21,7 @@ describe('AttributeList', () => {
             comp = mount(
                 <MockedProviderWithFragments>
                     <AddFilter
-                        stateItems={stateItems}
+                        stateItems={LibraryItemListInitialState}
                         setFilters={jest.fn()}
                         showAttr={true}
                         setShowAttr={jest.fn()}
@@ -43,6 +31,6 @@ describe('AttributeList', () => {
             );
         });
 
-        expect(comp.find(List)).toHaveLength(1);
+        expect(comp.find('ListAttributes')).toHaveLength(1);
     });
 });

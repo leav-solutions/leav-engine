@@ -2,7 +2,15 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {allowedTypeOperator} from '../../../../utils';
-import {AttributeFormat, FilterTypes, IAttribute, IFilter, IFilterSeparator} from '../../../../_types/types';
+import {
+    AttributeFormat,
+    ConditionFilter,
+    FilterTypes,
+    IAttribute,
+    IAttributesChecked,
+    IFilter,
+    IFilterSeparator
+} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
 import {LibraryItemListState} from '../../LibraryItemsListReducer';
 
@@ -17,14 +25,27 @@ interface IAttributeListProps {
 function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [attSelected, setAttSelected] = useState<{id: string; format?: AttributeFormat}[]>([]);
+    const [attributesChecked, setAttributesChecked] = useState<IAttributesChecked[]>([]);
+
+    const [, setNewAttributes] = useState<IAttribute[]>([]);
 
     const addFilters = () => {
+        // dispatchItems({
+        //     type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
+        //     attributes: [...stateItems.attributes, ...newAttributes]
+        // });
+
         setFilters(filters => {
             const separators = filters.filter(filter => filter.type === FilterTypes.separator);
-            const newFilters: IFilter[] = attSelected.map((att, index) => {
+            const newFilters: IFilter[] = attributesChecked.map((attributeChecked, index) => {
+                const attribute = stateItems.attributes.find(
+                    attribute => attribute.id === attributeChecked.id && attribute.library === attributeChecked.library
+                );
+
                 // take the first operator for the format of the attribute
-                const defaultConditionOptions = att.format && allowedTypeOperator[AttributeFormat[att.format]][0];
+                const defaultConditionOptions =
+                    (attribute?.format && allowedTypeOperator[AttributeFormat[attribute?.format]][0]) ||
+                    ConditionFilter.equal;
 
                 // if the new filter is after a separator, don't set operator
                 // separator key is the filters length when separator was add
@@ -38,28 +59,31 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
                     operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
                     condition: defaultConditionOptions,
                     value: '',
-                    attributeId: att.id,
+                    attributeId: attributeChecked.id,
                     active: true,
-                    format: att.format
+                    format: attribute?.format ?? AttributeFormat.text
                 };
             });
 
             return [...filters, ...newFilters] as (IFilter | IFilterSeparator)[];
         });
         setShowAttr(false);
-        setAttSelected([]);
+        setAttributesChecked([]);
         updateFilters();
     };
 
-    const handleChecked = (attribute: IAttribute, checked: boolean) => {
-        if (attribute) {
-            if (checked) {
-                setAttSelected(attSelected => [...attSelected, {id: attribute.id, format: attribute.format}]);
-            } else {
-                setAttSelected(attSelected => attSelected.filter(att => att.id !== attribute.id));
-            }
-        }
-    };
+    // const handleChecked = (attribute: IAttribute, checked: boolean) => {
+    //     if (attribute) {
+    //         if (checked) {
+    //             setAttributesChecked(attSelected => [
+    //                 ...attSelected,
+    //                 {id: attribute.id, library: attribute.library, depth: 0, checked: true}
+    //             ]);
+    //         } else {
+    //             setAttributesChecked(attSelected => attSelected.filter(att => att.id !== attribute.id));
+    //         }
+    //     }
+    // };
 
     const handleCancel = () => {
         setShowAttr(false);
@@ -69,7 +93,12 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
         <Modal open={showAttr} onClose={() => setShowAttr(false)} closeIcon>
             <Modal.Header>{t('filters.modal-header')}</Modal.Header>
             <Modal.Content>
-                <ListAttributes attributes={stateItems.attributes} useCheckbox onCheckboxChange={handleChecked} />
+                <ListAttributes
+                    attributes={stateItems.attributes}
+                    useCheckbox
+                    setAttributesChecked={setAttributesChecked}
+                    setNewAttributes={setNewAttributes}
+                />
             </Modal.Content>
             <Modal.Actions>
                 <Button onClick={handleCancel}>{t('attribute-list.cancel')}</Button>

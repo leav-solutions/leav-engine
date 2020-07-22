@@ -15,7 +15,7 @@ import {checkTypeIsLink, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
-import reducer, {initialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
+import reducer, {LibraryItemListInitialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 
@@ -34,7 +34,7 @@ const Wrapper = styled.div<IWrapperProps>`
 function LibraryItemsList(): JSX.Element {
     const {libId} = useParams();
 
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(reducer, LibraryItemListInitialState);
 
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
@@ -57,17 +57,19 @@ function LibraryItemsList(): JSX.Element {
                         attribute.type &&
                         Object.values(AttributeType).includes(attribute.type)
                     ) {
-                        return [
-                            ...acc,
-                            {
-                                id: attribute.id,
-                                type: attribute.type,
-                                format: attribute.format,
-                                label: attribute.label,
-                                isLink: checkTypeIsLink(attribute.type),
-                                isMultiple: attribute.multiple_values
-                            }
-                        ];
+                        const newAttribute: IAttribute = {
+                            id: attribute.id,
+                            type: attribute.type,
+                            format: attribute.format,
+                            label: attribute.label,
+                            isLink: checkTypeIsLink(attribute.type),
+                            isMultiple: attribute.multiple_values,
+                            linkedLibrary: attribute.linked_library,
+                            linkedTree: attribute.linked_tree,
+                            library: libId
+                        };
+
+                        return [...acc, newAttribute];
                     }
                     return acc;
                 },
@@ -89,7 +91,7 @@ function LibraryItemsList(): JSX.Element {
                 columns: []
             });
         }
-    }, [dispatch, loadingLib, dataLib]);
+    }, [dispatch, loadingLib, dataLib, libId]);
 
     const [
         getRecord,
@@ -133,6 +135,10 @@ function LibraryItemsList(): JSX.Element {
                         }
                     },
                     ...Object.keys(item).reduce((acc, key) => {
+                        if (key === '__typename') {
+                            return acc;
+                        }
+
                         acc[key] = item[key];
                         return acc;
                     }, {})

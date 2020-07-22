@@ -8,11 +8,21 @@ export const getLibraryDetailExtendsQuery = gql`
                 system
                 label
                 attributes {
-                    id
                     type
                     format
                     label
                     multiple_values
+                    ... on StandardAttribute {
+                        id
+                    }
+                    ... on LinkAttribute {
+                        id
+                        linked_library
+                    }
+                    ... on TreeAttribute {
+                        id
+                        linked_tree
+                    }
                 }
                 gqlNames {
                     query

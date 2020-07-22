@@ -5,29 +5,8 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
     const libQueryName = libraryName.toUpperCase();
 
     const fields = columns.map(col => {
-        switch (col.type) {
-            case AttributeType.tree:
-                return `${col.id} {
-                    record {
-                        whoAmI {
-                            id
-                            label
-                            color
-                            library {
-                                id
-                                label
-                            }
-                            preview {
-                                small
-                                medium
-                                big 
-                                pages
-                            }
-                        }   
-                    }
-                }`;
-            case AttributeType.simple_link:
-            case AttributeType.advanced_link:
+        if (col.originAttributeId) {
+            if (col.id === col.originAttributeId) {
                 return `${col.id} {
                     id
                     whoAmI {
@@ -46,11 +25,21 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
                         }
                     }
                 }`;
-            case AttributeType.simple:
-            case AttributeType.advanced:
-            default:
-                return col.id;
+            }
+            if (col.type) {
+                return `
+                ${col.originAttributeId} {
+                    ${handleType(col)}
+                }
+            `;
+            }
+            return `
+                ${col.originAttributeId} {
+                    ${col.id}
+                }
+            `;
         }
+        return handleType(col);
     });
 
     return gql`
@@ -87,4 +76,53 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
             }
         }
     `;
+};
+
+const handleType = (col: IItemsColumn) => {
+    switch (col.type) {
+        case AttributeType.tree:
+            return `${col.id} {
+                record {
+                    whoAmI {
+                        id
+                        label
+                        color
+                        library {
+                            id
+                            label
+                        }
+                        preview {
+                            small
+                            medium
+                            big 
+                            pages
+                        }
+                    }   
+                }
+            }`;
+        case AttributeType.simple_link:
+        case AttributeType.advanced_link:
+            return `${col.id} {
+                id
+                whoAmI {
+                    id
+                    label
+                    color
+                    library {
+                        id
+                        label
+                    }
+                    preview {
+                        small
+                        medium
+                        big 
+                        pages
+                    }
+                }
+            }`;
+        case AttributeType.simple:
+        case AttributeType.advanced:
+        default:
+            return col.id;
+    }
 };
