@@ -3,9 +3,6 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
-// import {IMigration} from '_types/migration';
-import {ActionsListEvents} from '../../../_types/actionsList';
-import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {IDbService} from '../dbService';
 
 interface IDeps {
@@ -25,9 +22,7 @@ export default function({
 }: any) {
     return {
         async run(ctx) {
-            const existingAttribute = await attributeDomain.getAttributes({}).catch(err => {
-                console.log(err.message);
-            });
+            const existingAttribute = await attributeDomain.getAttributes({});
 
             const modifyAndRecordAttribute = async function(attribute) {
                 if (!attribute || !attribute.id) {
@@ -70,16 +65,12 @@ export default function({
 
                 const actionsList = {getValue, saveValue, deleteValue};
 
-                await dbService
-                    .execute({
-                        query: aql`UPDATE ${attribute.id} WITH {
+                await dbService.execute({
+                    query: aql`UPDATE ${attribute.id} WITH {
                             actions_list: ${actionsList}
                         } IN core_attributes`,
-                        ctx
-                    })
-                    .catch(err => {
-                        console.log(err.message);
-                    });
+                    ctx
+                });
             };
 
             existingAttribute.list.forEach(modifyAndRecordAttribute);
