@@ -31,7 +31,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-interface IAttributeForRepo extends IAttribute {
+export interface IAttributeForRepo extends IAttribute {
     multiple_values: boolean;
 }
 
