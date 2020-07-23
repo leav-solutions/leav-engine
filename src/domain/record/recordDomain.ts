@@ -179,7 +179,10 @@ export default function({
             // Format attribute field into simple value
             values = [
                 {
-                    value: record[attribute.id]
+                    value:
+                        attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
+                            ? {id: record[attribute.id]}
+                            : record[attribute.id]
                 }
             ];
         } else {
@@ -215,12 +218,6 @@ export default function({
             attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
 
         if (isLinkAttribute && attribute.linked_library) {
-            if (attribute.type === AttributeTypes.SIMPLE_LINK) {
-                val.value = {
-                    id: val.value
-                };
-            }
-
             const linkValue = {...val.value, library: attribute.linked_library};
             val = {...value, value: linkValue};
         }
