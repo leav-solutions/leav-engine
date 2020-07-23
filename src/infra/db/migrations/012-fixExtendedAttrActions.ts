@@ -1,10 +1,10 @@
 import {aql} from 'arangojs';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IDbService} from '../dbService';
-import {AttributeFormats} from '../../../_types/attribute';
-import {ILibrary} from '_types/library';
 import {IAttribute} from '_types/attribute';
+import {ILibrary} from '_types/library';
+import {AttributeFormats} from '../../../_types/attribute';
+import {IDbService} from '../dbService';
 
 interface IDeps {
     config?: any;
@@ -20,15 +20,12 @@ export default function({
 }: IDeps) {
     return {
         async run(ctx) {
-            const existingAttributes = await attributeDomain
-                .getAttributes({params: {filters: {format: [AttributeFormats.EXTENDED]}}, ctx})
-                .catch(err => {
-                    console.log(err.message);
-                });
-
-            const existingLibraries = await libraryDomain.getLibraries({ctx}).catch(err => {
-                console.log(err.message);
+            const existingAttributes = await attributeDomain.getAttributes({
+                params: {filters: {format: [AttributeFormats.EXTENDED]}},
+                ctx
             });
+
+            const existingLibraries = await libraryDomain.getLibraries({ctx});
 
             const modifyAndRecordAttribute = async function(attribute: IAttribute) {
                 if (!attribute || !attribute.id) {
@@ -58,16 +55,12 @@ export default function({
 
                 const actionsList = {getValue, saveValue};
 
-                await dbService
-                    .execute({
-                        query: aql`UPDATE ${attribute.id} WITH {
+                await dbService.execute({
+                    query: aql`UPDATE ${attribute.id} WITH {
                             actions_list: ${actionsList}
                         } IN core_attributes`,
-                        ctx
-                    })
-                    .catch(err => {
-                        console.log(err.message);
-                    });
+                    ctx
+                });
             };
 
             const modifyRecordsLibraries = async function(library: ILibrary) {
@@ -83,14 +76,10 @@ export default function({
                 }
 
                 const collection = dbService.db.collection(library.id);
-                let records = await dbService
-                    .execute({
-                        query: aql`FOR r IN ${collection} RETURN r`,
-                        ctx
-                    })
-                    .catch(err => {
-                        console.log(err.message);
-                    });
+                let records = await dbService.execute({
+                    query: aql`FOR r IN ${collection} RETURN r`,
+                    ctx
+                });
 
                 if (records) {
                     records = records.map(record => {
@@ -104,18 +93,14 @@ export default function({
                     });
 
                     for (const record of records) {
-                        await dbService
-                            .execute({
-                                query: aql`
-                                    UPDATE ${record._key} 
+                        await dbService.execute({
+                            query: aql`
+                                    UPDATE ${record._key}
                                     WITH ${record}
                                     IN ${collection}
                                     `,
-                                ctx
-                            })
-                            .catch(err => {
-                                console.log(err.message);
-                            });
+                            ctx
+                        });
                     }
                 }
             };
