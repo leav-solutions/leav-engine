@@ -1,12 +1,12 @@
 import {Database} from 'arangojs';
+import {IQueryInfos} from '_types/queryInfos';
 import {IPermission, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {IDbUtils} from '../db/dbUtils';
 import permissionRepo from './permissionRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('PermissionRepo', () => {
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: '123456'
     };
     describe('SavePermission', () => {
@@ -36,7 +36,7 @@ describe('PermissionRepo', () => {
                     [RecordPermissionsActions.DELETE]: false
                 },
                 permissionTreeTarget: {
-                    id: 123445,
+                    id: '123445',
                     library: 'test_lib',
                     tree: 'test_tree'
                 }
@@ -92,7 +92,7 @@ describe('PermissionRepo', () => {
                     [RecordPermissionsActions.DELETE]: false
                 },
                 permissionTreeTarget: {
-                    id: 123445,
+                    id: '123445',
                     library: 'test_lib',
                     tree: 'test_tree'
                 }
@@ -208,7 +208,7 @@ describe('PermissionRepo', () => {
             const perm = await permRepo.getPermissions({
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',
@@ -231,7 +231,7 @@ describe('PermissionRepo', () => {
             const perm = await permRepo.getPermissions({
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',

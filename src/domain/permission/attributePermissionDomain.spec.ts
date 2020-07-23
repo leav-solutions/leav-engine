@@ -1,14 +1,14 @@
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import {AttributePermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import attributePermissionDomain from './attributePermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'attributePermissionDomainTest'
     };
     describe('getAttributePermission', () => {
@@ -84,10 +84,10 @@ describe('AttributePermissionDomain', () => {
 
             const perm = await attrDomain.getAttributePermission(
                 AttributePermissionsActions.EDIT_VALUE,
-                12345,
+                '12345',
                 'test_attr',
                 'test_lib',
-                987654,
+                '987654',
                 ctx
             );
 
@@ -112,10 +112,10 @@ describe('AttributePermissionDomain', () => {
 
             const perm = await attrDomain.getAttributePermission(
                 AttributePermissionsActions.EDIT_VALUE,
-                12345,
+                '12345',
                 'test_attr',
                 'test_lib',
-                987654,
+                '987654',
                 ctx
             );
 

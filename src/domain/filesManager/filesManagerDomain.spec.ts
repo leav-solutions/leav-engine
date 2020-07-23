@@ -2,12 +2,12 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {join} from 'path';
 import * as Config from '_types/config';
-import {IRecord, Operator} from '../../_types/record';
 import {IValueDomain} from '../../domain/value/valueDomain';
 import {IAmqpManager} from '../../infra/amqpManager/amqpManager';
 import {IUtils} from '../../utils/utils';
 import {RoutingKeys} from '../../_types/amqp';
 import {FileEvents, FilesAttributes, IFileEventData} from '../../_types/filesManager';
+import {IRecord, Operator} from '../../_types/record';
 import filesManager from './filesManagerDomain';
 import moment = require('moment');
 import winston = require('winston');
@@ -21,7 +21,7 @@ describe('FilesManager', () => {
                     previewRequest: 'preview_request',
                     previewResponse: 'preview_response'
                 },
-                userId: 0
+                userId: '0'
             }
         };
 
@@ -55,7 +55,7 @@ describe('FilesManager', () => {
                     previewRequest: 'preview_request',
                     previewResponse: 'preview_response'
                 },
-                userId: 0
+                userId: '0'
             }
         };
 
@@ -71,7 +71,7 @@ describe('FilesManager', () => {
         };
 
         const mockRecord: Mockify<IRecord> = {
-            id: 1
+            id: '1'
         };
         const mockRecordDomain: Mockify<IRecordDomain> = {
             createRecord: jest.fn(() => mockRecord),
@@ -270,7 +270,7 @@ describe('FilesManager', () => {
             };
 
             const mockDestRecord: Mockify<IRecord> = {
-                id: 2
+                id: '2'
             };
 
             // change find value return

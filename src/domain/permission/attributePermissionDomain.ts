@@ -1,17 +1,17 @@
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import {AttributePermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IAttributePermissionDomain {
     getAttributePermission(
         action: AttributePermissionsActions,
-        userGroupId: number,
+        userGroupId: string,
         attributeId: string,
         recordLibrary: string,
-        recordId: number,
+        recordId: string,
         ctx: IQueryInfos
     ): Promise<boolean>;
 }
@@ -32,10 +32,10 @@ export default function({
     return {
         async getAttributePermission(
             action: AttributePermissionsActions,
-            userId: number,
+            userId: string,
             attributeId: string,
             recordLibrary: string,
-            recordId: number,
+            recordId: string,
             ctx: IQueryInfos
         ): Promise<boolean> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});

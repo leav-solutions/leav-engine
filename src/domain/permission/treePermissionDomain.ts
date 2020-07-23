@@ -1,5 +1,6 @@
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import {ITreeNode} from '_types/tree';
 import {
     IPermissionsTreeTarget,
@@ -10,7 +11,6 @@ import {
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from './permissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface ITreePermissionDomain {
     getTreePermission(params: IGetTreePermissionParams, ctx: IQueryInfos): Promise<boolean>;
@@ -20,14 +20,14 @@ export interface ITreePermissionDomain {
 export interface IGetDefaultPermissionParams {
     action?: any;
     applyTo?: string;
-    userId?: number;
+    userId?: string;
     userGroups?: ITreeNode[][];
 }
 
 export interface IGetTreePermissionParams {
     type: PermissionTypes;
     action: PermissionsActions;
-    userId: number;
+    userId: string;
     applyTo: string;
     treeValues: {[treeAttributeId: string]: ITreeNode[]};
     permissions_conf: ITreePermissionsConf;
@@ -37,7 +37,7 @@ export interface IGetTreePermissionParams {
 export interface IGetHeritedTreePermissionParams {
     type: PermissionTypes;
     action: PermissionsActions;
-    userGroupId: number;
+    userGroupId: string;
     applyTo: string;
     permissionTreeTarget: IPermissionsTreeTarget;
     getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
@@ -214,7 +214,7 @@ export default function({
             const treeElemAncestors = await treeRepo.getElementAncestors({
                 treeId: permissionTreeTarget.tree,
                 element: {
-                    id: Number(permissionTreeTarget.id),
+                    id: permissionTreeTarget.id,
                     library: permissionTreeTarget.library
                 },
                 ctx

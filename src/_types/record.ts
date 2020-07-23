@@ -3,12 +3,12 @@ import {ILibrary} from './library';
 import {IPreview} from './preview';
 
 export interface IRecord {
-    id?: number;
+    id?: string;
     library?: string;
     created_at?: number;
-    created_by?: number;
+    created_by?: string;
     modified_at?: number;
-    modified_by?: number;
+    modified_by?: string;
     active?: boolean;
     [attributeName: string]: any;
 }
@@ -50,7 +50,7 @@ export interface IQueryField {
 }
 
 export interface IRecordIdentity {
-    id: number;
+    id: string;
     library: ILibrary;
     label?: string;
     color?: string;

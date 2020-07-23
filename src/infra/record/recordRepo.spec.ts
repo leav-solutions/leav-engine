@@ -8,7 +8,7 @@ import recordRepo from './recordRepo';
 
 describe('RecordRepo', () => {
     const ctx = {
-        userId: 0,
+        userId: '0',
         requestId: '123465'
     };
     describe('createRecord', () => {
@@ -23,7 +23,7 @@ describe('RecordRepo', () => {
             };
 
             const cleanCreatedRecordData = {
-                id: 222435651,
+                id: '222435651',
                 library: 'users',
                 created_at: 1519303348,
                 modified_at: 1519303348
@@ -61,7 +61,7 @@ describe('RecordRepo', () => {
 
     describe('updateRecord', () => {
         test('Should update a record', async function() {
-            const recordData = {id: 222435651, modified_at: 1519303348};
+            const recordData = {id: '222435651', modified_at: 1519303348};
             const updatedRecordData = {
                 _id: 'users/222435651',
                 _rev: '_WSywvyC--_',
@@ -71,7 +71,7 @@ describe('RecordRepo', () => {
             };
 
             const cleanUpdatedRecordData = {
-                id: 222435651,
+                id: '222435651',
                 library: 'users',
                 created_at: 1519303348,
                 modified_at: 1519303348
@@ -102,7 +102,7 @@ describe('RecordRepo', () => {
 
     describe('deleteRecord', () => {
         test('Should delete a record and return deleted record', async function() {
-            const recordData = {id: 222435651, created_at: 1519303348, modified_at: 1519303348};
+            const recordData = {id: '222435651', created_at: 1519303348, modified_at: 1519303348};
             const deletedRecordData = {
                 _id: 'users/222435651',
                 _rev: '_WSywvyC--_',

@@ -44,7 +44,7 @@ export interface IValueDomain {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: string;
         options?: IValuesOptions;
         ctx: IQueryInfos;
@@ -57,7 +57,7 @@ export interface IValueDomain {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: string;
         value: IValue;
         ctx: IQueryInfos;
@@ -77,7 +77,7 @@ export interface IValueDomain {
         keepEmpty
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         values: IValue[];
         ctx: IQueryInfos;
         keepEmpty?: boolean;
@@ -90,7 +90,7 @@ export interface IValueDomain {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: string;
         value: IValue;
         ctx: IQueryInfos;

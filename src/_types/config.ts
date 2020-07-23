@@ -47,7 +47,7 @@ export interface IQueues {
 
 export interface IFilesManager {
     queues: IQueues;
-    userId: number;
+    userId: string;
     prefetch?: number;
 }
 

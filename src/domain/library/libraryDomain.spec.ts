@@ -1,6 +1,7 @@
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
@@ -9,11 +10,10 @@ import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permis
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import libraryDomain from './libraryDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('LibraryDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'libraryDomainTest'
     };
     const mockAttrDomain: Mockify<IAttributeDomain> = {

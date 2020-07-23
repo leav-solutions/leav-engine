@@ -223,7 +223,7 @@ export default function({
         async import(filepath: string, clear: boolean): Promise<void> {
             const startTime = now();
             const ctx: IQueryInfos = {
-                userId: 1,
+                userId: '1',
                 queryId: 'importerApp'
             };
 

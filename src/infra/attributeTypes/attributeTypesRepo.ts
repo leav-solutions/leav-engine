@@ -1,10 +1,8 @@
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {IValue, IValuesOptions} from '../../_types/value';
 import {IQueryInfos} from '_types/queryInfos';
-import {IRecordSort, Condition} from '../../_types/record';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {Console} from 'console';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import {Condition, IRecordSort} from '../../_types/record';
+import {IValue, IValuesOptions} from '../../_types/value';
 
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
@@ -23,7 +21,7 @@ export interface IAttributeTypeRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
@@ -40,7 +38,7 @@ export interface IAttributeTypeRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
@@ -57,7 +55,7 @@ export interface IAttributeTypeRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
@@ -77,7 +75,7 @@ export interface IAttributeTypeRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         forceGetAllValues?: boolean;
         options?: IValuesOptions;
@@ -97,7 +95,7 @@ export interface IAttributeTypeRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;

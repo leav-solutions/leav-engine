@@ -5,7 +5,7 @@ import {IQueryInfos} from '../../../_types/queryInfos';
 
 export default (
     library: string,
-    recordId: number,
+    recordId: string,
     deps: {
         recordRepo: IRecordRepo;
     },

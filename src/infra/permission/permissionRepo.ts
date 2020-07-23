@@ -1,8 +1,8 @@
 import {aql} from 'arangojs';
+import {IQueryInfos} from '_types/queryInfos';
 import {IPermission, IPermissionsTreeTarget, PermissionTypes} from '../../_types/permissions';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IPermissionRepo {
     savePermission({permData, ctx}: {permData: IPermission; ctx: IQueryInfos}): Promise<IPermission>;
@@ -15,7 +15,7 @@ export interface IPermissionRepo {
     }: {
         type: PermissionTypes;
         applyTo: string;
-        usersGroupId: number | null;
+        usersGroupId: string | null;
         permissionTreeTarget?: IPermissionsTreeTarget;
         ctx: IQueryInfos;
     }): Promise<IPermission | null>;

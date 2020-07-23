@@ -2,6 +2,7 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
+import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -24,7 +25,6 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain from './valueDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('ValueDomain', () => {
     const mockRecordRepo: Mockify<IRecordRepo> = {
@@ -53,7 +53,7 @@ describe('ValueDomain', () => {
     };
 
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'valueDomainTest'
     };
     beforeEach(() => {
@@ -94,7 +94,7 @@ describe('ValueDomain', () => {
 
             const savedValue = await valDomain.saveValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {value: 'test val'},
                 ctx
@@ -139,7 +139,7 @@ describe('ValueDomain', () => {
 
             const savedValue = await valDomain.saveValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {value: 'test val'},
                 ctx
@@ -193,7 +193,7 @@ describe('ValueDomain', () => {
 
             const savedValue = await valDomain.saveValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {
                     id_value: 12345,
@@ -238,7 +238,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {value: 'test val'},
                     ctx
@@ -269,7 +269,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {value: 'test val'},
                     ctx
@@ -300,7 +300,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {
                         id_value: 12345,
@@ -328,7 +328,7 @@ describe('ValueDomain', () => {
 
             const mockRecRepo = {
                 updateRecord: global.__mockPromise({}),
-                find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]})
+                find: global.__mockPromise({totalCount: 1, list: [{id: '54321'}]})
             };
 
             const valDomain = valueDomain({
@@ -344,7 +344,7 @@ describe('ValueDomain', () => {
 
             const savedValue = await valDomain.saveValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {value: 'test val'},
                 ctx
@@ -353,7 +353,7 @@ describe('ValueDomain', () => {
             expect(mockRecRepo.updateRecord).toBeCalled();
             expect(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_at).toBeDefined();
             expect(Number.isInteger(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
-            expect(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_by).toBe(1);
+            expect(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
 
             expect(savedValue).toMatchObject(savedValueData);
         });
@@ -367,7 +367,7 @@ describe('ValueDomain', () => {
                 created_at: 123456,
                 version: {
                     my_tree: {
-                        id: 1,
+                        id: '1',
                         library: 'test_lib'
                     }
                 }
@@ -398,13 +398,13 @@ describe('ValueDomain', () => {
 
             const savedValue = await valDomain.saveValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {
                     value: 'test val',
                     version: {
                         my_tree: {
-                            id: 1,
+                            id: '1',
                             library: 'test_lib'
                         }
                     }
@@ -443,13 +443,13 @@ describe('ValueDomain', () => {
 
             const savedValue = await valDomain.saveValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {
                     value: 'test val',
                     version: {
                         my_tree: {
-                            id: 1,
+                            id: '1',
                             library: 'test_lib'
                         }
                     }
@@ -499,7 +499,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {value: 'test val'},
                     ctx
@@ -538,13 +538,13 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {
                         value: 'test val',
                         version: {
                             my_tree: {
-                                id: 1,
+                                id: '1',
                                 library: 'test_lib'
                             }
                         }
@@ -586,13 +586,13 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {
                         value: 'test val',
                         version: {
                             my_tree: {
-                                id: 1,
+                                id: '1',
                                 library: 'test_lib'
                             }
                         }
@@ -641,7 +641,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {value: 'test val'},
                     ctx
@@ -691,7 +691,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: mockAttrTree.id,
                     value: {value: 'lib1/123456'},
                     ctx
@@ -737,7 +737,7 @@ describe('ValueDomain', () => {
 
                 const savedValue = await valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
@@ -791,7 +791,7 @@ describe('ValueDomain', () => {
 
                 const saveVal = valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
@@ -845,7 +845,7 @@ describe('ValueDomain', () => {
 
                 const saveVal = valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
@@ -903,7 +903,7 @@ describe('ValueDomain', () => {
 
                 await valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: attrWithMetadataId,
                     value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
@@ -974,7 +974,7 @@ describe('ValueDomain', () => {
 
                 const saveVal = valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
@@ -1057,7 +1057,7 @@ describe('ValueDomain', () => {
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 values,
                 ctx
             });
@@ -1136,7 +1136,7 @@ describe('ValueDomain', () => {
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 values,
                 ctx
             });
@@ -1200,7 +1200,7 @@ describe('ValueDomain', () => {
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 values,
                 ctx
             });
@@ -1256,7 +1256,7 @@ describe('ValueDomain', () => {
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 values,
                 ctx,
                 keepEmpty: false
@@ -1304,7 +1304,7 @@ describe('ValueDomain', () => {
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 values,
                 ctx,
                 keepEmpty: true
@@ -1337,7 +1337,7 @@ describe('ValueDomain', () => {
 
             const saveVal = valDomain.saveValueBatch({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 values,
                 ctx,
                 keepEmpty: true
@@ -1376,7 +1376,7 @@ describe('ValueDomain', () => {
 
             const saveVal = valDomain.saveValueBatch({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 values,
                 ctx,
                 keepEmpty: true
@@ -1414,7 +1414,7 @@ describe('ValueDomain', () => {
 
             const deletedValue = await valDomain.deleteValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {value: 'test val'},
                 ctx
@@ -1443,7 +1443,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {value: 'test val'},
                     ctx
@@ -1467,7 +1467,7 @@ describe('ValueDomain', () => {
 
             const deleteVal = valDomain.deleteValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {value: 'test val'},
                 ctx
@@ -1498,7 +1498,7 @@ describe('ValueDomain', () => {
 
             const deleteVal = valDomain.deleteValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 value: {value: 'test val'},
                 ctx
@@ -1525,7 +1525,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.saveValue({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     value: {
                         id_value: 12345,
@@ -1563,7 +1563,7 @@ describe('ValueDomain', () => {
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 ctx
             });
@@ -1573,7 +1573,7 @@ describe('ValueDomain', () => {
         });
 
         test('Should return versioned values in simple mode', async function() {
-            const version = {my_tree: {library: 'my_lib', id: 12345}};
+            const version = {my_tree: {library: 'my_lib', id: '12345'}};
             const valueData = {
                 value: 'test val',
                 attribute: 'test_attr',
@@ -1602,7 +1602,7 @@ describe('ValueDomain', () => {
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
                 ctx
@@ -1677,12 +1677,12 @@ describe('ValueDomain', () => {
             });
 
             const version: IValueVersion = {
-                my_tree: {id: 9, library: 'my_lib'}
+                my_tree: {id: '9', library: 'my_lib'}
             };
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
                 ctx
@@ -1780,7 +1780,7 @@ describe('ValueDomain', () => {
                                 },
                                 {
                                     record: {
-                                        id: 1,
+                                        id: '1',
                                         library: 'my_lib'
                                     }
                                 }
@@ -1838,14 +1838,14 @@ describe('ValueDomain', () => {
             });
 
             const version: IValueVersion = {
-                my_tree: {id: 9, library: 'my_lib'},
-                other_tree: {id: 3, library: 'my_lib'},
-                third_tree: {id: 99, library: 'my_lib'}
+                my_tree: {id: '9', library: 'my_lib'},
+                other_tree: {id: '3', library: 'my_lib'},
+                third_tree: {id: '99', library: 'my_lib'}
             };
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
                 ctx
@@ -1927,12 +1927,12 @@ describe('ValueDomain', () => {
             });
 
             const version: IValueVersion = {
-                my_tree: {id: 9, library: 'my_lib'}
+                my_tree: {id: '9', library: 'my_lib'}
             };
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
                 ctx
@@ -1963,7 +1963,7 @@ describe('ValueDomain', () => {
             await expect(
                 valDomain.getValues({
                     library: 'test_lib',
-                    recordId: 12345,
+                    recordId: '12345',
                     attribute: 'test_attr',
                     ctx
                 })
@@ -1989,7 +1989,7 @@ describe('ValueDomain', () => {
 
             const getVal = valDomain.getValues({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 ctx
             });
@@ -2022,7 +2022,7 @@ describe('ValueDomain', () => {
 
             const getVal = valDomain.getValues({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: 'test_attr',
                 ctx
             });

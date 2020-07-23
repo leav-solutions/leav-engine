@@ -123,7 +123,7 @@ export default function({
         async migrate(depsManager: AwilixContainer): Promise<void> {
             await _initMigrationsCollection();
             const ctx: IQueryInfos = {
-                userId: 0,
+                userId: '0',
                 queryId: 'run-migrations'
             };
             // Load already ran migrations
@@ -287,7 +287,7 @@ export default function({
 
                       allVers[treeName] = {
                           library,
-                          id: Number(id)
+                          id
                       };
 
                       return allVers;

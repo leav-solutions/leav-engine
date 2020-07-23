@@ -10,9 +10,6 @@ import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICoreApp} from './coreApp';
-import {value} from '.';
-import {SlowBuffer} from 'buffer';
-import libraryRepo from 'infra/library';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -44,7 +41,7 @@ export default function({
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const libraries = await libraryDomain.getLibraries({
                 ctx: {
-                    userId: 0,
+                    userId: '0',
                     queryId: 'libraryAppGenerateBaseSchema'
                 }
             });

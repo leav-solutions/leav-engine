@@ -6,7 +6,7 @@ import libraryRepo from './libraryRepo';
 
 describe('LibraryRepo', () => {
     const ctx = {
-        userId: 0,
+        userId: '0',
         queryId: '123456'
     };
     describe('getLibrary', () => {

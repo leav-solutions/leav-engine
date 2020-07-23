@@ -1,14 +1,14 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import moment from 'moment';
+import {IQueryInfos} from '_types/queryInfos';
 import {IAttribute} from '../../../_types/attribute';
 import {IValue} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
-import {IQueryInfos} from '_types/queryInfos';
 
 export default async (
     library: string,
-    recordId: number,
+    recordId: string,
     attribute: IAttribute,
     value: IValue,
     deps: {

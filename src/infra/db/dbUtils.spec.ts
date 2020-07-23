@@ -15,7 +15,7 @@ import loadMigrationFile from './helpers/loadMigrationFile';
 describe('dbUtils', () => {
     const mockConf = {lang: {available: ['fr', 'en']}};
     const ctx = {
-        userId: 0,
+        userId: '0',
         queryId: '123456'
     };
     afterAll(() => {
@@ -283,8 +283,8 @@ describe('dbUtils', () => {
             const testDbUtils = dbUtils();
 
             const res = testDbUtils.convertValueVersionToDb({
-                my_tree: {id: 12345, library: 'my_lib'},
-                other_tree: {id: 6789, library: 'other_lib'}
+                my_tree: {id: '12345', library: 'my_lib'},
+                other_tree: {id: '6789', library: 'other_lib'}
             });
 
             expect(res).toMatchObject({my_tree: 'my_lib/12345', other_tree: 'other_lib/6789'});
@@ -297,8 +297,8 @@ describe('dbUtils', () => {
             const res = testDbUtils.convertValueVersionFromDb({my_tree: 'my_lib/12345', other_tree: 'other_lib/6789'});
 
             expect(res).toMatchObject({
-                my_tree: {id: 12345, library: 'my_lib'},
-                other_tree: {id: 6789, library: 'other_lib'}
+                my_tree: {id: '12345', library: 'my_lib'},
+                other_tree: {id: '6789', library: 'other_lib'}
             });
         });
     });

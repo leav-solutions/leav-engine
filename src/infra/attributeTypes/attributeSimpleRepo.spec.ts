@@ -1,7 +1,7 @@
 import {aql, Database} from 'arangojs';
+import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleRepo from './attributeSimpleRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {
@@ -9,7 +9,7 @@ describe('AttributeIndexRepo', () => {
         type: AttributeTypes.SIMPLE
     };
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: 'attributeSimpleRepoTest'
     };
 
@@ -32,7 +32,7 @@ describe('AttributeIndexRepo', () => {
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 'test val'
@@ -62,7 +62,7 @@ describe('AttributeIndexRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttribute,
                 ctx
             });
@@ -98,7 +98,7 @@ describe('AttributeIndexRepo', () => {
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 'test val'

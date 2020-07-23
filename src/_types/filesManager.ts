@@ -84,7 +84,7 @@ export interface IPreviewResponseResult {
 
 export interface IPreviewResponseContext {
     library: string;
-    recordId: number;
+    recordId: string;
 }
 
 export interface IPreviewResponse {

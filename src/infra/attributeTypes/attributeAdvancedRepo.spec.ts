@@ -1,9 +1,9 @@
 import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeAdvancedRepo from './attributeAdvancedRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeStandardRepo', () => {
     const mockAttribute = {
@@ -16,13 +16,13 @@ describe('AttributeStandardRepo', () => {
         convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
         convertValueVersionFromDb: jest.fn().mockReturnValue({
             my_tree: {
-                id: 1,
+                id: '1',
                 library: 'test_lib'
             }
         })
     };
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: 'attributeAdvancedRepoTest'
     };
 
@@ -65,7 +65,7 @@ describe('AttributeStandardRepo', () => {
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 'test val',
@@ -124,7 +124,7 @@ describe('AttributeStandardRepo', () => {
                 created_at: 400999999,
                 version: {
                     my_tree: {
-                        id: 1,
+                        id: '1',
                         library: 'test_lib'
                     }
                 }
@@ -142,7 +142,7 @@ describe('AttributeStandardRepo', () => {
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 'test val',
@@ -150,7 +150,7 @@ describe('AttributeStandardRepo', () => {
                     created_at: 400999999,
                     version: {
                         my_tree: {
-                            id: 1,
+                            id: '1',
                             library: 'test_lib'
                         }
                     }
@@ -206,7 +206,7 @@ describe('AttributeStandardRepo', () => {
 
             const savedVal = await attrRepo.updateValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     id_value: 987654,
@@ -263,7 +263,7 @@ describe('AttributeStandardRepo', () => {
                 created_at: 400999999,
                 version: {
                     my_tree: {
-                        id: 1,
+                        id: '1',
                         library: 'test_lib'
                     }
                 }
@@ -281,7 +281,7 @@ describe('AttributeStandardRepo', () => {
 
             const savedVal = await attrRepo.updateValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     id_value: 987654,
@@ -289,7 +289,7 @@ describe('AttributeStandardRepo', () => {
                     modified_at: 500999999,
                     version: {
                         my_tree: {
-                            id: 1,
+                            id: '1',
                             library: 'test_lib'
                         }
                     }
@@ -347,7 +347,7 @@ describe('AttributeStandardRepo', () => {
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     id_value: 123456789,
@@ -409,7 +409,7 @@ describe('AttributeStandardRepo', () => {
 
             const value = await attrRepo.getValueById({
                 library: 'test_lib',
-                recordId: 987654,
+                recordId: '987654',
                 attribute: mockAttribute,
                 value: {
                     id_value: 132465,
@@ -449,7 +449,7 @@ describe('AttributeStandardRepo', () => {
 
             const value = await attrRepo.getValueById({
                 library: 'test_lib',
-                recordId: 987654,
+                recordId: '987654',
                 attribute: mockAttribute,
                 value: {
                     id_value: 132465,
@@ -509,7 +509,7 @@ describe('AttributeStandardRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttribute,
                 ctx
             });
@@ -548,7 +548,7 @@ describe('AttributeStandardRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttrNotMultival,
                 ctx
             });
@@ -596,11 +596,11 @@ describe('AttributeStandardRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttrAdvVersionableSimple,
                 forceGetAllValues: false,
                 options: {
-                    version: {my_tree: {library: 'my_lib', id: 1345}}
+                    version: {my_tree: {library: 'my_lib', id: '1345'}}
                 },
                 ctx
             });
@@ -629,7 +629,7 @@ describe('AttributeStandardRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttrNotMultival,
                 forceGetAllValues: true,
                 ctx

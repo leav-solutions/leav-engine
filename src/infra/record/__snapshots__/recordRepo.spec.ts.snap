@@ -20,7 +20,7 @@ exports[`RecordRepo find Should find records 1`] = `
 Object {
   "ctx": Object {
     "requestId": "123465",
-    "userId": 0,
+    "userId": "0",
   },
   "query": Object {
     "_source": [Function],
@@ -41,7 +41,7 @@ exports[`RecordRepo find with filters Should filter records - simple 1`] = `
 Object {
   "ctx": Object {
     "requestId": "123465",
-    "userId": 0,
+    "userId": "0",
   },
   "query": Object {
     "_source": [Function],
@@ -84,7 +84,7 @@ exports[`RecordRepo updateRecord Should update a record 1`] = `
 exports[`RecordRepo updateRecord Should update a record 2`] = `
 Object {
   "@value2": "test",
-  "value0": 222435651,
+  "value0": "222435651",
   "value1": Object {
     "modified_at": 1519303348,
   },

@@ -1,15 +1,15 @@
 import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 import {mockForm} from '../../__tests__/mocks/forms';
 import formRepo from './formRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('FormRepo', () => {
     const docFormData = {...mockForm, _key: 'my_lib__test_form'};
     const formData = {...mockForm};
     const mockCleanupRes = {...formData, id: 'my_lib__test_form'};
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: 'formRepoTest'
     };
     describe('Get forms', () => {

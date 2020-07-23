@@ -32,7 +32,7 @@ export default function({
                 name: versName,
                 value: {
                     library: version[versName].library,
-                    id: Number(version[versName].id)
+                    id: version[versName].id
                 }
             });
         }

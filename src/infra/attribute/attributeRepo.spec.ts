@@ -1,13 +1,13 @@
 import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import attributeRepo from '../attribute/attributeRepo';
 import {IValueRepo} from '../value/valueRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeRepo', () => {
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: 'attributeRepoTest'
     };
     describe('getAttribute', () => {

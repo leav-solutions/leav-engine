@@ -14,7 +14,7 @@ import formDomain from './formDomain';
 
 describe('formDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'formDomainTest'
     };
 

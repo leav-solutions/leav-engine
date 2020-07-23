@@ -1,3 +1,4 @@
+import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {
     AdminPermissionsActions,
@@ -10,11 +11,10 @@ import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import permissionsHelperDomain from './permissionsHelperDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('HeritedPermissionDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'heritedPermissionDomainTest'
     };
     describe('getHeritedPermissions', () => {
@@ -31,8 +31,8 @@ describe('HeritedPermissionDomain', () => {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 action: RecordPermissionsActions.ACCESS,
-                userGroupId: 987654321,
-                permissionTreeTarget: {id: 12345, library: 'test', tree: 'test_tree'},
+                userGroupId: '987654321',
+                permissionTreeTarget: {id: '12345', library: 'test', tree: 'test_tree'},
                 ctx
             });
 
@@ -53,7 +53,7 @@ describe('HeritedPermissionDomain', () => {
                 type: PermissionTypes.LIBRARY,
                 applyTo: 'test_lib',
                 action: LibraryPermissionsActions.ACCESS,
-                userGroupId: 987654321,
+                userGroupId: '987654321',
                 ctx
             });
 
@@ -74,7 +74,7 @@ describe('HeritedPermissionDomain', () => {
                 type: PermissionTypes.ADMIN,
                 applyTo: 'test_lib',
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userGroupId: 987654321,
+                userGroupId: '987654321',
                 ctx
             });
 
@@ -96,7 +96,7 @@ describe('HeritedPermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.ADMIN,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: 123,
+                userId: '123',
                 ctx
             });
 
@@ -116,7 +116,7 @@ describe('HeritedPermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.LIBRARY,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: 123,
+                userId: '123',
                 applyTo: 'test_lib',
                 ctx
             });
@@ -137,10 +137,10 @@ describe('HeritedPermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.RECORD,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: 123,
+                userId: '123',
                 applyTo: 'test_lib',
                 target: {
-                    recordId: 1345
+                    recordId: '1345'
                 },
                 ctx
             });
@@ -163,7 +163,7 @@ describe('HeritedPermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
                     action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                    userId: 123,
+                    userId: '123',
                     applyTo: 'test_lib',
                     ctx
                 })
@@ -174,7 +174,7 @@ describe('HeritedPermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
                     action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                    userId: 123,
+                    userId: '123',
                     applyTo: 'test_lib',
                     target: {},
                     ctx
@@ -194,10 +194,10 @@ describe('HeritedPermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.ATTRIBUTE,
                 action: AttributePermissionsActions.EDIT_VALUE,
-                userId: 123,
+                userId: '123',
                 applyTo: 'test_lib',
                 target: {
-                    recordId: 1345,
+                    recordId: '1345',
                     attributeId: 'test_attr'
                 },
                 ctx
@@ -221,7 +221,7 @@ describe('HeritedPermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.ATTRIBUTE,
                     action: AttributePermissionsActions.EDIT_VALUE,
-                    userId: 123,
+                    userId: '123',
                     applyTo: 'test_lib',
                     ctx
                 })
@@ -232,7 +232,7 @@ describe('HeritedPermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.ATTRIBUTE,
                     action: AttributePermissionsActions.EDIT_VALUE,
-                    userId: 123,
+                    userId: '123',
                     applyTo: 'test_lib',
                     target: {},
                     ctx
@@ -244,10 +244,10 @@ describe('HeritedPermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.ATTRIBUTE,
                     action: AttributePermissionsActions.EDIT_VALUE,
-                    userId: 123,
+                    userId: '123',
                     applyTo: 'test_lib',
                     target: {
-                        recordId: 12345
+                        recordId: '12345'
                     },
                     ctx
                 })

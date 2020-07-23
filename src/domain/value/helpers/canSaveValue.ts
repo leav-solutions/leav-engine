@@ -17,7 +17,7 @@ interface ICanSaveValueParams {
     attributeProps: IAttribute;
     value: IValue;
     library: string;
-    recordId: number;
+    recordId: string;
     ctx?: IQueryInfos;
     keepEmpty: boolean;
     deps: {
@@ -29,7 +29,7 @@ interface ICanSaveValueParams {
 const _canSaveMetadata = async (
     valueExists: boolean,
     library: string,
-    recordId: number,
+    recordId: string,
     value: IValue,
     ctx: IQueryInfos,
     deps: {attributePermissionDomain: IAttributePermissionDomain}

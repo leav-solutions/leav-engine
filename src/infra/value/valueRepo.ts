@@ -1,7 +1,7 @@
 import {IAttribute} from '_types/attribute';
+import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValuesOptions} from '_types/value';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IValueRepo {
     createValue({
@@ -12,7 +12,7 @@ export interface IValueRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
@@ -29,7 +29,7 @@ export interface IValueRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
@@ -46,7 +46,7 @@ export interface IValueRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
@@ -66,7 +66,7 @@ export interface IValueRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         forceGetAllValues?: boolean;
         options?: IValuesOptions;
@@ -86,7 +86,7 @@ export interface IValueRepo {
         ctx
     }: {
         library: string;
-        recordId: number;
+        recordId: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;

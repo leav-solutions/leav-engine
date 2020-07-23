@@ -5,9 +5,9 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import * as jwt from 'jsonwebtoken';
 import * as winston from 'winston';
+import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IAuthApp {
     registerRoute(server: Server): void;
@@ -70,7 +70,7 @@ export default function({
                     }
                     // Get user id
                     const ctx: IQueryInfos = {
-                        userId: 0,
+                        userId: '0',
                         queryId: 'authenticate'
                     };
                     try {
@@ -143,7 +143,7 @@ export default function({
                 return false;
             }
             const ctx: IQueryInfos = {
-                userId: 0,
+                userId: '0',
                 queryId: 'validateToken'
             };
             const users = await recordDomain.find({

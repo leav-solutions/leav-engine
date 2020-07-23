@@ -11,7 +11,7 @@ interface IPrepareValueParams {
     attributeProps: IAttribute;
     value: IValue;
     library: string;
-    recordId: number;
+    recordId: string;
     infos?: IQueryInfos;
     keepEmpty: boolean;
     deps: {

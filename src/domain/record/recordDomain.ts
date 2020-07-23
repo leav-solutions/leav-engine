@@ -83,7 +83,7 @@ export interface IRecordDomain {
         ctx: IQueryInfos;
     }): Promise<IRecord>;
 
-    deleteRecord({library, id, ctx}: {library: string; id: number; ctx: IQueryInfos}): Promise<IRecord>;
+    deleteRecord({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IRecord>;
 
     /**
      * Search records
@@ -377,10 +377,10 @@ export default function({
 
                         const lastAttr = attributes[attributes.length - 1];
                         if (value && lastAttr.format === AttributeFormats.NUMERIC) {
-value = Number(f.value);
-} else if (value && lastAttr.format === AttributeFormats.BOOLEAN) {
-value = f.value === 'true';
-}
+                            value = Number(f.value);
+                        } else if (value && lastAttr.format === AttributeFormats.BOOLEAN) {
+                            value = f.value === 'true';
+                        }
 
                         const valueType = value === null ? 'null' : typeof value;
 

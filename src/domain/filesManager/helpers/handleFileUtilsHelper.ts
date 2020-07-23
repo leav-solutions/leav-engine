@@ -129,7 +129,7 @@ export const createRecordFile = async (
 
 export const updateRecordFile = async (
     recordData: IFilesAttributes,
-    recordId: number,
+    recordId: string,
     library: string,
     deps: {
         valueDomain: IValueDomain;
@@ -194,7 +194,7 @@ export const createFilesTreeElement = async (
     }
 };
 
-export const deleteFilesTreeElement = async (recordId: number, library: string, deps: IHandleFileSystemDeps, ctx) => {
+export const deleteFilesTreeElement = async (recordId: string, library: string, deps: IHandleFileSystemDeps, ctx) => {
     try {
         await deps.treeDomain.deleteElement({
             treeId: deps.utils.getLibraryTreeId(library),

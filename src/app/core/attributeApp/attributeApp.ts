@@ -56,7 +56,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const attributes = await attributeDomain.getAttributes({
                 ctx: {
-                    userId: 0,
+                    userId: '0',
                     queryId: 'attributeAppGenerateBaseSchema'
                 }
             });
@@ -352,7 +352,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                                             treeId: attributeData.linked_tree,
                                             element: {
                                                 library,
-                                                id: Number(id)
+                                                id
                                             },
                                             ctx
                                         });

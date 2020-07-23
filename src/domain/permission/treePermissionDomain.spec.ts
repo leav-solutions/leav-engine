@@ -1,19 +1,14 @@
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {
-    IPermissionsTreeTarget,
-    PermissionsRelations,
-    PermissionTypes,
-    RecordPermissionsActions
-} from '../../_types/permissions';
+import {IQueryInfos} from '_types/queryInfos';
+import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from './permissionDomain';
 import treePermissionDomain from './treePermissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('TreePermissionDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'treePermissionDomainTest'
     };
     describe('getTreePermission', () => {
@@ -254,13 +249,13 @@ describe('TreePermissionDomain', () => {
         const params = {
             type: PermissionTypes.ATTRIBUTE,
             action: RecordPermissionsActions.ACCESS,
-            userId: 987654,
+            userId: '987654',
             applyTo: 'test_lib',
             treeValues: {
                 category: [
                     {
                         record: {
-                            id: 321654,
+                            id: '321654',
                             library: 'category'
                         }
                     }
@@ -355,7 +350,6 @@ describe('TreePermissionDomain', () => {
                                     }
                                 }
                             ]);
-                            break;
                     }
                 })
             };
@@ -395,7 +389,7 @@ describe('TreePermissionDomain', () => {
                         category: [
                             {
                                 record: {
-                                    id: 321654,
+                                    id: '321654',
                                     library: 'category'
                                 }
                             }
@@ -403,7 +397,7 @@ describe('TreePermissionDomain', () => {
                         status: [
                             {
                                 record: {
-                                    id: 123456,
+                                    id: '123456',
                                     library: 'status'
                                 }
                             }
@@ -436,7 +430,7 @@ describe('TreePermissionDomain', () => {
                         category: [
                             {
                                 record: {
-                                    id: 321654,
+                                    id: '321654',
                                     library: 'category'
                                 }
                             }
@@ -444,7 +438,7 @@ describe('TreePermissionDomain', () => {
                         status: [
                             {
                                 record: {
-                                    id: 123456,
+                                    id: '123456',
                                     library: 'status'
                                 }
                             }

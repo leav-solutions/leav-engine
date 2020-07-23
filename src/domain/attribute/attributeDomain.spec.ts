@@ -1,6 +1,7 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
@@ -10,11 +11,10 @@ import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from 
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import attributeDomain from './attributeDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('attributeDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'attributeDomainTest'
     };
     const mockConf = {

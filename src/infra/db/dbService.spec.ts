@@ -3,7 +3,7 @@ import {IUtils} from 'utils/utils';
 import dbService from './dbService';
 describe('dbService', () => {
     const ctx = {
-        userId: 0,
+        userId: '0',
         queryId: 'testDbService'
     };
     describe('collectionExists', () => {

@@ -1,8 +1,8 @@
 import {Database} from 'arangojs';
+import {IQueryInfos} from '_types/queryInfos';
 import {TreeBehavior} from '../../_types/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
 import treeRepo from './treeRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('TreeRepo', () => {
     const docTreeData = {
@@ -19,7 +19,7 @@ describe('TreeRepo', () => {
         label: {fr: 'test', en: 'test'}
     };
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: '132456'
     };
     describe('createTree', () => {
@@ -174,7 +174,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
             const addedElement = await repo.addElement({
                 treeId: 'test_tree',
-                element: {id: 13445, library: 'test_lib'},
+                element: {id: '13445', library: 'test_lib'},
                 parent: null,
                 ctx
             });
@@ -196,8 +196,8 @@ describe('TreeRepo', () => {
 
             const addedElement = await repo.addElement({
                 treeId: 'test_tree',
-                element: {id: 13445, library: 'test_lib'},
-                parent: {id: 6789, library: 'test_lib2'},
+                element: {id: '13445', library: 'test_lib'},
+                parent: {id: '6789', library: 'test_lib2'},
                 order: 1,
                 ctx
             });
@@ -220,9 +220,9 @@ describe('TreeRepo', () => {
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
             const addedElement = await repo.moveElement({
                 treeId: 'test_tree',
-                element: {id: 13445, library: 'test_lib'},
+                element: {id: '13445', library: 'test_lib'},
                 parentTo: {
-                    id: 6789,
+                    id: '6789',
                     library: 'users'
                 },
                 order: 1,
@@ -247,7 +247,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
             const deletedElement = await repo.deleteElement({
                 treeId: 'test_tree',
-                element: {id: 13445, library: 'test_lib'},
+                element: {id: '13445', library: 'test_lib'},
                 deleteChildren: true,
                 ctx
             });
@@ -289,7 +289,7 @@ describe('TreeRepo', () => {
 
             const deletedElement = await repo.deleteElement({
                 treeId: 'test_tree',
-                element: {id: 13445, library: 'test_lib'},
+                element: {id: '13445', library: 'test_lib'},
                 deleteChildren: false,
                 ctx
             });
@@ -327,7 +327,7 @@ describe('TreeRepo', () => {
 
             const isPresent = await repo.isElementPresent({
                 treeId: 'test_tree',
-                element: {id: 13445, library: 'test_lib'},
+                element: {id: '13445', library: 'test_lib'},
                 ctx
             });
 
@@ -347,7 +347,7 @@ describe('TreeRepo', () => {
 
             const isPresent = await repo.isElementPresent({
                 treeId: 'test_tree',
-                element: {id: 13445, library: 'test_lib'},
+                element: {id: '13445', library: 'test_lib'},
                 ctx
             });
 
@@ -531,7 +531,7 @@ describe('TreeRepo', () => {
             });
             const treeContent = await repo.getTreeContent({
                 treeId: 'test_tree',
-                startingNode: {id: 223588185, library: 'categories'},
+                startingNode: {id: '223588185', library: 'categories'},
                 ctx
             });
 
@@ -643,17 +643,17 @@ describe('TreeRepo', () => {
             const mockCleanupRes = jest
                 .fn()
                 .mockReturnValueOnce({
-                    id: 123456,
+                    id: '123456',
                     created_at: 77777,
                     modified_at: 77777
                 })
                 .mockReturnValueOnce({
-                    id: 123457,
+                    id: '123457',
                     created_at: 88888,
                     modified_at: 88888
                 })
                 .mockReturnValueOnce({
-                    id: 123458,
+                    id: '123458',
                     created_at: 99999,
                     modified_at: 99999
                 });
@@ -669,7 +669,7 @@ describe('TreeRepo', () => {
 
             const values = await repo.getElementChildren({
                 treeId: 'test_tree',
-                element: {id: 123458, library: 'images'},
+                element: {id: '123458', library: 'images'},
                 ctx
             });
 
@@ -681,21 +681,21 @@ describe('TreeRepo', () => {
             expect(values).toEqual([
                 {
                     record: {
-                        id: 123456,
+                        id: '123456',
                         created_at: 77777,
                         modified_at: 77777
                     }
                 },
                 {
                     record: {
-                        id: 123457,
+                        id: '123457',
                         created_at: 88888,
                         modified_at: 88888
                     }
                 },
                 {
                     record: {
-                        id: 123458,
+                        id: '123458',
                         created_at: 99999,
                         modified_at: 99999
                     }
@@ -738,17 +738,17 @@ describe('TreeRepo', () => {
             const mockCleanupRes = jest
                 .fn()
                 .mockReturnValueOnce({
-                    id: 123456,
+                    id: '123456',
                     created_at: 77777,
                     modified_at: 77777
                 })
                 .mockReturnValueOnce({
-                    id: 123457,
+                    id: '123457',
                     created_at: 88888,
                     modified_at: 88888
                 })
                 .mockReturnValueOnce({
-                    id: 123458,
+                    id: '123458',
                     created_at: 99999,
                     modified_at: 99999
                 });
@@ -764,7 +764,7 @@ describe('TreeRepo', () => {
 
             const values = await repo.getElementAncestors({
                 treeId: 'test_tree',
-                element: {id: 123458, library: 'images'},
+                element: {id: '123458', library: 'images'},
                 ctx
             });
 
@@ -776,21 +776,21 @@ describe('TreeRepo', () => {
             expect(values).toEqual([
                 {
                     record: {
-                        id: 123456,
+                        id: '123456',
                         created_at: 77777,
                         modified_at: 77777
                     }
                 },
                 {
                     record: {
-                        id: 123457,
+                        id: '123457',
                         created_at: 88888,
                         modified_at: 88888
                     }
                 },
                 {
                     record: {
-                        id: 123458,
+                        id: '123458',
                         created_at: 99999,
                         modified_at: 99999
                     }
@@ -833,17 +833,17 @@ describe('TreeRepo', () => {
             const mockCleanupRes = jest
                 .fn()
                 .mockReturnValueOnce({
-                    id: 123456,
+                    id: '123456',
                     created_at: 77777,
                     modified_at: 77777
                 })
                 .mockReturnValueOnce({
-                    id: 123457,
+                    id: '123457',
                     created_at: 88888,
                     modified_at: 88888
                 })
                 .mockReturnValueOnce({
-                    id: 123458,
+                    id: '123458',
                     created_at: 99999,
                     modified_at: 99999
                 });
@@ -860,7 +860,7 @@ describe('TreeRepo', () => {
             const values = await repo.getLinkedRecords({
                 treeId: 'test_tree',
                 attribute: 'test_attr',
-                element: {id: 123458, library: 'images'},
+                element: {id: '123458', library: 'images'},
                 ctx
             });
 
@@ -871,17 +871,17 @@ describe('TreeRepo', () => {
 
             expect(values).toEqual([
                 {
-                    id: 123456,
+                    id: '123456',
                     created_at: 77777,
                     modified_at: 77777
                 },
                 {
-                    id: 123457,
+                    id: '123457',
                     created_at: 88888,
                     modified_at: 88888
                 },
                 {
-                    id: 123458,
+                    id: '123458',
                     created_at: 99999,
                     modified_at: 99999
                 }

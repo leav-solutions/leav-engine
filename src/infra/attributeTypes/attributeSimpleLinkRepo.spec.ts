@@ -1,9 +1,9 @@
 import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {
@@ -22,7 +22,7 @@ describe('AttributeIndexRepo', () => {
         clearAllValues: null
     };
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: 'attributeSimpleLinkRepoTest'
     };
 
@@ -42,7 +42,7 @@ describe('AttributeIndexRepo', () => {
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 123456
@@ -53,7 +53,7 @@ describe('AttributeIndexRepo', () => {
             expect(attrSimpleRepo.createValue.mock.calls.length).toBe(1);
             expect(attrSimpleRepo.createValue).toBeCalledWith({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 123456
@@ -80,7 +80,7 @@ describe('AttributeIndexRepo', () => {
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 123456
@@ -91,7 +91,7 @@ describe('AttributeIndexRepo', () => {
             expect(attrSimpleRepo.deleteValue.mock.calls.length).toBe(1);
             expect(attrSimpleRepo.deleteValue).toBeCalledWith({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 123456
@@ -144,7 +144,7 @@ describe('AttributeIndexRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttribute,
                 ctx
             });

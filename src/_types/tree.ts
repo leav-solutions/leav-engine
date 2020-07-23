@@ -16,7 +16,7 @@ export interface ITreeFilterOptions {
 }
 
 export interface ITreeElement {
-    id: number;
+    id: string;
     library: string;
 }
 

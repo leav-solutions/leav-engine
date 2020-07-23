@@ -41,7 +41,7 @@ export default function({
                                 const attrProps = await attributeDomain.getAttributeProperties({
                                     id: a,
                                     ctx: {
-                                        userId: 0,
+                                        userId: '0',
                                         queryId: 'recordAppGenerateBaseSchema'
                                     }
                                 });

@@ -94,7 +94,7 @@ describe('Versions', () => {
         expect(resSaveValue.data.errors).toBeUndefined();
         expect(resSaveValue.data.data.saveValue.version).toBeDefined();
         expect(resSaveValue.data.data.saveValue.version[0].name).toBe(treeName);
-        expect(resSaveValue.data.data.saveValue.version[0].value.id).toBe(Number(treeElement2));
+        expect(resSaveValue.data.data.saveValue.version[0].value.id).toBe(treeElement2);
 
         const resGetValues = await makeGraphQlCall(`{
             r: ${testLibNameFormatted}(
@@ -119,7 +119,7 @@ describe('Versions', () => {
         expect(resGetValues.data.errors).toBeUndefined();
         expect(resGetValues.data.data.r.list[0].property[0].version).toBeDefined();
         expect(resGetValues.data.data.r.list[0].property[0].version[treeName]).toBeDefined();
-        expect(resGetValues.data.data.r.list[0].property[0].version[treeName].id).toBe(Number(treeElement2));
+        expect(resGetValues.data.data.r.list[0].property[0].version[treeName].id).toBe(treeElement2);
         expect(resGetValues.data.data.r.list[0].property[0].version[treeName].library).toBe(treeElementLibName);
     });
 });

@@ -23,7 +23,7 @@ Object {
   "bindVars": Object {
     "@value0": "test_lib",
     "@value2": undefined,
-    "value1": 123456,
+    "value1": "123456",
     "value3": "test_simple_link_attr",
   },
   "query": "

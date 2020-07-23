@@ -17,13 +17,18 @@ describe('RecordDomain', () => {
         getRecordPermission: global.__mockPromise(true)
     };
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'recordDomainTest'
     };
 
     describe('createRecord', () => {
         test('Should create a new record', async function() {
-            const createdRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
+            const createdRecordData = {
+                id: '222435651',
+                library: 'test',
+                created_at: 1519303348,
+                modified_at: 1519303348
+            };
             const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
 
             const recDomain = recordDomain({
@@ -36,8 +41,8 @@ describe('RecordDomain', () => {
             expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
             expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
             expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe(1);
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe(1);
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
 
             expect(createdRecord).toMatchObject(createdRecordData);
         });
@@ -45,7 +50,12 @@ describe('RecordDomain', () => {
 
     describe('updateRecord', () => {
         test('Should update a record', async function() {
-            const updatedRecordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 987654321};
+            const updatedRecordData = {
+                id: '222435651',
+                library: 'test',
+                created_at: 1519303348,
+                modified_at: 987654321
+            };
             const recRepo: Mockify<IRecordRepo> = {updateRecord: global.__mockPromise(updatedRecordData)};
 
             const recDomain = recordDomain({
@@ -55,7 +65,7 @@ describe('RecordDomain', () => {
 
             const updatedRecord = await recDomain.updateRecord({
                 library: 'test',
-                recordData: {id: 222435651, modified_at: 987654321},
+                recordData: {id: '222435651', modified_at: 987654321},
                 ctx
             });
 
@@ -68,7 +78,7 @@ describe('RecordDomain', () => {
     });
 
     describe('deleteRecord', () => {
-        const recordData = {id: 222435651, library: 'test', created_at: 1519303348, modified_at: 1519303348};
+        const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
         test('Should delete an record and return deleted record', async function() {
             const recRepo: Mockify<IRecordRepo> = {deleteRecord: global.__mockPromise(recordData)};
@@ -126,7 +136,7 @@ describe('RecordDomain', () => {
     describe('getRecordIdentity', () => {
         test('Return record identity', async () => {
             const record = {
-                id: 222536283,
+                id: '222536283',
                 library: 'test_lib',
                 created_at: 1520931427,
                 modified_at: 1520931427,
@@ -178,7 +188,7 @@ describe('RecordDomain', () => {
 
             const res = await recDomain.getRecordIdentity(record, ctx);
 
-            expect(res.id).toBe(222536283);
+            expect(res.id).toBe('222536283');
             expect(res.library).toMatchObject(libData);
             expect(res.label).toBe('Label Value');
             expect(res.color).toBe('#123456');
@@ -191,7 +201,7 @@ describe('RecordDomain', () => {
 
         test('Return minimum identity if no config', async () => {
             const record = {
-                id: 222536283,
+                id: '222536283',
                 library: 'test_lib',
                 created_at: 1520931427,
                 modified_at: 1520931427,
@@ -218,7 +228,7 @@ describe('RecordDomain', () => {
 
             const res = await recDomain.getRecordIdentity(record, ctx);
 
-            expect(res.id).toBe(222536283);
+            expect(res.id).toBe('222536283');
             expect(res.library).toMatchObject(libData);
             expect(res.label).toBe(null);
             expect(res.color).toBe(null);
@@ -228,10 +238,10 @@ describe('RecordDomain', () => {
 
     describe('getRecordFieldValue', () => {
         const mockRecord: IRecord = {
-            id: 12345,
+            id: '12345',
             library: 'test_lib',
             created_at: 2119477320,
-            created_by: 42
+            created_by: '42'
         };
 
         test('Return a value present on record', async () => {
@@ -337,7 +347,7 @@ describe('RecordDomain', () => {
                 ctx
             });
 
-            expect((value as IValue).value.id).toBe(42);
+            expect((value as IValue).value.id).toBe('42');
             expect((value as IValue).value.library).toBe('users');
         });
 
@@ -367,7 +377,7 @@ describe('RecordDomain', () => {
     describe('Deactivate record', () => {
         test('Set active to false on record', async () => {
             const record = {
-                id: 222536283,
+                id: '222536283',
                 library: 'test_lib',
                 created_at: 1520931427,
                 modified_at: 1520931427,
@@ -393,7 +403,7 @@ describe('RecordDomain', () => {
     describe('Activate record', () => {
         test('Set active to true on record', async () => {
             const record = {
-                id: 222536283,
+                id: '222536283',
                 library: 'test_lib',
                 created_at: 1520931427,
                 modified_at: 1520931427,
@@ -420,7 +430,7 @@ describe('RecordDomain', () => {
     describe('Deactivate record', () => {
         test('Set active to false on record', async () => {
             const record = {
-                id: 222536283,
+                id: '222536283',
                 library: 'test_lib',
                 created_at: 1520931427,
                 modified_at: 1520931427,
@@ -433,7 +443,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
 
-            const recordAfter = await recDomain.deactivateRecord(record, {userId: 1});
+            const recordAfter = await recDomain.deactivateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
@@ -445,7 +455,7 @@ describe('RecordDomain', () => {
     describe('Activate record', () => {
         test('Set active to true on record', async () => {
             const record = {
-                id: 222536283,
+                id: '222536283',
                 library: 'test_lib',
                 created_at: 1520931427,
                 modified_at: 1520931427,
@@ -458,7 +468,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
 
-            const recordAfter = await recDomain.activateRecord(record, {userId: 1});
+            const recordAfter = await recDomain.activateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');

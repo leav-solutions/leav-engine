@@ -31,7 +31,7 @@ export interface IPermissionDomain {
         type: PermissionTypes;
         applyTo: string | null;
         action: PermissionsActions;
-        usersGroupId: number;
+        usersGroupId: string;
         permissionTreeTarget?: IPermissionsTreeTarget;
         ctx: IQueryInfos;
     }): Promise<boolean | null>;
@@ -50,7 +50,7 @@ export interface IPermissionDomain {
         type: PermissionTypes;
         applyTo: string | null;
         actions: PermissionsActions[];
-        usersGroupId: number;
+        usersGroupId: string;
         permissionTreeTarget?: IPermissionsTreeTarget;
         ctx: IQueryInfos;
     }): Promise<{[name: string]: boolean | null} | null>;
@@ -79,7 +79,7 @@ export interface IPermissionDomain {
         ctx
     }: {
         action: AdminPermissionsActions;
-        userId: number;
+        userId: string;
         ctx: IQueryInfos;
     }): Promise<boolean>;
 
@@ -89,7 +89,7 @@ export interface IPermissionDomain {
         ctx
     }: {
         action: AdminPermissionsActions;
-        userGroupId: number;
+        userGroupId: string;
         ctx: IQueryInfos;
     }): Promise<boolean>;
 
@@ -101,7 +101,7 @@ export interface IPermissionDomain {
     }: {
         action: LibraryPermissionsActions;
         libraryId: string;
-        userId: number;
+        userId: string;
         ctx: IQueryInfos;
     }): Promise<boolean>;
 
@@ -113,7 +113,7 @@ export interface IPermissionDomain {
     }: {
         action: LibraryPermissionsActions;
         libraryId: string;
-        userGroupId: number;
+        userGroupId: string;
         ctx: IQueryInfos;
     }): Promise<boolean>;
 }

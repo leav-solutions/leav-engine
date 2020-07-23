@@ -1,10 +1,10 @@
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {AdminPermissionsActions} from '../../../_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
+import {AdminPermissionsActions} from '../../../_types/permissions';
 
 export default async (
     existingLib: boolean,
-    userId: number,
+    userId: string,
     deps: {permissionDomain: IPermissionDomain},
     ctx: IQueryInfos
 ): Promise<{canSave: boolean; action: AdminPermissionsActions}> => {

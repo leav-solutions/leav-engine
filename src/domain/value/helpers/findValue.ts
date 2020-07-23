@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/check-indentation */
 import {isEqual} from 'lodash';
 import {IFindValueTree, IValue} from '_types/value';
 
@@ -36,7 +37,7 @@ const findValue = (trees: IFindValueTree[], values: IValue[]): IValue[] => {
     // Extract version from all trees at their current state
     const version = trees.reduce((vers, t) => {
         const {library: elemLibrary, id: elemId} = t.elements[t.currentIndex].record;
-        vers[t.name] = {library: elemLibrary, id: Number(elemId)};
+        vers[t.name] = {library: elemLibrary, id: elemId};
 
         return vers;
     }, {});

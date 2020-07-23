@@ -1,4 +1,6 @@
 import {aql} from 'arangojs';
+import {AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IQueryInfos} from '_types/queryInfos';
 import {
     CursorDirection,
     ICursorPaginationParams,
@@ -6,13 +8,10 @@ import {
     IPaginationCursors,
     IPaginationParams
 } from '../../_types/list';
-import {IRecord, IRecordFilterOption, IRecordSort, Operator, Condition} from '../../_types/record';
+import {IRecord, IRecordFilterOption, IRecordSort, Operator} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IQueryInfos} from '_types/queryInfos';
-import {value} from 'app/core';
-import {AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -35,7 +34,7 @@ export interface IRecordRepo {
         recordData: IRecord;
         ctx: IQueryInfos;
     }): Promise<IRecord>;
-    deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: number; ctx: IQueryInfos}): Promise<IRecord>;
+    deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
     find({
         libraryId,
         filters,

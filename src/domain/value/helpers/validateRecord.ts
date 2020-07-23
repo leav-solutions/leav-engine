@@ -1,12 +1,12 @@
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {AttributeTypes} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
-import {IQueryInfos} from '_types/queryInfos';
 
 export default async (
     library: string,
-    recordId: number,
+    recordId: string,
     deps: {recordRepo: IRecordRepo},
     ctx: IQueryInfos
 ): Promise<void> => {

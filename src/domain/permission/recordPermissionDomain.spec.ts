@@ -1,16 +1,15 @@
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from './permissionDomain';
 import recordPermissionDomain from './recordPermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
-import {isString} from 'util';
 
 describe('recordPermissionDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'recordPermissionDomainTest'
     };
     describe('getRecordPermission', () => {
@@ -90,9 +89,9 @@ describe('recordPermissionDomain', () => {
 
             const perm = await recordPermDomain.getRecordPermission(
                 RecordPermissionsActions.ACCESS,
-                987654,
+                '987654',
                 'test_lib',
-                123456,
+                '123456',
                 ctx
             );
 
@@ -119,9 +118,9 @@ describe('recordPermissionDomain', () => {
 
             const perm = await recordPermDomain.getRecordPermission(
                 RecordPermissionsActions.ACCESS,
-                987654,
+                '987654',
                 'test_lib',
-                123456,
+                '123456',
                 ctx
             );
 
@@ -147,10 +146,10 @@ describe('recordPermissionDomain', () => {
 
             const perm = await recordPermDomain.getHeritedRecordPermission(
                 RecordPermissionsActions.ACCESS,
-                12345,
+                '12345',
                 'test_lib',
                 'test_tree',
-                {id: 54321, library: 'some_lib'},
+                {id: '54321', library: 'some_lib'},
                 ctx
             );
 

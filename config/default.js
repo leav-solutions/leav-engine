@@ -37,7 +37,7 @@ module.exports = {
             previewRequest: 'files_preview_request',
             previewResponse: 'files_preview_response'
         },
-        userId: 1,
+        userId: '1',
         prefetch: 1
     },
     debug: false

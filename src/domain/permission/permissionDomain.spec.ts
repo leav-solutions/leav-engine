@@ -2,6 +2,7 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import {
     AdminPermissionsActions,
     LibraryPermissionsActions,
@@ -9,11 +10,10 @@ import {
     RecordPermissionsActions
 } from '../../_types/permissions';
 import permissionDomain from './permissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('PermissionDomain', () => {
     const ctx: IQueryInfos = {
-        userId: 1,
+        userId: '1',
         queryId: 'permissionDomainTest'
     };
     describe('savePermission', () => {
@@ -47,11 +47,11 @@ describe('PermissionDomain', () => {
                     },
                     permissionTreeTarget: {
                         library: 'test_lib',
-                        id: 12345,
+                        id: '12345',
                         tree: 'test_tree'
                     }
                 },
-                {userId: 1}
+                {userId: '1'}
             );
 
             expect(mockPermRepo.savePermission.mock.calls.length).toBe(1);
@@ -72,7 +72,7 @@ describe('PermissionDomain', () => {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 action: RecordPermissionsActions.ACCESS,
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',
@@ -85,7 +85,7 @@ describe('PermissionDomain', () => {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 action: RecordPermissionsActions.EDIT,
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',
@@ -98,7 +98,7 @@ describe('PermissionDomain', () => {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 action: RecordPermissionsActions.DELETE,
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',
@@ -139,7 +139,7 @@ describe('PermissionDomain', () => {
                     RecordPermissionsActions.EDIT,
                     RecordPermissionsActions.DELETE
                 ],
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',
@@ -179,7 +179,7 @@ describe('PermissionDomain', () => {
                     RecordPermissionsActions.EDIT,
                     RecordPermissionsActions.DELETE
                 ],
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',
@@ -210,7 +210,7 @@ describe('PermissionDomain', () => {
                     RecordPermissionsActions.EDIT,
                     RecordPermissionsActions.DELETE
                 ],
-                usersGroupId: 12345,
+                usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
                     library: 'category',
@@ -249,24 +249,24 @@ describe('PermissionDomain', () => {
             [
                 {
                     record: {
-                        id: 9
+                        id: '9'
                     }
                 },
                 {
                     record: {
-                        id: 1
+                        id: '1'
                     }
                 }
             ],
             [
                 {
                     record: {
-                        id: 8
+                        id: '8'
                     }
                 },
                 {
                     record: {
-                        id: 0
+                        id: '0'
                     }
                 }
             ]
@@ -279,9 +279,9 @@ describe('PermissionDomain', () => {
             permDomain.getSimplePermission = jest
                 .fn()
                 .mockImplementation(({type, applyTo, action, usersGroupId, permissionTreeTarget, ctx: ct}) => {
-                    if (usersGroupId === 1) {
+                    if (usersGroupId === '1') {
                         return true;
-                    } else if (usersGroupId === 0) {
+                    } else if (usersGroupId === '0') {
                         return false;
                     } else {
                         return null;
@@ -305,7 +305,7 @@ describe('PermissionDomain', () => {
             permDomain.getSimplePermission = jest
                 .fn()
                 .mockImplementation(({type, applyTo, action, usersGroupId, permissionTreeTarget, ctx: ct}) => {
-                    if (usersGroupId === 0) {
+                    if (usersGroupId === '0') {
                         return false;
                     } else {
                         return null;
@@ -441,7 +441,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getAdminPermission({
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: 12345,
+                userId: '12345',
                 ctx
             });
 
@@ -461,7 +461,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getAdminPermission({
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: 12345,
+                userId: '12345',
                 ctx
             });
 
@@ -534,7 +534,7 @@ describe('PermissionDomain', () => {
             const perm = await permDomain.getLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS,
                 libraryId: 'test_lib',
-                userId: 12345,
+                userId: '12345',
                 ctx
             });
 
@@ -555,7 +555,7 @@ describe('PermissionDomain', () => {
             const perm = await permDomain.getLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS,
                 libraryId: 'test_lib',
-                userId: 12345,
+                userId: '12345',
                 ctx
             });
 
@@ -593,7 +593,7 @@ describe('PermissionDomain', () => {
             const perm = await permDomain.getHeritedLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS,
                 libraryId: 'test_lib',
-                userGroupId: 12345,
+                userGroupId: '12345',
                 ctx
             });
 
@@ -607,7 +607,7 @@ describe('PermissionDomain', () => {
             const perm = await permDomain.getHeritedLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS,
                 libraryId: 'test_lib',
-                userGroupId: 12345,
+                userGroupId: '12345',
                 ctx
             });
 
@@ -644,7 +644,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getHeritedAdminPermission({
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userGroupId: 12345,
+                userGroupId: '12345',
                 ctx
             });
 
@@ -657,7 +657,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getHeritedAdminPermission({
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userGroupId: 12345,
+                userGroupId: '12345',
                 ctx
             });
 

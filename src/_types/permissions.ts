@@ -85,7 +85,7 @@ export interface IPermissionsTreeTarget {
     /**
      * Tree element's ID
      */
-    id: string | number | null;
+    id: string | null;
 }
 
 export interface IPermission {

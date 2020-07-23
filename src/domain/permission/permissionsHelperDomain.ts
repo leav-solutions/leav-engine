@@ -1,5 +1,6 @@
-import {Errors} from '../../_types/errors';
+import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
+import {Errors} from '../../_types/errors';
 import {
     AdminPermissionsActions,
     AttributePermissionsActions,
@@ -13,11 +14,10 @@ import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IPermissionTarget {
     attributeId?: string;
-    recordId?: number;
+    recordId?: string;
 }
 
 export interface IPermissionsHelperDomain {
@@ -35,7 +35,7 @@ export interface IPermissionsHelperDomain {
         type: PermissionTypes;
         applyTo: string;
         action: PermissionsActions;
-        userGroupId: number;
+        userGroupId: string;
         permissionTreeTarget?: IPermissionsTreeTarget;
         ctx: IQueryInfos;
     }): Promise<boolean>;
@@ -50,7 +50,7 @@ export interface IPermissionsHelperDomain {
     }: {
         type: PermissionTypes;
         action: PermissionsActions;
-        userId: number;
+        userId: string;
         applyTo?: string;
         target?: IPermissionTarget;
         ctx: IQueryInfos;

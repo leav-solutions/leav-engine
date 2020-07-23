@@ -1,12 +1,12 @@
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IAttribute, AttributeFormats} from '../../_types/attribute';
+import {IQueryInfos} from '_types/queryInfos';
+import {IRecordSort} from '_types/record';
+import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IQueryInfos} from '_types/queryInfos';
-import {IRecordSort} from '_types/record';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -15,7 +15,7 @@ interface IDeps {
 export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
-        recordId: number,
+        recordId: string,
         attribute: IAttribute,
         value: IValue,
         ctx: IQueryInfos

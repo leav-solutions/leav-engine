@@ -12,12 +12,12 @@ import {
 } from 'fs';
 import {join} from 'path';
 import {IQueryInfos} from '_types/queryInfos';
+import {Operator} from '_types/record';
 import {getConfig} from '../../../../config';
 import {IRecordDomain} from '../../../../domain/record/recordDomain';
 import {RoutingKeys} from '../../../../_types/amqp';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewResponse} from '../../../../_types/filesManager';
 import {getAmqpChannel, getCoreContainer} from '../globalSetup';
-import {Operator} from '_types/record';
 
 // can't use the rootKey to find library
 const library = 'files';
@@ -566,7 +566,7 @@ const _useRecordDomain = async (path: string, name: string) => {
 
     const recordDomain: IRecordDomain = coreContainer.cradle['core.domain.record'];
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: 'fileManagerE2eTest'
     };
 

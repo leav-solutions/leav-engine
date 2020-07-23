@@ -1,4 +1,5 @@
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IQueryInfos} from '_types/queryInfos';
 import {
     LibraryPermissionsActions,
     PermissionsActions,
@@ -9,22 +10,21 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {IGetDefaultPermissionParams, ITreePermissionDomain} from './treePermissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(
         action: string,
-        userId: number,
+        userId: string,
         recordLibrary: string,
-        recordId: number,
+        recordId: string,
         ctx: IQueryInfos
     ): Promise<boolean>;
     getHeritedRecordPermission(
         action: PermissionsActions,
-        userGroupId: number,
+        userGroupId: string,
         recordLibrary: string,
         permTree: string,
-        permTreeNode: {id: string | number; library: string},
+        permTreeNode: {id: string; library: string},
         ctx: IQueryInfos
     ): Promise<boolean>;
 }
@@ -47,9 +47,9 @@ export default function({
     return {
         async getRecordPermission(
             action: RecordPermissionsActions,
-            userId: number,
+            userId: string,
             recordLibrary: string,
-            recordId: number,
+            recordId: string,
             ctx: IQueryInfos
         ): Promise<boolean> {
             const lib = await libraryDomain.getLibraryProperties(recordLibrary, ctx);
@@ -111,10 +111,10 @@ export default function({
         },
         async getHeritedRecordPermission(
             action: PermissionsActions,
-            userGroupId: number,
+            userGroupId: string,
             recordLibrary: string,
             permTree: string,
-            permTreeNode: {id: number; library: string},
+            permTreeNode: {id: string; library: string},
             ctx: IQueryInfos
         ): Promise<boolean> {
             const getDefaultPermission = async (params: IGetDefaultPermissionParams) => {

@@ -37,7 +37,7 @@ export async function makeGraphQlCall(query: string): Promise<any> {
 
         return res;
     } catch (e) {
-        console.error('GraphQL query error:', e.message, '\n', e.response.data);
+        console.error('GraphQL query error:', e.message, '\n', e.response?.data ?? '');
     }
 }
 

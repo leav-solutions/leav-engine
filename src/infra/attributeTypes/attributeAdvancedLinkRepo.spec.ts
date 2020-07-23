@@ -1,9 +1,9 @@
 import {aql, Database, EdgeCollection} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
-import {IQueryInfos} from '_types/queryInfos';
 
 describe('AttributeAdvancedLinkRepo', () => {
     const mockAttribute = {
@@ -25,7 +25,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         metadata: {my_attribute: 'metadata value'},
         version: {
             my_tree: {
-                id: 1,
+                id: '1',
                 library: 'test_lib'
             }
         }
@@ -43,14 +43,14 @@ describe('AttributeAdvancedLinkRepo', () => {
         convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
         convertValueVersionFromDb: jest.fn().mockReturnValue({
             my_tree: {
-                id: 1,
+                id: '1',
                 library: 'test_lib'
             }
         })
     };
 
     const ctx: IQueryInfos = {
-        userId: 0,
+        userId: '0',
         queryId: 'AttributeAdvancedLinkRepoTest'
     };
 
@@ -68,7 +68,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     value: 987654,
@@ -77,7 +77,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     metadata: {my_attribute: 'metadata value'},
                     version: {
                         my_tree: {
-                            id: 1,
+                            id: '1',
                             library: 'test_lib'
                         }
                     }
@@ -99,7 +99,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
-                        id: 1,
+                        id: '1',
                         library: 'test_lib'
                     }
                 }
@@ -121,7 +121,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const savedVal = await attrRepo.updateValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     id_value: 987654,
@@ -130,7 +130,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     metadata: {my_attribute: 'metadata value'},
                     version: {
                         my_tree: {
-                            id: 1,
+                            id: '1',
                             library: 'test_lib'
                         }
                     }
@@ -148,7 +148,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
-                        id: 1,
+                        id: '1',
                         library: 'test_lib'
                     }
                 }
@@ -180,7 +180,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
-                recordId: 12345,
+                recordId: '12345',
                 attribute: mockAttribute,
                 value: {
                     id_value: 445566,
@@ -246,7 +246,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const value = await attrRepo.getValueById({
                 library: 'test_lib',
-                recordId: 987654,
+                recordId: '987654',
                 attribute: mockAttribute,
                 value: {
                     id_value: 112233,
@@ -285,7 +285,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const value = await attrRepo.getValueById({
                 library: 'test_lib',
-                recordId: 987654,
+                recordId: '987654',
                 attribute: mockAttribute,
                 value: {
                     id_value: 112233,
@@ -372,7 +372,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttribute,
                 ctx
             });
@@ -457,12 +457,12 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttribute,
                 forceGetAllValues: false,
                 options: {
                     version: {
-                        my_tree: {library: 'my_lib', id: 1345}
+                        my_tree: {library: 'my_lib', id: '1345'}
                     }
                 },
                 ctx
@@ -503,7 +503,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttributeNotMultiVal,
                 ctx
             });
@@ -564,7 +564,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
-                recordId: 123456,
+                recordId: '123456',
                 attribute: mockAttrNotMultival,
                 forceGetAllValues: true,
                 ctx
