@@ -1,119 +1,6 @@
 import {IUtils} from 'utils/utils';
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, IOAllowedTypes} from '../../../_types/attribute';
-
-export const getDefaultActionsList = (attribute: IAttribute): IActionsListConfig => {
-    if (attribute.type !== AttributeTypes.SIMPLE && attribute.type !== AttributeTypes.ADVANCED) {
-        return {};
-    }
-
-    let defaultActions = {};
-    switch (attribute.format) {
-        case AttributeFormats.DATE:
-            defaultActions = {
-                [ActionsListEvents.SAVE_VALUE]: [
-                    {
-                        id: 'toNumber',
-                        name: 'To Number',
-                        is_system: true
-                    },
-                    {
-                        id: 'validateFormat',
-                        name: 'Validate Format',
-                        is_system: true
-                    }
-                ],
-                [ActionsListEvents.GET_VALUE]: [
-                    {
-                        id: 'formatDate',
-                        name: 'Format Date',
-                        is_system: false
-                    }
-                ]
-            };
-            break;
-        case AttributeFormats.BOOLEAN:
-            defaultActions = {
-                [ActionsListEvents.SAVE_VALUE]: [
-                    {
-                        id: 'toBoolean',
-                        name: 'To Boolean',
-                        is_system: true
-                    },
-                    {
-                        id: 'validateFormat',
-                        name: 'Validate Format',
-                        is_system: true
-                    }
-                ]
-            };
-            break;
-        case AttributeFormats.ENCRYPTED:
-            defaultActions = {
-                [ActionsListEvents.SAVE_VALUE]: [
-                    {
-                        id: 'validateFormat',
-                        name: 'Validate Format',
-                        is_system: true
-                    },
-                    {
-                        id: 'encrypt',
-                        name: 'Encrypt',
-                        is_system: true
-                    }
-                ],
-                [ActionsListEvents.GET_VALUE]: [
-                    {
-                        id: 'toBoolean',
-                        name: 'To Boolean',
-                        is_system: true
-                    }
-                ]
-            };
-            break;
-        case AttributeFormats.EXTENDED:
-            defaultActions = {
-                [ActionsListEvents.SAVE_VALUE]: [
-                    {
-                        id: 'parseJSON',
-                        name: 'Parse JSON',
-                        is_system: true
-                    },
-                    {
-                        id: 'validateFormat',
-                        name: 'Validate Format',
-                        is_system: true
-                    }
-                ],
-                [ActionsListEvents.GET_VALUE]: [
-                    {
-                        id: 'toJSON',
-                        name: 'To JSON',
-                        is_system: true
-                    }
-                ]
-            };
-            break;
-        default:
-            defaultActions = {
-                [ActionsListEvents.SAVE_VALUE]: [
-                    {
-                        id: 'validateFormat',
-                        name: 'Validate Format',
-                        is_system: true
-                    }
-                ]
-            };
-            break;
-    }
-
-    return {
-        [ActionsListEvents.GET_VALUE]: [],
-        [ActionsListEvents.SAVE_VALUE]: [],
-        [ActionsListEvents.DELETE_VALUE]: [],
-        ...defaultActions
-    };
-};
+import {AttributeFormats, IAttribute, IOAllowedTypes} from '../../../_types/attribute';
 
 export const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
     let inputTypes;
@@ -216,7 +103,7 @@ export const getActionsListToSave = (
             }, {});
         }
     } else {
-        alToSave = utils.mergeConcat(getDefaultActionsList(attrDataToSave), attrDataToSave.actions_list);
+        alToSave = utils.mergeConcat(utils.getDefaultActionsList(attrDataToSave), attrDataToSave.actions_list);
     }
 
     return alToSave;

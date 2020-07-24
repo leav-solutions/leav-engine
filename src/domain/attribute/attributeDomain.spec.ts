@@ -123,7 +123,16 @@ describe('attributeDomain', () => {
 
         const mockUtils: Mockify<IUtils> = {
             validateID: jest.fn().mockReturnValue(true),
-            mergeConcat: jest.fn().mockImplementation(o => o)
+            mergeConcat: jest.fn().mockImplementation(o => o),
+            getDefaultActionsList: jest.fn().mockReturnValue({
+                [ActionsListEvents.SAVE_VALUE]: [
+                    {
+                        id: 'validateFormat',
+                        name: 'Action name',
+                        is_system: true
+                    }
+                ]
+            })
         };
 
         test('Should save a new attribute', async function() {

@@ -1,5 +1,10 @@
 import {ValueNode} from 'graphql';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
+import {IActionsListConfig} from '_types/actionsList';
+import {IAttribute} from '_types/attribute';
+import {LibraryBehavior} from '_types/library';
+import getDefaultActionsList from './helpers/getDefaultActionsList';
+import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 import {graphqlParseLiteral} from './helpers/graphqlParseLiteral';
 
 export interface IUtils {
@@ -38,6 +43,10 @@ export interface IUtils {
     graphqlParseLiteral(typeName: string, ast: ValueNode, variables?: {[key: string]: any}): any;
 
     forceArray<T>(val: T | T[]): T[];
+
+    getDefaultActionsList(attribute: IAttribute): IActionsListConfig;
+
+    getLibraryDefaultAttributes(behavior: LibraryBehavior): string[];
 }
 
 export default function(): IUtils {
@@ -90,6 +99,8 @@ export default function(): IUtils {
         graphqlParseLiteral,
         forceArray<T>(val: T | T[]): T[] {
             return Array.isArray(val) ? val : [val];
-        }
+        },
+        getDefaultActionsList,
+        getLibraryDefaultAttributes
     };
 }

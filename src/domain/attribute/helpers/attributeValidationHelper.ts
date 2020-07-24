@@ -3,12 +3,12 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, intersection} from 'lodash';
 import {IUtils} from 'utils/utils';
+import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../../_types/errors';
-import {getAllowedOutputTypes, getDefaultActionsList} from './attributeALHelper';
-import {IQueryInfos} from '_types/queryInfos';
+import {getAllowedOutputTypes} from './attributeALHelper';
 
 const _validateSettings = (
     attrData: IAttribute,
@@ -115,13 +115,18 @@ const _validateInputType = (
  *
  * @param attrData
  */
-const _validateRequiredActions = (attrData: IAttribute): ErrorFieldDetail<IAttribute> => {
+const _validateRequiredActions = (
+    attrData: IAttribute,
+    deps: {
+        utils: IUtils;
+    }
+): ErrorFieldDetail<IAttribute> => {
     const requiredActionsErrors: ErrorFieldDetail<IAttribute> = {};
     if (!attrData.actions_list) {
         return requiredActionsErrors;
     }
 
-    const defaultActions = getDefaultActionsList(attrData);
+    const defaultActions = deps.utils.getDefaultActionsList(attrData);
     const missingActions = [];
     for (const event of Object.keys(defaultActions)) {
         for (const defAction of defaultActions[event]) {
@@ -261,7 +266,7 @@ export const validateAttributeData = async (
         _validateId(attrData, deps),
         _validateMetadataFields(attrData, deps, ctx),
         _validateInputType(attrData, deps),
-        _validateRequiredActions(attrData)
+        _validateRequiredActions(attrData, deps)
     ];
 
     const validationRes = await Promise.all(validationFuncs);
