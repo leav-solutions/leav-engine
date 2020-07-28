@@ -1,6 +1,6 @@
 import {useLazyQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
-import {Accordion, Checkbox, Icon, Loader, Radio} from 'semantic-ui-react';
+import {Button, Checkbox, Icon, Loader, Radio} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLibraryDetailExtendsQuery} from '../../../queries/libraries/getLibraryDetailExtendQuery';
 import {checkTypeIsLink, localizedLabel} from '../../../utils';
@@ -11,22 +11,24 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../ListAttributesReducer';
-import {SmallText, Text, Wrapper} from '../StyledComponents';
-
-const CustomAccordion = styled(Accordion)`
-    width: 100%;
-`;
-
-const CustomAccordionTitle = styled(Accordion.Title)`
-    width: 100%;
-`;
-
-const CustomAccordionContent = styled(Accordion.Content)`
-    width: 100%;
-`;
+import {
+    CustomAccordion,
+    CustomAccordionContent,
+    CustomAccordionTitle,
+    SmallText,
+    Text,
+    Wrapper
+} from '../StyledComponents';
 
 const WrapperContent = styled.div`
     border-left: 3px solid #2185d0;
+`;
+
+const Row = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 `;
 
 interface IListItemAttributeLink {
@@ -49,8 +51,7 @@ const ListItemAttributeLink = ({
     itemClick,
     attributeChecked,
     handleCheckboxChange,
-    handleRadioChange,
-    originAttributeId
+    handleRadioChange
 }: IListItemAttributeLink) => {
     const currentAccordion = stateListAttribute.accordionsActive?.find(
         accordionActive => accordionActive?.id === attribute.id && accordionActive.library === attribute.linkedLibrary
@@ -102,48 +103,78 @@ const ListItemAttributeLink = ({
     }
 
     const changeCurrentAccordion = () => {
-        const accordionsActive = [
-            ...stateListAttribute.accordionsActive?.filter(
-                accordionActive => accordionActive.id !== attribute.id && accordionActive.depth !== depth
-            ),
-            {
-                id: attribute.id,
-                library: attribute.linkedLibrary as string,
-                depth
-            }
-        ];
+        if (
+            stateListAttribute.accordionsActive.find(
+                accordionActive =>
+                    accordionActive.id === attribute.id && accordionActive.library === attribute.linkedLibrary
+            )
+        ) {
+            const restAccordionsActive = stateListAttribute.accordionsActive.filter(
+                accordionActive =>
+                    accordionActive.id !== attribute.id &&
+                    accordionActive.library !== attribute.linkedLibrary &&
+                    accordionActive.depth >= depth
+            );
 
-        dispatchListAttribute({
-            type: ListAttributeReducerActionTypes.SET_CURRENT_ACCORDION,
-            accordionsActive
-        });
+            dispatchListAttribute({
+                type: ListAttributeReducerActionTypes.SET_CURRENT_ACCORDION,
+                accordionsActive: restAccordionsActive
+            });
+        } else {
+            const accordionsActive = [
+                ...stateListAttribute.accordionsActive?.filter(
+                    accordionActive => accordionActive.id !== attribute.id && accordionActive.depth !== depth
+                ),
+                {
+                    id: attribute.id,
+                    library: attribute.linkedLibrary as string,
+                    depth
+                }
+            ];
+
+            dispatchListAttribute({
+                type: ListAttributeReducerActionTypes.SET_CURRENT_ACCORDION,
+                accordionsActive
+            });
+        }
     };
 
-    const isAccordionActive = currentAccordion?.id === attribute.id && currentAccordion?.depth === depth;
+    const isAccordionActive = currentAccordion && currentAccordion?.depth === depth;
 
     return (
         <Wrapper>
             <CustomAccordion>
-                <CustomAccordionTitle active={isAccordionActive} index={attribute.id} onClick={changeCurrentAccordion}>
-                    <Text>
-                        {stateListAttribute.lang && localizedLabel(attribute.label, stateListAttribute.lang) ? (
+                <CustomAccordionTitle active={isAccordionActive} index={attribute.id}>
+                    <Button
+                        icon={isAccordionActive ? 'angle up' : 'angle down'}
+                        loading={called && loading}
+                        onClick={changeCurrentAccordion}
+                        compact
+                        basic
+                        size="mini"
+                        circular
+                    />
+                    <Row onClick={itemClick}>
+                        <Text>
+                            {stateListAttribute.lang && localizedLabel(attribute.label, stateListAttribute.lang) ? (
+                                <span>
+                                    {localizedLabel(attribute.label, stateListAttribute.lang)}{' '}
+                                    <SmallText>{attribute.id}</SmallText>
+                                </span>
+                            ) : (
+                                attribute.id
+                            )}
                             <span>
-                                {localizedLabel(attribute.label, stateListAttribute.lang)}{' '}
-                                <SmallText>{attribute.id}</SmallText>
+                                <Icon name="linkify" />
                             </span>
-                        ) : (
-                            attribute.id
+                        </Text>
+                        {stateListAttribute.useCheckbox && (
+                            <Checkbox
+                                checked={attributeChecked?.checked}
+                                onChange={(event, data) => handleCheckboxChange(data.checked ?? false)}
+                            />
                         )}
-                        <span>
-                            <Icon name="linkify" />
-                        </span>
-                    </Text>
-                    {stateListAttribute.useCheckbox && (
-                        <Checkbox
-                            checked={attributeChecked?.checked}
-                            onChange={(event, data) => handleCheckboxChange(data.checked ?? false)}
-                        />
-                    )}
+                    </Row>
 
                     {stateListAttribute.attributeSelection && (
                         <Radio

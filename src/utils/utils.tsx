@@ -5,6 +5,7 @@ import {
     AvailableLanguage,
     ConditionFilter,
     DisplayListItemTypes,
+    ExtendFormat,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -186,4 +187,12 @@ export const getSortFieldByAttributeType = (attributeId: string, type: Attribute
         default:
             return attributeId;
     }
+};
+
+export const getExtendsFormat = (itemContent: any): ExtendFormat[] => {
+    return Object.keys(itemContent).map(key =>
+        typeof itemContent[key] === 'object' && itemContent[key] !== null
+            ? {[key]: getExtendsFormat(itemContent[key])}
+            : key
+    );
 };

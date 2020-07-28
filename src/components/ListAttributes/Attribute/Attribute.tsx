@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {List} from 'semantic-ui-react';
-import {IAttribute, IAttributesChecked} from '../../../_types/types';
+import {AttributeFormat, IAttribute, IAttributesChecked} from '../../../_types/types';
+import AttributeExtends from '../AttributeExtends';
 import {
     ListAttributeReducerAction,
     ListAttributeReducerActionTypes,
@@ -114,23 +115,44 @@ function Attribute({
 
     const depthLimitation = depth < 1;
 
-    return attribute.linkedLibrary && !isSame && depthLimitation ? (
-        <ListItem>
-            <List.Content verticalAlign="middle">
-                <ListItemAttributeLink
-                    attribute={attribute}
-                    stateListAttribute={stateListAttribute}
-                    dispatchListAttribute={dispatchListAttribute}
-                    depth={depth}
-                    itemClick={itemClick}
-                    attributeChecked={attributeChecked}
-                    handleCheckboxChange={handleCheckboxChange}
-                    handleRadioChange={handleRadioChange}
-                    originAttributeId={originAttributeId}
-                />
-            </List.Content>
-        </ListItem>
-    ) : (
+    if (attribute.linkedLibrary && !isSame && depthLimitation) {
+        return (
+            <ListItem>
+                <List.Content verticalAlign="middle">
+                    <ListItemAttributeLink
+                        attribute={attribute}
+                        stateListAttribute={stateListAttribute}
+                        dispatchListAttribute={dispatchListAttribute}
+                        depth={depth}
+                        itemClick={itemClick}
+                        attributeChecked={attributeChecked}
+                        handleCheckboxChange={handleCheckboxChange}
+                        handleRadioChange={handleRadioChange}
+                        originAttributeId={originAttributeId}
+                    />
+                </List.Content>
+            </ListItem>
+        );
+    }
+
+    if (attribute.format === AttributeFormat.extended) {
+        return (
+            <ListItem>
+                <List.Content verticalAlign="middle">
+                    <AttributeExtends
+                        attribute={attribute}
+                        stateListAttribute={stateListAttribute}
+                        dispatchListAttribute={dispatchListAttribute}
+                        attributeChecked={attributeChecked}
+                        handleCheckboxChange={handleCheckboxChange}
+                        handleRadioChange={handleRadioChange}
+                    />
+                </List.Content>
+            </ListItem>
+        );
+    }
+
+    return (
         <ListItem onClick={itemClick}>
             <List.Content verticalAlign="middle">
                 <ListItemAttribute

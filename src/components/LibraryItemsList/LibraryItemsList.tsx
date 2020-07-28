@@ -1,4 +1,5 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
+import {isEqual} from 'lodash';
 import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import {Menu} from 'semantic-ui-react';
@@ -11,7 +12,7 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
-import {checkTypeIsLink, localizedLabel} from '../../utils';
+import {checkTypeIsLink, getExtendsFormat, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
@@ -139,6 +140,31 @@ function LibraryItemsList(): JSX.Element {
                             return acc;
                         }
 
+                        const attributes = state.attributes.reduce((acc, attribute) => {
+                            if (
+                                attribute.format === AttributeFormat.extended &&
+                                attribute.id === key &&
+                                attribute.library === libId
+                            ) {
+                                let itemContent;
+                                try {
+                                    itemContent = JSON.parse(item[key]);
+                                } catch {}
+                                if (itemContent) {
+                                    const extendFormat = getExtendsFormat(itemContent);
+                                    return [...acc, {...attribute, extendFormat}];
+                                }
+                            }
+                            return [...acc, attribute];
+                        }, [] as IAttribute[]);
+
+                        if (!isEqual(attributes, state.attributes)) {
+                            dispatch({
+                                type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
+                                attributes
+                            });
+                        }
+
                         acc[key] = item[key];
                         return acc;
                     }, {})
@@ -163,7 +189,7 @@ function LibraryItemsList(): JSX.Element {
                 }
             });
         }
-    }, [loadingItem, dataItem, calledItem, client, lang, libId, state.libQuery, state.libFilter]);
+    }, [loadingItem, dataItem, calledItem, client, lang, libId, state.libQuery, state.libFilter, state.attributes]);
 
     useEffect(() => {
         getRecord();

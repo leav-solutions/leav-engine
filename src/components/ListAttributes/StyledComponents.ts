@@ -1,4 +1,4 @@
-import {Input, List} from 'semantic-ui-react';
+import {Accordion, Input, List} from 'semantic-ui-react';
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
@@ -39,4 +39,22 @@ export const CustomInput = styled(Input)`
             border: none;
         }
     }
+`;
+
+export const CustomAccordion = styled(Accordion)`
+    width: 100%;
+`;
+
+export const CustomAccordionTitle = styled(Accordion.Title)`
+    & {
+        width: 100%;
+        padding: 0;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+    }
+`;
+
+export const CustomAccordionContent = styled(Accordion.Content)`
+    width: 100%;
 `;

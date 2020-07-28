@@ -80,7 +80,8 @@ export enum AttributeFormat {
     numeric = 'numeric',
     date = 'date',
     encrypted = 'encrypted',
-    boolean = 'boolean'
+    boolean = 'boolean',
+    extended = 'extended'
 }
 
 export enum AttributeType {
@@ -141,6 +142,8 @@ export interface IAttribute {
     originAttributeId?: string;
 }
 
+export type ExtendFormat = string | {[key: string]: ExtendFormat[]};
+
 export interface IItemsColumn {
     id: string;
     library: string;
@@ -165,4 +168,17 @@ export interface IAttributesChecked {
     depth: number;
     checked: boolean;
     originAttributeId?: string;
+}
+
+export interface IEmbeddedFields {
+    id: string;
+    format: AttributeFormat;
+    label: ILabel;
+    embedded_fields: IEmbeddedFields[];
+}
+
+export interface IGroupEmbeddedFields {
+    [attributeId: string]: {
+        embedded_fields: {[key: string]: IEmbeddedFields};
+    };
 }

@@ -149,12 +149,19 @@ interface RowsProps {
 }
 
 const Row = ({item, column, stateItems}: RowsProps) => {
-    const currentAtt = stateItems.attributes.find(att => att.id === column.id);
+    const currentAtt = stateItems.attributes.find(att => att.id === column.id && att.library === column.library);
 
     if (column.originAttributeId && column.id) {
+        let value = item[column.id] ?? item[column.originAttributeId][column.id];
         return (
             <Table.Cell>
-                <div>{item[column.originAttributeId][column.id]}</div>
+                {handleValueDisplay(
+                    value,
+                    currentAtt?.format || AttributeFormat.text,
+                    currentAtt?.type || AttributeType.simple,
+                    currentAtt?.isMultiple || false,
+                    displayTypeToPreviewSize(stateItems.displayType)
+                )}
             </Table.Cell>
         );
     }

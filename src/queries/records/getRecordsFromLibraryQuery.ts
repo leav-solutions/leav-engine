@@ -28,10 +28,10 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
             }
             if (col.type) {
                 return `
-                ${col.originAttributeId} {
-                    ${handleType(col)}
-                }
-            `;
+                    ${col.originAttributeId} {
+                        ${handleType(col)}
+                    }
+                `;
             }
             return `
                 ${col.originAttributeId} {

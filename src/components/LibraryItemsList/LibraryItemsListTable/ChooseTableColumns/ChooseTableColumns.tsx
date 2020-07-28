@@ -37,18 +37,25 @@ function ChooseTableColumns({
 
     const handleSubmit = () => {
         const noDuplicateNewAttribute = newAttributes.filter(
-            newAttribute => !stateItems.attributes.find(attribute => attribute.id === newAttribute.id)
+            newAttribute =>
+                !stateItems.attributes.find(
+                    attribute => attribute.id === newAttribute.id && attribute.library === newAttribute.library
+                )
         );
+
+        const allAttributes = [...stateItems.attributes, ...noDuplicateNewAttribute];
+
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
-            attributes: [...stateItems.attributes, ...noDuplicateNewAttribute]
+            attributes: allAttributes
         });
 
         const newColumns: IItemsColumn[] = attributesChecked.reduce((acc, attributeChecked) => {
             if (attributeChecked.checked) {
-                const attribute = stateItems.attributes.find(
+                const attribute = allAttributes.find(
                     attribute => attribute.id === attributeChecked.id && attribute.library === attributeChecked.library
                 );
+
                 return [
                     ...acc,
                     {

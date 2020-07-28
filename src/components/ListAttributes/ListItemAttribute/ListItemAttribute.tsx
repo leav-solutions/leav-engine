@@ -1,12 +1,12 @@
 import React from 'react';
 import {Checkbox, Icon, Radio} from 'semantic-ui-react';
 import {localizedLabel} from '../../../utils';
-import {IAttribute, IAttributesChecked} from '../../../_types/types';
+import {IAttribute, IAttributesChecked, IEmbeddedFields} from '../../../_types/types';
 import {ListAttributeReducerAction, ListAttributeState} from '../ListAttributesReducer';
 import {SmallText, Text, Wrapper} from '../StyledComponents';
 
 interface IListItemAttributeProps {
-    attribute: IAttribute;
+    attribute: IAttribute | IEmbeddedFields;
     stateListAttribute: ListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     attributeChecked?: IAttributesChecked;
@@ -32,7 +32,7 @@ const ListItemAttribute = ({
                 ) : (
                     attribute.id
                 )}
-                <span>{attribute.linkedLibrary && <Icon name="linkify" />}</span>
+                <span>{(attribute as IAttribute)?.linkedLibrary && <Icon name="linkify" />}</span>
             </Text>
             {stateListAttribute.useCheckbox && (
                 <Checkbox

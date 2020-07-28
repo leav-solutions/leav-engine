@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
-import {Container, List, Segment} from 'semantic-ui-react';
+import {Button, Container, List, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../utils';
@@ -17,7 +17,8 @@ import {CustomForm, CustomInput} from './StyledComponents';
 
 const Wrapper = styled.div`
     display: Grid;
-    grid-template-columns: 1fr 10rem;
+    grid-template-columns: 1fr 15rem;
+    grid-column-gap: 0.3rem;
 `;
 
 interface IListAttributeProps {
@@ -41,7 +42,7 @@ function ListAttributes({
 }: IListAttributeProps): JSX.Element {
     const searchRef = useRef<any>(null);
 
-    const [attributes, setAttributes] = useState(attrs);
+    const [attributes, setAttributes] = useState(attrs.filter(att => !att.originAttributeId));
     const [state, dispatch] = useReducer(ListAttributeReducer, {
         ...ListAttributeInitialState,
         attributeSelection,
@@ -107,6 +108,17 @@ function ListAttributes({
         }
     };
 
+    const removeAttributeChecked = (attributeCheckedToRemove: IAttributesChecked) => {
+        dispatch({
+            type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
+            attributesChecked: state.attributesChecked.filter(attributeChecked =>
+                attributeChecked.id === attributeCheckedToRemove.id
+                    ? attributeChecked.library !== attributeCheckedToRemove.library
+                    : true
+            )
+        });
+    };
+
     if (!state.lang) {
         return <></>;
     }
@@ -133,9 +145,20 @@ function ListAttributes({
                     {state.attributesChecked.map(
                         attributeChecked =>
                             attributeChecked.checked && (
-                                <Segment key={`${attributeChecked.id}${attributeChecked.library}`}>
-                                    {attributeChecked.id} | {attributeChecked.library} |{' '}
-                                    {attributeChecked.checked.toString()}
+                                <Segment key={`${attributeChecked.id}${attributeChecked.library}`} secondary>
+                                    <div>
+                                        {attributeChecked.id} | {attributeChecked.library}
+                                    </div>
+                                    <div>
+                                        <Button
+                                            icon="delete"
+                                            size="mini"
+                                            compact
+                                            onClick={() => {
+                                                removeAttributeChecked(attributeChecked);
+                                            }}
+                                        />
+                                    </div>
                                 </Segment>
                             )
                     )}
