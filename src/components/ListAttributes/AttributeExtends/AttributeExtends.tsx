@@ -67,9 +67,9 @@ function AttributeExtends({
     );
 
     useEffect(() => {
-        if (currentAccordion?.id === attribute.id && !called) {
+        if (currentAccordion?.id === attribute.id) {
             if (refetch) {
-                refetch();
+                // refetch();
             }
             getEmbeddedFields();
         }
@@ -211,16 +211,16 @@ const EmbeddedFieldItem = ({
                                 basic
                                 size="mini"
                                 circular
-                            />
+                            />{' '}
                             <Text>
                                 {stateListAttribute.lang && localizedLabel(element.label, stateListAttribute.lang) ? (
                                     <span>
-                                        {localizedLabel(element.label, stateListAttribute.lang)}
+                                        {localizedLabel(element.label, stateListAttribute.lang)}{' '}
                                         <SmallText>{element.id}</SmallText>
                                     </span>
                                 ) : (
                                     element.id
-                                )}
+                                )}{' '}
                                 <span>{isExpendable && <Icon name="external square" />}</span>
                             </Text>
                         </div>

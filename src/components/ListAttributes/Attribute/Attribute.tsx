@@ -69,7 +69,7 @@ function Attribute({
         });
     };
 
-    const handleCheckboxChange = (newChecked: boolean) => {
+    const handleCheckboxChange = (newChecked: boolean, path?: string) => {
         if (stateListAttribute.useCheckbox) {
             const restAttributesChecked = stateListAttribute.attributesChecked.filter(
                 attributeChecked => attributeChecked.id !== attribute.id

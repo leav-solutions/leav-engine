@@ -149,6 +149,7 @@ export interface IItemsColumn {
     library: string;
     type: AttributeType;
     originAttributeId?: string;
+    extendsPath?: string;
 }
 
 export interface IRecordEdition {
