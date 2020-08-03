@@ -40,7 +40,7 @@ const checkConfig = (conf: Config) => {
 
     const isValid: Joi.ValidationResult<Config> = configSchema.validate(conf);
 
-    if (isValid.error !== null) {
+    if (typeof isValid.error !== 'undefined') {
         const errorMsg: string = isValid.error.details.map(e => e.message).join(', ');
         throw new Error(errorMsg);
     }
