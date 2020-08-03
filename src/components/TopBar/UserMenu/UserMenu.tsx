@@ -1,7 +1,34 @@
 import {useQuery} from '@apollo/client';
 import React from 'react';
-import {Menu} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {getUser} from '../../../queries/cache/user/userQuery';
+
+const Wrapper = styled.div`
+    & {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        width: 100%;
+    }
+`;
+
+const CustomIcon = styled.div`
+    & {
+        border-radius: 50%;
+        background: hsl(130, 52%, 58%);
+        color: #ffffff;
+        height: 2rem;
+        width: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+`;
 
 function UserMenu(): JSX.Element {
     const {data: dataUser} = useQuery(getUser);
@@ -9,32 +36,11 @@ function UserMenu(): JSX.Element {
 
     const iconContent = userName.split(' ').map(word => word[0]);
 
-    const nameIconStyle = {
-        borderRadius: '50%',
-        background: 'hsl(130, 52%, 58%)',
-        color: '#FFFFFF',
-        height: '2rem',
-        width: '2rem',
-        display: 'flex',
-        flexDirection: 'column' as 'column',
-        justifyContent: 'center',
-        textAlign: 'center' as 'center',
-        fontWeight: 'bold' as 'bold',
-        fontSize: '.8rem'
-    };
-
     return (
-        <div
-            style={{
-                display: 'flex',
-                flexFlow: 'row nowrap',
-                alignItems: 'center',
-                cursor: 'pointer'
-            }}
-        >
-            <div style={nameIconStyle}>{iconContent}</div>
-            <Menu.Item>{userName}</Menu.Item>
-        </div>
+        <Wrapper>
+            <CustomIcon>{iconContent}</CustomIcon>
+            <div>{userName}</div>
+        </Wrapper>
     );
 }
 

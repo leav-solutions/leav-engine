@@ -6,13 +6,13 @@ import {Menu} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
-import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
+import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
-import {checkTypeIsLink, getExtendsFormat, localizedLabel} from '../../utils';
+import {checkTypeIsLink, getExtendedFormat, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
@@ -40,7 +40,7 @@ function LibraryItemsList(): JSX.Element {
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
 
-    const {loading: loadingLib, data: dataLib, error: errorLib} = useQuery(getLibraryDetailExtendsQuery, {
+    const {loading: loadingLib, data: dataLib, error: errorLib} = useQuery(getLibraryDetailExtendedQuery, {
         variables: {
             libId
         }
@@ -104,7 +104,7 @@ function LibraryItemsList(): JSX.Element {
                   state.libFilter,
                   state.columns.filter(col => state.attributes.find(att => att.id === col.id))
               )
-            : getLibraryDetailExtendsQuery,
+            : getLibraryDetailExtendedQuery,
         {
             variables: {
                 limit: state.pagination,
@@ -151,7 +151,7 @@ function LibraryItemsList(): JSX.Element {
                                     itemContent = JSON.parse(item[key]);
                                 } catch {}
                                 if (itemContent) {
-                                    const extendFormat = getExtendsFormat(itemContent);
+                                    const extendFormat = getExtendedFormat(itemContent);
                                     return [...acc, {...attribute, extendFormat}];
                                 }
                             }

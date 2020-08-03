@@ -1,23 +1,31 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {AttributeType} from '../../../_types/types';
+import {AttributeFormat, AttributeType} from '../../../_types/types';
 import {ListAttributeInitialState} from '../ListAttributesReducer';
 import Attribute from './Attribute';
 
 jest.mock(
-    '../ListItemAttribute',
+    '../AttributeBasic',
     () =>
-        function ListItemAttribute() {
-            return <>ListItemAttribute</>;
+        function AttributeBasic() {
+            return <>AttributeBasic</>;
         }
 );
 
 jest.mock(
-    '../ListItemAttributeLink',
+    '../AttributeLink',
     () =>
-        function ListItemAttributeLink() {
-            return <>ListItemAttributeLink</>;
+        function AttributeLink() {
+            return <>AttributeLink</>;
+        }
+);
+
+jest.mock(
+    '../AttributeExtended',
+    () =>
+        function AttributeExtended() {
+            return <>AttributeExtended</>;
         }
 );
 
@@ -34,7 +42,7 @@ describe('Attribute', () => {
         isMultiple: false
     };
 
-    test('should call ListItemAttribute', async () => {
+    test('should call AttributeBasic', async () => {
         let comp: any;
 
         await act(async () => {
@@ -48,10 +56,10 @@ describe('Attribute', () => {
             );
         });
 
-        expect(comp.find('ListItemAttribute')).toHaveLength(1);
+        expect(comp.find('AttributeBasic')).toHaveLength(1);
     });
 
-    test('should call ListItemAttributeLink', async () => {
+    test('should call AttributeLink', async () => {
         const mockAttributeLinkedLibrary = {
             ...mockAttribute,
             linkedLibrary: 'test_linked_library'
@@ -70,6 +78,28 @@ describe('Attribute', () => {
             );
         });
 
-        expect(comp.find('ListItemAttributeLink')).toHaveLength(1);
+        expect(comp.find('AttributeLink')).toHaveLength(1);
+    });
+
+    test('should call AttributeExtended', async () => {
+        const mockAttributeLinkedLibrary = {
+            ...mockAttribute,
+            format: AttributeFormat.extended
+        };
+
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <Attribute
+                    stateListAttribute={ListAttributeInitialState}
+                    dispatchListAttribute={jest.fn()}
+                    attribute={mockAttributeLinkedLibrary}
+                    depth={0}
+                />
+            );
+        });
+
+        expect(comp.find('AttributeExtended')).toHaveLength(1);
     });
 });

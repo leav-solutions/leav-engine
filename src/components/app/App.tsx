@@ -1,4 +1,4 @@
-import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache} from '@apollo/client';
+import {ApolloClient, ApolloLink, ApolloProvider, gql, HttpLink, InMemoryCache} from '@apollo/client';
 import {onError} from '@apollo/link-error';
 import {default as React} from 'react';
 import './App.css';
@@ -14,11 +14,32 @@ function App({token, onTokenInvalid}: IAppProps) {
     const _handleApolloError = onError(({graphQLErrors, networkError}) => {
         if (graphQLErrors)
             graphQLErrors.map(({message, locations, path}) =>
-                console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+                console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
             );
 
-        if (networkError) console.log(`[Network error]: ${networkError}`);
+        if (networkError) console.error(`[Network error]: ${networkError}`);
     });
+
+    const typeDefs = gql`
+        extend type User {
+            userId: String!
+            userName: String!
+            userPermissions: [String!]!
+        }
+
+        extend type Lang {
+            lang: String!
+            availableLangs: [String!]!
+            defaultLang: String!
+        }
+
+        extend type ActiveLibrary {
+            activeLibId: String!
+            activeLibQueryName: String!
+            activeLibName: String!
+            activeLibFilterName: String!
+        }
+    `;
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
@@ -39,7 +60,8 @@ function App({token, onTokenInvalid}: IAppProps) {
                     keyFields: ['id', 'library', ['id']]
                 }
             }
-        })
+        }),
+        typeDefs
     });
 
     return (

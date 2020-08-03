@@ -5,6 +5,7 @@ export const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 `;
 
 export const Text = styled.span`
@@ -20,6 +21,7 @@ export const SmallText = styled.span`
 export const ListItem = styled(List.Item)`
     &&&& {
         padding: 0.7rem 1rem;
+        width: 100%;
 
         &:hover {
             background: hsla(205.7, 72.6%, 47.3%, 10%);

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Dimmer, Dropdown, Loader, Menu, Segment, Table} from 'semantic-ui-react';
+import {Dimmer, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {AttributeType, IRecordEdition, OrderSearch} from '../../../_types/types';
+import {AttributeType, IRecordEdition, ITableHeader} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {
     LibraryItemListReducerAction,
@@ -10,9 +10,9 @@ import {
     LibraryItemListState
 } from '../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
+import HeaderTableCell from './HeaderTableCell';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
 import LibraryItemsModal from './LibraryItemsListTableRow/LibraryItemsModal';
-import {getSortFieldByAttributeType} from '../../../utils';
 
 const TableWrapper = styled.div`
     &&& {
@@ -37,14 +37,6 @@ const HeaderTable = styled(Segment)`
     }
 `;
 
-const HeaderTableCell = styled.div`
-    padding: 1rem;
-    justify-self: start;
-    align-self: center;
-    word-break: keep-all;
-    white-space: nowrap;
-`;
-
 const TableStyled = styled(Table)`
     &&& {
         border-radius: 0;
@@ -58,12 +50,6 @@ const FooterTable = styled(Segment)`
         border-radius: 0;
     }
 `;
-
-interface ITableHeader {
-    name: string;
-    display: string;
-    type: AttributeType;
-}
 
 interface ILibraryItemsListTableProps {
     stateItems: LibraryItemListState;
@@ -121,16 +107,21 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
             setTableColumn(
                 stateItems.columns.map(col => {
                     const attribute = stateItems.attributes.find(att => att.id === col.id);
+
                     if (attribute) {
+                        const display = col.extendedData?.path
+                            ? col.extendedData?.path.split('.').pop() || ''
+                            : typeof attribute.label === 'string'
+                            ? attribute.label
+                            : attribute.label.fr || attribute.label.en;
+
                         return {
-                            name: attribute.id,
-                            display:
-                                typeof attribute.label === 'string'
-                                    ? attribute.label
-                                    : attribute.label.fr || attribute.label.en,
+                            name: `${attribute.id}_${col.extendedData?.path}`,
+                            display,
                             type: attribute.type
                         };
                     }
+
                     // only the infos columns isn't in attributes
                     return {name: 'infos', display: t('items_list.table.infos'), type: AttributeType.simple};
                 })
@@ -148,31 +139,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
         );
     }
 
-    const handleSort = (attId: string, order: OrderSearch, attType: AttributeType) => {
-        const newSortField = getSortFieldByAttributeType(attId, attType);
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS,
-            itemsSortField: newSortField,
-            itemsSortOrder: order
-        });
-    };
-
-    const handleDesc = (attId: string, attType: AttributeType) => {
-        handleSort(attId, OrderSearch.desc, attType);
-    };
-
-    const handleAsc = (attId: string, attType: AttributeType) => {
-        handleSort(attId, OrderSearch.asc, attType);
-    };
-
-    const cancelSort = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.CANCEL_SEARCH,
-            itemsSortField: stateItems.attributes[0]?.id || ''
-        });
-    };
-
     return (
         <>
             <ChooseTableColumns
@@ -183,33 +149,13 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
             />
             <HeaderTable secondary columns={tableColumns.length}>
                 {tableColumns.map(cell => (
-                    <HeaderTableCell key={cell.name}>
-                        <Dropdown text={cell.display} key={cell.name}>
-                            <Dropdown.Menu>
-                                <Dropdown.Item
-                                    text={t('items_list.table.header-cell-menu.sort-ascend')}
-                                    onClick={() => handleAsc(cell.name, cell.type)}
-                                />
-                                <Dropdown.Item
-                                    text={t('items_list.table.header-cell-menu.sort-descend')}
-                                    onClick={() => handleDesc(cell.name, cell.type)}
-                                />
-                                <Dropdown.Item
-                                    text={t('items_list.table.header-cell-menu.cancel-sort')}
-                                    onClick={cancelSort}
-                                />
-                                <Dropdown.Divider />
-                                <Dropdown.Item text={t('items_list.table.header-cell-menu.sort-advance')} />
-                                <Dropdown.Divider />
-                                <Dropdown.Item text={t('items_list.table.header-cell-menu.regroup')} />
-                                <Dropdown.Divider />
-                                <Dropdown.Item
-                                    text={t('items_list.table.header-cell-menu.choose-columns')}
-                                    onClick={() => setOpenChangeColumns(true)}
-                                />
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </HeaderTableCell>
+                    <HeaderTableCell
+                        key={cell.name}
+                        cell={cell}
+                        stateItems={stateItems}
+                        dispatchItems={dispatchItems}
+                        setOpenChangeColumns={setOpenChangeColumns}
+                    />
                 ))}
             </HeaderTable>
             <TableWrapper>

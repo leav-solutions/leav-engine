@@ -2,9 +2,9 @@ import {useLazyQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {Button, Checkbox, Icon, Loader, Radio} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {getLibraryDetailExtendsQuery} from '../../../queries/libraries/getLibraryDetailExtendQuery';
+import {getLibraryDetailExtendedQuery} from '../../../queries/libraries/getLibraryDetailExtendQuery';
 import {checkTypeIsLink, localizedLabel} from '../../../utils';
-import {IAttribute, IAttributesChecked} from '../../../_types/types';
+import {IAttribute, IExtendedData} from '../../../_types/types';
 import {ListingAttributes} from '../ListAttributes';
 import {
     ListAttributeReducerAction,
@@ -29,36 +29,39 @@ const Row = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-left: 0.2rem;
+
+    *:first-child > *:last-child {
+        margin: 0 0.2rem;
+    }
 `;
 
-interface IListItemAttributeLink {
+interface IAttributeLink {
     attribute: IAttribute;
     stateListAttribute: ListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     depth: number;
     itemClick: () => void;
-    attributeChecked?: IAttributesChecked;
-    handleCheckboxChange: (newChecked: boolean) => void;
+    handleCheckboxChange: (extendedData?: IExtendedData) => void;
     handleRadioChange: () => void;
     originAttributeId?: string;
 }
 
-const ListItemAttributeLink = ({
+const AttributeLink = ({
     attribute,
     stateListAttribute,
     dispatchListAttribute,
     depth,
     itemClick,
-    attributeChecked,
     handleCheckboxChange,
     handleRadioChange
-}: IListItemAttributeLink) => {
+}: IAttributeLink) => {
     const currentAccordion = stateListAttribute.accordionsActive?.find(
         accordionActive => accordionActive?.id === attribute.id && accordionActive.library === attribute.linkedLibrary
     );
     const [linkedAttributes, setLinkedAttribute] = useState<IAttribute[]>([]);
 
-    const [getRecord, {called, loading, data, error}] = useLazyQuery(getLibraryDetailExtendsQuery, {
+    const [getRecord, {called, loading, data, error}] = useLazyQuery(getLibraryDetailExtendedQuery, {
         variables: {
             libId: attribute.linkedLibrary
         }
@@ -141,6 +144,13 @@ const ListItemAttributeLink = ({
 
     const isAccordionActive = currentAccordion && currentAccordion?.depth === depth;
 
+    const isChecked = stateListAttribute.attributesChecked.some(
+        attributeChecked =>
+            attributeChecked.id === attribute.id &&
+            attributeChecked.library === attribute?.library &&
+            attributeChecked?.checked
+    );
+
     return (
         <Wrapper>
             <CustomAccordion>
@@ -150,7 +160,6 @@ const ListItemAttributeLink = ({
                         loading={called && loading}
                         onClick={changeCurrentAccordion}
                         compact
-                        basic
                         size="mini"
                         circular
                     />
@@ -169,10 +178,7 @@ const ListItemAttributeLink = ({
                             </span>
                         </Text>
                         {stateListAttribute.useCheckbox && (
-                            <Checkbox
-                                checked={attributeChecked?.checked}
-                                onChange={(event, data) => handleCheckboxChange(data.checked ?? false)}
-                            />
+                            <Checkbox checked={isChecked} onChange={(event, data) => handleCheckboxChange()} />
                         )}
                     </Row>
 
@@ -204,4 +210,4 @@ const ListItemAttributeLink = ({
     );
 };
 
-export default ListItemAttributeLink;
+export default AttributeLink;

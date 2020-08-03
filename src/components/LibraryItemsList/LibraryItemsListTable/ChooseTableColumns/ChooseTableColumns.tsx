@@ -62,7 +62,8 @@ function ChooseTableColumns({
                         id: attributeChecked.id,
                         library: attributeChecked.library,
                         type: attribute ? attribute.type : AttributeType.simple,
-                        originAttributeId: attributeChecked.originAttributeId
+                        originAttributeId: attributeChecked.originAttributeId,
+                        extendedData: attributeChecked.extendedData
                     }
                 ];
             }
@@ -73,6 +74,7 @@ function ChooseTableColumns({
             type: LibraryItemListReducerActionTypes.SET_COLUMNS,
             columns: newColumns
         });
+
         setOpenChangeColumns(false);
     };
 

@@ -2,7 +2,7 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import LibraryItemsList from '.';
-import {getLibraryDetailExtendsQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
+import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {OrderSearch} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
@@ -113,7 +113,7 @@ describe('LibraryItemsList', () => {
         },
         {
             request: {
-                query: getLibraryDetailExtendsQuery,
+                query: getLibraryDetailExtendedQuery,
                 variables: {
                     libId
                 }

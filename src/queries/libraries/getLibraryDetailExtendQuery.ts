@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const getLibraryDetailExtendsQuery = gql`
+export const getLibraryDetailExtendedQuery = gql`
     query GET_LIBRARY_DETAIL($libId: ID) {
         libraries(filters: {id: $libId}) {
             list {

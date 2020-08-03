@@ -2,9 +2,9 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {AttributeType} from '../../../_types/types';
 import {ListAttributeInitialState} from '../ListAttributesReducer';
-import ListItemAttribute from './ListItemAttribute';
+import AttributeBasic from './AttributeBasic';
 
-describe('ListItemAttribute', () => {
+describe('AttributeBasic', () => {
     test('Snapshot test', async () => {
         const mockAttribute = {
             id: 'test',
@@ -19,7 +19,7 @@ describe('ListItemAttribute', () => {
         };
 
         const comp = mount(
-            <ListItemAttribute
+            <AttributeBasic
                 attribute={mockAttribute}
                 stateListAttribute={{...ListAttributeInitialState, useCheckbox: true}}
                 dispatchListAttribute={jest.fn()}

@@ -144,12 +144,23 @@ export interface IAttribute {
 
 export type ExtendFormat = string | {[key: string]: ExtendFormat[]};
 
+export interface IExtendedData {
+    path: string;
+    format: AttributeFormat;
+}
+
 export interface IItemsColumn {
     id: string;
     library: string;
     type: AttributeType;
     originAttributeId?: string;
-    extendsPath?: string;
+    extendedData?: IExtendedData;
+}
+
+export interface ITableHeader {
+    name: string;
+    display: string;
+    type: AttributeType;
 }
 
 export interface IRecordEdition {
@@ -169,6 +180,7 @@ export interface IAttributesChecked {
     depth: number;
     checked: boolean;
     originAttributeId?: string;
+    extendedData?: IExtendedData;
 }
 
 export interface IEmbeddedFields {

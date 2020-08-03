@@ -4,7 +4,8 @@ export enum ListAttributeReducerActionTypes {
     SET_ATTRS_CHECKED = 'SET_ATTRS_CHECKED',
     SET_LANG = 'SET_LANG',
     SET_CURRENT_ACCORDION = 'SET_CURRENT_ACCORDION',
-    SET_NEW_ATTRIBUTES = 'SET_NEW_ATTRIBUTES'
+    SET_NEW_ATTRIBUTES = 'SET_NEW_ATTRIBUTES',
+    RESET = 'RESET'
 }
 
 export interface ListAttributeState {
@@ -41,6 +42,9 @@ export type ListAttributeReducerAction =
     | {
           type: ListAttributeReducerActionTypes.SET_NEW_ATTRIBUTES;
           newAttributes: IAttribute[];
+      }
+    | {
+          type: ListAttributeReducerActionTypes.RESET;
       };
 
 export const ListAttributeReducer = (
@@ -56,6 +60,8 @@ export const ListAttributeReducer = (
             return {...state, accordionsActive: action.accordionsActive};
         case ListAttributeReducerActionTypes.SET_NEW_ATTRIBUTES:
             return {...state, newAttributes: action.newAttributes};
+        case ListAttributeReducerActionTypes.RESET:
+            return ListAttributeInitialState;
         default:
             return state;
     }

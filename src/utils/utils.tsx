@@ -189,10 +189,10 @@ export const getSortFieldByAttributeType = (attributeId: string, type: Attribute
     }
 };
 
-export const getExtendsFormat = (itemContent: any): ExtendFormat[] => {
+export const getExtendedFormat = (itemContent: any): ExtendFormat[] => {
     return Object.keys(itemContent).map(key =>
         typeof itemContent[key] === 'object' && itemContent[key] !== null
-            ? {[key]: getExtendsFormat(itemContent[key])}
+            ? {[key]: getExtendedFormat(itemContent[key])}
             : key
     );
 };

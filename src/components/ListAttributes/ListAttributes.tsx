@@ -54,7 +54,7 @@ function ListAttributes({
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
 
-    const handleChange = (search: string) => {
+    const handleSearchChange = (search: string) => {
         let attributesFilter = attrs.filter(
             att =>
                 localizedLabel(att.label, lang).toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
@@ -80,7 +80,7 @@ function ListAttributes({
         if (state.attributesChecked && setAttributesChecked) {
             setAttributesChecked(state.attributesChecked);
         }
-    }, [state.attributesChecked, setAttributesChecked]);
+    }, [state.attributesChecked, setAttributesChecked, state.newAttributes]);
 
     useEffect(() => {
         setNewAttributes(state.newAttributes);
@@ -132,7 +132,7 @@ function ListAttributes({
                             icon="search"
                             ref={searchRef}
                             fluid
-                            onChange={(event, data) => handleChange(data.value ?? '')}
+                            onChange={(event, data) => handleSearchChange(data.value ?? '')}
                         />
                     </CustomForm>
                     <ListingAttributes
@@ -145,10 +145,24 @@ function ListAttributes({
                     {state.attributesChecked.map(
                         attributeChecked =>
                             attributeChecked.checked && (
-                                <Segment key={`${attributeChecked.id}${attributeChecked.library}`} secondary>
-                                    <div>
-                                        {attributeChecked.id} | {attributeChecked.library}
-                                    </div>
+                                <Segment
+                                    key={`${attributeChecked.id}_${attributeChecked.library}_${attributeChecked.extendedData?.path}`}
+                                    secondary
+                                >
+                                    {attributeChecked.extendedData?.path ? (
+                                        <div>
+                                            <div>
+                                                {attributeChecked.extendedData?.path.split('.').map(pathPart => (
+                                                    <span key={pathPart}> - {pathPart} </span>
+                                                ))}
+                                            </div>
+                                            | {attributeChecked.id} | {attributeChecked.library}
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            {attributeChecked.id} | {attributeChecked.library}
+                                        </div>
+                                    )}
                                     <div>
                                         <Button
                                             icon="delete"

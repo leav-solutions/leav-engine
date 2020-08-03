@@ -1,3 +1,4 @@
+import objectPath from 'object-path';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, CheckboxProps, Grid, Icon, Popup, Table} from 'semantic-ui-react';
@@ -7,6 +8,7 @@ import {
     AttributeFormat,
     AttributeType,
     DisplayListItemTypes,
+    IExtendedData,
     IItem,
     IItemsColumn,
     PreviewSize
@@ -31,22 +33,56 @@ const getRowHeight = (displayType: DisplayListItemTypes) => {
     }
 };
 
-const handleValueDisplay = (
-    value: any,
-    format: AttributeFormat,
-    type: AttributeType,
-    isMultiple: boolean,
-    size: PreviewSize
-) => {
+interface handleValueDisplayProps {
+    value: any;
+    format: AttributeFormat;
+    type: AttributeType;
+    isMultiple: boolean;
+    size: PreviewSize;
+    extendedData?: IExtendedData;
+}
+
+const handleValueDisplay = ({value, format, type, isMultiple, size, extendedData}: handleValueDisplayProps) => {
     if (value !== undefined && value !== null) {
         switch (format) {
+            case AttributeFormat.extended:
+                if (extendedData) {
+                    let parseValue = {};
+
+                    try {
+                        parseValue = JSON.parse(value);
+                    } catch {}
+
+                    // Remove the attribute name from the path and change it to array
+                    const extendedPathArr = extendedData.path.split('.');
+                    extendedPathArr.shift();
+
+                    return handleValueDisplay({
+                        value: objectPath.get(parseValue, extendedPathArr),
+                        format: extendedData.format,
+                        type,
+                        isMultiple,
+                        size,
+                        extendedData
+                    });
+                }
+                return;
             case AttributeFormat.boolean:
                 return <Icon name={value ? 'check' : 'cancel'} />;
             case AttributeFormat.numeric:
             case AttributeFormat.text:
             default:
                 if (isMultiple) {
-                    return value?.map(val => handleValueDisplay(val, format, type, !!Array.isArray(val), size));
+                    return value?.map(val =>
+                        handleValueDisplay({
+                            value: val,
+                            format,
+                            type,
+                            isMultiple: !!Array.isArray(val),
+                            size,
+                            extendedData
+                        })
+                    );
                 } else if (checkTypeIsLink(type)) {
                     return <RecordCard record={{...value.whoAmI}} size={size} />;
                 } else if (type === AttributeType.tree) {
@@ -121,7 +157,7 @@ function LibraryItemsListTableRow({
 
     return (
         <>
-            <TableRow key={item.id} selected={isSelected} onClick={handleClickRow} size={stateItems.displayType}>
+            <TableRow key={`${item.id}`} selected={isSelected} onClick={handleClickRow} size={stateItems.displayType}>
                 {stateItems.columns.map(column =>
                     column.id === 'infos' ? (
                         <InfosRow
@@ -134,7 +170,12 @@ function LibraryItemsListTableRow({
                             showRecordEdition={showRecordEdition}
                         />
                     ) : (
-                        <Row key={column.id} item={item} column={column} stateItems={stateItems} />
+                        <Row
+                            key={`${column.id}_${column.extendedData?.path}`}
+                            item={item}
+                            column={column}
+                            stateItems={stateItems}
+                        />
                     )
                 )}
             </TableRow>
@@ -155,13 +196,14 @@ const Row = ({item, column, stateItems}: RowsProps) => {
         let value = item[column.id] ?? item[column.originAttributeId][column.id];
         return (
             <Table.Cell>
-                {handleValueDisplay(
+                {handleValueDisplay({
                     value,
-                    currentAtt?.format || AttributeFormat.text,
-                    currentAtt?.type || AttributeType.simple,
-                    currentAtt?.isMultiple || false,
-                    displayTypeToPreviewSize(stateItems.displayType)
-                )}
+                    format: currentAtt?.format || AttributeFormat.text,
+                    type: currentAtt?.type || AttributeType.simple,
+                    isMultiple: currentAtt?.isMultiple || false,
+                    size: displayTypeToPreviewSize(stateItems.displayType),
+                    extendedData: column.extendedData
+                })}
             </Table.Cell>
         );
     }
@@ -169,13 +211,14 @@ const Row = ({item, column, stateItems}: RowsProps) => {
     return (
         <Table.Cell>
             <div>
-                {handleValueDisplay(
-                    item[column.id],
-                    currentAtt?.format || AttributeFormat.text,
-                    currentAtt?.type || AttributeType.simple,
-                    currentAtt?.isMultiple || false,
-                    displayTypeToPreviewSize(stateItems.displayType)
-                )}
+                {handleValueDisplay({
+                    value: item[column.id],
+                    format: currentAtt?.format || AttributeFormat.text,
+                    type: currentAtt?.type || AttributeType.simple,
+                    isMultiple: currentAtt?.isMultiple || false,
+                    size: displayTypeToPreviewSize(stateItems.displayType),
+                    extendedData: column.extendedData
+                })}
             </div>
         </Table.Cell>
     );

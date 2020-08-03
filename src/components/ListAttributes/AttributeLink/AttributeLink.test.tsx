@@ -1,12 +1,12 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {AttributeType, IAttributesChecked} from '../../../_types/types';
+import {AttributeType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {ListAttributeInitialState} from '../ListAttributesReducer';
-import ListItemAttributeLink from './ListItemAttributeLink';
+import AttributeLink from './AttributeLink';
 
-describe('ListItemAttributeLink', () => {
+describe('AttributeLink', () => {
     test('Snapshot test', async () => {
         const mockAttribute = {
             id: 'test',
@@ -21,25 +21,17 @@ describe('ListItemAttributeLink', () => {
             linkedLibrary: 'test_linked_library'
         };
 
-        const mockAttributeChecked: IAttributesChecked = {
-            id: 'test',
-            library: 'test_library',
-            depth: 0,
-            checked: true
-        };
-
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <ListItemAttributeLink
+                    <AttributeLink
                         stateListAttribute={{...ListAttributeInitialState, useCheckbox: true}}
                         dispatchListAttribute={jest.fn()}
                         attribute={mockAttribute}
                         depth={0}
                         itemClick={jest.fn()}
-                        attributeChecked={mockAttributeChecked}
                         handleCheckboxChange={jest.fn()}
                         handleRadioChange={jest.fn()}
                     />
