@@ -20,8 +20,10 @@ import checkSavePermission from './helpers/checkSavePermission';
 import runBehaviorPostDelete from './helpers/runBehaviorPostDelete';
 import runBehaviorPostSave from './helpers/runBehaviorPostSave';
 import validateLibAttributes from './helpers/validateLibAttributes';
+import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
+import {library} from 'app/core';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -29,6 +31,7 @@ export interface ILibraryDomain {
     deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary>;
     getLibraryProperties(id: string, ctx: IQueryInfos): Promise<ILibrary>;
     getLibraryAttributes(id: string, ctx: IQueryInfos): Promise<IAttribute[]>;
+    getLibraryFullTextAttributes(id: string, ctx: IQueryInfos): Promise<IAttribute[]>;
 }
 
 interface IDeps {
@@ -60,6 +63,7 @@ export default function({
             const libs = await Promise.all(
                 libsList.list.map(async lib => {
                     lib.attributes = await libraryRepo.getLibraryAttributes({libId: lib.id, ctx});
+                    lib.fullTextAttributes = await libraryRepo.getLibraryFullTextAttributes({libId: lib.id, ctx});
 
                     return lib;
                 })
@@ -97,6 +101,15 @@ export default function({
 
             return libraryRepo.getLibraryAttributes({libId: id, ctx});
         },
+        async getLibraryFullTextAttributes(id: string, ctx): Promise<IAttribute[]> {
+            const libs = await libraryRepo.getLibraries({params: {filters: {id}}, ctx});
+
+            if (!libs.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            return libraryRepo.getLibraryFullTextAttributes({libId: id, ctx});
+        },
         async saveLibrary(libData: ILibrary, ctx: IQueryInfos): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({params: {filters: {id: libData.id}}, ctx});
             const existingLib = !!libs.list.length;
@@ -115,6 +128,9 @@ export default function({
 
             const validationErrors: Array<ErrorFieldDetail<ILibrary>> = [];
             const defaultAttributes = getDefaultAttributes(dataToSave.behavior);
+            const currentLibraryAttributes = existingLib
+                ? (await this.getLibraryAttributes(libData.id, ctx)).map(a => a.id)
+                : [];
 
             // Check permissions
             const permCheck = await checkSavePermission(existingLib, ctx.userId, {permissionDomain}, ctx);
@@ -130,16 +146,24 @@ export default function({
             validationErrors.push(await validatePermConf(dataToSave.permissions_conf, {attributeDomain}, ctx));
 
             // New library? Link default attributes. Otherwise, save given attributes if any
-            const attributesToSave =
-                typeof dataToSave.attributes !== 'undefined' ? dataToSave.attributes.map(attr => attr.id) : [];
+            const attributesToSave = dataToSave.attributes ? dataToSave.attributes.map(attr => attr.id) : [];
+            const fullTextAttributesToSave = dataToSave.fullTextAttributes
+                ? dataToSave.fullTextAttributes.map(fta => fta.id)
+                : [];
 
-            const libAttributes = existingLib ? attributesToSave : union(defaultAttributes, attributesToSave);
+            const libAttributes = union(defaultAttributes, attributesToSave);
+            const libFullTextAttributes = ['id', ...fullTextAttributesToSave];
 
-            // We can get rid of attributes in lib data, it will be saved separately
+            // We can get rid of attributes and full text attributes in lib data, it will be saved separately
             delete dataToSave.attributes;
+            delete dataToSave.fullTextAttributes;
 
             validationErrors.push(
                 await validateLibAttributes(libAttributes, {attributeDomain}, ctx),
+                validateLibFullTextAttributes(
+                    union(defaultAttributes, attributesToSave.length ? attributesToSave : currentLibraryAttributes),
+                    libFullTextAttributes
+                ),
                 await validateRecordIdentityConf(
                     dataToSave as ILibrary,
                     libAttributes,
@@ -166,13 +190,19 @@ export default function({
                       ctx
                   });
 
-            if (libAttributes.length) {
+            if (attributesToSave.length || !existingLib) {
                 await libraryRepo.saveLibraryAttributes({
                     libId: dataToSave.id,
                     attributes: libAttributes,
                     ctx
                 });
             }
+
+            await libraryRepo.saveLibraryFullTextAttributes({
+                libId: dataToSave.id,
+                fullTextAttributes: libFullTextAttributes,
+                ctx
+            });
 
             await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils}, ctx);
 

@@ -7,6 +7,7 @@
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",
         "INVALID_ATTRIBUTES": "Invalid attributes: {{attributes}}",
+        "INVALID_FULLTEXT_ATTRIBUTES": "Invalid full text attributes",
         "INVALID_ID_FORMAT": "Invalid ID format",
         "INVALID_SORT_FIELDS": "Invalid sort fields",
         "INVALID_FILTERS_EXPRESSION": "Invalid Filters expression order",

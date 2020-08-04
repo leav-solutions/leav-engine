@@ -164,9 +164,10 @@ describe('LibraryRepo', () => {
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(2);
 
             expect(mockDbServ.dropCollection.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls.length).toBe(2);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^FOR/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/^REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
@@ -308,6 +309,78 @@ describe('LibraryRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
 
             expect(libAttrs).toEqual(mockCleanupRes);
+        });
+    });
+
+    describe('getLibraryFullTextAttributes', () => {
+        test('Should get library full text attributes through graph query', async function() {
+            const mockQueryRes = [
+                {
+                    _key: 'modified_by',
+                    _id: 'core_attributes/modified_by',
+                    _rev: '_WSfp4UC--_',
+                    format: 'text',
+                    label: {en: 'Modified by', fr: 'Modifié par'},
+                    system: true,
+                    type: 'link'
+                }
+            ];
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(mockQueryRes)
+            };
+
+            const mockCleanupRes = [
+                {
+                    id: 'modified_by',
+                    format: 'text',
+                    label: {en: 'Modified by', fr: 'Modifié par'},
+                    system: true,
+                    type: 'link'
+                }
+            ];
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0])
+            };
+
+            const libRepo = libraryRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const libFullTextAttrs = await libRepo.getLibraryFullTextAttributes({libId: 'users', ctx});
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/POSITION/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+
+            expect(libFullTextAttrs).toEqual(mockCleanupRes);
+        });
+    });
+
+    describe('saveLibraryFullTextAttributes', () => {
+        test('Should set full text attributes of a library and return full text attributes', async function() {
+            const mockDbServ = {
+                db: new Database(),
+                execute: jest.fn()
+            };
+
+            const libRepo = libraryRepo({'core.infra.db.dbService': mockDbServ});
+
+            await libRepo.saveLibraryFullTextAttributes({
+                libId: 'users',
+                fullTextAttributes: ['id'],
+                ctx
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/FOR attr/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
     });
 });
