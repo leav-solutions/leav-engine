@@ -12,7 +12,7 @@ import {initPlugins} from './pluginsLoader';
     try {
         conf = await getConfig();
     } catch (e) {
-        console.log('config error', e);
+        console.error('config error', e);
         process.exit(1);
     }
 

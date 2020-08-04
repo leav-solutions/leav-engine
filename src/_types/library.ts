@@ -23,6 +23,11 @@ export interface ILibrary {
      * Records identity settings for this library
      */
     recordIdentityConf?: IRecordIdentityConf;
+
+    /**
+     * List of indexed attributes
+     */
+    fullTextAttributes?: IAttribute[];
 }
 
 export interface ILibraryFilterOptions {

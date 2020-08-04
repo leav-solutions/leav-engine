@@ -4,7 +4,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import {IAttribute} from '../../_types/attribute';
 import {ILibrary} from '../../_types/library';
 import {IList} from '../../_types/list';
-import {IAttributeRepo} from '../attribute/attributeRepo';
+import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
@@ -62,7 +62,24 @@ export interface ILibraryRepo {
         ctx: IQueryInfos;
     }): Promise<string[]>;
 
+    /**
+     * Upsert full text attributes to library
+     *
+     * fullTextAttributes Array of full text attributes IDs
+     *
+     */
+    saveLibraryFullTextAttributes({
+        libId,
+        fullTextAttributes,
+        ctx
+    }: {
+        libId: string;
+        fullTextAttributes: string[];
+        ctx: IQueryInfos;
+    }): Promise<void>;
+
     getLibraryAttributes({libId, ctx}: {libId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
+    getLibraryFullTextAttributes({libId, ctx}: {libId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
 }
 
 interface IDeps {
@@ -87,7 +104,13 @@ export default function({
             };
 
             const initializedParams = {...defaultParams, ...params};
-            return dbUtils.findCoreEntity<ILibrary>({...initializedParams, collectionName: LIB_COLLECTION_NAME, ctx});
+            const libraries = await dbUtils.findCoreEntity<ILibrary>({
+                ...initializedParams,
+                collectionName: LIB_COLLECTION_NAME,
+                ctx
+            });
+
+            return libraries;
         },
         async createLibrary({libData, ctx}): Promise<ILibrary> {
             const docToInsert = dbUtils.convertToDoc(libData);
@@ -123,12 +146,23 @@ export default function({
                 params: {filters: {linked_library: id}},
                 ctx
             });
+
             for (const linkedAttribute of linkedAttributes.list) {
-                attributeRepo.deleteAttribute({
+                await attributeRepo.deleteAttribute({
                     attrData: linkedAttribute,
                     ctx
                 });
             }
+
+            // Delete library attributes
+            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+
+            await dbService.execute({
+                query: aql`FOR e IN ${libAttributesCollec}
+                         FILTER e._from == ${LIB_COLLECTION_NAME + '/' + id}
+                         REMOVE e IN ${libAttributesCollec}`,
+                ctx
+            });
 
             // Delete library
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
@@ -156,7 +190,7 @@ export default function({
 
             // Unlink attributes not used anymore
             if (deletedAttrs.length) {
-                const delLibAttribRes = await dbService.execute({
+                await dbService.execute({
                     query: aql`
                         FOR attr IN ${deletedAttrs}
                             FOR l in ${libAttribCollec}
@@ -208,6 +242,42 @@ export default function({
             const res = await dbService.execute({query, ctx});
 
             return res.map(dbUtils.cleanup);
+        },
+        async saveLibraryFullTextAttributes({libId, fullTextAttributes, ctx}): Promise<void> {
+            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+
+            await dbService.execute({
+                query: aql`
+                    FOR attr IN ${libAttribCollec}
+                    FILTER attr._from == ${LIB_COLLECTION_NAME + '/' + libId}
+                    UPDATE {
+                        _key: attr._key,
+                        full_text_search: POSITION(${fullTextAttributes}, LAST(SPLIT(attr._to, '/')))
+                    }
+                    IN ${libAttribCollec}
+                `,
+                ctx
+            });
+        },
+        async getLibraryFullTextAttributes({libId, ctx}): Promise<IAttribute[]> {
+            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const attributesCollec = dbService.db.edgeCollection(ATTRIB_COLLECTION_NAME);
+
+            const attrs = await dbService.execute({
+                query: aql`LET fullTextAttrs = (
+                            FOR e IN ${libAttributesCollec}
+                                FILTER e._from == ${LIB_COLLECTION_NAME + '/' + libId}
+                                FILTER e.full_text_search == true
+                            RETURN LAST(SPLIT(e._to, '/'))
+                        )
+                        FOR a IN ${attributesCollec}
+                            FILTER POSITION(fullTextAttrs, a._key)
+                        RETURN a
+                    `,
+                ctx
+            });
+
+            return attrs.map(dbUtils.cleanup);
         }
     };
 }

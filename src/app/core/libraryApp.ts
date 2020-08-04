@@ -70,6 +70,7 @@ export default function({
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         behavior: LibraryBehavior!,
                         attributes: [Attribute!],
+                        fullTextAttributes: [Attribute!],
                         permissions_conf: Treepermissions_conf,
                         recordIdentityConf: RecordIdentityConf,
                         gqlNames: LibraryGraphqlNames!
@@ -79,6 +80,7 @@ export default function({
                         id: ID!
                         label: SystemTranslationInput,
                         attributes: [ID!],
+                        fullTextAttributes: [ID!],
                         behavior: LibraryBehavior,
                         permissions_conf: Treepermissions_confInput,
                         recordIdentityConf: RecordIdentityConfInput
@@ -137,6 +139,12 @@ export default function({
                                 }));
                             }
 
+                            if (typeof library.fullTextAttributes !== 'undefined') {
+                                library.fullTextAttributes = library.fullTextAttributes.map(fullTextAttrName => ({
+                                    id: fullTextAttrName
+                                }));
+                            }
+
                             const savedLib = await libraryDomain.saveLibrary(library, ctx);
                             graphqlApp.generateSchema();
 
@@ -152,6 +160,9 @@ export default function({
                     Library: {
                         attributes: async (parent, args, ctx, info): Promise<IAttribute[]> => {
                             return libraryDomain.getLibraryAttributes(parent.id, ctx);
+                        },
+                        fullTextAttributes: async (parent, args, ctx, info) => {
+                            return libraryDomain.getLibraryFullTextAttributes(parent.id, ctx);
                         },
                         /**
                          * Return library label, potentially filtered by requested language

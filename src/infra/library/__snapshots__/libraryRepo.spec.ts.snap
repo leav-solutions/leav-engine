@@ -12,14 +12,16 @@ Object {
 }
 `;
 
-exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 1`] = `
+"FOR e IN @@value0
+                         FILTER e._from == @value1
+                         REMOVE e IN @@value0"
+`;
 
 exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 2`] = `
 Object {
-  "@value1": "core_libraries",
-  "value0": Object {
-    "_key": "test_lib",
-  },
+  "@value0": "core_edge_libraries_attributes",
+  "value1": "core_libraries/test_lib",
 }
 `;
 
@@ -30,6 +32,19 @@ exports[`LibraryRepo getLibraryAttributes Should get library attributes through 
                 core_edge_libraries_attributes
                 RETURN v
             "
+`;
+
+exports[`LibraryRepo getLibraryFullTextAttributes Should get library full text attributes through graph query 1`] = `
+"LET fullTextAttrs = (
+                            FOR e IN @@value0
+                                FILTER e._from == @value1
+                                FILTER e.full_text_search == true
+                            RETURN LAST(SPLIT(e._to, '/'))
+                        )
+                        FOR a IN @@value2
+                            FILTER POSITION(fullTextAttrs, a._key)
+                        RETURN a
+                    "
 `;
 
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 1`] = `
@@ -81,6 +96,28 @@ Object {
     "my_attr",
   ],
   "value1": "core_libraries/users",
+}
+`;
+
+exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 1`] = `
+"
+                    FOR attr IN @@value0
+                    FILTER attr._from == @value1
+                    UPDATE {
+                        _key: attr._key,
+                        full_text_search: POSITION(@value2, LAST(SPLIT(attr._to, '/')))
+                    }
+                    IN @@value0
+                "
+`;
+
+exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 2`] = `
+Object {
+  "@value0": "core_edge_libraries_attributes",
+  "value1": "core_libraries/users",
+  "value2": Array [
+    "id",
+  ],
 }
 `;
 

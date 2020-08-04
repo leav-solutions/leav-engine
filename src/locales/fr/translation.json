@@ -7,6 +7,7 @@
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
+        "INVALID_FULLTEXT_ATTRIBUTES": "Attributs 'full text' non valides",
         "INVALID_ID_FORMAT": "Format d'ID non valide",
         "INVALID_SORT_FIELDS": "Les champs de tri ne sont pas valides",
         "INVALID_FILTERS_EXPRESSION": "L'ordre des filtres n'est pas valide",

@@ -108,7 +108,7 @@ export default function({
             // Delete all values
             await valueRepo.clearAllValues({attribute: attrData, ctx});
 
-            const resDelEdges = await dbService.execute({
+            await dbService.execute({
                 query: aql`
                     FOR e IN ${libAttributesCollec}
                         FILTER e._to == ${'core_attributes/' + attrData.id}
@@ -129,8 +129,6 @@ export default function({
             return dbUtils.cleanup(res.pop());
         },
         async getLibrariesUsingAttribute({attribute, ctx}): Promise<ILibrary[]> {
-            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
-
             // TODO: use aql template tag, and find out why it doesn't work :)
             const query = `
                 FOR v
