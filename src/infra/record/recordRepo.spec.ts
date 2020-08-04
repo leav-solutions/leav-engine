@@ -1,4 +1,5 @@
 import {Database} from 'arangojs';
+import {Client} from '@elastic/elasticsearch';
 import {cloneDeep} from 'lodash';
 import {AttributeTypes} from '../../_types/attribute';
 import {IRecordFilterOption, Operator} from '../../_types/record';
@@ -545,6 +546,94 @@ describe('RecordRepo', () => {
                         created_at: 1520931427,
                         modified_at: 1520931427,
                         test_attr: 'test'
+                    }
+                ]
+            });
+        });
+    });
+
+    describe('search', () => {
+        test('should search records', async function() {
+            const mockQueryRes = {
+                took: 322,
+                timed_out: false,
+                _shards: {total: 1, successful: 1, skipped: 0, failed: 0},
+                hits: {
+                    total: {value: 1, relation: 'eq'},
+                    max_score: 0.2876821,
+                    hits: [
+                        {
+                            _id: 1,
+                            _source: {
+                                library: 'test_lib'
+                            }
+                        }
+                    ]
+                }
+            };
+
+            const mockElasticsearch = {
+                multiMatch: global.__mockPromise(mockQueryRes)
+            };
+
+            const recRepo = recordRepo({
+                'core.infra.elasticsearch.elasticsearchService': mockElasticsearch
+            });
+
+            const result = await recRepo.search('test_lib', 'text');
+
+            expect(mockElasticsearch.multiMatch.mock.calls.length).toBe(1);
+            expect(mockElasticsearch.multiMatch.mock.calls[0][0]).toMatchSnapshot();
+
+            expect(result).toEqual({
+                totalCount: 1,
+                list: [
+                    {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                ]
+            });
+        });
+
+        test('should search record with from/size params', async function() {
+            const mockQueryRes = {
+                took: 322,
+                timed_out: false,
+                _shards: {total: 1, successful: 1, skipped: 0, failed: 0},
+                hits: {
+                    total: {value: 2, relation: 'eq'},
+                    max_score: 0.2876821,
+                    hits: [
+                        {
+                            _id: 1,
+                            _source: {
+                                library: 'test_lib'
+                            }
+                        }
+                    ]
+                }
+            };
+
+            const mockElasticsearch = {
+                multiMatch: global.__mockPromise(mockQueryRes)
+            };
+
+            const recRepo = recordRepo({
+                'core.infra.elasticsearch.elasticsearchService': mockElasticsearch
+            });
+
+            const result = await recRepo.search('test_lib', 'text', 0, 1);
+
+            expect(mockElasticsearch.multiMatch.mock.calls.length).toBe(1);
+            expect(mockElasticsearch.multiMatch.mock.calls[0][0]).toMatchSnapshot();
+
+            expect(result).toEqual({
+                totalCount: 2,
+                list: [
+                    {
+                        id: 1,
+                        library: 'test_lib'
                     }
                 ]
             });

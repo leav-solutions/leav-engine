@@ -5,12 +5,14 @@ import {
     CursorDirection,
     ICursorPaginationParams,
     IListWithCursor,
+    IList,
     IPaginationCursors,
     IPaginationParams
 } from '../../_types/list';
 import {IRecord, IRecordFilterOption, IRecordSort, Operator} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
+import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
 import {IDbUtils} from '../db/dbUtils';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -52,16 +54,19 @@ export interface IRecordRepo {
         retrieveInactive?: boolean;
         ctx: IQueryInfos;
     }): Promise<IListWithCursor<IRecord>>;
+    search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>>;
 }
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
+    'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
 }
 
 export default function({
     'core.infra.db.dbService': dbService = null,
+    'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes': attributeTypesRepo = null
 }: IDeps = {}): IRecordRepo {
@@ -126,6 +131,12 @@ export default function({
     };
 
     return {
+        async search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>> {
+            const result = await elasticsearchService.multiMatch(library, {query}, from, size);
+            const records = result.hits.hits.map(h => ({id: h._id, library, ...h._source}));
+
+            return {totalCount: result.hits.total.value, list: records};
+        },
         async find({
             libraryId,
             filters,

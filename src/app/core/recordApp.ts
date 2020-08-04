@@ -2,6 +2,7 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {IRecord} from '_types/record';
+import {IList} from '_types/list';
 import {PreviewSizes} from '../../_types/filesManager';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
@@ -90,9 +91,23 @@ export default function({
                         next: String
                     }
 
+                    type RecordsList {
+                        totalCount: Int!,
+                        list: [Record!]!
+                    }
+
                     extend type Mutation {
                         createRecord(library: ID): Record!
                         deleteRecord(library: ID, id: ID): Record!
+                    }
+
+                    extend type Query {
+                        search(
+                            library: ID!, 
+                            query: String!,
+                            from: Int,
+                            size: Int
+                        ): RecordsList!
                     }
                 `,
                 resolvers: {
@@ -109,6 +124,11 @@ export default function({
                         },
                         async deleteRecord(parent, {library, id}, ctx): Promise<IRecord> {
                             return recordDomain.deleteRecord({library, id, ctx});
+                        }
+                    },
+                    Query: {
+                        async search(parent, {library, query, from, size}, ctx): Promise<IList<IRecord>> {
+                            return recordDomain.search({library, query, from, size, ctx});
                         }
                     }
                 }

@@ -7,6 +7,9 @@ module.exports = {
         url: process.env.ARANGO_URL,
         name: process.env.DB_NAME
     },
+    elasticsearch: {
+        url: process.env.ELASTICSEARCH_URL
+    },
     auth: {
         scheme: 'jwt',
         key: process.env.AUTH_KEY,

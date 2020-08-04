@@ -81,16 +81,23 @@ describe('RecordDomain', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
         test('Should delete an record and return deleted record', async function() {
-            const recRepo: Mockify<IRecordRepo> = {deleteRecord: global.__mockPromise(recordData)};
+            const recRepo: Mockify<IRecordRepo> = {
+                deleteRecord: global.__mockPromise(recordData)
+            };
             const recordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
             };
+            const libDomain: Mockify<ILibraryDomain> = {
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1})
+            };
+
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
+                'core.domain.library': libDomain as ILibraryDomain,
                 'core.domain.permission.recordPermission': recordPermDomain as IRecordPermissionDomain
             });
 
-            const deleteRes = await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
+            await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
 
             expect(recRepo.deleteRecord.mock.calls.length).toBe(1);
         });
@@ -130,6 +137,43 @@ describe('RecordDomain', () => {
                     ean: '9876543219999999'
                 }
             ]);
+        });
+    });
+
+    describe('search', () => {
+        test('Should search records', async function() {
+            const mockRes = {
+                totalCount: 1,
+                list: [
+                    {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                ]
+            };
+
+            const recRepo: Mockify<IRecordRepo> = {search: global.__mockPromise(mockRes)};
+            const libDomain: Mockify<ILibraryDomain> = {
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib', system: false}], totalCount: 1})
+            };
+
+            const recDomain = recordDomain({
+                'core.infra.record': recRepo as IRecordRepo,
+                'core.domain.library': libDomain as ILibraryDomain
+            });
+
+            const findRes = await recDomain.search({library: 'test_lib', query: 'text', ctx});
+
+            expect(recRepo.search.mock.calls.length).toBe(1);
+            expect(findRes).toEqual({
+                totalCount: 1,
+                list: [
+                    {
+                        id: 1,
+                        library: 'test_lib'
+                    }
+                ]
+            });
         });
     });
 

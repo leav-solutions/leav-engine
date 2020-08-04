@@ -10,6 +10,8 @@ import {IRecord} from '../../_types/record';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICoreApp} from './coreApp';
+import {IAttribute} from '_types/attribute';
+import {ISystemTranslation} from '_types/systemTranslation';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -120,7 +122,7 @@ export default function({
                 `,
                 resolvers: {
                     Query: {
-                        async libraries(parent, {filters, pagination, sort}, ctx) {
+                        async libraries(parent, {filters, pagination, sort}, ctx): Promise<IList<ILibrary>> {
                             return libraryDomain.getLibraries({
                                 params: {filters, withCount: true, pagination, sort},
                                 ctx
@@ -148,13 +150,13 @@ export default function({
                         }
                     },
                     Library: {
-                        attributes: async (parent, args, ctx, info) => {
+                        attributes: async (parent, args, ctx, info): Promise<IAttribute[]> => {
                             return libraryDomain.getLibraryAttributes(parent.id, ctx);
                         },
                         /**
                          * Return library label, potentially filtered by requested language
                          */
-                        label: async (libData, args) => {
+                        label: (libData, args): ISystemTranslation => {
                             return coreApp.filterSysTranslationField(libData.label, args.lang || []);
                         },
                         gqlNames: parent => {

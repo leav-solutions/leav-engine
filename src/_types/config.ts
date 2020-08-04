@@ -8,6 +8,10 @@ export interface IDb {
     name: string;
 }
 
+export interface IElasticsearch {
+    url: string;
+}
+
 export interface IAuth {
     scheme: string;
     key: string;
@@ -54,6 +58,7 @@ export interface IFilesManager {
 export interface IConfig {
     server: IServer;
     db: IDb;
+    elasticsearch: IElasticsearch;
     auth: IAuth;
     lang: ILang;
     logs: ILogs;
