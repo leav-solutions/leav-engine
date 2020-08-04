@@ -74,6 +74,10 @@ RETURN MERGE(r, {library: @value4})",
 }
 `;
 
+exports[`RecordRepo search should search record with from/size params 1`] = `"test_lib"`;
+
+exports[`RecordRepo search should search records 1`] = `"test_lib"`;
+
 exports[`RecordRepo updateRecord Should update a record 1`] = `
 "
                     UPDATE {_key: @value0} WITH @value1 IN @@value2

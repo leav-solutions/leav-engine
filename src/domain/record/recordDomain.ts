@@ -3,6 +3,7 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
 import {join} from 'path';
+import validateLibrary from './helpers/validateLibrary';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
@@ -11,6 +12,7 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {IList} from '../../_types/list';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
@@ -92,6 +94,20 @@ export interface IRecordDomain {
      */
     find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
 
+    search({
+        library,
+        query,
+        from,
+        size,
+        ctx
+    }: {
+        library: string;
+        query: string;
+        from?: number;
+        size?: number;
+        ctx: IQueryInfos;
+    }): Promise<IList<IRecord>>;
+
     getRecordFieldValue({
         library,
         record,
@@ -109,6 +125,7 @@ export interface IRecordDomain {
     getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity>;
 
     deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
+
     activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
 }
 
@@ -332,16 +349,16 @@ export default function({
         },
         async deleteRecord({library, id, ctx}): Promise<IRecord> {
             // Get library
-            // const lib = await this.getLibraries({id});
+            const lib = await libraryDomain.getLibraries({params: {filters: {id}, strictFilters: true}, ctx});
 
             // // Check if exists and can delete
-            // if (!lib.length) {
-            //     throw new Error('Unknown library');
-            // }
+            if (!lib.list.length) {
+                throw new Error('Unknown library');
+            }
 
-            // if (lib.pop().system) {
-            //     throw new Error('Cannot delete system library');
-            // }
+            if (lib.list.pop().system) {
+                throw new Error('Cannot delete system library');
+            }
 
             // Check permission
             const canDelete = await recordPermissionDomain.getRecordPermission(
@@ -357,6 +374,11 @@ export default function({
             }
 
             return recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
+        },
+        async search({library, query, from, size, ctx}): Promise<IList<IRecord>> {
+            await validateLibrary(library, {libraryDomain}, ctx);
+
+            return recordRepo.search(library, query, from, size);
         },
         async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
             const {library, filters, sort, pagination, withCount, retrieveInactive = false} = params;

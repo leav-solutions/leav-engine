@@ -14,6 +14,9 @@ const checkConfig = (conf: Config.IConfig) => {
             url: Joi.string().required(),
             name: Joi.string().required()
         }),
+        elasticsearch: Joi.object().keys({
+            url: Joi.string().required()
+        }),
         auth: Joi.object().keys({
             scheme: Joi.string().required(),
             key: Joi.string(),

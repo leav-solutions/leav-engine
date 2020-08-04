@@ -7,6 +7,9 @@ module.exports = {
         url: 'http://root:@arangodb:8529',
         name: 'leav_test'
     },
+    elasticsearch: {
+        url: 'http://elasticsearch:9200'
+    },
     amqp: {
         host: 'message_broker',
         type: 'direct',
