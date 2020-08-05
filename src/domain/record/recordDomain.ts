@@ -349,9 +349,9 @@ export default function({
         },
         async deleteRecord({library, id, ctx}): Promise<IRecord> {
             // Get library
-            const lib = await libraryDomain.getLibraries({params: {filters: {id}, strictFilters: true}, ctx});
+            const lib = await libraryDomain.getLibraries({params: {filters: {id: library}, strictFilters: true}, ctx});
 
-            // // Check if exists and can delete
+            // Check if exists and can delete
             if (!lib.list.length) {
                 throw new Error('Unknown library');
             }
