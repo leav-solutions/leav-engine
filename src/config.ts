@@ -56,6 +56,10 @@ const checkConfig = (conf: Config.IConfig) => {
             userId: Joi.number().required(),
             prefetch: Joi.number()
         }),
+        indexationManager: Joi.object().keys({
+            queue: Joi.string().required(),
+            prefetch: Joi.number()
+        }),
         debug: Joi.boolean(),
         env: Joi.string()
     });

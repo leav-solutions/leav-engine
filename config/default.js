@@ -43,5 +43,9 @@ module.exports = {
         userId: '1',
         prefetch: 1
     },
+    indexationManager: {
+        queue: 'indexation_events',
+        prefetch: 1
+    },
     debug: false
 };

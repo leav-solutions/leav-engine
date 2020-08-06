@@ -1,4 +1,5 @@
 import {IFilesManagerInterface} from 'interface/filesManager';
+import {IIndexationManagerInterface} from 'interface/indexationManager';
 import * as Config from '_types/config';
 import {getConfig} from './config';
 import {init as initDI} from './depsManager';
@@ -25,6 +26,7 @@ import {initPlugins} from './pluginsLoader';
 
     const server = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
+    const indexationManager: IFilesManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
@@ -32,6 +34,7 @@ import {initPlugins} from './pluginsLoader';
 
     try {
         const opt = process.argv[2];
+
         if (typeof opt !== 'undefined' && opt.indexOf('server') !== -1) {
             await server.init();
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
@@ -40,6 +43,8 @@ import {initPlugins} from './pluginsLoader';
         } else if (typeof opt !== 'undefined' && opt.indexOf('filesManager') !== -1) {
             // Init files management
             await filesManager.init();
+        } else if (typeof opt !== 'undefined' && opt.indexOf('indexationManager') !== -1) {
+            await indexationManager.init();
         } else {
             await cli.run();
         }

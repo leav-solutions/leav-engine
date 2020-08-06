@@ -1,3 +1,18 @@
+export interface IConfig {
+    server: IServer;
+    db: IDb;
+    elasticsearch: IElasticsearch;
+    auth: IAuth;
+    lang: ILang;
+    logs: ILogs;
+    permissions: IPermissions;
+    amqp: IAmqp;
+    filesManager: IFilesManager;
+    indexationManager: IIndexationManager;
+    debug?: boolean;
+    env?: string;
+}
+
 export interface IServer {
     host: string;
     port: number;
@@ -55,16 +70,7 @@ export interface IFilesManager {
     prefetch?: number;
 }
 
-export interface IConfig {
-    server: IServer;
-    db: IDb;
-    elasticsearch: IElasticsearch;
-    auth: IAuth;
-    lang: ILang;
-    logs: ILogs;
-    permissions: IPermissions;
-    amqp: IAmqp;
-    filesManager: IFilesManager;
-    debug?: boolean;
-    env?: string;
+export interface IIndexationManager {
+    queue: string;
+    prefetch?: number;
 }
