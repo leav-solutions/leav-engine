@@ -29,7 +29,7 @@ describe('ItemTileDisplay', () => {
         columns: []
     };
 
-    test('Snapshot test', async () => {
+    test('should call RecordPreview', async () => {
         const stateMock = {
             ...stateItems,
             items: [itemMock]

@@ -2,7 +2,7 @@ import {mount} from 'enzyme';
 import 'jest-styled-components';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {RecordIdentity_whoAmI} from '../../../_types/types';
+import {PreviewSize, RecordIdentity_whoAmI} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
 import RecordCard from './RecordCard';
@@ -17,13 +17,13 @@ describe('RecordCard', () => {
         label: 'Test Record'
     };
 
-    test('Snapshot test', async () => {
+    test('should display label', async () => {
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <RecordCard record={mockRecord} />
+                    <RecordCard record={mockRecord} size={PreviewSize.small} />
                 </MockedProviderWithFragments>
             );
         });
@@ -38,7 +38,7 @@ describe('RecordCard', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <RecordCard record={mockRecord} />
+                    <RecordCard record={mockRecord} size={PreviewSize.small} />
                 </MockedProviderWithFragments>
             );
         });

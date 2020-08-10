@@ -1,4 +1,4 @@
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import {AttributeType} from '../../../../_types/types';
 import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
@@ -11,8 +11,8 @@ describe('HeaderTableCell', () => {
         type: AttributeType.simple
     };
 
-    test('Snapshot test', async () => {
-        const comp = render(
+    test('should contain cell display', async () => {
+        const comp = mount(
             <HeaderTableCell
                 cell={mockCell}
                 stateItems={LibraryItemListInitialState}
@@ -21,6 +21,6 @@ describe('HeaderTableCell', () => {
             />
         );
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.text()).toContain(mockCell.display);
     });
 });

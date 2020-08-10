@@ -4,7 +4,7 @@ import {ConditionFilter, FilterTypes, IFilter} from '../../../../../_types/types
 import FormBoolean from './FormBoolean';
 
 describe('FormBoolean', () => {
-    test('Snapshot test', async () => {
+    test('should checkbox', async () => {
         const mockFilter: IFilter = {
             type: FilterTypes.filter,
             key: 0,

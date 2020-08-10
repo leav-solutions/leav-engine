@@ -1,7 +1,7 @@
 import {shallow} from 'enzyme';
 import React from 'react';
-import {DisplayListItemTypes} from '../../../_types/types';
-import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
+import {Menu} from 'semantic-ui-react';
+import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import MenuItemList from './MenuItemList';
 
 jest.mock('../LibraryItemsListMenuPagination', () => {
@@ -11,30 +11,31 @@ jest.mock('../LibraryItemsListMenuPagination', () => {
 });
 
 describe('MenuItemList', () => {
-    const stateItems: LibraryItemListState = {
-        libQuery: 'test',
-        libFilter: 'test',
-        libSearchableField: 'test',
-        itemsSortField: 'test',
-        itemsSortOrder: 'test',
-        items: [],
-        itemsTotalCount: 0,
-        offset: 0,
-        pagination: 20,
-        displayType: DisplayListItemTypes.listMedium,
-        showFilters: false,
-        selectionMode: false,
-        itemsSelected: {},
-        queryFilters: []
-    };
+    const stateItems = LibraryItemListInitialState;
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
-    test('Snapshot test', async () => {
+    test('should have button show filter', async () => {
         const comp = shallow(
-            <MenuItemList stateItems={stateItems} dispatchItems={dispatchItems} refetch={jest.fn()} />
+            <MenuItemList
+                stateItems={{...stateItems, showFilters: false}}
+                dispatchItems={dispatchItems}
+                refetch={jest.fn()}
+            />
         );
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.find(Menu.Item)).toHaveLength(6);
+    });
+
+    test("shouldn't have button show filter", async () => {
+        const comp = shallow(
+            <MenuItemList
+                stateItems={{...stateItems, showFilters: true}}
+                dispatchItems={dispatchItems}
+                refetch={jest.fn()}
+            />
+        );
+
+        expect(comp.find(Menu.Item)).toHaveLength(4);
     });
 });

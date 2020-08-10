@@ -13,7 +13,7 @@ jest.mock(
 );
 
 describe('AppHandler', () => {
-    test('Snapshot test', async () => {
+    test('Should contain Router', async () => {
         const comp = mount(
             <MockedProviderWithFragments>
                 <AppHandler />

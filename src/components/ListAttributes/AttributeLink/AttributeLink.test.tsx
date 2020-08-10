@@ -7,38 +7,56 @@ import {ListAttributeInitialState} from '../ListAttributesReducer';
 import AttributeLink from './AttributeLink';
 
 describe('AttributeLink', () => {
-    test('Snapshot test', async () => {
-        const mockAttribute = {
-            id: 'test',
-            library: 'test_library',
-            type: AttributeType.simple,
-            label: {
-                fr: 'test',
-                en: 'test'
-            },
-            isLink: false,
-            isMultiple: false,
-            linkedLibrary: 'test_linked_library'
-        };
+    const mockAttribute = {
+        id: 'test',
+        library: 'test_library',
+        type: AttributeType.simple,
+        label: {
+            fr: 'test',
+            en: 'test'
+        },
+        isLink: false,
+        isMultiple: false,
+        linkedLibrary: 'test_linked_library'
+    };
 
+    test('should call AttributeLinkedLibrary', async () => {
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
                     <AttributeLink
+                        attribute={mockAttribute}
                         stateListAttribute={{...ListAttributeInitialState, useCheckbox: true}}
                         dispatchListAttribute={jest.fn()}
-                        attribute={mockAttribute}
                         depth={0}
-                        itemClick={jest.fn()}
-                        handleCheckboxChange={jest.fn()}
-                        handleRadioChange={jest.fn()}
+                        type="library"
                     />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find('Checkbox')).toHaveLength(1);
+        expect(comp.find('AttributeLinkedLibrary')).toHaveLength(1);
+    });
+
+    test('should call AttributeLinkedTree', async () => {
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <AttributeLink
+                        attribute={mockAttribute}
+                        stateListAttribute={{...ListAttributeInitialState, useCheckbox: true}}
+                        dispatchListAttribute={jest.fn()}
+                        depth={0}
+                        type="tree"
+                    />
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(comp.find('AttributeLinkedTree')).toHaveLength(1);
     });
 });

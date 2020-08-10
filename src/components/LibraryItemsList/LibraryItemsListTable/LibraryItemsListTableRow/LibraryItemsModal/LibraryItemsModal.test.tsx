@@ -7,7 +7,7 @@ import MockedProviderWithFragments from '../../../../../__mocks__/MockedProvider
 import LibraryItemsModal from './LibraryItemsModal';
 
 describe('LibraryItemsModal', () => {
-    test('Snapshot test', async () => {
+    test('should have modal', async () => {
         const items: IItem = {
             id: 'test',
             label: 'label-test'
@@ -19,9 +19,9 @@ describe('LibraryItemsModal', () => {
                 <MockedProviderWithFragments>
                     <LibraryItemsModal
                         showModal={false}
-                        setShowModal={jest.fn()}
+                        closeModal={jest.fn()}
                         values={items}
-                        setValues={jest.fn()}
+                        updateValues={jest.fn()}
                     />
                 </MockedProviderWithFragments>
             );

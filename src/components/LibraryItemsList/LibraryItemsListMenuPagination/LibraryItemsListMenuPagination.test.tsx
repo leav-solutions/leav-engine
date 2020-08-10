@@ -1,4 +1,4 @@
-import {mount, render} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {Dropdown} from 'semantic-ui-react';
@@ -30,12 +30,6 @@ describe('LibraryItemsListMenuPagination', () => {
     };
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
-
-    test('Snapshot test', async () => {
-        const comp = render(<LibraryItemsListMenuPagination stateItems={stateItems} dispatchItems={dispatchItems} />);
-
-        expect(comp).toMatchSnapshot();
-    });
 
     test('should display a dropdown', async () => {
         let comp: any;

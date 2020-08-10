@@ -5,7 +5,7 @@ import {ListAttributeInitialState} from '../ListAttributesReducer';
 import AttributeBasic from './AttributeBasic';
 
 describe('AttributeBasic', () => {
-    test('Snapshot test', async () => {
+    test('should have a checkbox', async () => {
         const mockAttribute = {
             id: 'test',
             library: 'test_library',
@@ -23,8 +23,7 @@ describe('AttributeBasic', () => {
                 attribute={mockAttribute}
                 stateListAttribute={{...ListAttributeInitialState, useCheckbox: true}}
                 dispatchListAttribute={jest.fn()}
-                handleCheckboxChange={jest.fn()}
-                handleRadioChange={jest.fn()}
+                depth={0}
             />
         );
 

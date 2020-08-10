@@ -1,7 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {AttributeType, IAttribute} from '../../../../_types/types';
+import {AttributeType, IAttribute, ILabel} from '../../../../_types/types';
 import {ListAttributeInitialState} from '../../ListAttributesReducer';
 import AttributeLinkedTree from './AttributeLinkedTree';
 
@@ -10,13 +10,13 @@ describe('AttributeLinkedTree', () => {
         id: 'test',
         library: 'testLib',
         type: AttributeType.tree,
-        label: 'testLabel',
+        label: {fr: 'testLabel', en: 'testLabel'},
         isLink: false,
         isMultiple: false,
         linkedTree: 'testLinkedTree'
     };
 
-    test('Snapshot test', async () => {
+    test('should contain label', async () => {
         let comp: any;
 
         await act(async () => {
@@ -24,7 +24,7 @@ describe('AttributeLinkedTree', () => {
                 <AttributeLinkedTree
                     attribute={mockAttribute}
                     changeCurrentAccordion={jest.fn()}
-                    stateListAttribute={ListAttributeInitialState}
+                    stateListAttribute={{...ListAttributeInitialState, lang: ['fr']}}
                     dispatchListAttribute={jest.fn()}
                     depth={0}
                     isChecked={true}
@@ -32,6 +32,6 @@ describe('AttributeLinkedTree', () => {
             );
         });
 
-        expect(comp).toMatchSnapshot();
+        expect(comp.text()).toContain((mockAttribute.label as ILabel).fr);
     });
 });
