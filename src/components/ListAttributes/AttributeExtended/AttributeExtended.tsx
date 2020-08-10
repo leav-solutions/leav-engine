@@ -3,8 +3,8 @@ import React, {useEffect, useState} from 'react';
 import {Button, Icon, List, Loader} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getAttributeWithEmbeddedFields} from '../../../queries/attributes/getAttributeWithEmbeddedFields';
-import {localizedLabel} from '../../../utils';
-import {AttributeFormat, IAttribute, IEmbeddedFields, IExtendedData, IGroupEmbeddedFields} from '../../../_types/types';
+import {attributeUpdateSelection, localizedLabel} from '../../../utils';
+import {AttributeFormat, IAttribute, IEmbeddedFields, IGroupEmbeddedFields} from '../../../_types/types';
 import ListItemAttribute from '../AttributeBasic';
 import {
     ListAttributeReducerAction,
@@ -17,8 +17,8 @@ import {
     CustomAccordionTitle,
     ListItem,
     SmallText,
-    Text,
-    Wrapper
+    TextAttribute,
+    WrapperAttribute
 } from '../StyledComponents';
 
 const Child = styled.div`
@@ -33,19 +33,13 @@ interface IAttributeExtendedProps {
     stateListAttribute: ListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     previousDepth: number;
-    itemClick: (extendedData?: IExtendedData) => void;
-    handleCheckboxChange: (extendedData?: IExtendedData) => void;
-    handleRadioChange: () => void;
 }
 
 function AttributeExtended({
     attribute,
     stateListAttribute,
     dispatchListAttribute,
-    previousDepth,
-    itemClick,
-    handleCheckboxChange,
-    handleRadioChange
+    previousDepth
 }: IAttributeExtendedProps): JSX.Element {
     const currentAccordion = stateListAttribute.accordionsActive?.find(
         accordionActive => accordionActive?.id === attribute.id && accordionActive.library === attribute.library
@@ -129,13 +123,10 @@ function AttributeExtended({
                     attribute={attribute}
                     isExpendable={true}
                     onClick={toggleExpand}
-                    itemClick={itemClick}
                     active={!!currentAccordion}
                     loading={loading && called}
                     stateListAttribute={stateListAttribute}
                     dispatchListAttribute={dispatchListAttribute}
-                    handleCheckboxChange={handleCheckboxChange}
-                    handleRadioChange={handleRadioChange}
                 />
             </CustomAccordionTitle>
             <CustomAccordionContent active={isAccordionActive}>
@@ -146,9 +137,6 @@ function AttributeExtended({
                         stateListAttribute={stateListAttribute}
                         dispatchListAttribute={dispatchListAttribute}
                         attribute={attribute}
-                        itemClick={itemClick}
-                        handleCheckboxChange={handleCheckboxChange}
-                        handleRadioChange={handleRadioChange}
                     />
                 ) : (
                     <Loader />
@@ -164,17 +152,13 @@ interface IEmbeddedFieldItemProps {
     attribute: IAttribute;
     isExpendable: boolean;
     onClick: () => void | undefined;
-    itemClick: (extendedData?: IExtendedData) => void;
     active: boolean;
     loading: boolean;
     extendedPath?: string;
     embeddedField?: IEmbeddedFields;
-
-    handleCheckboxChange: (extendedData?: IExtendedData) => void;
-    handleRadioChange: () => void;
 }
 
-const CustomWrapper = styled(Wrapper)`
+const CustomWrapper = styled(WrapperAttribute)`
     width: 100%;
     & {
         * > * {
@@ -189,21 +173,33 @@ const EmbeddedFieldItem = ({
     attribute,
     isExpendable,
     onClick,
-    itemClick,
     active,
     loading,
     extendedPath,
-    embeddedField,
-    handleCheckboxChange,
-    handleRadioChange
+    embeddedField
 }: IEmbeddedFieldItemProps) => {
     const id = (embeddedField && embeddedField?.id) ?? attribute.id;
     const label = embeddedField?.label ?? embeddedField?.id ? false : attribute.label;
 
+    const handleClick = () => {
+        const newAttributesChecked = attributeUpdateSelection({
+            attribute: attribute,
+            attributesChecked: stateListAttribute.attributesChecked,
+            useCheckbox: !!stateListAttribute.useCheckbox,
+            depth: 0,
+            extendedData: embeddedField ? {path: extendedPath || '', format: embeddedField.format} : undefined
+        });
+
+        dispatchListAttribute({
+            type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
+            attributesChecked: newAttributesChecked
+        });
+    };
+
     return (
         <CustomWrapper>
             {isExpendable ? (
-                <Wrapper>
+                <WrapperAttribute>
                     <div>
                         <Button
                             icon={active ? 'angle up' : 'angle down'}
@@ -213,7 +209,7 @@ const EmbeddedFieldItem = ({
                             size="mini"
                             circular
                         />
-                        <Text>
+                        <TextAttribute>
                             {stateListAttribute.lang && localizedLabel(label, stateListAttribute.lang) ? (
                                 <span>
                                     {localizedLabel(label, stateListAttribute.lang)}
@@ -223,22 +219,16 @@ const EmbeddedFieldItem = ({
                                 id
                             )}
                             <span>{isExpendable && <Icon name="external square" />}</span>
-                        </Text>
+                        </TextAttribute>
                     </div>
-                </Wrapper>
+                </WrapperAttribute>
             ) : (
-                <ListItem
-                    onClick={() =>
-                        itemClick(embeddedField ? {path: extendedPath || '', format: embeddedField.format} : undefined)
-                    }
-                >
+                <ListItem onClick={handleClick}>
                     <List.Content verticalAlign="middle">
                         <ListItemAttribute
                             attribute={attribute}
                             stateListAttribute={stateListAttribute}
                             dispatchListAttribute={dispatchListAttribute}
-                            handleCheckboxChange={handleCheckboxChange}
-                            handleRadioChange={handleRadioChange}
                             embeddedField={embeddedField}
                             extendedPath={extendedPath}
                         />
@@ -255,10 +245,6 @@ interface IDisplayGroupEmbeddedFields {
     stateListAttribute: ListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     attribute: IAttribute;
-    itemClick: (extendedData?: IExtendedData) => void;
-
-    handleCheckboxChange: (extendedData?: IExtendedData) => void;
-    handleRadioChange: () => void;
 }
 
 const ExploreEmbeddedFields = ({
@@ -266,10 +252,7 @@ const ExploreEmbeddedFields = ({
     setDepth,
     stateListAttribute,
     dispatchListAttribute,
-    attribute,
-    itemClick,
-    handleCheckboxChange,
-    handleRadioChange
+    attribute
 }: IDisplayGroupEmbeddedFields) => {
     const exploreEmbeddedFields = (
         groupEmbeddedFields: IGroupEmbeddedFields | IEmbeddedFields[] | IEmbeddedFields,
@@ -315,14 +298,11 @@ const ExploreEmbeddedFields = ({
                                 embeddedField={embeddedField}
                                 isExpendable={embeddedField.format === AttributeFormat.extended}
                                 onClick={toggleExpand}
-                                itemClick={itemClick}
                                 active={isActive}
                                 loading={false}
                                 extendedPath={`${path}.${embeddedField.id}`}
                                 stateListAttribute={stateListAttribute}
                                 dispatchListAttribute={dispatchListAttribute}
-                                handleCheckboxChange={handleCheckboxChange}
-                                handleRadioChange={handleRadioChange}
                                 key={embeddedField.id}
                             />
                         </CustomAccordionTitle>
@@ -361,14 +341,11 @@ const ExploreEmbeddedFields = ({
                             embeddedField={embeddedField}
                             isExpendable={embeddedField.format === AttributeFormat.extended}
                             onClick={toggleExpand}
-                            itemClick={itemClick}
                             active={!!embeddedField?.embedded_fields}
                             loading={false}
                             extendedPath={`${path}.${embeddedField.id}`}
                             stateListAttribute={stateListAttribute}
                             dispatchListAttribute={dispatchListAttribute}
-                            handleCheckboxChange={handleCheckboxChange}
-                            handleRadioChange={handleRadioChange}
                             key={embeddedField.id}
                         />
                     </CustomAccordionTitle>

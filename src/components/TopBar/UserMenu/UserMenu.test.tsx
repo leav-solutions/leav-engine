@@ -1,3 +1,4 @@
+import {InMemoryCache} from '@apollo/client';
 import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
 import React from 'react';
@@ -10,35 +11,19 @@ describe('UserMenu', () => {
     const userId = 'testUserId';
     const userName = 'testUserName';
 
-    const mocks = [
-        {
-            request: {
-                query: getUser
-            },
-
-            result: {
-                data: {
-                    userId: userId,
-                    userName: userName,
-                    userPermissions: []
-                }
-            }
-        }
-    ];
-
-    const resolvers = {
-        User: {
-            userId: () => userId,
-            userName: () => userName
-        }
-    };
-
-    test('should be an Menu Item', async () => {
+    test('should show username', async () => {
         let comp: any;
+
+        const mockCache = new InMemoryCache();
+
+        mockCache.writeQuery({
+            query: getUser,
+            data: {userId, userName, userPermissions: {}}
+        });
 
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocks} addTypename={false} resolvers={resolvers}>
+                <MockedProvider cache={mockCache} addTypename={false}>
                     <UserMenu />
                 </MockedProvider>
             );
@@ -48,6 +33,6 @@ describe('UserMenu', () => {
             comp.update();
         });
 
-        expect('div').toHaveLength(3);
+        expect(comp.text()).toContain(userName);
     });
 });

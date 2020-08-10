@@ -5,8 +5,11 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
     const libQueryName = libraryName.toUpperCase();
 
     const fields = columns.map(col => {
-        if (col.originAttributeId) {
-            if (col.id === col.originAttributeId) {
+        if (col.originAttributeData?.id) {
+            // is attribute from a linked library or tree
+
+            if (col.id === col.originAttributeData?.id) {
+                // case when the attribute linked is checked, return WhoAmI
                 return `${col.id} {
                     id
                     whoAmI {
@@ -26,15 +29,25 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
                     }
                 }`;
             }
-            if (col.type) {
+            if (col.treeData) {
                 return `
-                    ${col.originAttributeId} {
+                    ${col.originAttributeData?.id} {
+                        record {
+                           ... on ${col.treeData?.libraryTypeName} {
+                                ${handleType(col)}
+                           }
+                        }
+                    }
+                `;
+            } else if (col.type) {
+                return `
+                    ${col.originAttributeData?.id} {
                         ${handleType(col)}
                     }
                 `;
             }
             return `
-                ${col.originAttributeId} {
+                ${col.originAttributeData?.id} {
                     ${col.id}
                 }
             `;

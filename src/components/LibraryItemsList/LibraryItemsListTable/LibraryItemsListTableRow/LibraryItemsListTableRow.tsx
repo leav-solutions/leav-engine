@@ -35,14 +35,18 @@ const getRowHeight = (displayType: DisplayListItemTypes) => {
 
 interface handleValueDisplayProps {
     value: any;
-    format: AttributeFormat;
-    type: AttributeType;
+    format?: AttributeFormat;
+    type?: AttributeType;
     isMultiple: boolean;
     size: PreviewSize;
     extendedData?: IExtendedData;
 }
 
 const handleValueDisplay = ({value, format, type, isMultiple, size, extendedData}: handleValueDisplayProps) => {
+    if (!type) {
+        return 'error: no type';
+    }
+
     if (value !== undefined && value !== null) {
         switch (format) {
             case AttributeFormat.extended:
@@ -51,7 +55,9 @@ const handleValueDisplay = ({value, format, type, isMultiple, size, extendedData
 
                     try {
                         parseValue = JSON.parse(value);
-                    } catch {}
+                    } catch {
+                        return 'error';
+                    }
 
                     // Remove the attribute name from the path and change it to array
                     const extendedPathArr = extendedData.path.split('.');
@@ -157,7 +163,12 @@ function LibraryItemsListTableRow({
 
     return (
         <>
-            <TableRow key={`${item.id}`} selected={isSelected} onClick={handleClickRow} size={stateItems.displayType}>
+            <TableRow
+                key={`${item.id}_${item.library}`}
+                selected={isSelected}
+                onClick={handleClickRow}
+                size={stateItems.displayType}
+            >
                 {stateItems.columns.map(column =>
                     column.id === 'infos' ? (
                         <InfosRow
@@ -171,7 +182,9 @@ function LibraryItemsListTableRow({
                         />
                     ) : (
                         <Row
-                            key={`${column.id}_${column.extendedData?.path}`}
+                            key={`${column.id}_${column.library}_${column.originAttributeData?.id}_${
+                                column.extendedData?.path ?? column.treeData?.libraryTypeName
+                            }`}
                             item={item}
                             column={column}
                             stateItems={stateItems}
@@ -192,34 +205,18 @@ interface RowsProps {
 const Row = ({item, column, stateItems}: RowsProps) => {
     const currentAtt = stateItems.attributes.find(att => att.id === column.id && att.library === column.library);
 
-    if (column.originAttributeId && column.id) {
-        let value = item[column.id] ?? item[column.originAttributeId][column.id];
-        return (
-            <Table.Cell>
-                {handleValueDisplay({
-                    value,
-                    format: currentAtt?.format || AttributeFormat.text,
-                    type: currentAtt?.type || AttributeType.simple,
-                    isMultiple: currentAtt?.isMultiple || false,
-                    size: displayTypeToPreviewSize(stateItems.displayType),
-                    extendedData: column.extendedData
-                })}
-            </Table.Cell>
-        );
-    }
+    const display = handleValueDisplay({
+        value: item[`${column.library}_${column.id}`],
+        format: currentAtt?.format,
+        type: currentAtt?.type ?? column.type,
+        isMultiple: currentAtt?.isMultiple || false,
+        size: displayTypeToPreviewSize(stateItems.displayType),
+        extendedData: column.extendedData
+    });
 
     return (
         <Table.Cell>
-            <div>
-                {handleValueDisplay({
-                    value: item[column.id],
-                    format: currentAtt?.format || AttributeFormat.text,
-                    type: currentAtt?.type || AttributeType.simple,
-                    isMultiple: currentAtt?.isMultiple || false,
-                    size: displayTypeToPreviewSize(stateItems.displayType),
-                    extendedData: column.extendedData
-                })}
-            </div>
+            <div>{display}</div>
         </Table.Cell>
     );
 };

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
-import {AttributeType, IAttribute, IAttributesChecked, IItemsColumn} from '../../../../_types/types';
+import {IAttribute, IAttributesChecked, IItemsColumn} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
 import {
     LibraryItemListReducerAction,
@@ -28,6 +28,7 @@ function ChooseTableColumns({
         stateItems.columns.map(col => ({
             id: col.id,
             library: col.library,
+            type: col.type,
             depth: 0,
             checked: true
         }))
@@ -38,7 +39,7 @@ function ChooseTableColumns({
     const handleSubmit = () => {
         const noDuplicateNewAttribute = newAttributes.filter(
             newAttribute =>
-                !stateItems.attributes.find(
+                !stateItems.attributes.some(
                     attribute => attribute.id === newAttribute.id && attribute.library === newAttribute.library
                 )
         );
@@ -61,9 +62,10 @@ function ChooseTableColumns({
                     {
                         id: attributeChecked.id,
                         library: attributeChecked.library,
-                        type: attribute ? attribute.type : AttributeType.simple,
-                        originAttributeId: attributeChecked.originAttributeId,
-                        extendedData: attributeChecked.extendedData
+                        type: attributeChecked.type,
+                        originAttributeData: attribute?.originAttributeData,
+                        extendedData: attributeChecked.extendedData,
+                        treeData: attributeChecked.treeData
                     }
                 ];
             }

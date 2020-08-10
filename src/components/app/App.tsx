@@ -58,6 +58,15 @@ function App({token, onTokenInvalid}: IAppProps) {
                 },
                 RecordIdentity: {
                     keyFields: ['id', 'library', ['id']]
+                },
+                Library: {
+                    fields: {
+                        gqlNames: {
+                            merge(existing, incoming) {
+                                return {...existing, ...incoming};
+                            }
+                        }
+                    }
                 }
             }
         }),

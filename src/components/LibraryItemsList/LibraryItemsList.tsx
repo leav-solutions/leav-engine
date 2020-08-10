@@ -1,5 +1,4 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
-import {isEqual} from 'lodash';
 import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import {Menu} from 'semantic-ui-react';
@@ -12,7 +11,7 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
-import {checkTypeIsLink, getExtendedFormat, localizedLabel} from '../../utils';
+import {checkTypeIsLink, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
@@ -135,37 +134,27 @@ function LibraryItemsList(): JSX.Element {
                             label: item.whoAmI.library.label
                         }
                     },
-                    ...Object.keys(item).reduce((acc, key) => {
-                        if (key === '__typename') {
-                            return acc;
-                        }
+                    ...state.columns.reduce((acc, col) => {
+                        const key: string = `${col.library}_${col.id}`;
 
-                        const attributes = state.attributes.reduce((acc, attribute) => {
-                            if (
-                                attribute.format === AttributeFormat.extended &&
-                                attribute.id === key &&
-                                attribute.library === libId
-                            ) {
-                                let itemContent;
-                                try {
-                                    itemContent = JSON.parse(item[key]);
-                                } catch {}
-                                if (itemContent) {
-                                    const extendFormat = getExtendedFormat(itemContent);
-                                    return [...acc, {...attribute, extendFormat}];
+                        if (col?.originAttributeData && item[col.originAttributeData.id]) {
+                            if (col.originAttributeData.type === AttributeType.tree) {
+                                // linked tree
+                                let value = item[col.originAttributeData.id].map(tree => tree.record[col.id]);
+
+                                if (Array.isArray(value)) {
+                                    value = value.shift();
                                 }
+
+                                acc[key] = value;
+                            } else {
+                                // linked attribute
+                                acc[key] = item[col.originAttributeData.id][col.id];
                             }
-                            return [...acc, attribute];
-                        }, [] as IAttribute[]);
-
-                        if (!isEqual(attributes, state.attributes)) {
-                            dispatch({
-                                type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
-                                attributes
-                            });
+                        } else if (item.whoAmI.library.id === col.library && item[col.id]) {
+                            // basic case
+                            acc[key] = item[col.id];
                         }
-
-                        acc[key] = item[key];
                         return acc;
                     }, {})
                 };
@@ -173,7 +162,7 @@ function LibraryItemsList(): JSX.Element {
 
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
-                items: items as IItem[],
+                items: (items as unknown) as IItem[],
                 totalCount: dataItem[state.libQuery]?.totalCount
             });
 
@@ -189,7 +178,18 @@ function LibraryItemsList(): JSX.Element {
                 }
             });
         }
-    }, [loadingItem, dataItem, calledItem, client, lang, libId, state.libQuery, state.libFilter, state.attributes]);
+    }, [
+        loadingItem,
+        dataItem,
+        calledItem,
+        client,
+        lang,
+        libId,
+        state.libQuery,
+        state.libFilter,
+        state.attributes,
+        state.columns
+    ]);
 
     useEffect(() => {
         getRecord();

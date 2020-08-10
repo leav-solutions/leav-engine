@@ -1,14 +1,14 @@
 import {Accordion, Input, List} from 'semantic-ui-react';
 import styled from 'styled-components';
 
-export const Wrapper = styled.div`
+export const WrapperAttribute = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
 `;
 
-export const Text = styled.span`
+export const TextAttribute = styled.span`
     color: hsl(0, 0%, 13%);
     font-weight: 700;
 `;
@@ -59,4 +59,20 @@ export const CustomAccordionTitle = styled(Accordion.Title)`
 
 export const CustomAccordionContent = styled(Accordion.Content)`
     width: 100%;
+`;
+
+export const WrapperContentAttribute = styled.div`
+    border-left: 3px solid #2185d0;
+`;
+
+export const RowAttribute = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0.2rem;
+
+    *:first-child > *:last-child {
+        margin: 0 0.2rem;
+    }
 `;

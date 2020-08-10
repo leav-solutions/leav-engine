@@ -4,7 +4,7 @@ import {Button, Container, List, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../utils';
-import {IAttribute, IAttributesChecked} from '../../_types/types';
+import {IAttribute, IAttributesChecked, IOriginAttributeData, ITreeData} from '../../_types/types';
 import Attribute from './Attribute';
 import {
     ListAttributeInitialState,
@@ -42,7 +42,7 @@ function ListAttributes({
 }: IListAttributeProps): JSX.Element {
     const searchRef = useRef<any>(null);
 
-    const [attributes, setAttributes] = useState(attrs.filter(att => !att.originAttributeId));
+    const [attributes, setAttributes] = useState(attrs.filter(att => !att.originAttributeData?.id));
     const [state, dispatch] = useReducer(ListAttributeReducer, {
         ...ListAttributeInitialState,
         attributeSelection,
@@ -95,7 +95,13 @@ function ListAttributes({
 
                 const newAttrsChecked: IAttributesChecked[] = [
                     ...state.attributesChecked.filter(ac => ac.id !== attributes[0].id),
-                    {id: attributes[0].id, library: attributes[0].library, depth: 0, checked: checked}
+                    {
+                        id: attributes[0].id,
+                        library: attributes[0].library,
+                        type: attributes[0].type,
+                        depth: 0,
+                        checked: checked
+                    }
                 ];
 
                 dispatch({
@@ -187,7 +193,8 @@ interface IListingAttributesProps {
     stateListAttribute: ListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     depth?: number;
-    originAttributeId?: string;
+    originAttributeData?: IOriginAttributeData;
+    treeData?: ITreeData;
 }
 
 export const ListingAttributes = ({
@@ -195,7 +202,8 @@ export const ListingAttributes = ({
     stateListAttribute,
     dispatchListAttribute,
     depth = 0,
-    originAttributeId
+    originAttributeData,
+    treeData
 }: IListingAttributesProps) => {
     return (
         <List>
@@ -207,7 +215,8 @@ export const ListingAttributes = ({
                         dispatchListAttribute={dispatchListAttribute}
                         attribute={attribute}
                         depth={depth}
-                        originAttributeId={originAttributeId}
+                        originAttributeData={originAttributeData}
+                        treeData={treeData}
                     />
                 ))}
         </List>

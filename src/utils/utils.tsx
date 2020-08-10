@@ -6,6 +6,11 @@ import {
     ConditionFilter,
     DisplayListItemTypes,
     ExtendFormat,
+    IAttribute,
+    IAttributesChecked,
+    IExtendedData,
+    IOriginAttributeData,
+    ITreeData,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -195,4 +200,86 @@ export const getExtendedFormat = (itemContent: any): ExtendFormat[] => {
             ? {[key]: getExtendedFormat(itemContent[key])}
             : key
     );
+};
+
+interface IAttributeUpdateSelectionParams {
+    attribute: IAttribute;
+    attributesChecked: IAttributesChecked[];
+    useCheckbox: boolean;
+    depth: number;
+    originAttributeData?: IOriginAttributeData;
+    extendedData?: IExtendedData;
+    treeData?: ITreeData;
+}
+
+export const attributeUpdateSelection = ({
+    attribute,
+    attributesChecked,
+    useCheckbox,
+    depth,
+    originAttributeData,
+    extendedData,
+    treeData
+}: IAttributeUpdateSelectionParams): IAttributesChecked[] => {
+    if (useCheckbox) {
+        let newAttributesChecked: IAttributesChecked[];
+
+        const checkCurrentAttribute = (attributeChecked: IAttributesChecked) =>
+            attributeChecked.id === attribute.id && attributeChecked.library === attribute.library;
+
+        const hasCurrentAttribute = attributesChecked.some(attributeChecked =>
+            extendedData?.path
+                ? checkCurrentAttribute(attributeChecked) && attributeChecked.extendedData?.path === extendedData?.path
+                : checkCurrentAttribute(attributeChecked)
+        );
+
+        if (hasCurrentAttribute) {
+            newAttributesChecked = attributesChecked.reduce((acc, attributeChecked) => {
+                if (checkCurrentAttribute(attributeChecked)) {
+                    const newChecked = attributeChecked?.checked ? false : true;
+                    if (extendedData?.path) {
+                        if (attributeChecked.extendedData?.path === extendedData?.path) {
+                            return [...acc, {...attributeChecked, checked: newChecked, extendedData}];
+                        } else {
+                            return [...acc, attributeChecked];
+                        }
+                    } else {
+                        return [...acc, {...attributeChecked, checked: newChecked}];
+                    }
+                }
+                return [...acc, attributeChecked];
+            }, [] as IAttributesChecked[]);
+        } else {
+            newAttributesChecked = [
+                ...attributesChecked,
+                {
+                    id: attribute.id,
+                    library: attribute.library ?? originAttributeData?.id,
+                    type: attribute.type,
+                    checked: true,
+                    originAttributeData,
+                    extendedData,
+                    treeData,
+                    depth: extendedData?.path?.match(/,/g)?.length || 0
+                }
+            ];
+        }
+
+        return newAttributesChecked;
+    } else {
+        const newAttributesChecked: IAttributesChecked[] = [
+            ...attributesChecked.filter(ac => ac.id !== attribute.id),
+            {
+                id: attribute.id,
+                library: attribute.library,
+                type: attribute.type,
+                depth,
+                checked: true,
+                extendedData,
+                treeData
+            }
+        ];
+
+        return newAttributesChecked;
+    }
 };

@@ -1,9 +1,17 @@
 import React from 'react';
 import {List} from 'semantic-ui-react';
-import {AttributeFormat, IAttribute, IAttributesChecked, IExtendedData} from '../../../_types/types';
+import {attributeUpdateSelection} from '../../../utils';
+import {
+    AttributeFormat,
+    AttributeType,
+    IAttribute,
+    IAttributesChecked,
+    IOriginAttributeData,
+    ITreeData
+} from '../../../_types/types';
 import ListItemAttribute from '../AttributeBasic';
 import AttributeExtended from '../AttributeExtended';
-import ListItemAttributeLink from '../AttributeLink';
+import AttributeLink from '../AttributeLink';
 import {
     ListAttributeReducerAction,
     ListAttributeReducerActionTypes,
@@ -16,7 +24,8 @@ interface IAttributeProps {
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     attribute: IAttribute;
     depth: number;
-    originAttributeId?: string;
+    originAttributeData?: IOriginAttributeData;
+    treeData?: ITreeData;
 }
 
 function Attribute({
@@ -24,77 +33,9 @@ function Attribute({
     dispatchListAttribute,
     attribute,
     depth,
-    originAttributeId
+    originAttributeData,
+    treeData
 }: IAttributeProps): JSX.Element {
-    const itemClick = (extendedData?: IExtendedData) => {
-        handleCheckboxChange(extendedData);
-    };
-
-    const handleCheckboxChange = (extendedData?: IExtendedData) => {
-        if (stateListAttribute.useCheckbox) {
-            let newAttributesChecked: IAttributesChecked[];
-
-            const checkCurrentAttribute = (attributeChecked: IAttributesChecked) =>
-                attributeChecked.id === attribute.id && attributeChecked.library === attribute.library;
-
-            const hasCurrentAttribute = stateListAttribute.attributesChecked.some(attributeChecked =>
-                extendedData?.path
-                    ? checkCurrentAttribute(attributeChecked) &&
-                      attributeChecked.extendedData?.path === extendedData?.path
-                    : checkCurrentAttribute(attributeChecked)
-            );
-            if (hasCurrentAttribute) {
-                newAttributesChecked = stateListAttribute.attributesChecked.reduce((acc, attributeChecked) => {
-                    if (checkCurrentAttribute(attributeChecked)) {
-                        const newChecked = attributeChecked?.checked ? false : true;
-                        if (extendedData?.path) {
-                            if (attributeChecked.extendedData?.path === extendedData?.path) {
-                                return [...acc, {...attributeChecked, checked: newChecked, extendedData: extendedData}];
-                            } else {
-                                return [...acc, attributeChecked];
-                            }
-                        } else {
-                            return [...acc, {...attributeChecked, checked: newChecked}];
-                        }
-                    }
-                    return [...acc, attributeChecked];
-                }, [] as IAttributesChecked[]);
-            } else {
-                newAttributesChecked = [
-                    ...stateListAttribute.attributesChecked,
-                    {
-                        id: attribute.id,
-                        library: attribute.library,
-                        checked: true,
-                        extendedData,
-                        depth: extendedData?.path?.match(/,/g)?.length || 0
-                    }
-                ];
-            }
-
-            dispatchListAttribute({
-                type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
-                attributesChecked: newAttributesChecked
-            });
-        } else {
-            const newAttributesChecked: IAttributesChecked[] = [
-                ...stateListAttribute.attributesChecked.filter(ac => ac.id !== attribute.id),
-                {id: attribute.id, library: attribute.library, depth, checked: true, extendedData}
-            ];
-
-            dispatchListAttribute({
-                type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
-                attributesChecked: newAttributesChecked
-            });
-        }
-    };
-
-    const handleRadioChange = () => {
-        if (stateListAttribute.changeSelected) {
-            stateListAttribute.changeSelected(attribute.id);
-        }
-    };
-
     // avoid infinite recursion
     const isSame = stateListAttribute.accordionsActive?.find(
         accordionActive =>
@@ -109,15 +50,30 @@ function Attribute({
         return (
             <ListItem>
                 <List.Content verticalAlign="middle">
-                    <ListItemAttributeLink
+                    <AttributeLink
                         attribute={attribute}
                         stateListAttribute={stateListAttribute}
                         dispatchListAttribute={dispatchListAttribute}
                         depth={depth}
-                        itemClick={itemClick}
-                        handleCheckboxChange={handleCheckboxChange}
-                        handleRadioChange={handleRadioChange}
-                        originAttributeId={originAttributeId}
+                        type="library"
+                        originAttributeData={originAttributeData}
+                    />
+                </List.Content>
+            </ListItem>
+        );
+    }
+
+    if (attribute.type === AttributeType.tree && !isSame && depthLimitation) {
+        return (
+            <ListItem>
+                <List.Content verticalAlign="middle">
+                    <AttributeLink
+                        attribute={attribute}
+                        stateListAttribute={stateListAttribute}
+                        dispatchListAttribute={dispatchListAttribute}
+                        depth={depth}
+                        type="tree"
+                        originAttributeData={originAttributeData}
                     />
                 </List.Content>
             </ListItem>
@@ -133,24 +89,36 @@ function Attribute({
                         stateListAttribute={stateListAttribute}
                         dispatchListAttribute={dispatchListAttribute}
                         previousDepth={depth}
-                        itemClick={itemClick}
-                        handleCheckboxChange={handleCheckboxChange}
-                        handleRadioChange={handleRadioChange}
                     />
                 </List.Content>
             </ListItem>
         );
     }
 
+    const handleClick = () => {
+        const newAttributesChecked: IAttributesChecked[] = attributeUpdateSelection({
+            attribute: attribute,
+            attributesChecked: stateListAttribute.attributesChecked,
+            useCheckbox: !!stateListAttribute.useCheckbox,
+            depth: depth,
+            originAttributeData: originAttributeData,
+            treeData
+        });
+
+        dispatchListAttribute({
+            type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
+            attributesChecked: newAttributesChecked
+        });
+    };
+
     return (
-        <ListItem onClick={itemClick}>
+        <ListItem onClick={handleClick}>
             <List.Content verticalAlign="middle">
                 <ListItemAttribute
                     attribute={attribute}
                     stateListAttribute={stateListAttribute}
                     dispatchListAttribute={dispatchListAttribute}
-                    handleCheckboxChange={handleCheckboxChange}
-                    handleRadioChange={handleRadioChange}
+                    treeData={treeData}
                 />
             </List.Content>
         </ListItem>

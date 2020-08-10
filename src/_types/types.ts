@@ -139,7 +139,7 @@ export interface IAttribute {
     isMultiple: boolean;
     linkedLibrary?: string;
     linkedTree?: string;
-    originAttributeId?: string;
+    originAttributeData?: IOriginAttributeData;
 }
 
 export type ExtendFormat = string | {[key: string]: ExtendFormat[]};
@@ -153,8 +153,9 @@ export interface IItemsColumn {
     id: string;
     library: string;
     type: AttributeType;
-    originAttributeId?: string;
+    originAttributeData?: IOriginAttributeData;
     extendedData?: IExtendedData;
+    treeData?: ITreeData;
 }
 
 export interface ITableHeader {
@@ -177,10 +178,22 @@ export interface IAccordionActive {
 export interface IAttributesChecked {
     id: string;
     library: string;
+    type: AttributeType;
     depth: number;
     checked: boolean;
-    originAttributeId?: string;
+    originAttributeData?: IOriginAttributeData;
     extendedData?: IExtendedData;
+    treeData?: ITreeData;
+}
+
+export interface IOriginAttributeData {
+    id: string;
+    type: AttributeType;
+}
+
+export interface ITreeData {
+    attributeTreeId: string;
+    libraryTypeName: string;
 }
 
 export interface IEmbeddedFields {

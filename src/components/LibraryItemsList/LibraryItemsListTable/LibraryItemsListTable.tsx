@@ -1,7 +1,10 @@
+import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dimmer, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {getLang} from '../../../queries/cache/lang/getLangQuery';
+import {localizedLabel} from '../../../utils';
 import {AttributeType, IRecordEdition, ITableHeader} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {
@@ -61,6 +64,9 @@ const initialColumnsLimit = 5;
 function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTableProps): JSX.Element {
     const {t} = useTranslation();
 
+    const {data: dataLang} = useQuery(getLang);
+    const {lang} = dataLang ?? {lang: []};
+
     const [tableColumns, setTableColumn] = useState<ITableHeader[]>([]);
     const [openChangeColumns, setOpenChangeColumns] = useState(false);
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
@@ -113,10 +119,12 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             ? col.extendedData?.path.split('.').pop() || ''
                             : typeof attribute.label === 'string'
                             ? attribute.label
-                            : attribute.label.fr || attribute.label.en;
+                            : localizedLabel(attribute.label, lang);
 
                         return {
-                            name: `${attribute.id}_${col.extendedData?.path}`,
+                            name: `${attribute.id}_${attribute.library}_${
+                                attribute.linkedLibrary ?? attribute.linkedTree
+                            }_${col.extendedData?.path ?? col.treeData?.attributeTreeId}`,
                             display,
                             type: attribute.type
                         };
@@ -127,7 +135,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 })
             );
         }
-    }, [t, dispatchItems, stateItems.columns, stateItems.attributes]);
+    }, [t, dispatchItems, stateItems.columns, stateItems.attributes, lang]);
 
     if (!stateItems.items) {
         return (

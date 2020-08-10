@@ -1,9 +1,10 @@
 import {mount} from 'enzyme';
 import React from 'react';
-import {DisplayListItemTypes, IItem, OrderSearch} from '../../../_types/types';
+import {act} from 'react-dom/test-utils';
+import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
-import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
+import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 import LibraryItemsListTable from './LibraryItemsListTable';
 import LibraryItemsListTableRow from './LibraryItemsListTableRow';
@@ -37,24 +38,7 @@ jest.mock(
 );
 
 describe('LibraryItemsListTable', () => {
-    const stateItems: LibraryItemListState = {
-        libQuery: 'test',
-        libFilter: 'test',
-        libSearchableField: 'test',
-        itemsSortField: 'test',
-        itemsSortOrder: OrderSearch.asc,
-        itemsTotalCount: 0,
-        offset: 0,
-        pagination: 20,
-        displayType: DisplayListItemTypes.listSmall,
-        showFilters: false,
-        selectionMode: false,
-        itemsSelected: {},
-        queryFilters: [],
-        attributes: [],
-        columns: []
-    };
-
+    const stateItems = LibraryItemListInitialState;
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
     test('check child exist', async () => {
@@ -65,11 +49,15 @@ describe('LibraryItemsListTable', () => {
         ];
 
         const stateMock = {...stateItems, items: itemsMock};
-        const comp = mount(
-            <MockedProviderWithFragments>
-                <LibraryItemsListTable stateItems={stateMock} dispatchItems={dispatchItems} />
-            </MockedProviderWithFragments>
-        );
+
+        let comp: any;
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <LibraryItemsListTable stateItems={stateMock} dispatchItems={dispatchItems} />
+                </MockedProviderWithFragments>
+            );
+        });
 
         expect(comp.find(ChooseTableColumns)).toHaveLength(1);
         expect(comp.find(LibraryItemsListTableRow)).toHaveLength(1);
