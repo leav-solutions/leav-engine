@@ -18,9 +18,9 @@ export async function setup() {
 const _resetAmqpQueues = async (conf: Config.IConfig) => {
     // reset amqp queue
     const amqpConfig: Options.Connect = {
-        hostname: conf.amqp.host,
-        username: conf.amqp.user,
-        password: conf.amqp.password
+        hostname: conf.amqp.connOpt.hostname,
+        username: conf.amqp.connOpt.username,
+        password: conf.amqp.connOpt.password
     };
     const connection = await connect(amqpConfig);
     const channel = await connection.createChannel();
@@ -30,11 +30,11 @@ const _resetAmqpQueues = async (conf: Config.IConfig) => {
     await channel.assertExchange(conf.amqp.exchange, conf.amqp.type);
 
     // create queue to avoid error if not exist
-    await channel.assertQueue(conf.filesManager.queues.filesEvents, {durable: true});
+    await channel.assertQueue(conf.filesManager.queues.events, {durable: true});
     await channel.assertQueue(conf.filesManager.queues.previewRequest, {durable: true});
     await channel.assertQueue(conf.filesManager.queues.previewResponse, {durable: true});
 
-    await channel.purgeQueue(conf.filesManager.queues.filesEvents);
+    await channel.purgeQueue(conf.filesManager.queues.events);
     await channel.purgeQueue(conf.filesManager.queues.previewRequest);
     await channel.purgeQueue(conf.filesManager.queues.previewResponse);
 };
@@ -74,9 +74,9 @@ export const getAmqpChannel = async () => {
 
     // reset amqp queue
     const amqpConfig: Options.Connect = {
-        hostname: conf.amqp.host,
-        username: conf.amqp.user,
-        password: conf.amqp.password
+        hostname: conf.amqp.connOpt.hostname,
+        username: conf.amqp.connOpt.username,
+        password: conf.amqp.connOpt.password
     };
     const connection = await connect(amqpConfig);
 

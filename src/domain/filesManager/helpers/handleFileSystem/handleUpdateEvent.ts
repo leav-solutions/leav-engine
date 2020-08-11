@@ -9,7 +9,7 @@ export const handleUpdateEvent = async (
     {library}: IHandleFileSystemResources,
     deps: IHandleFileSystemDeps,
     ctx: IQueryInfos
-) => {
+): Promise<void> => {
     const {fileName, filePath} = getInputData(scanMsg.pathAfter);
 
     // Get the records
@@ -17,7 +17,7 @@ export const handleUpdateEvent = async (
 
     if (!record) {
         deps.logger.warn(`[FilesManager] event ${scanMsg.event} - record not found : ${scanMsg.pathAfter}`);
-        return false;
+        return;
     }
 
     const {previewsStatus, previews} = getPreviewsDatas(deps.previewVersions);
@@ -31,8 +31,8 @@ export const handleUpdateEvent = async (
     };
 
     // Update datas
-    updateRecordFile(recordData, record.id, library, deps, ctx);
+    await updateRecordFile(recordData, record.id, library, deps, ctx);
 
     // Regenerate Previews
-    createPreview(record, scanMsg, library, deps.previewVersions, deps.amqpManager, deps.config);
+    await createPreview(record, scanMsg, library, deps.previewVersions, deps.amqpService, deps.config);
 };

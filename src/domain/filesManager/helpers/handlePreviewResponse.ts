@@ -4,8 +4,7 @@ import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IAmqpManager} from '../../../infra/amqpManager/amqpManager';
-import {RoutingKeys} from '../../../_types/amqp';
+import {IAmqpService} from '../../../infra/amqp/amqpService';
 import {
     IFilesAttributes,
     IPreviewResponse,
@@ -17,6 +16,7 @@ import {getInputData, getRecord, updateRecordFile} from './handleFileUtilsHelper
 import winston = require('winston');
 
 export interface IHandlePreviewResponseDeps {
+    amqpService: IAmqpService;
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
     previewVersions: IPreviewVersion[];
@@ -116,14 +116,13 @@ export const _getOriginalRecord = async (
 };
 
 export const handlePreviewResponse = async (
-    amqpManager: IAmqpManager,
     config: Config.IConfig,
     logger: winston.Winston,
     deps: IHandlePreviewResponseDeps
 ) => {
-    await amqpManager.consume(
+    await deps.amqpService.consume(
         config.filesManager.queues.previewResponse,
-        RoutingKeys.FILES_PREVIEW_RESPONSE,
+        config.filesManager.routingKeys.previewResponse,
         (msg: string) => onMessage(msg, logger, deps)
     );
 };

@@ -11,13 +11,15 @@ module.exports = {
         url: 'http://elasticsearch:9200'
     },
     amqp: {
-        host: 'message_broker',
-        type: 'direct',
-        exchange: 'test_leav_core'
+        connOpt: {
+            hostname: 'message_broker'
+        },
+        exchange: 'test_leav_core',
+        type: 'direct'
     },
     filesManager: {
         queues: {
-            filesEvents: 'test_files_events',
+            events: 'test_files_events',
             previewRequest: 'test_files_preview_request',
             previewResponse: 'test_files_preview_response'
         }

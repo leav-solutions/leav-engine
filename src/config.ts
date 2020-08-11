@@ -40,24 +40,40 @@ const checkConfig = (conf: Config.IConfig) => {
             default: Joi.boolean().required()
         }),
         amqp: Joi.object().keys({
-            host: Joi.string().required(),
-            port: Joi.number().required(),
-            user: Joi.string().required(),
-            password: Joi.string().required(),
+            connOpt: Joi.object().keys({
+                protocol: Joi.string().required(),
+                hostname: Joi.string().required(),
+                username: Joi.string().required(),
+                password: Joi.string().required(),
+                port: Joi.string().required()
+            }),
             exchange: Joi.string().required(),
             type: Joi.string().required()
         }),
         filesManager: Joi.object().keys({
             queues: Joi.object().keys({
-                filesEvents: Joi.string().required(),
+                events: Joi.string().required(),
                 previewRequest: Joi.string().required(),
                 previewResponse: Joi.string().required()
+            }),
+            routingKeys: Joi.object().keys({
+                events: Joi.string().required(),
+                previewRequest: Joi.string().required(),
+                previewResponse: Joi.string().required()
+            }),
+            rootKeys: Joi.object().keys({
+                files1: Joi.string().required()
             }),
             userId: Joi.number().required(),
             prefetch: Joi.number()
         }),
         indexationManager: Joi.object().keys({
-            queue: Joi.string().required(),
+            queues: Joi.object().keys({
+                events: Joi.string().required()
+            }),
+            routingKeys: Joi.object().keys({
+                events: Joi.string().required()
+            }),
             prefetch: Joi.number()
         }),
         debug: Joi.boolean(),

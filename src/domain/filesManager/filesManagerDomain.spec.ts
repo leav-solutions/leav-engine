@@ -1,11 +1,11 @@
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {join} from 'path';
+import * as amqp from 'amqplib';
 import * as Config from '_types/config';
 import {IValueDomain} from '../../domain/value/valueDomain';
-import {IAmqpManager} from '../../infra/amqpManager/amqpManager';
+import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
 import {IUtils} from '../../utils/utils';
-import {RoutingKeys} from '../../_types/amqp';
 import {FileEvents, FilesAttributes, IFileEventData} from '../../_types/filesManager';
 import {IRecord, Operator} from '../../_types/record';
 import filesManager from './filesManagerDomain';
@@ -17,26 +17,46 @@ describe('FilesManager', () => {
         const mockConfig: Mockify<Config.IConfig> = {
             filesManager: {
                 queues: {
-                    filesEvents: 'files_events',
+                    events: 'files_events',
                     previewRequest: 'preview_request',
                     previewResponse: 'preview_response'
+                },
+                routingKeys: {
+                    events: 'files.event',
+                    previewRequest: 'files.previewRequest',
+                    previewResponse: 'files.previewResponse'
+                },
+                rootKeys: {
+                    files1: 'files'
                 },
                 userId: '0'
             }
         };
 
-        const mockAmqpManager: Mockify<IAmqpManager> = {
-            consume: jest.fn()
+        const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
+            assertExchange: jest.fn(),
+            checkExchange: jest.fn(),
+            assertQueue: jest.fn(),
+            bindQueue: jest.fn(),
+            consume: jest.fn(),
+            publish: jest.fn(),
+            waitForConfirms: jest.fn(),
+            prefetch: jest.fn()
         };
+
+        const mockAmqpService = amqpService({
+            'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+            config: mockConfig as Config.IConfig
+        });
 
         const files = filesManager({
             config: mockConfig as Config.IConfig,
-            'core.infra.amqpManager': mockAmqpManager as IAmqpManager
+            'core.infra.amqp.amqpService': mockAmqpService as IAmqpService
         });
 
         await files.init();
 
-        expect(mockAmqpManager.consume).toBeCalled();
+        expect(mockAmqpChannel.consume).toBeCalled();
     });
 
     describe('test fileDomain event receive from scan', () => {
@@ -51,9 +71,17 @@ describe('FilesManager', () => {
         const mockConfig: Mockify<Config.IConfig> = {
             filesManager: {
                 queues: {
-                    filesEvents: 'files_events',
+                    events: 'files_events',
                     previewRequest: 'preview_request',
                     previewResponse: 'preview_response'
+                },
+                routingKeys: {
+                    events: 'files.event',
+                    previewRequest: 'files.previewRequest',
+                    previewResponse: 'files.previewResponse'
+                },
+                rootKeys: {
+                    files1: 'files'
                 },
                 userId: '0'
             }
@@ -61,7 +89,7 @@ describe('FilesManager', () => {
 
         let onMessage: (msg: string) => Promise<void>;
 
-        const mockAmqpManager: Mockify<IAmqpManager> = {
+        const mockAmqpService: Mockify<IAmqpService> = {
             consume: jest.fn((...args) => (onMessage = args[2])),
             publish: jest.fn()
         };
@@ -97,7 +125,7 @@ describe('FilesManager', () => {
 
         const files = filesManager({
             config: mockConfig as Config.IConfig,
-            'core.infra.amqpManager': mockAmqpManager as IAmqpManager,
+            'core.infra.amqp.amqpService': mockAmqpService as IAmqpService,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
@@ -105,7 +133,7 @@ describe('FilesManager', () => {
             'core.utils': mockUtils as IUtils
         });
 
-        test('init filesDomaine', async () => {
+        test('init filesDomain', async () => {
             await files.init();
             expect(onMessage).toBeInstanceOf(Function);
         });
@@ -142,9 +170,8 @@ describe('FilesManager', () => {
             });
 
             // expect to send a message to generate preview
-            expect(mockAmqpManager.publish).toBeCalledWith(
-                RoutingKeys.FILES_PREVIEW_REQUEST,
-                mockConfig.filesManager.queues.previewRequest,
+            expect(mockAmqpService.publish).toBeCalledWith(
+                mockConfig.filesManager.routingKeys.previewRequest,
                 expect.anything()
             );
         });
@@ -249,9 +276,8 @@ describe('FilesManager', () => {
             });
 
             // expect to send a message for generate preview
-            expect(mockAmqpManager.publish).toBeCalledWith(
-                RoutingKeys.FILES_PREVIEW_REQUEST,
-                mockConfig.filesManager.queues.previewRequest,
+            expect(mockAmqpService.publish).toBeCalledWith(
+                mockConfig.filesManager.routingKeys.previewRequest,
                 expect.anything()
             );
         });

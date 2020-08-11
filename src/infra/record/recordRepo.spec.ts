@@ -6,6 +6,7 @@ import {IRecordFilterOption, Operator} from '../../_types/record';
 import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbUtils} from '../db/dbUtils';
 import recordRepo from './recordRepo';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 
 describe('RecordRepo', () => {
     const ctx = {
@@ -44,8 +45,21 @@ describe('RecordRepo', () => {
                 cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData)
             };
 
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraryFullTextAttributes: global.__mockPromise([
+                    {
+                        id: 'modified_by',
+                        format: 'text',
+                        label: {en: 'Modified by', fr: 'Modifié par'},
+                        system: true,
+                        type: 'link'
+                    }
+                ])
+            };
+
             const recRepo = recordRepo({
                 'core.infra.db.dbService': mockDbServ,
+                'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 

@@ -1,3 +1,5 @@
+import {Options} from 'amqplib';
+
 export interface IConfig {
     server: IServer;
     db: IDb;
@@ -50,27 +52,35 @@ export interface IPermissions {
 }
 
 export interface IAmqp {
-    host: string;
-    port: string;
-    user: string;
-    password: string;
+    connOpt: Options.Connect;
     exchange: string;
     type: string;
 }
 
-export interface IQueues {
-    filesEvents: string;
-    previewRequest: string;
-    previewResponse: string;
-}
-
 export interface IFilesManager {
-    queues: IQueues;
+    queues: {
+        events: string;
+        previewRequest: string;
+        previewResponse: string;
+    };
+    routingKeys: {
+        events: string;
+        previewRequest: string;
+        previewResponse: string;
+    };
+    rootKeys: {
+        files1: string;
+    };
     userId: string;
     prefetch?: number;
 }
 
 export interface IIndexationManager {
-    queue: string;
+    queues: {
+        events: string;
+    };
+    routingKeys: {
+        events: string;
+    };
     prefetch?: number;
 }

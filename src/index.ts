@@ -6,6 +6,7 @@ import {init as initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
+import {initAmqp} from './infra/amqp';
 
 (async function() {
     let conf: Config.IConfig;
@@ -22,11 +23,14 @@ import {initPlugins} from './pluginsLoader';
     // Init i18next
     const translator = await i18nextInit(conf);
 
-    const {coreContainer, pluginsContainer} = await initDI({translator});
+    // Init AMQP
+    const amqpConn = await initAmqp({config: conf});
+
+    const {coreContainer, pluginsContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
 
     const server = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
-    const indexationManager: IFilesManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
+    const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
@@ -52,3 +56,7 @@ import {initPlugins} from './pluginsLoader';
         console.error(e);
     }
 })().catch(e => console.error(e));
+
+process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});

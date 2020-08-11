@@ -1,8 +1,16 @@
 import * as Config from '_types/config';
 import {IRecord} from '_types/record';
-import {IAmqpManager} from '../../../infra/amqpManager/amqpManager';
-import {RoutingKeys} from '../../../_types/amqp';
+import {IAmqpService} from '../../../infra/amqp/amqpService';
 import {IFileEventData, IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
+
+export const _sendPreviewMessage = async (
+    previewMessage: IPreviewMessage,
+    amqpService: IAmqpService,
+    config: Config.IConfig
+) => {
+    const msg = JSON.stringify(previewMessage);
+    await amqpService.publish(config.filesManager.routingKeys.previewRequest, msg);
+};
 
 export const getPreviewMsg = (
     record: IRecord,
@@ -40,26 +48,15 @@ export const createPreview = async (
     scanMsg: IFileEventData,
     library: string,
     versions: IPreviewVersion[],
-    amqpManager: IAmqpManager,
+    amqpService: IAmqpService,
     config: Config.IConfig
-) => {
+): Promise<void> => {
     const context: IPreviewResponseContext = {library, recordId: record.id};
 
     const previewMessage = getPreviewMsg(record, scanMsg, versions, context);
 
     if (previewMessage) {
         // send preview msg
-        await _sendPreviewMessage(previewMessage, amqpManager, config);
+        await _sendPreviewMessage(previewMessage, amqpService, config);
     }
-
-    return true;
-};
-
-export const _sendPreviewMessage = async (
-    previewMessage: IPreviewMessage,
-    amqpManager: IAmqpManager,
-    config: Config.IConfig
-) => {
-    const msg = JSON.stringify(previewMessage);
-    await amqpManager.publish(RoutingKeys.FILES_PREVIEW_REQUEST, config.filesManager.queues.previewRequest, msg);
 };

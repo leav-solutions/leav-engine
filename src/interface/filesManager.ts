@@ -1,5 +1,4 @@
 import {IFilesManagerApp} from 'app/core/filesManagerApp';
-import winston = require('winston');
 
 export interface IFilesManagerInterface {
     init(): Promise<void>;

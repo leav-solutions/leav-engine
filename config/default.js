@@ -27,24 +27,40 @@ module.exports = {
     },
     permissions: {default: true},
     amqp: {
-        host: 'localhost',
-        port: '5672',
-        user: 'guest',
-        password: 'guest',
+        connOpt: {
+            protocol: 'amqp',
+            hostname: 'rabbitmq.leav.localhost',
+            username: 'guest',
+            password: 'guest',
+            port: '5672'
+        },
         exchange: 'leav_core',
         type: 'direct'
     },
     filesManager: {
         queues: {
-            filesEvents: 'files_events',
+            events: 'files_events',
             previewRequest: 'files_preview_request',
             previewResponse: 'files_preview_response'
+        },
+        routingKeys: {
+            events: 'files.event',
+            previewRequest: 'files.previewRequest',
+            previewResponse: 'files.previewResponse'
+        },
+        rootKeys: {
+            files1: 'files'
         },
         userId: '1',
         prefetch: 1
     },
     indexationManager: {
-        queue: 'indexation_events',
+        queues: {
+            events: 'indexation_events'
+        },
+        routingKeys: {
+            events: 'indexation.event'
+        },
         prefetch: 1
     },
     debug: false

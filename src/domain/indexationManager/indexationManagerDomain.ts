@@ -1,10 +1,10 @@
-import {IAmqpManager} from 'infra/amqpManager/amqpManager';
+import {IAmqpService} from 'infra/amqp/amqpService';
 import {IRecordDomain} from './../record/recordDomain';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import winston from 'winston';
-import {RoutingKeys} from '../../_types/amqp';
-import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
+import {FileEvents, IFileEventData} from '../../_types/filesManager';
+import * as Joi from '@hapi/joi';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -12,7 +12,7 @@ export interface IIndexationManagerDomain {
 
 interface IDeps {
     config?: Config.IConfig;
-    'core.infra.amqpManager'?: IAmqpManager;
+    'core.infra.amqp.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
     'core.utils'?: IUtils;
@@ -20,7 +20,7 @@ interface IDeps {
 
 export default function({
     config = null,
-    'core.infra.amqpManager': amqpManager = null,
+    'core.infra.amqp.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.utils': utils = null
@@ -53,9 +53,9 @@ export default function({
 
     return {
         async init(): Promise<void> {
-            return amqpManager.consume(
-                config.indexationManager.queue,
-                RoutingKeys.INDEXATION_EVENT,
+            return amqpService.consume(
+                config.indexationManager.queues.events,
+                config.indexationManager.routingKeys.events,
                 _onMessage,
                 config.indexationManager.prefetch
             );

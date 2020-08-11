@@ -14,6 +14,11 @@ import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
 import {IDbUtils} from '../db/dbUtils';
+import {IAmqpService} from '../amqp/amqpService';
+import * as Config from '_types/config';
+import {IEvent, EventType} from '../../_types/event';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {pick} from 'lodash';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -58,15 +63,21 @@ export interface IRecordRepo {
 }
 
 interface IDeps {
+    config?: Config.IConfig;
     'core.infra.db.dbService'?: IDbService;
     'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
+    'core.infra.amqp.amqpService'?: IAmqpService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
+    'core.infra.library'?: ILibraryRepo;
 }
 
 export default function({
+    config = null,
+    'core.infra.library': libraryRepo = null,
     'core.infra.db.dbService': dbService = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
+    'core.infra.amqp.amqpService': amqpService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes': attributeTypesRepo = null
 }: IDeps = {}): IRecordRepo {
@@ -252,6 +263,24 @@ export default function({
             newRecord = await collection.document(newRecord);
 
             newRecord.library = newRecord._id.split('/')[0];
+
+            // sending indexation event
+            const attrToIndex = await libraryRepo.getLibraryFullTextAttributes({libId: libraryId, ctx});
+            const indexationMsg: IEvent = {
+                date: new Date(),
+                userId: ctx.userId,
+                payload: {
+                    type: EventType.RECORD_CREATE,
+                    data: {
+                        id: recordData.id,
+                        new: pick(
+                            recordData,
+                            attrToIndex.map(a => a.id)
+                        )
+                    }
+                }
+            };
+            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
 
             return dbUtils.cleanup(newRecord);
         },

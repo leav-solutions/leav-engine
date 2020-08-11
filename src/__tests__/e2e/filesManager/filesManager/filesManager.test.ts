@@ -15,7 +15,6 @@ import {IQueryInfos} from '_types/queryInfos';
 import {Operator} from '_types/record';
 import {getConfig} from '../../../../config';
 import {IRecordDomain} from '../../../../domain/record/recordDomain';
-import {RoutingKeys} from '../../../../_types/amqp';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewResponse} from '../../../../_types/filesManager';
 import {getAmqpChannel, getCoreContainer} from '../globalSetup';
 
@@ -24,9 +23,6 @@ const library = 'files';
 
 let queueAction: string;
 let queueResponse: string;
-
-const routingKeyEvent = RoutingKeys.FILES_EVENT;
-const routingKeyResponse = RoutingKeys.FILES_PREVIEW_RESPONSE;
 
 const wait = time => new Promise(r => setTimeout(r, time));
 
@@ -87,8 +83,8 @@ describe('FilesManager', () => {
         await channel.assertQueue(queueResponse, {durable: true});
         await channel.assertQueue(queueAction, {durable: true});
 
-        await channel.bindQueue(queueAction, conf.amqp.exchange, routingKeyEvent);
-        await channel.bindQueue(queueResponse, conf.amqp.exchange, routingKeyResponse);
+        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.filesEvents);
+        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.filesPreviewResponse);
 
         await channel.purgeQueue(conf.filesManager.queues.filesEvents);
         await channel.purgeQueue(conf.filesManager.queues.previewRequest);
@@ -319,8 +315,8 @@ describe('FilesManager with real files', () => {
         await channel.assertQueue(queueResponse, {durable: true});
         await channel.assertQueue(queueAction, {durable: true});
 
-        await channel.bindQueue(queueAction, conf.amqp.exchange, routingKeyEvent);
-        await channel.bindQueue(queueResponse, conf.amqp.exchange, routingKeyResponse);
+        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.filesEvents);
+        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.filesPreviewResponse);
 
         await channel.purgeQueue(conf.filesManager.queues.filesEvents);
         await channel.purgeQueue(conf.filesManager.queues.previewRequest);

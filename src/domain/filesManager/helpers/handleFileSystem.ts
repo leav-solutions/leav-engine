@@ -1,7 +1,7 @@
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {IAmqpManager} from 'infra/amqpManager/amqpManager';
+import {IAmqpService} from 'infra/amqp/amqpService';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {FileEvents, IFileEventData, IPreviewVersion} from '../../../_types/filesManager';
@@ -16,7 +16,7 @@ export interface IHandleFileSystemDeps {
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
     treeDomain: ITreeDomain;
-    amqpManager: IAmqpManager;
+    amqpService: IAmqpService;
     previewVersions: IPreviewVersion[];
     logger: winston.Winston;
     config: Config.IConfig;

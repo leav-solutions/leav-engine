@@ -15,6 +15,8 @@ module.exports = {
     },
     debug: true,
     amqp: {
-        host: 'message_broker'
+        connOpt: {
+            hostname: 'message_broker'
+        }
     }
 };

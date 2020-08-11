@@ -1,14 +1,13 @@
 import * as Joi from '@hapi/joi';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {IAmqpManager} from 'infra/amqpManager/amqpManager';
+import {IAmqpService} from 'infra/amqp/amqpService';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ISystemTranslation} from '_types/systemTranslation';
-import {RoutingKeys} from '../../_types/amqp';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
 import {IRecordDomain} from './../record/recordDomain';
@@ -28,7 +27,7 @@ export interface IFilesManagerDomain {
 
 interface IDeps {
     config?: Config.IConfig;
-    'core.infra.amqpManager'?: IAmqpManager;
+    'core.infra.amqp.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
@@ -57,18 +56,9 @@ const systemPreviewVersions: IPreviewVersion[] = [
     }
 ];
 
-const getLibrary = (rootKey: string) => {
-    // rootKey => library
-    const cache = {
-        files1: 'files'
-    };
-
-    return cache[rootKey];
-};
-
 export default function({
     config = null,
-    'core.infra.amqpManager': amqpManager = null,
+    'core.infra.amqp.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
@@ -96,7 +86,7 @@ export default function({
         }
 
         try {
-            const library = getLibrary(msgBody.rootKey);
+            const library = config.filesManager.rootKeys[msgBody.rootKey];
             await handleEventFileSystem(
                 msgBody,
                 {library},
@@ -104,7 +94,7 @@ export default function({
                     recordDomain,
                     valueDomain,
                     treeDomain,
-                    amqpManager,
+                    amqpService,
                     previewVersions: systemPreviewVersions,
                     logger,
                     config,
@@ -113,6 +103,7 @@ export default function({
                 ctx
             );
         } catch (e) {
+            console.log(e);
             logger.error(
                 `[FilesManager] Error when processing file event msg:
                     ${e.message}.
@@ -146,16 +137,18 @@ export default function({
 
     return {
         async init(): Promise<void> {
-            await handlePreviewResponse(amqpManager, config, logger, {
+            await handlePreviewResponse(config, logger, {
+                amqpService,
                 recordDomain,
                 valueDomain,
                 previewVersions: systemPreviewVersions,
                 config,
                 logger
             });
-            return amqpManager.consume(
-                config.filesManager.queues.filesEvents,
-                RoutingKeys.FILES_EVENT,
+
+            return amqpService.consume(
+                config.filesManager.queues.events,
+                config.filesManager.routingKeys.events,
                 _onMessage,
                 config.filesManager.prefetch
             );

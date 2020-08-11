@@ -10,6 +10,7 @@
     "globalSetup": "./src/__tests__/e2e/api/globalSetupHook.js",
     "globalTeardown": "./src/__tests__/e2e/api/teardown.js",
     "setupFiles": [
+        "<rootDir>/src/__tests__/setup.ts",
         "<rootDir>/src/__tests__/jestUtils.ts"
     ]
 }
