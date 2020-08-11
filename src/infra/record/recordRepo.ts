@@ -272,14 +272,16 @@ export default function({
                 payload: {
                     type: EventType.RECORD_CREATE,
                     data: {
-                        id: recordData.id,
+                        id: newRecord._key,
+                        libraryId: newRecord.library,
                         new: pick(
-                            recordData,
+                            newRecord,
                             attrToIndex.map(a => a.id)
                         )
                     }
                 }
             };
+
             await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
 
             return dbUtils.cleanup(newRecord);
@@ -289,20 +291,39 @@ export default function({
             const edgeCollection = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Delete record values
-            const deleteValuesRes = await dbService.execute({
+            await dbService.execute({
                 query: aql`
                     FOR l IN ${edgeCollection}
                         FILTER l._from == ${libraryId + '/' + recordId} OR l._to == ${libraryId + '/' + recordId}
                         REMOVE {_key: l._key} IN ${edgeCollection}
-                        RETURN OLD
                 `,
                 ctx
             });
 
             // Delete record
-            const deletedRecord = await collection.remove({_key: String(recordId)});
+            const deletedRecord = await collection.remove({_key: String(recordId)}, {returnOld: true});
 
             deletedRecord.library = deletedRecord._id.split('/')[0];
+
+            // sending indexation event
+            const attrToIndex = await libraryRepo.getLibraryFullTextAttributes({libId: libraryId, ctx});
+            const indexationMsg: IEvent = {
+                date: new Date(),
+                userId: ctx.userId,
+                payload: {
+                    type: EventType.RECORD_DELETE,
+                    data: {
+                        id: deletedRecord._key,
+                        libraryId: deletedRecord.library,
+                        old: pick(
+                            deletedRecord.old,
+                            attrToIndex.map(a => a.id)
+                        )
+                    }
+                }
+            };
+            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
+
             return dbUtils.cleanup(deletedRecord);
         },
         async updateRecord({libraryId, recordData, ctx}): Promise<IRecord> {

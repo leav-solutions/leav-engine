@@ -5,7 +5,6 @@ exports[`RecordRepo deleteRecord Should delete a record and return deleted recor
                     FOR l IN @@value0
                         FILTER l._from == @value1 OR l._to == @value1
                         REMOVE {_key: l._key} IN @@value0
-                        RETURN OLD
                 "
 `;
 

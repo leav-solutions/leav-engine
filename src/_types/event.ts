@@ -15,6 +15,7 @@ export interface IPayload {
 export interface IRecordPayload extends IPayload {
     data: {
         id: string;
+        libraryId: string;
         old?: any;
         new?: any;
     };

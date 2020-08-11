@@ -1,5 +1,4 @@
 import {Database} from 'arangojs';
-import {Client} from '@elastic/elasticsearch';
 import {cloneDeep} from 'lodash';
 import {AttributeTypes} from '../../_types/attribute';
 import {IRecordFilterOption, Operator} from '../../_types/record';
@@ -7,6 +6,14 @@ import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attribu
 import {IDbUtils} from '../db/dbUtils';
 import recordRepo from './recordRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {IAmqpService} from 'infra/amqp/amqpService';
+import * as Config from '_types/config';
+
+const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'events'}};
+
+const mockConfig: Mockify<Config.IConfig> = {
+    indexationManager: indexationManagerMockConfig as Config.IIndexationManager
+};
 
 describe('RecordRepo', () => {
     const ctx = {
@@ -45,6 +52,10 @@ describe('RecordRepo', () => {
                 cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData)
             };
 
+            const mockAmqpServ: Mockify<IAmqpService> = {
+                publish: global.__mockPromise()
+            };
+
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraryFullTextAttributes: global.__mockPromise([
                     {
@@ -58,6 +69,8 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
@@ -126,8 +139,24 @@ describe('RecordRepo', () => {
                 modified_at: 1519303348
             };
 
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraryFullTextAttributes: global.__mockPromise([
+                    {
+                        id: 'modified_by',
+                        format: 'text',
+                        label: {en: 'Modified by', fr: 'Modifié par'},
+                        system: true,
+                        type: 'link'
+                    }
+                ])
+            };
+
             const mockDbCollec = {
                 remove: global.__mockPromise(deletedRecordData)
+            };
+
+            const mockAmqpServ: Mockify<IAmqpService> = {
+                publish: global.__mockPromise()
             };
 
             const mockDbServ = {
@@ -160,7 +189,10 @@ describe('RecordRepo', () => {
             const mockDbUtils: Mockify<IDbUtils> = {cleanup: jest.fn().mockReturnValue(recordData)};
 
             const recRepo = recordRepo({
+                config: mockConfig as Config.IConfig,
                 'core.infra.db.dbService': mockDbServ,
+                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
@@ -173,7 +205,7 @@ describe('RecordRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
-            expect(mockDbCollec.remove).toBeCalledWith({_key: String(recordData.id)});
+            expect(mockDbCollec.remove).toBeCalledWith({_key: String(recordData.id)}, {returnOld: true});
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
 

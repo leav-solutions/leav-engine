@@ -356,10 +356,6 @@ export default function({
                 throw new Error('Unknown library');
             }
 
-            if (lib.list.pop().system) {
-                throw new Error('Cannot delete system library');
-            }
-
             // Check permission
             const canDelete = await recordPermissionDomain.getRecordPermission(
                 RecordPermissionsActions.DELETE,
