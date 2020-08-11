@@ -78,7 +78,7 @@ function ListAttributes({
 
     useEffect(() => {
         if (state.attributesChecked && setAttributesChecked) {
-            setAttributesChecked(state.attributesChecked);
+            setAttributesChecked(state.attributesChecked.filter(attributeChecked => attributeChecked.checked));
         }
     }, [state.attributesChecked, setAttributesChecked, state.newAttributes]);
 

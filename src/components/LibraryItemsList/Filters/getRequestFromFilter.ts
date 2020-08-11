@@ -66,8 +66,9 @@ const handleValueRequest = (filter: IFilter) => {
                     if (!firstValue) {
                         result.push({operator: OperatorFilter.or});
                     }
+
                     result.push({
-                        field: filter.attributeId,
+                        field: getValueFromFilter(filter),
                         value: filterValue,
                         condition: filter.condition
                     });
@@ -87,4 +88,14 @@ const handleValueRequest = (filter: IFilter) => {
     }
 
     return result;
+};
+
+const getValueFromFilter = (filter: IFilter) => {
+    if (filter.originAttributeData) {
+        return `${filter.originAttributeData.id}.${filter.attributeId}`;
+    }
+    if (filter.extendedData) {
+        return `${filter.extendedData.path}`;
+    }
+    return `${filter.attributeId}`;
 };

@@ -12,32 +12,80 @@ import {
     IFilterSeparator
 } from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
-import {LibraryItemListState} from '../../LibraryItemsListReducer';
+import {
+    LibraryItemListReducerAction,
+    LibraryItemListReducerActionTypes,
+    LibraryItemListState
+} from '../../LibraryItemsListReducer';
 
 interface IAttributeListProps {
     stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
     showAttr: boolean;
     setShowAttr: React.Dispatch<React.SetStateAction<boolean>>;
     updateFilters: () => void;
 }
 
-function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters}: IAttributeListProps): JSX.Element {
+function AddFilter({
+    stateItems,
+    dispatchItems,
+    setFilters,
+    showAttr,
+    setShowAttr,
+    updateFilters
+}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
     const [attributesChecked, setAttributesChecked] = useState<IAttributesChecked[]>([]);
 
-    const [, setNewAttributes] = useState<IAttribute[]>([]);
+    const [newAttributes, setNewAttributes] = useState<IAttribute[]>([]);
 
     const addFilters = () => {
-        // dispatchItems({
-        //     type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
-        //     attributes: [...stateItems.attributes, ...newAttributes]
-        // });
+        const noDuplicateNewAttribute = newAttributes.filter(
+            newAttribute =>
+                !stateItems.attributes.some(
+                    attribute => attribute.id === newAttribute.id && attribute.library === newAttribute.library
+                )
+        );
+
+        const allAttributes = [...stateItems.attributes, ...noDuplicateNewAttribute];
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
+            attributes: allAttributes
+        });
 
         setFilters(filters => {
             const separators = filters.filter(filter => filter.type === FilterTypes.separator);
             const newFilters: IFilter[] = attributesChecked.map((attributeChecked, index) => {
+                if (attributeChecked?.extendedData) {
+                    const format = attributeChecked.extendedData.format;
+                    const defaultConditionOptions =
+                        (format && allowedTypeOperator[AttributeFormat[format]][0]) || ConditionFilter.equal;
+
+                    const lastFilterIsSeparatorCondition = separators.some(
+                        separator => separator.key === filters.length + index - 1
+                    );
+
+                    const attributeId = attributeChecked.extendedData.path.split('.').pop() ?? '';
+
+                    const newFilter: IFilter = {
+                        type: FilterTypes.filter,
+                        key: filters.length + index,
+                        operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
+                        condition: defaultConditionOptions,
+                        value: '',
+                        attributeId,
+                        active: true,
+                        format,
+                        originAttributeData: attributeChecked.originAttributeData,
+                        treeData: attributeChecked.treeData,
+                        extendedData: attributeChecked.extendedData
+                    };
+                    return newFilter;
+                }
+
                 const attribute = stateItems.attributes.find(
                     attribute => attribute.id === attributeChecked.id && attribute.library === attributeChecked.library
                 );
@@ -61,7 +109,10 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
                     value: '',
                     attributeId: attributeChecked.id,
                     active: true,
-                    format: attribute?.format ?? AttributeFormat.text
+                    format: attribute?.format ?? AttributeFormat.text,
+                    originAttributeData: attributeChecked.originAttributeData,
+                    treeData: attributeChecked.treeData,
+                    extendedData: attributeChecked.extendedData
                 };
             });
 
@@ -71,19 +122,6 @@ function AddFilter({stateItems, setFilters, showAttr, setShowAttr, updateFilters
         setAttributesChecked([]);
         updateFilters();
     };
-
-    // const handleChecked = (attribute: IAttribute, checked: boolean) => {
-    //     if (attribute) {
-    //         if (checked) {
-    //             setAttributesChecked(attSelected => [
-    //                 ...attSelected,
-    //                 {id: attribute.id, library: attribute.library, depth: 0, checked: true}
-    //             ]);
-    //         } else {
-    //             setAttributesChecked(attSelected => attSelected.filter(att => att.id !== attribute.id));
-    //         }
-    //     }
-    // };
 
     const handleCancel = () => {
         setShowAttr(false);

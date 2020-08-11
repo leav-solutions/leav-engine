@@ -67,6 +67,9 @@ export interface IFilter {
     attributeId: string;
     active: boolean;
     format?: AttributeFormat;
+    originAttributeData?: IOriginAttributeData;
+    extendedData?: IExtendedData;
+    treeData?: ITreeData;
 }
 
 export interface IFilterSeparator {

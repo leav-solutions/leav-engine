@@ -11,8 +11,6 @@ export function getConditionOptions(t: TFunction) {
         {text: t('filters.end-with'), value: ConditionFilter.endWith},
         {text: t('filters.greater-than'), value: ConditionFilter.greaterThan},
         {text: t('filters.less-than'), value: ConditionFilter.lessThan}
-        // {text: t('filters.exist'), value: conditionFilter.exist},
-        // {text: t('filters.search-in'), value: conditionFilter.searchIn}
     ];
 
     return conditionOptions;

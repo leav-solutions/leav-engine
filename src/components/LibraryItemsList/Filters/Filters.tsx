@@ -136,6 +136,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
             let newFilters = filters.sort((a, b) => a.key - b.key);
 
             let noOperator = true;
+
             newFilters = newFilters.map((filter, index) => {
                 if (filter.key !== index) {
                     filter.key = index;
@@ -188,6 +189,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
             <CustomSidebarPushable>
                 <AddFilter
                     stateItems={stateItems}
+                    dispatchItems={dispatchItems}
                     setFilters={setFilters}
                     showAttr={showAttr}
                     setShowAttr={setShowAttr}
