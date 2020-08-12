@@ -11,6 +11,14 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
+import {IAmqpService} from 'infra/amqp/amqpService';
+import * as Config from '_types/config';
+
+const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
+
+const mockConfig: Mockify<Config.IConfig> = {
+    indexationManager: indexationManagerMockConfig as Config.IIndexationManager
+};
 
 describe('RecordDomain', () => {
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
@@ -31,7 +39,18 @@ describe('RecordDomain', () => {
             };
             const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
 
+            const mockLibDomain: Mockify<ILibraryDomain> = {
+                getLibraryFullTextAttributes: global.__mockPromise([])
+            };
+
+            const mockAmqpServ: Mockify<IAmqpService> = {
+                publish: global.__mockPromise()
+            };
+
             const recDomain = recordDomain({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
             });
@@ -88,10 +107,16 @@ describe('RecordDomain', () => {
                 getRecordPermission: global.__mockPromise(true)
             };
             const libDomain: Mockify<ILibraryDomain> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([])
+            };
+            const mockAmqpServ: Mockify<IAmqpService> = {
+                publish: global.__mockPromise()
             };
 
             const recDomain = recordDomain({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.library': libDomain as ILibraryDomain,
                 'core.domain.permission.recordPermission': recordPermDomain as IRecordPermissionDomain
