@@ -11,12 +11,25 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import libraryDomain from './libraryDomain';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
+import {IAmqpService} from 'infra/amqp/amqpService';
+import * as Config from '_types/config';
+
+const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
+
+const mockConfig: Mockify<Config.IConfig> = {
+    indexationManager: indexationManagerMockConfig as Config.IIndexationManager
+};
 
 describe('LibraryDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'libraryDomainTest'
     };
+
+    const mockAmqpServ: Mockify<IAmqpService> = {
+        publish: global.__mockPromise()
+    };
+
     const mockAttrDomain: Mockify<IAttributeDomain> = {
         getAttributes: global.__mockPromise({
             list: [
@@ -212,6 +225,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -267,6 +282,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -290,6 +307,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -323,6 +342,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -358,6 +379,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -393,6 +416,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -442,6 +467,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -479,6 +506,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -516,6 +545,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -573,6 +604,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -596,12 +629,14 @@ describe('LibraryDomain', () => {
 
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.permission': mockAdminPermDomain as IPermissionDomain
             });
             libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
 
-            const deleteRes = await libDomain.deleteLibrary(libData.id, ctx);
+            await libDomain.deleteLibrary(libData.id, ctx);
 
             expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
 
@@ -613,7 +648,11 @@ describe('LibraryDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const libDomain = libraryDomain({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.infra.library': mockLibRepo as ILibraryRepo
+            });
             libDomain.getLibraries = global.__mockPromise([]);
 
             await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
@@ -621,7 +660,11 @@ describe('LibraryDomain', () => {
 
         test('Should throw if system library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const libDomain = libraryDomain({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.infra.library': mockLibRepo as ILibraryRepo
+            });
             libDomain.getLibraries = global.__mockPromise([{system: true}]);
 
             await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
@@ -634,6 +677,8 @@ describe('LibraryDomain', () => {
 
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.permission': mockAdminPermDomain as IPermissionDomain
             });
@@ -653,6 +698,8 @@ describe('LibraryDomain', () => {
 
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,

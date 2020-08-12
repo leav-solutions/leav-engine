@@ -23,6 +23,9 @@ import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
+import {IEvent, EventType} from '../../_types/event';
+import {IAmqpService} from 'infra/amqp/amqpService';
+import * as Config from '_types/config';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -34,15 +37,19 @@ export interface ILibraryDomain {
 }
 
 interface IDeps {
+    config?: Config.IConfig;
     'core.infra.library'?: ILibraryRepo;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission'?: IPermissionDomain;
+    'core.infra.amqp.amqpService'?: IAmqpService;
     'core.utils'?: IUtils;
     translator?: i18n;
     'core.infra.tree'?: ITreeRepo;
 }
 
 export default function({
+    config = null,
+    'core.infra.amqp.amqpService': amqpService = null,
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -205,6 +212,20 @@ export default function({
 
             await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils}, ctx);
 
+            // sending indexation event
+            const indexationMsg: IEvent = {
+                date: new Date(),
+                userId: ctx.userId,
+                payload: {
+                    type: EventType.LIBRARY_SAVE,
+                    data: {
+                        id: lib.id,
+                        fullTextAttributes: libFullTextAttributes
+                    }
+                }
+            };
+            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
+
             return lib;
         },
         async deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary> {
@@ -230,7 +251,20 @@ export default function({
 
             await runBehaviorPostDelete(lib, {treeRepo, utils}, ctx);
 
-            return libraryRepo.deleteLibrary({id, ctx});
+            const deletedLibrary = await libraryRepo.deleteLibrary({id, ctx});
+
+            // sending indexation event
+            const indexationMsg: IEvent = {
+                date: new Date(),
+                userId: ctx.userId,
+                payload: {
+                    type: EventType.LIBRARY_DELETE,
+                    data: {id: deletedLibrary.id}
+                }
+            };
+            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
+
+            return deletedLibrary;
         }
     };
 }

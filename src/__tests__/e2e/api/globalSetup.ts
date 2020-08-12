@@ -2,6 +2,7 @@ import {Database} from 'arangojs';
 import {getConfig} from '../../../config';
 import {init as initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
+import {initAmqp} from '../../../infra/amqp';
 
 export async function setup() {
     try {
@@ -24,7 +25,10 @@ export async function setup() {
         // Init i18next
         const translator = await i18nextInit(conf);
 
-        const {coreContainer} = await initDI({translator});
+        // Init AMQP
+        const amqpConn = await initAmqp({config: conf});
+
+        const {coreContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
         await dbUtils.migrate(coreContainer);
