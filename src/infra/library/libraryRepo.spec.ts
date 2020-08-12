@@ -3,6 +3,14 @@ import {AttributeTypes} from '../../_types/attribute';
 import {IAttributeRepo} from '../attribute/attributeRepo';
 import {IDbUtils} from '../db/dbUtils';
 import libraryRepo from './libraryRepo';
+import {IAmqpService} from 'infra/amqp/amqpService';
+import * as Config from '_types/config';
+
+const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
+
+const mockConfig: Mockify<Config.IConfig> = {
+    indexationManager: indexationManagerMockConfig as Config.IIndexationManager
+};
 
 describe('LibraryRepo', () => {
     const ctx = {
@@ -66,7 +74,13 @@ describe('LibraryRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
+            const mockAmqpServ: Mockify<IAmqpService> = {
+                publish: global.__mockPromise()
+            };
+
             const libRepo = libraryRepo({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -146,12 +160,18 @@ describe('LibraryRepo', () => {
                 execute: global.__mockPromiseMultiple([[], [docLibData]])
             };
 
+            const mockAmqpServ: Mockify<IAmqpService> = {
+                publish: global.__mockPromise()
+            };
+
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(libData),
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
             const libRepo = libraryRepo({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo
@@ -366,7 +386,15 @@ describe('LibraryRepo', () => {
                 execute: jest.fn()
             };
 
-            const libRepo = libraryRepo({'core.infra.db.dbService': mockDbServ});
+            const mockAmqpServ: Mockify<IAmqpService> = {
+                publish: global.__mockPromise()
+            };
+
+            const libRepo = libraryRepo({
+                config: mockConfig as Config.IConfig,
+                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.infra.db.dbService': mockDbServ
+            });
 
             await libRepo.saveLibraryFullTextAttributes({
                 libId: 'users',

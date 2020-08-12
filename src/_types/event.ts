@@ -1,11 +1,13 @@
 export enum EventType {
     RECORD_CREATE = 'RECORD_CREATE',
-    RECORD_UPDATE = 'RECORD_UPDATE',
+    RECORD_UPDATE = 'RECORD_UPDATE', // TODO: linked to save VALUE_SAVE?
     RECORD_DELETE = 'RECORD_DELETE',
-    LIBRARY_SAVE = 'LIBRARY_SAVE',
+    LIBRARY_CREATE = 'LIBRARY_CREATE',
+    LIBRARY_UPDATE = 'LIBRARY_UPDATE', // FIXME: useless?!
+    LIBRARY_ATTRIBUTES_UPDATE = 'LIBRARY_ATTRIBUTES_UPDATE',
     LIBRARY_DELETE = 'LIBRARY_DELETE',
-    VALUE_SAVE = 'VALUE_SAVE',
-    VALUE_DELETE = 'VALUE_DELETE'
+    VALUE_SAVE = 'VALUE_SAVE', // TODO:
+    VALUE_DELETE = 'VALUE_DELETE' // TODO:
 }
 
 export interface IPayload {
@@ -24,8 +26,7 @@ export interface IRecordPayload extends IPayload {
 export interface ILibraryPayload extends IPayload {
     data: {
         id: string;
-        old?: any;
-        new?: any;
+        fullTextAttributes?: string[];
     };
 }
 

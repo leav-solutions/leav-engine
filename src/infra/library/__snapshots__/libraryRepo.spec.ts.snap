@@ -102,12 +102,12 @@ Object {
 exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 1`] = `
 "
                     FOR attr IN @@value0
-                    FILTER attr._from == @value1
-                    UPDATE {
-                        _key: attr._key,
-                        full_text_search: POSITION(@value2, LAST(SPLIT(attr._to, '/')))
-                    }
-                    IN @@value0
+                        FILTER attr._from == @value1
+                        UPDATE {
+                            _key: attr._key,
+                            full_text_search: POSITION(@value2, LAST(SPLIT(attr._to, '/')))
+                        }
+                        IN @@value0
                 "
 `;
 

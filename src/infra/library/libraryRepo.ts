@@ -8,6 +8,9 @@ import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
+import {IEvent, EventType} from '../../_types/event';
+import {IAmqpService} from '../amqp/amqpService';
+import * as Config from '_types/config';
 
 const LIB_COLLECTION_NAME = 'core_libraries';
 export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
@@ -83,15 +86,19 @@ export interface ILibraryRepo {
 }
 
 interface IDeps {
+    config?: Config.IConfig;
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attribute'?: IAttributeRepo;
+    'core.infra.amqp.amqpService'?: IAmqpService;
 }
 
 export default function({
+    config = null,
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attribute': attributeRepo = null
+    'core.infra.attribute': attributeRepo = null,
+    'core.infra.amqp.amqpService': amqpService = null
 }: IDeps = {}): ILibraryRepo {
     return {
         async getLibraries({params = {}, ctx}): Promise<IList<ILibrary>> {
@@ -124,6 +131,19 @@ export default function({
                 query: aql`INSERT ${docToInsert} IN ${libCollc} RETURN NEW`,
                 ctx
             });
+
+            // sending indexation event
+            const indexationMsg: IEvent = {
+                date: new Date(),
+                userId: ctx.userId,
+                payload: {
+                    type: EventType.LIBRARY_CREATE,
+                    data: {
+                        id: libRes[0]._key
+                    }
+                }
+            };
+            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
 
             return dbUtils.cleanup(libRes.pop());
         },
@@ -173,6 +193,17 @@ export default function({
 
             // Delete library's collection
             await dbService.dropCollection(id);
+
+            // sending indexation event
+            const indexationMsg: IEvent = {
+                date: new Date(),
+                userId: ctx.userId,
+                payload: {
+                    type: EventType.LIBRARY_DELETE,
+                    data: {id}
+                }
+            };
+            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
 
             // Return deleted library
             return dbUtils.cleanup(res.pop());
@@ -249,15 +280,30 @@ export default function({
             await dbService.execute({
                 query: aql`
                     FOR attr IN ${libAttribCollec}
-                    FILTER attr._from == ${LIB_COLLECTION_NAME + '/' + libId}
-                    UPDATE {
-                        _key: attr._key,
-                        full_text_search: POSITION(${fullTextAttributes}, LAST(SPLIT(attr._to, '/')))
-                    }
-                    IN ${libAttribCollec}
+                        FILTER attr._from == ${LIB_COLLECTION_NAME + '/' + libId}
+                        UPDATE {
+                            _key: attr._key,
+                            full_text_search: POSITION(${fullTextAttributes}, LAST(SPLIT(attr._to, '/')))
+                        }
+                        IN ${libAttribCollec}
                 `,
                 ctx
             });
+
+            // sending indexation event
+            const indexationMsg: IEvent = {
+                date: new Date(),
+                userId: ctx.userId,
+                payload: {
+                    type: EventType.LIBRARY_ATTRIBUTES_UPDATE,
+                    data: {
+                        id: libId,
+                        fullTextAttributes
+                    }
+                }
+            };
+
+            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
         },
         async getLibraryFullTextAttributes({libId, ctx}): Promise<IAttribute[]> {
             const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);

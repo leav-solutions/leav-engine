@@ -9,7 +9,7 @@ import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IAmqpService} from 'infra/amqp/amqpService';
 import * as Config from '_types/config';
 
-const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'events'}};
+const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
 
 const mockConfig: Mockify<Config.IConfig> = {
     indexationManager: indexationManagerMockConfig as Config.IIndexationManager
