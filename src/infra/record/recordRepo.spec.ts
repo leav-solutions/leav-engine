@@ -77,7 +77,12 @@ describe('RecordRepo', () => {
                 modified_at: 1519303348
             };
 
-            const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
+            const mockDbCollec = {
+                update: global.__mockPromise(updatedRecordData)
+            };
+
+            const mockDbServ = {db: new Database()};
+            mockDbServ.db.collection = jest.fn().mockReturnValue(mockDbCollec);
 
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData)
@@ -89,10 +94,13 @@ describe('RecordRepo', () => {
             });
 
             const updatedRecord = await recRepo.updateRecord({libraryId: 'test', recordData, ctx});
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPDATE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+
+            expect(mockDbCollec.update.mock.calls.length).toBe(1);
+            expect(mockDbCollec.update).toBeCalledWith(
+                {_key: String(recordData.id)},
+                {...recordData, id: undefined},
+                {returnOld: true}
+            );
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
 

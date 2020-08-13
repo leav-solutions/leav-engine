@@ -279,19 +279,14 @@ export default function({
         async updateRecord({libraryId, recordData, ctx}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);
             const dataToSave = {...recordData};
+            const recordId = dataToSave.id;
             delete dataToSave.id; // Don't save ID
 
-            const updateRes = await dbService.execute({
-                query: aql`
-                    UPDATE {_key: ${recordData.id}} WITH ${dataToSave} IN ${collection}
-                    RETURN NEW
-                `,
-                ctx
-            });
+            const updatedRecord = await collection.update({_key: String(recordId)}, dataToSave, {returnOld: true});
 
-            const updatedRecord = dbUtils.cleanup(updateRes[0]);
+            updatedRecord.library = updatedRecord._id.split('/')[0];
 
-            return updatedRecord;
+            return dbUtils.cleanup(updatedRecord);
         }
     };
 }

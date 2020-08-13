@@ -1,11 +1,10 @@
 export enum EventType {
     RECORD_CREATE = 'RECORD_CREATE',
-    RECORD_UPDATE = 'RECORD_UPDATE', // TODO: linked to save VALUE_SAVE?
     RECORD_DELETE = 'RECORD_DELETE',
     LIBRARY_SAVE = 'LIBRARY_SAVE',
     LIBRARY_DELETE = 'LIBRARY_DELETE',
-    VALUE_SAVE = 'VALUE_SAVE', // TODO:
-    VALUE_DELETE = 'VALUE_DELETE' // TODO:
+    VALUE_SAVE = 'VALUE_SAVE', // TODO: how to index it?
+    VALUE_DELETE = 'VALUE_DELETE' // TODO: "
 }
 
 export interface IPayload {
