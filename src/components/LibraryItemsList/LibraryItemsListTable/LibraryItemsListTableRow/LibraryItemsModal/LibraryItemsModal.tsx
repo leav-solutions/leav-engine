@@ -1,6 +1,6 @@
 import {useMutation} from '@apollo/client';
+import {Button, Form, Modal} from 'antd';
 import React, {useRef} from 'react';
-import {Button, Form, Header, Modal} from 'semantic-ui-react';
 import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
 import {IItem} from '../../../../../_types/types';
 import FormPreviewsModal from './FormPreviewsModal';
@@ -40,38 +40,41 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
     };
 
     return (
-        <Modal open={showModal} onClose={closeModal} closeIcon>
-            <Modal.Header>Modal</Modal.Header>
+        <Modal
+            visible={showModal}
+            onCancel={closeModal}
+            title="Modal"
+            footer={[
+                <Button type="text" onClick={closeModal}>
+                    Close
+                </Button>,
+                <Button type="primary" onClick={triggerSubmit}>
+                    Submit
+                </Button>
+            ]}
+        >
             {values && (
-                <Modal.Content>
-                    <Form as="div">
+                <>
+                    <Form>
                         <form ref={formRef} onSubmit={handleSubmit}>
-                            <Form.Field>
+                            <Form.Item>
                                 <label>Id</label>
                                 <input disabled type="text" value={values?.id} />
-                            </Form.Field>
-                            <Form.Field>
+                            </Form.Item>
+                            <Form.Item>
                                 <label>Label</label>
                                 <input
                                     type="text"
                                     value={values?.label || ''}
                                     onChange={e => updateValues({...values, label: e.target.value})}
                                 />
-                            </Form.Field>
-                            <Header as="h2">Preview</Header>
+                            </Form.Item>
+                            <h2>Preview</h2>
                             <FormPreviewsModal values={values} updateValues={updateValues} />
                         </form>
                     </Form>
-                </Modal.Content>
+                </>
             )}
-            <Modal.Actions>
-                <Button secondary onClick={closeModal}>
-                    Close
-                </Button>
-                <Button positive onClick={triggerSubmit}>
-                    Submit
-                </Button>
-            </Modal.Actions>
         </Modal>
     );
 }

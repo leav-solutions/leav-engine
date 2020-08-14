@@ -14,6 +14,22 @@ jest.mock('react-router-dom', () => ({
     NavLink: jest.fn(() => <></>)
 }));
 
+jest.mock(
+    './LibraryCard',
+    () =>
+        function LibraryCard() {
+            return <div>LibraryCard</div>;
+        }
+);
+
+jest.mock(
+    './LibraryDetail',
+    () =>
+        function LibraryDetail() {
+            return <div>LibraryDetail</div>;
+        }
+);
+
 describe('LibrariesList', () => {
     const mocks = [
         {

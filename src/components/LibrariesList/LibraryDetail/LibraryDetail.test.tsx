@@ -1,7 +1,6 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {Grid, Segment} from 'semantic-ui-react';
 import wait from 'waait';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
@@ -13,6 +12,7 @@ describe('LibraryDetail', () => {
     describe('test rendering', () => {
         const libId = 'test';
         const libQueryName = 'test';
+        const libFilterName = 'testFilter';
         const totalCount = 1;
         const mocks = [
             {
@@ -56,12 +56,12 @@ describe('LibraryDetail', () => {
             await act(async () => {
                 comp = mount(
                     <MockedProviderWithFragments mocks={mocks}>
-                        <LibraryDetail libId={libId} libQueryName={libQueryName} />
+                        <LibraryDetail libId={libId} libQueryName={libQueryName} filterName={libFilterName} />
                     </MockedProviderWithFragments>
                 );
             });
-            expect(comp.find(Grid)).toHaveLength(1);
-            expect(comp.find(Grid.Column)).toHaveLength(3);
+            expect(comp.find('Row')).toHaveLength(1);
+            expect(comp.find('Col')).toHaveLength(3);
         });
 
         test('Should fill info', async () => {
@@ -70,7 +70,7 @@ describe('LibraryDetail', () => {
                 comp.update();
             });
 
-            expect(comp.find(Segment).first().text()).toContain(totalCount);
+            expect(comp.find('Card').first().text()).toContain(totalCount);
         });
     });
 });

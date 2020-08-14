@@ -20,6 +20,6 @@ describe('FilterSeparator', () => {
             />
         );
 
-        expect(comp.find('Dropdown')).toHaveLength(1);
+        expect(comp.find('Select')).toHaveLength(2);
     });
 });

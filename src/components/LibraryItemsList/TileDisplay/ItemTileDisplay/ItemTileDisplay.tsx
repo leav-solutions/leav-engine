@@ -1,5 +1,6 @@
+import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant-design/icons';
+import {Button, Card} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Icon} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getPreviewUrl} from '../../../../utils';
 import {IItem} from '../../../../_types/types';
@@ -148,15 +149,15 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
                     {stateItems.selectionMode ? (
                         <Selection>
                             <CheckboxWrapper checked={isSelected} onClick={handleClick}>
-                                {isSelected && <Icon name="check" size="huge" color="grey" />}
+                                {isSelected && <CheckOutlined />}
                             </CheckboxWrapper>
                         </Selection>
                     ) : (
                         <Actions className="actions">
-                            <Button circular icon="check" onClick={switchSelectionMode} />
-                            <Button circular icon="write" onClick={() => showRecordEdition(item)} />
-                            <Button circular icon="like" />
-                            <Button circular icon="ellipsis horizontal" />
+                            <Button shape="circle" icon={<CheckOutlined />} onClick={switchSelectionMode} />
+                            <Button shape="circle" icon={<EditOutlined />} onClick={() => showRecordEdition(item)} />
+                            <Button shape="circle" icon={<HeartOutlined />} />
+                            <Button shape="circle" icon={<EllipsisOutlined />} />
                         </Actions>
                     )}
                 </ActionsWrapper>
@@ -166,10 +167,7 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
                     tile={true}
                 />
             </ImageWrapper>
-            <Card.Content>
-                <Card.Header>{item.label || item.id}</Card.Header>
-                <Card.Meta>{item.library?.id}</Card.Meta>
-            </Card.Content>
+            <Card title={item.label || item.id}>{item.library?.id}</Card>
         </CustomCard>
     );
 }

@@ -1,6 +1,6 @@
+import {Button, Modal} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Modal} from 'semantic-ui-react';
 import {allowedTypeOperator} from '../../../../../utils';
 import {
     AttributeFormat,
@@ -67,21 +67,24 @@ function ChangeAttribute({
     };
 
     return (
-        <Modal open={showModal} onClose={handleCancel} closeIcon>
-            <Modal.Content>
-                <ListAttributes
-                    attributes={stateItems.attributes}
-                    attributeSelection={attSelected}
-                    changeSelected={newAttSelected => setAttSelected(newAttSelected)}
-                    setNewAttributes={setNewAttributes}
-                />
-            </Modal.Content>
-            <Modal.Actions>
-                <Button onClick={handleCancel}>{t('change-attribute.cancel')}</Button>
-                <Button primary onClick={changeAttribute}>
+        <Modal
+            visible={showModal}
+            onCancel={handleCancel}
+            footer={[
+                <Button key="cancel" onClick={handleCancel}>
+                    {t('change-attribute.cancel')}
+                </Button>,
+                <Button key="submit" type="primary" onClick={changeAttribute}>
                     {t('change-attribute.submit')}
                 </Button>
-            </Modal.Actions>
+            ]}
+        >
+            <ListAttributes
+                attributes={stateItems.attributes}
+                attributeSelection={attSelected}
+                changeSelected={newAttSelected => setAttSelected(newAttSelected)}
+                setNewAttributes={setNewAttributes}
+            />
         </Modal>
     );
 }

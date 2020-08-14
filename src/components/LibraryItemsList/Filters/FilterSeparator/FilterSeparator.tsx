@@ -1,9 +1,10 @@
+import {CloseOutlined} from '@ant-design/icons';
+import {Button, Card, Select} from 'antd';
 import React from 'react';
-import {Button, Dropdown, DropdownProps, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {IFilter, IFilterSeparator, OperatorFilter} from '../../../../_types/types';
 
-const CustomSegment = styled(Segment)`
+const CustomSegment = styled(Card)`
     display: flex;
     justify-content: space-between;
     align-items: top;
@@ -43,15 +44,20 @@ function FilterSeparator({
         updateFilter();
     };
 
-    const changeOperator = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        setSeparatorOperator(data.value as OperatorFilter);
+    const changeOperator = (operatorFilter: OperatorFilter) => {
+        setSeparatorOperator(operatorFilter);
     };
 
     return (
-        <CustomSegment secondary disabled={!separator.active}>
-            <Dropdown options={operatorOptions} value={separatorOperator} selection onChange={changeOperator} />
+        <CustomSegment>
+            <Button disabled={!separator.active}>is disable</Button>
+            <Select value={separatorOperator} onChange={e => changeOperator(e)}>
+                {operatorOptions.map(operator => (
+                    <Select.Option value={operator.value}>{operator.text}</Select.Option>
+                ))}
+            </Select>
             <span>
-                <Button icon="remove" basic negative compact size="mini" onClick={deleteSeparator} />
+                <Button icon={<CloseOutlined />} size="small" onClick={deleteSeparator} />
             </span>
         </CustomSegment>
     );

@@ -1,4 +1,4 @@
-import {Accordion, Input, List} from 'semantic-ui-react';
+import {Collapse, Input, List} from 'antd';
 import styled from 'styled-components';
 
 export const WrapperAttribute = styled.div`
@@ -34,7 +34,7 @@ export const CustomForm = styled.form`
     width: 100%;
 `;
 
-export const CustomInput = styled(Input)`
+export const CustomInput = styled(Input.Search)`
     &&& {
         input {
             background: hsl(0, 0%, 95%);
@@ -43,11 +43,11 @@ export const CustomInput = styled(Input)`
     }
 `;
 
-export const CustomAccordion = styled(Accordion)`
+export const CustomAccordion = styled(Collapse)`
     width: 100%;
 `;
 
-export const CustomAccordionTitle = styled(Accordion.Title)`
+export const CustomAccordionTitle = styled(Collapse)`
     & {
         width: 100%;
         padding: 0;
@@ -57,7 +57,7 @@ export const CustomAccordionTitle = styled(Accordion.Title)`
     }
 `;
 
-export const CustomAccordionContent = styled(Accordion.Content)`
+export const CustomAccordionContent = styled(Collapse.Panel)`
     width: 100%;
 `;
 

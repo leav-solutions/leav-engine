@@ -1,6 +1,7 @@
+import {AppstoreFilled, MenuOutlined, PlusOutlined} from '@ant-design/icons';
+import {Dropdown, Menu} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Dropdown, Icon} from 'semantic-ui-react';
 
 interface IView {
     value: number;
@@ -26,32 +27,35 @@ function SelectView(): JSX.Element {
         setCurrentView(view);
     };
 
-    return (
-        <Dropdown text={currentView?.text ?? t('select-view.default-view')}>
-            <Dropdown.Menu>
-                {views.map(view => (
-                    <Dropdown.Item key={view.value} value={view.value} onClick={() => changeView(view)}>
-                        <Icon name={view.type === 'list' ? 'sidebar' : 'th large'} />
-                        {view.text}
-                    </Dropdown.Item>
-                ))}
+    const menu = (
+        <Menu>
+            {views.map(view => (
+                <Menu.Item key={view.value} onClick={() => changeView(view)}>
+                    {view.type === 'list' ? <MenuOutlined /> : <AppstoreFilled />} {view.text}
+                </Menu.Item>
+            ))}
 
-                <Dropdown.Divider />
-                <Dropdown.Item>
-                    <span>
-                        <Icon name="plus" />
-                        <Icon name="sidebar" />
-                    </span>
-                    {t('select-view.add-view-list')}
-                </Dropdown.Item>
-                <Dropdown.Item>
-                    <span>
-                        <Icon name="plus" />
-                        <Icon name="th large" />
-                    </span>
-                    {t('select-view.add-view-tile')}
-                </Dropdown.Item>
-            </Dropdown.Menu>
+            <Menu.Divider />
+            <Menu.Item>
+                <span>
+                    <PlusOutlined />
+                    <MenuOutlined />
+                </span>
+                {t('select-view.add-view-list')}
+            </Menu.Item>
+            <Menu.Item>
+                <span>
+                    <PlusOutlined />
+                    <AppstoreFilled />
+                </span>
+                {t('select-view.add-view-tile')}
+            </Menu.Item>
+        </Menu>
+    );
+
+    return (
+        <Dropdown overlay={menu}>
+            <span>{currentView?.text ?? t('select-view.default-view')}</span>
         </Dropdown>
     );
 }

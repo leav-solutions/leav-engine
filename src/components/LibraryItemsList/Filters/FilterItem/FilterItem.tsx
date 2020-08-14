@@ -1,6 +1,7 @@
+import {CloseOutlined} from '@ant-design/icons';
+import {Button, Card, Checkbox, Select} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, Dropdown, DropdownProps, Segment} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {allowedTypeOperator} from '../../../../utils';
 import {
@@ -171,8 +172,8 @@ function FilterItem({
         });
     };
 
-    const changeCondition = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newCondition = (data?.value ?? '').toString() as ConditionFilter;
+    const changeCondition = (conditionFilter: ConditionFilter) => {
+        const newCondition = conditionFilter;
 
         setFilters(filters =>
             filters.reduce((acc, f) => {
@@ -184,8 +185,8 @@ function FilterItem({
         );
     };
 
-    const handleOperatorChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newOperator = (data.value as OperatorFilter) ?? OperatorFilter.and;
+    const handleOperatorChange = (operatorFilter: OperatorFilter) => {
+        const newOperator = operatorFilter ?? OperatorFilter.and;
 
         setFilterOperator(newOperator);
     };
@@ -199,7 +200,8 @@ function FilterItem({
                 showModal={showModal}
                 setShowModal={setShowModal}
             />
-            <Segment secondary disabled={!filter.active}>
+            <Card>
+                <Button disabled={!filter.active}>Usable</Button>
                 <Grid>
                     <GridRow key={filter.key}>
                         <GridColumn>
@@ -208,36 +210,35 @@ function FilterItem({
 
                         <GridColumn flex={5}>
                             {filter.operator ? (
-                                <Dropdown
-                                    floating
-                                    inline
-                                    value={filterOperator}
-                                    options={operatorOptions}
-                                    onChange={handleOperatorChange}
-                                />
+                                <Select value={filterOperator} onChange={e => handleOperatorChange(e)}>
+                                    {operatorOptions.map(operator => (
+                                        <Select.Option key={operator.value} value={operator.value}>
+                                            {operator.text}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
                             ) : (
                                 t('filter-item.no-operator')
                             )}
 
                             <CurrentAttribute onClick={() => setShowModal(true)}>{filter.attributeId}</CurrentAttribute>
 
-                            <Dropdown
-                                floating
-                                inline
-                                value={filter.condition}
-                                onChange={changeCondition}
-                                options={conditionOptionsByType}
-                                direction="left"
-                            />
+                            <Select value={filter.condition} onChange={(e: ConditionFilter) => changeCondition(e)}>
+                                {conditionOptionsByType.map(condition => (
+                                    <Select.Option key={condition.value} value={condition.value}>
+                                        {condition.text}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </GridColumn>
 
-                        <Button icon="remove" basic negative compact size="mini" onClick={deleteFilterItem} />
+                        <Button icon={<CloseOutlined />} size="small" onClick={deleteFilterItem} />
                     </GridRow>
                     <GridRow>
                         <SwitchFormFormat filter={filter} updateFilterValue={updateFilterValue} />
                     </GridRow>
                 </Grid>
-            </Segment>
+            </Card>
         </>
     );
 }

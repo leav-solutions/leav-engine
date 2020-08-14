@@ -1,7 +1,7 @@
+import {Form, Input} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {IFilter} from '../../../../../_types/types';
-import {TextAreaProps, Form, TextArea} from 'semantic-ui-react';
 
 const TextAreaWrapper = styled.div`
     margin: 1rem 0 0 0;
@@ -19,8 +19,8 @@ interface IFromTextProps {
 const FormText = ({filter, updateFilterValue}: IFromTextProps) => {
     const [textAreaRows, setTextAreaRows] = useState<number>(1);
 
-    const handleChange = (event: React.FormEvent<HTMLTextAreaElement>, data: TextAreaProps) => {
-        const newValue = (data?.value ?? '').toString();
+    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newValue = (event.target.value ?? '').toString();
         updateFilterValue(newValue);
 
         const rows = newValue.split('\n').length;
@@ -31,7 +31,7 @@ const FormText = ({filter, updateFilterValue}: IFromTextProps) => {
     return (
         <CustomForm>
             <TextAreaWrapper>
-                <TextArea rows={textAreaRows} value={filter.value} onChange={handleChange} />
+                <Input.TextArea rows={textAreaRows} value={filter.value} onChange={e => handleChange(e)} />
             </TextAreaWrapper>
         </CustomForm>
     );

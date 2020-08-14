@@ -1,6 +1,7 @@
+import {LogoutOutlined} from '@ant-design/icons';
+import {Drawer, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Icon, Menu, Sidebar} from 'semantic-ui-react';
 
 interface IUserPanelProps {
     userPanelVisible: boolean;
@@ -11,27 +12,28 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
     const {t} = useTranslation();
 
     return (
-        <Sidebar
-            as={Menu}
-            inverted
-            vertical
-            animation="overlay"
-            direction="right"
+        <Drawer
             visible={userPanelVisible}
-            onHide={hideUserPanel}
-            width="wide"
+            onClose={hideUserPanel}
+            placement="right"
+            closable={false}
+            getContainer={false}
+            style={{position: 'absolute'}}
+            bodyStyle={{padding: 0}}
         >
-            <Menu.Item>{t('menu.user_menu.profil')}</Menu.Item>
-            <Menu.Item>{t('menu.user_menu.tasks')}</Menu.Item>
-            <Menu.Item>{t('menu.user_menu.shortcuts')}</Menu.Item>
-            <Menu.Item>{t('menu.user_menu.events')}</Menu.Item>
-            <Menu.Item>{t('menu.user_menu.admin')}</Menu.Item>
-            <Menu.Item>{t('menu.user_menu.leav_engine')}</Menu.Item>
-            <Menu.Item>
-                <Icon name="log out" />
-                {t('menu.user_menu.logout')}
-            </Menu.Item>
-        </Sidebar>
+            <Menu theme="dark" style={{height: '100%'}} mode="inline">
+                <Menu.Item>{t('menu.user_menu.profil')}</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.tasks')}</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.shortcuts')}</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.events')}</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.admin')}</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.leav_engine')}</Menu.Item>
+                <Menu.Item>
+                    <LogoutOutlined />
+                    {t('menu.user_menu.logout')}
+                </Menu.Item>
+            </Menu>
+        </Drawer>
     );
 }
 

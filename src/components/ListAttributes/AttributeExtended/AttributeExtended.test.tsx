@@ -29,10 +29,7 @@ describe('AttributeExtended', () => {
                         stateListAttribute={ListAttributeInitialState}
                         dispatchListAttribute={jest.fn()}
                         attribute={mockAttribute}
-                        handleCheckboxChange={jest.fn()}
-                        handleRadioChange={jest.fn()}
                         previousDepth={0}
-                        itemClick={jest.fn()}
                     />
                 </MockedProviderWithFragments>
             );

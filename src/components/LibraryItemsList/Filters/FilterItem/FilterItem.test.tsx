@@ -1,38 +1,14 @@
+import {Checkbox, Input, Select} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {Checkbox, Dropdown, TextArea} from 'semantic-ui-react';
-import {
-    AttributeFormat,
-    ConditionFilter,
-    DisplayListItemTypes,
-    FilterTypes,
-    IFilter,
-    OperatorFilter,
-    OrderSearch
-} from '../../../../_types/types';
+import {AttributeFormat, ConditionFilter, FilterTypes, IFilter, OperatorFilter} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListState} from '../../LibraryItemsListReducer';
+import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import FilterItem from './FilterItem';
 
 describe('FilterItem', () => {
-    const stateItems: LibraryItemListState = {
-        libQuery: 'test',
-        libFilter: 'test',
-        libSearchableField: 'test',
-        itemsSortField: 'test',
-        itemsSortOrder: OrderSearch.asc,
-        itemsTotalCount: 0,
-        offset: 0,
-        pagination: 20,
-        displayType: DisplayListItemTypes.listSmall,
-        showFilters: false,
-        selectionMode: false,
-        itemsSelected: {},
-        queryFilters: [],
-        attributes: [],
-        columns: []
-    };
+    const stateItems = LibraryItemListInitialState;
 
     const mockFilter: IFilter = {
         type: FilterTypes.filter,
@@ -94,7 +70,7 @@ describe('FilterItem', () => {
             );
         });
 
-        expect(comp.find(Dropdown)).toHaveLength(1);
+        expect(comp.find(Select)).toHaveLength(1);
     });
 
     test('should have a TextArea', async () => {
@@ -118,6 +94,6 @@ describe('FilterItem', () => {
             );
         });
 
-        expect(comp.find(TextArea)).toHaveLength(1);
+        expect(comp.find(Input.TextArea)).toHaveLength(1);
     });
 });

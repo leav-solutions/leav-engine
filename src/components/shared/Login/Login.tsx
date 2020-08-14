@@ -1,6 +1,7 @@
+import {LockOutlined, SendOutlined, UserOutlined} from '@ant-design/icons';
+import {Alert, Button, Card, Form, Input, Spin} from 'antd';
 import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button} from 'semantic-ui-react';
 import styles from './login.module.css';
 
 interface ILoginProps {
@@ -74,82 +75,67 @@ const Login = ({onSuccess, message, url}: ILoginProps): JSX.Element => {
     return (
         <>
             <div className={styles.loginBackground} />
-            <div className={`ui middle aligned center aligned grid ${styles.loginContainer}`}>
-                <div className={`column ${styles.loginBlock}`}>
-                    <h2 className={`${styles.loginHeader} ui image header`}>{t('login.header')}</h2>
-                    <form className="ui large form">
-                        <div className="ui segment">
-                            <div className="field">
-                                <div className="ui left icon input ">
-                                    <i className="user icon" />
-                                    <input
-                                        type="text"
-                                        name="email"
-                                        placeholder={t('login.email')}
-                                        autoFocus
-                                        value={login}
-                                        onChange={extractValueFromEventAndThen(setLogin)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="field">
-                                <div className="ui left icon input">
-                                    <i className="lock icon" />
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        placeholder={t('login.password')}
-                                        value={password}
-                                        onChange={extractValueFromEventAndThen(setPassword)}
-                                    />
-                                </div>
-                            </div>
+            <div className={styles.loginContainer}>
+                <Card title={<h2>{t('login.header')}</h2>} style={{width: '30rem'}}>
+                    <Form>
+                        <Form.Item>
+                            <Input
+                                prefix={<UserOutlined />}
+                                type="text"
+                                name="email"
+                                placeholder={t('login.email')}
+                                autoFocus
+                                value={login}
+                                onChange={extractValueFromEventAndThen(setLogin)}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Input
+                                prefix={<LockOutlined />}
+                                type="password"
+                                name="password"
+                                placeholder={t('login.password')}
+                                value={password}
+                                onChange={extractValueFromEventAndThen(setPassword)}
+                            />
+                        </Form.Item>
+                        <Form.Item>
                             {isLoading ? (
-                                <div className="ui icon message teal">
-                                    <i className="notched circle loading icon" />
-                                    <div className="content">
-                                        <div className="header">{t('login.loading.header')}</div>
-                                        <p>{t('login.loading.text')}</p>
-                                    </div>
-                                </div>
+                                <Alert
+                                    message={t('login.loading.header')}
+                                    description={t('login.loading.text')}
+                                    icon={<Spin />}
+                                    type="warning"
+                                    showIcon
+                                />
                             ) : (
                                 <Button
-                                    fluid
                                     size="large"
-                                    primary
+                                    type="primary"
                                     loading={isLoading}
                                     disabled={isLoading}
                                     onClick={proceedAuth}
-                                    type="submit"
-                                    icon
-                                    labelPosition="left"
+                                    htmlType="submit"
+                                    icon={<SendOutlined />}
+                                    block
                                 >
-                                    <i className="send icon" />
                                     {t('login.submit')}
                                 </Button>
                             )}
-                        </div>
-                    </form>
+                        </Form.Item>
+                    </Form>
                     {loginError ? (
-                        <div className="ui icon message red">
-                            <i className="lock icon" />
-                            <div className="content">
-                                <div className="header">{t('login.apologize_header')}</div>
-                                <p>{t('login.apologize')}</p>
-                                <p>{t('login.error.' + loginError)}</p>
-                            </div>
-                        </div>
+                        <Alert
+                            message={t('login.apologize')}
+                            description={t('login.error.' + loginError)}
+                            type="error"
+                            showIcon
+                        />
                     ) : null}
                     {message ? (
-                        <div className="ui icon message orange">
-                            <i className="lock icon" />
-                            <div className="content">
-                                <p>{t('login.apologize')}</p>
-                                <p>{t(message)}</p>
-                            </div>
-                        </div>
+                        <Alert message={t('login.apologize')} description={t(message)} type="warning" showIcon />
                     ) : null}
-                </div>
+                </Card>
             </div>
         </>
     );

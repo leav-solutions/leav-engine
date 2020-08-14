@@ -1,34 +1,45 @@
-.loginBackground{
-    position:absolute;
-    top:0;
-    right:0;
-    bottom:0;
-    left:0;
+.loginBackground {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     background-image: linear-gradient(to right bottom, #2185d0, #009ad7, #00aabf, #00b58a, #21ba45);
     background-size: 200% 100%;
     animation: Gradient 15s ease infinite;
+    z-index: -1;
 }
-.loginContainer{
-    height:100%;
+
+.loginContainer {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 10%;
 }
-.loginHeader{
+
+.loginHeader {
     mix-blend-mode: multiply;
     color: #aaa !important;
 }
-.loginBlock{
-    max-width:450px;
-    height:100%;
-    box-sizing:border-box;
-    padding-top:200px !important;
+
+.loginBlock {
+    max-width: 450px;
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 200px !important;
 }
+
 @keyframes Gradient {
-	0% {
-		background-position: 0% 0%
-	}
-	50% {
-		background-position: 100% 0%
-	}
-	100% {
-		background-position: 0% 0%
-	}
+    0% {
+        background-position: 0% 0%
+    }
+
+    50% {
+        background-position: 100% 0%
+    }
+
+    100% {
+        background-position: 0% 0%
+    }
 }

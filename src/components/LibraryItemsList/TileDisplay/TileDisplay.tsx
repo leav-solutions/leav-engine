@@ -1,5 +1,5 @@
+import {Card, Menu} from 'antd';
 import React, {useState} from 'react';
-import {Menu, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
@@ -21,7 +21,7 @@ const WrapperItem = styled.div`
     grid-gap: 1rem;
 `;
 
-const CustomSegment = styled(Segment)`
+const CustomSegment = styled(Card)`
     &&& {
         height: calc(100% - 13rem);
         overflow-y: scroll;
@@ -31,7 +31,7 @@ const CustomSegment = styled(Segment)`
     }
 `;
 
-const CustomPagination = styled(Segment)`
+const CustomPagination = styled(Card)`
     &&& {
         margin-top: 0;
         border-radius: 0 0 0.25rem 0.25rem;
@@ -70,8 +70,8 @@ function TileDisplay({stateItems, dispatchItems}: IItemsTitleDisplayProps): JSX.
                     ))}
                 </WrapperItem>
             </CustomSegment>
-            <CustomPagination secondary>
-                <Menu pagination>
+            <CustomPagination>
+                <Menu>
                     <LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />
                 </Menu>
             </CustomPagination>

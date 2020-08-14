@@ -1,7 +1,8 @@
+import {Form, Radio} from 'antd';
+import {CheckboxChangeEvent} from 'antd/lib/checkbox';
 import React from 'react';
-import {IFilter} from '../../../../../_types/types';
-import {Form, Checkbox, CheckboxProps} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {IFilter} from '../../../../../_types/types';
 
 const CustomForm = styled(Form)`
     display: flex;
@@ -16,37 +17,25 @@ interface IFormBooleanProps {
 }
 
 function FormBoolean({filter, updateFilterValue}: IFormBooleanProps): JSX.Element {
-    const handleChange = (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
-        const newFilterValue = !!data.value;
+    const handleChange = (event: CheckboxChangeEvent) => {
+        const newFilterValue = !!event.target.value;
         updateFilterValue(newFilterValue);
     };
 
     return (
-        <>
-            <CustomForm>
-                <Form.Field>
-                    <Checkbox
-                        radio
-                        label="true"
-                        name="checkboxRadioGroup"
-                        checked={!!filter.value}
-                        value={1}
-                        onChange={handleChange}
-                    />
-                </Form.Field>
+        <CustomForm>
+            <Form.Item>
+                <Radio name="checkboxRadioGroup" checked={!!filter.value} value={1} onChange={e => handleChange(e)}>
+                    True
+                </Radio>
+            </Form.Item>
 
-                <Form.Field>
-                    <Checkbox
-                        radio
-                        label="false"
-                        name="checkboxRadioGroup"
-                        checked={!filter.value}
-                        value={0}
-                        onChange={handleChange}
-                    />
-                </Form.Field>
-            </CustomForm>
-        </>
+            <Form.Item>
+                <Radio name="checkboxRadioGroup" checked={!filter.value} value={0} onChange={e => handleChange(e)}>
+                    False
+                </Radio>
+            </Form.Item>
+        </CustomForm>
     );
 }
 

@@ -1,6 +1,6 @@
+import {Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Dropdown} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getSortFieldByAttributeType} from '../../../../utils';
 import {AttributeType, ITableHeader, OrderSearch} from '../../../../_types/types';
@@ -55,27 +55,28 @@ function HeaderTableCell({cell, stateItems, dispatchItems, setOpenChangeColumns}
 
     return (
         <HeaderTableCellStyled>
-            <Dropdown text={cell.display}>
-                <Dropdown.Menu>
-                    <Dropdown.Item
-                        text={t('items_list.table.header-cell-menu.sort-ascend')}
-                        onClick={() => handleAsc(cell.name, cell.type)}
-                    />
-                    <Dropdown.Item
-                        text={t('items_list.table.header-cell-menu.sort-descend')}
-                        onClick={() => handleDesc(cell.name, cell.type)}
-                    />
-                    <Dropdown.Item text={t('items_list.table.header-cell-menu.cancel-sort')} onClick={cancelSort} />
-                    <Dropdown.Divider />
-                    <Dropdown.Item text={t('items_list.table.header-cell-menu.sort-advance')} />
-                    <Dropdown.Divider />
-                    <Dropdown.Item text={t('items_list.table.header-cell-menu.regroup')} />
-                    <Dropdown.Divider />
-                    <Dropdown.Item
-                        text={t('items_list.table.header-cell-menu.choose-columns')}
-                        onClick={() => setOpenChangeColumns(true)}
-                    />
-                </Dropdown.Menu>
+            <Dropdown
+                overlay={
+                    <Menu>
+                        <Menu.Item onClick={() => handleAsc(cell.name, cell.type)}>
+                            {t('items_list.table.header-cell-menu.sort-ascend')}
+                        </Menu.Item>
+                        <Menu.Item onClick={() => handleDesc(cell.name, cell.type)}>
+                            {t('items_list.table.header-cell-menu.sort-descend')}
+                        </Menu.Item>
+                        <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Item>{t('items_list.table.header-cell-menu.sort-advance')}</Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Item>{t('items_list.table.header-cell-menu.regroup')}</Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Item onClick={() => setOpenChangeColumns(true)}>
+                            {t('items_list.table.header-cell-menu.choose-columns')}
+                        </Menu.Item>
+                    </Menu>
+                }
+            >
+                <span>{cell.display}</span>
             </Dropdown>
         </HeaderTableCellStyled>
     );

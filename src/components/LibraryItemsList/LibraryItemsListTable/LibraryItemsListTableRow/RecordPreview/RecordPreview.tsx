@@ -1,5 +1,4 @@
 import React from 'react';
-import {Image} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../../../utils/utils';
 import {PreviewSize} from '../../../../../_types/types';
@@ -69,8 +68,9 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
     if (image) {
         return (
             <ImagePreview size={size}>
-                <Image
+                <img
                     src={image}
+                    alt="record preview"
                     style={{
                         ...style,
                         maxHeight: `calc(${getPreviewSize(size)} - 0.5rem)`,
@@ -133,7 +133,7 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
     if (image) {
         return (
             <ImagePreviewTile>
-                <Image src={image} wrapped ui={false} style={{...style}} />
+                <img src={image} alt="record preview" style={{...style}} />
             </ImagePreviewTile>
         );
     }

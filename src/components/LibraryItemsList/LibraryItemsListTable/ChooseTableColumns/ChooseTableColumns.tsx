@@ -1,6 +1,6 @@
+import {Button, Modal} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Modal} from 'semantic-ui-react';
 import {IAttribute, IAttributesChecked, IItemsColumn} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
 import {
@@ -85,23 +85,26 @@ function ChooseTableColumns({
     };
 
     return (
-        <Modal open={openChangeColumns} onClose={() => setOpenChangeColumns(false)} closeIcon size="small">
-            <Modal.Header>{t('table-columns-selection.header')}</Modal.Header>
-            <Modal.Content>
-                <ListAttributes
-                    attributes={stateItems.attributes}
-                    useCheckbox
-                    attributesChecked={attributesChecked}
-                    setAttributesChecked={setAttributesChecked}
-                    setNewAttributes={setNewAttributes}
-                />
-            </Modal.Content>
-            <Modal.Actions>
-                <Button onClick={handleCancel}>{t('table-columns-selection.cancel')}</Button>
-                <Button onClick={handleSubmit} primary>
+        <Modal
+            visible={openChangeColumns}
+            onCancel={() => setOpenChangeColumns(false)}
+            title={t('table-columns-selection.header')}
+            footer={[
+                <Button key="Cancel" onClick={handleCancel}>
+                    {t('table-columns-selection.cancel')}
+                </Button>,
+                <Button key="Submit" onClick={handleSubmit} type="primary">
                     {t('table-columns-selection.submit')}
                 </Button>
-            </Modal.Actions>
+            ]}
+        >
+            <ListAttributes
+                attributes={stateItems.attributes}
+                useCheckbox
+                attributesChecked={attributesChecked}
+                setAttributesChecked={setAttributesChecked}
+                setNewAttributes={setNewAttributes}
+            />
         </Modal>
     );
 }

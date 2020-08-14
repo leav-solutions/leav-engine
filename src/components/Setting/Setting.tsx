@@ -1,7 +1,7 @@
 import {useQuery} from '@apollo/client';
+import {Card, Select} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Container, Dropdown, DropdownProps, Header, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getAvailableLangs, getLangAndDefaultLang} from '../../queries/cache/lang/getLangQuery';
 import {AvailableLanguage} from '../../_types/types';
@@ -22,8 +22,8 @@ function Setting(): JSX.Element {
         text: l
     }));
 
-    const changeLang = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        i18nClient.changeLanguage(data.value ?? (lang[0] as any));
+    const changeLang = (value: string) => {
+        i18nClient.changeLanguage(value ?? (lang[0] as any));
 
         // Update cache lang infos
         const newLang = [i18nClient.language, i18nClient.language];
@@ -42,24 +42,18 @@ function Setting(): JSX.Element {
     };
 
     return (
-        <Container>
+        <div>
             <Wrapper>
-                <Segment>
-                    <Header>{t('settings.header')}</Header>
-                    <Dropdown
-                        selection
-                        fluid
-                        options={langOption}
-                        defaultValue={lang[0]}
-                        onChange={changeLang}
-                        labeled
-                        button
-                        className="icon"
-                        icon="flag"
-                    />
-                </Segment>
+                <Card>
+                    <h1>{t('settings.header')}</h1>
+                    <Select onChange={value => changeLang(value.toString())}>
+                        {langOption.map(lang => (
+                            <Select.Option value={lang.value}>{lang.text}</Select.Option>
+                        ))}
+                    </Select>
+                </Card>
             </Wrapper>
-        </Container>
+        </div>
     );
 }
 

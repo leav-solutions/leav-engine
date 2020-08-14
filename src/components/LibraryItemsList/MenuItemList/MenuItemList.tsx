@@ -1,6 +1,7 @@
+import {FilterOutlined, PlusOutlined, RedoOutlined} from '@ant-design/icons';
+import {Button, Menu, Select, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Dropdown, DropdownProps, Menu, Popup} from 'semantic-ui-react';
 import {DisplayListItemTypes} from '../../../_types/types';
 import LibraryItemsListMenuPagination from '../LibraryItemsListMenuPagination';
 import {
@@ -48,8 +49,8 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
         }
     ];
 
-    const changeDisplay = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-        const newDisplay = data.value?.toString();
+    const changeDisplay = (value: string) => {
+        const newDisplay = value?.toString();
 
         if (newDisplay) {
             dispatchItems({
@@ -67,14 +68,13 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
     };
 
     return (
-        <>
+        <Menu>
             {!stateItems.showFilters && (
                 <>
                     <Menu.Item>
-                        <Popup
-                            content={t('items_list.show-filter-panel')}
-                            trigger={<Button icon="filter" onClick={toggleShowFilter} />}
-                        />
+                        <Tooltip title={t('items_list.show-filter-panel')}>
+                            <Button icon={<FilterOutlined />} onClick={toggleShowFilter} />
+                        </Tooltip>
                     </Menu.Item>
                     <Menu.Item>
                         <SelectView />
@@ -89,24 +89,28 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
                 <SearchItems dispatchItems={dispatchItems} />
             </Menu.Item>
 
-            <Menu.Menu position="right">
+            <Menu.SubMenu>
                 <Menu.Item>
-                    <Button icon="plus" content={t('items_list.new')} />
+                    <Button icon={<PlusOutlined />}>{t('items_list.new')}</Button>
                 </Menu.Item>
 
-                <Dropdown
-                    text={t('items_list.display_type')}
-                    item
-                    options={displayOptions}
+                <Select
+                    placeholder={t('items_list.display_type')}
                     defaultValue={stateItems.displayType}
-                    onChange={changeDisplay}
-                />
+                    onChange={value => changeDisplay(value)}
+                >
+                    {displayOptions.map(display => (
+                        <Select.Option key={display.key} value={display.value}>
+                            {display.text}
+                        </Select.Option>
+                    ))}
+                </Select>
 
                 <Menu.Item>
-                    <Button icon="redo" onClick={() => refetch && refetch()}></Button>
+                    <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()}></Button>
                 </Menu.Item>
-            </Menu.Menu>
-        </>
+            </Menu.SubMenu>
+        </Menu>
     );
 }
 

@@ -1,6 +1,6 @@
+import {Button, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Dropdown, Menu} from 'semantic-ui-react';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -88,36 +88,31 @@ function MenuItemListSelected({stateItems, dispatchItems}: IMenuItemListSelected
     };
 
     return (
-        <>
-            <Menu.Item>
-                <Dropdown
-                    text={
-                        stateItems.allSelected
-                            ? t('menu-selection.all-selected-enabled')
-                            : t('menu-selection.nb-selected', {nb: countItemsSelected})
-                    }
-                >
-                    <Dropdown.Menu>
-                        <Dropdown.Item
-                            onClick={selectVisible}
-                            text={t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
-                        />
-                        <Dropdown.Item
-                            onClick={selectAll}
-                            text={t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
-                        />
-                        <Dropdown.Item onClick={unselectAll} text={t('menu-selection.unselect-all')} />
-                    </Dropdown.Menu>
-                </Dropdown>
-            </Menu.Item>
-            <Menu.Item>
-                <Dropdown text={t('menu-selection.actions')}></Dropdown>
-            </Menu.Item>
+        <Menu>
+            <Menu.SubMenu
+                title={
+                    stateItems.allSelected
+                        ? t('menu-selection.all-selected-enabled')
+                        : t('menu-selection.nb-selected', {nb: countItemsSelected})
+                }
+            >
+                <Menu.Item onClick={selectVisible}>
+                    {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
+                </Menu.Item>
+                <Menu.Item onClick={selectAll}>
+                    {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
+                </Menu.Item>
+                <Menu.Item onClick={unselectAll}>{t('menu-selection.unselect-all')}</Menu.Item>
+            </Menu.SubMenu>
+
+            <Menu.SubMenu title={t('menu-selection.actions')}>
+                <Menu.Item>some actions</Menu.Item>
+            </Menu.SubMenu>
 
             <Menu.Item>
                 <Button onClick={disableModeSelection}>{t('menu-selection.quit')}</Button>
             </Menu.Item>
-        </>
+        </Menu>
     );
 }
 

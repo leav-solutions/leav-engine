@@ -1,6 +1,7 @@
+import {ApartmentOutlined, DownOutlined, UpOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
+import {Button, Checkbox, Radio, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {Button, Checkbox, Icon, Loader, Radio} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getTreeAttributesQuery} from '../../../../queries/trees/getTreeAttributesQuery';
 import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../../../utils';
@@ -14,7 +15,6 @@ import {
 import {
     CustomAccordion,
     CustomAccordionContent,
-    CustomAccordionTitle,
     RowAttribute,
     SmallText,
     TextAttribute,
@@ -144,43 +144,48 @@ function AttributeLinkedTree({
     return (
         <WrapperAttribute>
             <CustomAccordion>
-                <CustomAccordionTitle active={isAccordionActive} index={attribute.id}>
-                    <Button
-                        icon={isAccordionActive ? 'angle up' : 'angle down'}
-                        loading={called && loading}
-                        onClick={changeCurrentAccordion}
-                        compact
-                        size="mini"
-                        circular
-                    />
-                    <RowAttribute onClick={handleClick}>
-                        <TextAttribute>
-                            {stateListAttribute.lang && localizedLabel(attribute.label, stateListAttribute.lang) ? (
-                                <span>
-                                    {localizedLabel(attribute.label, stateListAttribute.lang)}
-                                    <SmallText>{attribute.id}</SmallText>
-                                </span>
-                            ) : (
-                                attribute.id
+                <CustomAccordionContent
+                    key={attribute.id}
+                    header={
+                        <>
+                            <Button
+                                icon={isAccordionActive ? <UpOutlined /> : <DownOutlined />}
+                                loading={called && loading}
+                                onClick={changeCurrentAccordion}
+                                size="small"
+                                shape="circle"
+                            />
+                            <RowAttribute onClick={handleClick}>
+                                <TextAttribute>
+                                    {stateListAttribute.lang &&
+                                    localizedLabel(attribute.label, stateListAttribute.lang) ? (
+                                        <span>
+                                            {localizedLabel(attribute.label, stateListAttribute.lang)}
+                                            <SmallText>{attribute.id}</SmallText>
+                                        </span>
+                                    ) : (
+                                        attribute.id
+                                    )}
+                                    <span>
+                                        <ApartmentOutlined />
+                                    </span>
+                                </TextAttribute>
+                                {stateListAttribute.useCheckbox && (
+                                    <Checkbox checked={isChecked} onChange={handleClick} />
+                                )}
+                            </RowAttribute>
+
+                            {stateListAttribute.attributeSelection && (
+                                <Radio
+                                    checked={stateListAttribute.attributeSelection === attribute.id}
+                                    onChange={handleRadioChange}
+                                />
                             )}
-                            <span>
-                                <Icon name="tree" />
-                            </span>
-                        </TextAttribute>
-                        {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
-                    </RowAttribute>
-
-                    {stateListAttribute.attributeSelection && (
-                        <Radio
-                            checked={stateListAttribute.attributeSelection === attribute.id}
-                            onChange={handleRadioChange}
-                        />
-                    )}
-                </CustomAccordionTitle>
-
-                <CustomAccordionContent active={isAccordionActive}>
+                        </>
+                    }
+                >
                     {loading ? (
-                        <Loader />
+                        <Spin />
                     ) : (
                         <WrapperContentAttribute>
                             {linkedAttributes.map(linkedAttribute => (

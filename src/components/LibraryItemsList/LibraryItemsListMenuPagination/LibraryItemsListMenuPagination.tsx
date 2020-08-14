@@ -1,6 +1,7 @@
+import {Button, Dropdown, Menu} from 'antd';
+import SubMenu from 'antd/lib/menu/SubMenu';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Dropdown} from 'semantic-ui-react';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -63,15 +64,9 @@ function LibraryItemsListMenuPagination({
 
     return (
         <Dropdown
-            text={t('items-list-row.nb-elements', {
-                nb1: offsetDisplay,
-                nb2: nextOffsetDisplay,
-                nbItems: stateItems.itemsTotalCount
-            })}
-        >
-            <Dropdown.Menu>
-                <Dropdown.Header>
-                    <div>
+            overlay={
+                <Menu>
+                    <SubMenu>
                         <Button onClick={selectAll}>
                             {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
                         </Button>
@@ -79,23 +74,33 @@ function LibraryItemsListMenuPagination({
                         <Button onClick={selectVisible}>
                             {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
                         </Button>
-                    </div>
-                </Dropdown.Header>
-                <Dropdown.Header>{t('items-menu-dropdown.items-display')}</Dropdown.Header>
-                {paginationOptions.map(pagOption => (
-                    <Dropdown.Item
-                        key={pagOption}
-                        active={stateItems.pagination === pagOption}
-                        onClick={() =>
-                            dispatchItems({
-                                type: LibraryItemListReducerActionTypes.SET_PAGINATION,
-                                pagination: pagOption
-                            })
-                        }
-                        content={pagOption}
-                    />
-                ))}
-            </Dropdown.Menu>
+                    </SubMenu>
+                    <SubMenu title={t('items-menu-dropdown.items-display')}>
+                        {paginationOptions.map(pagOption => (
+                            <Menu.Item
+                                key={pagOption}
+                                active={stateItems.pagination === pagOption}
+                                onClick={() =>
+                                    dispatchItems({
+                                        type: LibraryItemListReducerActionTypes.SET_PAGINATION,
+                                        pagination: pagOption
+                                    })
+                                }
+                            >
+                                pagOption
+                            </Menu.Item>
+                        ))}
+                    </SubMenu>
+                </Menu>
+            }
+        >
+            <span>
+                {t('items-list-row.nb-elements', {
+                    nb1: offsetDisplay,
+                    nb2: nextOffsetDisplay,
+                    nbItems: stateItems.itemsTotalCount
+                })}
+            </span>
         </Dropdown>
     );
 }

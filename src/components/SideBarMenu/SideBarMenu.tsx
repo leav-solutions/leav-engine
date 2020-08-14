@@ -1,10 +1,14 @@
+import {BookOutlined, DatabaseOutlined, SettingOutlined, UnorderedListOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import React from 'react';
+import {Drawer, Menu} from 'antd';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {NavLink} from 'react-router-dom';
-import {Divider, Icon, Menu, Sidebar} from 'semantic-ui-react';
+import {NavLink, useLocation} from 'react-router-dom';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
-import SideBarLibraryList from './SideBarLibraryList';
+import {getLang} from '../../queries/cache/lang/getLangQuery';
+import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
+import {localizedLabel} from '../../utils';
+import {ILibrary} from '../../_types/types';
 
 interface ISideBarMenuProps {
     visible: boolean;
@@ -13,9 +17,29 @@ interface ISideBarMenuProps {
 
 function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
     const {t} = useTranslation();
+    const location = useLocation();
+
+    const activeKeys = location.pathname.split('/');
 
     const {data: activeLib} = useQuery(getActiveLibrary);
     const {activeLibId, activeLibQueryName, activeLibName, activeLibFilterName} = activeLib ?? {};
+
+    const {data: dataLang} = useQuery(getLang);
+    const {lang} = dataLang ?? {lang: []};
+
+    const [libraries, setLibraries] = useState<ILibrary[]>([]);
+
+    const {loading, data, error} = useQuery(getLibrariesListQuery);
+
+    useEffect(() => {
+        if (!loading) {
+            setLibraries(data?.libraries?.list ?? []);
+        }
+    }, [loading, data, error]);
+
+    if (error) {
+        return <div>error</div>;
+    }
 
     const checkActive = (match: any, location: any) => {
         //some additional logic to verify you are in the home URI
@@ -25,51 +49,65 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
     };
 
     return (
-        <Sidebar
-            as={Menu}
-            inverted
-            vertical
-            animation="overlay"
-            direction="left"
+        <Drawer
             visible={visible}
-            onHide={hide}
-            width="wide"
+            onClose={hide}
+            placement="left"
+            closable={false}
+            getContainer={false}
+            style={{position: 'absolute'}}
+            bodyStyle={{padding: 0}}
         >
-            <Menu.Item header content={t('sidebar.shortcuts')} />
-            {activeLibId && (
-                <NavLink
-                    to={`/library/items/${activeLibId}/${activeLibQueryName}/${activeLibFilterName}`}
-                    onClick={hide}
-                    strict
-                    activeClassName="nav-link-active"
-                    isActive={checkActive}
-                >
-                    <Menu.Item as="span">
-                        <Icon name="database" />
-                        {activeLibName}
+            <Menu
+                theme="dark"
+                style={{height: '100%'}}
+                mode="inline"
+                selectedKeys={activeKeys}
+                defaultOpenKeys={['libraries', 'shortcuts']}
+            >
+                <Menu.SubMenu key="shortcuts" icon={<UnorderedListOutlined />} title={t('sidebar.shortcuts')}>
+                    {activeLibId && (
+                        <Menu.Item key={activeLibId} icon={<DatabaseOutlined />}>
+                            <NavLink
+                                to={`/library/items/${activeLibId}/${activeLibQueryName}/${activeLibFilterName}`}
+                                onClick={hide}
+                                strict
+                                activeClassName="nav-link-active"
+                                isActive={checkActive}
+                            >
+                                {activeLibName}
+                            </NavLink>
+                        </Menu.Item>
+                    )}
+
+                    <Menu.Item key="list" icon={<BookOutlined />} onClick={hide}>
+                        <NavLink to="/library/list/" activeClassName="nav-link-active">
+                            {t('sidebar.lib_list')}
+                        </NavLink>
                     </Menu.Item>
-                </NavLink>
-            )}
 
-            <NavLink to="/library/list/" onClick={hide} activeClassName="nav-link-active">
-                <Menu.Item as="span">
-                    <Icon name="list ul" />
-                    {t('sidebar.lib_list')}
-                </Menu.Item>
-            </NavLink>
-
-            <NavLink to="/setting" onClick={hide} activeClassName="nav-link-active">
-                <Menu.Item as="span">
-                    <Icon name="setting" />
-                    {t('sidebar.setting')}
-                </Menu.Item>
-            </NavLink>
-
-            <Divider />
-
-            <Menu.Item header>{t('sidebar.libraries')}</Menu.Item>
-            <SideBarLibraryList hide={hide} />
-        </Sidebar>
+                    <Menu.Item key="setting" icon={<SettingOutlined />} onClick={hide}>
+                        <NavLink to="/setting" activeClassName="nav-link-active">
+                            {t('sidebar.setting')}
+                        </NavLink>
+                    </Menu.Item>
+                </Menu.SubMenu>
+                <Menu.SubMenu key="libraries" icon={<DatabaseOutlined />} title={t('sidebar.libraries')}>
+                    {libraries.map(lib => (
+                        <Menu.Item key={lib.id}>
+                            <NavLink
+                                key={lib.id}
+                                to={`/library/items/${lib.id}/${lib.gqlNames.query}/${lib.gqlNames.filter}`}
+                                onClick={hide}
+                                activeClassName="nav-link-active"
+                            >
+                                {localizedLabel(lib.label, lang)}
+                            </NavLink>
+                        </Menu.Item>
+                    ))}
+                </Menu.SubMenu>
+            </Menu>
+        </Drawer>
     );
 }
 

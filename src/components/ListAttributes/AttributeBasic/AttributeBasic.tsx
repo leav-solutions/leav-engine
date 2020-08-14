@@ -1,5 +1,6 @@
+import {LinkOutlined} from '@ant-design/icons';
+import {Checkbox, Radio} from 'antd';
 import React from 'react';
-import {Checkbox, Icon, Radio} from 'semantic-ui-react';
 import {attributeUpdateSelection, localizedLabel} from '../../../utils';
 import {IAttribute, IEmbeddedFields, ITreeData} from '../../../_types/types';
 import {
@@ -72,7 +73,7 @@ const AttributeBasic = ({
                 ) : (
                     id
                 )}
-                <span>{attribute?.linkedLibrary && <Icon name="linkify" />}</span>
+                <span>{attribute?.linkedLibrary && <LinkOutlined />}</span>
             </TextAttribute>
             {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
 

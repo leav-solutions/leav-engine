@@ -1,6 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import wait from 'waait';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import AddFilter from './AddFilter';
@@ -22,6 +23,7 @@ describe('AttributeList', () => {
                 <MockedProviderWithFragments>
                     <AddFilter
                         stateItems={LibraryItemListInitialState}
+                        dispatchItems={jest.fn()}
                         setFilters={jest.fn()}
                         showAttr={true}
                         setShowAttr={jest.fn()}
@@ -29,6 +31,9 @@ describe('AttributeList', () => {
                     />
                 </MockedProviderWithFragments>
             );
+
+            await wait();
+            comp.update();
         });
 
         expect(comp.find('ListAttributes')).toHaveLength(1);

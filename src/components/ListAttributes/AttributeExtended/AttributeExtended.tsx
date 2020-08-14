@@ -1,6 +1,7 @@
+import {DownOutlined, ExpandAltOutlined, UpOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
+import {Button, List, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {Button, Icon, List, Loader} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getAttributeWithEmbeddedFields} from '../../../queries/attributes/getAttributeWithEmbeddedFields';
 import {attributeUpdateSelection, localizedLabel} from '../../../utils';
@@ -116,20 +117,24 @@ function AttributeExtended({
 
     const isAccordionActive = !!currentAccordion;
 
+    console.log('use this', isAccordionActive);
+
     return (
         <CustomAccordion>
-            <CustomAccordionTitle active={isAccordionActive} index={attribute.id}>
-                <EmbeddedFieldItem
-                    attribute={attribute}
-                    isExpendable={true}
-                    onClick={toggleExpand}
-                    active={!!currentAccordion}
-                    loading={loading && called}
-                    stateListAttribute={stateListAttribute}
-                    dispatchListAttribute={dispatchListAttribute}
-                />
-            </CustomAccordionTitle>
-            <CustomAccordionContent active={isAccordionActive}>
+            <CustomAccordionContent
+                key={attribute.id}
+                header={
+                    <EmbeddedFieldItem
+                        attribute={attribute}
+                        isExpendable={true}
+                        onClick={toggleExpand}
+                        active={!!currentAccordion}
+                        loading={loading && called}
+                        stateListAttribute={stateListAttribute}
+                        dispatchListAttribute={dispatchListAttribute}
+                    />
+                }
+            >
                 {groupEmbeddedFields && called && !loading ? (
                     <ExploreEmbeddedFields
                         groupEmbeddedFields={groupEmbeddedFields}
@@ -139,7 +144,7 @@ function AttributeExtended({
                         attribute={attribute}
                     />
                 ) : (
-                    <Loader />
+                    <Spin />
                 )}
             </CustomAccordionContent>
         </CustomAccordion>
@@ -202,12 +207,11 @@ const EmbeddedFieldItem = ({
                 <WrapperAttribute>
                     <div>
                         <Button
-                            icon={active ? 'angle up' : 'angle down'}
+                            icon={active ? <UpOutlined /> : <DownOutlined />}
                             loading={loading}
                             onClick={onClick}
-                            compact
-                            size="mini"
-                            circular
+                            size="small"
+                            shape="circle"
                         />
                         <TextAttribute>
                             {stateListAttribute.lang && localizedLabel(label, stateListAttribute.lang) ? (
@@ -218,13 +222,13 @@ const EmbeddedFieldItem = ({
                             ) : (
                                 id
                             )}
-                            <span>{isExpendable && <Icon name="external square" />}</span>
+                            <span>{isExpendable && <ExpandAltOutlined />}</span>
                         </TextAttribute>
                     </div>
                 </WrapperAttribute>
             ) : (
                 <ListItem onClick={handleClick}>
-                    <List.Content verticalAlign="middle">
+                    <List.Item>
                         <ListItemAttribute
                             attribute={attribute}
                             stateListAttribute={stateListAttribute}
@@ -232,7 +236,7 @@ const EmbeddedFieldItem = ({
                             embeddedField={embeddedField}
                             extendedPath={extendedPath}
                         />
-                    </List.Content>
+                    </List.Item>
                 </ListItem>
             )}
         </CustomWrapper>
@@ -292,21 +296,23 @@ const ExploreEmbeddedFields = ({
 
                 return (
                     <CustomAccordion key={embeddedField.id}>
-                        <CustomAccordionTitle active={isActive} index={embeddedField.id}>
-                            <EmbeddedFieldItem
-                                attribute={attribute}
-                                embeddedField={embeddedField}
-                                isExpendable={embeddedField.format === AttributeFormat.extended}
-                                onClick={toggleExpand}
-                                active={isActive}
-                                loading={false}
-                                extendedPath={`${path}.${embeddedField.id}`}
-                                stateListAttribute={stateListAttribute}
-                                dispatchListAttribute={dispatchListAttribute}
-                                key={embeddedField.id}
-                            />
-                        </CustomAccordionTitle>
-                        <CustomAccordionContent active={isActive}>
+                        <CustomAccordionContent
+                            key={embeddedField.id}
+                            header={
+                                <EmbeddedFieldItem
+                                    attribute={attribute}
+                                    embeddedField={embeddedField}
+                                    isExpendable={embeddedField.format === AttributeFormat.extended}
+                                    onClick={toggleExpand}
+                                    active={isActive}
+                                    loading={false}
+                                    extendedPath={`${path}.${embeddedField.id}`}
+                                    stateListAttribute={stateListAttribute}
+                                    dispatchListAttribute={dispatchListAttribute}
+                                    key={embeddedField.id}
+                                />
+                            }
+                        >
                             <Child>
                                 {exploreEmbeddedFields(
                                     embeddedField.embedded_fields,

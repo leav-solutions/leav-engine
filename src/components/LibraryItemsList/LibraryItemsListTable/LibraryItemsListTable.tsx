@@ -1,7 +1,7 @@
 import {useQuery} from '@apollo/client';
+import {Card, Menu, Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Dimmer, Loader, Menu, Segment, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../../utils';
@@ -28,7 +28,7 @@ const TableWrapper = styled.div`
     }
 `;
 
-const HeaderTable = styled(Segment)`
+const HeaderTable = styled(Card)<any>`
     &&& {
         margin: 0;
         padding: 0;
@@ -46,7 +46,7 @@ const TableStyled = styled(Table)`
     }
 `;
 
-const FooterTable = styled(Segment)`
+const FooterTable = styled(Card)`
     &&& {
         margin-top: 0;
         border-top: 0;
@@ -139,11 +139,11 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
     if (!stateItems.items) {
         return (
-            <Segment style={{height: '20rem'}}>
-                <Dimmer active inverted>
-                    <Loader inverted size="massive" />
-                </Dimmer>
-            </Segment>
+            <Card style={{height: '20rem'}}>
+                <div>
+                    <Spin />
+                </div>
+            </Card>
         );
     }
 
@@ -155,7 +155,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 openChangeColumns={openChangeColumns}
                 setOpenChangeColumns={setOpenChangeColumns}
             />
-            <HeaderTable secondary columns={tableColumns.length}>
+            <HeaderTable columns={tableColumns.length}>
                 {tableColumns.map(cell => (
                     <HeaderTableCell
                         key={cell.name}
@@ -167,25 +167,27 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 ))}
             </HeaderTable>
             <TableWrapper>
-                <TableStyled fixed selectable className="table-items" striped>
-                    <Table.Body>
+                <TableStyled>
+                    <Table.ColumnGroup>
                         {stateItems.items &&
-                            stateItems.items?.map(item => (
-                                <LibraryItemsListTableRow
-                                    key={item.id}
-                                    item={item}
-                                    stateItems={stateItems}
-                                    dispatchItems={dispatchItems}
-                                    showRecordEdition={item => setRecordEdition(re => ({show: true, item}))}
-                                />
-                            ))}
-                    </Table.Body>
+                            stateItems.items?.map(item => {
+                                return (
+                                    <LibraryItemsListTableRow
+                                        key={item.id}
+                                        item={item}
+                                        stateItems={stateItems}
+                                        dispatchItems={dispatchItems}
+                                        showRecordEdition={item => setRecordEdition(re => ({show: true, item}))}
+                                    />
+                                );
+                            })}
+                    </Table.ColumnGroup>
                 </TableStyled>
             </TableWrapper>
 
-            <FooterTable secondary>
+            <FooterTable>
                 <div>
-                    <Menu pagination>
+                    <Menu>
                         <LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />
                     </Menu>
                 </div>

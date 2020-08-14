@@ -1,6 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import wait from 'waait';
 import {AttributeFormat, AttributeType, IAttribute} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../../LibraryItemsListReducer';
@@ -47,6 +48,10 @@ describe('ChooseTableColumns', () => {
                     />
                 </MockedProviderWithFragments>
             );
+
+            await wait();
+
+            comp.update();
         });
 
         expect(comp.find('ListAttributes')).toHaveLength(1);

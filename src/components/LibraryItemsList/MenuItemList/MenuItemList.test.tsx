@@ -1,6 +1,6 @@
+import {Menu} from 'antd';
 import {shallow} from 'enzyme';
 import React from 'react';
-import {Menu} from 'semantic-ui-react';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import MenuItemList from './MenuItemList';
 

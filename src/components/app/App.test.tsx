@@ -1,7 +1,7 @@
+import {PageHeader} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {Header} from 'semantic-ui-react';
 import App from './App';
 
 jest.mock('i18next', () => ({
@@ -14,11 +14,11 @@ jest.mock('i18next', () => ({
     }))
 }));
 
-test('renders Header', async () => {
+test('renders PageHeader', async () => {
     let component: any;
     await act(async () => {
         component = mount(<App token="" onTokenInvalid={jest.fn} />);
     });
 
-    expect(component.find(Header)).toBeTruthy();
+    expect(component.find(PageHeader)).toBeTruthy();
 });

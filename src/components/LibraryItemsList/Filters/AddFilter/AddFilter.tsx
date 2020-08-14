@@ -1,6 +1,6 @@
+import {Button, Modal} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Modal} from 'semantic-ui-react';
 import {allowedTypeOperator} from '../../../../utils';
 import {
     AttributeFormat,
@@ -128,22 +128,25 @@ function AddFilter({
     };
 
     return (
-        <Modal open={showAttr} onClose={() => setShowAttr(false)} closeIcon>
-            <Modal.Header>{t('filters.modal-header')}</Modal.Header>
-            <Modal.Content>
-                <ListAttributes
-                    attributes={stateItems.attributes}
-                    useCheckbox
-                    setAttributesChecked={setAttributesChecked}
-                    setNewAttributes={setNewAttributes}
-                />
-            </Modal.Content>
-            <Modal.Actions>
-                <Button onClick={handleCancel}>{t('attribute-list.cancel')}</Button>
-                <Button primary onClick={addFilters}>
+        <Modal
+            visible={showAttr}
+            onCancel={() => setShowAttr(false)}
+            title={t('filters.modal-header')}
+            footer={[
+                <Button key="cancel" onClick={handleCancel}>
+                    {t('attribute-list.cancel')}
+                </Button>,
+                <Button key="add" type="primary" onClick={addFilters}>
                     {t('attribute-list.add')}
                 </Button>
-            </Modal.Actions>
+            ]}
+        >
+            <ListAttributes
+                attributes={stateItems.attributes}
+                useCheckbox
+                setAttributesChecked={setAttributesChecked}
+                setNewAttributes={setNewAttributes}
+            />
         </Modal>
     );
 }

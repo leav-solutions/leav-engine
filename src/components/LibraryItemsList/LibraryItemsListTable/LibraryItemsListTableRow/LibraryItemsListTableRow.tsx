@@ -1,7 +1,9 @@
+import {CheckOutlined, CloseOutlined, EditOutlined, HeartOutlined, MoreOutlined} from '@ant-design/icons';
+import {Button, Checkbox, Col, Row, Tooltip} from 'antd';
+import {CheckboxChangeEvent} from 'antd/lib/checkbox';
 import objectPath from 'object-path';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, CheckboxProps, Grid, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {checkTypeIsLink, displayTypeToPreviewSize} from '../../../../utils';
 import {
@@ -74,7 +76,7 @@ const handleValueDisplay = ({value, format, type, isMultiple, size, extendedData
                 }
                 return;
             case AttributeFormat.boolean:
-                return <Icon name={value ? 'check' : 'cancel'} />;
+                return value ? <CheckOutlined /> : <CloseOutlined />;
             case AttributeFormat.numeric:
             case AttributeFormat.text:
             default:
@@ -105,7 +107,7 @@ interface RowProps {
     size: DisplayListItemTypes;
 }
 
-const TableRow = styled(Table.Row)<RowProps>`
+const TableRow = styled.tr<RowProps>`
     &&&&& {
         height: ${({size}) => getRowHeight(size)};
         background: ${({selected}) => (selected ? 'hsla(202, 100%, 50%, 0.15)' : 'none')};
@@ -162,37 +164,35 @@ function LibraryItemsListTableRow({
     }, [stateItems.itemsSelected, item]);
 
     return (
-        <>
-            <TableRow
-                key={`${item.id}_${item.library}`}
-                selected={isSelected}
-                onClick={handleClickRow}
-                size={stateItems.displayType}
-            >
-                {stateItems.columns.map(column =>
-                    column.id === 'infos' ? (
-                        <InfosRow
-                            key={column.id}
-                            item={item}
-                            stateItems={stateItems}
-                            dispatchItems={dispatchItems}
-                            isSelected={isSelected}
-                            setIsSelect={setIsSelect}
-                            showRecordEdition={showRecordEdition}
-                        />
-                    ) : (
-                        <Row
-                            key={`${column.id}_${column.library}_${column.originAttributeData?.id}_${
-                                column.extendedData?.path ?? column.treeData?.libraryTypeName
-                            }`}
-                            item={item}
-                            column={column}
-                            stateItems={stateItems}
-                        />
-                    )
-                )}
-            </TableRow>
-        </>
+        <TableRow
+            key={`${item.id}_${item.library}`}
+            selected={isSelected}
+            onClick={handleClickRow}
+            size={stateItems.displayType}
+        >
+            {stateItems.columns.map(column =>
+                column.id === 'infos' ? (
+                    <InfosRow
+                        key={column.id}
+                        item={item}
+                        stateItems={stateItems}
+                        dispatchItems={dispatchItems}
+                        isSelected={isSelected}
+                        setIsSelect={setIsSelect}
+                        showRecordEdition={showRecordEdition}
+                    />
+                ) : (
+                    <ItemRow
+                        key={`${column.id}_${column.library}_${column.originAttributeData?.id}_${
+                            column.extendedData?.path ?? column.treeData?.libraryTypeName
+                        }`}
+                        item={item}
+                        column={column}
+                        stateItems={stateItems}
+                    />
+                )
+            )}
+        </TableRow>
     );
 }
 
@@ -202,7 +202,7 @@ interface RowsProps {
     stateItems: LibraryItemListState;
 }
 
-const Row = ({item, column, stateItems}: RowsProps) => {
+const ItemRow = ({item, column, stateItems}: RowsProps) => {
     const currentAtt = stateItems.attributes.find(att => att.id === column.id && att.library === column.library);
 
     const display = handleValueDisplay({
@@ -215,9 +215,9 @@ const Row = ({item, column, stateItems}: RowsProps) => {
     });
 
     return (
-        <Table.Cell>
+        <td>
             <div>{display}</div>
-        </Table.Cell>
+        </td>
     );
 };
 
@@ -233,12 +233,12 @@ interface IInfosRow {
 const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, showRecordEdition}: IInfosRow) => {
     const {t} = useTranslation();
 
-    const handleCheckboxChange = (event: React.FormEvent<HTMLInputElement>, {checked}: CheckboxProps) => {
+    const handleCheckboxChange = (event: CheckboxChangeEvent) => {
         setIsSelect(s => !s);
 
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {...stateItems.itemsSelected, [item.id]: !!checked}
+            itemsSelected: {...stateItems.itemsSelected, [item.id]: !!event.target.checked}
         });
 
         dispatchItems({
@@ -260,44 +260,41 @@ const InfosRow = ({item, stateItems, dispatchItems, isSelected, setIsSelect, sho
     };
 
     return (
-        <>
-            <Table.Cell>
-                <Grid>
-                    <Grid.Row>
-                        <RecordCard record={{...item}} size={displayTypeToPreviewSize(stateItems.displayType)} />
+        <td>
+            <Row>
+                <Col>
+                    <RecordCard record={{...item}} size={displayTypeToPreviewSize(stateItems.displayType)} />
 
-                        <Actions className="actions">
-                            {stateItems.selectionMode ? (
-                                <Button.Group size="small">
-                                    <Checkbox onChange={handleCheckboxChange} checked={isSelected} />
-                                </Button.Group>
-                            ) : (
-                                <Button.Group size="small">
-                                    <Popup
-                                        hoverable={false}
-                                        content={t('items-list-row.switch-to-selection-mode')}
-                                        trigger={
-                                            <Button
-                                                active={stateItems.selectionMode}
-                                                icon="check"
-                                                onClick={switchMode}
-                                            />
-                                        }
-                                    />
-                                    <Popup
-                                        hoverable={false}
-                                        content={t('items-list-row.edit')}
-                                        trigger={<Button icon="write" onClick={() => showRecordEdition(item)} />}
-                                    />
-                                    <Button icon="like" />
-                                    <Button icon="ellipsis horizontal" />
-                                </Button.Group>
-                            )}
-                        </Actions>
-                    </Grid.Row>
-                </Grid>
-            </Table.Cell>
-        </>
+                    <Actions className="actions">
+                        {stateItems.selectionMode ? (
+                            <Button.Group size="small">
+                                <Checkbox onChange={handleCheckboxChange} checked={isSelected} />
+                            </Button.Group>
+                        ) : (
+                            <Button.Group size="small">
+                                <Tooltip title={t('items-list-row.switch-to-selection-mode')}>
+                                    <Button onClick={switchMode}>
+                                        <CheckOutlined />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title={t('items-list-row.edit')}>
+                                    <Button onClick={() => showRecordEdition(item)}>
+                                        <EditOutlined />
+                                    </Button>
+                                </Tooltip>
+
+                                <Button>
+                                    <HeartOutlined />
+                                </Button>
+                                <Button>
+                                    <MoreOutlined />
+                                </Button>
+                            </Button.Group>
+                        )}
+                    </Actions>
+                </Col>
+            </Row>
+        </td>
     );
 };
 

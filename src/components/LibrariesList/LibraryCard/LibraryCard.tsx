@@ -1,7 +1,8 @@
+import {HeartOutlined, InfoOutlined, SelectOutlined, SettingOutlined, ShareAltOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
+import {Button, Card} from 'antd';
 import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
-import {Button, Card} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../../utils';
@@ -42,23 +43,22 @@ function LibraryCard({lib}: ILibraryCardProps): JSX.Element {
     const {lang} = dataLang ?? {lang: []};
 
     return (
-        <Card key={lib.id} as="div" onMouseEnter={displayActions} onMouseLeave={hideActions}>
-            <Card.Content>
-                <Card.Header as="h3">{localizedLabel(lib.label, lang) ?? lib.id}</Card.Header>
+        <Card key={lib.id} onMouseEnter={displayActions} onMouseLeave={hideActions}>
+            <Card title={localizedLabel(lib.label, lang) ?? lib.id}>
                 <Card.Meta>{lib.id}</Card.Meta>
 
-                <Card.Description>
+                <>
                     <ActionsWrapper showActions={showActions}>
-                        <Button.Group fluid>
-                            <Button icon="share" onClick={goLib} />
-                            <Button icon="external share" />
-                            <Button icon="like" />
-                            <Button icon="configure" />
-                            <Button icon="info" onClick={handleChangeLibSelected} />
+                        <Button.Group>
+                            <Button icon={<ShareAltOutlined />} onClick={goLib} />
+                            <Button icon={<SelectOutlined />} />
+                            <Button icon={<HeartOutlined />} />
+                            <Button icon={<SettingOutlined />} />
+                            <Button icon={<InfoOutlined />} onClick={handleChangeLibSelected} />
                         </Button.Group>
                     </ActionsWrapper>
-                </Card.Description>
-            </Card.Content>
+                </>
+            </Card>
         </Card>
     );
 }

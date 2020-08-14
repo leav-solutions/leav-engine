@@ -1,5 +1,5 @@
+import {Input} from 'antd';
 import React, {useState} from 'react';
-import {Input, InputOnChangeData} from 'semantic-ui-react';
 import {ConditionFilter, IQueryFilter} from '../../../_types/types';
 import {LibraryItemListReducerAction, LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
@@ -10,15 +10,15 @@ interface ISearchItemsProps {
 function SearchItems({dispatchItems}: ISearchItemsProps): JSX.Element {
     const [search, setSearch] = useState<string>('');
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
-        const newSearch = data.value;
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newSearch = event.target.value;
         if (newSearch === '') {
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
                 queryFilters: []
             });
         } else {
-            setSearch(data.value ?? '');
+            setSearch(newSearch);
         }
     };
 
@@ -35,7 +35,7 @@ function SearchItems({dispatchItems}: ISearchItemsProps): JSX.Element {
 
     return (
         <form onSubmit={handleSearch}>
-            <Input icon="search" onSubmit={handleSearch} onChange={handleChange} />
+            <Input.Search value={search} onChange={e => handleChange(e)} />
         </form>
     );
 }

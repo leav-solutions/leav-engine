@@ -1,5 +1,4 @@
 import React from 'react';
-import {List} from 'semantic-ui-react';
 import {attributeUpdateSelection} from '../../../utils';
 import {
     AttributeFormat,
@@ -49,16 +48,14 @@ function Attribute({
     if (attribute.linkedLibrary && !isSame && depthLimitation) {
         return (
             <ListItem>
-                <List.Content verticalAlign="middle">
-                    <AttributeLink
-                        attribute={attribute}
-                        stateListAttribute={stateListAttribute}
-                        dispatchListAttribute={dispatchListAttribute}
-                        depth={depth}
-                        type="library"
-                        originAttributeData={originAttributeData}
-                    />
-                </List.Content>
+                <AttributeLink
+                    attribute={attribute}
+                    stateListAttribute={stateListAttribute}
+                    dispatchListAttribute={dispatchListAttribute}
+                    depth={depth}
+                    type="library"
+                    originAttributeData={originAttributeData}
+                />
             </ListItem>
         );
     }
@@ -66,16 +63,14 @@ function Attribute({
     if (attribute.type === AttributeType.tree && !isSame && depthLimitation) {
         return (
             <ListItem>
-                <List.Content verticalAlign="middle">
-                    <AttributeLink
-                        attribute={attribute}
-                        stateListAttribute={stateListAttribute}
-                        dispatchListAttribute={dispatchListAttribute}
-                        depth={depth}
-                        type="tree"
-                        originAttributeData={originAttributeData}
-                    />
-                </List.Content>
+                <AttributeLink
+                    attribute={attribute}
+                    stateListAttribute={stateListAttribute}
+                    dispatchListAttribute={dispatchListAttribute}
+                    depth={depth}
+                    type="tree"
+                    originAttributeData={originAttributeData}
+                />
             </ListItem>
         );
     }
@@ -83,14 +78,12 @@ function Attribute({
     if (attribute.format === AttributeFormat.extended) {
         return (
             <ListItem>
-                <List.Content verticalAlign="middle">
-                    <AttributeExtended
-                        attribute={attribute}
-                        stateListAttribute={stateListAttribute}
-                        dispatchListAttribute={dispatchListAttribute}
-                        previousDepth={depth}
-                    />
-                </List.Content>
+                <AttributeExtended
+                    attribute={attribute}
+                    stateListAttribute={stateListAttribute}
+                    dispatchListAttribute={dispatchListAttribute}
+                    previousDepth={depth}
+                />
             </ListItem>
         );
     }
@@ -113,14 +106,12 @@ function Attribute({
 
     return (
         <ListItem onClick={handleClick}>
-            <List.Content verticalAlign="middle">
-                <ListItemAttribute
-                    attribute={attribute}
-                    stateListAttribute={stateListAttribute}
-                    dispatchListAttribute={dispatchListAttribute}
-                    treeData={treeData}
-                />
-            </List.Content>
+            <ListItemAttribute
+                attribute={attribute}
+                stateListAttribute={stateListAttribute}
+                dispatchListAttribute={dispatchListAttribute}
+                treeData={treeData}
+            />
         </ListItem>
     );
 }

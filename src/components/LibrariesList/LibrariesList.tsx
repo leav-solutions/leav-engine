@@ -1,8 +1,8 @@
 import {useQuery} from '@apollo/client';
+import {Card, Divider} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
-import {Card, Divider, Header} from 'semantic-ui-react';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import {ILibrary} from '../../_types/types';
 import LibraryCard from './LibraryCard';
@@ -28,12 +28,12 @@ function LibrariesList(): JSX.Element {
 
     return (
         <div className="wrapper-page">
-            <Header as="h2">{t('lib_list.header')}</Header>
-            <Card.Group itemsPerRow={4}>
+            <h1>{t('lib_list.header')}</h1>
+            <Card>
                 {libraries.map(lib => (
                     <LibraryCard key={lib.id} lib={lib} />
                 ))}
-            </Card.Group>
+            </Card>
 
             {libId && libQueryName && (
                 <>

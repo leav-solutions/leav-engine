@@ -1,3 +1,4 @@
+import {Input} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {ConditionFilter, FilterTypes, IFilter} from '../../../../../_types/types';
@@ -16,6 +17,6 @@ describe('FormText', () => {
 
         const comp = mount(<FormText filter={mockFilter} updateFilterValue={jest.fn()} />);
 
-        expect(comp.find('TextArea')).toHaveLength(1);
+        expect(comp.find(Input.TextArea)).toHaveLength(1);
     });
 });

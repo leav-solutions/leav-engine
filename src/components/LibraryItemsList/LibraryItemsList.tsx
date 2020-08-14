@@ -1,7 +1,7 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
+import {Menu} from 'antd';
 import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
-import {Menu} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';

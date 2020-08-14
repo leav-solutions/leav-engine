@@ -27,6 +27,6 @@ describe('AttributeBasic', () => {
             />
         );
 
-        expect(comp.find('Checkbox')).toHaveLength(1);
+        expect(comp.find('Checkbox')).toHaveLength(2);
     });
 });

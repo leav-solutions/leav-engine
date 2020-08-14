@@ -1,5 +1,6 @@
+import {DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined} from '@ant-design/icons';
+import {Menu} from 'antd';
 import React, {useState} from 'react';
-import {Icon, Menu} from 'semantic-ui-react';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -40,13 +41,13 @@ function LibraryItemsListPagination({stateItems, dispatchItems}: ILibraryItemsLi
         });
 
     return (
-        <>
-            <Menu.Item as="a" icon onClick={first}>
-                <Icon name="angle double left" />
+        <Menu>
+            <Menu.Item icon onClick={first}>
+                <DoubleLeftOutlined />
             </Menu.Item>
 
-            <Menu.Item as="a" icon onClick={previous}>
-                <Icon name="angle left" />
+            <Menu.Item icon onClick={previous}>
+                <LeftOutlined />
             </Menu.Item>
 
             {stateItems.itemsTotalCount
@@ -65,7 +66,6 @@ function LibraryItemsListPagination({stateItems, dispatchItems}: ILibraryItemsLi
                       return (
                           <Menu.Item
                               key={index}
-                              as="a"
                               active={isActive}
                               onClick={() =>
                                   !isActive &&
@@ -85,13 +85,13 @@ function LibraryItemsListPagination({stateItems, dispatchItems}: ILibraryItemsLi
                   })
                 : ''}
 
-            <Menu.Item as="a" icon onClick={next}>
-                <Icon name="angle right" />
+            <Menu.Item icon onClick={next}>
+                <RightOutlined />
             </Menu.Item>
-            <Menu.Item as="a" icon onClick={last}>
-                <Icon name="angle double right" />
+            <Menu.Item icon onClick={last}>
+                <DoubleRightOutlined />
             </Menu.Item>
-        </>
+        </Menu>
     );
 }
 

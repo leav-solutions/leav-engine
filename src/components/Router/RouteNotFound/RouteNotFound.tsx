@@ -1,8 +1,7 @@
 import React from 'react';
-import {Header} from 'semantic-ui-react';
 
 function RouteNotFound(): JSX.Element {
-    return <Header as="h1">404</Header>;
+    return <h1>404</h1>;
 }
 
 export default RouteNotFound;

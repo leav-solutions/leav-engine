@@ -1,6 +1,7 @@
+import {FilterOutlined} from '@ant-design/icons';
+import {Button, Divider, Dropdown, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Divider, Dropdown, Menu, Sidebar} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
@@ -25,7 +26,7 @@ const WrapperFilter = styled.div<WrapperFilterProps>`
     display: ${({visible}) => (visible ? 'flex' : 'none')};
 `;
 
-const CustomSidebarPushable = styled(Sidebar.Pushable)`
+const CustomSidebarPushable = styled.div`
     width: 100%;
 `;
 
@@ -198,37 +199,37 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
 
                 <Side>
                     <Menu style={{height: '5rem'}}>
-                        <Menu.Menu>
+                        <Menu>
                             <Menu.Item>
-                                <Button icon="filter" active onClick={handleHide} />
+                                <Button icon={<FilterOutlined />} onClick={handleHide} />
                             </Menu.Item>
-                        </Menu.Menu>
-                        <Menu.Menu position="right">
+                        </Menu>
+                        <Menu>
                             <Menu.Item>
                                 <SelectView />
                             </Menu.Item>
-                        </Menu.Menu>
+                        </Menu>
                     </Menu>
 
                     <FilterActions>
-                        <Dropdown text={t('filters.filters-options')}>
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => setShowAttr(true)}>
-                                    {t('filters.add-filters')}
-                                </Dropdown.Item>
-                                <Dropdown.Item disabled={!filters.length} onClick={removeAllFilter}>
-                                    {t('filters.remove-filters')}
-                                </Dropdown.Item>
-                                <Dropdown.Item disabled={!filters.length} onClick={addSeparator}>
-                                    {t('filters.add-separator')}
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
+                        <Dropdown
+                            overlay={
+                                <Menu>
+                                    <Menu.Item onClick={() => setShowAttr(true)}>{t('filters.add-filters')}</Menu.Item>
+                                    <Menu.Item disabled={!filters.length} onClick={removeAllFilter}>
+                                        {t('filters.remove-filters')}
+                                    </Menu.Item>
+                                    <Menu.Item disabled={!filters.length} onClick={addSeparator}>
+                                        {t('filters.add-separator')}
+                                    </Menu.Item>
+                                </Menu>
+                            }
+                        >
+                            <span>{t('filters.filters-options')}</span>
                         </Dropdown>
 
                         <Button
-                            positive
                             disabled={!filters.filter(f => f.type === FilterTypes.filter).length}
-                            compact
                             onClick={applyFilters}
                         >
                             {t('filters.apply')}

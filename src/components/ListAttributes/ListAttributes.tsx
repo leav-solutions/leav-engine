@@ -1,6 +1,7 @@
+import {CloseOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
+import {Button, Card, List} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
-import {Button, Container, List, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../utils';
@@ -130,16 +131,11 @@ function ListAttributes({
     }
 
     return (
-        <Container>
+        <div>
             <Wrapper>
                 <div>
                     <CustomForm onSubmit={handleSubmit}>
-                        <CustomInput
-                            icon="search"
-                            ref={searchRef}
-                            fluid
-                            onChange={(event, data) => handleSearchChange(data.value ?? '')}
-                        />
+                        <CustomInput ref={searchRef} onChange={event => handleSearchChange(event.target.value ?? '')} />
                     </CustomForm>
                     <ListingAttributes
                         attributes={attributes}
@@ -151,9 +147,8 @@ function ListAttributes({
                     {state.attributesChecked.map(
                         attributeChecked =>
                             attributeChecked.checked && (
-                                <Segment
+                                <Card
                                     key={`${attributeChecked.id}_${attributeChecked.library}_${attributeChecked.extendedData?.path}`}
-                                    secondary
                                 >
                                     {attributeChecked.extendedData?.path ? (
                                         <div>
@@ -171,20 +166,19 @@ function ListAttributes({
                                     )}
                                     <div>
                                         <Button
-                                            icon="delete"
-                                            size="mini"
-                                            compact
+                                            icon={<CloseOutlined />}
+                                            size="small"
                                             onClick={() => {
                                                 removeAttributeChecked(attributeChecked);
                                             }}
                                         />
                                     </div>
-                                </Segment>
+                                </Card>
                             )
                     )}
                 </div>
             </Wrapper>
-        </Container>
+        </div>
     );
 }
 

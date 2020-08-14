@@ -6,6 +6,22 @@ import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFr
 import {ListAttributeInitialState} from '../ListAttributesReducer';
 import AttributeLink from './AttributeLink';
 
+jest.mock(
+    './AttributeLinkedLibrary',
+    () =>
+        function AttributeLinkedLibrary() {
+            return <div>AttributeLinkedLibrary</div>;
+        }
+);
+
+jest.mock(
+    './AttributeLinkedTree',
+    () =>
+        function AttributeLinkedTree() {
+            return <div>AttributeLinkedTree</div>;
+        }
+);
+
 describe('AttributeLink', () => {
     const mockAttribute = {
         id: 'test',

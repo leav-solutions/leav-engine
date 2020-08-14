@@ -1,11 +1,44 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {BrowserRouter, Route} from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import SideBarMenu from '../SideBarMenu';
 import Router from './Router';
+import Routes from './Routes';
+
+jest.mock(
+    '../SideBarMenu',
+    () =>
+        function SideBarMenu() {
+            return <div>SideBarMenu</div>;
+        }
+);
+
+jest.mock(
+    '../TopBar',
+    () =>
+        function TopBar() {
+            return <div>TopBar</div>;
+        }
+);
+
+jest.mock(
+    '../UserPanel',
+    () =>
+        function UserPanel() {
+            return <div>UserPanel</div>;
+        }
+);
+
+jest.mock(
+    './Routes',
+    () =>
+        function Routes() {
+            return <div>Routes</div>;
+        }
+);
 
 describe('Router', () => {
     const mocks = [
@@ -72,6 +105,6 @@ describe('Router', () => {
             );
         });
 
-        expect(comp.find(Route)).toHaveLength(1);
+        expect(comp.find(Routes)).toHaveLength(1);
     });
 });

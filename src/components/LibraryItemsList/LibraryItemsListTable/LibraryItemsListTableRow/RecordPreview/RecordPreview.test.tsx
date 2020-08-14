@@ -12,14 +12,14 @@ describe('RecordPreview', () => {
     test('Show an image', async () => {
         const comp = shallow(<RecordPreview image="http://fake-image-url.com" label="TestLabel" />);
 
-        expect(comp.find('Image')).toHaveLength(1);
-        expect(comp.find('Image').prop('src')).toBe('http://fake-image-url.com');
+        expect(comp.find('img')).toHaveLength(1);
+        expect(comp.find('img').prop('src')).toBe('http://fake-image-url.com');
     });
 
     test('Show initial with color if no image', async () => {
         const comp = mount(<RecordPreview color="#FF0000" label="TestLabel" />);
 
-        expect(comp.find('Image')).toHaveLength(0);
+        expect(comp.find('img')).toHaveLength(0);
         expect(comp.find('GeneratedPreview')).toHaveLength(1);
         expect(comp.find('GeneratedPreview').text()).toBe('T');
     });

@@ -1,37 +1,15 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {
-    AttributeFormat,
-    ConditionFilter,
-    DisplayListItemTypes,
-    FilterTypes,
-    IFilter,
-    OrderSearch
-} from '../../../../../_types/types';
+import wait from 'waait';
+import {AttributeFormat, ConditionFilter, FilterTypes, IFilter} from '../../../../../_types/types';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import ListAttributes from '../../../../ListAttributes';
-import {LibraryItemListState} from '../../../LibraryItemsListReducer';
+import {LibraryItemListInitialState} from '../../../LibraryItemsListReducer';
 import ChangeAttribute from './ChangeAttribute';
 
 describe('ChangeAttribute', () => {
-    const stateItems: LibraryItemListState = {
-        libQuery: 'test',
-        libFilter: 'test',
-        libSearchableField: 'test',
-        itemsSortField: 'test',
-        itemsSortOrder: OrderSearch.asc,
-        itemsTotalCount: 0,
-        offset: 0,
-        pagination: 20,
-        displayType: DisplayListItemTypes.listSmall,
-        showFilters: false,
-        selectionMode: false,
-        itemsSelected: {},
-        queryFilters: [],
-        attributes: [],
-        columns: []
-    };
+    const stateItems = LibraryItemListInitialState;
 
     const filterMock: IFilter = {
         type: FilterTypes.filter,
@@ -59,6 +37,10 @@ describe('ChangeAttribute', () => {
                     />
                 </MockedProviderWithFragments>
             );
+
+            await wait();
+
+            comp.update();
         });
 
         expect(comp.find(ListAttributes)).toHaveLength(1);

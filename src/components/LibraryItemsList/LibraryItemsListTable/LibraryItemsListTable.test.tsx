@@ -51,6 +51,7 @@ describe('LibraryItemsListTable', () => {
         const stateMock = {...stateItems, items: itemsMock};
 
         let comp: any;
+
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
@@ -58,9 +59,8 @@ describe('LibraryItemsListTable', () => {
                 </MockedProviderWithFragments>
             );
         });
-
         expect(comp.find(ChooseTableColumns)).toHaveLength(1);
-        expect(comp.find(LibraryItemsListTableRow)).toHaveLength(1);
+        expect(comp.contains(LibraryItemsListTableRow)).toBeTruthy();
         expect(comp.find(LibraryItemsListPagination)).toHaveLength(1);
     });
 });

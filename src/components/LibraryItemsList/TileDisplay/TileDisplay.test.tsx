@@ -1,10 +1,10 @@
 import {mount} from 'enzyme';
 import React from 'react';
-import {DisplayListItemTypes, IItem, OrderSearch} from '../../../_types/types';
+import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
-import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
-import RecordPreview from '../LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
+import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
+import ItemTileDisplay from './ItemTileDisplay';
 import TileDisplay from './TileDisplay';
 
 jest.mock(
@@ -15,24 +15,24 @@ jest.mock(
         }
 );
 
+jest.mock(
+    './ItemTileDisplay',
+    () =>
+        function ItemTileDisplay() {
+            return <div>ItemTileDisplay</div>;
+        }
+);
+
+jest.mock(
+    '../LibraryItemsListTable/LibraryItemsListTableRow/LibraryItemsModal',
+    () =>
+        function LibraryItemsModal() {
+            return <div>LibraryItemsModal</div>;
+        }
+);
+
 describe('TileDisplay', () => {
-    const stateItems: LibraryItemListState = {
-        libQuery: 'test',
-        libFilter: 'test',
-        libSearchableField: 'test',
-        itemsSortField: 'test',
-        itemsSortOrder: OrderSearch.asc,
-        itemsTotalCount: 0,
-        offset: 0,
-        pagination: 20,
-        displayType: DisplayListItemTypes.listSmall,
-        showFilters: false,
-        selectionMode: false,
-        itemsSelected: {},
-        queryFilters: [],
-        attributes: [],
-        columns: []
-    };
+    const stateItems = LibraryItemListInitialState;
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
     test('Check render', async () => {
@@ -49,7 +49,7 @@ describe('TileDisplay', () => {
             </MockedProviderWithFragments>
         );
 
-        expect(comp.find(RecordPreview)).toHaveLength(1);
+        expect(comp.find(ItemTileDisplay)).toHaveLength(1);
         expect(comp.find(LibraryItemsListPagination)).toHaveLength(1);
     });
 });

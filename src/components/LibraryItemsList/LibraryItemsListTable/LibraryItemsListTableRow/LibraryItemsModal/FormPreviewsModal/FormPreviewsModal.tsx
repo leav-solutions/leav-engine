@@ -1,5 +1,5 @@
+import {Col, Form, Row} from 'antd';
 import React from 'react';
-import {Form, Grid, Image} from 'semantic-ui-react';
 import {getPreviewSizes, getPreviewUrl} from '../../../../../../utils';
 import {IItem, IPreview, PreviewAttributes} from '../../../../../../_types/types';
 
@@ -18,15 +18,15 @@ const FormPreviewsModal = ({values, updateValues}: IFormPreviewsModal) => {
     }
 
     return (
-        <Grid columns="2">
-            <Grid.Column>
+        <Row>
+            <Col>
                 {values.preview?.big ? (
-                    <Image size="large" src={getPreviewUrl(values.preview.big)} />
+                    <img src={getPreviewUrl(values.preview.big)} alt="preview" />
                 ) : (
                     <div>No Preview</div>
                 )}
-            </Grid.Column>
-            <Grid.Column>
+            </Col>
+            <Col>
                 {previewAttributes.map(previewAttribute => (
                     <FormPreviewModal
                         key={previewAttribute}
@@ -36,8 +36,8 @@ const FormPreviewsModal = ({values, updateValues}: IFormPreviewsModal) => {
                         defaultPreview={defaultPreview}
                     />
                 ))}
-            </Grid.Column>
-        </Grid>
+            </Col>
+        </Row>
     );
 };
 
@@ -52,7 +52,7 @@ const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPrevie
     const att: 'small' | 'medium' | 'big' | 'pages' = previewAttribute as any;
 
     return (
-        <Form.Field>
+        <Form.Item>
             <label>{previewAttribute}</label>
             <input
                 disabled
@@ -69,7 +69,7 @@ const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPrevie
                     })
                 }
             />
-        </Form.Field>
+        </Form.Item>
     );
 };
 

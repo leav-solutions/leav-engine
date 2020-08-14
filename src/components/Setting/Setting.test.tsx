@@ -15,7 +15,7 @@ describe('Setting', () => {
             );
         });
 
-        expect(comp.find('Header')).toHaveLength(1);
-        expect(comp.find('Header').text()).toContain('settings.header');
+        expect(comp.find('h1')).toHaveLength(1);
+        expect(comp.find('h1').text()).toContain('settings.header');
     });
 });
