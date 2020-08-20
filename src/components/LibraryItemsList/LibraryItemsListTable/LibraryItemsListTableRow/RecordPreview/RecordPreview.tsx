@@ -1,4 +1,5 @@
-import React from 'react';
+import {Skeleton} from 'antd';
+import React, {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../../../utils/utils';
 import {PreviewSize} from '../../../../../_types/types';
@@ -129,11 +130,20 @@ const ImagePreviewTile = styled.div`
 `;
 ImagePreviewTile.displayName = 'ImagePreviewTile';
 
+const CustomSkeletonImage = styled(Skeleton.Image)`
+    && {
+        height: 100%;
+        width: 100%;
+    }
+`;
+
 function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): JSX.Element {
+    const [imgLoad, setImgLoad] = useState(false);
     if (image) {
         return (
             <ImagePreviewTile>
-                <img src={image} alt="record preview" style={{...style}} />
+                {!imgLoad && <CustomSkeletonImage style={{...style}} />}
+                <img src={image} alt="record preview" style={{...style}} onLoad={() => setImgLoad(true)} />
             </ImagePreviewTile>
         );
     }

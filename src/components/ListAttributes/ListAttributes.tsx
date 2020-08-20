@@ -1,7 +1,8 @@
-import {CloseOutlined} from '@ant-design/icons';
+import {CloseOutlined, MoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {Button, Card, List} from 'antd';
+import {Button, Descriptions, Input, List} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../utils';
@@ -14,12 +15,19 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from './ListAttributesReducer';
-import {CustomForm, CustomInput} from './StyledComponents';
+import {CustomForm, SmallText, TextAttribute} from './StyledComponents';
 
 const Wrapper = styled.div`
     display: Grid;
-    grid-template-columns: 1fr 15rem;
+    grid-template-columns: 1fr 1fr;
     grid-column-gap: 0.3rem;
+`;
+
+const FirstContainer = styled.div`
+    border-right: 1px solid #f0f0f0;
+    padding: 0 1rem;
+    overflow-y: scroll;
+    height: 80vh;
 `;
 
 interface IListAttributeProps {
@@ -41,6 +49,7 @@ function ListAttributes({
     setAttributesChecked,
     setNewAttributes
 }: IListAttributeProps): JSX.Element {
+    const {t} = useTranslation();
     const searchRef = useRef<any>(null);
 
     const [attributes, setAttributes] = useState(attrs.filter(att => !att.originAttributeData?.id));
@@ -99,6 +108,7 @@ function ListAttributes({
                     {
                         id: attributes[0].id,
                         library: attributes[0].library,
+                        label: attributes[0].label,
                         type: attributes[0].type,
                         depth: 0,
                         checked: checked
@@ -131,56 +141,120 @@ function ListAttributes({
     }
 
     return (
-        <div>
+        <>
             <Wrapper>
-                <div>
+                <FirstContainer>
                     <CustomForm onSubmit={handleSubmit}>
-                        <CustomInput ref={searchRef} onChange={event => handleSearchChange(event.target.value ?? '')} />
+                        <Input.Search
+                            placeholder={t('attributes-list.search')}
+                            ref={searchRef}
+                            onChange={event => handleSearchChange(event.target.value ?? '')}
+                        />
                     </CustomForm>
                     <ListingAttributes
                         attributes={attributes}
                         stateListAttribute={state}
                         dispatchListAttribute={dispatch}
                     />
-                </div>
+                </FirstContainer>
                 <div>
                     {state.attributesChecked.map(
                         attributeChecked =>
                             attributeChecked.checked && (
-                                <Card
+                                <LeftColumnItem
                                     key={`${attributeChecked.id}_${attributeChecked.library}_${attributeChecked.extendedData?.path}`}
-                                >
-                                    {attributeChecked.extendedData?.path ? (
-                                        <div>
-                                            <div>
-                                                {attributeChecked.extendedData?.path.split('.').map(pathPart => (
-                                                    <span key={pathPart}> - {pathPart} </span>
-                                                ))}
-                                            </div>
-                                            | {attributeChecked.id} | {attributeChecked.library}
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            {attributeChecked.id} | {attributeChecked.library}
-                                        </div>
-                                    )}
-                                    <div>
-                                        <Button
-                                            icon={<CloseOutlined />}
-                                            size="small"
-                                            onClick={() => {
-                                                removeAttributeChecked(attributeChecked);
-                                            }}
-                                        />
-                                    </div>
-                                </Card>
+                                    attributeChecked={attributeChecked}
+                                    removeAttributeChecked={removeAttributeChecked}
+                                    stateListAttribute={state}
+                                />
                             )
                     )}
                 </div>
             </Wrapper>
-        </div>
+        </>
     );
 }
+
+interface LeftColumnItemProps {
+    attributeChecked: IAttributesChecked;
+    removeAttributeChecked: (attributeChecked: IAttributesChecked) => void;
+    stateListAttribute: ListAttributeState;
+}
+const CustomCard = styled.div`
+    &&& {
+        padding: 0;
+        margin: 24px;
+        display: flex;
+        justify-content: space-between;
+        border: 1px solid #f0f0f0;
+        border-radius: 2px;
+        min-height: 5rem;
+    }
+`;
+
+const DragHandle = styled.div`
+    border-right: 1px solid #f0f0f0;
+    padding: 8px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    * {
+        color: #f0f0f0;
+        font-size: 32px;
+    }
+`;
+
+const Content = styled.div`
+    padding: 8px;
+    width: 50%;
+`;
+
+const CloseWrapper = styled.div`
+    padding: 8px;
+`;
+
+const LeftColumnItem = ({attributeChecked, removeAttributeChecked, stateListAttribute}: LeftColumnItemProps) => {
+    const {t} = useTranslation();
+    return (
+        <CustomCard>
+            <DragHandle>
+                <MoreOutlined />
+            </DragHandle>
+            <Content>
+                <Descriptions
+                    title={
+                        <TextAttribute>
+                            {stateListAttribute.lang &&
+                            localizedLabel(attributeChecked.label, stateListAttribute.lang) ? (
+                                <span>
+                                    {localizedLabel(attributeChecked.label, stateListAttribute.lang)}
+                                    <SmallText>{attributeChecked.id}</SmallText>
+                                </span>
+                            ) : (
+                                attributeChecked.id
+                            )}
+                        </TextAttribute>
+                    }
+                >
+                    <Descriptions.Item label={t('attributes-list.items-selected.library')}>
+                        {attributeChecked.library}
+                    </Descriptions.Item>
+                </Descriptions>
+            </Content>
+            <CloseWrapper>
+                <Button
+                    icon={<CloseOutlined />}
+                    size="small"
+                    onClick={() => {
+                        removeAttributeChecked(attributeChecked);
+                    }}
+                />
+            </CloseWrapper>
+        </CustomCard>
+    );
+};
 
 interface IListingAttributesProps {
     attributes: IAttribute[];

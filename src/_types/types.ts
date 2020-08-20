@@ -181,6 +181,7 @@ export interface IAccordionActive {
 export interface IAttributesChecked {
     id: string;
     library: string;
+    label: string | ILabel;
     type: AttributeType;
     depth: number;
     checked: boolean;

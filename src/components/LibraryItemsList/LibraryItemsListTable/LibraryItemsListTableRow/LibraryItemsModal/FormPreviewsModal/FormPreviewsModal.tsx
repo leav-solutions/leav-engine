@@ -1,4 +1,4 @@
-import {Col, Form, Row} from 'antd';
+import {Form, Input} from 'antd';
 import React from 'react';
 import {getPreviewSizes, getPreviewUrl} from '../../../../../../utils';
 import {IItem, IPreview, PreviewAttributes} from '../../../../../../_types/types';
@@ -18,15 +18,15 @@ const FormPreviewsModal = ({values, updateValues}: IFormPreviewsModal) => {
     }
 
     return (
-        <Row>
-            <Col>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <div>
                 {values.preview?.big ? (
-                    <img src={getPreviewUrl(values.preview.big)} alt="preview" />
+                    <img src={getPreviewUrl(values.preview.big)} alt="preview" style={{width: '20rem'}} />
                 ) : (
                     <div>No Preview</div>
                 )}
-            </Col>
-            <Col>
+            </div>
+            <div style={{width: '20rem'}}>
                 {previewAttributes.map(previewAttribute => (
                     <FormPreviewModal
                         key={previewAttribute}
@@ -36,8 +36,8 @@ const FormPreviewsModal = ({values, updateValues}: IFormPreviewsModal) => {
                         defaultPreview={defaultPreview}
                     />
                 ))}
-            </Col>
-        </Row>
+            </div>
+        </div>
     );
 };
 
@@ -52,9 +52,8 @@ const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPrevie
     const att: 'small' | 'medium' | 'big' | 'pages' = previewAttribute as any;
 
     return (
-        <Form.Item>
-            <label>{previewAttribute}</label>
-            <input
+        <Form.Item label={previewAttribute}>
+            <Input
                 disabled
                 value={(values.preview && values.preview[att]) ?? ''}
                 onChange={e =>

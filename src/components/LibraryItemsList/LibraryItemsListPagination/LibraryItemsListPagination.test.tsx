@@ -1,4 +1,4 @@
-import {Menu} from 'antd';
+import {Pagination} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
@@ -9,14 +9,9 @@ describe('LibraryItemsListPagination', () => {
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
-    test('should have 3 pagination option', async () => {
+    test('should have pagination', async () => {
         const comp = mount(<LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />);
 
-        expect(comp.find('InputValue')).toHaveLength(1);
-        expect(comp.find(Menu.Item)).toHaveLength(
-            3 + // pagination option
-            2 + // left arrow
-                2 // right arrow
-        );
+        expect(comp.find(Pagination)).toHaveLength(1);
     });
 });

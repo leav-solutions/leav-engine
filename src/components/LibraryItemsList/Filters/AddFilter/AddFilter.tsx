@@ -132,12 +132,14 @@ function AddFilter({
             visible={showAttr}
             onCancel={() => setShowAttr(false)}
             title={t('filters.modal-header')}
+            width="70rem"
+            centered
             footer={[
                 <Button key="cancel" onClick={handleCancel}>
-                    {t('attribute-list.cancel')}
+                    {t('attributes-list.cancel')}
                 </Button>,
                 <Button key="add" type="primary" onClick={addFilters}>
-                    {t('attribute-list.add')}
+                    {t('attributes-list.add')}
                 </Button>
             ]}
         >

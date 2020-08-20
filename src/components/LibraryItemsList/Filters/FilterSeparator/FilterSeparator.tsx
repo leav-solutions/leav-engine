@@ -1,17 +1,8 @@
 import {CloseOutlined} from '@ant-design/icons';
-import {Button, Card, Select} from 'antd';
+import {Button, Select} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import {IFilter, IFilterSeparator, OperatorFilter} from '../../../../_types/types';
-
-const CustomSegment = styled(Card)`
-    display: flex;
-    justify-content: space-between;
-    align-items: top;
-    &&& {
-        margin: 0.5rem 0.2rem;
-    }
-`;
 
 interface IFilterSeparatorProps {
     separator: IFilterSeparator;
@@ -24,6 +15,15 @@ interface IFilterSeparatorProps {
     setSeparatorOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
     updateFilters: () => void;
 }
+
+const Wrapper = styled.div`
+    margin: 0.5rem 0.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #f0f0f0;
+    padding: 12px 12px;
+`;
 
 function FilterSeparator({
     separator,
@@ -49,17 +49,14 @@ function FilterSeparator({
     };
 
     return (
-        <CustomSegment>
-            <Button disabled={!separator.active}>is disable</Button>
-            <Select value={separatorOperator} onChange={e => changeOperator(e)}>
+        <Wrapper>
+            <Select disabled={!separator.active} value={separatorOperator} onChange={e => changeOperator(e)}>
                 {operatorOptions.map(operator => (
                     <Select.Option value={operator.value}>{operator.text}</Select.Option>
                 ))}
             </Select>
-            <span>
-                <Button icon={<CloseOutlined />} size="small" onClick={deleteSeparator} />
-            </span>
-        </CustomSegment>
+            <Button type="text" icon={<CloseOutlined />} size="small" onClick={deleteSeparator} />
+        </Wrapper>
     );
 }
 

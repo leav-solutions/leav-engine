@@ -1,7 +1,9 @@
-import {DownOutlined, LinkOutlined, UpOutlined} from '@ant-design/icons';
+import {IdcardOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {Button, Checkbox, Radio, Spin} from 'antd';
+import {Checkbox, Radio, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
+import {animated, useSpring} from 'react-spring';
+import styled from 'styled-components';
 import {getLibraryDetailExtendedQuery} from '../../../../queries/libraries/getLibraryDetailExtendQuery';
 import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../../../utils';
 import {IAccordionActive, IAttribute, IOriginAttributeData} from '../../../../_types/types';
@@ -11,15 +13,7 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../../ListAttributesReducer';
-import {
-    CustomAccordion,
-    CustomAccordionContent,
-    RowAttribute,
-    SmallText,
-    TextAttribute,
-    WrapperAttribute,
-    WrapperContentAttribute
-} from '../../StyledComponents';
+import {DeployButton, SmallText, TextAttribute, WrapperContentAttribute} from '../../StyledComponents';
 
 interface IAttributeLinkedLibraryProps {
     attribute: IAttribute;
@@ -32,6 +26,25 @@ interface IAttributeLinkedLibraryProps {
     originAttributeData?: IOriginAttributeData;
 }
 
+const Wrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const Container = styled.div`
+    border: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 6px;
+
+    & > * {
+        padding: 0 6px;
+    }
+`;
+
 function AttributeLinkedLibrary({
     attribute,
     currentAccordion,
@@ -42,6 +55,8 @@ function AttributeLinkedLibrary({
     isChecked,
     originAttributeData
 }: IAttributeLinkedLibraryProps): JSX.Element {
+    const [propsAnim, setAnim] = useSpring(() => ({display: 'block'}));
+
     const [linkedAttributes, setLinkedAttributes] = useState<IAttribute[]>([]);
     const [getLinkedAttributes, {called, loading, data, error}] = useLazyQuery(getLibraryDetailExtendedQuery, {
         variables: {
@@ -109,64 +124,56 @@ function AttributeLinkedLibrary({
     };
 
     return (
-        <WrapperAttribute>
-            <CustomAccordion>
-                <CustomAccordionContent
-                    key={attribute.id}
-                    header={
-                        <>
-                            <Button
-                                icon={isAccordionActive ? <UpOutlined /> : <DownOutlined />}
-                                loading={called && loading}
-                                onClick={changeCurrentAccordion}
-                                size="small"
-                                shape="circle"
-                            />
-                            <RowAttribute onClick={handleClick}>
-                                <TextAttribute>
-                                    {stateListAttribute.lang &&
-                                    localizedLabel(attribute.label, stateListAttribute.lang) ? (
-                                        <span>
-                                            {localizedLabel(attribute.label, stateListAttribute.lang)}
-                                            <SmallText>{attribute.id}</SmallText>
-                                        </span>
-                                    ) : (
-                                        attribute.id
-                                    )}
-                                    <span>
-                                        <LinkOutlined />
-                                    </span>
-                                </TextAttribute>
-                                {stateListAttribute.useCheckbox && (
-                                    <Checkbox checked={isChecked} onChange={handleClick} />
-                                )}
-                            </RowAttribute>
+        <>
+            <Wrapper>
+                <Container>
+                    <DeployButton
+                        active={isAccordionActive}
+                        called={called}
+                        loading={loading}
+                        changeCurrentAccordion={changeCurrentAccordion}
+                        setAnim={setAnim}
+                    />
+                    <TextAttribute>
+                        {stateListAttribute.lang && localizedLabel(attribute.label, stateListAttribute.lang) ? (
+                            <span>
+                                {localizedLabel(attribute.label, stateListAttribute.lang)}
+                                <SmallText>{attribute.id}</SmallText>
+                            </span>
+                        ) : (
+                            attribute.id
+                        )}
+                    </TextAttribute>
 
-                            {stateListAttribute.attributeSelection && (
-                                <Radio
-                                    checked={stateListAttribute.attributeSelection === attribute.id}
-                                    onChange={handleRadioChange}
-                                />
-                            )}
-                        </>
-                    }
-                >
-                    {loading ? (
-                        <Spin />
-                    ) : (
-                        <WrapperContentAttribute>
-                            <ListingAttributes
-                                attributes={linkedAttributes}
-                                stateListAttribute={stateListAttribute}
-                                dispatchListAttribute={dispatchListAttribute}
-                                depth={depth + 1}
-                                originAttributeData={{id: attribute.id, type: attribute.type}}
-                            />
-                        </WrapperContentAttribute>
-                    )}
-                </CustomAccordionContent>
-            </CustomAccordion>
-        </WrapperAttribute>
+                    <IdcardOutlined style={{fontSize: '18px'}} />
+                </Container>
+
+                {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
+
+                {stateListAttribute.attributeSelection && (
+                    <Radio
+                        checked={stateListAttribute.attributeSelection === attribute.id}
+                        onChange={handleRadioChange}
+                    />
+                )}
+            </Wrapper>
+
+            {loading ? (
+                <Spin />
+            ) : (
+                <animated.div style={propsAnim}>
+                    <WrapperContentAttribute>
+                        <ListingAttributes
+                            attributes={linkedAttributes}
+                            stateListAttribute={stateListAttribute}
+                            dispatchListAttribute={dispatchListAttribute}
+                            depth={depth + 1}
+                            originAttributeData={{id: attribute.id, type: attribute.type}}
+                        />
+                    </WrapperContentAttribute>
+                </animated.div>
+            )}
+        </>
     );
 }
 

@@ -20,7 +20,8 @@
         "title": "Accueil"
     },
     "settings": {
-        "header": "Paramètres"
+        "header": "Paramètres",
+        "choose-lang": "Choix de langue"
     },
     "menu": {
         "app_name": "Explorer",
@@ -133,9 +134,13 @@
     "filter-item": {
         "no-operator": "Si"
     },
-    "attribute-list": {
+    "attributes-list": {
         "add": "Ajoute les filtres",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "search": "Recherche...",
+        "items-selected": {
+            "library": "Bibliothèque"
+        }
     },
     "menu-selection": {
         "nb-selected": "{{nb}} éléments sélectionné(s)",

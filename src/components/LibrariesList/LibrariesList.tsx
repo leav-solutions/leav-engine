@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {Card, Divider} from 'antd';
+import {Divider, PageHeader, Row} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
@@ -10,9 +10,10 @@ import LibraryDetail from './LibraryDetail';
 
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
-    const [libraries, setLibraries] = useState<ILibrary[]>([]);
-
     const {libId, libQueryName, filterName} = useParams();
+
+    const [libraries, setLibraries] = useState<ILibrary[]>([]);
+    const [activeLibrary, setActiveLibrary] = useState<string>(libId);
 
     const {loading, data, error} = useQuery(getLibrariesListQuery);
 
@@ -20,7 +21,8 @@ function LibrariesList(): JSX.Element {
         if (!loading) {
             setLibraries(data?.libraries?.list ?? []);
         }
-    }, [loading, data, error]);
+        setActiveLibrary(libId);
+    }, [loading, data, error, libId, setActiveLibrary]);
 
     if (error) {
         return <div>error</div>;
@@ -28,12 +30,12 @@ function LibrariesList(): JSX.Element {
 
     return (
         <div className="wrapper-page">
-            <h1>{t('lib_list.header')}</h1>
-            <Card>
+            <PageHeader title={t('lib_list.header')} />
+            <Row gutter={[16, 16]}>
                 {libraries.map(lib => (
-                    <LibraryCard key={lib.id} lib={lib} />
+                    <LibraryCard active={lib.id === activeLibrary} key={lib.id} lib={lib} />
                 ))}
-            </Card>
+            </Row>
 
             {libId && libQueryName && (
                 <>

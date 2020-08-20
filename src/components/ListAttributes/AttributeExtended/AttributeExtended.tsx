@@ -1,8 +1,8 @@
-import {DownOutlined, ExpandAltOutlined, UpOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {Button, List, Spin} from 'antd';
+import {Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import styled from 'styled-components';
+import {animated, useSpring} from 'react-spring';
+import styled, {CSSObject} from 'styled-components';
 import {getAttributeWithEmbeddedFields} from '../../../queries/attributes/getAttributeWithEmbeddedFields';
 import {attributeUpdateSelection, localizedLabel} from '../../../utils';
 import {AttributeFormat, IAttribute, IEmbeddedFields, IGroupEmbeddedFields} from '../../../_types/types';
@@ -12,20 +12,31 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../ListAttributesReducer';
-import {
-    CustomAccordion,
-    CustomAccordionContent,
-    CustomAccordionTitle,
-    ListItem,
-    SmallText,
-    TextAttribute,
-    WrapperAttribute
-} from '../StyledComponents';
+import {DeployButton, SmallText, TextAttribute} from '../StyledComponents';
 
 const Child = styled.div`
     &&& {
         border-left: 3px solid #2185d0;
         padding-left: 0.8rem;
+    }
+`;
+
+const Wrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const Container = styled.div`
+    border: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 6px;
+
+    & > * {
+        padding: 0 6px;
     }
 `;
 
@@ -42,6 +53,8 @@ function AttributeExtended({
     dispatchListAttribute,
     previousDepth
 }: IAttributeExtendedProps): JSX.Element {
+    const [propsAnim, setAnim] = useSpring(() => ({display: 'none'}));
+
     const currentAccordion = stateListAttribute.accordionsActive?.find(
         accordionActive => accordionActive?.id === attribute.id && accordionActive.library === attribute.library
     );
@@ -117,24 +130,19 @@ function AttributeExtended({
 
     const isAccordionActive = !!currentAccordion;
 
-    console.log('use this', isAccordionActive);
-
     return (
-        <CustomAccordion>
-            <CustomAccordionContent
-                key={attribute.id}
-                header={
-                    <EmbeddedFieldItem
-                        attribute={attribute}
-                        isExpendable={true}
-                        onClick={toggleExpand}
-                        active={!!currentAccordion}
-                        loading={loading && called}
-                        stateListAttribute={stateListAttribute}
-                        dispatchListAttribute={dispatchListAttribute}
-                    />
-                }
-            >
+        <>
+            <EmbeddedFieldItem
+                attribute={attribute}
+                isExpendable={true}
+                onClick={toggleExpand}
+                active={isAccordionActive}
+                loading={loading && called}
+                stateListAttribute={stateListAttribute}
+                dispatchListAttribute={dispatchListAttribute}
+                setAnim={setAnim}
+            />
+            <animated.div style={propsAnim}>
                 {groupEmbeddedFields && called && !loading ? (
                     <ExploreEmbeddedFields
                         groupEmbeddedFields={groupEmbeddedFields}
@@ -146,8 +154,8 @@ function AttributeExtended({
                 ) : (
                     <Spin />
                 )}
-            </CustomAccordionContent>
-        </CustomAccordion>
+            </animated.div>
+        </>
     );
 }
 
@@ -161,16 +169,8 @@ interface IEmbeddedFieldItemProps {
     loading: boolean;
     extendedPath?: string;
     embeddedField?: IEmbeddedFields;
+    setAnim: (css: CSSObject) => void;
 }
-
-const CustomWrapper = styled(WrapperAttribute)`
-    width: 100%;
-    & {
-        * > * {
-            margin: 0 0.2rem;
-        }
-    }
-`;
 
 const EmbeddedFieldItem = ({
     stateListAttribute,
@@ -181,7 +181,8 @@ const EmbeddedFieldItem = ({
     active,
     loading,
     extendedPath,
-    embeddedField
+    embeddedField,
+    setAnim
 }: IEmbeddedFieldItemProps) => {
     const id = (embeddedField && embeddedField?.id) ?? attribute.id;
     const label = embeddedField?.label ?? embeddedField?.id ? false : attribute.label;
@@ -202,16 +203,16 @@ const EmbeddedFieldItem = ({
     };
 
     return (
-        <CustomWrapper>
+        <>
             {isExpendable ? (
-                <WrapperAttribute>
-                    <div>
-                        <Button
-                            icon={active ? <UpOutlined /> : <DownOutlined />}
+                <Wrapper>
+                    <Container>
+                        <DeployButton
+                            active={active}
+                            called={true}
                             loading={loading}
-                            onClick={onClick}
-                            size="small"
-                            shape="circle"
+                            changeCurrentAccordion={onClick}
+                            setAnim={setAnim}
                         />
                         <TextAttribute>
                             {stateListAttribute.lang && localizedLabel(label, stateListAttribute.lang) ? (
@@ -222,24 +223,21 @@ const EmbeddedFieldItem = ({
                             ) : (
                                 id
                             )}
-                            <span>{isExpendable && <ExpandAltOutlined />}</span>
                         </TextAttribute>
-                    </div>
-                </WrapperAttribute>
+                    </Container>
+                </Wrapper>
             ) : (
-                <ListItem onClick={handleClick}>
-                    <List.Item>
-                        <ListItemAttribute
-                            attribute={attribute}
-                            stateListAttribute={stateListAttribute}
-                            dispatchListAttribute={dispatchListAttribute}
-                            embeddedField={embeddedField}
-                            extendedPath={extendedPath}
-                        />
-                    </List.Item>
-                </ListItem>
+                <div onClick={handleClick}>
+                    <ListItemAttribute
+                        attribute={attribute}
+                        stateListAttribute={stateListAttribute}
+                        dispatchListAttribute={dispatchListAttribute}
+                        embeddedField={embeddedField}
+                        extendedPath={extendedPath}
+                    />
+                </div>
             )}
-        </CustomWrapper>
+        </>
     );
 };
 
@@ -258,6 +256,8 @@ const ExploreEmbeddedFields = ({
     dispatchListAttribute,
     attribute
 }: IDisplayGroupEmbeddedFields) => {
+    const [propsAnim, setAnim] = useSpring(() => ({display: 'none'}));
+
     const exploreEmbeddedFields = (
         groupEmbeddedFields: IGroupEmbeddedFields | IEmbeddedFields[] | IEmbeddedFields,
         depth: number = 0,
@@ -295,24 +295,21 @@ const ExploreEmbeddedFields = ({
                 };
 
                 return (
-                    <CustomAccordion key={embeddedField.id}>
-                        <CustomAccordionContent
+                    <div key={embeddedField.id}>
+                        <EmbeddedFieldItem
+                            attribute={attribute}
+                            embeddedField={embeddedField}
+                            isExpendable={embeddedField.format === AttributeFormat.extended}
+                            onClick={toggleExpand}
+                            active={isActive}
+                            loading={false}
+                            extendedPath={`${path}.${embeddedField.id}`}
+                            stateListAttribute={stateListAttribute}
+                            dispatchListAttribute={dispatchListAttribute}
                             key={embeddedField.id}
-                            header={
-                                <EmbeddedFieldItem
-                                    attribute={attribute}
-                                    embeddedField={embeddedField}
-                                    isExpendable={embeddedField.format === AttributeFormat.extended}
-                                    onClick={toggleExpand}
-                                    active={isActive}
-                                    loading={false}
-                                    extendedPath={`${path}.${embeddedField.id}`}
-                                    stateListAttribute={stateListAttribute}
-                                    dispatchListAttribute={dispatchListAttribute}
-                                    key={embeddedField.id}
-                                />
-                            }
-                        >
+                            setAnim={setAnim}
+                        />
+                        <animated.div style={propsAnim}>
                             <Child>
                                 {exploreEmbeddedFields(
                                     embeddedField.embedded_fields,
@@ -320,8 +317,8 @@ const ExploreEmbeddedFields = ({
                                     `${path}.${embeddedField.id}`
                                 )}
                             </Child>
-                        </CustomAccordionContent>
-                    </CustomAccordion>
+                        </animated.div>
+                    </div>
                 );
             } else {
                 const toggleExpand = () => {
@@ -341,7 +338,7 @@ const ExploreEmbeddedFields = ({
                 };
 
                 return (
-                    <CustomAccordionTitle key={embeddedField.id}>
+                    <div key={embeddedField.id}>
                         <EmbeddedFieldItem
                             attribute={attribute}
                             embeddedField={embeddedField}
@@ -353,8 +350,9 @@ const ExploreEmbeddedFields = ({
                             stateListAttribute={stateListAttribute}
                             dispatchListAttribute={dispatchListAttribute}
                             key={embeddedField.id}
+                            setAnim={setAnim}
                         />
-                    </CustomAccordionTitle>
+                    </div>
                 );
             }
         };

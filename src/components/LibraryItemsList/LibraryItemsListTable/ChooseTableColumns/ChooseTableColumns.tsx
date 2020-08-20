@@ -25,13 +25,20 @@ function ChooseTableColumns({
     const {t} = useTranslation();
 
     const [attributesChecked, setAttributesChecked] = useState<IAttributesChecked[]>(
-        stateItems.columns.map(col => ({
-            id: col.id,
-            library: col.library,
-            type: col.type,
-            depth: 0,
-            checked: true
-        }))
+        stateItems.columns.map(col => {
+            const currentAttribute = stateItems.attributes.find(
+                attribute => attribute.id === col.id && attribute.library === col.library
+            );
+
+            return {
+                id: col.id,
+                library: col.library,
+                label: currentAttribute?.label ?? '',
+                type: col.type,
+                depth: 0,
+                checked: true
+            };
+        })
     );
 
     const [newAttributes, setNewAttributes] = useState<IAttribute[]>([]);

@@ -1,5 +1,5 @@
 import {CloseOutlined} from '@ant-design/icons';
-import {Button, Card, Checkbox, Select} from 'antd';
+import {Button, Card, Checkbox, Divider, Select} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
@@ -50,9 +50,14 @@ const GridColumn = styled.div<GridColumnProps>`
     }
 `;
 
-const CurrentAttribute = styled.span`
-    cursor: pointer;
-    background: none;
+interface CurrentAttributeProps {
+    style?: CSSObject;
+    disabled: boolean;
+}
+
+const CurrentAttribute = styled.span<CurrentAttributeProps>`
+    cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+    background: ${props => (props.disabled ? 'hsla(0, 0%, 0%, 0.1)' : 'none')};
     padding: 0.5rem;
     border-radius: 0.25rem;
 
@@ -200,8 +205,20 @@ function FilterItem({
                 showModal={showModal}
                 setShowModal={setShowModal}
             />
+            <Divider>
+                {filter.operator ? (
+                    <Select bordered={false} value={filterOperator} onChange={e => handleOperatorChange(e)}>
+                        {operatorOptions.map(operator => (
+                            <Select.Option key={operator.value} value={operator.value}>
+                                {operator.text}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                ) : (
+                    <Select bordered={false} value={t('filter-item.no-operator')}></Select>
+                )}
+            </Divider>
             <Card>
-                <Button disabled={!filter.active}>Usable</Button>
                 <Grid>
                     <GridRow key={filter.key}>
                         <GridColumn>
@@ -209,21 +226,15 @@ function FilterItem({
                         </GridColumn>
 
                         <GridColumn flex={5}>
-                            {filter.operator ? (
-                                <Select value={filterOperator} onChange={e => handleOperatorChange(e)}>
-                                    {operatorOptions.map(operator => (
-                                        <Select.Option key={operator.value} value={operator.value}>
-                                            {operator.text}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            ) : (
-                                t('filter-item.no-operator')
-                            )}
+                            <CurrentAttribute onClick={() => setShowModal(true)} disabled={!filter.active}>
+                                {filter.attributeId}
+                            </CurrentAttribute>
 
-                            <CurrentAttribute onClick={() => setShowModal(true)}>{filter.attributeId}</CurrentAttribute>
-
-                            <Select value={filter.condition} onChange={(e: ConditionFilter) => changeCondition(e)}>
+                            <Select
+                                value={filter.condition}
+                                onChange={(e: ConditionFilter) => changeCondition(e)}
+                                disabled={!filter.active}
+                            >
                                 {conditionOptionsByType.map(condition => (
                                     <Select.Option key={condition.value} value={condition.value}>
                                         {condition.text}

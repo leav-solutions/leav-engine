@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import {attributeUpdateSelection} from '../../../utils';
 import {
     AttributeFormat,
@@ -16,7 +17,6 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../ListAttributesReducer';
-import {ListItem} from '../StyledComponents';
 
 interface IAttributeProps {
     stateListAttribute: ListAttributeState;
@@ -26,6 +26,10 @@ interface IAttributeProps {
     originAttributeData?: IOriginAttributeData;
     treeData?: ITreeData;
 }
+
+const Item = styled.div`
+    padding: 1rem 0;
+`;
 
 function Attribute({
     stateListAttribute,
@@ -47,7 +51,7 @@ function Attribute({
 
     if (attribute.linkedLibrary && !isSame && depthLimitation) {
         return (
-            <ListItem>
+            <Item>
                 <AttributeLink
                     attribute={attribute}
                     stateListAttribute={stateListAttribute}
@@ -56,13 +60,13 @@ function Attribute({
                     type="library"
                     originAttributeData={originAttributeData}
                 />
-            </ListItem>
+            </Item>
         );
     }
 
     if (attribute.type === AttributeType.tree && !isSame && depthLimitation) {
         return (
-            <ListItem>
+            <Item>
                 <AttributeLink
                     attribute={attribute}
                     stateListAttribute={stateListAttribute}
@@ -71,20 +75,20 @@ function Attribute({
                     type="tree"
                     originAttributeData={originAttributeData}
                 />
-            </ListItem>
+            </Item>
         );
     }
 
     if (attribute.format === AttributeFormat.extended) {
         return (
-            <ListItem>
+            <Item>
                 <AttributeExtended
                     attribute={attribute}
                     stateListAttribute={stateListAttribute}
                     dispatchListAttribute={dispatchListAttribute}
                     previousDepth={depth}
                 />
-            </ListItem>
+            </Item>
         );
     }
 
@@ -105,14 +109,14 @@ function Attribute({
     };
 
     return (
-        <ListItem onClick={handleClick}>
+        <Item onClick={handleClick}>
             <ListItemAttribute
                 attribute={attribute}
                 stateListAttribute={stateListAttribute}
                 dispatchListAttribute={dispatchListAttribute}
                 treeData={treeData}
             />
-        </ListItem>
+        </Item>
     );
 }
 export default Attribute;

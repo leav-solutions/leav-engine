@@ -54,7 +54,8 @@
         "new": "New"
     },
     "settings": {
-        "header": "Settings"
+        "header": "Settings",
+        "choose-lang": "Choose language"
     },
     "loading": "Loading",
     "items_list": {
@@ -134,9 +135,13 @@
     "filter-item": {
         "no-operator": "If"
     },
-    "attribute-list": {
+    "attributes-list": {
         "add": "Add filters",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "search": "Search...",
+        "items-selected": {
+            "library": "Library"
+        }
     },
     "menu-selection": {
         "nb-selected": "{{nb}} items selected",

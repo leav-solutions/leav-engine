@@ -14,14 +14,6 @@ interface ITopBarProps {
     toggleUserPanelVisible: () => void;
 }
 
-const CustomMenu = styled(Menu)`
-    && {
-        border-radius: 0;
-        margin: 0;
-        height: 3.5rem;
-    }
-`;
-
 const WrapperUserMenu = styled.div`
     width: 6rem;
 `;

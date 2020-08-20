@@ -31,7 +31,12 @@ const FormText = ({filter, updateFilterValue}: IFromTextProps) => {
     return (
         <CustomForm>
             <TextAreaWrapper>
-                <Input.TextArea rows={textAreaRows} value={filter.value} onChange={e => handleChange(e)} />
+                <Input.TextArea
+                    disabled={!filter.active}
+                    rows={textAreaRows}
+                    value={filter.value}
+                    onChange={e => handleChange(e)}
+                />
             </TextAreaWrapper>
         </CustomForm>
     );

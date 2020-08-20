@@ -255,6 +255,7 @@ export const attributeUpdateSelection = ({
                 {
                     id: attribute.id,
                     library: attribute.library ?? originAttributeData?.id,
+                    label: attribute.label,
                     type: attribute.type,
                     checked: true,
                     originAttributeData,
@@ -272,6 +273,7 @@ export const attributeUpdateSelection = ({
             {
                 id: attribute.id,
                 library: attribute.library,
+                label: attribute.label,
                 type: attribute.type,
                 depth,
                 checked: true,
@@ -283,3 +285,5 @@ export const attributeUpdateSelection = ({
         return newAttributesChecked;
     }
 };
+
+export const paginationOptions = [5, 10, 20, 50, 100];

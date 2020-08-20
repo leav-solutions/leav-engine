@@ -1,4 +1,7 @@
-import {Collapse, Input, List} from 'antd';
+import {DownOutlined} from '@ant-design/icons';
+import {Button, Collapse, Input, List} from 'antd';
+import React from 'react';
+import {animated, useSpring} from 'react-spring';
 import styled from 'styled-components';
 
 export const WrapperAttribute = styled.div`
@@ -16,6 +19,7 @@ export const TextAttribute = styled.span`
 export const SmallText = styled.span`
     color: hsl(0, 0%, 45%);
     font-weight: 400;
+    padding-left: 3px;
 `;
 
 export const ListItem = styled(List.Item)`
@@ -76,3 +80,33 @@ export const RowAttribute = styled.div`
         margin: 0 0.2rem;
     }
 `;
+
+interface DeployButtonProps {
+    active: boolean | undefined;
+    called: boolean;
+    loading: boolean;
+    changeCurrentAccordion: () => void;
+    setAnim: (props: any) => void;
+}
+
+export const DeployButton = ({active, called, loading, changeCurrentAccordion, setAnim}: DeployButtonProps) => {
+    const [animProps, set] = useSpring(() => ({transform: 'rotateX(0deg)'}));
+
+    const onClick = () => {
+        set({transform: `rotateX(${active ? 0 : 180}deg)`});
+        changeCurrentAccordion();
+        setAnim({display: active ? 'none' : 'block'});
+    };
+
+    return (
+        <animated.div style={animProps}>
+            <Button
+                icon={<DownOutlined />}
+                loading={called && loading}
+                onClick={onClick}
+                size="small"
+                style={animProps}
+            />
+        </animated.div>
+    );
+};

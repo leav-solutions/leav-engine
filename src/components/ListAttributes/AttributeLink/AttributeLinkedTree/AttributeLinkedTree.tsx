@@ -1,7 +1,8 @@
-import {ApartmentOutlined, DownOutlined, UpOutlined} from '@ant-design/icons';
+import {IdcardOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {Button, Checkbox, Radio, Spin} from 'antd';
+import {Checkbox, Radio, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
+import {animated, useSpring} from 'react-spring';
 import styled from 'styled-components';
 import {getTreeAttributesQuery} from '../../../../queries/trees/getTreeAttributesQuery';
 import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../../../utils';
@@ -12,15 +13,7 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../../ListAttributesReducer';
-import {
-    CustomAccordion,
-    CustomAccordionContent,
-    RowAttribute,
-    SmallText,
-    TextAttribute,
-    WrapperAttribute,
-    WrapperContentAttribute
-} from '../../StyledComponents';
+import {DeployButton, SmallText, TextAttribute, WrapperContentAttribute} from '../../StyledComponents';
 
 const LibraryName = styled.div`
     font-weight: 300;
@@ -28,6 +21,25 @@ const LibraryName = styled.div`
     width: 100%;
     justify-content: space-around;
     display: flex;
+`;
+
+const Wrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const Container = styled.div`
+    border: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 6px;
+
+    & > * {
+        padding: 0 6px;
+    }
 `;
 
 interface ITreeLinkedAttribute {
@@ -57,6 +69,8 @@ function AttributeLinkedTree({
     isChecked,
     originAttributeData
 }: IAttributeLinkedTreeProps): JSX.Element {
+    const [propsAnim, setAnim] = useSpring(() => ({display: 'block'}));
+
     const [linkedAttributes, setLinkedAttributes] = useState<ITreeLinkedAttribute[]>([]);
 
     const [getLinkedAttributes, {called, loading, data, error}] = useLazyQuery(getTreeAttributesQuery, {
@@ -142,73 +156,65 @@ function AttributeLinkedTree({
     };
 
     return (
-        <WrapperAttribute>
-            <CustomAccordion>
-                <CustomAccordionContent
-                    key={attribute.id}
-                    header={
-                        <>
-                            <Button
-                                icon={isAccordionActive ? <UpOutlined /> : <DownOutlined />}
-                                loading={called && loading}
-                                onClick={changeCurrentAccordion}
-                                size="small"
-                                shape="circle"
-                            />
-                            <RowAttribute onClick={handleClick}>
-                                <TextAttribute>
-                                    {stateListAttribute.lang &&
-                                    localizedLabel(attribute.label, stateListAttribute.lang) ? (
-                                        <span>
-                                            {localizedLabel(attribute.label, stateListAttribute.lang)}
-                                            <SmallText>{attribute.id}</SmallText>
-                                        </span>
-                                    ) : (
-                                        attribute.id
-                                    )}
-                                    <span>
-                                        <ApartmentOutlined />
-                                    </span>
-                                </TextAttribute>
-                                {stateListAttribute.useCheckbox && (
-                                    <Checkbox checked={isChecked} onChange={handleClick} />
-                                )}
-                            </RowAttribute>
+        <>
+            <Wrapper>
+                <Container>
+                    <DeployButton
+                        active={isAccordionActive}
+                        called={called}
+                        loading={loading}
+                        changeCurrentAccordion={changeCurrentAccordion}
+                        setAnim={setAnim}
+                    />
+                    <TextAttribute>
+                        {stateListAttribute.lang && localizedLabel(attribute.label, stateListAttribute.lang) ? (
+                            <span>
+                                {localizedLabel(attribute.label, stateListAttribute.lang)}
+                                <SmallText>{attribute.id}</SmallText>
+                            </span>
+                        ) : (
+                            attribute.id
+                        )}
+                    </TextAttribute>
 
-                            {stateListAttribute.attributeSelection && (
-                                <Radio
-                                    checked={stateListAttribute.attributeSelection === attribute.id}
-                                    onChange={handleRadioChange}
+                    <IdcardOutlined style={{fontSize: '18px'}} />
+                </Container>
+
+                {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
+
+                {stateListAttribute.attributeSelection && (
+                    <Radio
+                        checked={stateListAttribute.attributeSelection === attribute.id}
+                        onChange={handleRadioChange}
+                    />
+                )}
+            </Wrapper>
+
+            {loading ? (
+                <Spin />
+            ) : (
+                <animated.div style={propsAnim}>
+                    <WrapperContentAttribute>
+                        {linkedAttributes.map(linkedAttribute => (
+                            <div key={linkedAttribute.library}>
+                                <LibraryName>{linkedAttribute.library}</LibraryName>
+                                <ListingAttributes
+                                    attributes={linkedAttribute.attributes}
+                                    stateListAttribute={stateListAttribute}
+                                    dispatchListAttribute={dispatchListAttribute}
+                                    depth={depth + 1}
+                                    originAttributeData={{id: attribute.id, type: attribute.type}}
+                                    treeData={{
+                                        attributeTreeId: attribute.id,
+                                        libraryTypeName: linkedAttribute.libraryTypeName
+                                    }}
                                 />
-                            )}
-                        </>
-                    }
-                >
-                    {loading ? (
-                        <Spin />
-                    ) : (
-                        <WrapperContentAttribute>
-                            {linkedAttributes.map(linkedAttribute => (
-                                <div key={linkedAttribute.library}>
-                                    <LibraryName>{linkedAttribute.library}</LibraryName>
-                                    <ListingAttributes
-                                        attributes={linkedAttribute.attributes}
-                                        stateListAttribute={stateListAttribute}
-                                        dispatchListAttribute={dispatchListAttribute}
-                                        depth={depth + 1}
-                                        originAttributeData={{id: attribute.id, type: attribute.type}}
-                                        treeData={{
-                                            attributeTreeId: attribute.id,
-                                            libraryTypeName: linkedAttribute.libraryTypeName
-                                        }}
-                                    />
-                                </div>
-                            ))}
-                        </WrapperContentAttribute>
-                    )}
-                </CustomAccordionContent>
-            </CustomAccordion>
-        </WrapperAttribute>
+                            </div>
+                        ))}
+                    </WrapperContentAttribute>
+                </animated.div>
+            )}
+        </>
     );
 }
 

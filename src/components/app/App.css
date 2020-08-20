@@ -3,10 +3,11 @@
 }
 
 .page-content {
-  height: calc(100% - 3.5rem); /* All page less the size of the top navbar */
+  height: calc(100% - 3.5rem);
+  /* All page less the size of the top navbar */
 }
 
-.nav-link-active  span{
+.nav-link-active span {
   background: gray !important;
 }
 

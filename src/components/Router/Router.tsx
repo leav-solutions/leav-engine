@@ -1,5 +1,5 @@
 import {Menu} from 'antd';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import styled from 'styled-components';
 import SideBarMenu from '../SideBarMenu';
@@ -13,13 +13,26 @@ const PageWrapper = styled.div`
     margin: 0;
 `;
 
-const TopBarWrapper = styled.div``;
+const TopBarWrapper = styled.div`
+    height: 3rem;
+
+    & > * {
+        height: 3rem;
+
+        & > * {
+            height: 3rem;
+        }
+    }
+`;
+
+const BodyWrapper = styled.div`
+    position: relative; /* relative position for Drawer */
+    height: calc(100% - 3rem);
+`;
 
 function Router(): JSX.Element {
     const [sideBarVisible, setSideBarVisible] = useState<boolean>(false);
     const [userPanelVisible, setUserPanelVisible] = useState<boolean>(false);
-
-    const contextRef = useRef();
 
     const toggleSidebarVisible = () => {
         setSideBarVisible(visible => !visible);
@@ -38,31 +51,21 @@ function Router(): JSX.Element {
             <BrowserRouter>
                 <PageWrapper>
                     <TopBarWrapper>
-                        <div>
-                            <TopBar
-                                sideBarVisible={sideBarVisible}
-                                userPanelVisible={userPanelVisible}
-                                toggleSidebarVisible={toggleSidebarVisible}
-                                toggleUserPanelVisible={toggleUserPanelVisible}
-                            />
-                        </div>
+                        <TopBar
+                            sideBarVisible={sideBarVisible}
+                            userPanelVisible={userPanelVisible}
+                            toggleSidebarVisible={toggleSidebarVisible}
+                            toggleUserPanelVisible={toggleUserPanelVisible}
+                        />
                     </TopBarWrapper>
-                    <div
-                        style={{
-                            position: 'relative', // relative position for Drawer
-                            height: '100%'
-                        }}
-                    >
-                        <div>
-                            <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
-                            <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
-                        </div>
-                        <div>
-                            <Menu>
-                                <Routes />
-                            </Menu>
-                        </div>
-                    </div>
+                    <BodyWrapper>
+                        <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
+                        <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
+
+                        <Menu>
+                            <Routes />
+                        </Menu>
+                    </BodyWrapper>
                 </PageWrapper>
             </BrowserRouter>
         </>

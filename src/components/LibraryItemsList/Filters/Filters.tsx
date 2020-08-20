@@ -1,5 +1,5 @@
-import {FilterOutlined} from '@ant-design/icons';
-import {Button, Divider, Dropdown, Menu} from 'antd';
+import {FilterFilled} from '@ant-design/icons';
+import {Button, Dropdown, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
@@ -24,22 +24,23 @@ interface WrapperFilterProps {
 
 const WrapperFilter = styled.div<WrapperFilterProps>`
     display: ${({visible}) => (visible ? 'flex' : 'none')};
-`;
-
-const CustomSidebarPushable = styled.div`
-    width: 100%;
+    position: relative;
+    height: 100vh;
+    margin-right: 16px;
 `;
 
 const Side = styled.div`
     border-right: 1px solid #ebebeb;
-    padding: 1rem 1rem 0 1rem;
+    padding-right: 1rem;
     height: 100%;
+    width: 100%;
 `;
 
 const FilterActions = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 1rem 0;
 `;
 
 const FilterList = styled.div`
@@ -49,8 +50,7 @@ const FilterList = styled.div`
 `;
 
 const FilterGroup = styled.div`
-    padding: 0.2rem;
-    border: 1px solid hsla(0, 0%, 90%);
+    padding: 0 16px;
     border-radius: 0.25rem;
 `;
 
@@ -187,76 +187,73 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
             visible={stateItems.showFilters ? 1 : 0}
             className={stateItems.showFilters ? 'wrapped-filter-open' : 'wrapped-filter-close'}
         >
-            <CustomSidebarPushable>
-                <AddFilter
-                    stateItems={stateItems}
-                    dispatchItems={dispatchItems}
-                    setFilters={setFilters}
-                    showAttr={showAttr}
-                    setShowAttr={setShowAttr}
-                    updateFilters={updateFilters}
-                />
+            <AddFilter
+                stateItems={stateItems}
+                dispatchItems={dispatchItems}
+                setFilters={setFilters}
+                showAttr={showAttr}
+                setShowAttr={setShowAttr}
+                updateFilters={updateFilters}
+            />
+            <Side>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingLeft: '1rem'
+                    }}
+                >
+                    <div>
+                        <Button icon={<FilterFilled />} onClick={handleHide} />
+                    </div>
+                    <div>
+                        <SelectView />
+                    </div>
+                </div>
 
-                <Side>
-                    <Menu style={{height: '5rem'}}>
-                        <Menu>
-                            <Menu.Item>
-                                <Button icon={<FilterOutlined />} onClick={handleHide} />
-                            </Menu.Item>
-                        </Menu>
-                        <Menu>
-                            <Menu.Item>
-                                <SelectView />
-                            </Menu.Item>
-                        </Menu>
-                    </Menu>
-
-                    <FilterActions>
-                        <Dropdown
-                            overlay={
-                                <Menu>
-                                    <Menu.Item onClick={() => setShowAttr(true)}>{t('filters.add-filters')}</Menu.Item>
-                                    <Menu.Item disabled={!filters.length} onClick={removeAllFilter}>
-                                        {t('filters.remove-filters')}
-                                    </Menu.Item>
-                                    <Menu.Item disabled={!filters.length} onClick={addSeparator}>
-                                        {t('filters.add-separator')}
-                                    </Menu.Item>
-                                </Menu>
-                            }
-                        >
-                            <span>{t('filters.filters-options')}</span>
-                        </Dropdown>
-
-                        <Button
-                            disabled={!filters.filter(f => f.type === FilterTypes.filter).length}
-                            onClick={applyFilters}
-                        >
-                            {t('filters.apply')}
-                        </Button>
-                    </FilterActions>
-
-                    <Divider />
-
-                    <FilterList>
-                        {
-                            <FilterElements
-                                filters={filters}
-                                setFilters={setFilters}
-                                stateItems={stateItems}
-                                conditionOptions={conditionOptions}
-                                operatorOptions={operatorOptions}
-                                resetFilters={resetFilters}
-                                updateFilters={updateFilters}
-                                filterOperator={filterOperator}
-                                setFilterOperator={setFilterOperator}
-                                separatorOperator={separatorOperator}
-                                setSeparatorOperator={setSeparatorOperator}
-                            />
+                <FilterActions>
+                    <Dropdown
+                        overlay={
+                            <Menu>
+                                <Menu.Item onClick={() => setShowAttr(true)}>{t('filters.add-filters')}</Menu.Item>
+                                <Menu.Item disabled={!filters.length} onClick={removeAllFilter}>
+                                    {t('filters.remove-filters')}
+                                </Menu.Item>
+                                <Menu.Item disabled={!filters.length} onClick={addSeparator}>
+                                    {t('filters.add-separator')}
+                                </Menu.Item>
+                            </Menu>
                         }
-                    </FilterList>
-                </Side>
-            </CustomSidebarPushable>
+                    >
+                        <span>{t('filters.filters-options')}</span>
+                    </Dropdown>
+
+                    <Button
+                        disabled={!filters.filter(f => f.type === FilterTypes.filter).length}
+                        onClick={applyFilters}
+                        type="primary"
+                    >
+                        {t('filters.apply')}
+                    </Button>
+                </FilterActions>
+
+                <FilterList>
+                    <FilterElements
+                        filters={filters}
+                        setFilters={setFilters}
+                        stateItems={stateItems}
+                        conditionOptions={conditionOptions}
+                        operatorOptions={operatorOptions}
+                        resetFilters={resetFilters}
+                        updateFilters={updateFilters}
+                        filterOperator={filterOperator}
+                        setFilterOperator={setFilterOperator}
+                        separatorOperator={separatorOperator}
+                        setSeparatorOperator={setSeparatorOperator}
+                    />
+                </FilterList>
+            </Side>
         </WrapperFilter>
     );
 }
@@ -290,6 +287,7 @@ const FilterElements = ({
 }: IFilterElements) => {
     let lastType: string;
 
+    // Create group of filters in function of separators
     const result = filters
         .reduce((acc, filter) => {
             // Group filters by type

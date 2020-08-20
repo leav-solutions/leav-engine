@@ -1,4 +1,4 @@
-import {AppstoreFilled, MenuOutlined, PlusOutlined} from '@ant-design/icons';
+import {AppstoreFilled, DownOutlined, MenuOutlined, PlusOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -55,7 +55,9 @@ function SelectView(): JSX.Element {
 
     return (
         <Dropdown overlay={menu}>
-            <span>{currentView?.text ?? t('select-view.default-view')}</span>
+            <span>
+                {currentView?.text ?? t('select-view.default-view')} <DownOutlined />
+            </span>
         </Dropdown>
     );
 }

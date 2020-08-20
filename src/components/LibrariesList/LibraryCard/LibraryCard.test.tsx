@@ -1,4 +1,3 @@
-import {Button} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
@@ -12,34 +11,38 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('LibraryCard', () => {
-    test('Card should have actions', async () => {
-        const lib = {
-            label: {}
-        };
+    const lib = {
+        label: {
+            en: 'label',
+            fr: 'label'
+        },
+        id: 'id'
+    };
 
-        const mocks = [
-            {
-                request: {
-                    query: getLang
-                },
-                result: {
-                    data: {
-                        lang: 'fr'
-                    }
+    const mocks = [
+        {
+            request: {
+                query: getLang
+            },
+            result: {
+                data: {
+                    lang: 'fr'
                 }
             }
-        ];
+        }
+    ];
 
+    test('should display id', async () => {
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
-                    <LibraryCard lib={lib as ILibrary} />
+                    <LibraryCard lib={lib as ILibrary} active={true} />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find(Button.Group)).toHaveLength(1);
+        expect(comp.text()).toContain('id');
     });
 });

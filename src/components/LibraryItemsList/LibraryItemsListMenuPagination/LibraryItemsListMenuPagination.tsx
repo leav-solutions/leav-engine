@@ -1,4 +1,5 @@
-import {Button, Dropdown, Menu} from 'antd';
+import {DownOutlined} from '@ant-design/icons';
+import {Button, Col, Dropdown, Menu, Row} from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -66,15 +67,21 @@ function LibraryItemsListMenuPagination({
         <Dropdown
             overlay={
                 <Menu>
-                    <SubMenu>
-                        <Button onClick={selectAll}>
-                            {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
-                        </Button>
+                    <Menu.Item>
+                        <Row>
+                            <Col>
+                                <Button onClick={selectAll}>
+                                    {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
+                                </Button>
+                            </Col>
 
-                        <Button onClick={selectVisible}>
-                            {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
-                        </Button>
-                    </SubMenu>
+                            <Col>
+                                <Button onClick={selectVisible}>
+                                    {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Menu.Item>
                     <SubMenu title={t('items-menu-dropdown.items-display')}>
                         {paginationOptions.map(pagOption => (
                             <Menu.Item
@@ -87,7 +94,7 @@ function LibraryItemsListMenuPagination({
                                     })
                                 }
                             >
-                                pagOption
+                                {pagOption}
                             </Menu.Item>
                         ))}
                     </SubMenu>
@@ -100,6 +107,7 @@ function LibraryItemsListMenuPagination({
                     nb2: nextOffsetDisplay,
                     nbItems: stateItems.itemsTotalCount
                 })}
+                <DownOutlined style={{paddingLeft: 6}} />
             </span>
         </Dropdown>
     );

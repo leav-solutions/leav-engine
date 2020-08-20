@@ -15,7 +15,8 @@ export enum LibraryItemListReducerActionTypes {
     SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
     SET_ATTRIBUTES = 'SET_ATTRIBUTES',
     SET_COLUMNS = 'SET_COLUMNS',
-    SET_ALL_SELECTED = 'SET_ALL_SELECTED'
+    SET_ALL_SELECTED = 'SET_ALL_SELECTED',
+    SET_ITEM_LOADING = 'SET_ITEM_LOADING'
 }
 
 export interface LibraryItemListState {
@@ -26,6 +27,7 @@ export interface LibraryItemListState {
     itemsSortOrder: OrderSearch;
     items?: IItem[];
     itemsTotalCount: number;
+    itemsLoading: boolean;
     offset: number;
     pagination: number;
     displayType: DisplayListItemTypes;
@@ -45,6 +47,7 @@ export const LibraryItemListInitialState: LibraryItemListState = {
     itemsSortField: '',
     itemsSortOrder: OrderSearch.asc,
     itemsTotalCount: 0,
+    itemsLoading: true,
     offset: 0,
     pagination: 20,
     displayType: DisplayListItemTypes.listSmall,
@@ -124,6 +127,10 @@ export type LibraryItemListReducerAction =
     | {
           type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED;
           allSelected: boolean;
+      }
+    | {
+          type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING;
+          itemLoading: boolean;
       };
 
 const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
@@ -163,6 +170,8 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
                 finalState.itemsSelected = {};
             }
             return finalState;
+        case LibraryItemListReducerActionTypes.SET_ITEM_LOADING:
+            return {...state, itemsLoading: action.itemLoading};
         default:
             return state;
     }

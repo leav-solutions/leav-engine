@@ -18,17 +18,9 @@ interface IItemTileDisplayProps {
     showRecordEdition: (item: IItem) => void;
 }
 
-const CustomCard = styled(Card)`
-    &&& {
-        max-width: 15rem;
-        min-width: 8rem;
-        height: 15rem;
-        margin: auto auto 1rem auto;
-    }
-`;
-
 const ImageWrapper = styled.div`
     position: relative;
+    border-bottom: 1px solid #f5f5f5;
 `;
 
 const ActionsWrapper = styled.div`
@@ -143,32 +135,40 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
     }, [stateItems.itemsSelected, item]);
 
     return (
-        <CustomCard>
-            <ImageWrapper>
-                <ActionsWrapper>
-                    {stateItems.selectionMode ? (
-                        <Selection>
-                            <CheckboxWrapper checked={isSelected} onClick={handleClick}>
-                                {isSelected && <CheckOutlined />}
-                            </CheckboxWrapper>
-                        </Selection>
-                    ) : (
-                        <Actions className="actions">
-                            <Button shape="circle" icon={<CheckOutlined />} onClick={switchSelectionMode} />
-                            <Button shape="circle" icon={<EditOutlined />} onClick={() => showRecordEdition(item)} />
-                            <Button shape="circle" icon={<HeartOutlined />} />
-                            <Button shape="circle" icon={<EllipsisOutlined />} />
-                        </Actions>
-                    )}
-                </ActionsWrapper>
-                <RecordPreview
-                    label={item.label || item.id}
-                    image={item.preview?.medium ? getPreviewUrl(item.preview.medium) : ''}
-                    tile={true}
-                />
-            </ImageWrapper>
-            <Card title={item.label || item.id}>{item.library?.id}</Card>
-        </CustomCard>
+        <Card
+            cover={
+                <ImageWrapper>
+                    <ActionsWrapper>
+                        {stateItems.selectionMode ? (
+                            <Selection>
+                                <CheckboxWrapper checked={isSelected} onClick={handleClick}>
+                                    {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
+                                </CheckboxWrapper>
+                            </Selection>
+                        ) : (
+                            <Actions className="actions">
+                                <Button shape="circle" ghost icon={<CheckOutlined />} onClick={switchSelectionMode} />
+                                <Button
+                                    shape="circle"
+                                    icon={<EditOutlined />}
+                                    ghost
+                                    onClick={() => showRecordEdition(item)}
+                                />
+                                <Button shape="circle" ghost icon={<HeartOutlined />} />
+                                <Button shape="circle" ghost icon={<EllipsisOutlined />} />
+                            </Actions>
+                        )}
+                    </ActionsWrapper>
+                    <RecordPreview
+                        label={item.label || item.id}
+                        image={item.preview?.medium ? getPreviewUrl(item.preview.medium) : ''}
+                        tile={true}
+                    />
+                </ImageWrapper>
+            }
+        >
+            <Card.Meta title={item.label || item.id} description={item.library?.id} />
+        </Card>
     );
 }
 

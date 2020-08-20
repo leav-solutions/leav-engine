@@ -70,7 +70,7 @@ describe('FilterItem', () => {
             );
         });
 
-        expect(comp.find(Select)).toHaveLength(1);
+        expect(comp.find(Select)).toHaveLength(2);
     });
 
     test('should have a TextArea', async () => {

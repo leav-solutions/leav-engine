@@ -1,5 +1,6 @@
 import {useMutation} from '@apollo/client';
-import {Button, Form, Modal} from 'antd';
+import {Button, Form, Input, Modal} from 'antd';
+import {FormInstance} from 'antd/lib/form';
 import React, {useRef} from 'react';
 import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
 import {IItem} from '../../../../../_types/types';
@@ -13,13 +14,11 @@ interface ILibraryItemsModalProps {
 }
 
 function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibraryItemsModalProps): JSX.Element {
-    const formRef = useRef<HTMLFormElement>(null);
+    const formRef = useRef<FormInstance>(null);
 
     const [saveValueBatch] = useMutation(saveValueBatchQuery);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleSubmit = () => {
         saveValueBatch({
             variables: {
                 library: values?.library?.id,
@@ -36,7 +35,7 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
     };
 
     const triggerSubmit = () => {
-        formRef.current?.dispatchEvent(new Event('submit'));
+        formRef.current?.submit();
     };
 
     return (
@@ -44,6 +43,7 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
             visible={showModal}
             onCancel={closeModal}
             title="Modal"
+            width="50rem"
             footer={[
                 <Button type="text" onClick={closeModal}>
                     Close
@@ -55,23 +55,19 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
         >
             {values && (
                 <>
-                    <Form>
-                        <form ref={formRef} onSubmit={handleSubmit}>
-                            <Form.Item>
-                                <label>Id</label>
-                                <input disabled type="text" value={values?.id} />
-                            </Form.Item>
-                            <Form.Item>
-                                <label>Label</label>
-                                <input
-                                    type="text"
-                                    value={values?.label || ''}
-                                    onChange={e => updateValues({...values, label: e.target.value})}
-                                />
-                            </Form.Item>
-                            <h2>Preview</h2>
-                            <FormPreviewsModal values={values} updateValues={updateValues} />
-                        </form>
+                    <Form ref={formRef} onFinish={handleSubmit}>
+                        <Form.Item label="ID" name="ID">
+                            <Input disabled type="text" value={values?.id} />
+                        </Form.Item>
+                        <Form.Item label="Label">
+                            <Input
+                                type="text"
+                                value={values?.label || ''}
+                                onChange={e => updateValues({...values, label: e.target.value})}
+                            />
+                        </Form.Item>
+                        <h2>Preview</h2>
+                        <FormPreviewsModal values={values} updateValues={updateValues} />
                     </Form>
                 </>
             )}

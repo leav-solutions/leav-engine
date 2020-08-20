@@ -42,7 +42,7 @@ describe('TileDisplay', () => {
             }
         ];
 
-        const stateMock = {...stateItems, items: itemsMock};
+        const stateMock = {...stateItems, items: itemsMock, itemsLoading: false};
         const comp = mount(
             <MockedProviderWithFragments>
                 <TileDisplay stateItems={stateMock} dispatchItems={dispatchItems} />

@@ -1,5 +1,4 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
-import {Menu} from 'antd';
 import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
@@ -29,6 +28,13 @@ const Wrapper = styled.div<IWrapperProps>`
     grid-template-columns: 25rem auto;
     grid-template-rows: 100%;
     height: 100%;
+    padding: 1rem;
+`;
+
+const MenuWrapper = styled.div`
+    border-bottom: 1px solid rgb(235, 237, 240);
+    padding: 0 1rem;
+    height: 3rem;
 `;
 
 function LibraryItemsList(): JSX.Element {
@@ -166,6 +172,11 @@ function LibraryItemsList(): JSX.Element {
                 totalCount: dataItem[state.libQuery]?.totalCount
             });
 
+            dispatch({
+                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
+                itemLoading: false
+            });
+
             const label = dataItem[state.libQuery]?.list[0]?.whoAmI.library.label;
 
             client.writeQuery({
@@ -176,6 +187,11 @@ function LibraryItemsList(): JSX.Element {
                     activeLibName: localizedLabel(label, lang),
                     activeLibFilterName: state.libFilter
                 }
+            });
+        } else {
+            dispatch({
+                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
+                itemLoading: true
             });
         }
     }, [
@@ -202,15 +218,14 @@ function LibraryItemsList(): JSX.Element {
     return (
         <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
             <Filters stateItems={state} dispatchItems={dispatch} />
-            <div className="wrapper-page">
-                <Menu style={{height: '5rem'}}>
+            <div>
+                <MenuWrapper>
                     {state.selectionMode ? (
                         <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
                     ) : (
                         <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
                     )}
-                </Menu>
-
+                </MenuWrapper>
                 <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
             </div>
         </Wrapper>
