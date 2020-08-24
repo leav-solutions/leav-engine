@@ -10,7 +10,7 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
-import {checkTypeIsLink, localizedLabel} from '../../utils';
+import {checkTypeIsLink, getItemKeyFromColumn, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
@@ -140,29 +140,34 @@ function LibraryItemsList(): JSX.Element {
                             label: item.whoAmI.library.label
                         }
                     },
-                    ...state.columns.reduce((acc, col) => {
-                        const key: string = `${col.library}_${col.id}`;
+                    ...state.columns.reduce(
+                        (acc, col) => {
+                            const key: string = getItemKeyFromColumn(col);
 
-                        if (col?.originAttributeData && item[col.originAttributeData.id]) {
-                            if (col.originAttributeData.type === AttributeType.tree) {
-                                // linked tree
-                                let value = item[col.originAttributeData.id].map(tree => tree.record[col.id]);
+                            if (col?.originAttributeData && item[col.originAttributeData.id]) {
+                                if (col.originAttributeData.type === AttributeType.tree) {
+                                    // linked tree
+                                    let value = item[col.originAttributeData.id].map(tree => tree.record[col.id]);
 
-                                if (Array.isArray(value)) {
-                                    value = value.shift();
+                                    if (Array.isArray(value)) {
+                                        value = value.shift();
+                                    }
+
+                                    acc[key] = value;
+                                } else {
+                                    // linked attribute
+                                    acc[key] = item[col.originAttributeData.id][col.id];
                                 }
-
-                                acc[key] = value;
-                            } else {
-                                // linked attribute
-                                acc[key] = item[col.originAttributeData.id][col.id];
+                            } else if (item.whoAmI.library.id === col.library && item[col.id]) {
+                                // basic case
+                                acc[key] = item[col.id];
                             }
-                        } else if (item.whoAmI.library.id === col.library && item[col.id]) {
-                            // basic case
-                            acc[key] = item[col.id];
+                            return acc;
+                        },
+                        {
+                            infos: item.whoAmI
                         }
-                        return acc;
-                    }, {})
+                    )
                 };
             });
 

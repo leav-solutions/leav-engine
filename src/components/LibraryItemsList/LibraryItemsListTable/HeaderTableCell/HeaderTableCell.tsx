@@ -3,7 +3,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {getSortFieldByAttributeType} from '../../../../utils';
-import {AttributeType, ITableHeader, OrderSearch} from '../../../../_types/types';
+import {AttributeType, ITableHeaderOld, OrderSearch} from '../../../../_types/types';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -11,7 +11,7 @@ import {
 } from '../../LibraryItemsListReducer';
 
 interface IHeaderTableCellProps {
-    cell: ITableHeader;
+    cell: ITableHeaderOld;
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     setOpenChangeColumns: React.Dispatch<React.SetStateAction<boolean>>;

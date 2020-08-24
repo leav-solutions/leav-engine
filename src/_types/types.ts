@@ -161,10 +161,19 @@ export interface IItemsColumn {
     treeData?: ITreeData;
 }
 
-export interface ITableHeader {
+export interface ITableHeaderOld {
     name: string;
     display: string;
     type: AttributeType;
+}
+
+export interface ITableHeader {
+    title: string | any;
+    type: AttributeType;
+    library: string;
+    dataIndex: string;
+    key: string;
+    render: (text: string) => JSX.Element;
 }
 
 export interface IRecordEdition {

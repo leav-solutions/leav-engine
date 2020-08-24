@@ -9,6 +9,7 @@ import {
     IAttribute,
     IAttributesChecked,
     IExtendedData,
+    IItemsColumn,
     IOriginAttributeData,
     ITreeData,
     PreviewAttributes,
@@ -287,3 +288,7 @@ export const attributeUpdateSelection = ({
 };
 
 export const paginationOptions = [5, 10, 20, 50, 100];
+
+export const getItemKeyFromColumn = (column: IItemsColumn) => {
+    return `${column.library}_${column.id}`;
+};

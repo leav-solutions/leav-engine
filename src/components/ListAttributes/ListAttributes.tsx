@@ -23,11 +23,24 @@ const Wrapper = styled.div`
     grid-column-gap: 0.3rem;
 `;
 
-const FirstContainer = styled.div`
+const ListingAttributeWrapper = styled.div`
     border-right: 1px solid #f0f0f0;
     padding: 0 1rem;
     overflow-y: scroll;
     height: 80vh;
+`;
+
+const WrapperItemSelected = styled.div`
+    overflow-y: scroll;
+    height: 80vh;
+
+    &&& > *:first-child {
+        margin-top: 0;
+    }
+
+    &&& > *:last-child {
+        margin-bottom: 0;
+    }
 `;
 
 interface IListAttributeProps {
@@ -143,7 +156,7 @@ function ListAttributes({
     return (
         <>
             <Wrapper>
-                <FirstContainer>
+                <ListingAttributeWrapper>
                     <CustomForm onSubmit={handleSubmit}>
                         <Input.Search
                             placeholder={t('attributes-list.search')}
@@ -156,12 +169,12 @@ function ListAttributes({
                         stateListAttribute={state}
                         dispatchListAttribute={dispatch}
                     />
-                </FirstContainer>
-                <div>
+                </ListingAttributeWrapper>
+                <WrapperItemSelected>
                     {state.attributesChecked.map(
                         attributeChecked =>
                             attributeChecked.checked && (
-                                <LeftColumnItem
+                                <ItemSelected
                                     key={`${attributeChecked.id}_${attributeChecked.library}_${attributeChecked.extendedData?.path}`}
                                     attributeChecked={attributeChecked}
                                     removeAttributeChecked={removeAttributeChecked}
@@ -169,13 +182,13 @@ function ListAttributes({
                                 />
                             )
                     )}
-                </div>
+                </WrapperItemSelected>
             </Wrapper>
         </>
     );
 }
 
-interface LeftColumnItemProps {
+interface ItemSelectedProps {
     attributeChecked: IAttributesChecked;
     removeAttributeChecked: (attributeChecked: IAttributesChecked) => void;
     stateListAttribute: ListAttributeState;
@@ -189,6 +202,7 @@ const CustomCard = styled.div`
         border: 1px solid #f0f0f0;
         border-radius: 2px;
         min-height: 5rem;
+        box-shadow: 0px 2px 4px #00000017;
     }
 `;
 
@@ -215,7 +229,7 @@ const CloseWrapper = styled.div`
     padding: 8px;
 `;
 
-const LeftColumnItem = ({attributeChecked, removeAttributeChecked, stateListAttribute}: LeftColumnItemProps) => {
+const ItemSelected = ({attributeChecked, removeAttributeChecked, stateListAttribute}: ItemSelectedProps) => {
     const {t} = useTranslation();
     return (
         <CustomCard>

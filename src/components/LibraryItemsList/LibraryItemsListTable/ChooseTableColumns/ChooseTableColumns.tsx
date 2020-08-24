@@ -96,6 +96,8 @@ function ChooseTableColumns({
             visible={openChangeColumns}
             onCancel={() => setOpenChangeColumns(false)}
             title={t('table-columns-selection.header')}
+            width="70rem"
+            centered
             footer={[
                 <Button key="Cancel" onClick={handleCancel}>
                     {t('table-columns-selection.cancel')}

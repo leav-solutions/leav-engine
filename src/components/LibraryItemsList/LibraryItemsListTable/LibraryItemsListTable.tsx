@@ -1,58 +1,35 @@
+import {CheckOutlined, CloseOutlined, DownOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {Card, Menu, Spin, Table} from 'antd';
+import {Card, Dropdown, Menu, Spin, Table} from 'antd';
+import objectPath from 'object-path';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
-import {localizedLabel} from '../../../utils';
-import {AttributeType, IRecordEdition, ITableHeader} from '../../../_types/types';
-import LibraryItemsListPagination from '../LibraryItemsListPagination';
+import {
+    checkTypeIsLink,
+    displayTypeToPreviewSize,
+    getItemKeyFromColumn,
+    getSortFieldByAttributeType,
+    localizedLabel,
+    paginationOptions
+} from '../../../utils';
+import {
+    AttributeFormat,
+    AttributeType,
+    IItemsColumn,
+    IRecordEdition,
+    ITableHeader,
+    OrderSearch,
+    PreviewSize
+} from '../../../_types/types';
+import RecordCard from '../../shared/RecordCard';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
-import HeaderTableCell from './HeaderTableCell';
-import LibraryItemsListTableRow from './LibraryItemsListTableRow';
 import LibraryItemsModal from './LibraryItemsListTableRow/LibraryItemsModal';
-
-const TableWrapper = styled.div`
-    &&& {
-        height: calc(100% - 16rem);
-        overflow: auto;
-        padding: 0;
-        margin-top: 0;
-
-        border: 1px solid rgba(34, 36, 38, 0.15);
-    }
-`;
-
-const HeaderTable = styled(Card)<any>`
-    &&& {
-        margin: 0;
-        padding: 0;
-        border-bottom: 0;
-        border-radius: 0;
-
-        display: grid;
-        grid-template-columns: repeat(${({columns}) => columns}, 1fr);
-    }
-`;
-
-const TableStyled = styled(Table)`
-    &&& {
-        border-radius: 0;
-    }
-`;
-
-const FooterTable = styled(Card)`
-    &&& {
-        margin-top: 0;
-        border-top: 0;
-        border-radius: 0;
-    }
-`;
 
 interface ILibraryItemsListTableProps {
     stateItems: LibraryItemListState;
@@ -68,6 +45,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     const {lang} = dataLang ?? {lang: []};
 
     const [tableColumns, setTableColumn] = useState<ITableHeader[]>([]);
+    const [tableData, setTableData] = useState<any[]>([]);
     const [openChangeColumns, setOpenChangeColumns] = useState(false);
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
         show: false
@@ -76,35 +54,59 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     useEffect(() => {
         if (stateItems.attributes.length && !stateItems.columns.length) {
             // initialize columns in state
-            const initialTableColumns = stateItems.attributes.reduce(
+            const initialTableColumns: ITableHeader[] = stateItems.attributes.reduce(
                 (acc, attribute, index) =>
                     index < initialColumnsLimit
                         ? [
                               ...acc,
                               {
-                                  name: attribute.id,
+                                  key: attribute.id,
+                                  dataIndex: attribute.id,
+                                  title: (
+                                      <Header
+                                          stateItems={stateItems}
+                                          dispatchItems={dispatchItems}
+                                          name={attribute.id}
+                                          type={attribute.type}
+                                          setOpenChangeColumns={setOpenChangeColumns}
+                                      >
+                                          {typeof attribute.label === 'string'
+                                              ? attribute.label
+                                              : attribute.label.fr || attribute.label.en}
+                                      </Header>
+                                  ),
                                   library: attribute.library,
-                                  display:
-                                      typeof attribute.label === 'string'
-                                          ? attribute.label
-                                          : attribute.label.fr || attribute.label.en,
-                                  type: attribute.type
+                                  type: attribute.type,
+                                  render: text => <span>{text}</span>
                               }
                           ]
                         : acc,
                 [
                     {
-                        name: 'infos',
-                        display: t('items_list.table.infos'),
+                        key: 'infos',
+                        dataIndex: 'infos',
+                        title: (
+                            <Header
+                                stateItems={stateItems}
+                                dispatchItems={dispatchItems}
+                                name={'infos'}
+                                type={AttributeType.simple}
+                                setOpenChangeColumns={setOpenChangeColumns}
+                            >
+                                {t('items_list.table.infos')}
+                            </Header>
+                        ),
                         library: stateItems.attributes[0].library,
-                        type: AttributeType.simple
-                    }
+                        type: AttributeType.simple,
+                        fixed: 'left',
+                        render: text => <span>{text}</span>
+                    } as ITableHeader
                 ]
             );
 
             setTableColumn(initialTableColumns);
 
-            const columns = initialTableColumns.map(col => ({id: col.name, library: col.library, type: col.type}));
+            const columns = initialTableColumns.map(col => ({id: col.key, library: col.library, type: col.type}));
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_COLUMNS,
                 columns
@@ -122,20 +124,78 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             : localizedLabel(attribute.label, lang);
 
                         return {
-                            name: `${attribute.id}_${attribute.library}_${
-                                attribute.linkedLibrary ?? attribute.linkedTree
-                            }_${col.extendedData?.path ?? col.treeData?.attributeTreeId}`,
-                            display,
-                            type: attribute.type
+                            title: (
+                                <Header
+                                    stateItems={stateItems}
+                                    dispatchItems={dispatchItems}
+                                    name={attribute.id}
+                                    type={attribute.type}
+                                    setOpenChangeColumns={setOpenChangeColumns}
+                                >
+                                    {display}
+                                </Header>
+                            ),
+                            type: attribute.type,
+                            dataIndex: getItemKeyFromColumn(col),
+                            key: col.id,
+                            library: col.library,
+                            render: text => (
+                                <Cell
+                                    value={text}
+                                    column={col}
+                                    size={displayTypeToPreviewSize(stateItems.displayType)}
+                                    format={attribute.format}
+                                />
+                            )
                         };
                     }
 
                     // only the infos columns isn't in attributes
-                    return {name: 'infos', display: t('items_list.table.infos'), type: AttributeType.simple};
+                    return {
+                        title: (
+                            <Header
+                                stateItems={stateItems}
+                                dispatchItems={dispatchItems}
+                                name={'infos'}
+                                type={AttributeType.simple}
+                                setOpenChangeColumns={setOpenChangeColumns}
+                            >
+                                {t('items_list.table.infos')}
+                            </Header>
+                        ),
+                        type: AttributeType.simple,
+                        library: '',
+                        dataIndex: 'infos',
+                        key: 'infos',
+                        fixed: 'left',
+                        render: text => (
+                            <Cell
+                                value={text}
+                                size={displayTypeToPreviewSize(stateItems.displayType)}
+                                format={AttributeFormat.text}
+                            />
+                        )
+                    };
                 })
             );
         }
-    }, [t, dispatchItems, stateItems.columns, stateItems.attributes, lang]);
+    }, [t, dispatchItems, stateItems, lang]);
+
+    useEffect(() => {
+        if (stateItems.items) {
+            setTableData(
+                stateItems.items.reduce((acc, item) => {
+                    return [
+                        ...acc,
+                        {
+                            key: item.id,
+                            ...item
+                        }
+                    ];
+                }, [] as any)
+            );
+        }
+    }, [stateItems.items, stateItems.columns, setTableData]);
 
     if (!stateItems.items) {
         return (
@@ -147,6 +207,20 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
         );
     }
 
+    const handlePageChange = (page: number, pageSize?: number) => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_OFFSET,
+            offset: (page - 1) * (pageSize ?? 0)
+        });
+    };
+
+    const setPagination = (current: number, size: number) => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_PAGINATION,
+            pagination: size
+        });
+    };
+
     return (
         <>
             <ChooseTableColumns
@@ -155,43 +229,21 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 openChangeColumns={openChangeColumns}
                 setOpenChangeColumns={setOpenChangeColumns}
             />
-            <HeaderTable columns={tableColumns.length}>
-                {tableColumns.map(cell => (
-                    <HeaderTableCell
-                        key={cell.name}
-                        cell={cell}
-                        stateItems={stateItems}
-                        dispatchItems={dispatchItems}
-                        setOpenChangeColumns={setOpenChangeColumns}
-                    />
-                ))}
-            </HeaderTable>
-            <TableWrapper>
-                <TableStyled>
-                    <Table.ColumnGroup>
-                        {stateItems.items &&
-                            stateItems.items?.map(item => {
-                                return (
-                                    <LibraryItemsListTableRow
-                                        key={item.id}
-                                        item={item}
-                                        stateItems={stateItems}
-                                        dispatchItems={dispatchItems}
-                                        showRecordEdition={item => setRecordEdition(re => ({show: true, item}))}
-                                    />
-                                );
-                            })}
-                    </Table.ColumnGroup>
-                </TableStyled>
-            </TableWrapper>
 
-            <FooterTable>
-                <div>
-                    <Menu>
-                        <LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />
-                    </Menu>
-                </div>
-            </FooterTable>
+            <Table
+                columns={tableColumns}
+                dataSource={tableData}
+                scroll={{y: 'calc(100vh - 15rem)'}}
+                pagination={{
+                    total: stateItems.itemsTotalCount,
+                    pageSize: stateItems.pagination,
+                    current: stateItems.offset / stateItems.pagination + 1,
+                    showSizeChanger: true,
+                    pageSizeOptions: paginationOptions.map(option => option.toString()),
+                    onChange: handlePageChange,
+                    onShowSizeChange: setPagination
+                }}
+            />
 
             <LibraryItemsModal
                 showModal={recordEdition.show}
@@ -202,5 +254,139 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
         </>
     );
 }
+
+interface HeaderPros {
+    children: React.ReactNode;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+    name: string;
+    type: AttributeType;
+    setOpenChangeColumns: any;
+}
+
+const Header = ({children, stateItems, dispatchItems, name, type, setOpenChangeColumns}: HeaderPros) => {
+    const {t} = useTranslation();
+
+    const handleSort = (attId: string, order: OrderSearch, attType: AttributeType) => {
+        const newSortField = getSortFieldByAttributeType(attId, attType);
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS,
+            itemsSortField: newSortField,
+            itemsSortOrder: order
+        });
+    };
+
+    const handleDesc = (attId: string, attType: AttributeType) => {
+        handleSort(attId, OrderSearch.desc, attType);
+    };
+
+    const handleAsc = (attId: string, attType: AttributeType) => {
+        handleSort(attId, OrderSearch.asc, attType);
+    };
+
+    const cancelSort = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.CANCEL_SEARCH,
+            itemsSortField: stateItems.attributes[0]?.id || ''
+        });
+    };
+    return (
+        <Dropdown
+            overlay={
+                <Menu>
+                    <Menu.Item onClick={() => handleAsc(name, type)}>
+                        {t('items_list.table.header-cell-menu.sort-ascend')}
+                    </Menu.Item>
+                    <Menu.Item onClick={() => handleDesc(name, type)}>
+                        {t('items_list.table.header-cell-menu.sort-descend')}
+                    </Menu.Item>
+                    <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item>{t('items_list.table.header-cell-menu.sort-advance')}</Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item>{t('items_list.table.header-cell-menu.regroup')}</Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item onClick={() => setOpenChangeColumns(true)}>
+                        {t('items_list.table.header-cell-menu.choose-columns')}
+                    </Menu.Item>
+                </Menu>
+            }
+        >
+            <span>
+                {children} <DownOutlined />
+            </span>
+        </Dropdown>
+    );
+};
+
+interface CellProps {
+    value: any;
+    column?: IItemsColumn;
+    size: PreviewSize;
+    format?: AttributeFormat;
+    isMultiple?: boolean;
+}
+
+const Cell = ({value, column, size, format, isMultiple}: CellProps) => {
+    if (value !== undefined && value !== null) {
+        // handle infos column
+        if (!column) {
+            return <RecordCard record={{...value}} size={size} />;
+        }
+
+        switch (format) {
+            case AttributeFormat.extended:
+                if (column.extendedData) {
+                    let parseValue = {};
+
+                    try {
+                        parseValue = JSON.parse(value);
+                    } catch {
+                        return 'error';
+                    }
+
+                    // Remove the attribute name from the path and change it to array
+                    const extendedPathArr = column.extendedData.path.split('.');
+                    extendedPathArr.shift();
+
+                    return (
+                        <Cell
+                            value={objectPath.get(parseValue, extendedPathArr)}
+                            column={column}
+                            size={size}
+                            format={column.extendedData.format}
+                            isMultiple={isMultiple}
+                        />
+                    );
+                }
+                return;
+            case AttributeFormat.boolean:
+                return value ? <CheckOutlined /> : <CloseOutlined />;
+            case AttributeFormat.numeric:
+            case AttributeFormat.text:
+            default:
+                if (isMultiple) {
+                    return value?.map(val => (
+                        <Cell
+                            value={val}
+                            column={column}
+                            size={size}
+                            format={format}
+                            isMultiple={!!Array.isArray(val)}
+                        />
+                    ));
+                } else if (checkTypeIsLink(column.type)) {
+                    return <RecordCard record={{...value.whoAmI}} size={size} />;
+                } else if (column.type === AttributeType.tree) {
+                    return <RecordCard key={value?.record?.whoAmI?.id} record={{...value.record.whoAmI}} size={size} />;
+                }
+
+                return value;
+        }
+    }
+
+    return <span>{value}</span>;
+};
 
 export default LibraryItemsListTable;
