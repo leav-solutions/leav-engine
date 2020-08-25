@@ -4,7 +4,7 @@ import styled, {CSSObject} from 'styled-components';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {getPreviewUrl, localizedLabel} from '../../../utils/utils';
 import {IPreview, PreviewSize, RecordIdentity_whoAmI} from '../../../_types/types';
-import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
+import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 
 interface IRecordCardProps {
     record: RecordIdentity_whoAmI;

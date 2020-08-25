@@ -6,25 +6,13 @@ import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFr
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 import LibraryItemsListTable from './LibraryItemsListTable';
-import LibraryItemsModal from './LibraryItemsListTableRow/LibraryItemsModal';
+import LibraryItemsModal from './LibraryItemsModal';
 
 jest.mock(
     './ChooseTableColumns',
     () =>
         function ChooseTableColumns() {
             return <div>ChooseTableColumns</div>;
-        }
-);
-
-jest.mock(
-    './LibraryItemsListTableRow',
-    () =>
-        function LibraryItemsListTableRow() {
-            return (
-                <tr>
-                    <td>LibraryItemsListTableRow</td>
-                </tr>
-            );
         }
 );
 
@@ -37,7 +25,7 @@ jest.mock(
 );
 
 jest.mock(
-    './LibraryItemsListTableRow/LibraryItemsModal',
+    './LibraryItemsModal',
     () =>
         function LibraryItemsModal() {
             return <div>LibraryItemsModal</div>;
@@ -62,7 +50,10 @@ describe('LibraryItemsListTable', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <LibraryItemsListTable stateItems={stateMock} dispatchItems={dispatchItems} />
+                    <LibraryItemsListTable
+                        stateItems={{...stateMock, itemsLoading: false}}
+                        dispatchItems={dispatchItems}
+                    />
                 </MockedProviderWithFragments>
             );
         });

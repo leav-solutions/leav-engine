@@ -173,6 +173,13 @@ export interface ITableHeader {
     library: string;
     dataIndex: string;
     key: string;
+    width?: number;
+    onHeaderCell: (
+        column: any
+    ) => {
+        width: number;
+        onResize: any; // (index: number) => (e: any, params: any) => void;
+    };
     render: (text: string) => JSX.Element;
 }
 

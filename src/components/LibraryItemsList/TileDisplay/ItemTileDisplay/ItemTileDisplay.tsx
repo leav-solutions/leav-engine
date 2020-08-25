@@ -9,7 +9,7 @@ import {
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../../LibraryItemsListReducer';
-import RecordPreview from '../../LibraryItemsListTable/LibraryItemsListTableRow/RecordPreview';
+import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 
 interface IItemTileDisplayProps {
     item: IItem;

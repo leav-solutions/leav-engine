@@ -2,8 +2,8 @@ import {useMutation} from '@apollo/client';
 import {Button, Form, Input, Modal} from 'antd';
 import {FormInstance} from 'antd/lib/form';
 import React, {useRef} from 'react';
-import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
-import {IItem} from '../../../../../_types/types';
+import {saveValueBatchQuery} from '../../../../queries/values/saveValueBatchMutation';
+import {IItem} from '../../../../_types/types';
 import FormPreviewsModal from './FormPreviewsModal';
 
 interface ILibraryItemsModalProps {

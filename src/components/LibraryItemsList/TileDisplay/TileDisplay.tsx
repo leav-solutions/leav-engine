@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
-import LibraryItemsModal from '../LibraryItemsListTable/LibraryItemsListTableRow/LibraryItemsModal';
+import LibraryItemsModal from '../LibraryItemsListTable/LibraryItemsModal';
 import ItemTileDisplay from './ItemTileDisplay';
 
 interface IItemsTitleDisplayProps {

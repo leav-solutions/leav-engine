@@ -1,7 +1,7 @@
 import {Form, Input} from 'antd';
 import React from 'react';
-import {getPreviewSizes, getPreviewUrl} from '../../../../../../utils';
-import {IItem, IPreview, PreviewAttributes} from '../../../../../../_types/types';
+import {getPreviewSizes, getPreviewUrl} from '../../../../../utils';
+import {IItem, IPreview, PreviewAttributes} from '../../../../../_types/types';
 
 interface IFormPreviewsModal {
     values: IItem;

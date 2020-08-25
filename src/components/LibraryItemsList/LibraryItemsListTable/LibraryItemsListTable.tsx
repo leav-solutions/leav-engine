@@ -1,35 +1,21 @@
-import {CheckOutlined, CloseOutlined, DownOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {Card, Dropdown, Menu, Spin, Table} from 'antd';
-import objectPath from 'object-path';
+import {Card, Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {Resizable} from 'react-resizable';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
-import {
-    checkTypeIsLink,
-    displayTypeToPreviewSize,
-    getItemKeyFromColumn,
-    getSortFieldByAttributeType,
-    localizedLabel,
-    paginationOptions
-} from '../../../utils';
-import {
-    AttributeFormat,
-    AttributeType,
-    IItemsColumn,
-    IRecordEdition,
-    ITableHeader,
-    OrderSearch,
-    PreviewSize
-} from '../../../_types/types';
-import RecordCard from '../../shared/RecordCard';
+import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
+import {AttributeFormat, AttributeType, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../LibraryItemsListReducer';
+import Cell from './Cell';
 import ChooseTableColumns from './ChooseTableColumns';
-import LibraryItemsModal from './LibraryItemsListTableRow/LibraryItemsModal';
+import Header from './Header';
+import './LibraryItemsListTable.css';
+import LibraryItemsModal from './LibraryItemsModal';
 
 interface ILibraryItemsListTableProps {
     stateItems: LibraryItemListState;
@@ -54,66 +40,45 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     useEffect(() => {
         if (stateItems.attributes.length && !stateItems.columns.length) {
             // initialize columns in state
-            const initialTableColumns: ITableHeader[] = stateItems.attributes.reduce(
+            const initialTableColumns: IItemsColumn[] = stateItems.attributes.reduce(
                 (acc, attribute, index) =>
                     index < initialColumnsLimit
                         ? [
                               ...acc,
                               {
-                                  key: attribute.id,
-                                  dataIndex: attribute.id,
-                                  title: (
-                                      <Header
-                                          stateItems={stateItems}
-                                          dispatchItems={dispatchItems}
-                                          name={attribute.id}
-                                          type={attribute.type}
-                                          setOpenChangeColumns={setOpenChangeColumns}
-                                      >
-                                          {typeof attribute.label === 'string'
-                                              ? attribute.label
-                                              : attribute.label.fr || attribute.label.en}
-                                      </Header>
-                                  ),
+                                  id: attribute.id,
                                   library: attribute.library,
-                                  type: attribute.type,
-                                  render: text => <span>{text}</span>
+                                  type: attribute.type
                               }
                           ]
                         : acc,
                 [
                     {
-                        key: 'infos',
-                        dataIndex: 'infos',
-                        title: (
-                            <Header
-                                stateItems={stateItems}
-                                dispatchItems={dispatchItems}
-                                name={'infos'}
-                                type={AttributeType.simple}
-                                setOpenChangeColumns={setOpenChangeColumns}
-                            >
-                                {t('items_list.table.infos')}
-                            </Header>
-                        ),
+                        id: 'infos',
                         library: stateItems.attributes[0].library,
-                        type: AttributeType.simple,
-                        fixed: 'left',
-                        render: text => <span>{text}</span>
-                    } as ITableHeader
+                        type: AttributeType.simple
+                    } as IItemsColumn
                 ]
             );
 
-            setTableColumn(initialTableColumns);
-
-            const columns = initialTableColumns.map(col => ({id: col.key, library: col.library, type: col.type}));
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_COLUMNS,
-                columns
+                columns: initialTableColumns
             });
         } else if (stateItems.attributes.length && stateItems.columns.length) {
+            const handleResize = index => (e, {size}) => {
+                setTableColumn(columns => {
+                    const nextColumns = [...columns];
+                    nextColumns[index] = {
+                        ...nextColumns[index],
+                        width: size.width
+                    };
+                    return nextColumns;
+                });
+            };
+
             setTableColumn(
-                stateItems.columns.map(col => {
+                stateItems.columns.map((col, index) => {
                     const attribute = stateItems.attributes.find(att => att.id === col.id);
 
                     if (attribute) {
@@ -139,6 +104,11 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             dataIndex: getItemKeyFromColumn(col),
                             key: col.id,
                             library: col.library,
+                            width: 100,
+                            onHeaderCell: column => ({
+                                width: column.width,
+                                onResize: handleResize(index)
+                            }),
                             render: text => (
                                 <Cell
                                     value={text}
@@ -150,7 +120,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         };
                     }
 
-                    // only the infos columns isn't in attributes
+                    // only the infos columns as no attributes
                     return {
                         title: (
                             <Header
@@ -168,6 +138,11 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         dataIndex: 'infos',
                         key: 'infos',
                         fixed: 'left',
+                        width: 200,
+                        onHeaderCell: column => ({
+                            width: column.width,
+                            onResize: handleResize(index)
+                        }),
                         render: text => (
                             <Cell
                                 value={text}
@@ -230,20 +205,32 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 setOpenChangeColumns={setOpenChangeColumns}
             />
 
-            <Table
-                columns={tableColumns}
-                dataSource={tableData}
-                scroll={{y: 'calc(100vh - 15rem)'}}
-                pagination={{
-                    total: stateItems.itemsTotalCount,
-                    pageSize: stateItems.pagination,
-                    current: stateItems.offset / stateItems.pagination + 1,
-                    showSizeChanger: true,
-                    pageSizeOptions: paginationOptions.map(option => option.toString()),
-                    onChange: handlePageChange,
-                    onShowSizeChange: setPagination
-                }}
-            />
+            {stateItems.itemsLoading ? (
+                <Spin />
+            ) : (
+                <Table
+                    bordered
+                    columns={(tableColumns as unknown) as any}
+                    dataSource={tableData}
+                    tableLayout="fixed"
+                    scroll={{x: true, y: 'calc(100vh - 15rem)'}}
+                    components={{
+                        header: {
+                            cell: ResizableTitle
+                        }
+                    }}
+                    pagination={{
+                        total: stateItems.itemsTotalCount,
+                        pageSize: stateItems.pagination,
+                        current: stateItems.offset / stateItems.pagination + 1,
+                        showSizeChanger: true,
+                        pageSizeOptions: paginationOptions.map(option => option.toString()),
+                        onChange: handlePageChange,
+                        onShowSizeChange: setPagination,
+                        position: ['bottomCenter']
+                    }}
+                />
+            )}
 
             <LibraryItemsModal
                 showModal={recordEdition.show}
@@ -255,138 +242,31 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     );
 }
 
-interface HeaderPros {
-    children: React.ReactNode;
-    stateItems: LibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-    name: string;
-    type: AttributeType;
-    setOpenChangeColumns: any;
-}
+const ResizableTitle = props => {
+    const {onResize, width, ...restProps} = props;
 
-const Header = ({children, stateItems, dispatchItems, name, type, setOpenChangeColumns}: HeaderPros) => {
-    const {t} = useTranslation();
-
-    const handleSort = (attId: string, order: OrderSearch, attType: AttributeType) => {
-        const newSortField = getSortFieldByAttributeType(attId, attType);
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS,
-            itemsSortField: newSortField,
-            itemsSortOrder: order
-        });
-    };
-
-    const handleDesc = (attId: string, attType: AttributeType) => {
-        handleSort(attId, OrderSearch.desc, attType);
-    };
-
-    const handleAsc = (attId: string, attType: AttributeType) => {
-        handleSort(attId, OrderSearch.asc, attType);
-    };
-
-    const cancelSort = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.CANCEL_SEARCH,
-            itemsSortField: stateItems.attributes[0]?.id || ''
-        });
-    };
-    return (
-        <Dropdown
-            overlay={
-                <Menu>
-                    <Menu.Item onClick={() => handleAsc(name, type)}>
-                        {t('items_list.table.header-cell-menu.sort-ascend')}
-                    </Menu.Item>
-                    <Menu.Item onClick={() => handleDesc(name, type)}>
-                        {t('items_list.table.header-cell-menu.sort-descend')}
-                    </Menu.Item>
-                    <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item>{t('items_list.table.header-cell-menu.sort-advance')}</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item>{t('items_list.table.header-cell-menu.regroup')}</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item onClick={() => setOpenChangeColumns(true)}>
-                        {t('items_list.table.header-cell-menu.choose-columns')}
-                    </Menu.Item>
-                </Menu>
-            }
-        >
-            <span>
-                {children} <DownOutlined />
-            </span>
-        </Dropdown>
-    );
-};
-
-interface CellProps {
-    value: any;
-    column?: IItemsColumn;
-    size: PreviewSize;
-    format?: AttributeFormat;
-    isMultiple?: boolean;
-}
-
-const Cell = ({value, column, size, format, isMultiple}: CellProps) => {
-    if (value !== undefined && value !== null) {
-        // handle infos column
-        if (!column) {
-            return <RecordCard record={{...value}} size={size} />;
-        }
-
-        switch (format) {
-            case AttributeFormat.extended:
-                if (column.extendedData) {
-                    let parseValue = {};
-
-                    try {
-                        parseValue = JSON.parse(value);
-                    } catch {
-                        return 'error';
-                    }
-
-                    // Remove the attribute name from the path and change it to array
-                    const extendedPathArr = column.extendedData.path.split('.');
-                    extendedPathArr.shift();
-
-                    return (
-                        <Cell
-                            value={objectPath.get(parseValue, extendedPathArr)}
-                            column={column}
-                            size={size}
-                            format={column.extendedData.format}
-                            isMultiple={isMultiple}
-                        />
-                    );
-                }
-                return;
-            case AttributeFormat.boolean:
-                return value ? <CheckOutlined /> : <CloseOutlined />;
-            case AttributeFormat.numeric:
-            case AttributeFormat.text:
-            default:
-                if (isMultiple) {
-                    return value?.map(val => (
-                        <Cell
-                            value={val}
-                            column={column}
-                            size={size}
-                            format={format}
-                            isMultiple={!!Array.isArray(val)}
-                        />
-                    ));
-                } else if (checkTypeIsLink(column.type)) {
-                    return <RecordCard record={{...value.whoAmI}} size={size} />;
-                } else if (column.type === AttributeType.tree) {
-                    return <RecordCard key={value?.record?.whoAmI?.id} record={{...value.record.whoAmI}} size={size} />;
-                }
-
-                return value;
-        }
+    if (!width) {
+        return <th {...restProps} />;
     }
 
-    return <span>{value}</span>;
+    return (
+        <Resizable
+            width={width}
+            height={0}
+            handle={
+                <span
+                    className="react-resizable-handle"
+                    onClick={e => {
+                        e.stopPropagation();
+                    }}
+                />
+            }
+            onResize={onResize}
+            draggableOpts={{enableUserSelectHack: false}}
+        >
+            <th {...restProps} />
+        </Resizable>
+    );
 };
 
 export default LibraryItemsListTable;

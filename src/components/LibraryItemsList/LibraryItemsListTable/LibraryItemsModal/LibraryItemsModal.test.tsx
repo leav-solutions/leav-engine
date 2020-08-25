@@ -2,8 +2,8 @@ import {Modal} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IItem} from '../../../../../_types/types';
-import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
+import {IItem} from '../../../../_types/types';
+import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import LibraryItemsModal from './LibraryItemsModal';
 
 describe('LibraryItemsModal', () => {

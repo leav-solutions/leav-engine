@@ -24,7 +24,7 @@ jest.mock(
 );
 
 jest.mock(
-    '../LibraryItemsListTable/LibraryItemsListTableRow/LibraryItemsModal',
+    '../LibraryItemsListTable/LibraryItemsModal',
     () =>
         function LibraryItemsModal() {
             return <div>LibraryItemsModal</div>;

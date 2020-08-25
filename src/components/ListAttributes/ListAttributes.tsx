@@ -1,6 +1,5 @@
-import {CloseOutlined, MoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {Button, Descriptions, Input, List} from 'antd';
+import {Input, List} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -8,6 +7,7 @@ import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {localizedLabel} from '../../utils';
 import {IAttribute, IAttributesChecked, IOriginAttributeData, ITreeData} from '../../_types/types';
 import Attribute from './Attribute';
+import ItemSelected from './ItemSelected';
 import {
     ListAttributeInitialState,
     ListAttributeReducer,
@@ -15,7 +15,7 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from './ListAttributesReducer';
-import {CustomForm, SmallText, TextAttribute} from './StyledComponents';
+import {CustomForm} from './StyledComponents';
 
 const Wrapper = styled.div`
     display: Grid;
@@ -187,88 +187,6 @@ function ListAttributes({
         </>
     );
 }
-
-interface ItemSelectedProps {
-    attributeChecked: IAttributesChecked;
-    removeAttributeChecked: (attributeChecked: IAttributesChecked) => void;
-    stateListAttribute: ListAttributeState;
-}
-const CustomCard = styled.div`
-    &&& {
-        padding: 0;
-        margin: 24px;
-        display: flex;
-        justify-content: space-between;
-        border: 1px solid #f0f0f0;
-        border-radius: 2px;
-        min-height: 5rem;
-        box-shadow: 0px 2px 4px #00000017;
-    }
-`;
-
-const DragHandle = styled.div`
-    border-right: 1px solid #f0f0f0;
-    padding: 8px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    * {
-        color: #f0f0f0;
-        font-size: 32px;
-    }
-`;
-
-const Content = styled.div`
-    padding: 8px;
-    width: 50%;
-`;
-
-const CloseWrapper = styled.div`
-    padding: 8px;
-`;
-
-const ItemSelected = ({attributeChecked, removeAttributeChecked, stateListAttribute}: ItemSelectedProps) => {
-    const {t} = useTranslation();
-    return (
-        <CustomCard>
-            <DragHandle>
-                <MoreOutlined />
-            </DragHandle>
-            <Content>
-                <Descriptions
-                    title={
-                        <TextAttribute>
-                            {stateListAttribute.lang &&
-                            localizedLabel(attributeChecked.label, stateListAttribute.lang) ? (
-                                <span>
-                                    {localizedLabel(attributeChecked.label, stateListAttribute.lang)}
-                                    <SmallText>{attributeChecked.id}</SmallText>
-                                </span>
-                            ) : (
-                                attributeChecked.id
-                            )}
-                        </TextAttribute>
-                    }
-                >
-                    <Descriptions.Item label={t('attributes-list.items-selected.library')}>
-                        {attributeChecked.library}
-                    </Descriptions.Item>
-                </Descriptions>
-            </Content>
-            <CloseWrapper>
-                <Button
-                    icon={<CloseOutlined />}
-                    size="small"
-                    onClick={() => {
-                        removeAttributeChecked(attributeChecked);
-                    }}
-                />
-            </CloseWrapper>
-        </CustomCard>
-    );
-};
 
 interface IListingAttributesProps {
     attributes: IAttribute[];

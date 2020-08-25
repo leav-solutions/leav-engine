@@ -30,6 +30,8 @@ const Wrapper = styled.div`
 
 const Container = styled.div`
     border: 1px solid #f0f0f0;
+    border-radius: 2px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
     display: flex;
     justify-content: space-around;
     align-items: center;

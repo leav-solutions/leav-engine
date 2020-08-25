@@ -1,6 +1,9 @@
 #!/usr/bin/env node
+
 const fs = require('fs');
-const {program: prog} = require('commander');
+const {
+    program: prog
+} = require('commander');
 
 const _getFuncCompContent = name =>
     `import React from 'react';
@@ -88,14 +91,19 @@ prog.version('0.1.0')
         const testFile = compFolder + `/${name}.test.tsx`;
         if (!fs.existsSync(testFile)) {
             const fileContent = `import React from 'react';
-import {render} from 'enzyme';
+import {mount} from 'enzyme';
 import ${name} from './${name}';
+import {act} from 'react-dom/test-utils';
 
 describe('${name}', () => {
-    test('Snapshot test', async () => {
-        const comp = render(<${name} />);
+    test('', async () => {
+        let comp: any;
 
-        expect(comp).toMatchSnapshot();
+        await act(async () => {
+            comp = mount(<${name} />);
+        })
+
+        expect(comp);
     });
 });`;
 

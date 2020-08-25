@@ -1,8 +1,8 @@
 import {Skeleton} from 'antd';
 import React, {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getInvertColor, stringToColor} from '../../../../../utils/utils';
-import {PreviewSize} from '../../../../../_types/types';
+import {getInvertColor, stringToColor} from '../../../../utils/utils';
+import {PreviewSize} from '../../../../_types/types';
 
 interface IRecordPreviewProps {
     label: string;
