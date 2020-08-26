@@ -13,6 +13,7 @@ import libraryDomain from './libraryDomain';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {IAmqpService} from 'infra/amqp/amqpService';
 import * as Config from '_types/config';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
 
@@ -224,10 +225,14 @@ describe('LibraryDomain', () => {
                     saveLibraryFullTextAttributes: jest.fn()
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
                     'core.utils': mockUtils as IUtils
@@ -281,10 +286,14 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'id'}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
                     'core.utils': mockUtilsInvalidID as IUtils
@@ -306,11 +315,15 @@ describe('LibraryDomain', () => {
                     saveLibraryFullTextAttributes: jest.fn()
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
@@ -341,9 +354,13 @@ describe('LibraryDomain', () => {
                     saveLibraryFullTextAttributes: jest.fn()
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -378,9 +395,13 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -415,9 +436,13 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -466,9 +491,13 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -505,9 +534,13 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -544,9 +577,13 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -579,8 +616,13 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
                     'core.utils': mockUtils as IUtils
@@ -603,9 +645,13 @@ describe('LibraryDomain', () => {
                     getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
                 };
 
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
-                    'core.infra.amqp.amqpService': mockAmqpServ,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
@@ -628,12 +674,17 @@ describe('LibraryDomain', () => {
             };
 
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                send: global.__mockPromise()
+            };
+
             const libDomain = libraryDomain({
                 config: mockConfig as Config.IConfig,
-                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.permission': mockAdminPermDomain as IPermissionDomain
             });
+
             libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
 
             await libDomain.deleteLibrary(libData.id, ctx);
@@ -648,11 +699,16 @@ describe('LibraryDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                send: global.__mockPromise()
+            };
+
             const libDomain = libraryDomain({
                 config: mockConfig as Config.IConfig,
-                'core.infra.amqp.amqpService': mockAmqpServ,
-                'core.infra.library': mockLibRepo as ILibraryRepo
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
+
             libDomain.getLibraries = global.__mockPromise([]);
 
             await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
@@ -660,10 +716,14 @@ describe('LibraryDomain', () => {
 
         test('Should throw if system library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                send: global.__mockPromise()
+            };
+
             const libDomain = libraryDomain({
                 config: mockConfig as Config.IConfig,
-                'core.infra.amqp.amqpService': mockAmqpServ,
-                'core.infra.library': mockLibRepo as ILibraryRepo
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
             libDomain.getLibraries = global.__mockPromise([{system: true}]);
 
@@ -674,14 +734,17 @@ describe('LibraryDomain', () => {
             const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(false)
             };
-
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                send: global.__mockPromise()
+            };
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
                 config: mockConfig as Config.IConfig,
-                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.permission': mockAdminPermDomain as IPermissionDomain
             });
+
             libDomain.getLibraries = global.__mockPromise([libData]);
 
             await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow(PermissionError);
@@ -695,12 +758,14 @@ describe('LibraryDomain', () => {
             const mockAdminPermDomain: Mockify<IPermissionDomain> = {
                 getAdminPermission: global.__mockPromise(true)
             };
-
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                send: global.__mockPromise()
+            };
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
                 config: mockConfig as Config.IConfig,
-                'core.infra.amqp.amqpService': mockAmqpServ,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils

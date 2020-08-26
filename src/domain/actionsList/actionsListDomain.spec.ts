@@ -30,7 +30,7 @@ describe('handleJoiError', () => {
 
 describe('runActionsList', () => {
     const val = {
-        id_value: 999,
+        id_value: '999',
         value: 'test_val'
     };
 

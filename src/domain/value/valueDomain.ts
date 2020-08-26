@@ -22,6 +22,10 @@ import updateRecordLastModif from './helpers/updateRecordLastModif';
 import validateLibrary from './helpers/validateLibrary';
 import validateRecord from './helpers/validateRecord';
 import validateValue from './helpers/validateValue';
+import {EventType} from '../../_types/event';
+import {IAmqpService} from 'infra/amqp/amqpService';
+import * as Config from '_types/config';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -82,22 +86,24 @@ export interface IValueDomain {
         ctx: IQueryInfos;
         keepEmpty?: boolean;
     }): Promise<ISaveBatchValueResult>;
+
     deleteValue({
         library,
         recordId,
         attribute,
-        value,
+        valueId,
         ctx
     }: {
         library: string;
         recordId: string;
         attribute: string;
-        value: IValue;
+        valueId: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
 }
 
 interface IDeps {
+    config?: Config.IConfig;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.library'?: ILibraryDomain;
@@ -107,9 +113,13 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
     'core.utils'?: IUtils;
+    'core.infra.amqp.amqpService'?: IAmqpService;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
 }
 
 export default function({
+    config = null,
+    'core.infra.amqp.amqpService': amqpService = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,
@@ -118,7 +128,8 @@ export default function({
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.value': valueRepo = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.domain.eventsManager': eventsManager = null
 }: IDeps = {}): IValueDomain {
     return {
         async getValues({library, recordId, attribute, options, ctx}): Promise<IValue[]> {
@@ -181,7 +192,7 @@ export default function({
                 );
 
                 // Retrieve appropriate value among all values
-                values = findValue(trees, allValues);
+                values = options.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
 
             return values;
@@ -256,6 +267,38 @@ export default function({
 
             await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
+            const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
+            if (attrToIndex.map(a => a.id).includes(attribute)) {
+                let val: IValue | IValue[] = savedVal.value;
+                if (attributeProps.multiple_values) {
+                    val = await valueRepo.getValues({
+                        library,
+                        recordId,
+                        attribute: attributeProps,
+                        forceGetAllValues: true,
+                        ctx
+                    });
+
+                    val = val.map((v: IValue) => v.value);
+                }
+
+                // TODO: get value retrieve old value
+                await eventsManager.send(
+                    {
+                        type: EventType.VALUE_SAVE,
+                        data: {
+                            libraryId: library,
+                            recordId,
+                            attributeId: attributeProps.id,
+                            value: {
+                                new: val
+                            }
+                        }
+                    },
+                    ctx
+                );
+            }
+
             return savedVal;
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
@@ -318,7 +361,7 @@ export default function({
                         });
 
                         const savedVal =
-                            !keepEmpty && !valToSave.value && valToSave.id_value
+                            !keepEmpty && !valToSave.value && !!valToSave.id_value
                                 ? await valueRepo.deleteValue({
                                       library,
                                       recordId,
@@ -339,6 +382,38 @@ export default function({
                                   );
 
                         prevRes.values.push({...savedVal, attribute: value.attribute});
+
+                        const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
+                        if (attrToIndex.map(a => a.id).includes(savedVal.attribute)) {
+                            let val: IValue | IValue[] = savedVal.value;
+                            if (attributeProps.multiple_values) {
+                                val = await valueRepo.getValues({
+                                    library,
+                                    recordId,
+                                    attribute: attributeProps,
+                                    forceGetAllValues: true,
+                                    ctx
+                                });
+
+                                val = val.map((v: IValue) => v.value);
+                            }
+
+                            // TODO: get value retrieve old value
+                            await eventsManager.send(
+                                {
+                                    type: EventType.VALUE_SAVE,
+                                    data: {
+                                        libraryId: library,
+                                        recordId,
+                                        attributeId: attributeProps.id,
+                                        value: {
+                                            new: val
+                                        }
+                                    }
+                                },
+                                ctx
+                            );
+                        }
                     } catch (e) {
                         if (
                             !e.type ||
@@ -370,7 +445,7 @@ export default function({
 
             return saveRes;
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async deleteValue({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             await validateLibrary(library, {libraryDomain}, ctx);
             await validateRecord(library, recordId, {recordRepo}, ctx);
 
@@ -401,11 +476,14 @@ export default function({
             }
 
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-            // Check if value ID actually exists
-            if (value.id_value && attr.type !== AttributeTypes.SIMPLE) {
-                const existingVal = await valueRepo.getValueById({library, recordId, attribute: attr, value, ctx});
 
-                if (existingVal === null) {
+            // if simple attribute type
+            let value = (await valueRepo.getValues({library, recordId, attribute: attr, ctx})).pop();
+
+            // if not, get value by value id
+            if (attr.type !== AttributeTypes.SIMPLE) {
+                value = await valueRepo.getValueById({library, recordId, attribute: attr, valueId, ctx});
+                if (value === null) {
                     throw new ValidationError({id: Errors.UNKNOWN_VALUE});
                 }
             }
@@ -420,9 +498,45 @@ export default function({
                       })
                     : value;
 
-            const res = await valueRepo.deleteValue({library, recordId, attribute: attr, value: actionsListRes, ctx});
+            const res: IValue = await valueRepo.deleteValue({
+                library,
+                recordId,
+                attribute: attr,
+                value: actionsListRes,
+                ctx
+            });
+
             // Make sure attribute is returned here
             res.attribute = attribute;
+
+            // delete value on elasticsearch
+            const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
+            if (attrToIndex.map(a => a.id).includes(attribute)) {
+                await eventsManager.send(
+                    {
+                        type: EventType.VALUE_DELETE,
+                        data: {
+                            libraryId: library,
+                            recordId,
+                            attributeId: attribute,
+                            ...(attr.multiple_values && {
+                                value: {
+                                    new: (
+                                        await valueRepo.getValues({
+                                            library,
+                                            recordId,
+                                            attribute: attr,
+                                            forceGetAllValues: true,
+                                            ctx
+                                        })
+                                    ).map(v => v.value)
+                                }
+                            })
+                        }
+                    },
+                    ctx
+                );
+            }
 
             return res;
         }

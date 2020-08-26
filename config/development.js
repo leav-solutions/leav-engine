@@ -1,7 +1,10 @@
 module.exports = {
     db: {
-        url: 'http://root:@localhost:8529',
+        url: 'http://arango.leav.localhost',
         name: 'leav_core'
+    },
+    elasticsearch: {
+        url: 'http://elasticsearch:9200'
     },
     logs: {
         level: 'silly',

@@ -1,8 +1,8 @@
+import moment from 'moment';
+import {join} from 'path';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import moment from 'moment';
-import {join} from 'path';
 import validateLibrary from './helpers/validateLibrary';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
@@ -15,7 +15,7 @@ import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList} from '../../_types/list';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IEvent, EventType} from '../../_types/event';
+import {EventType} from '../../_types/event';
 import {
     Condition,
     IRecord,
@@ -29,8 +29,8 @@ import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import {pick} from 'lodash';
-import {IAmqpService} from 'infra/amqp/amqpService';
 import * as Config from '_types/config';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -137,11 +137,11 @@ interface IDeps {
     config?: Config.IConfig;
     'core.infra.record'?: IRecordRepo;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.infra.amqp.amqpService'?: IAmqpService;
     'core.domain.value'?: IValueDomain;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.recordPermission'?: IRecordPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
 }
 
 export default function({
@@ -150,9 +150,9 @@ export default function({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.actionsList': actionsListDomain = null,
-    'core.infra.amqp.amqpService': amqpService = null,
     'core.domain.permission.recordPermission': recordPermissionDomain = null,
-    'core.domain.library': libraryDomain = null
+    'core.domain.library': libraryDomain = null,
+    'core.domain.eventsManager': eventsManager = null
 }: IDeps = {}): IRecordDomain {
     /**
      * Run actions list on a value
@@ -339,24 +339,20 @@ export default function({
 
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
-            const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
-            const indexationMsg: IEvent = {
-                date: new Date(),
-                userId: ctx.userId,
-                payload: {
+            await eventsManager.send(
+                {
                     type: EventType.RECORD_CREATE,
                     data: {
                         id: newRecord.id,
                         libraryId: newRecord.library,
                         new: pick(
                             newRecord,
-                            attrToIndex.map(a => a.id)
+                            (await libraryDomain.getLibraryFullTextAttributes(library, ctx)).map(a => a.id)
                         )
                     }
-                }
-            };
-
-            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
+                },
+                ctx
+            );
 
             return newRecord;
         },
@@ -400,24 +396,20 @@ export default function({
 
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            // sending indexation event
-            const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
-            const indexationMsg: IEvent = {
-                date: new Date(),
-                userId: ctx.userId,
-                payload: {
+            await eventsManager.send(
+                {
                     type: EventType.RECORD_DELETE,
                     data: {
                         id: deletedRecord.id,
                         libraryId: deletedRecord.library,
                         old: pick(
                             deletedRecord.old,
-                            attrToIndex.map(a => a.id)
+                            (await libraryDomain.getLibraryFullTextAttributes(library, ctx)).map(a => a.id)
                         )
                     }
-                }
-            };
-            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
+                },
+                ctx
+            );
 
             return deletedRecord;
         },

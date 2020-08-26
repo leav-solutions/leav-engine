@@ -33,7 +33,7 @@ describe('AttributeTreeRepo', () => {
         _rev: '_WSywvyC--_',
         _from: 'test_lib/12345',
         _to: 'categories/123456',
-        _key: 978654321,
+        _key: '978654321',
         attribute: 'test_tree_attr',
         modified_at: 400999999,
         created_at: 400999999,
@@ -44,7 +44,7 @@ describe('AttributeTreeRepo', () => {
     };
 
     const valueData: IValue = {
-        id_value: 978654321,
+        id_value: '978654321',
         value: 'categories/123456',
         attribute: 'test_tree_attr',
         modified_at: 400999999,
@@ -109,7 +109,7 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject({
-                id_value: 978654321,
+                id_value: '978654321',
                 value: 'categories/123456',
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
@@ -142,7 +142,7 @@ describe('AttributeTreeRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    id_value: 987654,
+                    id_value: '987654',
                     value: 'categories/123456',
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
@@ -172,7 +172,7 @@ describe('AttributeTreeRepo', () => {
                 _rev: '_WSywvyC--_',
                 _from: 'test_lib/12345',
                 _to: 'categories/123456',
-                _key: 978654321
+                _key: '978654321'
             };
 
             const mockDbEdgeCollec = {
@@ -192,7 +192,7 @@ describe('AttributeTreeRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    id_value: 445566,
+                    id_value: '445566',
                     value: 'categories/123456',
                     modified_at: 400999999,
                     created_at: 400999999
@@ -201,9 +201,9 @@ describe('AttributeTreeRepo', () => {
             });
 
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: 445566});
+            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: '445566'});
 
-            expect(deletedVal).toMatchObject({id_value: 445566});
+            expect(deletedVal).toMatchObject({id_value: '445566'});
         });
     });
 
@@ -257,10 +257,11 @@ describe('AttributeTreeRepo', () => {
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
-                value: {
-                    id_value: 112233,
-                    value: 'categories/123456'
-                },
+                valueId: '112233',
+                // value: {
+                //     id_value: '112233',
+                //     value: 'categories/123456'
+                // },
                 ctx
             });
 
@@ -269,7 +270,7 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(value).toMatchObject({
-                id_value: 112233,
+                id_value: '112233',
                 value: {
                     id: 123456,
                     created_at: 88888,
@@ -296,10 +297,11 @@ describe('AttributeTreeRepo', () => {
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
-                value: {
-                    id_value: 112233,
-                    value: 'categories/123456'
-                },
+                valueId: '112233',
+                // value: {
+                //     id_value: '112233',
+                //     value: 'categories/123456'
+                // },
                 ctx
             });
 
@@ -393,7 +395,7 @@ describe('AttributeTreeRepo', () => {
 
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
-                id_value: 112233,
+                id_value: '112233',
                 value: {
                     record: {
                         id: 123456,
@@ -408,7 +410,7 @@ describe('AttributeTreeRepo', () => {
             });
 
             expect(values[1]).toMatchObject({
-                id_value: 11223344,
+                id_value: '11223344',
                 value: {
                     record: {
                         id: 123457,
@@ -483,7 +485,7 @@ describe('AttributeTreeRepo', () => {
             });
 
             expect(values.length).toBe(1);
-            expect(values[0].id_value).toBe(112233);
+            expect(values[0].id_value).toBe('112233');
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
@@ -525,7 +527,7 @@ describe('AttributeTreeRepo', () => {
             expect(values.length).toBe(1);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('LIMIT 1');
             expect(values[0]).toMatchObject({
-                id_value: 112233,
+                id_value: '112233',
                 value: {
                     record: {
                         id: 123456,

@@ -75,7 +75,7 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                 }
             ];
         },
-        async getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             return null;
         },
         filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {

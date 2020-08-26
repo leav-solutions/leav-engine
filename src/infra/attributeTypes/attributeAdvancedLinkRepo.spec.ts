@@ -18,7 +18,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         _rev: '_WSywvyC--_',
         _from: 'test_lib/12345',
         _to: 'test_linked_lib/987654',
-        _key: 978654321,
+        _key: '978654321',
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
         created_at: 400999999,
@@ -32,7 +32,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     };
 
     const valueData: IValue = {
-        id_value: 978654321,
+        id_value: '978654321',
         value: 987654,
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
@@ -91,7 +91,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject({
-                id_value: 978654321,
+                id_value: '978654321',
                 value: '987654',
                 attribute: 'test_adv_link_attr',
                 modified_at: 400999999,
@@ -124,7 +124,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    id_value: 987654,
+                    id_value: '987654',
                     value: 987654,
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
@@ -163,7 +163,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 _rev: '_WSywvyC--_',
                 _from: 'test_lib/12345',
                 _to: 'test_linked_lib/987654',
-                _key: 978654321
+                _key: '978654321'
             };
 
             const mockDbEdgeCollec: Mockify<EdgeCollection> = {
@@ -183,7 +183,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    id_value: 445566,
+                    id_value: '445566',
                     value: 987654,
                     modified_at: 400999999,
                     created_at: 400999999
@@ -192,9 +192,9 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
 
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: 445566});
+            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: '445566'});
 
-            expect(deletedVal).toMatchObject({id_value: 445566});
+            expect(deletedVal).toMatchObject({id_value: '445566'});
         });
     });
 
@@ -248,10 +248,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
-                value: {
-                    id_value: 112233,
-                    value: 123456
-                },
+                valueId: '112233',
                 ctx
             });
 
@@ -260,7 +257,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(value).toMatchObject({
-                id_value: 112233,
+                id_value: '112233',
                 value: {
                     id: 123456,
                     created_at: 88888,
@@ -287,10 +284,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
-                value: {
-                    id_value: 112233,
-                    value: 123456
-                },
+                valueId: '112233',
                 ctx
             });
 
@@ -384,7 +378,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
-                id_value: 112233,
+                id_value: '112233',
                 value: {
                     id: 123456,
                     created_at: 88888,
@@ -397,7 +391,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
 
             expect(values[1]).toMatchObject({
-                id_value: 112234,
+                id_value: '112234',
                 value: {
                     id: 123457,
                     created_at: 77777,
@@ -469,7 +463,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
 
             expect(values.length).toBe(1);
-            expect(values[0].id_value).toBe(112233);
+            expect(values[0].id_value).toBe('112233');
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
@@ -516,7 +510,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
-                id_value: 112233,
+                id_value: '112233',
                 value: {
                     id: 123456,
                     created_at: 88888,

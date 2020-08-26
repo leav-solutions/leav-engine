@@ -213,11 +213,11 @@ export default function({
                 version: dbUtils.convertValueVersionFromDb(r.edge.version)
             }));
         },
-        async getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const values = await valCollec.lookupByKeys([String(value.id_value)]);
+            const values = await valCollec.lookupByKeys([valueId]);
 
             if (!values.length) {
                 return null;

@@ -60,7 +60,13 @@ interface ISearchResponse<T> {
 
 export interface IElasticsearchService {
     client?: Client;
-
+    indiceGetMapping?(index: string): Promise<string[]>;
+    indiceDelete?(index: string): Promise<void>;
+    indiceExists?(index: string): Promise<boolean>;
+    index?(index: string, documentId: string, data: any): Promise<void>;
+    update?(index: string, documentId: string, data: any): Promise<void>;
+    delete?(index: string, documentId: string, attributeId: string): Promise<void>;
+    deleteDocument?(index: string, documentId: string): Promise<void>;
     multiMatch?<T extends any = any>(
         index: string,
         {query, fields, fuzziness}: IMultiMatchQuery['multi_match'],
@@ -76,6 +82,39 @@ interface IDeps {
 export default function({'core.infra.elasticsearch': client = null}: IDeps = {}): IElasticsearchService {
     return {
         client,
+        async indiceGetMapping(index: string): Promise<string[]> {
+            const res = await client.indices.getMapping({index});
+            return Object.keys(res.body[index].mappings.properties);
+        },
+        async indiceExists(index: string): Promise<boolean> {
+            const res = await client.indices.exists({index});
+            return (res.body as unknown) as boolean;
+        },
+        async index(index: string, documentId: string, data: any): Promise<void> {
+            await client.index({index, id: documentId, body: data, refresh: 'true'});
+        },
+        async update(index: string, documentId: string, data: any): Promise<void> {
+            await client.update({index, id: documentId, body: {doc: data}, refresh: 'true'});
+        },
+        async delete(index: string, documentId: string, attributeId: string): Promise<void> {
+            await client.update({
+                index,
+                id: documentId,
+                body: {
+                    script: {
+                        source: 'ctx._source.remove(params.attribute)',
+                        params: {attribute: attributeId}
+                    }
+                },
+                refresh: 'true'
+            });
+        },
+        async indiceDelete(index: string): Promise<void> {
+            await client.indices.delete({index});
+        },
+        async deleteDocument(index: string, documentId: string): Promise<void> {
+            await client.delete({index, id: documentId, refresh: 'true'});
+        },
         async multiMatch<T extends any = any>(
             index: string,
             {query, fields = ['*'], fuzziness = 'AUTO'}: IMultiMatchQuery['multi_match'],

@@ -60,6 +60,7 @@ export default function({
                     RETURN NEW`,
                 ctx
             });
+
             const savedEdge = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
@@ -162,7 +163,7 @@ export default function({
             const res = await dbService.execute({query, ctx});
 
             return res.map(r => ({
-                id_value: Number(r.edge._key),
+                id_value: r.edge._key,
                 value: dbUtils.cleanup(r.linkedRecord),
                 attribute: r.edge.attribute,
                 modified_at: r.edge.modified_at,
@@ -170,14 +171,14 @@ export default function({
                 metadata: r.edge.metadata
             }));
         },
-        async getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const query = aql`
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
-                    FILTER edge._key == ${value.id_value}
+                    FILTER edge._key == ${valueId}
                     FILTER edge.attribute == ${attribute.id}
                     LIMIT 1
                     RETURN {linkedRecord, edge}
@@ -190,7 +191,7 @@ export default function({
             }
 
             return {
-                id_value: Number(res[0].edge._key),
+                id_value: res[0].edge._key,
                 value: dbUtils.cleanup(res[0].linkedRecord),
                 attribute: res[0].edge.attribute,
                 modified_at: res[0].edge.modified_at,

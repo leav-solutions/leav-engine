@@ -13,7 +13,7 @@ export interface IValueMetadata {
 }
 
 export interface IValue {
-    id_value?: number;
+    id_value?: string;
     attribute?: string;
     value?: any;
     raw_value?: any;
@@ -26,6 +26,7 @@ export interface IValue {
 export interface IValuesOptions {
     version?: IValueVersion;
     forceArray?: boolean;
+    forceGetAllValues?: boolean;
     [optionName: string]: any;
 }
 

@@ -1,6 +1,7 @@
 import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {omit, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
@@ -23,8 +24,7 @@ import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
-import {IEvent, EventType} from '../../_types/event';
-import {IAmqpService} from 'infra/amqp/amqpService';
+import {EventType} from '../../_types/event';
 import * as Config from '_types/config';
 
 export interface ILibraryDomain {
@@ -41,20 +41,20 @@ interface IDeps {
     'core.infra.library'?: ILibraryRepo;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission'?: IPermissionDomain;
-    'core.infra.amqp.amqpService'?: IAmqpService;
     'core.utils'?: IUtils;
     translator?: i18n;
     'core.infra.tree'?: ITreeRepo;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
 }
 
 export default function({
     config = null,
-    'core.infra.amqp.amqpService': amqpService = null,
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
     'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
+    'core.domain.eventsManager': eventsManager = null,
     translator: translator
 }: IDeps = {}): ILibraryDomain {
     return {
@@ -213,18 +213,16 @@ export default function({
             await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils}, ctx);
 
             // sending indexation event
-            const indexationMsg: IEvent = {
-                date: new Date(),
-                userId: ctx.userId,
-                payload: {
+            await eventsManager.send(
+                {
                     type: EventType.LIBRARY_SAVE,
                     data: {
                         id: lib.id,
                         fullTextAttributes: libFullTextAttributes
                     }
-                }
-            };
-            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
+                },
+                ctx
+            );
 
             return lib;
         },
@@ -254,15 +252,13 @@ export default function({
             const deletedLibrary = await libraryRepo.deleteLibrary({id, ctx});
 
             // sending indexation event
-            const indexationMsg: IEvent = {
-                date: new Date(),
-                userId: ctx.userId,
-                payload: {
+            await eventsManager.send(
+                {
                     type: EventType.LIBRARY_DELETE,
                     data: {id: deletedLibrary.id}
-                }
-            };
-            await amqpService.publish(config.indexationManager.routingKeys.events, JSON.stringify(indexationMsg));
+                },
+                ctx
+            );
 
             return deletedLibrary;
         }

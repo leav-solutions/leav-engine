@@ -11,7 +11,7 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
-import {IAmqpService} from 'infra/amqp/amqpService';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import * as Config from '_types/config';
 
 const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
@@ -43,13 +43,13 @@ describe('RecordDomain', () => {
                 getLibraryFullTextAttributes: global.__mockPromise([])
             };
 
-            const mockAmqpServ: Mockify<IAmqpService> = {
-                publish: global.__mockPromise()
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                send: global.__mockPromise()
             };
 
             const recDomain = recordDomain({
                 config: mockConfig as Config.IConfig,
-                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
@@ -110,13 +110,13 @@ describe('RecordDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1}),
                 getLibraryFullTextAttributes: global.__mockPromise([])
             };
-            const mockAmqpServ: Mockify<IAmqpService> = {
-                publish: global.__mockPromise()
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                send: global.__mockPromise()
             };
 
             const recDomain = recordDomain({
                 config: mockConfig as Config.IConfig,
-                'core.infra.amqp.amqpService': mockAmqpServ,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.library': libDomain as ILibraryDomain,
                 'core.domain.permission.recordPermission': recordPermDomain as IRecordPermissionDomain

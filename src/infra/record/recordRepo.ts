@@ -150,7 +150,7 @@ export default function({
             // Force disbaling count on cursor pagination as it's pointless
             const withTotalCount = withCount && !withCursorPagination;
             const coll = dbService.db.collection(libraryId);
-            let queryParts = [!filters.length ? aql`FOR r IN ${coll}` : aql`FOR r IN`];
+            let queryParts = [!filters || !filters.length ? aql`FOR r IN ${coll}` : aql`FOR r IN`];
 
             if (typeof filters !== 'undefined' && filters.length) {
                 const rpn: IRecordFilterOption[] = _toReversePolishNotation(filters);

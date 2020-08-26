@@ -78,7 +78,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -123,7 +124,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -168,7 +170,7 @@ describe('ValueDomain', () => {
             const mockValRepo = {
                 updateValue: global.__mockPromise(savedValueData),
                 getValueById: global.__mockPromise({
-                    id_value: 12345
+                    id_value: '12345'
                 })
             };
 
@@ -177,7 +179,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -196,7 +199,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {
-                    id_value: 12345,
+                    id_value: '12345',
                     value: 'test val'
                 },
                 ctx
@@ -221,7 +224,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const mockValRepo = {};
@@ -252,7 +256,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [], totalCount: 0})
+                getLibraries: global.__mockPromise({list: [], totalCount: 0}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const mockValRepo = {};
@@ -283,7 +288,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const mockValRepo = {};
@@ -303,7 +309,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {
-                        id_value: 12345,
+                        id_value: '12345',
                         value: 'test val'
                     },
                     ctx
@@ -323,7 +329,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const mockRecRepo = {
@@ -360,7 +367,7 @@ describe('ValueDomain', () => {
 
         test('Should save a versioned value', async () => {
             const savedValueData: IValue = {
-                id_value: 1337,
+                id_value: '1337',
                 value: 'test val',
                 attribute: 'advanced_attribute',
                 modified_at: 123456,
@@ -382,7 +389,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -427,7 +435,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -482,7 +491,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -521,7 +531,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -569,7 +580,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -624,7 +636,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -669,7 +682,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const mockTreeRepoNotPresent: Mockify<ITreeRepo> = {
@@ -721,7 +735,8 @@ describe('ValueDomain', () => {
                 };
 
                 const mockLibDomain = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
                 };
 
                 const valDomain = valueDomain({
@@ -775,7 +790,8 @@ describe('ValueDomain', () => {
                 };
 
                 const mockLibDomain = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
                 };
 
                 const valDomain = valueDomain({
@@ -822,7 +838,8 @@ describe('ValueDomain', () => {
                 };
 
                 const mockLibDomain = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
                 };
 
                 const mockAttrPermForbidDom: Mockify<IAttributePermissionDomain> = {
@@ -887,7 +904,8 @@ describe('ValueDomain', () => {
                 };
 
                 const mockLibDomain = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
                 };
 
                 const valDomain = valueDomain({
@@ -957,7 +975,8 @@ describe('ValueDomain', () => {
                 };
 
                 const mockLibDomain = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                    getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
                 };
 
                 const valDomain = valueDomain({
@@ -994,14 +1013,19 @@ describe('ValueDomain', () => {
 
         test('Should save multiple values', async () => {
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
-
+            const mockUtils: Mockify<IUtils> = {
+                rethrow: jest.fn().mockImplementation(e => {
+                    throw e;
+                })
+            };
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
                     value: 'test',
-                    id_value: 12345
+                    id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
@@ -1022,7 +1046,7 @@ describe('ValueDomain', () => {
                     {value: 'test', id_value: null}
                 ]),
                 getValueById: global.__mockPromise({
-                    id_value: 12345
+                    id_value: '12345'
                 })
             };
 
@@ -1052,7 +1076,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.utils': mockUtils as IUtils
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1096,7 +1121,7 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr',
                     value: 'test',
-                    id_value: 12345
+                    id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
@@ -1109,7 +1134,7 @@ describe('ValueDomain', () => {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
-                    id_value: 12345
+                    id_value: '12345'
                 })
             };
 
@@ -1162,7 +1187,7 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr',
                     value: 'test',
-                    id_value: 12345
+                    id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
@@ -1175,7 +1200,7 @@ describe('ValueDomain', () => {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
-                    id_value: 12345
+                    id_value: '12345'
                 })
             };
 
@@ -1219,23 +1244,33 @@ describe('ValueDomain', () => {
 
         test('Delete empty values', async () => {
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+            };
+
+            const mockUtils: Mockify<IUtils> = {
+                rethrow: jest.fn().mockImplementation(e => {
+                    throw e;
+                })
             };
 
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     value: '',
-                    id_value: 987654
+                    id_value: '987654'
                 }
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
-                deleteValue: jest.fn(),
+                deleteValue: global.__mockPromise({
+                    id_value: '12345',
+                    value: 'MyLabel'
+                }),
                 getValueById: global.__mockPromise({
-                    id_value: 12345
+                    id_value: '12345'
                 })
             };
 
@@ -1251,15 +1286,16 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.utils': mockUtils as IUtils
             });
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
                 recordId: '123456',
                 values,
-                ctx,
-                keepEmpty: false
+                keepEmpty: false,
+                ctx
             });
 
             expect(mockValRepo.deleteValue).toBeCalledTimes(1);
@@ -1267,14 +1303,20 @@ describe('ValueDomain', () => {
 
         test("Don't delete empty values if keepEmpty true", async () => {
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+            };
+            const mockUtils: Mockify<IUtils> = {
+                rethrow: jest.fn().mockImplementation(e => {
+                    throw e;
+                })
             };
 
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     value: '',
-                    id_value: 987654
+                    id_value: '987654'
                 }
             ];
 
@@ -1283,7 +1325,7 @@ describe('ValueDomain', () => {
                 createValue: jest.fn(),
                 deleteValue: jest.fn(),
                 getValueById: global.__mockPromise({
-                    id_value: 12345
+                    id_value: '12345'
                 })
             };
 
@@ -1299,7 +1341,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.utils': mockUtils as IUtils
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1318,7 +1361,7 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'advanced_attribute',
                     value: '',
-                    id_value: 987654
+                    id_value: '987654'
                 }
             ];
 
@@ -1352,7 +1395,7 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'advanced_attribute',
                     value: '',
-                    id_value: 987654
+                    id_value: '987654'
                 }
             ];
 
@@ -1392,7 +1435,9 @@ describe('ValueDomain', () => {
             const deletedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
-                deleteValue: global.__mockPromise(deletedValueData)
+                deleteValue: global.__mockPromise({value: 'test val', attribute: 'test_attr', id_value: '123'}),
+                getValueById: global.__mockPromise({id_value: '12345'}),
+                getValues: global.__mockPromise([{value: 'test val', attribute: 'test_attr'}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1400,7 +1445,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -1416,7 +1462,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                valueId: '123',
                 ctx
             });
 
@@ -1432,7 +1478,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -1469,7 +1516,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                valueId: '123',
                 ctx
             });
 
@@ -1500,7 +1547,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                valueId: '123',
                 ctx
             });
 
@@ -1514,7 +1561,8 @@ describe('ValueDomain', () => {
             };
 
             const mockLibDomain = {
-                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
+                getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
 
             const valDomain = valueDomain({
@@ -1528,7 +1576,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {
-                        id_value: 12345,
+                        id_value: '12345',
                         value: 'test val'
                     },
                     ctx

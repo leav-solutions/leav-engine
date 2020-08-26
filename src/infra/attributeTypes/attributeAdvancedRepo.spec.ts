@@ -209,7 +209,7 @@ describe('AttributeStandardRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    id_value: 987654,
+                    id_value: '987654',
                     value: 'test val',
                     modified_at: 500999999,
                     metadata: {my_attribute: 'metadata value'}
@@ -284,7 +284,7 @@ describe('AttributeStandardRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    id_value: 987654,
+                    id_value: '987654',
                     value: 'test val',
                     modified_at: 500999999,
                     version: {
@@ -350,7 +350,7 @@ describe('AttributeStandardRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    id_value: 123456789,
+                    id_value: '123456789',
                     value: 'test val',
                     modified_at: 400999999,
                     created_at: 400999999
@@ -411,10 +411,7 @@ describe('AttributeStandardRepo', () => {
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
-                value: {
-                    id_value: 132465,
-                    value: 'test val'
-                },
+                valueId: '132465',
                 ctx
             });
 
@@ -451,10 +448,7 @@ describe('AttributeStandardRepo', () => {
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
-                value: {
-                    id_value: 132465,
-                    value: 'test val'
-                },
+                valueId: '132465',
                 ctx
             });
 

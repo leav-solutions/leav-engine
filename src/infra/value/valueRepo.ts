@@ -82,13 +82,13 @@ export interface IValueRepo {
         library,
         recordId,
         attribute,
-        value,
+        valueId,
         ctx
     }: {
         library: string;
         recordId: string;
         attribute: IAttribute;
-        value: IValue;
+        valueId: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
     clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
@@ -116,9 +116,9 @@ export default function({'core.infra.attributeTypes': attributeTypesRepo = null}
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.getValues({library, recordId, attribute, forceGetAllValues, options, ctx});
         },
-        getValueById({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValueById({library, recordId, attribute, value, ctx});
+            return typeRepo.getValueById({library, recordId, attribute, valueId, ctx});
         },
         clearAllValues({attribute, ctx}): Promise<boolean> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

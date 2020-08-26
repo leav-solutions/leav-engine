@@ -145,7 +145,7 @@ export default function({
                             values: [ValueBatchInput],
                             deleteEmpty: Boolean
                         ): saveValueBatchResult!
-                        deleteValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value!
+                        deleteValue(library: ID!, recordId: ID!, attribute: ID!, valueId: ID): Value!
                     }
                 `,
                 resolvers: {
@@ -201,8 +201,14 @@ export default function({
 
                             return res;
                         },
-                        async deleteValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
-                            return valueDomain.deleteValue({library, recordId, attribute, value, ctx});
+                        async deleteValue(parent, {library, recordId, attribute, valueId}, ctx): Promise<IValue> {
+                            return valueDomain.deleteValue({
+                                library,
+                                recordId,
+                                attribute,
+                                valueId,
+                                ctx
+                            });
                         }
                     },
                     ValueVersion: new GraphQLScalarType({

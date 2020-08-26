@@ -150,7 +150,7 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 2`] =
 Object {
   "@value2": "core_values",
   "value0": Object {
-    "_key": 987654,
+    "_key": "987654",
   },
   "value1": Object {
     "value": "test val",

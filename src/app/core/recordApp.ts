@@ -6,6 +6,7 @@ import {IList} from '_types/list';
 import {PreviewSizes} from '../../_types/filesManager';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
+import {IIndexationManagerApp} from './indexationManagerApp';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -17,6 +18,7 @@ interface IDeps {
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core.attribute'?: ICoreAttributeApp;
+    'core.app.core.indexationManager'?: IIndexationManagerApp;
 }
 
 export default function({
@@ -24,7 +26,8 @@ export default function({
     'core.domain.attribute': attributeDomain = null,
     'core.utils': utils = null,
     'core.app.graphql': graphqlApp = null,
-    'core.app.core.attribute': attributeApp = null
+    'core.app.core.attribute': attributeApp = null,
+    'core.app.core.indexationManager': indexationManagerApp = null
 }: IDeps = {}): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -75,6 +78,11 @@ export default function({
                         preview: ID
                     }
 
+                    input RecordInput {
+                        id: ID!
+                        library: String!
+                    }
+
                     # Records support on both offset and cursor. Cannot use both at the same time.
                     # If none is supplied, it will apply an offset 0. Cursors are always returned along the results
                     # ⚠️Sorting is disallowed when using cursor pagination
@@ -99,6 +107,7 @@ export default function({
                     extend type Mutation {
                         createRecord(library: ID): Record!
                         deleteRecord(library: ID, id: ID): Record!
+                        indexRecords(records: [String!]): Boolean!
                     }
 
                     extend type Query {
@@ -118,12 +127,13 @@ export default function({
                     },
                     Mutation: {
                         async createRecord(parent, {library}, ctx): Promise<IRecord> {
-                            const newRec = await recordDomain.createRecord(library, ctx);
-
-                            return newRec;
+                            return recordDomain.createRecord(library, ctx);
                         },
                         async deleteRecord(parent, {library, id}, ctx): Promise<IRecord> {
                             return recordDomain.deleteRecord({library, id, ctx});
+                        },
+                        async indexRecords(parent, {records}, ctx): Promise<boolean> {
+                            return indexationManagerApp.indexDatabase(ctx, records);
                         }
                     },
                     Query: {

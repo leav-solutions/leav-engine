@@ -468,7 +468,7 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
-                    value: {id_value: "${advValueId}"}) { id_value value }
+                    valueId: "${advValueId}") { id_value value }
               }`);
 
         expect(res.status).toBe(200);
@@ -482,8 +482,7 @@ describe('Values', () => {
                 deleteValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
-                    attribute: "${attrSimpleName}",
-                    value: {value: "TEST VAL"}) { id_value value }
+                    attribute: "${attrSimpleName}") { id_value value }
               }`);
 
         expect(res.status).toBe(200);

@@ -3,8 +3,8 @@ export enum EventType {
     RECORD_DELETE = 'RECORD_DELETE',
     LIBRARY_SAVE = 'LIBRARY_SAVE',
     LIBRARY_DELETE = 'LIBRARY_DELETE',
-    VALUE_SAVE = 'VALUE_SAVE', // TODO: how to index it?
-    VALUE_DELETE = 'VALUE_DELETE' // TODO: "
+    VALUE_SAVE = 'VALUE_SAVE', // FIXME:
+    VALUE_DELETE = 'VALUE_DELETE' // FIXME:
 }
 
 export interface IPayload {
@@ -33,8 +33,8 @@ export interface IValuePayload extends IPayload {
         recordId: string;
         attributeId: string;
         value?: {
-            old: any;
             new: any;
+            old?: any;
         };
     };
 }
@@ -42,7 +42,7 @@ export interface IValuePayload extends IPayload {
 export type Payload = IRecordPayload | ILibraryPayload | IValuePayload;
 
 export interface IEvent {
-    date: Date;
+    time: number;
     userId: string;
     payload: Payload;
 }

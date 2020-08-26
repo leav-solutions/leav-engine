@@ -91,13 +91,13 @@ export interface IAttributeTypeRepo {
         library,
         recordId,
         attribute,
-        value,
+        valueId,
         ctx
     }: {
         library: string;
         recordId: string;
         attribute: IAttribute;
-        value: IValue;
+        valueId: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
