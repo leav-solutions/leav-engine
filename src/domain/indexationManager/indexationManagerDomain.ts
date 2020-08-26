@@ -153,8 +153,8 @@ export default function({
                 ? records.reduce((acc, id) => {
                       acc.push({field: 'id', value: id});
                       if (records.length > 1) {
-acc.push({operator: Operator.OR});
-}
+                          acc.push({operator: Operator.OR});
+                      }
                       return acc;
                   }, [])
                 : [];
@@ -177,12 +177,12 @@ acc.push({operator: Operator.OR});
             }
 
             for (const lib in data) {
-if (data.hasOwnProperty(lib)) {
-for (const r of data[lib].records) {
-await elasticsearchService.index(lib, r.id, pick(r, data[lib].fullTextAttr));
-}
-}
-}
+                if (data.hasOwnProperty(lib)) {
+                    for (const r of data[lib].records) {
+                        await elasticsearchService.index(lib, r.id, pick(r, data[lib].fullTextAttr));
+                    }
+                }
+            }
 
             return true;
         }
