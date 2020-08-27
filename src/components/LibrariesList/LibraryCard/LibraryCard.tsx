@@ -5,6 +5,7 @@ import Meta from 'antd/lib/card/Meta';
 import React from 'react';
 import {useHistory} from 'react-router-dom';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
+import themingVar from '../../../themingVar.js';
 import {localizedLabel} from '../../../utils';
 import {ILibrary} from '../../../_types/types';
 
@@ -41,7 +42,7 @@ function LibraryCard({lib, active}: ILibraryCardProps): JSX.Element {
                     <ToolOutlined />,
                     <InfoCircleOutlined onClick={handleChangeLibSelected} />
                 ]}
-                style={active ? {border: '1px solid #1890ff'} : {}}
+                style={active ? {border: `1px solid ${themingVar['@primary-color']}`} : {}}
             >
                 <Card.Meta>{lib.id}</Card.Meta>
                 <Meta title={localizedLabel(lib.label, lang) ?? lib.id} description={lib.id} />

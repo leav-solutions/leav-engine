@@ -1,26 +1,23 @@
 import {DownOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
-import React from 'react';
+import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
+import {StateItemsContext} from '../../../../Context/StateItemsContext';
 import {getSortFieldByAttributeType} from '../../../../utils';
 import {AttributeType, OrderSearch} from '../../../../_types/types';
-import {
-    LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
-} from '../../LibraryItemsListReducer';
+import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 
 interface HeaderPros {
     children: React.ReactNode;
-    stateItems: LibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     name: string;
     type: AttributeType;
     setOpenChangeColumns: any;
 }
 
-const Header = ({children, stateItems, dispatchItems, name, type, setOpenChangeColumns}: HeaderPros) => {
+const Header = ({children, name, type, setOpenChangeColumns}: HeaderPros) => {
     const {t} = useTranslation();
+
+    const {stateItems, dispatchItems} = useContext(StateItemsContext);
 
     const handleSort = (attId: string, order: OrderSearch, attType: AttributeType) => {
         const newSortField = getSortFieldByAttributeType(attId, attType);

@@ -4,6 +4,7 @@ import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
+import themingVar from '../../themingVar.js';
 import {localizedLabel} from '../../utils';
 import {IAttribute, IAttributesChecked, IOriginAttributeData, ITreeData} from '../../_types/types';
 import Attribute from './Attribute';
@@ -24,8 +25,8 @@ const Wrapper = styled.div`
 `;
 
 const ListingAttributeWrapper = styled.div`
-    border-right: 1px solid #f0f0f0;
-    padding: 0 1rem;
+    border-right: 1px solid ${themingVar['@primary-color']};
+    padding: 0.3rem 1rem 0 1rem;
     overflow-y: scroll;
     height: 80vh;
 `;

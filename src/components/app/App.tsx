@@ -2,7 +2,7 @@ import {ApolloClient, ApolloLink, ApolloProvider, gql, HttpLink, InMemoryCache} 
 import {onError} from '@apollo/link-error';
 import {default as React} from 'react';
 import './App.css';
-import AppHandler from './AppHandler';
+import ThemeHandler from './ThemeHandler';
 
 interface IAppProps {
     token: string;
@@ -75,7 +75,7 @@ function App({token, onTokenInvalid}: IAppProps) {
 
     return (
         <ApolloProvider client={gqlClient}>
-            <AppHandler />
+            <ThemeHandler />
         </ApolloProvider>
     );
 }

@@ -174,7 +174,7 @@ export interface ITableHeader {
     dataIndex: string;
     key: string;
     width?: number;
-    onHeaderCell: (
+    onHeaderCell?: (
         column: any
     ) => {
         width: number;

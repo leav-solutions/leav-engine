@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import AuthHandler from './components/shared/AuthHandler';
 import './i18n';
-import './index.css';
+import './index.less';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(

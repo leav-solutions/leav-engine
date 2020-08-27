@@ -1,8 +1,9 @@
 import {InMemoryCache} from '@apollo/client';
 import {MockedProvider} from '@apollo/client/testing';
-import {Select} from 'antd';
+import {PageHeader, Select} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
+import {ThemeSwitcherProvider} from 'react-css-theme-switcher';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import {getAvailableLangs} from '../../queries/cache/lang/getLangQuery';
@@ -25,7 +26,12 @@ describe('Setting', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <Setting />
+                    <ThemeSwitcherProvider
+                        themeMap={{light: `${process.env.PUBLIC_URL}/dark-theme.css`}}
+                        defaultTheme="light"
+                    >
+                        <Setting />
+                    </ThemeSwitcherProvider>
                 </MockedProviderWithFragments>
             );
 
@@ -34,7 +40,7 @@ describe('Setting', () => {
             comp.update();
         });
 
-        expect(comp.text()).toContain('settings.header');
+        expect(comp.find(PageHeader)).toHaveLength(1);
     });
 
     test('should display available languages', async () => {
@@ -42,7 +48,12 @@ describe('Setting', () => {
         await act(async () => {
             comp = mount(
                 <MockedProvider cache={mockCache}>
-                    <Setting />
+                    <ThemeSwitcherProvider
+                        themeMap={{light: `${process.env.PUBLIC_URL}/dark-theme.css`}}
+                        defaultTheme="light"
+                    >
+                        <Setting />
+                    </ThemeSwitcherProvider>
                 </MockedProvider>
             );
 

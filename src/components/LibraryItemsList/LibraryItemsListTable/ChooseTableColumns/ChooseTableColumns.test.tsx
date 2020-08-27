@@ -2,9 +2,10 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
+import {StateItemsContext} from '../../../../Context/StateItemsContext';
 import {AttributeFormat, AttributeType, IAttribute} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../../LibraryItemsListReducer';
+import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 
 jest.mock(
@@ -16,8 +17,6 @@ jest.mock(
 );
 
 describe('ChooseTableColumns', () => {
-    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
-
     test('should render attributes', async () => {
         const attributesMock: IAttribute[] = [
             {
@@ -33,19 +32,20 @@ describe('ChooseTableColumns', () => {
                 isMultiple: false
             }
         ];
-        const stateMock = {...LibraryItemListInitialState, attributes: attributesMock};
 
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <ChooseTableColumns
-                        stateItems={stateMock}
-                        dispatchItems={dispatchItems}
-                        openChangeColumns={true}
-                        setOpenChangeColumns={jest.fn()}
-                    />
+                    <StateItemsContext.Provider
+                        value={{
+                            stateItems: {...LibraryItemListInitialState, attributes: attributesMock},
+                            dispatchItems: jest.fn()
+                        }}
+                    >
+                        <ChooseTableColumns openChangeColumns={true} setOpenChangeColumns={jest.fn()} />
+                    </StateItemsContext.Provider>
                 </MockedProviderWithFragments>
             );
 

@@ -1,28 +1,20 @@
 import {Button, Modal} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useStateItem} from '../../../../Context/StateItemsContext';
 import {IAttribute, IAttributesChecked, IItemsColumn} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
-import {
-    LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
-} from '../../LibraryItemsListReducer';
+import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 
 interface IChooseTableColumnsProps {
-    stateItems: LibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     openChangeColumns: boolean;
     setOpenChangeColumns: (openChangeColumns: boolean) => void;
 }
 
-function ChooseTableColumns({
-    stateItems,
-    dispatchItems,
-    openChangeColumns,
-    setOpenChangeColumns
-}: IChooseTableColumnsProps): JSX.Element {
+function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
+
+    const {stateItems, dispatchItems} = useStateItem();
 
     const [attributesChecked, setAttributesChecked] = useState<IAttributesChecked[]>(
         stateItems.columns.map(col => {
@@ -40,6 +32,25 @@ function ChooseTableColumns({
             };
         })
     );
+
+    useEffect(() => {
+        setAttributesChecked(
+            stateItems.columns.map(col => {
+                const currentAttribute = stateItems.attributes.find(
+                    attribute => attribute.id === col.id && attribute.library === col.library
+                );
+
+                return {
+                    id: col.id,
+                    library: col.library,
+                    label: currentAttribute?.label ?? '',
+                    type: col.type,
+                    depth: 0,
+                    checked: true
+                };
+            })
+        );
+    }, [stateItems.attributes, stateItems.columns, setAttributesChecked]);
 
     const [newAttributes, setNewAttributes] = useState<IAttribute[]>([]);
 

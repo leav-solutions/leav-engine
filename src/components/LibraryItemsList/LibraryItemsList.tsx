@@ -2,6 +2,7 @@ import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
+import {StateItemsContext} from '../../Context/StateItemsContext';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
@@ -221,19 +222,21 @@ function LibraryItemsList(): JSX.Element {
     }
 
     return (
-        <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
-            <Filters stateItems={state} dispatchItems={dispatch} />
-            <div>
-                <MenuWrapper>
-                    {state.selectionMode ? (
-                        <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
-                    ) : (
-                        <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
-                    )}
-                </MenuWrapper>
-                <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
-            </div>
-        </Wrapper>
+        <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
+            <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
+                <Filters stateItems={state} dispatchItems={dispatch} />
+                <div>
+                    <MenuWrapper>
+                        {state.selectionMode ? (
+                            <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
+                        ) : (
+                            <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
+                        )}
+                    </MenuWrapper>
+                    <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
+                </div>
+            </Wrapper>
+        </StateItemsContext.Provider>
     );
 }
 

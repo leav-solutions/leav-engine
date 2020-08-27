@@ -21,7 +21,11 @@
     },
     "settings": {
         "header": "Paramètres",
-        "choose-lang": "Choix de langue"
+        "choose-lang": "Choix de langue",
+        "choose-theme": "Choix du thème",
+        "current-theme": "Le thème actuel est {{theme}}",
+        "name-theme-dark": "sombre",
+        "name-theme-light": "éclairé"
     },
     "menu": {
         "app_name": "Explorer",

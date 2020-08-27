@@ -18,10 +18,18 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
             placement="right"
             closable={false}
             getContainer={false}
-            style={{position: 'absolute'}}
+            style={{
+                position: 'absolute'
+            }}
             bodyStyle={{padding: 0}}
         >
-            <Menu theme="dark" style={{height: '100%'}} mode="inline">
+            <Menu
+                theme="dark"
+                style={{
+                    height: '100%'
+                }}
+                mode="inline"
+            >
                 <Menu.Item>{t('menu.user_menu.profil')}</Menu.Item>
                 <Menu.Item>{t('menu.user_menu.tasks')}</Menu.Item>
                 <Menu.Item>{t('menu.user_menu.shortcuts')}</Menu.Item>

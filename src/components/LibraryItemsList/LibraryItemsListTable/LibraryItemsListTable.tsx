@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {Card, Spin, Table} from 'antd';
+import {Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Resizable} from 'react-resizable';
@@ -38,6 +38,19 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     });
 
     useEffect(() => {
+        const handleResize = index => (e, {size}) => {
+            const widthLimited = size.width < 50 ? 50 : size.width;
+
+            setTableColumn(cols => {
+                const nextColumns = [...cols];
+                nextColumns[index] = {
+                    ...nextColumns[index],
+                    width: widthLimited
+                };
+                return nextColumns;
+            });
+        };
+
         if (stateItems.attributes.length && !stateItems.columns.length) {
             // initialize columns in state
             const initialTableColumns: IItemsColumn[] = stateItems.attributes.reduce(
@@ -66,19 +79,8 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 columns: initialTableColumns
             });
         } else if (stateItems.attributes.length && stateItems.columns.length) {
-            const handleResize = index => (e, {size}) => {
-                setTableColumn(columns => {
-                    const nextColumns = [...columns];
-                    nextColumns[index] = {
-                        ...nextColumns[index],
-                        width: size.width
-                    };
-                    return nextColumns;
-                });
-            };
-
-            setTableColumn(
-                stateItems.columns.map((col, index) => {
+            setTableColumn(columns => {
+                return stateItems.columns.map((col, index) => {
                     const attribute = stateItems.attributes.find(att => att.id === col.id);
 
                     if (attribute) {
@@ -91,8 +93,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         return {
                             title: (
                                 <Header
-                                    stateItems={stateItems}
-                                    dispatchItems={dispatchItems}
                                     name={attribute.id}
                                     type={attribute.type}
                                     setOpenChangeColumns={setOpenChangeColumns}
@@ -124,8 +124,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     return {
                         title: (
                             <Header
-                                stateItems={stateItems}
-                                dispatchItems={dispatchItems}
                                 name={'infos'}
                                 type={AttributeType.simple}
                                 setOpenChangeColumns={setOpenChangeColumns}
@@ -151,10 +149,10 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             />
                         )
                     };
-                })
-            );
+                });
+            });
         }
-    }, [t, dispatchItems, stateItems, lang]);
+    }, [t, dispatchItems, lang, stateItems.attributes, stateItems.columns, stateItems.displayType]);
 
     useEffect(() => {
         if (stateItems.items) {
@@ -172,16 +170,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
         }
     }, [stateItems.items, stateItems.columns, setTableData]);
 
-    if (!stateItems.items) {
-        return (
-            <Card style={{height: '20rem'}}>
-                <div>
-                    <Spin />
-                </div>
-            </Card>
-        );
-    }
-
     const handlePageChange = (page: number, pageSize?: number) => {
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_OFFSET,
@@ -198,12 +186,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
     return (
         <>
-            <ChooseTableColumns
-                stateItems={stateItems}
-                dispatchItems={dispatchItems}
-                openChangeColumns={openChangeColumns}
-                setOpenChangeColumns={setOpenChangeColumns}
-            />
+            <ChooseTableColumns openChangeColumns={openChangeColumns} setOpenChangeColumns={setOpenChangeColumns} />
 
             {stateItems.itemsLoading ? (
                 <Spin />
@@ -213,7 +196,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     columns={(tableColumns as unknown) as any}
                     dataSource={tableData}
                     tableLayout="fixed"
-                    scroll={{x: true, y: 'calc(100vh - 15rem)'}}
+                    scroll={{x: 'calc(100vw - 4rem)', y: 'calc(100vh - 15rem)'}}
                     components={{
                         header: {
                             cell: ResizableTitle

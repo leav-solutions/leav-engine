@@ -55,7 +55,11 @@
     },
     "settings": {
         "header": "Settings",
-        "choose-lang": "Choose language"
+        "choose-lang": "Choose language",
+        "choose-theme": "Choose theme",
+        "current-theme": "Current theme is {{theme}}",
+        "name-theme-dark": "dark",
+        "name-theme-light": "light"
     },
     "loading": "Loading",
     "items_list": {

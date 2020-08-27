@@ -1,12 +1,17 @@
+import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {PageHeader, Select} from 'antd';
-import React from 'react';
+import {Card, Col, PageHeader, Row, Select, Switch} from 'antd';
+import React, {useState} from 'react';
+import {useThemeSwitcher} from 'react-css-theme-switcher';
 import {useTranslation} from 'react-i18next';
 import {getAvailableLangs, getLangAndDefaultLang} from '../../queries/cache/lang/getLangQuery';
 import {AvailableLanguage} from '../../_types/types';
 
 function Setting(): JSX.Element {
     const {t, i18n: i18nClient} = useTranslation();
+
+    const {switcher, themes} = useThemeSwitcher();
+    const [darkMode, setDarkMode] = useState(false);
 
     const {data: dataLang, client} = useQuery(getAvailableLangs);
     const {availableLangs, lang} = dataLang ?? {availableLangs: [], lang: []};
@@ -16,6 +21,11 @@ function Setting(): JSX.Element {
         value: l,
         text: l
     }));
+
+    const toggleTheme = () => {
+        switcher({theme: !darkMode ? themes.dark : themes.light});
+        setDarkMode(mode => !mode);
+    };
 
     const changeLang = (value: string) => {
         i18nClient.changeLanguage(value ?? (lang[0] as any));
@@ -36,19 +46,39 @@ function Setting(): JSX.Element {
         });
     };
 
+    const themeName = darkMode ? t('settings.name-theme-dark') : t('settings.name-theme-light');
     return (
-        <div>
+        <div style={{padding: '1rem'}}>
             <PageHeader title={t('settings.header')} />
-            <label>
-                <span style={{padding: 16}}>{t('settings.choose-lang')}</span>
-                <Select defaultValue={lang[0]} onChange={value => changeLang(value.toString())}>
-                    {langOption.map(lang => (
-                        <Select.Option key={lang.key} value={lang.value}>
-                            {lang.text}
-                        </Select.Option>
-                    ))}
-                </Select>
-            </label>
+            <Row gutter={[8, 8]}>
+                <Col span={4}>
+                    <Card title={t('settings.choose-lang')} hoverable={true}>
+                        <Select defaultValue={lang[0]} onChange={value => changeLang(value.toString())}>
+                            {langOption.map(lang => (
+                                <Select.Option key={lang.key} value={lang.value}>
+                                    {lang.text}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Card>
+                </Col>
+
+                <Col span={4}>
+                    <Card title={t('settings.choose-theme')} hoverable={true}>
+                        <Row gutter={8}>
+                            <Col>{t('settings.current-theme', {theme: themeName})}</Col>
+                            <Col>
+                                <Switch
+                                    checkedChildren={<CheckOutlined />}
+                                    unCheckedChildren={<CloseOutlined />}
+                                    defaultChecked={darkMode}
+                                    onChange={toggleTheme}
+                                />
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
+            </Row>
         </div>
     );
 }
