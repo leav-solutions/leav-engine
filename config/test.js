@@ -24,5 +24,13 @@ module.exports = {
             previewResponse: 'test_files_preview_response'
         }
     },
+    indexationManager: {
+        queues: {
+            events: 'test_indexation_events'
+        },
+        routingKeys: {
+            events: 'test_indexation_events'
+        }
+    },
     debug: true
 };
