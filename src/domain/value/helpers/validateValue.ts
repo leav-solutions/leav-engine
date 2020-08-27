@@ -173,9 +173,10 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
             library,
             recordId,
             attribute: attributeProps,
-            value,
+            valueId: value.id_value,
             ctx
         });
+
         if (existingVal === null) {
             errors.id_value = Errors.UNKNOWN_VALUE;
         }
