@@ -3,8 +3,8 @@ export enum EventType {
     RECORD_DELETE = 'RECORD_DELETE',
     LIBRARY_SAVE = 'LIBRARY_SAVE',
     LIBRARY_DELETE = 'LIBRARY_DELETE',
-    VALUE_SAVE = 'VALUE_SAVE', // FIXME:
-    VALUE_DELETE = 'VALUE_DELETE' // FIXME:
+    VALUE_SAVE = 'VALUE_SAVE',
+    VALUE_DELETE = 'VALUE_DELETE'
 }
 
 export interface IPayload {

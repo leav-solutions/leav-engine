@@ -41,24 +41,6 @@ describe('Indexation Manager', () => {
         expect(mockAmqpChannel.consume).toBeCalledTimes(1);
     });
 
-    test('sending message', async () => {
-        const conf = await getConfig();
-
-        const amqpServ = amqpService({
-            'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
-            config: conf as Config.IConfig
-        });
-
-        const indexation = indexationManager({
-            config: conf as Config.IConfig,
-            'core.infra.amqp.amqpService': amqpServ as IAmqpService
-        });
-
-        await indexation.send({type: EventType.LIBRARY_SAVE, data: {id: 'test'}}, ctx);
-
-        expect(mockAmqpChannel.publish).toBeCalledTimes(1);
-    });
-
     test('index database', async () => {
         const conf = await getConfig();
 

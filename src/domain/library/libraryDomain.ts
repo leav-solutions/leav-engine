@@ -221,6 +221,7 @@ export default function({
                         fullTextAttributes: libFullTextAttributes
                     }
                 },
+                config.indexationManager.routingKeys.events,
                 ctx
             );
 
@@ -257,6 +258,7 @@ export default function({
                     type: EventType.LIBRARY_DELETE,
                     data: {id: deletedLibrary.id}
                 },
+                config.indexationManager.routingKeys.events,
                 ctx
             );
 

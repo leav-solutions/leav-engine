@@ -295,6 +295,7 @@ export default function({
                             }
                         }
                     },
+                    config.indexationManager.routingKeys.events,
                     ctx
                 );
             }
@@ -411,6 +412,7 @@ export default function({
                                         }
                                     }
                                 },
+                                config.indexationManager.routingKeys.events,
                                 ctx
                             );
                         }
@@ -534,6 +536,7 @@ export default function({
                             })
                         }
                     },
+                    config.indexationManager.routingKeys.events,
                     ctx
                 );
             }

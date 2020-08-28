@@ -27,6 +27,18 @@ describe('amqp', () => {
         jest.clearAllMocks();
     });
 
+    test('Set up message listening', async () => {
+        const amqpServ = amqpService({
+            'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+            config: mockConfig as Config.IConfig
+        });
+        const mockCbFunc = jest.fn();
+
+        await amqpServ.consume('myQueue', 'someRoutingKey', mockCbFunc);
+
+        expect(mockAmqpChannel.consume).toBeCalled();
+    });
+
     test('Publish a message', async () => {
         const amqpServ = amqpService({
             'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
@@ -38,17 +50,5 @@ describe('amqp', () => {
         expect(mockAmqpChannel.checkExchange).toBeCalled();
         expect(mockAmqpChannel.publish).toBeCalled();
         expect(mockAmqpChannel.waitForConfirms).toBeCalled();
-    });
-
-    test('Set up message listening', async () => {
-        const amqpServ = amqpService({
-            'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
-            config: mockConfig as Config.IConfig
-        });
-        const mockCbFunc = jest.fn();
-
-        await amqpServ.consume('myQueue', 'someRoutingKey', mockCbFunc);
-
-        expect(mockAmqpChannel.consume).toBeCalled();
     });
 });

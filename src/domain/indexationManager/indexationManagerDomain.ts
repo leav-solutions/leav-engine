@@ -16,7 +16,6 @@ import {Operator} from '../../_types/record';
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
     indexDatabase(ctx: IQueryInfos, records?: string[]): Promise<boolean>;
-    send(payload: Payload, ctx: IQueryInfos): Promise<void>;
 }
 
 interface IDeps {
@@ -136,12 +135,6 @@ export default function({
                 config.indexationManager.routingKeys.events,
                 _onMessage,
                 config.indexationManager.prefetch
-            );
-        },
-        async send(payload: Payload, ctx: IQueryInfos): Promise<void> {
-            await amqpService.publish(
-                config.indexationManager.routingKeys.events,
-                JSON.stringify({time: Date.now(), userId: ctx.userId, payload})
             );
         },
         async indexDatabase(ctx: IQueryInfos, records?: string[]): Promise<boolean> {
