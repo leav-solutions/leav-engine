@@ -12,20 +12,8 @@ interface ItemSelectedProps {
     attributeChecked: IAttributesChecked;
     removeAttributeChecked: (attributeChecked: IAttributesChecked) => void;
     stateListAttribute: ListAttributeState;
+    handleProps: any;
 }
-
-const CustomCard = styled.div`
-    &&& {
-        padding: 0;
-        margin: 24px;
-        display: flex;
-        justify-content: space-between;
-        border: 1px solid #f0f0f0;
-        border-radius: 2px;
-        min-height: 5rem;
-        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-    }
-`;
 
 const DragHandle = styled.div`
     border-right: 1px solid #f0f0f0;
@@ -63,11 +51,16 @@ const HandlePoint = styled.div`
     border-radius: 100%;
 `;
 
-const ItemSelected = ({attributeChecked, removeAttributeChecked, stateListAttribute}: ItemSelectedProps) => {
+const ItemSelected = ({
+    attributeChecked,
+    removeAttributeChecked,
+    stateListAttribute,
+    handleProps
+}: ItemSelectedProps) => {
     const {t} = useTranslation();
     return (
-        <CustomCard>
-            <DragHandle>
+        <>
+            <DragHandle {...handleProps}>
                 <Handle>
                     {[...Array(8)].map((useless, index) => (
                         <HandlePoint key={index} />
@@ -104,7 +97,7 @@ const ItemSelected = ({attributeChecked, removeAttributeChecked, stateListAttrib
                     }}
                 />
             </CloseWrapper>
-        </CustomCard>
+        </>
     );
 };
 

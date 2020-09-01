@@ -2,7 +2,6 @@ import {IdcardOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {Checkbox, Radio, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {animated, useSpring} from 'react-spring';
 import styled from 'styled-components';
 import {getLibraryDetailExtendedQuery} from '../../../../queries/libraries/getLibraryDetailExtendQuery';
 import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../../../utils';
@@ -13,7 +12,7 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../../ListAttributesReducer';
-import {DeployButton, SmallText, TextAttribute, WrapperContentAttribute} from '../../StyledComponents';
+import {DeployButton, DeployContent, SmallText, StyledDeployContent, TextAttribute} from '../../StyledComponents';
 
 interface IAttributeLinkedLibraryProps {
     attribute: IAttribute;
@@ -57,8 +56,6 @@ function AttributeLinkedLibrary({
     isChecked,
     originAttributeData
 }: IAttributeLinkedLibraryProps): JSX.Element {
-    const [propsAnim, setAnim] = useSpring(() => ({display: 'block'}));
-
     const [linkedAttributes, setLinkedAttributes] = useState<IAttribute[]>([]);
     const [getLinkedAttributes, {called, loading, data, error}] = useLazyQuery(getLibraryDetailExtendedQuery, {
         variables: {
@@ -134,7 +131,6 @@ function AttributeLinkedLibrary({
                         called={called}
                         loading={loading}
                         changeCurrentAccordion={changeCurrentAccordion}
-                        setAnim={setAnim}
                     />
                     <TextAttribute>
                         {stateListAttribute.lang && localizedLabel(attribute.label, stateListAttribute.lang) ? (
@@ -163,8 +159,8 @@ function AttributeLinkedLibrary({
             {loading ? (
                 <Spin />
             ) : (
-                <animated.div style={propsAnim}>
-                    <WrapperContentAttribute>
+                <DeployContent active={!!isAccordionActive}>
+                    <StyledDeployContent>
                         <ListingAttributes
                             attributes={linkedAttributes}
                             stateListAttribute={stateListAttribute}
@@ -172,8 +168,8 @@ function AttributeLinkedLibrary({
                             depth={depth + 1}
                             originAttributeData={{id: attribute.id, type: attribute.type}}
                         />
-                    </WrapperContentAttribute>
-                </animated.div>
+                    </StyledDeployContent>
+                </DeployContent>
             )}
         </>
     );

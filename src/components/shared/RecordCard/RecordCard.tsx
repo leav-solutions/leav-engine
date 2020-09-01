@@ -1,7 +1,5 @@
-import {useQuery} from '@apollo/client';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {getPreviewUrl, localizedLabel} from '../../../utils/utils';
 import {IPreview, PreviewSize, RecordIdentity_whoAmI} from '../../../_types/types';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
@@ -10,6 +8,7 @@ interface IRecordCardProps {
     record: RecordIdentity_whoAmI;
     size: PreviewSize;
     style?: CSSObject;
+    lang?: string[];
 }
 
 interface IWrapperProps {
@@ -51,9 +50,7 @@ const getPreviewBySize = (preview?: IPreview, size?: PreviewSize) => {
     return previewBySize ? getPreviewUrl(previewBySize) : '';
 };
 
-const RecordCard = ({record, size, style}: IRecordCardProps): JSX.Element => {
-    const {data: dataLang} = useQuery(getLang);
-
+const RecordCard = ({record, size, style, lang}: IRecordCardProps): JSX.Element => {
     return (
         <Wrapper recordColor={record.color ?? ''} style={style} className="ui fluid">
             <PreviewWrapper className="ui">
@@ -66,7 +63,7 @@ const RecordCard = ({record, size, style}: IRecordCardProps): JSX.Element => {
             </PreviewWrapper>
             <CardPart className="ui">
                 <RecordLabel>{record.label || record.id}</RecordLabel>
-                <LibLabel>{localizedLabel(record.library?.label, dataLang?.lang ?? []) || record.library?.id}</LibLabel>
+                <LibLabel>{localizedLabel(record.library?.label, lang ?? []) || record.library?.id}</LibLabel>
             </CardPart>
         </Wrapper>
     );

@@ -11,13 +11,14 @@ interface CellProps {
     size: PreviewSize;
     format?: AttributeFormat;
     isMultiple?: boolean;
+    lang?: string[];
 }
 
-const Cell = ({value, column, size, format, isMultiple}: CellProps) => {
+const Cell = ({value, column, size, format, isMultiple, lang}: CellProps) => {
     if (value !== undefined && value !== null) {
         // handle infos column
         if (!column) {
-            return <RecordCard record={{...value}} size={size} />;
+            return <RecordCard record={{...value}} size={size} lang={lang} />;
         }
 
         switch (format) {
@@ -62,10 +63,15 @@ const Cell = ({value, column, size, format, isMultiple}: CellProps) => {
                         />
                     ));
                 } else if (checkTypeIsLink(column.type)) {
-                    return <RecordCard record={{...value.whoAmI}} size={size} />;
+                    return <RecordCard record={{...value.whoAmI}} size={size} lang={lang} />;
                 } else if (column.type === AttributeType.tree) {
                     return (
-                        <RecordCard key={value?.record?.whoAmI?.id} record={{...value?.record?.whoAmI}} size={size} />
+                        <RecordCard
+                            key={value?.record?.whoAmI?.id}
+                            record={{...value?.record?.whoAmI}}
+                            size={size}
+                            lang={lang}
+                        />
                     );
                 }
 

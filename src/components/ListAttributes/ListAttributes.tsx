@@ -8,7 +8,6 @@ import themingVar from '../../themingVar.js';
 import {localizedLabel} from '../../utils';
 import {IAttribute, IAttributesChecked, IOriginAttributeData, ITreeData} from '../../_types/types';
 import Attribute from './Attribute';
-import ItemSelected from './ItemSelected';
 import {
     ListAttributeInitialState,
     ListAttributeReducer,
@@ -16,6 +15,7 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from './ListAttributesReducer';
+import ListItemsSelected from './ListItemsSelected';
 import {CustomForm} from './StyledComponents';
 
 const Wrapper = styled.div`
@@ -29,19 +29,6 @@ const ListingAttributeWrapper = styled.div`
     padding: 0.3rem 1rem 0 1rem;
     overflow-y: scroll;
     height: 80vh;
-`;
-
-const WrapperItemSelected = styled.div`
-    overflow-y: scroll;
-    height: 80vh;
-
-    &&& > *:first-child {
-        margin-top: 0;
-    }
-
-    &&& > *:last-child {
-        margin-bottom: 0;
-    }
 `;
 
 interface IListAttributeProps {
@@ -139,17 +126,6 @@ function ListAttributes({
         }
     };
 
-    const removeAttributeChecked = (attributeCheckedToRemove: IAttributesChecked) => {
-        dispatch({
-            type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
-            attributesChecked: state.attributesChecked.filter(attributeChecked =>
-                attributeChecked.id === attributeCheckedToRemove.id
-                    ? attributeChecked.library !== attributeCheckedToRemove.library
-                    : true
-            )
-        });
-    };
-
     if (!state.lang) {
         return <></>;
     }
@@ -171,19 +147,7 @@ function ListAttributes({
                         dispatchListAttribute={dispatch}
                     />
                 </ListingAttributeWrapper>
-                <WrapperItemSelected>
-                    {state.attributesChecked.map(
-                        attributeChecked =>
-                            attributeChecked.checked && (
-                                <ItemSelected
-                                    key={`${attributeChecked.id}_${attributeChecked.library}_${attributeChecked.extendedData?.path}`}
-                                    attributeChecked={attributeChecked}
-                                    removeAttributeChecked={removeAttributeChecked}
-                                    stateListAttribute={state}
-                                />
-                            )
-                    )}
-                </WrapperItemSelected>
+                <ListItemsSelected stateListAttribute={state} dispatchListAttribute={dispatch} />
             </Wrapper>
         </>
     );

@@ -1,9 +1,9 @@
 import {useLazyQuery} from '@apollo/client';
 import {Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {animated, useSpring} from 'react-spring';
-import styled, {CSSObject} from 'styled-components';
+import styled from 'styled-components';
 import {getAttributeWithEmbeddedFields} from '../../../queries/attributes/getAttributeWithEmbeddedFields';
+import ThemeVars from '../../../themingVar';
 import {attributeUpdateSelection, localizedLabel} from '../../../utils';
 import {AttributeFormat, IAttribute, IEmbeddedFields, IGroupEmbeddedFields} from '../../../_types/types';
 import ListItemAttribute from '../AttributeBasic';
@@ -12,14 +12,7 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../ListAttributesReducer';
-import {DeployButton, SmallText, TextAttribute} from '../StyledComponents';
-
-const Child = styled.div`
-    &&& {
-        border-left: 3px solid #2185d0;
-        padding-left: 0.8rem;
-    }
-`;
+import {DeployButton, DeployContent, SmallText, StyledDeployContent, TextAttribute} from '../StyledComponents';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -28,7 +21,19 @@ const Wrapper = styled.div`
     align-items: center;
 `;
 
-const Container = styled.div`
+interface ContainerProps {
+    children?: React.ReactNode;
+    isChild?: boolean;
+}
+
+const Container = ({children, isChild}) => {
+    if (isChild) {
+        return <ContainerWithBefore>{children}</ContainerWithBefore>;
+    }
+    return <ContainerBasic>{children}</ContainerBasic>;
+};
+
+const ContainerBasic = styled.div<ContainerProps>`
     border: 1px solid #f0f0f0;
     border-radius: 2px;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
@@ -39,6 +44,45 @@ const Container = styled.div`
 
     & > * {
         padding: 0 6px;
+    }
+`;
+
+const ContainerWithBefore = styled(ContainerBasic)`
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: -3.5rem;
+        top: 1rem;
+        width: 2rem;
+        height: 1px;
+        background: hsla(0, 0%, 0%, 0.1);
+    }
+
+    @keyframes anim-glow {
+        0% {
+            box-shadow: 0 0 0px 0 ${ThemeVars['@primary-color']};
+        }
+        50% {
+            box-shadow: 0 0 5px 0 ${ThemeVars['@primary-color']};
+        }
+        100% {
+            box-shadow: 0 0 0px 0 ${ThemeVars['@primary-color']};
+        }
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: -1.5rem;
+        top: 0.75rem;
+        padding: 4px;
+        border-radius: 100%;
+        background: ${ThemeVars['@primary-color']};
+        animation: anim-glow 5s ease infinite;
     }
 `;
 
@@ -55,8 +99,6 @@ function AttributeExtended({
     dispatchListAttribute,
     previousDepth
 }: IAttributeExtendedProps): JSX.Element {
-    const [propsAnim, setAnim] = useSpring(() => ({display: 'none'}));
-
     const currentAccordion = stateListAttribute.accordionsActive?.find(
         accordionActive => accordionActive?.id === attribute.id && accordionActive.library === attribute.library
     );
@@ -142,21 +184,23 @@ function AttributeExtended({
                 loading={loading && called}
                 stateListAttribute={stateListAttribute}
                 dispatchListAttribute={dispatchListAttribute}
-                setAnim={setAnim}
+                depth={0}
             />
-            <animated.div style={propsAnim}>
+            <DeployContent active={isAccordionActive}>
                 {groupEmbeddedFields && called && !loading ? (
-                    <ExploreEmbeddedFields
-                        groupEmbeddedFields={groupEmbeddedFields}
-                        setDepth={setDepth}
-                        stateListAttribute={stateListAttribute}
-                        dispatchListAttribute={dispatchListAttribute}
-                        attribute={attribute}
-                    />
+                    <>
+                        <ExploreEmbeddedFields
+                            groupEmbeddedFields={groupEmbeddedFields}
+                            setDepth={setDepth}
+                            stateListAttribute={stateListAttribute}
+                            dispatchListAttribute={dispatchListAttribute}
+                            attribute={attribute}
+                        />
+                    </>
                 ) : (
                     <Spin />
                 )}
-            </animated.div>
+            </DeployContent>
         </>
     );
 }
@@ -171,7 +215,7 @@ interface IEmbeddedFieldItemProps {
     loading: boolean;
     extendedPath?: string;
     embeddedField?: IEmbeddedFields;
-    setAnim: (css: CSSObject) => void;
+    depth: number;
 }
 
 const EmbeddedFieldItem = ({
@@ -184,7 +228,7 @@ const EmbeddedFieldItem = ({
     loading,
     extendedPath,
     embeddedField,
-    setAnim
+    depth
 }: IEmbeddedFieldItemProps) => {
     const id = (embeddedField && embeddedField?.id) ?? attribute.id;
     const label = embeddedField?.label ?? embeddedField?.id ? false : attribute.label;
@@ -208,13 +252,12 @@ const EmbeddedFieldItem = ({
         <>
             {isExpendable ? (
                 <Wrapper>
-                    <Container>
+                    <Container isChild={!!depth}>
                         <DeployButton
                             active={active}
                             called={true}
                             loading={loading}
                             changeCurrentAccordion={onClick}
-                            setAnim={setAnim}
                         />
                         <TextAttribute>
                             {stateListAttribute.lang && localizedLabel(label, stateListAttribute.lang) ? (
@@ -229,13 +272,14 @@ const EmbeddedFieldItem = ({
                     </Container>
                 </Wrapper>
             ) : (
-                <div onClick={handleClick}>
+                <div style={{padding: '1rem 0'}} onClick={handleClick}>
                     <ListItemAttribute
                         attribute={attribute}
                         stateListAttribute={stateListAttribute}
                         dispatchListAttribute={dispatchListAttribute}
                         embeddedField={embeddedField}
                         extendedPath={extendedPath}
+                        depth={1}
                     />
                 </div>
             )}
@@ -258,8 +302,6 @@ const ExploreEmbeddedFields = ({
     dispatchListAttribute,
     attribute
 }: IDisplayGroupEmbeddedFields) => {
-    const [propsAnim, setAnim] = useSpring(() => ({display: 'none'}));
-
     const exploreEmbeddedFields = (
         groupEmbeddedFields: IGroupEmbeddedFields | IEmbeddedFields[] | IEmbeddedFields,
         depth: number = 0,
@@ -298,28 +340,34 @@ const ExploreEmbeddedFields = ({
 
                 return (
                     <div key={embeddedField.id}>
-                        <EmbeddedFieldItem
-                            attribute={attribute}
-                            embeddedField={embeddedField}
-                            isExpendable={embeddedField.format === AttributeFormat.extended}
-                            onClick={toggleExpand}
-                            active={isActive}
-                            loading={false}
-                            extendedPath={`${path}.${embeddedField.id}`}
-                            stateListAttribute={stateListAttribute}
-                            dispatchListAttribute={dispatchListAttribute}
-                            key={embeddedField.id}
-                            setAnim={setAnim}
-                        />
-                        <animated.div style={propsAnim}>
-                            <Child>
-                                {exploreEmbeddedFields(
-                                    embeddedField.embedded_fields,
-                                    depth + 1,
-                                    `${path}.${embeddedField.id}`
-                                )}
-                            </Child>
-                        </animated.div>
+                        <div>
+                            <EmbeddedFieldItem
+                                attribute={attribute}
+                                embeddedField={embeddedField}
+                                isExpendable={embeddedField.format === AttributeFormat.extended}
+                                onClick={toggleExpand}
+                                active={isActive}
+                                loading={false}
+                                extendedPath={`${path}.${embeddedField.id}`}
+                                stateListAttribute={stateListAttribute}
+                                dispatchListAttribute={dispatchListAttribute}
+                                key={embeddedField.id}
+                                depth={depth}
+                            />
+                        </div>
+                        <StyledDeployContent>
+                            <DeployContent active={isActive}>
+                                <div>
+                                    <div>
+                                        {exploreEmbeddedFields(
+                                            embeddedField.embedded_fields,
+                                            depth + 1,
+                                            `${path}.${embeddedField.id}`
+                                        )}
+                                    </div>
+                                </div>
+                            </DeployContent>
+                        </StyledDeployContent>
                     </div>
                 );
             } else {
@@ -352,7 +400,7 @@ const ExploreEmbeddedFields = ({
                             stateListAttribute={stateListAttribute}
                             dispatchListAttribute={dispatchListAttribute}
                             key={embeddedField.id}
-                            setAnim={setAnim}
+                            depth={depth}
                         />
                     </div>
                 );
@@ -366,16 +414,20 @@ const ExploreEmbeddedFields = ({
                 const current = groupEmbeddedFields[field]?.embedded_fields;
 
                 return (
-                    <Child key={field}>
+                    <div key={field}>
                         {current
                             ? exploreEmbeddedFields(current, depth + 1, `${field}`)
                             : groupEmbeddedFields[field].map((element: IEmbeddedFields) => hasEmbeddedFields(element))}
-                    </Child>
+                    </div>
                 );
             });
         }
     };
 
-    return <>{exploreEmbeddedFields(groupEmbeddedFields)}</>;
+    return (
+        <StyledDeployContent style={{marginLeft: '5rem'}}>
+            {exploreEmbeddedFields(groupEmbeddedFields)}
+        </StyledDeployContent>
+    );
 };
 export default AttributeExtended;

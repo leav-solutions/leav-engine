@@ -2,7 +2,6 @@ import {IdcardOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {Checkbox, Radio, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {animated, useSpring} from 'react-spring';
 import styled from 'styled-components';
 import {getTreeAttributesQuery} from '../../../../queries/trees/getTreeAttributesQuery';
 import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../../../utils';
@@ -13,7 +12,7 @@ import {
     ListAttributeReducerActionTypes,
     ListAttributeState
 } from '../../ListAttributesReducer';
-import {DeployButton, SmallText, TextAttribute, WrapperContentAttribute} from '../../StyledComponents';
+import {DeployButton, DeployContent, SmallText, StyledDeployContent, TextAttribute} from '../../StyledComponents';
 
 const LibraryName = styled.div`
     font-weight: 300;
@@ -71,8 +70,6 @@ function AttributeLinkedTree({
     isChecked,
     originAttributeData
 }: IAttributeLinkedTreeProps): JSX.Element {
-    const [propsAnim, setAnim] = useSpring(() => ({display: 'block'}));
-
     const [linkedAttributes, setLinkedAttributes] = useState<ITreeLinkedAttribute[]>([]);
 
     const [getLinkedAttributes, {called, loading, data, error}] = useLazyQuery(getTreeAttributesQuery, {
@@ -134,7 +131,7 @@ function AttributeLinkedTree({
         return <>error</>;
     }
 
-    const isAccordionActive = currentAccordion && currentAccordion?.depth === depth;
+    const isAccordionActive = !!(currentAccordion && currentAccordion?.depth === depth);
 
     const handleClick = () => {
         const newAttributesChecked = attributeUpdateSelection({
@@ -166,7 +163,6 @@ function AttributeLinkedTree({
                         called={called}
                         loading={loading}
                         changeCurrentAccordion={changeCurrentAccordion}
-                        setAnim={setAnim}
                     />
                     <TextAttribute>
                         {stateListAttribute.lang && localizedLabel(attribute.label, stateListAttribute.lang) ? (
@@ -195,8 +191,8 @@ function AttributeLinkedTree({
             {loading ? (
                 <Spin />
             ) : (
-                <animated.div style={propsAnim}>
-                    <WrapperContentAttribute>
+                <DeployContent active={isAccordionActive}>
+                    <StyledDeployContent>
                         {linkedAttributes.map(linkedAttribute => (
                             <div key={linkedAttribute.library}>
                                 <LibraryName>{linkedAttribute.library}</LibraryName>
@@ -213,8 +209,8 @@ function AttributeLinkedTree({
                                 />
                             </div>
                         ))}
-                    </WrapperContentAttribute>
-                </animated.div>
+                    </StyledDeployContent>
+                </DeployContent>
             )}
         </>
     );

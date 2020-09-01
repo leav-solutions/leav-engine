@@ -115,6 +115,7 @@ function Attribute({
                 stateListAttribute={stateListAttribute}
                 dispatchListAttribute={dispatchListAttribute}
                 treeData={treeData}
+                depth={depth}
             />
         </Item>
     );

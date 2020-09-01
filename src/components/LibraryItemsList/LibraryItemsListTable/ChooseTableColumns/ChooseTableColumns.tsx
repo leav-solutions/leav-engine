@@ -102,6 +102,13 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
         setOpenChangeColumns(false);
     };
 
+    // hack to disable warning "Droppable: unsupported nested scroll container" from react-beautiful-dnd,
+    // remove "overflow: auto" on class "ant-modal-wrap"
+    const elements: any = document.getElementsByClassName('ant-modal-wrap');
+    if (elements.length) {
+        elements[0].style.overflow = 'initial';
+    }
+
     return (
         <Modal
             visible={openChangeColumns}

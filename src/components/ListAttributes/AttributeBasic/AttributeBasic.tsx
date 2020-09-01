@@ -1,4 +1,4 @@
-import {LinkOutlined} from '@ant-design/icons';
+import {IdcardOutlined} from '@ant-design/icons';
 import {Checkbox, Radio} from 'antd';
 import React from 'react';
 import {attributeUpdateSelection, localizedLabel} from '../../../utils';
@@ -16,7 +16,7 @@ interface IAttributeBasicProps {
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     embeddedField?: IEmbeddedFields;
     extendedPath?: string;
-    depth?: number;
+    depth: number;
     treeData?: ITreeData;
 }
 
@@ -64,7 +64,7 @@ const AttributeBasic = ({
     };
 
     return (
-        <WrapperAttribute>
+        <WrapperAttribute isChild={!!depth}>
             <TextAttribute>
                 {stateListAttribute.lang && localizedLabel(label, stateListAttribute.lang) ? (
                     <span>
@@ -73,7 +73,7 @@ const AttributeBasic = ({
                 ) : (
                     id
                 )}
-                <span>{attribute?.linkedLibrary && <LinkOutlined />}</span>
+                <span>{attribute?.linkedLibrary && <IdcardOutlined />}</span>
             </TextAttribute>
             {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
 

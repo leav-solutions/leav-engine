@@ -52,7 +52,9 @@ function FilterSeparator({
         <Wrapper>
             <Select disabled={!separator.active} value={separatorOperator} onChange={e => changeOperator(e)}>
                 {operatorOptions.map(operator => (
-                    <Select.Option value={operator.value}>{operator.text}</Select.Option>
+                    <Select.Option key={operator.value} value={operator.value}>
+                        {operator.text}
+                    </Select.Option>
                 ))}
             </Select>
             <Button type="text" icon={<CloseOutlined />} size="small" onClick={deleteSeparator} />

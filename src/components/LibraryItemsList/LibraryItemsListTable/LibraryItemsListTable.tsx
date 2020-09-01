@@ -157,18 +157,21 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     useEffect(() => {
         if (stateItems.items) {
             setTableData(
-                stateItems.items.reduce((acc, item) => {
-                    return [
-                        ...acc,
-                        {
-                            key: item.id,
-                            ...item
-                        }
-                    ];
+                stateItems.items.reduce((acc, item, index) => {
+                    if (index < stateItems.pagination) {
+                        return [
+                            ...acc,
+                            {
+                                key: item.id,
+                                ...item
+                            }
+                        ];
+                    }
+                    return acc;
                 }, [] as any)
             );
         }
-    }, [stateItems.items, stateItems.columns, setTableData]);
+    }, [stateItems.items, stateItems.columns, stateItems.pagination, setTableData]);
 
     const handlePageChange = (page: number, pageSize?: number) => {
         dispatchItems({
@@ -204,7 +207,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     }}
                     pagination={{
                         total: stateItems.itemsTotalCount,
-                        pageSize: stateItems.pagination,
+                        defaultPageSize: stateItems.pagination,
                         current: stateItems.offset / stateItems.pagination + 1,
                         showSizeChanger: true,
                         pageSizeOptions: paginationOptions.map(option => option.toString()),
