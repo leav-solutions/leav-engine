@@ -4,7 +4,7 @@ import * as rootPath from 'app-root-path';
 import * as Config from '_types/config';
 import {env as appEnv} from './env';
 
-const checkConfig = (conf: Config.IConfig) => {
+export const validateConfig = (conf: Config.IConfig) => {
     const configSchema = Joi.object().keys({
         server: Joi.object().keys({
             host: Joi.string().required(),
@@ -54,7 +54,10 @@ const checkConfig = (conf: Config.IConfig) => {
             prefetch: Joi.number()
         }),
         debug: Joi.boolean(),
-        env: Joi.string()
+        env: Joi.string(),
+        plugins: Joi.object()
+            .keys()
+            .unknown()
     });
 
     const isValid = configSchema.validate(conf);
@@ -74,11 +77,10 @@ const checkConfig = (conf: Config.IConfig) => {
  *
  * @return {Promise} Full config
  */
-export const getConfig = async (): Promise<Config.IConfig> => {
+export const getConfig = async (folder?: string): Promise<Config.IConfig> => {
     const definedEnv: string = appEnv || '';
-    const conf = await loadConfig<Config.IConfig>(rootPath.path + '/config', definedEnv);
-
-    checkConfig(conf);
+    const confRootFolder = folder ?? rootPath.path;
+    const conf = await loadConfig<Config.IConfig>(confRootFolder + '/config', definedEnv);
 
     return conf;
 };
