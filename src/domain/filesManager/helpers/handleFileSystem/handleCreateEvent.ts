@@ -27,20 +27,20 @@ export const handleCreateEvent = async (
     const {previewsStatus, previews} = getPreviewsDatas(deps.previewVersions);
 
     if (record) {
-        const {userId} = deps.config.filesManager;
-
-        const recordData: IFilesAttributes = {
-            ROOT_KEY: scanMsg.rootKey,
-            INODE: scanMsg.inode,
-            PREVIEWS_STATUS: previewsStatus,
-            PREVIEWS: previews,
-            HASH: scanMsg.hash
-        };
-
-        await updateRecordFile(recordData, record.id, resources.library, deps, ctx);
-
         try {
+            const {userId} = deps.config.filesManager;
+
             await deps.recordDomain.activateRecord(record, {userId});
+
+            const recordData: IFilesAttributes = {
+                ROOT_KEY: scanMsg.rootKey,
+                INODE: scanMsg.inode,
+                PREVIEWS_STATUS: previewsStatus,
+                PREVIEWS: previews,
+                HASH: scanMsg.hash
+            };
+
+            await updateRecordFile(recordData, record.id, resources.library, deps, ctx);
         } catch (e) {
             deps.logger.warn(`[FilesManager] Event ${scanMsg.event} - Error when activate record : ${e.message}`);
         }

@@ -57,7 +57,8 @@ describe('Indexation Manager', () => {
                         modified_at: 1520931648
                     }
                 ]
-            })
+            }),
+            getRecordFieldValue: global.__mockPromise({value: '1337'})
         };
 
         const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -72,12 +73,12 @@ describe('Indexation Manager', () => {
             'core.infra.elasticsearch.elasticsearchService': mockElasticsearchService as IElasticsearchService
         });
 
-        await indexation.indexDatabase(ctx);
-        await indexation.indexDatabase(ctx, ['1337']);
+        await indexation.indexDatabase(ctx, 'test');
+        await indexation.indexDatabase(ctx, 'test', ['1337']);
 
-        expect(mockLibraryRepo.getLibraries).toBeCalledTimes(2);
         expect(mockLibraryRepo.getLibraryFullTextAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
+        expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);
         expect(mockElasticsearchService.index).toBeCalledWith('test', '1337', {id: '1337'});
     });
 });

@@ -107,7 +107,7 @@ export default function({
                     extend type Mutation {
                         createRecord(library: ID): Record!
                         deleteRecord(library: ID, id: ID): Record!
-                        indexRecords(records: [String!]): Boolean!
+                        indexRecords(libraryId: String!, records: [String!]): Boolean!
                     }
 
                     extend type Query {
@@ -132,8 +132,8 @@ export default function({
                         async deleteRecord(parent, {library, id}, ctx): Promise<IRecord> {
                             return recordDomain.deleteRecord({library, id, ctx});
                         },
-                        async indexRecords(parent, {records}, ctx): Promise<boolean> {
-                            return indexationManagerApp.indexDatabase(ctx, records);
+                        async indexRecords(parent, {libraryId, records}, ctx): Promise<boolean> {
+                            return indexationManagerApp.indexDatabase(ctx, libraryId, records);
                         }
                     },
                     Query: {

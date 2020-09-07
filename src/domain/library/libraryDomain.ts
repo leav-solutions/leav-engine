@@ -216,10 +216,7 @@ export default function({
             await eventsManager.send(
                 {
                     type: EventType.LIBRARY_SAVE,
-                    data: {
-                        id: lib.id,
-                        fullTextAttributes: libFullTextAttributes
-                    }
+                    data: {id: lib.id}
                 },
                 config.indexationManager.routingKeys.events,
                 ctx

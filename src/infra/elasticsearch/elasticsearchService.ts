@@ -1,18 +1,32 @@
 import {Client} from '@elastic/elasticsearch';
 
-// Define the type of the body for the search request
 interface IMultiMatchQuery {
     multi_match: {
         query: string;
         fields?: string[];
         fuzziness?: string;
+        lenient: boolean;
+        analyzer: string;
+    };
+}
+
+interface IFilterQuery {
+    term?: {
+        active?: boolean;
     };
 }
 
 interface ISearchBody {
     from: number;
     size: number;
-    query: IMultiMatchQuery;
+    query: {
+        bool: {
+            must: {
+                should: IMultiMatchQuery[];
+            };
+            filter?: IFilterQuery;
+        };
+    };
 }
 
 // Complete definition of the Search response
@@ -121,16 +135,39 @@ export default function({'core.infra.elasticsearch': client = null}: IDeps = {})
             from?: number,
             size?: number
         ): Promise<ISearchResponse<T>> {
-            const response = await client.search<ISearchResponse<any>, ISearchBody>({
+            const response = await client.search<ISearchResponse<any>, any>({
                 index,
                 body: {
                     from,
                     size,
                     query: {
-                        multi_match: {
-                            query,
-                            fields,
-                            fuzziness
+                        bool: {
+                            must: [
+                                {
+                                    multi_match: {
+                                        query,
+                                        fields,
+                                        fuzziness,
+                                        lenient: true,
+                                        analyzer: 'standard'
+                                    }
+                                }
+                                // to match number because of fuzziness
+                                // {
+                                //     multi_match: {
+                                //         query,
+                                //         fields,
+                                //         lenient: true,
+                                //         analyzer: 'standard'
+                                //     }
+                                // }
+                            ],
+                            filter: {
+                                term: {
+                                    active: true
+                                }
+                            }
+                            // minimum_should_match: 1
                         }
                     }
                 }

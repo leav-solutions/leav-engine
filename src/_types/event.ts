@@ -1,5 +1,5 @@
 export enum EventType {
-    RECORD_CREATE = 'RECORD_CREATE',
+    RECORD_SAVE = 'RECORD_SAVE',
     RECORD_DELETE = 'RECORD_DELETE',
     LIBRARY_SAVE = 'LIBRARY_SAVE',
     LIBRARY_DELETE = 'LIBRARY_DELETE',
@@ -23,7 +23,6 @@ export interface IRecordPayload extends IPayload {
 export interface ILibraryPayload extends IPayload {
     data: {
         id: string;
-        fullTextAttributes?: string[];
     };
 }
 

@@ -3,7 +3,7 @@ import {IQueryInfos} from '_types/queryInfos';
 
 export interface IIndexationManagerApp {
     init(): Promise<void>;
-    indexDatabase(ctx: IQueryInfos, records?: string[]): Promise<boolean>;
+    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean>;
 }
 
 interface IDeps {
@@ -13,6 +13,7 @@ interface IDeps {
 export default function({'core.domain.indexationManager': indexationManager}: IDeps): IIndexationManagerApp {
     return {
         init: () => indexationManager.init(),
-        indexDatabase: (ctx: IQueryInfos, records?: string[]) => indexationManager.indexDatabase(ctx, records)
+        indexDatabase: (ctx: IQueryInfos, libraryId: string, records?: string[]) =>
+            indexationManager.indexDatabase(ctx, libraryId, records)
     };
 }

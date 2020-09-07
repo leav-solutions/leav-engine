@@ -341,7 +341,7 @@ export default function({
 
             await eventsManager.send(
                 {
-                    type: EventType.RECORD_CREATE,
+                    type: EventType.RECORD_SAVE,
                     data: {
                         id: newRecord.id,
                         libraryId: newRecord.library,

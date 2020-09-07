@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -267,6 +268,19 @@ export default function({
 
             await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
+            if (attribute === 'active' && savedVal.value) {
+                const record = (
+                    await recordRepo.find({
+                        libraryId: library,
+                        filters: [{attributes: [{id: 'id', type: AttributeTypes.SIMPLE}], value: recordId}],
+                        ctx
+                    })
+                ).list[0];
+
+                // if (newRecord.id) {
+                // }
+            }
+
             const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
             if (attrToIndex.map(a => a.id).includes(attribute)) {
                 let val: IValue | IValue[] = savedVal.value;
@@ -282,7 +296,7 @@ export default function({
                     val = val.map((v: IValue) => v.value);
                 }
 
-                // TODO: get value retrieve old value
+                // TODO: get old value
                 await eventsManager.send(
                     {
                         type: EventType.VALUE_SAVE,

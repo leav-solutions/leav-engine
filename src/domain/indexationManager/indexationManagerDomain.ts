@@ -3,7 +3,6 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
-import {IRecord} from '_types/record';
 import winston from 'winston';
 import {IEvent, EventType, IRecordPayload, ILibraryPayload, IValuePayload, Payload} from '../../_types/event';
 import * as Joi from '@hapi/joi';
@@ -12,15 +11,18 @@ import {isEqual, pick} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {ArangoSearchView} from 'arangojs/lib/cjs/view';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
-    indexDatabase(ctx: IQueryInfos, records?: string[]): Promise<boolean>;
+    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean>;
 }
 
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.amqp.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
@@ -35,6 +37,7 @@ export default function({
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.infra.library': libraryRepo = null,
+    'core.domain.eventsManager': eventsManager = null,
     'core.utils': utils = null
 }: IDeps): IIndexationManagerDomain {
     const _onMessage = async (msg: string): Promise<void> => {
@@ -53,7 +56,7 @@ export default function({
         let data: any;
 
         switch (event.payload.type) {
-            case EventType.RECORD_CREATE:
+            case EventType.RECORD_SAVE:
                 data = (event.payload as IRecordPayload).data;
                 await elasticsearchService.index(data.libraryId, data.id, data.new);
                 break;
@@ -64,21 +67,46 @@ export default function({
             case EventType.LIBRARY_SAVE:
                 data = (event.payload as ILibraryPayload).data;
                 const exists = await elasticsearchService.indiceExists(data.id);
+                const fullTextAttributes = (await libraryRepo.getLibraryFullTextAttributes({libId: data.id, ctx})).map(
+                    fta => fta.id
+                );
 
                 if (
                     !exists ||
                     (exists &&
                         !isEqual(
                             (await elasticsearchService.indiceGetMapping(data.id)).sort(),
-                            data.fullTextAttributes.sort()
+                            fullTextAttributes.sort()
                         ))
                 ) {
                     if (exists) {
                         await elasticsearchService.indiceDelete(data.id);
                     }
-                    const records = await recordDomain.find({params: {library: data.id}, ctx});
-                    for (const r of records.list) {
-                        await elasticsearchService.index(data.id, r.id, pick(r, [...data.fullTextAttributes]));
+
+                    const records = await recordDomain.find({
+                        params: {library: data.id},
+                        ctx
+                    });
+
+                    for (const record of records.list) {
+                        const obj = (
+                            await Promise.all(
+                                fullTextAttributes.map(async fta => {
+                                    const val = await recordDomain.getRecordFieldValue({
+                                        library: data.id,
+                                        record,
+                                        attributeId: fta,
+                                        ctx
+                                    });
+
+                                    return {
+                                        [fta]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
+                                    };
+                                })
+                            )
+                        ).reduce((acc, e) => ({...acc, ...e}), {});
+
+                        await elasticsearchService.index(data.id, record.id, obj);
                     }
                 }
 
@@ -88,15 +116,18 @@ export default function({
                 await elasticsearchService.indiceDelete(data.id);
                 break;
             case EventType.VALUE_SAVE:
+                console.log('VALUE_SAVE_RECEIVED');
                 data = (event.payload as IValuePayload).data;
-                await elasticsearchService.update(data.libraryId, data.recordId, {[data.attributeId]: data.value.new});
+                await elasticsearchService.update(data.libraryId, data.recordId, {
+                    [data.attributeId]: String(data.value.new)
+                });
                 break;
             case EventType.VALUE_DELETE:
                 data = (event.payload as IValuePayload).data;
 
                 if (!!data.value) {
                     await elasticsearchService.update(data.libraryId, data.recordId, {
-                        [data.attributeId]: data.value.new
+                        [data.attributeId]: String(data.value.new)
                     });
                 } else {
                     await elasticsearchService.delete(data.libraryId, data.recordId, data.attributeId);
@@ -137,10 +168,8 @@ export default function({
                 config.indexationManager.prefetch
             );
         },
-        async indexDatabase(ctx: IQueryInfos, records?: string[]): Promise<boolean> {
-            // if records is undefined we re-index all libraries
-            const data: {[attr: string]: {fullTextAttr: string[]; records: IRecord[]}} = {};
-            const libraries = await libraryRepo.getLibraries({ctx});
+        async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean> {
+            // if records and library are undefined we re-index all libraries
 
             const filters = records
                 ? records.reduce((acc, id) => {
@@ -152,29 +181,48 @@ export default function({
                   }, [])
                 : [];
 
-            for (const library of libraries.list) {
-                data[library.id] = {
-                    fullTextAttr: (await libraryRepo.getLibraryFullTextAttributes({libId: library.id, ctx})).map(
-                        a => a.id
-                    ),
-                    records: (
-                        await recordDomain.find({
-                            params: {
-                                library: library.id,
-                                filters
-                            },
-                            ctx
-                        })
-                    ).list
-                };
-            }
+            const fullTextAttr = (await libraryRepo.getLibraryFullTextAttributes({libId: libraryId, ctx})).map(
+                a => a.id
+            );
 
-            for (const lib in data) {
-                if (data.hasOwnProperty(lib)) {
-                    for (const r of data[lib].records) {
-                        await elasticsearchService.index(lib, r.id, pick(r, data[lib].fullTextAttr));
-                    }
-                }
+            const res = (
+                await recordDomain.find({
+                    params: {
+                        library: libraryId,
+                        filters
+                    },
+                    ctx
+                })
+            ).list;
+
+            for (const record of res) {
+                const obj = (
+                    await Promise.all(
+                        fullTextAttr.map(async fta => {
+                            const val = await recordDomain.getRecordFieldValue({
+                                library: libraryId,
+                                record,
+                                attributeId: fta,
+                                ctx
+                            });
+
+                            return {[fta]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)};
+                        })
+                    )
+                ).reduce((acc, e) => ({...acc, ...e}), {});
+
+                await eventsManager.send(
+                    {
+                        type: EventType.RECORD_SAVE,
+                        data: {
+                            id: record.id,
+                            libraryId,
+                            new: obj
+                        }
+                    },
+                    config.indexationManager.routingKeys.events,
+                    ctx
+                );
             }
 
             return true;
