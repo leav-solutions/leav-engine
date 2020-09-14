@@ -165,4 +165,25 @@ describe('Utils', () => {
             expect(utilsModule.forceArray(['foo'])).toEqual(['foo']);
         });
     });
+
+    describe('timestampToDate', () => {
+        test('Convert UNIX timestamp to instance of Date', async () => {
+            const utilsModule = utils();
+
+            const resNum = utilsModule.timestampToDate(1445412480);
+            expect(resNum.toISOString()).toBe('2015-10-21T07:28:00.000Z');
+
+            const resStr = utilsModule.timestampToDate('1445412480');
+            expect(resStr.toISOString()).toBe('2015-10-21T07:28:00.000Z');
+        });
+    });
+
+    describe('dateToTimestamp', () => {
+        test('Convert instance of Date to UNIX timestamp', async () => {
+            const utilsModule = utils();
+
+            const resNum = utilsModule.dateToTimestamp(new Date('2015-10-21T07:28:00.000Z'));
+            expect(resNum).toBe(1445412480);
+        });
+    });
 });
