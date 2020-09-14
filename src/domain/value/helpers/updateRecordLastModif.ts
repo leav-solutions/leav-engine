@@ -16,7 +16,7 @@ export default (
         recordData: {
             id: recordId,
             modified_at: moment().unix(),
-            modified_by: ctx.userId
+            modified_by: String(ctx.userId)
         },
         ctx
     });

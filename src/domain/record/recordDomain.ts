@@ -306,9 +306,9 @@ export default function({
         async createRecord(library: string, ctx: IQueryInfos): Promise<IRecord> {
             const recordData = {
                 created_at: moment().unix(),
-                created_by: ctx.userId,
+                created_by: String(ctx.userId),
                 modified_at: moment().unix(),
-                modified_by: ctx.userId,
+                modified_by: String(ctx.userId),
                 active: true
             };
 
