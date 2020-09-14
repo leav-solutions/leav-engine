@@ -1,3 +1,4 @@
+import {IDbUtils} from 'infra/db/dbUtils';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import * as Config from '_types/config';
 import {getConfig, validateConfig} from './config';
@@ -27,7 +28,7 @@ import {initPlugins} from './pluginsLoader';
 
     const server = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
-    const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+    const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
@@ -39,6 +40,9 @@ import {initPlugins} from './pluginsLoader';
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
+
+            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
+            process.exit(0);
         } else if (typeof opt !== 'undefined' && opt.indexOf('filesManager') !== -1) {
             // Init files management
             await filesManager.init();
