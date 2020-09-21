@@ -131,6 +131,8 @@ export default function({
                             _key: '1',
                             created_at: ${moment().unix()},
                             modified_at: ${moment().unix()},
+                            created_by: '1',
+                            modified_by: '1',
                             login: 'admin',
                             password: '$2b$10$5Xfl5NHANL9kingYuicNR.naIL23PnTqqZBJKmhhhzVlYjQFXTcya'
                         } IN users`,
