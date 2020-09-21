@@ -498,6 +498,21 @@ interface IGetPreview {
 }
 
 const getPreviews = async ({conf, lib, record, valueDomain, libraryDomain, ctx}: IGetPreview) => {
+    const _getPreviewFromRecord = async (valueRecord: IRecord) => {
+        let previewAttribute: string;
+
+        if (valueRecord.library) {
+            const valueLib = await libraryDomain.getLibraryProperties(valueRecord.library, ctx);
+            const valueConf = valueLib.recordIdentityConf || {};
+
+            return valueConf.preview;
+        } else {
+            previewAttribute = 'previews';
+        }
+
+        return valueRecord[previewAttribute];
+    };
+
     const previewUrl = getPreviewUrl();
     const confPreview = lib.behavior === LibraryBehavior.FILES ? 'previews' : conf.preview;
 
@@ -513,22 +528,7 @@ const getPreviews = async ({conf, lib, record, valueDomain, libraryDomain, ctx}:
           )?.pop()
         : null;
 
-    const getPreviewFromRecord = async (valueRecord: IRecord) => {
-        let previewAttribute: string;
-
-        if (valueRecord.library) {
-            const valueLib = await libraryDomain.getLibraryProperties(valueRecord.library, ctx);
-            const valueConf = valueLib.recordIdentityConf || {};
-
-            return valueConf.preview;
-        } else {
-            previewAttribute = 'previews';
-        }
-
-        return valueRecord[previewAttribute];
-    };
-
-    const previews = valuePreview?.value.id ? await getPreviewFromRecord(valuePreview?.value) : valuePreview?.value;
+    const previews = valuePreview?.value?.id ? await _getPreviewFromRecord(valuePreview?.value) : valuePreview?.value;
 
     // append preview url
     return previews
