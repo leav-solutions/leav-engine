@@ -1,5 +1,6 @@
 import {GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
+import {IUtils} from 'utils/utils';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
@@ -10,6 +11,7 @@ export interface ICoreApp {
 
 interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
+    'core.utils'?: IUtils;
     config?: any;
 }
 
@@ -35,7 +37,9 @@ const _parseLiteralAny = ast => {
     }
 };
 
-export default function({'core.app.graphql': graphqlApp = null, config = null}: IDeps = ({} = {})): ICoreApp {
+export default function(
+    {'core.app.graphql': graphqlApp = null, 'core.utils': utils = null, config = null}: IDeps = ({} = {})
+): ICoreApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -43,6 +47,7 @@ export default function({'core.app.graphql': graphqlApp = null, config = null}: 
                     scalar JSON
                     scalar JSONObject
                     scalar Any
+                    scalar DateTime
 
                     enum AvailableLanguage {
                         ${config.lang.available.join(' ')}
@@ -82,6 +87,29 @@ export default function({'core.app.graphql': graphqlApp = null, config = null}: 
                         serialize: val => val,
                         parseValue: val => val,
                         parseLiteral: ast => ast
+                    }),
+                    DateTime: new GraphQLScalarType({
+                        name: 'DateTime',
+                        description: `The DateTime scalar type represents time data,
+                            represented as an ISO-8601 encoded UTC date string.`,
+                        parseValue(value: string) {
+                            return new Date(value); // value from the client
+                        },
+                        serialize(value: Date | number | string) {
+                            if (!(value instanceof Date) && typeof value !== 'string' && typeof value !== 'number') {
+                                throw new Error(`Invalid date ${value}`);
+                            }
+
+                            const dateValue = value instanceof Date ? value : utils.timestampToDate(value);
+
+                            return dateValue.toISOString(); // value sent to the client
+                        },
+                        parseLiteral(ast) {
+                            if (ast.kind === Kind.STRING) {
+                                return ast.value;
+                            }
+                            return null;
+                        }
                     })
                 }
             };

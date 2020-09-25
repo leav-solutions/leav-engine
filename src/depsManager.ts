@@ -72,7 +72,8 @@ export async function init(additionalModulesToRegister?: {
     await _registerModules(coreContainer, srcFolder, modulesGlob, 'core');
 
     // Add a few extra dependencies
-    coreContainer.register('config', asValue(await getConfig()));
+    const coreConf = await getConfig();
+    coreContainer.register('config', asValue(coreConf));
     coreContainer.register('pluginsFolder', asValue(pluginsFolder));
 
     for (const [modKey, mod] of Object.entries(additionalModulesToRegister)) {
@@ -83,6 +84,9 @@ export async function init(additionalModulesToRegister?: {
     const pluginsContainer = coreContainer.createScope();
 
     await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
+
+    const pluginConf = await getConfig(pluginsFolder + '/omnipublish');
+    pluginsContainer.register('config', asValue({...coreConf, plugins: {omnipublish: pluginConf}}));
 
     // Register this at the very end because we don't plugins to access the deps manager
     coreContainer.register('core.depsManager', asValue(coreContainer));

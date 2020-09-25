@@ -1,3 +1,5 @@
+import {IKeyValue} from './shared';
+
 export interface IServer {
     host: string;
     port: number;
@@ -67,4 +69,5 @@ export interface IConfig {
     filesManager: IFilesManager;
     debug?: boolean;
     env?: string;
+    plugins: IKeyValue<IKeyValue<any>>;
 }

@@ -1,10 +1,10 @@
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IValue} from '../../_types/value';
+import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IRecordSort} from '../../_types/record';
+import {IValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IAttribute, AttributeFormats} from '../../_types/attribute';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -99,7 +99,7 @@ export default function({
 
             const resEdge = await dbService.execute({
                 query: aql`
-                    UPDATE ${{_key: value.id_value}}
+                    UPDATE ${{_key: String(value.id_value)}}
                         WITH ${edgeData}
                         IN ${edgeCollec}
                     RETURN NEW`,
@@ -182,7 +182,7 @@ export default function({
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
-                    FILTER edge._key == ${value.id_value}
+                    FILTER edge._key == ${String(value.id_value)}
                     FILTER edge.attribute == ${attribute.id}
                     LIMIT 1
                     RETURN {linkedRecord, edge}

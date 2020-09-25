@@ -108,7 +108,9 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                     query: aql`
                         INSERT {
                             created_at: ${moment().unix()},
-                            modified_at: ${moment().unix()}
+                            modified_at: ${moment().unix()},
+                            created_by: '1',
+                            modified_by: '1'
                         } IN ${usersGroupsLibCollec}
                         RETURN NEW
                     `,

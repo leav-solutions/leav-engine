@@ -50,6 +50,7 @@ export default function({config = null, 'core.utils.logger': logger = null}: IDe
                         `[${queue}/${routingKey}] Error while processing message:
                             ${e.message}.
                             Message was: ${msgString}
+                            ${e.stack}
                         `
                     );
                 } finally {
