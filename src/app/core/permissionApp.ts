@@ -5,6 +5,7 @@ import {
     AdminPermissionsActions,
     AttributePermissionsActions,
     IPermission,
+    ITreePermissionsConf,
     PermissionsRelations,
     PermissionTypes,
     RecordPermissionsActions
@@ -235,11 +236,11 @@ export default function({
                         }
                     },
                     Treepermissions_conf: {
-                        permissionTreeAttributes(parent) {
+                        permissionTreeAttributes(parent: ITreePermissionsConf, _, ctx) {
                             return parent.permissionTreeAttributes
                                 ? Promise.all(
                                       parent.permissionTreeAttributes.map(attrId =>
-                                          attributeDomain.getAttributeProperties(attrId)
+                                          attributeDomain.getAttributeProperties({id: attrId, ctx})
                                       )
                                   )
                                 : [];

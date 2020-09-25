@@ -1,4 +1,5 @@
 import {Options} from 'amqplib';
+import {IKeyValue} from './shared';
 
 export interface IConfig {
     server: IServer;
@@ -13,6 +14,7 @@ export interface IConfig {
     indexationManager: IIndexationManager;
     debug?: boolean;
     env?: string;
+    plugins: IKeyValue<IKeyValue<any>>;
 }
 
 export interface IServer {

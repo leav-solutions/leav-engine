@@ -1,5 +1,6 @@
 import {ValueNode} from 'graphql';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
+import moment from 'moment';
 import {IActionsListConfig} from '_types/actionsList';
 import {IAttribute} from '_types/attribute';
 import {LibraryBehavior} from '_types/library';
@@ -47,6 +48,10 @@ export interface IUtils {
     getDefaultActionsList(attribute: IAttribute): IActionsListConfig;
 
     getLibraryDefaultAttributes(behavior: LibraryBehavior): string[];
+
+    timestampToDate(t: number | string): Date;
+
+    dateToTimestamp(d: Date): number;
 }
 
 export default function(): IUtils {
@@ -101,6 +106,12 @@ export default function(): IUtils {
             return Array.isArray(val) ? val : [val];
         },
         getDefaultActionsList,
-        getLibraryDefaultAttributes
+        getLibraryDefaultAttributes,
+        timestampToDate(t: string | number): Date {
+            return moment.unix(Number(t)).toDate();
+        },
+        dateToTimestamp(d: Date): number {
+            return moment(d).unix();
+        }
     };
 }

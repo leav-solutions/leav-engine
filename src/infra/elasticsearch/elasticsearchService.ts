@@ -5,8 +5,6 @@ interface IMultiMatchQuery {
         query: string;
         fields?: string[];
         fuzziness?: string;
-        lenient: boolean;
-        analyzer: string;
     };
 }
 

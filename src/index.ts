@@ -1,7 +1,8 @@
+import {IDbUtils} from 'infra/db/dbUtils';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import * as Config from '_types/config';
-import {getConfig} from './config';
+import {getConfig, validateConfig} from './config';
 import {init as initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
 import {initDb} from './infra/db/db';
@@ -13,6 +14,8 @@ import {initAmqp} from './infra/amqp';
 
     try {
         conf = await getConfig();
+
+        validateConfig(conf);
     } catch (e) {
         console.error('config error', e);
         process.exit(1);
@@ -44,6 +47,9 @@ import {initAmqp} from './infra/amqp';
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
+
+            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
+            process.exit(0);
         } else if (typeof opt !== 'undefined' && opt.indexOf('filesManager') !== -1) {
             // Init files management
             await filesManager.init();
