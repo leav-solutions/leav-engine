@@ -1,6 +1,7 @@
 import React from 'react';
 import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
 import styled from 'styled-components';
+import {reorder} from '../../../utils';
 import {IAttributesChecked} from '../../../_types/types';
 import ItemSelected from '../ItemSelected';
 import {
@@ -35,14 +36,6 @@ const CustomCard = styled.div`
         background: #fff;
     }
 `;
-
-const reorder = (list: any[], startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-
-    return result;
-};
 
 interface IListItemsSelectedProps {
     stateListAttribute: ListAttributeState;

@@ -45,10 +45,10 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
             title="Modal"
             width="50rem"
             footer={[
-                <Button type="text" onClick={closeModal}>
+                <Button key="close" type="text" onClick={closeModal}>
                     Close
                 </Button>,
-                <Button type="primary" onClick={triggerSubmit}>
+                <Button key="submit" type="primary" onClick={triggerSubmit}>
                     Submit
                 </Button>
             ]}

@@ -73,7 +73,7 @@ const AttributeBasic = ({
                 ) : (
                     id
                 )}
-                <span>{attribute?.linkedLibrary && <IdcardOutlined />}</span>
+                <span style={{padding: '.3rem'}}>{attribute?.linkedLibrary && <IdcardOutlined />}</span>
             </TextAttribute>
             {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
 

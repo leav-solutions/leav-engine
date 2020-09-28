@@ -1,8 +1,10 @@
 import {FilterFilled} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
+import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
+import {flatArray, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
     LibraryItemListReducerAction,
@@ -44,14 +46,14 @@ const FilterActions = styled.div`
 `;
 
 const FilterList = styled.div`
-    height: calc(100% - 11rem);
+    height: calc(100% - 10rem);
     overflow-y: scroll;
     padding: 0.3rem 0.3rem 0.3rem 0;
 `;
 
 const FilterGroup = styled.div`
-    padding: 0 16px;
-    border-radius: 0.25rem;
+    padding: 8px 8px;
+    position: relative;
 `;
 
 interface IFiltersProps {
@@ -67,16 +69,58 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     const [separatorOperator, setSeparatorOperator] = useState<OperatorFilter>(OperatorFilter.or);
     const [filterOperator, setFilterOperator] = useState<OperatorFilter>(OperatorFilter.and);
 
-    const [filters, setFilters] = useState<(IFilter | IFilterSeparator)[]>([]);
-
-    const conditionOptions = getConditionOptions(t);
-    const operatorOptions = getOperatorOptions(t);
+    const [filters, setFilters] = useState<(IFilter | IFilterSeparator)[][]>([[]]);
 
     const resetFilters = () =>
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
             queryFilters: []
         });
+
+    const updateFilters = () => {
+        setFilters(filtersGroup => {
+            return filtersGroup.map(filters => {
+                let newFilters = filters.sort((a, b) => a.key - b.key);
+
+                let noOperator = true;
+
+                newFilters = newFilters.map((filter, index) => {
+                    if (filter.key !== index) {
+                        filter.key = index;
+                    }
+
+                    if (filter.type === FilterTypes.filter) {
+                        if (noOperator && filter.active) {
+                            filter.operator = false;
+                            noOperator = false;
+                        } else if (!filter.operator) {
+                            filter.operator = true;
+                        }
+                    } else if (filter.type === FilterTypes.separator) {
+                        noOperator = true;
+
+                        const conditionBefore = (filters.filter(
+                            f => f.type === FilterTypes.filter && f.key < filter.key
+                        ) as IFilter[]).some(f => f.active);
+
+                        const conditionAfter = (filters.filter(
+                            f => f.type === FilterTypes.filter && f.key > filter.key
+                        ) as IFilter[]).some(f => f.active);
+
+                        if (conditionBefore && conditionAfter) {
+                            filter.active = true;
+                        } else {
+                            filter.active = false;
+                        }
+                    }
+
+                    return filter;
+                });
+
+                return newFilters;
+            });
+        });
+    };
 
     const removeAllFilter = () => {
         setFilters([]);
@@ -85,7 +129,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
 
     const addSeparator = () => {
         // use only 1 separator
-        const filterSeparators = filters.filter(filter => filter.type === FilterTypes.separator);
+        const filterSeparators = flatArray(filters).filter(filter => filter.type === FilterTypes.separator);
 
         if (filterSeparators.length === 0) {
             const newSeparator: IFilterSeparator = {
@@ -93,12 +137,12 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                 key: filters.length,
                 active: false
             };
-            setFilters(fs => [...fs, newSeparator]);
+            setFilters(fs => [...fs, [newSeparator]]);
         }
     };
 
     const applyFilters = () => {
-        const request = getRequestFromFilter(filters, filterOperator, separatorOperator);
+        const request = getRequestFromFilter(flatArray(filters), filterOperator, separatorOperator);
 
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
@@ -131,49 +175,6 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
             return so;
         });
     }, [filterOperator]);
-
-    const updateFilters = () => {
-        setFilters(filters => {
-            let newFilters = filters.sort((a, b) => a.key - b.key);
-
-            let noOperator = true;
-
-            newFilters = newFilters.map((filter, index) => {
-                if (filter.key !== index) {
-                    filter.key = index;
-                }
-
-                if (filter.type === FilterTypes.filter) {
-                    if (noOperator && filter.active) {
-                        filter.operator = false;
-                        noOperator = false;
-                    } else if (!filter.operator) {
-                        filter.operator = true;
-                    }
-                } else if (filter.type === FilterTypes.separator) {
-                    noOperator = true;
-
-                    const conditionBefore = (filters.filter(
-                        f => f.type === FilterTypes.filter && f.key < filter.key
-                    ) as IFilter[]).some(f => f.active);
-
-                    const conditionAfter = (filters.filter(
-                        f => f.type === FilterTypes.filter && f.key > filter.key
-                    ) as IFilter[]).some(f => f.active);
-
-                    if (conditionBefore && conditionAfter) {
-                        filter.active = true;
-                    } else {
-                        filter.active = false;
-                    }
-                }
-
-                return filter;
-            });
-
-            return newFilters;
-        });
-    };
 
     const handleHide = () => {
         dispatchItems({
@@ -230,7 +231,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     </Dropdown>
 
                     <Button
-                        disabled={!filters.filter(f => f.type === FilterTypes.filter).length}
+                        disabled={!flatArray(filters).filter(f => f.type === FilterTypes.filter).length}
                         onClick={applyFilters}
                         type="primary"
                     >
@@ -243,8 +244,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                         filters={filters}
                         setFilters={setFilters}
                         stateItems={stateItems}
-                        conditionOptions={conditionOptions}
-                        operatorOptions={operatorOptions}
+                        dispatchItems={dispatchItems}
                         resetFilters={resetFilters}
                         updateFilters={updateFilters}
                         filterOperator={filterOperator}
@@ -259,25 +259,22 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
 }
 
 interface IFilterElements {
-    filters: (IFilter | IFilterSeparator)[];
-    setFilters: any;
-    stateItems: any;
-    conditionOptions: any;
-    operatorOptions: any;
-    resetFilters: any;
-    updateFilters: any;
-    filterOperator: any;
-    setFilterOperator: any;
-    separatorOperator: any;
-    setSeparatorOperator: any;
+    filters: (IFilter | IFilterSeparator)[][];
+    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
+    stateItems: LibraryItemListState;
+    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+    resetFilters: () => void;
+    updateFilters: () => void;
+    filterOperator: OperatorFilter;
+    setFilterOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
+    separatorOperator: OperatorFilter;
+    setSeparatorOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
 }
 
 const FilterElements = ({
     filters,
     setFilters,
     stateItems,
-    conditionOptions,
-    operatorOptions,
     resetFilters,
     updateFilters,
     filterOperator,
@@ -285,10 +282,14 @@ const FilterElements = ({
     separatorOperator,
     setSeparatorOperator
 }: IFilterElements) => {
-    let lastType: string;
+    const {t} = useTranslation();
 
+    const conditionOptions = getConditionOptions(t);
+    const operatorOptions = getOperatorOptions(t);
+
+    let lastType: string;
     // Create group of filters in function of separators
-    const result = filters
+    const result = flatArray(filters)
         .reduce((acc, filter) => {
             // Group filters by type
             if (lastType !== filter.type) {
@@ -304,41 +305,61 @@ const FilterElements = ({
         .map((arrayFilters, index) => {
             if (arrayFilters[0].type === FilterTypes.filter) {
                 return (
-                    <FilterGroup key={index}>
-                        {arrayFilters.map(filter =>
-                            filter.type === FilterTypes.filter ? (
-                                <FilterItem
-                                    key={filter.key}
-                                    stateItems={stateItems}
-                                    filter={filter}
-                                    setFilters={setFilters}
-                                    conditionOptions={conditionOptions}
-                                    operatorOptions={operatorOptions}
-                                    resetFilters={resetFilters}
-                                    updateFilters={updateFilters}
-                                    filterOperator={filterOperator}
-                                    setFilterOperator={setFilterOperator}
-                                />
-                            ) : (
-                                <></>
-                            )
+                    <Droppable key={index} droppableId={`filter-group-${index}`} type={`droppableSubItem`}>
+                        {provided => (
+                            <FilterGroup key={index} ref={provided.innerRef} {...provided.droppableProps}>
+                                {arrayFilters.map((filter, filterIndex) =>
+                                    filter.type === FilterTypes.filter ? (
+                                        <Draggable
+                                            key={filter.key}
+                                            index={filterIndex}
+                                            draggableId={filter.key.toString()}
+                                        >
+                                            {provided => (
+                                                <div ref={provided.innerRef} {...provided.draggableProps}>
+                                                    <FilterItem
+                                                        key={filter.key}
+                                                        stateItems={stateItems}
+                                                        filter={filter}
+                                                        setFilters={setFilters}
+                                                        conditionOptions={conditionOptions}
+                                                        operatorOptions={operatorOptions}
+                                                        resetFilters={resetFilters}
+                                                        updateFilters={updateFilters}
+                                                        filterOperator={filterOperator}
+                                                        setFilterOperator={setFilterOperator}
+                                                        handleProps={provided.dragHandleProps}
+                                                    />
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    ) : (
+                                        <></>
+                                    )
+                                )}
+                                {provided.placeholder}
+                            </FilterGroup>
                         )}
-                    </FilterGroup>
+                    </Droppable>
                 );
             }
             return arrayFilters.map(filter =>
                 filter.type === FilterTypes.separator ? (
-                    <>
-                        <FilterSeparator
-                            key={filter.key}
-                            separator={filter}
-                            operatorOptions={operatorOptions}
-                            setFilters={setFilters}
-                            separatorOperator={separatorOperator}
-                            setSeparatorOperator={setSeparatorOperator}
-                            updateFilters={updateFilters}
-                        />
-                    </>
+                    <Draggable key={filter.key} index={index} draggableId={filter.key.toString()}>
+                        {provided => (
+                            <div ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}>
+                                <FilterSeparator
+                                    key={filter.key}
+                                    separator={filter}
+                                    operatorOptions={operatorOptions}
+                                    setFilters={setFilters}
+                                    separatorOperator={separatorOperator}
+                                    setSeparatorOperator={setSeparatorOperator}
+                                    updateFilters={updateFilters}
+                                />
+                            </div>
+                        )}
+                    </Draggable>
                 ) : (
                     <></>
                 )
@@ -346,7 +367,50 @@ const FilterElements = ({
         })
         .map(filters => (Array.isArray(filters) ? filters : [filters]));
 
-    return <>{result.reduce((acc, val, index) => acc.concat(<div key={index}>{val}</div>), [])}</>;
+    const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+        if (!result.destination) {
+            return;
+        }
+
+        if (result.destination.index === result.source.index) {
+            return;
+        }
+
+        const indexFilterGroup = parseInt(result.destination.droppableId.split('-').pop() ?? '0');
+
+        let indexDestination = result.destination?.index ?? 0;
+        indexDestination = indexFilterGroup > 0 ? indexDestination + 1 : indexDestination;
+
+        setFilters(f => {
+            const lastFilterGroup = f.pop();
+            if (lastFilterGroup) {
+                const newLastFilterGroup = reorder(lastFilterGroup, result.source.index, indexDestination).map(
+                    (filter, index) => ({
+                        ...filter,
+                        key: index
+                    })
+                );
+
+                return [...f, newLastFilterGroup as IFilter[]];
+            }
+            return [...f];
+        });
+
+        updateFilters();
+    };
+
+    return (
+        <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="filter">
+                {provided => (
+                    <div ref={provided.innerRef} {...provided.droppableProps}>
+                        {result.reduce((acc, val, index) => acc.concat(<div key={index}>{val}</div>), [])}
+                        {provided.placeholder}
+                    </div>
+                )}
+            </Droppable>
+        </DragDropContext>
+    );
 };
 
 export default Filters;

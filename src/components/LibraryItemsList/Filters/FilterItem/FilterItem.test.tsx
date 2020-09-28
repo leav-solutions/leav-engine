@@ -41,6 +41,7 @@ describe('FilterItem', () => {
                         updateFilters={jest.fn()}
                         filterOperator={OperatorFilter.and}
                         setFilterOperator={jest.fn()}
+                        handleProps={{}}
                     />
                 </MockedProviderWithFragments>
             );
@@ -65,12 +66,13 @@ describe('FilterItem', () => {
                         updateFilters={jest.fn()}
                         filterOperator={OperatorFilter.and}
                         setFilterOperator={jest.fn()}
+                        handleProps={{}}
                     />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find(Select)).toHaveLength(2);
+        expect(comp.find(Select)).toHaveLength(1);
     });
 
     test('should have a TextArea', async () => {
@@ -89,6 +91,7 @@ describe('FilterItem', () => {
                         updateFilters={jest.fn()}
                         filterOperator={OperatorFilter.and}
                         setFilterOperator={jest.fn()}
+                        handleProps={{}}
                     />
                 </MockedProviderWithFragments>
             );

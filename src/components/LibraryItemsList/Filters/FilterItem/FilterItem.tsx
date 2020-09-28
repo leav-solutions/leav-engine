@@ -17,9 +17,38 @@ import ChangeAttribute from './ChangeAttribute';
 import FormBoolean from './FormBoolean';
 import FormText from './FormText';
 
+const CustomCard = styled(Card)`
+    &:hover .handle {
+        opacity: 1 !important;
+    }
+`;
+const Handle = styled.div`
+    margin: 3rem 5px;
+    opacity: 0;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-content: center;
+
+    & > div {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1px;
+        justify-items: center;
+    }
+`;
+
+const HandlePoint = styled.div`
+    background: hsla(0, 0%, 70%);
+    border-radius: 100%;
+    padding: 1px;
+`;
+
 const Grid = styled.div`
     display: flex;
     flex-flow: column;
+    margin: 8px 16px 8px 0;
 `;
 
 const GridRow = styled.div`
@@ -69,7 +98,7 @@ const CurrentAttribute = styled.span<CurrentAttributeProps>`
 interface IFilterItemProps {
     stateItems: LibraryItemListState;
     filter: IFilter;
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
+    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
     conditionOptions: {
         text: string;
         value: ConditionFilter;
@@ -82,6 +111,7 @@ interface IFilterItemProps {
     updateFilters: () => void;
     filterOperator: OperatorFilter;
     setFilterOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
+    handleProps: any;
 }
 
 function FilterItem({
@@ -93,7 +123,8 @@ function FilterItem({
     resetFilters,
     updateFilters,
     filterOperator,
-    setFilterOperator
+    setFilterOperator,
+    handleProps
 }: IFilterItemProps): JSX.Element {
     const {t} = useTranslation();
 
@@ -105,33 +136,35 @@ function FilterItem({
 
     const changeActive = () => {
         setFilters(filters => {
-            const restFilters = filters.filter(f => f.key !== filter.key);
-            const currentFilter = filters.find(f => f.key === filter.key);
+            return filters.map(filterGroup => {
+                const restFilters = filterGroup.filter(f => f.key !== filter.key);
+                const currentFilter = filterGroup.find(f => f.key === filter.key);
 
-            let newNewFilters: (IFilter | IFilterSeparator)[] = [];
-            if (currentFilter && currentFilter.type === FilterTypes.filter) {
-                const newFilters = currentFilter
-                    ? [...restFilters, {...currentFilter, active: !currentFilter.active}].sort(
-                          (f1, f2) => f1.key - f2.key
-                      )
-                    : restFilters;
+                let newNewFilters: (IFilter | IFilterSeparator)[] = [];
+                if (currentFilter && currentFilter.type === FilterTypes.filter) {
+                    const newFilters = currentFilter
+                        ? [...restFilters, {...currentFilter, active: !currentFilter.active}].sort(
+                              (f1, f2) => f1.key - f2.key
+                          )
+                        : restFilters;
 
-                let firstFind = false;
-                newNewFilters = newFilters.map(f => {
-                    if (!firstFind && f.type === FilterTypes.filter && f.active) {
-                        if (f.operator) {
-                            f.operator = false;
+                    let firstFind = false;
+                    newNewFilters = newFilters.map(f => {
+                        if (!firstFind && f.type === FilterTypes.filter && f.active) {
+                            if (f.operator) {
+                                f.operator = false;
+                            }
+                            firstFind = true;
+                        } else if (firstFind && f.type === FilterTypes.filter && !f.operator) {
+                            f.operator = true;
                         }
-                        firstFind = true;
-                    } else if (firstFind && f.type === FilterTypes.filter && !f.operator) {
-                        f.operator = true;
-                    }
 
-                    return f;
-                });
-            }
+                        return f;
+                    });
+                }
 
-            return newNewFilters;
+                return newNewFilters;
+            });
         });
 
         updateFilters();
@@ -139,54 +172,62 @@ function FilterItem({
 
     const deleteFilterItem = () => {
         setFilters(filters => {
-            let newFilters = filters.filter(f => f.key !== filter.key);
-            const activeFilters = (filters as IFilter[]).filter(f => f.type === FilterTypes.filter && f.active);
+            return filters.map(filterGroup => {
+                let newFilters = filterGroup.filter(f => f.key !== filter.key);
+                const activeFilters = (filterGroup as IFilter[]).filter(f => f.type === FilterTypes.filter && f.active);
 
-            if (activeFilters.length && activeFilters[0].operator) {
-                const separators = filters.filter(filter => filter.type === FilterTypes.separator);
+                if (activeFilters.length && activeFilters[0].operator) {
+                    const separators = filterGroup.filter(filter => filter.type === FilterTypes.separator);
 
-                newFilters = newFilters.map(f => {
-                    const lastFilterIsSeparatorCondition = separators.some(separator => separator.key === f.key - 1);
+                    newFilters = newFilters.map(f => {
+                        const lastFilterIsSeparatorCondition = separators.some(
+                            separator => separator.key === f.key - 1
+                        );
 
-                    if (
-                        f.type === FilterTypes.filter &&
-                        (f.key === activeFilters[0].key || lastFilterIsSeparatorCondition)
-                    ) {
-                        f.operator = false;
-                    }
+                        if (
+                            f.type === FilterTypes.filter &&
+                            (f.key === activeFilters[0].key || lastFilterIsSeparatorCondition)
+                        ) {
+                            f.operator = false;
+                        }
 
-                    return f;
-                });
-            } else if (!activeFilters.length) {
-                resetFilters();
-            }
+                        return f;
+                    });
+                } else if (!activeFilters.length) {
+                    resetFilters();
+                }
 
-            return newFilters;
+                return newFilters;
+            });
         });
 
         updateFilters();
     };
 
-    const updateFilterValue = (newValue: any) => {
-        setFilters(filters => {
-            const restFilters = filters.filter(f => f.key !== filter.key);
-            const currentFilter = filters.find(f => f.key === filter.key);
-            return currentFilter
-                ? [...restFilters, {...currentFilter, value: newValue}].sort((f1, f2) => f1.key - f2.key)
-                : restFilters;
-        });
+    const updateFilterValue = (newValue: any, valueSize?: number) => {
+        setFilters(filters =>
+            filters.map(filtersGroup => {
+                const restFilters = filtersGroup.filter(f => f.key !== filter.key);
+                const currentFilter = filtersGroup.find(f => f.key === filter.key);
+                return currentFilter
+                    ? [...restFilters, {...currentFilter, value: newValue, valueSize}].sort((f1, f2) => f1.key - f2.key)
+                    : restFilters;
+            })
+        );
     };
 
     const changeCondition = (conditionFilter: ConditionFilter) => {
         const newCondition = conditionFilter;
 
         setFilters(filters =>
-            filters.reduce((acc, f) => {
-                if (f.key === filter.key) {
-                    return [...acc, {...filter, condition: newCondition}];
-                }
-                return [...acc, f];
-            }, [] as (IFilter | IFilterSeparator)[])
+            filters.map(filtersGroup =>
+                filtersGroup.reduce((acc, f) => {
+                    if (f.key === filter.key) {
+                        return [...acc, {...filter, condition: newCondition}];
+                    }
+                    return [...acc, f];
+                }, [] as (IFilter | IFilterSeparator)[])
+            )
         );
     };
 
@@ -205,7 +246,7 @@ function FilterItem({
                 showModal={showModal}
                 setShowModal={setShowModal}
             />
-            <Divider>
+            <Divider style={{margin: 0, fontSize: '14px'}}>
                 {filter.operator ? (
                     <Select bordered={false} value={filterOperator} onChange={e => handleOperatorChange(e)}>
                         {operatorOptions.map(operator => (
@@ -215,41 +256,52 @@ function FilterItem({
                         ))}
                     </Select>
                 ) : (
-                    <Select bordered={false} value={t('filter-item.no-operator')}></Select>
+                    <span>{t('filter-item.no-operator')}</span>
                 )}
             </Divider>
-            <Card>
-                <Grid>
-                    <GridRow key={filter.key}>
-                        <GridColumn>
-                            <Checkbox checked={filter.active} onChange={changeActive} />
-                        </GridColumn>
 
-                        <GridColumn flex={5}>
-                            <CurrentAttribute onClick={() => setShowModal(true)} disabled={!filter.active}>
-                                {filter.attributeId}
-                            </CurrentAttribute>
+            <CustomCard bodyStyle={{padding: 0}}>
+                <div style={{display: 'grid', gridTemplateColumns: '1rem 1fr'}}>
+                    <Handle className="handle" {...handleProps}>
+                        <div>
+                            {[...Array(8)].map((_, index) => (
+                                <HandlePoint key={index} />
+                            ))}
+                        </div>
+                    </Handle>
+                    <Grid>
+                        <GridRow key={filter.key}>
+                            <GridColumn>
+                                <Checkbox checked={filter.active} onChange={changeActive} />
+                            </GridColumn>
 
-                            <Select
-                                value={filter.condition}
-                                onChange={(e: ConditionFilter) => changeCondition(e)}
-                                disabled={!filter.active}
-                            >
-                                {conditionOptionsByType.map(condition => (
-                                    <Select.Option key={condition.value} value={condition.value}>
-                                        {condition.text}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </GridColumn>
+                            <GridColumn flex={5}>
+                                <CurrentAttribute onClick={() => setShowModal(true)} disabled={!filter.active}>
+                                    {filter.attributeId}
+                                </CurrentAttribute>
 
-                        <Button icon={<CloseOutlined />} size="small" onClick={deleteFilterItem} />
-                    </GridRow>
-                    <GridRow>
-                        <SwitchFormFormat filter={filter} updateFilterValue={updateFilterValue} />
-                    </GridRow>
-                </Grid>
-            </Card>
+                                <Select
+                                    value={filter.condition}
+                                    onChange={(e: ConditionFilter) => changeCondition(e)}
+                                    disabled={!filter.active}
+                                    bordered={false}
+                                >
+                                    {conditionOptionsByType.map(condition => (
+                                        <Select.Option key={condition.value} value={condition.value}>
+                                            {condition.text}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </GridColumn>
+
+                            <Button icon={<CloseOutlined />} size="small" onClick={deleteFilterItem} />
+                        </GridRow>
+                        <GridRow>
+                            <SwitchFormFormat filter={filter} updateFilterValue={updateFilterValue} />
+                        </GridRow>
+                    </Grid>
+                </div>
+            </CustomCard>
         </>
     );
 }

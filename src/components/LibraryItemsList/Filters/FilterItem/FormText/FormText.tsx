@@ -1,5 +1,5 @@
 import {Form, Input} from 'antd';
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {IFilter} from '../../../../../_types/types';
 
@@ -13,19 +13,22 @@ const CustomForm = styled(Form)`
 
 interface IFromTextProps {
     filter: IFilter;
-    updateFilterValue: (newValue: any) => void;
+    updateFilterValue: (newValue: any, valueSize?: number | 'auto') => void;
 }
 
 const FormText = ({filter, updateFilterValue}: IFromTextProps) => {
-    const [textAreaRows, setTextAreaRows] = useState<number>(1);
-
+    let valueChange = false;
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newValue = (event.target.value ?? '').toString();
         updateFilterValue(newValue);
+        valueChange = true;
+    };
 
-        const rows = newValue.split('\n').length;
-
-        setTextAreaRows(rows <= 10 ? rows : 10);
+    const handleResize = (size: {width: number; height: number}) => {
+        if (valueChange) {
+            updateFilterValue(filter.value, size.height);
+        }
+        valueChange = false;
     };
 
     return (
@@ -33,9 +36,10 @@ const FormText = ({filter, updateFilterValue}: IFromTextProps) => {
             <TextAreaWrapper>
                 <Input.TextArea
                     disabled={!filter.active}
-                    rows={textAreaRows}
                     value={filter.value}
                     onChange={e => handleChange(e)}
+                    onResize={handleResize}
+                    style={{height: filter.valueSize}}
                 />
             </TextAreaWrapper>
         </CustomForm>

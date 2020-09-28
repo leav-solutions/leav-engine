@@ -225,7 +225,7 @@ function LibraryItemsList(): JSX.Element {
         <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
             <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
                 <Filters stateItems={state} dispatchItems={dispatch} />
-                <div>
+                <div style={{maxWidth: state.showFilters ? 'calc(100% - 23rem)' : '100%'}}>
                     <MenuWrapper>
                         {state.selectionMode ? (
                             <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />

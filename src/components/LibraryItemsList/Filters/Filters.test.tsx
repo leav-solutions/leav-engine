@@ -31,7 +31,6 @@ jest.mock(
 
 describe('Filters', () => {
     const stateItems = LibraryItemListInitialState;
-
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
     test('check child', async () => {

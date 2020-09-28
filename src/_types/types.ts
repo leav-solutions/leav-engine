@@ -70,6 +70,7 @@ export interface IFilter {
     originAttributeData?: IOriginAttributeData;
     extendedData?: IExtendedData;
     treeData?: ITreeData;
+    valueSize?: number | 'auto';
 }
 
 export interface IFilterSeparator {
@@ -178,7 +179,7 @@ export interface ITableHeader {
         column: any
     ) => {
         width: number;
-        onResize: any; // (index: number) => (e: any, params: any) => void;
+        onResize: any;
     };
     render: (text: string) => JSX.Element;
 }

@@ -1,11 +1,12 @@
+import {CheckOutlined, EditOutlined, HeartOutlined, SettingOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {Spin, Table} from 'antd';
+import {Checkbox, Dropdown, Menu, Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Resizable} from 'react-resizable';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
-import {AttributeFormat, AttributeType, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
+import {AttributeFormat, AttributeType, IItem, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -79,8 +80,72 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 columns: initialTableColumns
             });
         } else if (stateItems.attributes.length && stateItems.columns.length) {
+            const handleCheckboxClick = (item: IItem) => {
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+                    itemsSelected: {...stateItems.itemsSelected, [item.id]: !stateItems.itemsSelected[item.id]}
+                });
+            };
+
+            const handleClickEditMode = (item: IItem) => {
+                setRecordEdition(({show}) => {
+                    return {item, show: !show};
+                });
+            };
+
+            const switchSelectionMode = (item: IItem) => {
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
+                    selectionMode: !stateItems.selectionMode
+                });
+
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
+                    itemsSelected: {...stateItems.itemsSelected, [item.id]: true}
+                });
+            };
+
             setTableColumn(columns => {
-                return stateItems.columns.map((col, index) => {
+                const actionsColumn = {
+                    title: <span></span>,
+                    type: AttributeType.simple,
+                    library: '',
+                    dataIndex: 'actions',
+                    key: 'actions',
+                    fixed: 'left',
+                    width: 20,
+                    onHeaderCell: column => ({
+                        width: 20,
+                        onResize: handleResize(-1)
+                    }),
+                    render: item =>
+                        stateItems.selectionMode ? (
+                            <Checkbox
+                                checked={stateItems.itemsSelected[item.id]}
+                                onClick={() => handleCheckboxClick(item)}
+                            />
+                        ) : (
+                            <Dropdown
+                                overlay={
+                                    <Menu>
+                                        <Menu.Item onClick={() => switchSelectionMode(item)}>
+                                            <CheckOutlined /> {t('items-list-row.switch-to-selection-mode')}
+                                        </Menu.Item>
+                                        <Menu.Item onClick={() => handleClickEditMode(item)}>
+                                            <EditOutlined /> {t('items-list-row.edit')}
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <HeartOutlined /> Like
+                                        </Menu.Item>
+                                    </Menu>
+                                }
+                            >
+                                <SettingOutlined style={{display: 'flex', justifyContent: 'center'}} />
+                            </Dropdown>
+                        )
+                };
+
+                const newColumns = stateItems.columns.map((col, index) => {
                     const attribute = stateItems.attributes.find(att => att.id === col.id);
 
                     if (attribute) {
@@ -136,7 +201,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         dataIndex: 'infos',
                         key: 'infos',
                         fixed: 'left',
-                        width: 200,
+                        width: 100,
                         onHeaderCell: column => ({
                             width: column.width,
                             onResize: handleResize(index)
@@ -150,9 +215,19 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         )
                     };
                 });
+                return [actionsColumn, ...newColumns];
             });
         }
-    }, [t, dispatchItems, lang, stateItems.attributes, stateItems.columns, stateItems.displayType]);
+    }, [
+        t,
+        dispatchItems,
+        lang,
+        stateItems.attributes,
+        stateItems.columns,
+        stateItems.displayType,
+        stateItems.itemsSelected,
+        stateItems.selectionMode
+    ]);
 
     useEffect(() => {
         if (stateItems.items) {
@@ -163,6 +238,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             ...acc,
                             {
                                 key: item.id,
+                                actions: item,
                                 ...item
                             }
                         ];
@@ -205,6 +281,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             cell: ResizableTitle
                         }
                     }}
+                    style={{marginTop: '8px'}}
                     pagination={{
                         total: stateItems.itemsTotalCount,
                         defaultPageSize: stateItems.pagination,

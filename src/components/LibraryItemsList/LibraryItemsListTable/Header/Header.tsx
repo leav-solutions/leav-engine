@@ -65,7 +65,7 @@ const Header = ({children, name, type, setOpenChangeColumns}: HeaderPros) => {
                 </Menu>
             }
         >
-            <span>
+            <span style={{wordBreak: 'keep-all', userSelect: 'none'}}>
                 {children} <DownOutlined />
             </span>
         </Dropdown>

@@ -4,7 +4,7 @@ import {Checkbox, Radio, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {getTreeAttributesQuery} from '../../../../queries/trees/getTreeAttributesQuery';
-import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../../../utils';
+import {attributeUpdateSelection, checkTypeIsLink, flatArray, localizedLabel} from '../../../../utils';
 import {IAccordionActive, IAttribute, IOriginAttributeData} from '../../../../_types/types';
 import {ListingAttributes} from '../../ListAttributes';
 import {
@@ -105,11 +105,11 @@ function AttributeLinkedTree({
 
             setLinkedAttributes(newLinkedAttributes);
 
-            const newAttributes: IAttribute[] = newLinkedAttributes
-                .map(lib => {
+            const newAttributes: IAttribute[] = flatArray(
+                newLinkedAttributes.map(lib => {
                     return lib.attributes;
                 })
-                .flat();
+            );
 
             dispatchListAttribute({
                 type: ListAttributeReducerActionTypes.SET_NEW_ATTRIBUTES,

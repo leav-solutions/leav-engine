@@ -292,3 +292,15 @@ export const paginationOptions = [5, 10, 20, 50, 100];
 export const getItemKeyFromColumn = (column: IItemsColumn) => {
     return `${column.library}_${column.id}`;
 };
+
+export const reorder = (list: any[], startIndex: number, endIndex: number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
+};
+
+export const flatArray = (arrays: any[]): any[] => {
+    return [].concat.apply([], arrays);
+};

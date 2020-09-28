@@ -1,7 +1,7 @@
 import {Button, Modal} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {allowedTypeOperator} from '../../../../utils';
+import {allowedTypeOperator, flatArray} from '../../../../utils';
 import {
     AttributeFormat,
     ConditionFilter,
@@ -21,7 +21,7 @@ import {
 interface IAttributeListProps {
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
+    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
     showAttr: boolean;
     setShowAttr: React.Dispatch<React.SetStateAction<boolean>>;
     updateFilters: () => void;
@@ -57,14 +57,17 @@ function AddFilter({
         });
 
         setFilters(filters => {
-            const separators = filters.filter(filter => filter.type === FilterTypes.separator);
+            const separators = filters.map(filtersGroup =>
+                filtersGroup.filter(filter => filter.type === FilterTypes.separator)
+            );
+
             const newFilters: IFilter[] = attributesChecked.map((attributeChecked, index) => {
                 if (attributeChecked?.extendedData) {
                     const format = attributeChecked.extendedData.format;
                     const defaultConditionOptions =
                         (format && allowedTypeOperator[AttributeFormat[format]][0]) || ConditionFilter.equal;
 
-                    const lastFilterIsSeparatorCondition = separators.some(
+                    const lastFilterIsSeparatorCondition = flatArray(separators).some(
                         separator => separator.key === filters.length + index - 1
                     );
 
@@ -97,7 +100,7 @@ function AddFilter({
 
                 // if the new filter is after a separator, don't set operator
                 // separator key is the filters length when separator was add
-                const lastFilterIsSeparatorCondition = separators.some(
+                const lastFilterIsSeparatorCondition = flatArray(separators).some(
                     separator => separator.key === filters.length + index - 1
                 );
 
@@ -116,7 +119,7 @@ function AddFilter({
                 };
             });
 
-            return [...filters, ...newFilters] as (IFilter | IFilterSeparator)[];
+            return [...filters, newFilters] as (IFilter | IFilterSeparator)[][];
         });
         setShowAttr(false);
         setAttributesChecked([]);
@@ -146,6 +149,7 @@ function AddFilter({
             <ListAttributes
                 attributes={stateItems.attributes}
                 useCheckbox
+                attributesChecked={attributesChecked}
                 setAttributesChecked={setAttributesChecked}
                 setNewAttributes={setNewAttributes}
             />

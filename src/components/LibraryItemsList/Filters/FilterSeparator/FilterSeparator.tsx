@@ -2,7 +2,7 @@ import {CloseOutlined} from '@ant-design/icons';
 import {Button, Select} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import {IFilter, IFilterSeparator, OperatorFilter} from '../../../../_types/types';
+import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../../_types/types';
 
 interface IFilterSeparatorProps {
     separator: IFilterSeparator;
@@ -10,7 +10,7 @@ interface IFilterSeparatorProps {
         text: string;
         value: OperatorFilter;
     }[];
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
+    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
     separatorOperator: OperatorFilter;
     setSeparatorOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
     updateFilters: () => void;
@@ -31,17 +31,19 @@ function FilterSeparator({
     setFilters,
     separatorOperator,
     setSeparatorOperator,
-    updateFilters: updateFilter
+    updateFilters
 }: IFilterSeparatorProps): JSX.Element {
     const deleteSeparator = () => {
         setFilters(filters => {
-            let restFilter = filters.filter(f => f.key !== separator.key);
+            let restFilter = filters.map(filterGroup =>
+                filterGroup.filter(filter => filter.type !== FilterTypes.separator)
+            );
 
             return restFilter;
         });
 
         // reorder the key of the array
-        updateFilter();
+        updateFilters();
     };
 
     const changeOperator = (operatorFilter: OperatorFilter) => {

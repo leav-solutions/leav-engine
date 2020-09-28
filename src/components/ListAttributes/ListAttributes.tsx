@@ -88,8 +88,14 @@ function ListAttributes({
     }, [searchRef, lang, dispatch, state.lang]);
 
     useEffect(() => {
-        if (state.attributesChecked && setAttributesChecked) {
-            setAttributesChecked(state.attributesChecked.filter(attributeChecked => attributeChecked.checked));
+        if (state.attributesChecked && state.attributesChecked.length && setAttributesChecked) {
+            setAttributesChecked(attrs => {
+                if (attrs !== state.attributesChecked) {
+                    return state.attributesChecked.filter(attributeChecked => attributeChecked.checked);
+                }
+
+                return attrs;
+            });
         }
     }, [state.attributesChecked, setAttributesChecked, state.newAttributes]);
 
@@ -97,7 +103,16 @@ function ListAttributes({
         setNewAttributes(state.newAttributes);
     }, [state.newAttributes, setNewAttributes]);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    useEffect(() => {
+        if (attributesChecked?.length === 0) {
+            dispatch({
+                type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
+                attributesChecked: []
+            });
+        }
+    }, [attributesChecked]);
+
+    const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (attributes.length >= 1) {
@@ -134,7 +149,7 @@ function ListAttributes({
         <>
             <Wrapper>
                 <ListingAttributeWrapper>
-                    <CustomForm onSubmit={handleSubmit}>
+                    <CustomForm onSubmit={handleSearchSubmit}>
                         <Input.Search
                             placeholder={t('attributes-list.search')}
                             ref={searchRef}

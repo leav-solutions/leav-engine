@@ -15,7 +15,7 @@ import {LibraryItemListState} from '../../../LibraryItemsListReducer';
 
 interface IChangeAttributeProps {
     stateItems: LibraryItemListState;
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[]>>;
+    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
     filter: IFilter;
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,21 +47,23 @@ function ChangeAttribute({
             allowedTypeOperator[AttributeFormat[newAtt?.format ?? 0]][0];
 
         setFilters(filters =>
-            filters.reduce((acc, f) => {
-                if (f.type === FilterTypes.filter && f.key === filter.key) {
-                    return [
-                        ...acc,
-                        {
-                            ...f,
-                            attributeId: attSelected,
-                            format: newAtt?.format,
-                            condition: ConditionFilter[defaultConditionOperator]
-                        } as IFilter
-                    ];
-                }
+            filters.map(filterGroup =>
+                filterGroup.reduce((acc, f) => {
+                    if (f.type === FilterTypes.filter && f.key === filter.key) {
+                        return [
+                            ...acc,
+                            {
+                                ...f,
+                                attributeId: attSelected,
+                                format: newAtt?.format,
+                                condition: ConditionFilter[defaultConditionOperator]
+                            } as IFilter
+                        ];
+                    }
 
-                return [...acc, f];
-            }, [] as (IFilter | IFilterSeparator)[])
+                    return [...acc, f];
+                }, [] as (IFilter | IFilterSeparator)[])
+            )
         );
         setShowModal(false);
     };
