@@ -268,51 +268,35 @@ export default function({
 
             await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
-            if (attribute === 'active' && savedVal.value) {
-                const record = (
-                    await recordRepo.find({
-                        libraryId: library,
-                        filters: [{attributes: [{id: 'id', type: AttributeTypes.SIMPLE}], value: recordId}],
-                        ctx
-                    })
-                ).list[0];
-
-                // if (newRecord.id) {
-                // }
-            }
-
-            const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
-            if (attrToIndex.map(a => a.id).includes(attribute)) {
-                let val: IValue | IValue[] = savedVal.value;
-                if (attributeProps.multiple_values) {
-                    val = await valueRepo.getValues({
-                        library,
-                        recordId,
-                        attribute: attributeProps,
-                        forceGetAllValues: true,
-                        ctx
-                    });
-
-                    val = val.map((v: IValue) => v.value);
-                }
-
-                // TODO: get old value
-                await eventsManager.send(
-                    {
-                        type: EventType.VALUE_SAVE,
-                        data: {
-                            libraryId: library,
-                            recordId,
-                            attributeId: attributeProps.id,
-                            value: {
-                                new: val
-                            }
-                        }
-                    },
-                    config.indexationManager.routingKeys.events,
+            let val: IValue | IValue[] = savedVal.value;
+            if (attributeProps.multiple_values) {
+                val = await valueRepo.getValues({
+                    library,
+                    recordId,
+                    attribute: attributeProps,
+                    forceGetAllValues: true,
                     ctx
-                );
+                });
+
+                val = val.map((v: IValue) => v.value);
             }
+
+            // TODO: get old value
+            await eventsManager.send(
+                {
+                    type: EventType.VALUE_SAVE,
+                    data: {
+                        libraryId: library,
+                        recordId,
+                        attributeId: attributeProps.id,
+                        value: {
+                            new: val
+                        }
+                    }
+                },
+                config.indexationManager.routingKeys.events,
+                ctx
+            );
 
             return savedVal;
         },
@@ -398,38 +382,35 @@ export default function({
 
                         prevRes.values.push({...savedVal, attribute: value.attribute});
 
-                        const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
-                        if (attrToIndex.map(a => a.id).includes(savedVal.attribute)) {
-                            let val: IValue | IValue[] = savedVal.value;
-                            if (attributeProps.multiple_values) {
-                                val = await valueRepo.getValues({
-                                    library,
-                                    recordId,
-                                    attribute: attributeProps,
-                                    forceGetAllValues: true,
-                                    ctx
-                                });
-
-                                val = val.map((v: IValue) => v.value);
-                            }
-
-                            // TODO: get value retrieve old value
-                            await eventsManager.send(
-                                {
-                                    type: EventType.VALUE_SAVE,
-                                    data: {
-                                        libraryId: library,
-                                        recordId,
-                                        attributeId: attributeProps.id,
-                                        value: {
-                                            new: val
-                                        }
-                                    }
-                                },
-                                config.indexationManager.routingKeys.events,
+                        let val: IValue | IValue[] = savedVal.value;
+                        if (attributeProps.multiple_values) {
+                            val = await valueRepo.getValues({
+                                library,
+                                recordId,
+                                attribute: attributeProps,
+                                forceGetAllValues: true,
                                 ctx
-                            );
+                            });
+
+                            val = val.map((v: IValue) => v.value);
                         }
+
+                        // TODO: get value retrieve old value
+                        await eventsManager.send(
+                            {
+                                type: EventType.VALUE_SAVE,
+                                data: {
+                                    libraryId: library,
+                                    recordId,
+                                    attributeId: attributeProps.id,
+                                    value: {
+                                        new: val
+                                    }
+                                }
+                            },
+                            config.indexationManager.routingKeys.events,
+                            ctx
+                        );
                     } catch (e) {
                         if (
                             !e.type ||
@@ -526,34 +507,31 @@ export default function({
             res.attribute = attribute;
 
             // delete value on elasticsearch
-            const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(library, ctx);
-            if (attrToIndex.map(a => a.id).includes(attribute)) {
-                await eventsManager.send(
-                    {
-                        type: EventType.VALUE_DELETE,
-                        data: {
-                            libraryId: library,
-                            recordId,
-                            attributeId: attribute,
-                            ...(attr.multiple_values && {
-                                value: {
-                                    new: (
-                                        await valueRepo.getValues({
-                                            library,
-                                            recordId,
-                                            attribute: attr,
-                                            forceGetAllValues: true,
-                                            ctx
-                                        })
-                                    ).map(v => v.value)
-                                }
-                            })
-                        }
-                    },
-                    config.indexationManager.routingKeys.events,
-                    ctx
-                );
-            }
+            await eventsManager.send(
+                {
+                    type: EventType.VALUE_DELETE,
+                    data: {
+                        libraryId: library,
+                        recordId,
+                        attributeId: attribute,
+                        ...(attr.multiple_values && {
+                            value: {
+                                new: (
+                                    await valueRepo.getValues({
+                                        library,
+                                        recordId,
+                                        attribute: attr,
+                                        forceGetAllValues: true,
+                                        ctx
+                                    })
+                                ).map(v => v.value)
+                            }
+                        })
+                    }
+                },
+                config.indexationManager.routingKeys.events,
+                ctx
+            );
 
             return res;
         }

@@ -3,11 +3,10 @@ import * as Config from '_types/config';
 import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
 import indexationManager from '././indexationManagerDomain';
 import {IQueryInfos} from '_types/queryInfos';
-import {EventType} from '../../_types/event';
 import {getConfig} from '../../config';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
@@ -62,7 +61,7 @@ describe('Indexation Manager', () => {
             getRecordFieldValue: global.__mockPromise({value: '1337'})
         };
 
-        const mockLibraryRepo: Mockify<ILibraryRepo> = {
+        const mockLibraryDomain: Mockify<ILibraryDomain> = {
             getLibraries: global.__mockPromise({list: [{id: 'test'}], totalCount: 1}),
             getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
         };
@@ -74,7 +73,7 @@ describe('Indexation Manager', () => {
         const indexation = indexationManager({
             config: conf as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.infra.library': mockLibraryRepo as ILibraryRepo,
+            'core.domain.library': mockLibraryDomain as ILibraryDomain,
             'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
             'core.infra.elasticsearch.elasticsearchService': mockElasticsearchService as IElasticsearchService
         });
@@ -82,9 +81,9 @@ describe('Indexation Manager', () => {
         await indexation.indexDatabase(ctx, 'test');
         await indexation.indexDatabase(ctx, 'test', ['1337']);
 
-        expect(mockLibraryRepo.getLibraryFullTextAttributes).toBeCalledTimes(2);
+        expect(mockLibraryDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);
-        expect(mockElasticsearchService.index).toBeCalledWith('test', '1337', {id: '1337'});
+        expect(mockEventsManagerDomain.send).toBeCalledTimes(2);
     });
 });

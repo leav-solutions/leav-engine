@@ -1,6 +1,6 @@
 import {IAmqpService} from 'infra/amqp/amqpService';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import winston from 'winston';
@@ -26,7 +26,7 @@ interface IDeps {
     'core.infra.amqp.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
-    'core.infra.library'?: ILibraryRepo;
+    'core.domain.library'?: ILibraryDomain;
     'core.utils'?: IUtils;
 }
 
@@ -36,7 +36,7 @@ export default function({
     'core.infra.amqp.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
-    'core.infra.library': libraryRepo = null,
+    'core.domain.library': libraryDomain = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.utils': utils = null
 }: IDeps): IIndexationManagerDomain {
@@ -67,7 +67,7 @@ export default function({
             case EventType.LIBRARY_SAVE:
                 data = (event.payload as ILibraryPayload).data;
                 const exists = await elasticsearchService.indiceExists(data.id);
-                const fullTextAttributes = (await libraryRepo.getLibraryFullTextAttributes({libId: data.id, ctx})).map(
+                const fullTextAttributes = (await libraryDomain.getLibraryFullTextAttributes(data.id, ctx)).map(
                     fta => fta.id
                 );
 
@@ -116,11 +116,41 @@ export default function({
                 await elasticsearchService.indiceDelete(data.id);
                 break;
             case EventType.VALUE_SAVE:
-                console.log('VALUE_SAVE_RECEIVED');
                 data = (event.payload as IValuePayload).data;
-                await elasticsearchService.update(data.libraryId, data.recordId, {
-                    [data.attributeId]: String(data.value.new)
-                });
+                const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
+
+                if (data.attributeId === 'active' && data.value.new === false) {
+                    await elasticsearchService.deleteDocument(data.libraryId, data.recordId);
+                } else if (data.attributeId === 'active' && data.value.new === true) {
+                    const records = await recordDomain.find({
+                        params: {library: data.libraryId, filters: [{field: 'id', value: data.recordId}]},
+                        ctx
+                    });
+
+                    const obj = (
+                        await Promise.all(
+                            attrToIndex.map(async ati => {
+                                const val = await recordDomain.getRecordFieldValue({
+                                    library: data.libraryId,
+                                    record: records.list[0],
+                                    attributeId: ati.id,
+                                    ctx
+                                });
+
+                                return {
+                                    [ati.id]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
+                                };
+                            })
+                        )
+                    ).reduce((acc, e) => ({...acc, ...e}), {});
+
+                    await elasticsearchService.index(data.libraryId, data.recordId, obj);
+                } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
+                    await elasticsearchService.update(data.libraryId, data.recordId, {
+                        [data.attributeId]: String(data.value.new)
+                    });
+                }
+
                 break;
             case EventType.VALUE_DELETE:
                 data = (event.payload as IValuePayload).data;
@@ -169,7 +199,7 @@ export default function({
             );
         },
         async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean> {
-            // if records and library are undefined we re-index all libraries
+            // if records are undefined we re-index all library's records
 
             const filters = records
                 ? records.reduce((acc, id) => {
@@ -181,9 +211,7 @@ export default function({
                   }, [])
                 : [];
 
-            const fullTextAttr = (await libraryRepo.getLibraryFullTextAttributes({libId: libraryId, ctx})).map(
-                a => a.id
-            );
+            const fullTextAttr = (await libraryDomain.getLibraryFullTextAttributes(libraryId, ctx)).map(a => a.id);
 
             const res = (
                 await recordDomain.find({

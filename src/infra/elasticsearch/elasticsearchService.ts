@@ -139,33 +139,12 @@ export default function({'core.infra.elasticsearch': client = null}: IDeps = {})
                     from,
                     size,
                     query: {
-                        bool: {
-                            must: [
-                                {
-                                    multi_match: {
-                                        query,
-                                        fields,
-                                        fuzziness,
-                                        lenient: true,
-                                        analyzer: 'standard'
-                                    }
-                                }
-                                // to match number because of fuzziness
-                                // {
-                                //     multi_match: {
-                                //         query,
-                                //         fields,
-                                //         lenient: true,
-                                //         analyzer: 'standard'
-                                //     }
-                                // }
-                            ],
-                            filter: {
-                                term: {
-                                    active: true
-                                }
-                            }
-                            // minimum_should_match: 1
+                        multi_match: {
+                            query,
+                            fields,
+                            fuzziness,
+                            lenient: true,
+                            analyzer: 'standard'
                         }
                     }
                 }

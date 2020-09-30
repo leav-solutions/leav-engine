@@ -8,6 +8,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {Errors} from '../../_types/errors';
 import {
     mockAttrAdv,
@@ -25,8 +26,15 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain from './valueDomain';
+import * as Config from '_types/config';
 
 describe('ValueDomain', () => {
+    const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
+
+    const mockConfig: Mockify<Config.IConfig> = {
+        indexationManager: indexationManagerMockConfig as Config.IIndexationManager
+    };
+
     const mockRecordRepo: Mockify<IRecordRepo> = {
         updateRecord: jest.fn(),
         find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]})
@@ -42,6 +50,10 @@ describe('ValueDomain', () => {
 
     const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
         getAttributePermission: global.__mockPromise(true)
+    };
+
+    const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
+        send: jest.fn()
     };
 
     const mockAttribute = {
@@ -83,6 +95,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -90,7 +103,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const savedValue = await valDomain.saveValue({
@@ -129,6 +143,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -136,7 +151,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const savedValue = await valDomain.saveValue({
@@ -184,6 +200,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -191,7 +208,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const savedValue = await valDomain.saveValue({
@@ -339,6 +357,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -346,7 +365,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const savedValue = await valDomain.saveValue({
@@ -394,6 +414,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -401,7 +422,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const savedValue = await valDomain.saveValue({
@@ -440,6 +462,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -447,7 +470,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const savedValue = await valDomain.saveValue({
@@ -740,6 +764,8 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.library': mockLibDomain as ILibraryDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
@@ -909,6 +935,7 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    config: mockConfig as Config.IConfig,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.library': mockLibDomain as ILibraryDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
@@ -916,7 +943,8 @@ describe('ValueDomain', () => {
                     'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                     'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
-                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                    'core.infra.tree': mockTreeRepo as ITreeRepo,
+                    'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
                 });
 
                 await valDomain.saveValue({
@@ -1069,6 +1097,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1077,7 +1106,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1279,6 +1309,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1287,7 +1318,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1334,6 +1366,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1342,7 +1375,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1450,12 +1484,14 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain,
-                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain
+                'core.domain.permission.attributePermission': mockAttrPermDomain as IAttributePermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const deletedValue = await valDomain.deleteValue({

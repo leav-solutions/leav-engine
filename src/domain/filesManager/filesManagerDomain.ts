@@ -103,7 +103,6 @@ export default function({
                 ctx
             );
         } catch (e) {
-            console.log(e);
             logger.error(
                 `[FilesManager] Error when processing file event msg:
                     ${e.message}.
