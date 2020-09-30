@@ -56,7 +56,7 @@ export enum Errors {
 }
 
 export interface IExtendedErrorMsg {
-    msg: Errors;
+    msg: Errors | string;
     vars: {[varName: string]: any};
 }
 
@@ -65,5 +65,5 @@ export interface IExtendedErrorMsg {
  * must be "fieldName: 'message about what failed'"
  */
 export type ErrorFieldDetail<T> = {
-    [P in keyof T]?: Errors | IExtendedErrorMsg;
+    [P in keyof T]?: Errors | IExtendedErrorMsg | string;
 };
