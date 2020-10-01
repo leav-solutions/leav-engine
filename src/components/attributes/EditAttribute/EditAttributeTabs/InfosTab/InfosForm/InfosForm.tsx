@@ -7,7 +7,8 @@ import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {
     GET_ATTRIBUTES_attributes_list,
-    GET_ATTRIBUTES_attributes_list_LinkAttribute
+    GET_ATTRIBUTES_attributes_list_LinkAttribute,
+    GET_ATTRIBUTES_attributes_list_TreeAttribute
 } from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
@@ -223,6 +224,7 @@ function InfosForm({
                             label={t('attributes.linked_tree')}
                             placeholder={t('attributes.linked_tree')}
                             name="linked_tree"
+                            value={(values as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree || ''}
                             onChange={_handleChange}
                         />
                     </FormFieldWrapper>
