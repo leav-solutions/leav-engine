@@ -1,0 +1,22 @@
+stages:
+    - test
+
+# Environment variables are defined in GitLab CI/CD settings at projet level:
+# NEXUS_URL is the private registry URL
+# NEXUS_AUTH is the base64 encoded credentials on Nexus registry.
+eslint:
+    stage: test
+    image: node:alpine
+    before_script:
+        - npm config set _auth $NEXUS_AUTH
+        - npm install
+    script:
+        - npm run lint
+unitTests:
+    stage: test
+    image: node:alpine
+    before_script:
+        - npm config set _auth $NEXUS_AUTH
+        - npm install
+    script:
+        - npm run test

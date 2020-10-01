@@ -46,6 +46,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "lint": "eslint src/",
     "eject": "react-scripts eject",
     "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes=**/*.test.* src/_gqlTypes && prettier --write src/_gqlTypes/*",
     "create_comp": "scripts/createComponent.js"
