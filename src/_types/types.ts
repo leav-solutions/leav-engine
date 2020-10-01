@@ -58,9 +58,13 @@ export enum FilterTypes {
     separator = 'separator'
 }
 
-export interface IFilter {
-    type: FilterTypes.filter;
+export interface IFilterSeparatorCommon {
     key: number;
+    id: string;
+}
+
+export interface IFilter extends IFilterSeparatorCommon {
+    type: FilterTypes.filter;
     operator?: boolean;
     condition: ConditionFilter;
     value: string;
@@ -73,9 +77,8 @@ export interface IFilter {
     valueSize?: number | 'auto';
 }
 
-export interface IFilterSeparator {
+export interface IFilterSeparator extends IFilterSeparatorCommon {
     type: FilterTypes.separator;
-    key: number;
     active: boolean;
 }
 

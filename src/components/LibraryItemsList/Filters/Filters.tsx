@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import {flatArray, reorder} from '../../../utils';
+import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
     LibraryItemListReducerAction,
@@ -56,6 +56,38 @@ const FilterGroup = styled.div`
     position: relative;
 `;
 
+const move = (
+    list: any[][],
+    droppableSource: any,
+    droppableDestination: any,
+    sourceIndex: number,
+    destIndex: number
+) => {
+    const sourceClone = Array.from(list[sourceIndex]);
+    const destClone = Array.from(list[destIndex]);
+
+    const [removed] = sourceClone.splice(droppableSource.index, 1);
+    destClone.splice(droppableDestination.index, 0, removed);
+
+    // change key value
+    const sourceCloneOrdered = sourceClone.reduce((acc, filter, index) => {
+        return [...acc, {...filter, key: index}];
+    }, [] as (IFilterElements | IFilterSeparator)[]);
+
+    const destCloneOrdered = destClone.reduce((acc, filter, index) => {
+        return [...acc, {...filter, key: index}];
+    }, [] as (IFilterElements | IFilterSeparator)[]);
+
+    const result = list;
+    result[sourceIndex] = sourceCloneOrdered;
+    result[destIndex] = destCloneOrdered;
+
+    // Remove empty array
+    const filterResult = result.filter(arr => arr.length);
+
+    return filterResult;
+};
+
 interface IFiltersProps {
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
@@ -79,14 +111,14 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
 
     const updateFilters = () => {
         setFilters(filtersGroup => {
-            return filtersGroup.map(filters => {
+            return filtersGroup.map((filters, indexOne) => {
                 let newFilters = filters.sort((a, b) => a.key - b.key);
 
                 let noOperator = true;
 
-                newFilters = newFilters.map((filter, index) => {
-                    if (filter.key !== index) {
-                        filter.key = index;
+                newFilters = newFilters.map((filter, indexTwo) => {
+                    if (filter.key !== indexTwo) {
+                        filter.key = indexTwo;
                     }
 
                     if (filter.type === FilterTypes.filter) {
@@ -117,6 +149,18 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     return filter;
                 });
 
+                if (newFilters && filtersGroup[indexOne - 1] && filtersGroup[indexOne - 1].length) {
+                    const previousIsFilter = filtersGroup[indexOne - 1][0].type === FilterTypes.filter;
+                    const currentIsFilter = filtersGroup[indexOne][0].type === FilterTypes.filter;
+                    const lastElement = newFilters[0];
+
+                    console.log(newFilters, lastElement);
+
+                    if (previousIsFilter && currentIsFilter && lastElement.type === FilterTypes.filter) {
+                        lastElement.operator = true;
+                    }
+                }
+
                 return newFilters;
             });
         });
@@ -135,6 +179,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
             const newSeparator: IFilterSeparator = {
                 type: FilterTypes.separator,
                 key: filters.length,
+                id: getUniqueId(),
                 active: false
             };
             setFilters(fs => [...fs, [newSeparator]]);
@@ -287,128 +332,93 @@ const FilterElements = ({
     const conditionOptions = getConditionOptions(t);
     const operatorOptions = getOperatorOptions(t);
 
-    let lastType: string;
-    // Create group of filters in function of separators
-    const result = flatArray(filters)
-        .reduce((acc, filter) => {
-            // Group filters by type
-            if (lastType !== filter.type) {
-                lastType = filter.type;
-                return [...acc, [filter]];
-            }
-            const lastArray = acc.pop();
-            if (lastArray) {
-                return [...acc, [...lastArray, filter]];
-            }
-            return [...acc, [filter]];
-        }, [] as (IFilter | IFilterSeparator)[][])
-        .map((arrayFilters, index) => {
-            if (arrayFilters[0].type === FilterTypes.filter) {
-                return (
-                    <Droppable key={index} droppableId={`filter-group-${index}`} type={`droppableSubItem`}>
-                        {provided => (
-                            <FilterGroup key={index} ref={provided.innerRef} {...provided.droppableProps}>
-                                {arrayFilters.map((filter, filterIndex) =>
-                                    filter.type === FilterTypes.filter ? (
-                                        <Draggable
-                                            key={filter.key}
-                                            index={filterIndex}
-                                            draggableId={filter.key.toString()}
-                                        >
-                                            {provided => (
-                                                <div ref={provided.innerRef} {...provided.draggableProps}>
-                                                    <FilterItem
-                                                        key={filter.key}
-                                                        stateItems={stateItems}
-                                                        filter={filter}
-                                                        setFilters={setFilters}
-                                                        conditionOptions={conditionOptions}
-                                                        operatorOptions={operatorOptions}
-                                                        resetFilters={resetFilters}
-                                                        updateFilters={updateFilters}
-                                                        filterOperator={filterOperator}
-                                                        setFilterOperator={setFilterOperator}
-                                                        handleProps={provided.dragHandleProps}
-                                                    />
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ) : (
-                                        <></>
-                                    )
-                                )}
-                                {provided.placeholder}
-                            </FilterGroup>
-                        )}
-                    </Droppable>
-                );
-            }
-            return arrayFilters.map(filter =>
-                filter.type === FilterTypes.separator ? (
-                    <Draggable key={filter.key} index={index} draggableId={filter.key.toString()}>
-                        {provided => (
-                            <div ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}>
-                                <FilterSeparator
-                                    key={filter.key}
-                                    separator={filter}
-                                    operatorOptions={operatorOptions}
-                                    setFilters={setFilters}
-                                    separatorOperator={separatorOperator}
-                                    setSeparatorOperator={setSeparatorOperator}
-                                    updateFilters={updateFilters}
-                                />
-                            </div>
-                        )}
-                    </Draggable>
-                ) : (
-                    <></>
-                )
-            );
-        })
-        .map(filters => (Array.isArray(filters) ? filters : [filters]));
-
     const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
-        if (!result.destination) {
+        const {source, destination} = result;
+
+        // dropped outside the list
+        if (!destination) {
             return;
         }
 
-        if (result.destination.index === result.source.index) {
-            return;
+        const sourceGroupIndex = parseInt(source.droppableId.split('-').pop() ?? '0');
+        const destinationGroupIndex = parseInt(destination.droppableId.split('-').pop() ?? '0');
+
+        if (source.droppableId === destination.droppableId) {
+            const newFiltersGroup = reorder(filters[destinationGroupIndex], source.index, destination.index);
+
+            // switch key
+            const newFiltersGroupOrdered = newFiltersGroup.reduce((acc, filter, index) => {
+                return [...acc, {...filter, key: index}];
+            }, [] as (IFilterElements | IFilterSeparator)[]);
+
+            const newFilters = filters.reduce((acc, filtersGroup, index) => {
+                if (index === destinationGroupIndex) {
+                    return [...acc, newFiltersGroupOrdered];
+                }
+
+                return [...acc, filtersGroup];
+            }, [] as (IFilter | IFilterSeparator)[][]);
+
+            setFilters(newFilters);
+        } else {
+            const newFilters = move(filters, source, destination, sourceGroupIndex, destinationGroupIndex);
+
+            setFilters(newFilters);
         }
-
-        const indexFilterGroup = parseInt(result.destination.droppableId.split('-').pop() ?? '0');
-
-        let indexDestination = result.destination?.index ?? 0;
-        indexDestination = indexFilterGroup > 0 ? indexDestination + 1 : indexDestination;
-
-        setFilters(f => {
-            const lastFilterGroup = f.pop();
-            if (lastFilterGroup) {
-                const newLastFilterGroup = reorder(lastFilterGroup, result.source.index, indexDestination).map(
-                    (filter, index) => ({
-                        ...filter,
-                        key: index
-                    })
-                );
-
-                return [...f, newLastFilterGroup as IFilter[]];
-            }
-            return [...f];
-        });
 
         updateFilters();
     };
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="filter">
-                {provided => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
-                        {result.reduce((acc, val, index) => acc.concat(<div key={index}>{val}</div>), [])}
-                        {provided.placeholder}
-                    </div>
-                )}
-            </Droppable>
+            {filters.map((filtersGroup, index) => (
+                <Droppable key={index} droppableId={`droppableId-${index}`}>
+                    {providedDroppable => (
+                        <div ref={providedDroppable.innerRef}>
+                            {filtersGroup.map((filter, index) => (
+                                <Draggable key={filter.id} draggableId={filter.id} index={index}>
+                                    {provided =>
+                                        filter.type === FilterTypes.filter ? (
+                                            <div ref={provided.innerRef} {...provided.draggableProps}>
+                                                <FilterItem
+                                                    key={filter.key}
+                                                    stateItems={stateItems}
+                                                    filter={filter}
+                                                    setFilters={setFilters}
+                                                    conditionOptions={conditionOptions}
+                                                    operatorOptions={operatorOptions}
+                                                    resetFilters={resetFilters}
+                                                    updateFilters={updateFilters}
+                                                    filterOperator={filterOperator}
+                                                    setFilterOperator={setFilterOperator}
+                                                    handleProps={provided.dragHandleProps}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.dragHandleProps}
+                                                {...provided.draggableProps}
+                                            >
+                                                <FilterSeparator
+                                                    key={filter.key}
+                                                    separator={filter}
+                                                    operatorOptions={operatorOptions}
+                                                    setFilters={setFilters}
+                                                    separatorOperator={separatorOperator}
+                                                    setSeparatorOperator={setSeparatorOperator}
+                                                    updateFilters={updateFilters}
+                                                />
+                                            </div>
+                                        )
+                                    }
+                                </Draggable>
+                            ))}
+                            {providedDroppable.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            ))}
         </DragDropContext>
     );
 };

@@ -304,3 +304,7 @@ export const reorder = (list: any[], startIndex: number, endIndex: number) => {
 export const flatArray = (arrays: any[]): any[] => {
     return [].concat.apply([], arrays);
 };
+
+export const getUniqueId = () => {
+    return '_' + Math.random().toString(36).substr(2, 9);
+};

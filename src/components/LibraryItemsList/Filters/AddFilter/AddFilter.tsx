@@ -1,7 +1,7 @@
 import {Button, Modal} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {allowedTypeOperator, flatArray} from '../../../../utils';
+import {allowedTypeOperator, flatArray, getUniqueId} from '../../../../utils';
 import {
     AttributeFormat,
     ConditionFilter,
@@ -76,6 +76,7 @@ function AddFilter({
                     const newFilter: IFilter = {
                         type: FilterTypes.filter,
                         key: filters.length + index,
+                        id: getUniqueId(),
                         operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
                         condition: defaultConditionOptions,
                         value: '',
@@ -107,6 +108,7 @@ function AddFilter({
                 return {
                     type: FilterTypes.filter,
                     key: filters.length + index,
+                    id: getUniqueId(),
                     operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
                     condition: defaultConditionOptions,
                     value: '',
