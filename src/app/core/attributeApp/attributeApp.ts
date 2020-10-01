@@ -306,7 +306,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                     LinkAttribute: {
                         ...commonResolvers,
                         values_list: (attributeData: IAttribute, a2, ctx) => {
-                            if (!attributeData.values_list.enable) {
+                            if (!attributeData?.values_list?.enable) {
                                 return attributeData.values_list;
                             }
 
@@ -334,6 +334,10 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         ...commonResolvers,
                         values_list: async (attributeData: IAttribute, _, ctx) => {
                             ctx.treeId = attributeData.linked_tree;
+
+                            if (!attributeData?.values_list?.enable) {
+                                return attributeData.values_list;
+                            }
 
                             // Here, values is a list of "[id_record]/[id_library]". Return tree node instead
                             return {
