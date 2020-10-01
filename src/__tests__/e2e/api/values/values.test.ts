@@ -1,5 +1,4 @@
 import {makeGraphQlCall} from '../e2eUtils';
-import {SlowBuffer} from 'buffer';
 
 describe('Values', () => {
     const testLibName = 'values_library_test';
@@ -21,7 +20,7 @@ describe('Values', () => {
     let advValueId;
     let treeElemId;
 
-    beforeAll(async () => {
+    beforeAll(async done => {
         // Create attributes
         await makeGraphQlCall(`mutation {
                 saveAttribute(
@@ -182,16 +181,20 @@ describe('Values', () => {
                 id
             }
         }`);
+
+        done();
     });
 
     test('Save value tree', async () => {
         const res = await makeGraphQlCall(`mutation {
-                saveValue(
-                    library: "${testLibName}",
-                    recordId: "${recordId}",
-                    attribute: "${attrTreeName}",
-                    value: {value: "${treeLibName}/${treeElemId}"}) { id_value value }
-              }`);
+            saveValue(
+                library: "${testLibName}",
+                recordId: "${recordId}",
+                attribute: "${attrTreeName}",
+                value: {value: "${treeLibName}/${treeElemId}"}) {
+                    id_value value
+                }
+            }`);
 
         expect(res.status).toBe(200);
 
