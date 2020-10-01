@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {useDrop} from 'react-dnd-cjs';
+import {useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Button, Header} from 'semantic-ui-react';
 import ALCCard from '../ALCCard';

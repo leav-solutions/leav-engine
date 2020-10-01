@@ -168,4 +168,5 @@ export interface GET_ATTRIBUTESVariables {
     system?: boolean | null;
     multiple_values?: boolean | null;
     versionable?: boolean | null;
+    libraries?: string[] | null;
 }

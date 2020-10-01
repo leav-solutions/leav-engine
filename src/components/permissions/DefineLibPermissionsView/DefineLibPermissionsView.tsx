@@ -1,5 +1,5 @@
+import {NodeData, TreeNode} from '@casolutions/react-sortable-tree';
 import React from 'react';
-import {NodeData, TreeNode} from 'react-sortable-tree';
 import {getTreeNodeKey} from '../../../utils/utils';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';

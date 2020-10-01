@@ -10,6 +10,8 @@ import {ApolloLink} from 'apollo-link';
 import {onError} from 'apollo-link-error';
 import {HttpLink} from 'apollo-link-http';
 import React, {useCallback, useEffect, useState} from 'react';
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
 import * as yup from 'yup';
 import {isAllowedQuery, IsAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
@@ -154,22 +156,7 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
                 query={isAllowedQuery}
                 variables={{
                     type: PermissionTypes.admin,
-                    actions: [
-                        PermissionsActions.admin_access_attributes,
-                        PermissionsActions.admin_access_libraries,
-                        PermissionsActions.admin_access_permissions,
-                        PermissionsActions.admin_access_trees,
-                        PermissionsActions.admin_create_attribute,
-                        PermissionsActions.admin_create_library,
-                        PermissionsActions.admin_create_tree,
-                        PermissionsActions.admin_delete_attribute,
-                        PermissionsActions.admin_delete_library,
-                        PermissionsActions.admin_delete_tree,
-                        PermissionsActions.admin_edit_attribute,
-                        PermissionsActions.admin_edit_library,
-                        PermissionsActions.admin_edit_permission,
-                        PermissionsActions.admin_edit_tree
-                    ]
+                    actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/))
                 }}
             >
                 {({loading, data, error}) => {
@@ -198,13 +185,15 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
                         : AvailableLanguage.en;
 
                     return (
-                        <LangContext.Provider value={{lang, availableLangs, defaultLang}}>
-                            <UserContext.Provider value={userData}>
-                                <div className="App height100">
-                                    <Home />
-                                </div>
-                            </UserContext.Provider>
-                        </LangContext.Provider>
+                        <DndProvider backend={HTML5Backend}>
+                            <LangContext.Provider value={{lang, availableLangs, defaultLang}}>
+                                <UserContext.Provider value={userData}>
+                                    <div className="App height100">
+                                        <Home />
+                                    </div>
+                                </UserContext.Provider>
+                            </LangContext.Provider>
+                        </DndProvider>
                     );
                 }}
             </IsAllowedQuery>

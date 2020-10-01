@@ -13,7 +13,11 @@
         },
         "or": "ou",
         "expanded": "Agrandir",
-        "reduce": "Réduire"
+        "reduce": "Réduire",
+        "label": "Libellé",
+        "id": "Identifiant",
+        "isSystem": "Système",
+        "settings": "Paramètres"
     },
     "libraries": {
         "title": "Bibliothèques",
@@ -145,6 +149,10 @@
         "admin_create_tree": "Créer un arbre",
         "admin_edit_tree": "Éditer un arbre",
         "admin_delete_tree": "Supprimer un arbre",
+        "admin_access_forms": "Accéder aux formulaires",
+        "admin_create_form": "Créer un formulaire",
+        "admin_edit_form": "Éditer un formulaire",
+        "admin_delete_form": "Supprimer un formulaire",
         "admin_access_permissions": "Accéder aux permissions",
         "admin_edit_permission": "Éditer les permissions",
         "access_attribute": "Voir l'attribut",
@@ -191,5 +199,29 @@
         "edit": "Éditer",
         "delete_link": "Supprimer la liaison",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet élément?"
+    },
+    "forms": {
+        "title": "Formulaires",
+        "new": "Nouveau formulaire",
+        "informations": "Informations",
+        "layout": "Agencement",
+        "fields": "Champs de saisie",
+        "dependency_attributes": "Dépend de",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer le formulaire {{formLabel}}?",
+        "attribute": "Attribut",
+        "select_attribute": "Sélectionner un attribut",
+        "select_tree_element": "Sélectionner un élément",
+        "dependencies": "Dépendances",
+        "attributes": "Attributs",
+        "elements": {
+            "fields_container": "Conteneur",
+            "divider": "Séparateur",
+            "text_block": "Bloc de texte",
+            "tabs": "Onglets"
+        },
+        "content": "Contenu",
+        "empty_container": "Glissez des éléments ici",
+        "text_block_helper": "Un bloc de texte permet d'insérer du contenu statique dans le formulaire",
+        "new_tab_label": "Nouvel onglet"
     }
 }

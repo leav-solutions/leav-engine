@@ -54,7 +54,8 @@ describe('EditTreeStructure', () => {
                                         label: {fr: 'Test'}
                                     }
                                 },
-                                children: []
+                                children: [],
+                                ancestors: []
                             }
                         ]
                     }

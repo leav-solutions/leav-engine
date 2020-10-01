@@ -1,6 +1,11 @@
+import {
+    ExtendedNodeData,
+    NodeData,
+    SortableTreeWithoutDndContext as SortableTree,
+    TreeItem
+} from '@casolutions/react-sortable-tree';
 import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import SortableTree, {ExtendedNodeData, NodeData, TreeItem} from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
@@ -24,6 +29,7 @@ interface IEditTreeStructureViewProps {
     onClickNode?: (nodeData: NodeData) => void;
     selection?: NodeData[] | null;
     onAddElement?: (record: RecordIdentity_whoAmI, parent: TreeItem) => void;
+    compact?: boolean;
 }
 
 interface IEditionState {
@@ -55,7 +61,8 @@ const TreeStructureView = ({
     onClickNode,
     selection,
     readOnly,
-    onAddElement
+    onAddElement,
+    compact = false
 }: IEditTreeStructureViewProps) => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
@@ -192,12 +199,21 @@ const TreeStructureView = ({
     const canDrop = d => d.nextParent !== null;
     const orTxt = t('admin.or');
 
+    const theme = compact
+        ? {
+              scaffoldBlockPxWidth: 50,
+              rowHeight: 40,
+              slideRegionSize: 50
+          }
+        : undefined;
+
     return (
         <div className="grow height100">
             {!treeData.length ? (
                 <Loading withDimmer />
             ) : (
                 <SortableTree
+                    data-test-id="sortable-tree"
                     canDrag={!readOnly}
                     canDrop={canDrop}
                     treeData={treeData}
@@ -206,6 +222,7 @@ const TreeStructureView = ({
                     getNodeKey={getTreeNodeKey}
                     generateNodeProps={_genNodeProps}
                     onMoveNode={onMoveNode}
+                    theme={theme}
                 />
             )}
             <EditRecordModal

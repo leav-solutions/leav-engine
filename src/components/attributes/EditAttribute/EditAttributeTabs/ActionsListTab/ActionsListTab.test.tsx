@@ -1,9 +1,12 @@
 import {MockedProvider} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
+import {DndProvider} from 'react-dnd';
+import {TestBackend} from 'react-dnd-test-backend';
 import {act} from 'react-dom/test-utils';
+import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 import ActionsListTab from './ActionsListTab';
-import {ATTRIBUTE_MOCK, AVAILABLE_ACTIONS_MOCK, NO_AVAILABLE_ACTION_MOCK} from './mocks/ALCMocks';
+import {AVAILABLE_ACTIONS_MOCK, NO_AVAILABLE_ACTION_MOCK} from './mocks/ALCMocks';
 
 // adds the availableActions
 // check that it don't crash when there's no actionList or no available actions
@@ -20,9 +23,11 @@ describe('ActionsListTab', () => {
         let component;
         await act(async () => {
             component = mount(
-                <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
-                    <ActionsListTab attribute={ATTRIBUTE_MOCK} />
-                </MockedProvider>
+                <DndProvider backend={TestBackend}>
+                    <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
+                        <ActionsListTab attribute={mockAttrSimple} />
+                    </MockedProvider>
+                </DndProvider>
             );
         });
         await act(async () => {
@@ -40,9 +45,11 @@ describe('ActionsListTab', () => {
         let component;
         await act(async () => {
             component = mount(
-                <MockedProvider mocks={NO_AVAILABLE_ACTION_MOCK} addTypename={false}>
-                    <ActionsListTab attribute={ATTRIBUTE_MOCK} />
-                </MockedProvider>
+                <DndProvider backend={TestBackend}>
+                    <MockedProvider mocks={NO_AVAILABLE_ACTION_MOCK} addTypename={false}>
+                        <ActionsListTab attribute={mockAttrSimple} />
+                    </MockedProvider>
+                </DndProvider>
             );
         });
         await act(async () => {

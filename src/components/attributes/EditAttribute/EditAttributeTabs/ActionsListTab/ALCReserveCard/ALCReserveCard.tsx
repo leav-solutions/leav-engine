@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useDrag} from 'react-dnd-cjs';
+import {useDrag} from 'react-dnd';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
 import {Button, Card, Icon} from 'semantic-ui-react';

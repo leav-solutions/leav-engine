@@ -35,6 +35,11 @@ export enum AvailableLanguage {
     fr = 'fr'
 }
 
+export enum FormElementTypes {
+    field = 'field',
+    layout = 'layout'
+}
+
 export enum IOTypes {
     boolean = 'boolean',
     number = 'number',
@@ -137,6 +142,38 @@ export interface EmbeddedAttributeInput {
     label?: SystemTranslationInput | null;
     validation_regex?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
+}
+
+export interface FormDependencyValueInput {
+    attribute: string;
+    value: TreeElementInput;
+}
+
+export interface FormElementInput {
+    id: string;
+    containerId: string;
+    order: number;
+    uiElementType: string;
+    type: FormElementTypes;
+    settings: FormElementSettingsInput[];
+}
+
+export interface FormElementSettingsInput {
+    key: string;
+    value: any;
+}
+
+export interface FormElementsByDepsInput {
+    dependencyValue?: FormDependencyValueInput | null;
+    elements: FormElementInput[];
+}
+
+export interface FormInput {
+    id: string;
+    library: string;
+    label?: SystemTranslationInput | null;
+    dependencyAttributes?: string[] | null;
+    elements?: FormElementsByDepsInput[] | null;
 }
 
 export interface LibraryInput {

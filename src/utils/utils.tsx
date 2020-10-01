@@ -1,8 +1,8 @@
+import {TreeNode} from '@casolutions/react-sortable-tree';
 import {FormikErrors, FormikTouched} from 'formik';
 import {i18n} from 'i18next';
-import {get} from 'lodash';
+import get from 'lodash/get';
 import {join} from 'path';
-import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
 import {
     GET_ATTRIBUTES_attributes_list,
@@ -13,6 +13,7 @@ import {AttributeType, AvailableLanguage, TreeElementInput} from '../_gqlTypes/g
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {IErrorByField} from '../_types/errors';
 import {IGenericValue, ILinkValue, ITreeLinkValue, IValue} from '../_types/records';
+import {IKeyValue} from '../_types/shared';
 
 export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[]): string => {
     if (labels === null) {
@@ -238,3 +239,63 @@ export const urlCore = process.env.REACT_APP_CORE_URL || '';
 export const getAbsoluteUrlCore = (relativeUrl: string) => {
     return join(urlCore, relativeUrl).replace(':/', '://');
 };
+/*************/
+
+/** Convert an array to an object, using given field as key **/
+export function arrayToObj<T>(arr: T[], keyField: string): IKeyValue<T> {
+    return arr.reduce((acc, cur) => {
+        acc[cur[keyField]] = cur;
+
+        return acc;
+    }, {});
+}
+
+/** Delete given keys from object */
+export function omit<T extends object, K extends keyof T>(o: T, keysToDelete: K[]): Omit<T, K> {
+    const newObj = {...o};
+    for (const key of [...keysToDelete]) {
+        delete newObj[key];
+    }
+
+    return newObj;
+}
+
+/**
+ * Pick given keys from each array element.
+ * If key is an array, return objects otherwise, return values directly  */
+export function arrayPick<T extends object, K extends keyof T>(arr: T[], keys: K): Array<T[K]>;
+export function arrayPick<T extends object, K extends keyof T>(arr: T[], keys: K[]): Array<Pick<T, K>>;
+export function arrayPick<T extends object, K extends keyof T>(arr: T[], keys: K | K[]): Array<T[K] | Pick<T, K>> {
+    return arr.map(item => {
+        if (typeof keys === 'string') {
+            return pick(item, keys as K);
+        }
+
+        return pick(item, keys as K[]);
+    });
+}
+
+/**
+ * Pick given key from object.
+ * If keys is an array, return an object otherwise return value directly
+ *
+ * @param obj
+ * @param keys
+ */
+export function pick<T extends object, K extends keyof T>(obj: T, keys: K): T[K];
+export function pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K>;
+export function pick<T extends object, K extends keyof T>(obj: T, keys: K | K[]): T[K] | Pick<T, K> {
+    if (typeof keys === 'string') {
+        return obj[keys];
+    }
+
+    const newObj = Object.keys(obj).reduce((acc, cur: string) => {
+        if ((keys as string[]).includes(cur)) {
+            acc[cur] = obj[cur];
+        }
+
+        return acc;
+    }, {});
+
+    return newObj as Pick<T, K>;
+}

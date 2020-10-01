@@ -38,10 +38,11 @@ export const getCurrentList = (
 };
 
 export const getActionFromConfig = (configAct: IActionConfig, availableActions: IReserveAction[], id: number) => {
-    const action: IAction = cloneDeep(availableActions.filter(act => act.id === configAct.id)[0]);
-
-    action.list_id = id;
-    action.isSystem = configAct.is_system;
+    const action: IAction = {
+        ...cloneDeep(availableActions.filter(act => act.id === configAct.id)[0]),
+        list_id: id,
+        isSystem: configAct.is_system
+    };
 
     if (action.params && action.params.length) {
         action.params.forEach(param => {

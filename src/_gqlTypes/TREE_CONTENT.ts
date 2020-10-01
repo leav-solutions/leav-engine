@@ -39,6 +39,34 @@ export interface TREE_CONTENT_treeContent_record {
     whoAmI: TREE_CONTENT_treeContent_record_whoAmI;
 }
 
+export interface TREE_CONTENT_treeContent_ancestors_record_whoAmI_library {
+    id: string;
+    label: any | null;
+}
+
+export interface TREE_CONTENT_treeContent_ancestors_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
+export interface TREE_CONTENT_treeContent_ancestors_record_whoAmI {
+    id: string;
+    library: TREE_CONTENT_treeContent_ancestors_record_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: TREE_CONTENT_treeContent_ancestors_record_whoAmI_preview | null;
+}
+
+export interface TREE_CONTENT_treeContent_ancestors_record {
+    whoAmI: TREE_CONTENT_treeContent_ancestors_record_whoAmI;
+}
+
+export interface TREE_CONTENT_treeContent_ancestors {
+    record: TREE_CONTENT_treeContent_ancestors_record;
+}
+
 export interface TREE_CONTENT_treeContent_children_record_library {
     id: string;
     label: any | null;
@@ -78,6 +106,7 @@ export interface TREE_CONTENT_treeContent_children {
 export interface TREE_CONTENT_treeContent {
     order: number;
     record: TREE_CONTENT_treeContent_record;
+    ancestors: TREE_CONTENT_treeContent_ancestors[] | null;
     children: TREE_CONTENT_treeContent_children[] | null;
 }
 

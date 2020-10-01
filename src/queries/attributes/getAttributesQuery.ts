@@ -18,6 +18,7 @@ export const getAttributesQuery = gql`
         $system: Boolean
         $multiple_values: Boolean
         $versionable: Boolean
+        $libraries: [String!]
     ) {
         attributes(
             filters: {
@@ -28,6 +29,7 @@ export const getAttributesQuery = gql`
                 system: $system
                 multiple_values: $multiple_values
                 versionable: $versionable
+                libraries: $libraries
             }
         ) {
             totalCount
