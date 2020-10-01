@@ -1,6 +1,6 @@
+import {TreeItem} from '@casolutions/react-sortable-tree';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TreeItem} from 'react-sortable-tree';
 import {Button, Icon, List} from 'semantic-ui-react';
 import {RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
 import {ITreeValuesList} from '../../../../../../../_types/attributes';

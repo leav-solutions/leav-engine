@@ -53,6 +53,6 @@ describe('TreeStructureView', () => {
         );
 
         expect(comp.find('Loading')).toHaveLength(0);
-        expect(comp.find('SortableTree')).toHaveLength(1);
+        expect(comp.find('[data-test-id="sortable-tree"]')).toHaveLength(1);
     });
 });

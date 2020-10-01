@@ -1,8 +1,6 @@
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {cloneDeep} from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {DndProvider} from 'react-dnd-cjs';
-import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import {getActionListQuery} from '../../../../../../queries/attributes/getActionListQuery';
 import {saveAttributeActionsListMutation} from '../../../../../../queries/attributes/saveAttributeActionsListMutation';
 import {
@@ -100,9 +98,11 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         if (!availableActions) {
             return {list_id: -1};
         } else {
-            const act: IAction = cloneDeep(availableActions.filter(action => action.id === id)[0]);
-            act.list_id = listId;
-            act.isSystem = false;
+            const act: IAction = {
+                ...cloneDeep(availableActions.filter(action => action.id === id)[0]),
+                list_id: listId,
+                isSystem: false
+            };
             return act;
         }
     };
@@ -235,45 +235,43 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     //////////////////// RENDER
 
     return (
-        <DndProvider backend={HTML5Backend as any}>
-            <ExternalContainer>
-                <BinDragLayer />
-                <ReserveContainer>
-                    {availableActions && (
-                        <ALCReserve
-                            actions={availableActions}
-                            setCurrentIndex={setCurrentIndex}
-                            addActionToList={addActionToList}
-                            colorTypeDictionnary={colorTypeDictionnary}
-                        />
-                    )}
-                </ReserveContainer>
-                <ListsContainer>
-                    {loading || loadingSave ? (
-                        <Loading />
-                    ) : (
-                        <ALCList
-                            actions={currentActionList}
-                            cardOrder={currentActionListOrder}
-                            moveCard={moveCard}
-                            findCard={findCard}
-                            addActionToList={addActionToList}
-                            removeActionFromList={removeActionFromList}
-                            getNewId={getNewId}
-                            currentIndex={currentIndex}
-                            setCurrentIndex={setCurrentIndex}
-                            inType={attributeTypes.inTypes}
-                            outType={attributeTypes.outTypes}
-                            colorTypeDictionnary={colorTypeDictionnary}
-                            changeParam={changeParam}
-                            onSelectorChange={onSelectorChange}
-                            currentActionListName={currentActionListName}
-                            onSave={onSave}
-                        />
-                    )}
-                </ListsContainer>
-            </ExternalContainer>
-        </DndProvider>
+        <ExternalContainer>
+            <BinDragLayer />
+            <ReserveContainer>
+                {availableActions && (
+                    <ALCReserve
+                        actions={availableActions}
+                        setCurrentIndex={setCurrentIndex}
+                        addActionToList={addActionToList}
+                        colorTypeDictionnary={colorTypeDictionnary}
+                    />
+                )}
+            </ReserveContainer>
+            <ListsContainer>
+                {loading || loadingSave ? (
+                    <Loading />
+                ) : (
+                    <ALCList
+                        actions={currentActionList}
+                        cardOrder={currentActionListOrder}
+                        moveCard={moveCard}
+                        findCard={findCard}
+                        addActionToList={addActionToList}
+                        removeActionFromList={removeActionFromList}
+                        getNewId={getNewId}
+                        currentIndex={currentIndex}
+                        setCurrentIndex={setCurrentIndex}
+                        inType={attributeTypes.inTypes}
+                        outType={attributeTypes.outTypes}
+                        colorTypeDictionnary={colorTypeDictionnary}
+                        changeParam={changeParam}
+                        onSelectorChange={onSelectorChange}
+                        currentActionListName={currentActionListName}
+                        onSave={onSave}
+                    />
+                )}
+            </ListsContainer>
+        </ExternalContainer>
     );
 }
 

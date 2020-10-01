@@ -1,5 +1,4 @@
 import {getAvailableActionsQuery} from '../../../../../../queries/attributes/getAvailableActionsQuery';
-import {AttributeFormat, AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 
 export const AVAILABLE_ACTIONS_MOCK = [
     {
@@ -67,28 +66,3 @@ export const NO_AVAILABLE_ACTION_MOCK = [
         }
     }
 ];
-
-export const ATTRIBUTE_MOCK = {
-    id: 'id',
-    format: AttributeFormat.text,
-    label: {en: 'Identifier', fr: 'identifiant'},
-    linked_library: null,
-    linked_tree: null,
-    multiple_values: false,
-    permissions_conf: null,
-    system: true,
-    type: AttributeType.simple,
-    versions_conf: {
-        mode: null,
-        trees: [],
-        versionable: false
-    }
-};
-
-// params : [{
-//     name: "",
-//     type: "",
-//     description: "",
-//     required: false,
-//     default_value: ""
-// }]

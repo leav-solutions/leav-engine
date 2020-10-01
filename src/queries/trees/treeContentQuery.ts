@@ -18,6 +18,11 @@ export const getTreeContentQuery = gql`
                 }
                 ...RecordIdentity
             }
+            ancestors {
+                record {
+                    ...RecordIdentity
+                }
+            }
             children {
                 order
                 record {

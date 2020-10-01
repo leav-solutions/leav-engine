@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import {DragLayer} from 'react-dnd-cjs';
+import {DragLayer} from 'react-dnd';
 import ALCCard from '../ALCCard';
 
 const layerStyles = {

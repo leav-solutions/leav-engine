@@ -1,15 +1,13 @@
-import React, {useLayoutEffect, useEffect} from 'react';
-import {shallow, mount, render} from 'enzyme';
-import {act} from 'react-dom/test-utils';
 // import ALCList from '../ALCList';
-
 import {MockedProvider} from '@apollo/react-testing';
-
-import ALCContainer from './ALCContainer';
-
+import {mount, shallow} from 'enzyme';
+import React from 'react';
+import {DndProvider} from 'react-dnd';
+import {TestBackend} from 'react-dnd-test-backend';
+import {act} from 'react-dom/test-utils';
 // import {getActionListQuery} from '../../../../queries/attributes/getActionListQuery';
-
-import {AVAILABLE_ACTIONS_MOCK, ATTRIBUTE_MOCK, NO_AVAILABLE_ACTION_MOCK} from '../mocks/ALCMocks';
+import {ATTRIBUTE_MOCK, AVAILABLE_ACTIONS_MOCK} from '../mocks/ALCMocks';
+import ALCContainer from './ALCContainer';
 
 // React currently throws a warning when using useLayoutEffect on the server.
 // To get around it, we can conditionally useEffect on the server (no-op) and
@@ -26,6 +24,7 @@ const actionsMock = [
     {
         description: 'encryptValue',
         input_types: ['string'],
+        name: 'encrypt',
         id: 'encrypt',
         output_types: ['string'],
         params: null
@@ -51,9 +50,11 @@ jest.mock('../ALCList', () => {
 describe('ALCContainer', () => {
     test('renders the reserve and the list', () => {
         const container = shallow(
-            <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
-                <ALCContainer attribute={ATTRIBUTE_MOCK} availableActions={[]} inType={[]} outType={[]} />
-            </MockedProvider>
+            <DndProvider backend={TestBackend}>
+                <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
+                    <ALCContainer attribute={ATTRIBUTE_MOCK} availableActions={[]} inType={[]} outType={[]} />
+                </MockedProvider>
+            </DndProvider>
         );
         expect(container.find('ALCReserve')).toHaveLength(0);
         expect(container.find('ALCList')).toHaveLength(0);
@@ -64,14 +65,16 @@ describe('ALCContainer', () => {
 
         await act(async () => {
             component = mount(
-                <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
-                    <ALCContainer
-                        attribute={ATTRIBUTE_MOCK}
-                        availableActions={actionsMock}
-                        inType={['string']}
-                        outType={['string']}
-                    />
-                </MockedProvider>
+                <DndProvider backend={TestBackend}>
+                    <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
+                        <ALCContainer
+                            attribute={ATTRIBUTE_MOCK}
+                            availableActions={actionsMock}
+                            inType={['string']}
+                            outType={['string']}
+                        />
+                    </MockedProvider>
+                </DndProvider>
             );
         });
 

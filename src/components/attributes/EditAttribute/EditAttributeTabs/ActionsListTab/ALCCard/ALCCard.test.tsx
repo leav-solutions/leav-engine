@@ -1,15 +1,15 @@
-import React from 'react';
 import {render} from 'enzyme';
+import React from 'react';
+import {DndProvider} from 'react-dnd';
+import {TestBackend} from 'react-dnd-test-backend';
 import ALCCard from './ALCCard';
-import {DndProvider} from 'react-dnd-cjs';
-import TestBackend from 'react-dnd-test-backend-cjs';
-// import HTML5Backend from 'react-dnd-html5-backend-cjs';
+// import HTML5Backend from 'react-dnd-html5-backend';
 
 function placeholder() {
     return undefined;
 }
 
-jest.mock('react-dnd-cjs', () => ({
+jest.mock('react-dnd', () => ({
     useDrag: ({}) => {
         const isDragging = false;
         const drag = () => {

@@ -1,11 +1,13 @@
+import {TreeNode} from '@casolutions/react-sortable-tree';
 import {i18n} from 'i18next';
-import {TreeNode} from 'react-sortable-tree';
 import {PermissionsActions} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {Mockify} from '../_types/Mockify';
 import {mockAttrAdv, mockAttrAdvLink, mockAttrSimpleLink, mockAttrTree} from '../__mocks__/attributes';
 import {
     addWildcardToFilters,
+    arrayPick,
+    arrayToObj,
     formatIDString,
     getFieldError,
     getInvertColor,
@@ -15,7 +17,9 @@ import {
     getTreeNodeKey,
     isLinkAttribute,
     localizedLabel,
+    omit,
     permsArrayToObject,
+    pick,
     stringToColor,
     versionObjToGraphql
 } from './utils';
@@ -231,6 +235,83 @@ describe('utils', () => {
     describe('getRecordIdentityCacheKey', () => {
         test('Return cache key based on lib and id', async () => {
             expect(getRecordIdentityCacheKey('test_lib', '12345')).toBe('recordIdentity/test_lib/12345');
+        });
+    });
+
+    describe('arrayToObj', () => {
+        test('Convert an array to object with given field as key', async () => {
+            const myArray: Array<{id: string; someField: string}> = [
+                {id: 'foo', someField: 'value'},
+                {id: 'bar', someField: 'otherValue'}
+            ];
+
+            expect(arrayToObj(myArray, 'id')).toEqual({
+                foo: {id: 'foo', someField: 'value'},
+                bar: {id: 'bar', someField: 'otherValue'}
+            });
+        });
+    });
+
+    describe('omit', () => {
+        test('Should delete fields from object', async () => {
+            const obj = {
+                foo: 'bar',
+                toto: 'tata',
+                tutu: 'titi'
+            };
+
+            expect(omit(obj, ['toto', 'tutu'])).toEqual({foo: 'bar'});
+        });
+
+        test('Should not mutate original object', async () => {
+            const obj = {
+                foo: 'bar',
+                toto: 'tata'
+            };
+
+            omit(obj, ['toto']);
+
+            expect(obj.toto).toBeDefined();
+        });
+    });
+
+    describe('arrayPick', () => {
+        const objs = [
+            {
+                a: 1,
+                b: 2,
+                c: 3
+            },
+            {
+                a: 4,
+                b: 5,
+                c: 6
+            }
+        ];
+        test('Should return array of string if given one key', async () => {
+            expect(arrayPick(objs, 'a')).toEqual([1, 4]);
+        });
+
+        test('Should return array of objects if given multiple keys', async () => {
+            expect(arrayPick(objs, ['a', 'c'])).toEqual([
+                {a: 1, c: 3},
+                {a: 4, c: 6}
+            ]);
+        });
+    });
+
+    describe('pick', () => {
+        const obj = {
+            a: 1,
+            b: 2,
+            c: 3
+        };
+        test('Should return value if given one key', async () => {
+            expect(pick(obj, 'a')).toBe(1);
+        });
+
+        test('Should return array of objects if given multiple keys', async () => {
+            expect(pick(obj, ['a', 'c'])).toEqual({a: 1, c: 3});
         });
     });
 });

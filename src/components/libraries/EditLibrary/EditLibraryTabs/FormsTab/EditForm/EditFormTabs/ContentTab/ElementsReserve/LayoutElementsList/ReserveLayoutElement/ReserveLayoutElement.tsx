@@ -1,0 +1,84 @@
+import React from 'react';
+import {useDrag} from 'react-dnd';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+import {v4 as uuidv4} from 'uuid';
+import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
+import {
+    defaultContainerId,
+    FormBuilderActionTypes,
+    IFormBuilderStateAndDispatch
+} from '../../../formBuilderReducer/formBuilderReducer';
+import {DraggableElementTypes, IFormBuilderDragObject, IFormElement, IUIElement} from '../../../_types';
+
+interface IReserveLayoutElementProps extends IFormBuilderStateAndDispatch {
+    element: IUIElement;
+}
+
+const Wrapper = styled.div<{isDragging: boolean}>`
+    opacity: ${props => (props.isDragging ? 0.5 : 1)};
+    font-weight: bold;
+    cursor: move;
+    margin: 1em 0;
+`;
+
+function ReserveLayoutElement({element, dispatch}: IReserveLayoutElementProps): JSX.Element {
+    const {t} = useTranslation();
+
+    const formElement = {
+        id: uuidv4(),
+        order: 0,
+        containerId: defaultContainerId,
+        type: FormElementTypes.layout,
+        uiElement: element
+    };
+
+    const [{isDragging}, drag] = useDrag<
+        IFormBuilderDragObject<IFormElement>,
+        IFormBuilderDragObject<IFormElement>,
+        {isDragging: boolean}
+    >({
+        item: {
+            type: DraggableElementTypes.RESERVE_LAYOUT_ELEMENT,
+            element: formElement,
+            index: -1
+        },
+        collect: monitor => ({
+            isDragging: !!monitor.isDragging()
+        }),
+        end: (dropResult, monitor) => {
+            if (monitor.didDrop()) {
+                // Item has already been added, don't do anything
+                if (typeof monitor.getItem().dropAtPos !== 'undefined') {
+                    return;
+                }
+
+                const position = {
+                    order: monitor.getItem().dropAtPos?.order || 0,
+                    containerId: monitor.getDropResult().containerId
+                };
+
+                dispatch({
+                    type: FormBuilderActionTypes.ADD_ELEMENT,
+                    element: {...monitor.getItem().element, containerId: position.containerId},
+                    position
+                });
+            } else {
+                const containerId = monitor.getItem().dropAtPos?.containerId || defaultContainerId;
+
+                dispatch({
+                    type: FormBuilderActionTypes.REMOVE_ELEMENT,
+                    element: {...monitor.getItem().element, containerId}
+                });
+            }
+        }
+    });
+
+    return (
+        <Wrapper isDragging={isDragging} ref={drag}>
+            {t(`forms.elements.${element.type}`)}
+        </Wrapper>
+    );
+}
+
+export default ReserveLayoutElement;

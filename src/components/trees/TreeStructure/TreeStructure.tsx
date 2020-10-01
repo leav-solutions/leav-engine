@@ -1,6 +1,4 @@
 import {ApolloConsumer} from '@apollo/react-common';
-import {ApolloClient} from 'apollo-client';
-import React, {useState} from 'react';
 import {
     addNodeUnderParent,
     changeNodeAtPath,
@@ -12,7 +10,9 @@ import {
     OnMovePreviousAndNextLocation,
     removeNodeAtPath,
     TreeItem
-} from 'react-sortable-tree';
+} from '@casolutions/react-sortable-tree';
+import {ApolloClient} from 'apollo-client';
+import React, {useState} from 'react';
 import 'react-sortable-tree/style.css';
 import styled from 'styled-components';
 import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
@@ -37,15 +37,17 @@ interface ITreeStructureProps {
     selection?: NodeData[] | null;
     withFakeRoot?: boolean;
     fakeRootLabel?: string;
+    compact?: boolean;
+    startAt?: TreeElementInput;
 }
 
 const fakeRootId = 'root';
 
-const _convertTreeRecord = (records: TREE_CONTENT_treeContent[]): TreeItem[] => {
+const _convertTreeRecord = (records: TREE_CONTENT_treeContent[], compact: boolean): TreeItem[] => {
     return records.map(
         (r: TREE_CONTENT_treeContent): TreeItem => {
             const nodeTitle =
-                r.record.id !== fakeRootId ? (
+                r.record.id !== fakeRootId && !compact ? (
                     <RecordCard record={r.record.whoAmI} style={{height: '100%'}} />
                 ) : (
                     <RootElem>{r.record.whoAmI.label}</RootElem>
@@ -54,8 +56,8 @@ const _convertTreeRecord = (records: TREE_CONTENT_treeContent[]): TreeItem[] => 
             return {
                 ...r.record,
                 title: nodeTitle,
-                // subtitle: r.record.library.id,
-                children: r.children ? _convertTreeRecord(r.children as TREE_CONTENT_treeContent[]) : [],
+                children: r.children ? _convertTreeRecord(r.children as TREE_CONTENT_treeContent[], compact) : [],
+                ancestors: r.ancestors ? _convertTreeRecord(r.ancestors as TREE_CONTENT_treeContent[], compact) : [],
                 expanded: false
             };
         }
@@ -70,7 +72,16 @@ const RootElem = styled.div`
     justify-content: center;
 `;
 
-const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fakeRootLabel}: ITreeStructureProps) => {
+const TreeStructure = ({
+    tree,
+    readOnly,
+    onClickNode,
+    selection,
+    withFakeRoot,
+    fakeRootLabel,
+    startAt,
+    compact = false
+}: ITreeStructureProps) => {
     const fakeRootData = [
         {
             record: {
@@ -86,11 +97,12 @@ const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fa
                 isFakeRoot: true
             },
             children: [],
+            ancestors: [],
             order: 0
         }
     ];
 
-    const initTreeData = withFakeRoot ? _convertTreeRecord(fakeRootData) : [];
+    const initTreeData = withFakeRoot ? _convertTreeRecord(fakeRootData, compact) : [];
 
     const [treeData, setTreeData] = useState<TreeItem[]>(initTreeData);
     const [loaded, setLoaded] = useState<boolean>(false);
@@ -138,7 +150,7 @@ const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fa
             }
         });
 
-        const convertedRecords = data.data.treeContent ? _convertTreeRecord(data.data.treeContent) : [];
+        const convertedRecords = data.data.treeContent ? _convertTreeRecord(data.data.treeContent, compact) : [];
 
         // Update tree node with fetched data
         // We must get fresh node data from in case its state has changed during loading (expand/collapse...)
@@ -209,7 +221,7 @@ const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fa
         const siblings = parentNode !== null ? parentNode.children : treeData;
         if (siblings && siblings.length) {
             await Promise.all(
-                siblings.map((s, i) => {
+                (siblings as TreeItem[]).map((s, i) => {
                     const siblingElement = _nodeToTreeElement(s);
                     return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
                         ? client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
@@ -315,12 +327,13 @@ const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fa
                     whoAmI: record
                 },
                 children: [],
+                ancestors: [],
                 order: 0
             };
 
             const updatedTree = addNodeUnderParent({
                 treeData,
-                newNode: _convertTreeRecord([newRecord])[0],
+                newNode: _convertTreeRecord([newRecord], compact)[0],
                 parentKey: getTreeNodeKey({node: parent}),
                 getNodeKey: getTreeNodeKey,
                 expandParent: true
@@ -337,7 +350,7 @@ const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fa
                 // Init tree with root children
                 if (!loaded) {
                     const path = withFakeRoot ? ['root/root'] : undefined;
-                    _loadChildren(client, null, path);
+                    _loadChildren(client, startAt || null, path);
                 }
 
                 const onVisibilityToggle = ({expanded, node, path}) => {
@@ -365,6 +378,7 @@ const TreeStructure = ({tree, readOnly, onClickNode, selection, withFakeRoot, fa
                         onClickNode={_handleClickNode}
                         selection={selection}
                         onAddElement={onAddElement}
+                        compact={compact}
                     />
                 );
             }}

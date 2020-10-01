@@ -1,16 +1,14 @@
 import {useMutation, useQuery} from '@apollo/react-hooks';
-import React, {useCallback, useEffect, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import SortableTree, {
     addNodeUnderParent,
     ExtendedNodeData,
     OnDragStateChangedData,
     OnVisibilityToggleData,
-    removeNodeAtPath,
-    TreeIndex,
-    TreeItem,
-    TreeNode
-} from 'react-sortable-tree';
+    removeNodeAtPath
+} from '@casolutions/react-sortable-tree';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {TreeIndex, TreeItem, TreeNode} from 'react-sortable-tree';
 import {Button} from 'semantic-ui-react';
 import {getAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/getAttributesEmbeddedFieldsQuery';
 import {saveAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/saveAttributesEmbeddedFieldsQuery';
@@ -369,7 +367,7 @@ const _getNewAttribute = (treeItem: TreeItem, values: IFormValue[]) => {
 
         return {
             ...cloneValueFind,
-            embedded_fields: nTreeItems?.children.map(em => _recreateAttributeFromTree(em, nValues))
+            embedded_fields: (nTreeItems?.children as ITreeItem[]).map(em => _recreateAttributeFromTree(em, nValues))
         };
     };
 

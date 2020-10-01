@@ -1,10 +1,10 @@
-import React from 'react';
-import {mount} from 'enzyme';
 import {wait} from '@apollo/react-testing';
+import {mount} from 'enzyme';
+import React from 'react';
+import {DndProvider} from 'react-dnd';
+import {TestBackend} from 'react-dnd-test-backend';
 import {act} from 'react-dom/test-utils';
 import ALCList from './ALCList';
-import {DndProvider} from 'react-dnd-cjs';
-import TestBackend from 'react-dnd-test-backend-cjs';
 
 function placeholder() {
     return undefined;

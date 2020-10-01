@@ -1,6 +1,6 @@
+import 'fomantic-ui-css/semantic.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'semantic-ui-css/semantic.min.css';
 import AuthHandler from './components/shared/AuthHandler';
 import './i18n';
 import './index.css';

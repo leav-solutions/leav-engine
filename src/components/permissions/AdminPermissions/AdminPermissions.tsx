@@ -1,6 +1,6 @@
+import {NodeData, TreeNode} from '@casolutions/react-sortable-tree';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {NodeData, TreeNode} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
@@ -69,6 +69,16 @@ const AdminPermissions = (): JSX.Element => {
                     PermissionsActions.admin_create_tree,
                     PermissionsActions.admin_edit_tree,
                     PermissionsActions.admin_delete_tree
+                ]
+            },
+            {
+                id: 'forms',
+                title: t('forms.title'),
+                actions: [
+                    PermissionsActions.admin_access_forms,
+                    PermissionsActions.admin_create_form,
+                    PermissionsActions.admin_edit_form,
+                    PermissionsActions.admin_delete_form
                 ]
             },
             {

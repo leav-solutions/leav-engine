@@ -1,6 +1,6 @@
+import {TreeItem} from '@casolutions/react-sortable-tree';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TreeItem} from 'react-sortable-tree';
 import {Button, Dropdown, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../hooks/useLang';
