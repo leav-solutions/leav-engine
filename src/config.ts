@@ -71,10 +71,12 @@ export const validateConfig = (conf: Config.IConfig) => {
             queues: Joi.object().keys({
                 events: Joi.string().required()
             }),
+            prefetch: Joi.number()
+        }),
+        eventsManager: Joi.object().keys({
             routingKeys: Joi.object().keys({
                 events: Joi.string().required()
-            }),
-            prefetch: Joi.number()
+            })
         }),
         debug: Joi.boolean(),
         env: Joi.string(),

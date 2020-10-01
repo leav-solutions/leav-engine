@@ -54,12 +54,14 @@ module.exports = {
         userId: '1',
         prefetch: 1
     },
+    eventsManager: {
+        routingKeys: {
+            events: 'database.event'
+        }
+    },
     indexationManager: {
         queues: {
             events: 'indexation_events'
-        },
-        routingKeys: {
-            events: 'indexation.event'
         },
         prefetch: 1
     },

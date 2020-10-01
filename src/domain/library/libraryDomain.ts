@@ -218,7 +218,6 @@ export default function({
                     type: EventType.LIBRARY_SAVE,
                     data: {id: lib.id}
                 },
-                config.indexationManager.routingKeys.events,
                 ctx
             );
 
@@ -255,7 +254,6 @@ export default function({
                     type: EventType.LIBRARY_DELETE,
                     data: {id: deletedLibrary.id}
                 },
-                config.indexationManager.routingKeys.events,
                 ctx
             );
 

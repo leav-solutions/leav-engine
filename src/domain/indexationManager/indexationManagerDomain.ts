@@ -191,9 +191,12 @@ export default function({
 
     return {
         async init(): Promise<void> {
+            console.log('--INIT INDEXATION MANAGER--');
+            console.log('config.indexationManager.queues.events', config.indexationManager.queues.events);
+            console.log('config.eventsManager.routingKeys.events', config.eventsManager.routingKeys.events);
             return amqpService.consume(
                 config.indexationManager.queues.events,
-                config.indexationManager.routingKeys.events,
+                config.eventsManager.routingKeys.events,
                 _onMessage,
                 config.indexationManager.prefetch
             );
@@ -248,7 +251,6 @@ export default function({
                             new: obj
                         }
                     },
-                    config.indexationManager.routingKeys.events,
                     ctx
                 );
             }

@@ -294,7 +294,6 @@ export default function({
                         }
                     }
                 },
-                config.indexationManager.routingKeys.events,
                 ctx
             );
 
@@ -408,7 +407,6 @@ export default function({
                                     }
                                 }
                             },
-                            config.indexationManager.routingKeys.events,
                             ctx
                         );
                     } catch (e) {
@@ -529,7 +527,6 @@ export default function({
                         })
                     }
                 },
-                config.indexationManager.routingKeys.events,
                 ctx
             );
 

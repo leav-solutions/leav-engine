@@ -12,6 +12,7 @@ export interface IConfig {
     amqp: IAmqp;
     filesManager: IFilesManager;
     indexationManager: IIndexationManager;
+    eventsManager: IEventsManager;
     debug?: boolean;
     env?: string;
     plugins: IKeyValue<IKeyValue<any>>;
@@ -77,11 +78,14 @@ export interface IFilesManager {
     prefetch?: number;
 }
 
-export interface IIndexationManager {
-    queues: {
+export interface IEventsManager {
+    routingKeys: {
         events: string;
     };
-    routingKeys: {
+}
+
+export interface IIndexationManager {
+    queues: {
         events: string;
     };
     prefetch?: number;
