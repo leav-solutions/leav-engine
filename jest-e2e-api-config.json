@@ -8,7 +8,6 @@
     },
     "testRegex": "src\/__tests__\/e2e\/api\/.*(.test.ts)$",
     "globalSetup": "./src/__tests__/e2e/api/globalSetupHook.js",
-    "globalTeardown": "./src/__tests__/e2e/api/teardown.js",
     "setupFiles": [
         "<rootDir>/src/__tests__/jestUtils.ts"
     ]

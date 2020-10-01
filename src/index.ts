@@ -51,5 +51,6 @@ import {initPlugins} from './pluginsLoader';
         }
     } catch (e) {
         console.error(e);
+        process.exit(1);
     }
 })().catch(e => console.error(e));

@@ -28,3 +28,19 @@ unitTests:
         - npm install
     script:
         - npm run test
+
+e2eTests:
+    stage: test
+    image: node:alpine
+    services:
+        - arangodb:3.5
+    variables:
+        NODE_ENV: test
+        ARANGO_NO_AUTH: 1
+        ARANGO_URL: 'http://root:@arangodb:8529'
+        AUTH_KEY: 123456789
+    before_script:
+        - npm config set _auth $NEXUS_AUTH
+        - npm install
+    script:
+        - npm run test:e2e:api

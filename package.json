@@ -11,7 +11,7 @@
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",
         "test:e2e": "npm run test:e2e:api",
-        "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json",
+        "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json --forceExit",
         "test:e2e:filesManager": "NODE_ENV=test jest -c jest-e2e-filesManager-config.json",
         "lint": "eslint --fix src/",
         "lint:test": "eslint src/",
