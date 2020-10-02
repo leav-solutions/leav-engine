@@ -12,6 +12,14 @@ eslint:
         - npm install
     script:
         - npm run lint
+tscheck:
+    stage: test
+    image: node:alpine
+    before_script:
+        - npm config set _auth $NEXUS_AUTH
+        - npm install
+    script:
+        - npm run tscheck
 unitTests:
     stage: test
     image: node:alpine
