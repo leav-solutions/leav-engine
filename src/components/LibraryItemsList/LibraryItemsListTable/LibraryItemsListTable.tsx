@@ -4,6 +4,7 @@ import {Checkbox, Dropdown, Menu, Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Resizable} from 'react-resizable';
+import {infosCol} from '../../../constants/constants';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
 import {AttributeFormat, AttributeType, IItem, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
@@ -68,7 +69,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         : acc,
                 [
                     {
-                        id: 'infos',
+                        id: infosCol,
                         library: stateItems.attributes[0].library,
                         type: AttributeType.simple
                     } as IItemsColumn
@@ -114,7 +115,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     key: 'actions',
                     fixed: 'left',
                     width: 20,
-                    onHeaderCell: column => ({
+                    onHeaderCell: () => ({
                         width: 20,
                         onResize: handleResize(-1)
                     }),
@@ -189,7 +190,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     return {
                         title: (
                             <Header
-                                name={'infos'}
+                                name={infosCol}
                                 type={AttributeType.simple}
                                 setOpenChangeColumns={setOpenChangeColumns}
                             >
@@ -198,8 +199,8 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         ),
                         type: AttributeType.simple,
                         library: '',
-                        dataIndex: 'infos',
-                        key: 'infos',
+                        dataIndex: infosCol,
+                        key: infosCol,
                         fixed: 'left',
                         width: 100,
                         onHeaderCell: column => ({

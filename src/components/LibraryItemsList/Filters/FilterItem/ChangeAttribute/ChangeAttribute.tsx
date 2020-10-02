@@ -72,6 +72,7 @@ function ChangeAttribute({
         <Modal
             visible={showModal}
             onCancel={handleCancel}
+            width="70rem"
             footer={[
                 <Button key="cancel" onClick={handleCancel}>
                     {t('change-attribute.cancel')}

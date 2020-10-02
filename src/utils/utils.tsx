@@ -1,4 +1,5 @@
 import {i18n} from 'i18next';
+import {infosCol} from '../constants/constants';
 import {
     AttributeFormat,
     AttributeType,
@@ -182,7 +183,7 @@ export const displayTypeToPreviewSize = (displayType: DisplayListItemTypes) => {
 };
 
 export const getSortFieldByAttributeType = (attributeId: string, type: AttributeType) => {
-    attributeId = 'infos' === attributeId ? 'id' : attributeId;
+    attributeId = infosCol === attributeId ? 'id' : attributeId;
 
     switch (type) {
         case AttributeType.tree:

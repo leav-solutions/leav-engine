@@ -61,7 +61,7 @@ function ListItemsSelected({stateListAttribute, dispatchListAttribute}: IListIte
             return;
         }
 
-        if (result.destination.index === result.source.index) {
+        if (result.destination.index === result.source.index || result.destination.index < 1) {
             return;
         }
 
@@ -84,9 +84,13 @@ function ListItemsSelected({stateListAttribute, dispatchListAttribute}: IListIte
                                     key={`${item.id}_${item.library}_${item.extendedData?.path}`}
                                     index={index}
                                     draggableId={`${item.id}_${item.library}_${item.extendedData?.path}`}
+                                    isDragDisabled={item.fixed}
                                 >
                                     {provided => (
-                                        <CustomCard ref={provided.innerRef} {...provided.draggableProps}>
+                                        <CustomCard
+                                            ref={provided.innerRef}
+                                            {...(item.fixed ? [] : provided.draggableProps)}
+                                        >
                                             <ItemSelected
                                                 attributeChecked={item}
                                                 removeAttributeChecked={removeAttributeChecked}

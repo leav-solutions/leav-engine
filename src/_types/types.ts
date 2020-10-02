@@ -208,6 +208,7 @@ export interface IAttributesChecked {
     originAttributeData?: IOriginAttributeData;
     extendedData?: IExtendedData;
     treeData?: ITreeData;
+    fixed?: boolean;
 }
 
 export interface IOriginAttributeData {
