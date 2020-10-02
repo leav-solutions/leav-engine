@@ -51,7 +51,7 @@ describe('ListAttributes', () => {
                 <MockedProviderWithFragments mocks={mocks}>
                     <ListAttributes
                         attributes={[mockAttribute]}
-                        attributeSelection={'test'}
+                        attributeSelected={'test'}
                         changeSelected={jest.fn()}
                         useCheckbox={false}
                         attributesChecked={mockAttributesChecked}

@@ -118,8 +118,16 @@ function AttributeLinkedLibrary({
 
     const handleRadioChange = () => {
         if (stateListAttribute.changeSelected) {
-            stateListAttribute.changeSelected(attribute.id);
+            stateListAttribute.changeSelected({id: attribute.id, library: attribute.library});
         }
+
+        dispatchListAttribute({
+            type: ListAttributeReducerActionTypes.SET_ATTRIBUTE_SELECTED,
+            attributeSelected: {
+                id: attribute.id,
+                library: attribute.library
+            }
+        });
     };
 
     return (
@@ -148,9 +156,12 @@ function AttributeLinkedLibrary({
 
                 {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
 
-                {stateListAttribute.attributeSelection && (
+                {stateListAttribute.attributeSelected && (
                     <Radio
-                        checked={stateListAttribute.attributeSelection === attribute.id}
+                        checked={
+                            stateListAttribute.attributeSelected.id === attribute.id &&
+                            stateListAttribute.attributeSelected.library === attribute.library
+                        }
                         onChange={handleRadioChange}
                     />
                 )}

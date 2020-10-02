@@ -2,11 +2,11 @@ import {useQuery} from '@apollo/client';
 import {Input, List} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
+import styled, {CSSObject} from 'styled-components';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import themingVar from '../../themingVar.js';
 import {localizedLabel} from '../../utils';
-import {IAttribute, IAttributesChecked, IOriginAttributeData, ITreeData} from '../../_types/types';
+import {IAttribute, IAttributesChecked, IAttributeSelected, IOriginAttributeData, ITreeData} from '../../_types/types';
 import Attribute from './Attribute';
 import {
     ListAttributeInitialState,
@@ -18,14 +18,24 @@ import {
 import ListItemsSelected from './ListItemsSelected';
 import {CustomForm} from './StyledComponents';
 
-const Wrapper = styled.div`
+interface WrapperProps {
+    style?: CSSObject;
+    attributesChecked: boolean;
+}
+
+const Wrapper = styled.div<WrapperProps>`
     display: Grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(${props => (props.attributesChecked ? 2 : 1)}, 1fr);
     grid-column-gap: 0.3rem;
 `;
 
-const ListingAttributeWrapper = styled.div`
-    border-right: 1px solid ${themingVar['@primary-color']};
+interface ListingAttributeWrapperProps {
+    style?: CSSObject;
+    attributesChecked: boolean;
+}
+
+const ListingAttributeWrapper = styled.div<ListingAttributeWrapperProps>`
+    ${props => props.attributesChecked && `border-right: 1px solid ${themingVar['@primary-color']};`}
     padding: 0.3rem 1rem 0 1rem;
     overflow-y: scroll;
     height: 80vh;
@@ -33,8 +43,8 @@ const ListingAttributeWrapper = styled.div`
 
 interface IListAttributeProps {
     attributes: IAttribute[];
-    attributeSelection?: string;
-    changeSelected?: (attId: string) => void;
+    attributeSelected?: IAttributeSelected;
+    changeSelected?: (attId: IAttributeSelected) => void;
     useCheckbox?: boolean;
     attributesChecked?: IAttributesChecked[];
     setAttributesChecked?: React.Dispatch<React.SetStateAction<IAttributesChecked[]>>;
@@ -43,7 +53,7 @@ interface IListAttributeProps {
 
 function ListAttributes({
     attributes: attrs,
-    attributeSelection,
+    attributeSelected,
     changeSelected,
     useCheckbox,
     attributesChecked,
@@ -56,7 +66,7 @@ function ListAttributes({
     const [attributes, setAttributes] = useState(attrs.filter(att => !att.originAttributeData?.id));
     const [state, dispatch] = useReducer(ListAttributeReducer, {
         ...ListAttributeInitialState,
-        attributeSelection,
+        attributeSelected,
         changeSelected,
         useCheckbox,
         attributesChecked: attributesChecked ?? []
@@ -135,8 +145,11 @@ function ListAttributes({
                     type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
                     attributesChecked: newAttrsChecked
                 });
-            } else if (attributeSelection && changeSelected) {
-                changeSelected(attributes[0].id);
+            } else if (attributeSelected && changeSelected) {
+                changeSelected({
+                    id: attributes[0].id,
+                    library: attributes[0].library
+                });
             }
         }
     };
@@ -147,8 +160,8 @@ function ListAttributes({
 
     return (
         <>
-            <Wrapper>
-                <ListingAttributeWrapper>
+            <Wrapper attributesChecked={!!attributesChecked}>
+                <ListingAttributeWrapper attributesChecked={!!attributesChecked}>
                     <CustomForm onSubmit={handleSearchSubmit}>
                         <Input.Search
                             placeholder={t('attributes-list.search')}
@@ -162,7 +175,7 @@ function ListAttributes({
                         dispatchListAttribute={dispatch}
                     />
                 </ListingAttributeWrapper>
-                <ListItemsSelected stateListAttribute={state} dispatchListAttribute={dispatch} />
+                {attributesChecked && <ListItemsSelected stateListAttribute={state} dispatchListAttribute={dispatch} />}
             </Wrapper>
         </>
     );

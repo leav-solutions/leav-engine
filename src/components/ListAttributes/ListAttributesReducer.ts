@@ -1,6 +1,7 @@
-import {IAccordionActive, IAttribute, IAttributesChecked} from './../../_types/types';
+import {IAccordionActive, IAttribute, IAttributesChecked, IAttributeSelected} from './../../_types/types';
 
 export enum ListAttributeReducerActionTypes {
+    SET_ATTRIBUTE_SELECTED = 'SET_ATTRIBUTE_SELECTED',
     SET_ATTRS_CHECKED = 'SET_ATTRS_CHECKED',
     SET_LANG = 'SET_LANG',
     SET_CURRENT_ACCORDION = 'SET_CURRENT_ACCORDION',
@@ -9,14 +10,13 @@ export enum ListAttributeReducerActionTypes {
 }
 
 export interface ListAttributeState {
-    attributesChecked: IAttributesChecked[];
     lang: any;
     accordionsActive: IAccordionActive[];
     newAttributes: IAttribute[];
-
-    attributeSelection?: string;
-    changeSelected?: (attId: string) => void;
+    attributesChecked: IAttributesChecked[];
     useCheckbox?: boolean;
+    attributeSelected?: IAttributeSelected;
+    changeSelected?: (attId: IAttributeSelected) => void;
 }
 
 export const ListAttributeInitialState: ListAttributeState = {
@@ -27,6 +27,10 @@ export const ListAttributeInitialState: ListAttributeState = {
 };
 
 export type ListAttributeReducerAction =
+    | {
+          type: ListAttributeReducerActionTypes.SET_ATTRIBUTE_SELECTED;
+          attributeSelected: IAttributeSelected;
+      }
     | {
           type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED;
           attributesChecked: IAttributesChecked[];
@@ -52,6 +56,8 @@ export const ListAttributeReducer = (
     action: ListAttributeReducerAction
 ): ListAttributeState => {
     switch (action.type) {
+        case ListAttributeReducerActionTypes.SET_ATTRIBUTE_SELECTED:
+            return {...state, attributeSelected: action.attributeSelected};
         case ListAttributeReducerActionTypes.SET_ATTRS_CHECKED:
             return {...state, attributesChecked: action.attributesChecked};
         case ListAttributeReducerActionTypes.SET_LANG:

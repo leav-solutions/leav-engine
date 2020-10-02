@@ -59,8 +59,16 @@ const AttributeBasic = ({
 
     const handleRadioChange = () => {
         if (stateListAttribute.changeSelected) {
-            stateListAttribute.changeSelected(attribute.id);
+            stateListAttribute.changeSelected({id: attribute.id, library: attribute.library});
         }
+
+        dispatchListAttribute({
+            type: ListAttributeReducerActionTypes.SET_ATTRIBUTE_SELECTED,
+            attributeSelected: {
+                id: attribute.id,
+                library: attribute.library
+            }
+        });
     };
 
     return (
@@ -77,8 +85,14 @@ const AttributeBasic = ({
             </TextAttribute>
             {stateListAttribute.useCheckbox && <Checkbox checked={isChecked} onChange={handleClick} />}
 
-            {stateListAttribute.attributeSelection && (
-                <Radio checked={stateListAttribute.attributeSelection === attribute.id} onChange={handleRadioChange} />
+            {stateListAttribute.attributeSelected && (
+                <Radio
+                    checked={
+                        stateListAttribute.attributeSelected.id === attribute.id &&
+                        stateListAttribute.attributeSelected.library === attribute.library
+                    }
+                    onChange={handleRadioChange}
+                />
             )}
         </WrapperAttribute>
     );

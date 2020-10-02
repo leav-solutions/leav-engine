@@ -7,6 +7,7 @@ import {
     ConditionFilter,
     FilterTypes,
     IAttribute,
+    IAttributeSelected,
     IFilter,
     IFilterSeparator
 } from '../../../../../_types/types';
@@ -29,17 +30,23 @@ function ChangeAttribute({
     setShowModal
 }: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
-    const [attSelected, setAttSelected] = useState<string>(filter.attributeId);
+
+    const currentAttribute = stateItems.attributes.find(att => att.id);
+
+    const [attSelected, setAttSelected] = useState<IAttributeSelected>({
+        id: filter.attributeId,
+        library: currentAttribute?.library ?? ''
+    });
 
     const [, setNewAttributes] = useState<IAttribute[]>([]);
 
     const handleCancel = () => {
         setShowModal(false);
-        setAttSelected(filter.attributeId);
+        setAttSelected({id: filter.attributeId, library: filter.attributeId});
     };
 
     const changeAttribute = () => {
-        const newAtt = stateItems.attributes.find(a => a.id === attSelected);
+        const newAtt = stateItems.attributes.find(a => a.id === attSelected.id && a.library === attSelected.library);
 
         // take the first operator for the format of the attribute
         const defaultConditionOperator =
@@ -54,7 +61,7 @@ function ChangeAttribute({
                             ...acc,
                             {
                                 ...f,
-                                attributeId: attSelected,
+                                attributeId: attSelected.id,
                                 format: newAtt?.format,
                                 condition: ConditionFilter[defaultConditionOperator]
                             } as IFilter
@@ -84,7 +91,7 @@ function ChangeAttribute({
         >
             <ListAttributes
                 attributes={stateItems.attributes}
-                attributeSelection={attSelected}
+                attributeSelected={attSelected}
                 changeSelected={newAttSelected => setAttSelected(newAttSelected)}
                 setNewAttributes={setNewAttributes}
             />

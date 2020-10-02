@@ -233,3 +233,11 @@ export interface IGroupEmbeddedFields {
         embedded_fields: {[key: string]: IEmbeddedFields};
     };
 }
+
+export interface IAttributeSelected {
+    id: string;
+    library: string;
+    originAttributeData?: IOriginAttributeData;
+    extendedData?: IExtendedData;
+    treeData?: ITreeData;
+}
