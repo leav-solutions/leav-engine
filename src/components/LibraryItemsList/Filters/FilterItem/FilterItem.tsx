@@ -95,6 +95,19 @@ const CurrentAttribute = styled.span<CurrentAttributeProps>`
     }
 `;
 
+const CustomDivider = styled(Divider)`
+    &&&&&&&& {
+        margin: 0;
+
+        & > * {
+            height: 32px;
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+        }
+    }
+`;
+
 interface IFilterItemProps {
     stateItems: LibraryItemListState;
     filter: IFilter;
@@ -246,7 +259,7 @@ function FilterItem({
                 showModal={showModal}
                 setShowModal={setShowModal}
             />
-            <Divider style={{margin: 0, fontSize: '14px'}}>
+            <CustomDivider plain>
                 {filter.operator ? (
                     <Select bordered={false} value={filterOperator} onChange={e => handleOperatorChange(e)}>
                         {operatorOptions.map(operator => (
@@ -256,9 +269,9 @@ function FilterItem({
                         ))}
                     </Select>
                 ) : (
-                    <span>{t('filter-item.no-operator')}</span>
+                    <span style={{fontSize: '14px', padding: '0 20px'}}>{t('filter-item.no-operator')}</span>
                 )}
-            </Divider>
+            </CustomDivider>
 
             <CustomCard bodyStyle={{padding: 0}}>
                 <div style={{display: 'grid', gridTemplateColumns: '1rem 1fr'}}>

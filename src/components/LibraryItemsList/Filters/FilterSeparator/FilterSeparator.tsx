@@ -1,5 +1,5 @@
 import {CloseOutlined} from '@ant-design/icons';
-import {Button, Select} from 'antd';
+import {Button, Card, Select} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../../_types/types';
@@ -16,13 +16,15 @@ interface IFilterSeparatorProps {
     updateFilters: () => void;
 }
 
-const Wrapper = styled.div`
-    margin: 0.5rem 0.2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #f0f0f0;
-    padding: 12px 12px;
+const Wrapper = styled(Card)`
+    & > * {
+        padding: 8px 16px;
+        div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
 `;
 
 function FilterSeparator({
@@ -51,16 +53,20 @@ function FilterSeparator({
     };
 
     return (
-        <Wrapper>
-            <Select disabled={!separator.active} value={separatorOperator} onChange={e => changeOperator(e)}>
-                {operatorOptions.map(operator => (
-                    <Select.Option key={operator.value} value={operator.value}>
-                        {operator.text}
-                    </Select.Option>
-                ))}
-            </Select>
-            <Button type="text" icon={<CloseOutlined />} size="small" onClick={deleteSeparator} />
-        </Wrapper>
+        <div style={{padding: '0.5rem 0'}}>
+            <Wrapper>
+                <div>
+                    <Select disabled={!separator.active} value={separatorOperator} onChange={e => changeOperator(e)}>
+                        {operatorOptions.map(operator => (
+                            <Select.Option key={operator.value} value={operator.value}>
+                                {operator.text}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                    <Button type="default" icon={<CloseOutlined />} size="small" onClick={deleteSeparator} />
+                </div>
+            </Wrapper>
+        </div>
     );
 }
 

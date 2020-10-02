@@ -51,11 +51,6 @@ const FilterList = styled.div`
     padding: 0.3rem 0.3rem 0.3rem 0;
 `;
 
-const FilterGroup = styled.div`
-    padding: 8px 8px;
-    position: relative;
-`;
-
 const move = (
     list: any[][],
     droppableSource: any,
@@ -110,8 +105,8 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
         });
 
     const updateFilters = () => {
-        setFilters(filtersGroup => {
-            return filtersGroup.map((filters, indexOne) => {
+        setFilters(filtersGroups => {
+            return filtersGroups.map((filters, indexOne) => {
                 let newFilters = filters.sort((a, b) => a.key - b.key);
 
                 let noOperator = true;
@@ -131,13 +126,27 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     } else if (filter.type === FilterTypes.separator) {
                         noOperator = true;
 
-                        const conditionBefore = (filters.filter(
+                        let conditionBefore = (filters.filter(
                             f => f.type === FilterTypes.filter && f.key < filter.key
                         ) as IFilter[]).some(f => f.active);
 
-                        const conditionAfter = (filters.filter(
+                        let conditionAfter = (filters.filter(
                             f => f.type === FilterTypes.filter && f.key > filter.key
                         ) as IFilter[]).some(f => f.active);
+
+                        if (!conditionBefore) {
+                            conditionBefore =
+                                filtersGroups[indexOne - 1] &&
+                                filtersGroups[indexOne - 1][0] &&
+                                filtersGroups[indexOne - 1][0].type === FilterTypes.filter;
+                        }
+
+                        if (!conditionAfter) {
+                            conditionAfter =
+                                filtersGroups[indexOne + 1] &&
+                                filtersGroups[indexOne + 1][0] &&
+                                filtersGroups[indexOne + 1][0].type === FilterTypes.filter;
+                        }
 
                         if (conditionBefore && conditionAfter) {
                             filter.active = true;
@@ -149,12 +158,11 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     return filter;
                 });
 
-                if (newFilters && filtersGroup[indexOne - 1] && filtersGroup[indexOne - 1].length) {
-                    const previousIsFilter = filtersGroup[indexOne - 1][0].type === FilterTypes.filter;
-                    const currentIsFilter = filtersGroup[indexOne][0].type === FilterTypes.filter;
+                // if last element of the group was a filter, set operator true
+                if (newFilters && filtersGroups[indexOne - 1] && filtersGroups[indexOne - 1].length) {
+                    const previousIsFilter = filtersGroups[indexOne - 1][0].type === FilterTypes.filter;
+                    const currentIsFilter = filtersGroups[indexOne][0].type === FilterTypes.filter;
                     const lastElement = newFilters[0];
-
-                    console.log(newFilters, lastElement);
 
                     if (previousIsFilter && currentIsFilter && lastElement.type === FilterTypes.filter) {
                         lastElement.operator = true;
