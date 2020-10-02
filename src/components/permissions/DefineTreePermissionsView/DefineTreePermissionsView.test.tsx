@@ -1,7 +1,7 @@
 import {MockedProvider} from '@apollo/react-testing';
 import {render} from 'enzyme';
 import React from 'react';
-import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import DefineTreePermissionsView from './DefineTreePermissionsView';
 
 jest.mock('../../../hooks/useLang');
@@ -20,6 +20,7 @@ describe('DefineTreePermissionsView', () => {
                     treeAttribute={mockTree}
                     permissionType={PermissionTypes.record}
                     applyTo="test_lib"
+                    actions={[PermissionsActions.access]}
                 />
             </MockedProvider>
         );

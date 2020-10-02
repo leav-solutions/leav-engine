@@ -18,7 +18,8 @@ const oneActionMock = {
     saveValue: {
         higherId: 0,
         0: {
-            id: 0,
+            id: 'validateFormat',
+            list_id: 0,
             name: 'validateFormat',
             description: 'Check if value matches attribute format',
             input_types: ['string', 'number', 'boolean', 'object'],
@@ -39,7 +40,8 @@ const twoActionsMock = {
     saveValue: {
         higherId: 1,
         0: {
-            id: 0,
+            id: 'add',
+            list_id: 0,
             name: 'add',
             description: 'add input to param',
             input_types: ['number'],
@@ -57,7 +59,8 @@ const twoActionsMock = {
             ]
         },
         1: {
-            id: 1,
+            id: 'sub',
+            list_id: 0,
             name: 'sub',
             description: 'substract parameter from input',
             input_types: ['number'],
@@ -87,7 +90,8 @@ const twoIncompatibleActionsMock = {
     saveValue: {
         higherId: 1,
         0: {
-            id: 0,
+            id: 'add',
+            list_id: 0,
             name: 'add',
             description: 'add input to param',
             input_types: ['number'],
@@ -105,7 +109,8 @@ const twoIncompatibleActionsMock = {
             ]
         },
         1: {
-            id: 1,
+            id: 'sub',
+            list_id: 1,
             name: 'sub',
             description: 'substract parameter from input',
             input_types: ['object'],

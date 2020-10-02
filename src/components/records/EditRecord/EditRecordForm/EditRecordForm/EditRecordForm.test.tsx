@@ -3,7 +3,11 @@ import {render} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
-import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {
+    GET_LIBRARIES_libraries_list,
+    GET_LIBRARIES_libraries_list_attributes
+} from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 
@@ -127,9 +131,10 @@ const attributes = [
     }
 ];
 
-const library = {
+const library: GET_LIBRARIES_libraries_list = {
     id: 'produits',
     system: false,
+    behavior: LibraryBehavior.standard,
     label: {fr: 'produits', en: 'products'},
     attributes: attributes as GET_LIBRARIES_libraries_list_attributes[],
     permissions_conf: null,

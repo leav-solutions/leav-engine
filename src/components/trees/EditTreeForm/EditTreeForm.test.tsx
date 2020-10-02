@@ -1,6 +1,8 @@
 import {shallow} from 'enzyme';
 import {Location} from 'history';
 import React from 'react';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 import {Mockify} from '../../../_types/Mockify';
 import EditTreeForm from './EditTreeForm';
 
@@ -14,14 +16,15 @@ jest.mock('../../../hooks/useLang');
 
 describe('EditTreeForm', () => {
     test('Render form for existing tree', async () => {
-        const tree = {
+        const tree: GET_TREES_trees_list = {
             id: 'test',
             label: {fr: 'Test', en: null},
             system: false,
             libraries: [
                 {id: 'test_lib', label: null},
                 {id: 'users', label: null}
-            ]
+            ],
+            behavior: TreeBehavior.standard
         };
         const onSubmit = jest.fn();
 

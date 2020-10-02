@@ -2,6 +2,8 @@ import {MockedProvider} from '@apollo/react-testing';
 import {render} from 'enzyme';
 import React from 'react';
 import {act, create} from 'react-test-renderer';
+import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 import EditTreeInfosForm from './EditTreeInfosForm';
 
 jest.mock('../../../utils/utils', () => ({
@@ -13,11 +15,12 @@ jest.mock('../../../utils/utils', () => ({
 jest.mock('../../../hooks/useLang', () => jest.fn().mockReturnValue(['fr']));
 
 describe('EditTreeInfosForm', () => {
-    const mockTree = {
+    const mockTree: GET_TREES_trees_list = {
         id: 'test',
         label: {fr: 'Test'},
         system: false,
-        libraries: ['test_lib']
+        libraries: [{id: 'test_lib', label: null}],
+        behavior: TreeBehavior.standard
     };
     const onSubmit = jest.fn();
     const onCheckIdExists = jest.fn().mockReturnValue(false);

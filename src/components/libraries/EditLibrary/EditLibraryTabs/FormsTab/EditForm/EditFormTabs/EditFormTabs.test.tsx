@@ -9,7 +9,7 @@ describe('EditFormTabs', () => {
     const mockForm = {...mockFormFull};
 
     test('Display form edition for existing form', async () => {
-        const comp = shallow(<EditFormTabs form={mockForm} />);
+        const comp = shallow(<EditFormTabs library="test_lib" form={mockForm} />);
 
         expect(
             comp
@@ -25,7 +25,7 @@ describe('EditFormTabs', () => {
     });
 
     test('Display form edition for new form', async () => {
-        const comp = shallow(<EditFormTabs form={null} />);
+        const comp = shallow(<EditFormTabs library="test_lib" form={null} />);
 
         expect(
             comp

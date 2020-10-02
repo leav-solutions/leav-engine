@@ -5,8 +5,9 @@ import React from 'react';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
 import {act} from 'react-dom/test-utils';
+import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
 // import {getActionListQuery} from '../../../../queries/attributes/getActionListQuery';
-import {ATTRIBUTE_MOCK, AVAILABLE_ACTIONS_MOCK} from '../mocks/ALCMocks';
+import {AVAILABLE_ACTIONS_MOCK} from '../mocks/ALCMocks';
 import ALCContainer from './ALCContainer';
 
 // React currently throws a warning when using useLayoutEffect on the server.
@@ -52,7 +53,7 @@ describe('ALCContainer', () => {
         const container = shallow(
             <DndProvider backend={TestBackend}>
                 <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
-                    <ALCContainer attribute={ATTRIBUTE_MOCK} availableActions={[]} inType={[]} outType={[]} />
+                    <ALCContainer attribute={mockAttrSimple} availableActions={[]} />
                 </MockedProvider>
             </DndProvider>
         );
@@ -67,12 +68,7 @@ describe('ALCContainer', () => {
             component = mount(
                 <DndProvider backend={TestBackend}>
                     <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
-                        <ALCContainer
-                            attribute={ATTRIBUTE_MOCK}
-                            availableActions={actionsMock}
-                            inType={['string']}
-                            outType={['string']}
-                        />
+                        <ALCContainer attribute={mockAttrSimple} availableActions={actionsMock} />
                     </MockedProvider>
                 </DndProvider>
             );

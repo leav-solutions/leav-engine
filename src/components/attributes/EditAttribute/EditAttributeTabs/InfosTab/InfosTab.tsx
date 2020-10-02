@@ -1,7 +1,9 @@
 import {useLazyQuery, useMutation} from '@apollo/react-hooks';
+import {History} from 'history';
 import React from 'react';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
+import {clearCacheQueriesFromRegexp} from '../../../../../utils';
 import {
     GET_ATTRIBUTES,
     GET_ATTRIBUTESVariables,
@@ -13,8 +15,6 @@ import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {onAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
-import {clearCacheQueriesFromRegexp} from '../../../../../utils';
-import {History} from 'history';
 // import useLang from '../../../../../hooks/useLang';
 
 interface IInfosTabProps {

@@ -10,8 +10,8 @@ import {ValueInput} from './globalTypes';
 
 export interface SAVE_VALUE_saveValue {
     id_value: string | null;
-    value: string | null;
-    raw_value: string | null;
+    value: any | null;
+    raw_value: any | null;
     attribute: string | null;
 }
 

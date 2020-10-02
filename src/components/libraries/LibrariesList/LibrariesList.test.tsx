@@ -2,6 +2,7 @@ import {MockedProvider} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
+import {mockLibrary} from '../../../__mocks__/libraries';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import LibrariesList from './LibrariesList';
 
@@ -10,28 +11,19 @@ jest.mock('../../../hooks/useLang');
 describe('LibrariesList', () => {
     const libraries = [
         {
+            ...mockLibrary,
             id: 'test',
-            system: false,
-            label: {fr: 'Test', en: null},
-            attributes: [],
-            permissions_conf: null,
-            recordIdentityConf: {label: null, color: null, preview: null}
+            label: {fr: 'Test', en: null}
         },
         {
+            ...mockLibrary,
             id: 'test2',
-            system: false,
-            label: {fr: null, en: 'Test 2'},
-            attributes: [],
-            permissions_conf: null,
-            recordIdentityConf: {label: null, color: null, preview: null}
+            label: {fr: null, en: 'Test 2'}
         },
         {
+            ...mockLibrary,
             id: 'test3',
-            system: false,
-            label: null,
-            attributes: [],
-            permissions_conf: null,
-            recordIdentityConf: {label: null, color: null, preview: null}
+            label: null
         }
     ];
 

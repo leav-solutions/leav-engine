@@ -1,15 +1,15 @@
-import React from 'react';
 import {mount} from 'enzyme';
+import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from '../../utils/testUtils';
+import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 import ListPanel from './ListPanel';
 import {initialState} from './NavigatorReducer';
-import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 
 const lang = ['fr'];
 
 const getTests = (range = 1) => {
-    const returnArr = [];
+    const returnArr: any[] = [];
     let id = 1391560;
 
     for (let i = 0; i < range; i++) {

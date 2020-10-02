@@ -1,7 +1,7 @@
-import {SelectionChanged, EditRecordClick} from './Navigator';
 import {GET_LIBRARIES_libraries_list, GET_LIBRARIES_libraries_list_attributes} from '../../_gqlTypes/GET_LIBRARIES';
-import {IGenericValue} from '../../_types/records';
 import {RecordIdentity_whoAmI} from '../../_gqlTypes/RecordIdentity';
+import {IGenericValue} from '../../_types/records';
+import {EditRecordClick, SelectionChanged} from './Navigator';
 
 type RecordData = {
     [attributeName: string]: IGenericValue | IGenericValue[];

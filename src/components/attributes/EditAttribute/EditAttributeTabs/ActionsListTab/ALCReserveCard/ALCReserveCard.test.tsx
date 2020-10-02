@@ -36,7 +36,8 @@ describe('ALCReserveCard', () => {
                 <ALCReserveCard
                     id={'0'}
                     action={{
-                        id: 0,
+                        id: 'action',
+                        list_id: 0,
                         name: 'action',
                         description: 'action',
                         input_types: [],

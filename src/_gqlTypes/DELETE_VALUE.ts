@@ -11,7 +11,7 @@ import {ValueInput} from './globalTypes';
 export interface DELETE_VALUE_deleteValue {
     attribute: string | null;
     id_value: string | null;
-    value: string | null;
+    value: any | null;
 }
 
 export interface DELETE_VALUE {

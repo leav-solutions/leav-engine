@@ -8,6 +8,12 @@ import PermissionsContent from './PermissionsContent';
 
 jest.mock('../../../../../../hooks/useLang');
 
+jest.mock('../../../../../permissions/DefineTreePermissionsView', () => {
+    return function DefineTreePermissionsView() {
+        return <div>DefineTreePermissionsView</div>;
+    };
+});
+
 describe('PermissionsContent', () => {
     const mockTreeAttributes = [
         {...mockAttrTree, id: 'tree1', label: {fr: 'Tree Attr1'}},

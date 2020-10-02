@@ -1,6 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {mockLibrary} from '../../../../../__mocks__/libraries';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import NavigatorTab from './NavigatorTab';
 
@@ -21,24 +22,6 @@ jest.mock('../../../../records/EditRecordModal', () => {
         return <div>MOCK EditRecordModal</div>;
     };
 });
-
-const mockLibrary = {
-    id: '',
-    system: true,
-    attributes: [],
-    label: {fr: '', en: ''},
-    gqlNames: {
-        filter: '',
-        list: '',
-        query: '',
-        searchableFields: '',
-        type: '',
-        __typename: ''
-    },
-    permissions_conf: null,
-    recordIdentityConf: null,
-    __typename: ''
-};
 
 const mockRecord = {
     color: null,

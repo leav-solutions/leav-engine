@@ -5,6 +5,7 @@ import EmbeddedFieldsForm from '../EmbeddedFieldsForm';
 import EmbeddedFieldsWrapper from './EmbeddedFieldsWrapper';
 
 describe('EmbeddedFieldsWrapper', () => {
+    const handleSave = jest.fn();
     test('should return something', () => {
         const mockAttributes = {
             id: 'test',
@@ -25,6 +26,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 displayForm
                 formValues={mockValues}
                 setFormValues={mockSetValues}
+                save={handleSave}
             />
         );
 
@@ -51,6 +53,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 displayForm
                 formValues={mockValues}
                 setFormValues={mockSetValues}
+                save={handleSave}
             />
         );
 
@@ -77,6 +80,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 displayForm={false}
                 formValues={mockValues}
                 setFormValues={mockSetValues}
+                save={handleSave}
             />
         );
 

@@ -1,7 +1,7 @@
 import {shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IGenericValue} from '../../../../../../../_types/records';
+import {IValue} from '../../../../../../../_types/records';
 import {mockAttrSimple} from '../../../../../../../__mocks__/attributes';
 import EditRecordInput from './EditRecordInput';
 
@@ -11,7 +11,7 @@ describe('EditRecordInput', () => {
     const onChange = jest.fn();
     const onCancel = jest.fn();
 
-    const mockValue: IGenericValue = {
+    const mockValue: IValue = {
         id_value: null,
         value: 'test_value',
         raw_value: 'test_value',

@@ -1,12 +1,11 @@
-import React from 'react';
-import {mount, shallow} from 'enzyme';
 import {MockedProvider} from '@apollo/react-testing';
+import {mount, shallow} from 'enzyme';
+import React from 'react';
 import {act} from 'react-dom/test-utils';
-
 import {wait} from '../../utils/testUtils';
+import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 import MainPanel, {QUERY_LIBRARY_CONFIG} from './MainPanel';
-import {initialState, ActionTypes} from './NavigatorReducer';
-import {AttributeType, AttributeFormat} from '../../_gqlTypes/globalTypes';
+import {ActionTypes, initialState} from './NavigatorReducer';
 
 const lang = ['fr'];
 export const DATAMOCK = [
@@ -169,6 +168,7 @@ describe('<MainPanel />', () => {
                     multiple_values: false,
                     permissions_conf: null,
                     versions_conf: null,
+                    metadata_fields: null,
                     label: {
                         fr: 'labela1'
                     }

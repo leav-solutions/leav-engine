@@ -1,5 +1,6 @@
 import {shallow} from 'enzyme';
 import React from 'react';
+import {mockLibrary} from '../../../__mocks__/libraries';
 import LibrariesSelectorField from './LibrariesSelectorField';
 
 jest.mock('../../../utils/utils', () => ({
@@ -14,10 +15,12 @@ describe('LibrariesSelectorField', () => {
     test('Snapshot test', async () => {
         const libraries = [
             {
+                ...mockLibrary,
                 id: 'lib1',
                 label: {fr: 'Lib'}
             },
             {
+                ...mockLibrary,
                 id: 'lib2',
                 label: {fr: 'Lib'}
             }

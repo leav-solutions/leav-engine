@@ -12,8 +12,8 @@ export interface ValueDetails_Value {
     modified_at: number | null;
     version: any | null;
     metadata: any | null;
-    value: string | null;
-    raw_value: string | null;
+    value: any | null;
+    raw_value: any | null;
 }
 
 export interface ValueDetails_LinkValue_linkValue_whoAmI_library {

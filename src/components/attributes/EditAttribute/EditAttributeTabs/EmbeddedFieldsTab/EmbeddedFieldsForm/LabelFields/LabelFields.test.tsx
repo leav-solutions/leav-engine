@@ -2,13 +2,16 @@ import {mount} from 'enzyme';
 import {TFunction} from 'i18next';
 import React from 'react';
 import {Mockify} from '../../../../../../../_types/Mockify';
+import {IFormValues} from '../EmbeddedFieldsForm';
 import LabelFields from './LabelFields';
 
 describe('LabelFields', () => {
     const mockT: Mockify<TFunction> = jest.fn();
+    const handleSave = jest.fn();
 
-    const mockFormValues = {
+    const mockFormValues: IFormValues = {
         id: 'test',
+        originalId: 'test',
         label: {
             fr: 'test fr',
             en: 'test en'
@@ -18,7 +21,13 @@ describe('LabelFields', () => {
     };
 
     const comp = mount(
-        <LabelFields formValues={mockFormValues} setFormValues={jest.fn} onChange={jest.fn} t={mockT as TFunction} />
+        <LabelFields
+            formValues={mockFormValues}
+            setFormValues={jest.fn}
+            onChange={jest.fn}
+            t={mockT as TFunction}
+            save={handleSave}
+        />
     );
 
     test('should return something', () => {
@@ -26,10 +35,10 @@ describe('LabelFields', () => {
     });
 
     test('should create an input for fr label', () => {
-        expect(comp.find('input[name="label-fr"]').prop('value')).toBe(mockFormValues.label.fr);
+        expect(comp.find('input[name="label-fr"]').prop('value')).toBe(mockFormValues?.label?.fr);
     });
 
     test('should create an input for en label', () => {
-        expect(comp.find('input[name="label-en"]').prop('value')).toBe(mockFormValues.label.en);
+        expect(comp.find('input[name="label-en"]').prop('value')).toBe(mockFormValues?.label?.en);
     });
 });

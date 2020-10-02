@@ -20,6 +20,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 add={jest.fn()}
                 remove={jest.fn()}
                 t={jest.fn()}
+                isRoot={false}
             />
         );
 

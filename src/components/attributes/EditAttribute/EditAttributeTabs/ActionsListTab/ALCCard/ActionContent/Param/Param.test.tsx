@@ -1,5 +1,5 @@
-import React from 'react';
 import {render} from 'enzyme';
+import React from 'react';
 import Param from './Param';
 
 // import data from '../../../../data.json';
@@ -11,6 +11,7 @@ function placeholder() {
 const paramsMock = [
     {
         name: 'additionner',
+        default_value: '0',
         type: 'float',
         description: 'a float or integer to add',
         required: true,
@@ -20,7 +21,9 @@ const paramsMock = [
 
 describe('Param', () => {
     test('Snapshot test', async () => {
-        const comp = render(<Param param={paramsMock[0]} changeParam={placeholder} index={0} actionId={0} />);
+        const comp = render(
+            <Param param={paramsMock[0]} changeParam={placeholder} index={0} actionId={0} setBlockCard={jest.fn()} />
+        );
         expect(true).toBe(true);
     });
 });

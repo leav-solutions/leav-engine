@@ -49,7 +49,9 @@
     "lint": "eslint src/",
     "eject": "react-scripts eject",
     "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes=**/*.test.* src/_gqlTypes && prettier --write src/_gqlTypes/*",
-    "create_comp": "scripts/createComponent.js"
+    "create_comp": "scripts/createComponent.js",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p ."
   },
   "devDependencies": {
     "@apollo/react-testing": "3.0.0",
