@@ -122,6 +122,20 @@ function ListAttributes({
         }
     }, [attributesChecked]);
 
+    useEffect(() => {
+        setAttributes(attributes => {
+            if (attributes !== attrs) {
+                dispatch({
+                    type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
+                    attributesChecked: attributesChecked ?? []
+                });
+                return attrs.filter(att => !att.originAttributeData?.id);
+            }
+
+            return attributes;
+        });
+    }, [setAttributes, attrs, attributesChecked, dispatch]);
+
     const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
