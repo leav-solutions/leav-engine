@@ -264,7 +264,7 @@ export default function({
                   }, [])
                 : [];
 
-            const fullTextAttr = (await libraryDomain.getLibraryFullTextAttributes(libraryId, ctx)).map(a => a.id);
+            const fullTextAttr = await libraryDomain.getLibraryFullTextAttributes(libraryId, ctx);
 
             const res = (
                 await recordDomain.find({
@@ -283,26 +283,28 @@ export default function({
                             const val = await recordDomain.getRecordFieldValue({
                                 library: libraryId,
                                 record,
-                                attributeId: fta,
+                                attributeId: fta.id,
                                 ctx
                             });
 
-                            return {[fta]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)};
+                            // if simple link replace id by record label
+                            if (fta.type === AttributeTypes.SIMPLE_LINK) {
+                                const recordIdentity = await recordDomain.getRecordIdentity(
+                                    {id: (val as IValue).value.id, library: fta.linked_library},
+                                    ctx
+                                );
+
+                                (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
+                            }
+
+                            return {
+                                [fta.id]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
+                            };
                         })
                     )
                 ).reduce((acc, e) => ({...acc, ...e}), {});
 
-                await eventsManager.send(
-                    {
-                        type: EventType.RECORD_SAVE,
-                        data: {
-                            id: record.id,
-                            libraryId,
-                            new: obj
-                        }
-                    },
-                    ctx
-                );
+                await elasticsearchService.index(libraryId, record.id, obj);
             }
 
             return true;

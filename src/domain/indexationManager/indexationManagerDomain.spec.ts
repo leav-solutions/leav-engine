@@ -84,6 +84,5 @@ describe('Indexation Manager', () => {
         expect(mockLibraryDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);
-        expect(mockEventsManagerDomain.send).toBeCalledTimes(2);
     });
 });
