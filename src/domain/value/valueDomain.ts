@@ -54,6 +54,7 @@ export interface IValueDomain {
         options?: IValuesOptions;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
+
     saveValue({
         library,
         recordId,

@@ -29,10 +29,10 @@ import valueDomain from './valueDomain';
 import * as Config from '_types/config';
 
 describe('ValueDomain', () => {
-    const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
+    const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
     const mockConfig: Mockify<Config.IConfig> = {
-        indexationManager: indexationManagerMockConfig as Config.IIndexationManager
+        eventsManager: eventsManagerMockConfig as Config.IEventsManager
     };
 
     const mockRecordRepo: Mockify<IRecordRepo> = {

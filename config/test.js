@@ -24,13 +24,16 @@ module.exports = {
             previewResponse: 'test_files_preview_response'
         }
     },
+    eventsManager: {
+        routingKeys: {
+            events: 'test.database.event'
+        }
+    },
     indexationManager: {
         queues: {
-            events: 'test_indexation_events'
+            events: 'test_indexation_event'
         },
-        routingKeys: {
-            events: 'test_indexation_events'
-        }
+        prefetch: 1
     },
     debug: true
 };

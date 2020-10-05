@@ -1,18 +1,21 @@
 import {IAmqpService} from 'infra/amqp/amqpService';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import winston from 'winston';
-import {IEvent, EventType, IRecordPayload, ILibraryPayload, IValuePayload, Payload} from '../../_types/event';
+import {IEvent, EventType, IRecordPayload, ILibraryPayload, IValuePayload} from '../../_types/event';
+import {IValue} from '../../_types/value';
 import * as Joi from '@hapi/joi';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {isEqual, pick} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
+import {AttributeTypes} from '../../_types/attribute';
 import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ArangoSearchView} from 'arangojs/lib/cjs/view';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -28,6 +31,8 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.utils'?: IUtils;
+    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.value'?: IValueDomain;
 }
 
 export default function({
@@ -38,6 +43,8 @@ export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.eventsManager': eventsManager = null,
+    'core.domain.attribute': attributeDomain = null,
+    'core.domain.value': valueDomain = null,
     'core.utils': utils = null
 }: IDeps): IIndexationManagerDomain {
     const _onMessage = async (msg: string): Promise<void> => {
@@ -58,6 +65,20 @@ export default function({
         switch (event.payload.type) {
             case EventType.RECORD_SAVE:
                 data = (event.payload as IRecordPayload).data;
+
+                // if simple link replace id by record label
+                for (const [key, value] of Object.entries(data.new)) {
+                    const attrProps = await attributeDomain.getAttributeProperties({id: key, ctx});
+
+                    if (attrProps.type === AttributeTypes.SIMPLE_LINK) {
+                        const recordIdentity = await recordDomain.getRecordIdentity(
+                            {id: value as string, library: attrProps.linked_library},
+                            ctx
+                        );
+                        data.new[key] = String(recordIdentity.label);
+                    }
+                }
+
                 await elasticsearchService.index(data.libraryId, data.id, data.new);
                 break;
             case EventType.RECORD_DELETE:
@@ -66,17 +87,16 @@ export default function({
                 break;
             case EventType.LIBRARY_SAVE:
                 data = (event.payload as ILibraryPayload).data;
+
                 const exists = await elasticsearchService.indiceExists(data.id);
-                const fullTextAttributes = (await libraryDomain.getLibraryFullTextAttributes(data.id, ctx)).map(
-                    fta => fta.id
-                );
+                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(data.id, ctx);
 
                 if (
                     !exists ||
                     (exists &&
                         !isEqual(
                             (await elasticsearchService.indiceGetMapping(data.id)).sort(),
-                            fullTextAttributes.sort()
+                            fullTextAttributes.map(fta => fta.id).sort()
                         ))
                 ) {
                     if (exists) {
@@ -95,12 +115,24 @@ export default function({
                                     const val = await recordDomain.getRecordFieldValue({
                                         library: data.id,
                                         record,
-                                        attributeId: fta,
+                                        attributeId: fta.id,
                                         ctx
                                     });
 
+                                    // if simple link replace id by record label
+                                    if (fta.type === AttributeTypes.SIMPLE_LINK) {
+                                        const recordIdentity = await recordDomain.getRecordIdentity(
+                                            {id: (val as IValue).value.id, library: fta.linked_library},
+                                            ctx
+                                        );
+
+                                        (val as IValue).value = recordIdentity.label;
+                                    }
+
                                     return {
-                                        [fta]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
+                                        [fta.id]: Array.isArray(val)
+                                            ? val.map(v => String(v?.value))
+                                            : String(val?.value)
                                     };
                                 })
                             )
@@ -137,6 +169,16 @@ export default function({
                                     ctx
                                 });
 
+                                // if simple link replace id by record label
+                                if (ati.type === AttributeTypes.SIMPLE_LINK) {
+                                    const recordIdentity = await recordDomain.getRecordIdentity(
+                                        {id: (val as IValue).value.id, library: ati.linked_library},
+                                        ctx
+                                    );
+
+                                    (val as IValue).value = recordIdentity.label;
+                                }
+
                                 return {
                                     [ati.id]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
                                 };
@@ -146,8 +188,18 @@ export default function({
 
                     await elasticsearchService.index(data.libraryId, data.recordId, obj);
                 } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
+                    // if simple link replace id by record label
+                    const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
+                    if (attr.type === AttributeTypes.SIMPLE_LINK) {
+                        const recordIdentity = await recordDomain.getRecordIdentity(
+                            {id: String(data.value.new), library: attr.linked_library},
+                            ctx
+                        );
+                        data.value.new = recordIdentity.label;
+                    }
+
                     await elasticsearchService.update(data.libraryId, data.recordId, {
-                        [data.attributeId]: String(data.value.new)
+                        [data.attributeId]: data.value.new
                     });
                 }
 
@@ -191,9 +243,6 @@ export default function({
 
     return {
         async init(): Promise<void> {
-            console.log('--INIT INDEXATION MANAGER--');
-            console.log('config.indexationManager.queues.events', config.indexationManager.queues.events);
-            console.log('config.eventsManager.routingKeys.events', config.eventsManager.routingKeys.events);
             return amqpService.consume(
                 config.indexationManager.queues.events,
                 config.eventsManager.routingKeys.events,

@@ -14,10 +14,10 @@ import recordDomain from './recordDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import * as Config from '_types/config';
 
-const indexationManagerMockConfig: Mockify<Config.IIndexationManager> = {routingKeys: {events: 'indexation.event'}};
+const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
 const mockConfig: Mockify<Config.IConfig> = {
-    indexationManager: indexationManagerMockConfig as Config.IIndexationManager
+    eventsManager: eventsManagerMockConfig as Config.IEventsManager
 };
 
 describe('RecordDomain', () => {
