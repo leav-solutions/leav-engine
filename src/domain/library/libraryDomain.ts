@@ -26,6 +26,7 @@ import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
 import {EventType} from '../../_types/event';
 import * as Config from '_types/config';
+import {exist} from '@hapi/joi';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -119,7 +120,6 @@ export default function({
         async saveLibrary(libData: ILibrary, ctx: IQueryInfos): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({params: {filters: {id: libData.id}}, ctx});
             const existingLib = !!libs.list.length;
-            const errors = {} as any;
             const defaultParams = {
                 id: '',
                 system: false,
@@ -137,6 +137,9 @@ export default function({
             const currentLibraryAttributes = existingLib
                 ? (await this.getLibraryAttributes(libData.id, ctx)).map(a => a.id)
                 : [];
+            const currentFullTextAttributes = existingLib
+                ? (await this.getLibraryFullTextAttributes(libData.id, ctx)).map(a => a.id)
+                : [];
 
             // Check permissions
             const permCheck = await checkSavePermission(existingLib, ctx.userId, {permissionDomain}, ctx);
@@ -152,10 +155,14 @@ export default function({
             validationErrors.push(await validatePermConf(dataToSave.permissions_conf, {attributeDomain}, ctx));
 
             // New library? Link default attributes. Otherwise, save given attributes if any
-            const attributesToSave = dataToSave.attributes ? dataToSave.attributes.map(attr => attr.id) : [];
+            // const attributesToSave = dataToSave.attributes ? dataToSave.attributes.map(attr => attr.id) : [];
+            const attributesToSave = dataToSave.attributes
+                ? dataToSave.attributes.map(attr => attr.id)
+                : currentLibraryAttributes;
+
             const fullTextAttributesToSave = dataToSave.fullTextAttributes
                 ? dataToSave.fullTextAttributes.map(fta => fta.id)
-                : [];
+                : currentFullTextAttributes;
 
             const libAttributes = union(defaultAttributes, attributesToSave);
             const libFullTextAttributes = [...new Set(['id', ...fullTextAttributesToSave])];
@@ -196,13 +203,11 @@ export default function({
                       ctx
                   });
 
-            if (attributesToSave.length || !existingLib) {
-                await libraryRepo.saveLibraryAttributes({
-                    libId: dataToSave.id,
-                    attributes: libAttributes,
-                    ctx
-                });
-            }
+            await libraryRepo.saveLibraryAttributes({
+                libId: dataToSave.id,
+                attributes: libAttributes,
+                ctx
+            });
 
             await libraryRepo.saveLibraryFullTextAttributes({
                 libId: dataToSave.id,

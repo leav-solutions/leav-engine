@@ -110,7 +110,8 @@ describe('LibraryDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([])
+                getLibraries: global.__mockPromise([]),
+                getLibraryFullTextAttributes: global.__mockPromise([])
             };
 
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
@@ -283,7 +284,8 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'id'}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'id'}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -392,7 +394,8 @@ describe('LibraryDomain', () => {
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
                     saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -412,7 +415,7 @@ describe('LibraryDomain', () => {
 
                 expect(mockLibRepo.createLibrary.mock.calls.length).toBe(0);
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
@@ -433,7 +436,8 @@ describe('LibraryDomain', () => {
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
                     saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -488,7 +492,8 @@ describe('LibraryDomain', () => {
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
                     saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -531,7 +536,8 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -574,7 +580,8 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -613,7 +620,8 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -642,7 +650,8 @@ describe('LibraryDomain', () => {
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
                     saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}])
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([])
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
