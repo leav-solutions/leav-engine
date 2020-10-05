@@ -27,17 +27,10 @@ const MainMenu = (): JSX.Element => {
     ];
 
     const filteredItems = userData.permissions
-        ? menuItems.filter(item => userData.permissions![`admin_access_${item.id}`])
+        ? menuItems.filter(item => userData.permissions![`app_access_${item.id}`])
         : [];
 
-    return (
-        <AppMenu
-            items={[
-                ...filteredItems,
-                {id: 'plugins', label: t('plugins.title')}
-            ]}
-        />
-    );
+    return <AppMenu items={[...filteredItems, {id: 'plugins', label: t('plugins.title')}]} />;
 };
 
 export default MainMenu;

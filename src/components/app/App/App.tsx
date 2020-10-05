@@ -155,8 +155,8 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
             <IsAllowedQuery
                 query={isAllowedQuery}
                 variables={{
-                    type: PermissionTypes.admin,
-                    actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/))
+                    type: PermissionTypes.app,
+                    actions: Object.values(PermissionsActions).filter(a => !!a.match(/^app_/))
                 }}
             >
                 {({loading, data, error}) => {

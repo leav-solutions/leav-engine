@@ -19,7 +19,7 @@ const AdminPermissions = (): JSX.Element => {
     const usersGroupsTreeId = 'users_groups';
 
     const userData = useUserData();
-    const readOnly = !userData.permissions[PermissionsActions.admin_edit_permission];
+    const readOnly = !userData.permissions[PermissionsActions.app_edit_permission];
 
     const [selectedGroupNode, setSelectedGroupNode] = React.useState<NodeData | null>(null);
     const _selectGroupNode = (nodeData: NodeData) =>
@@ -38,53 +38,53 @@ const AdminPermissions = (): JSX.Element => {
 
     if (selectedGroupNode) {
         const usersGroup = selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null;
-        const type = PermissionTypes.admin;
+        const type = PermissionTypes.app;
 
         const permsGroups = [
             {
                 id: 'libraries',
                 title: t('libraries.title'),
                 actions: [
-                    PermissionsActions.admin_access_libraries,
-                    PermissionsActions.admin_create_library,
-                    PermissionsActions.admin_edit_library,
-                    PermissionsActions.admin_delete_library
+                    PermissionsActions.app_access_libraries,
+                    PermissionsActions.app_create_library,
+                    PermissionsActions.app_edit_library,
+                    PermissionsActions.app_delete_library
                 ]
             },
             {
                 id: 'attributes',
                 title: t('attributes.title'),
                 actions: [
-                    PermissionsActions.admin_access_attributes,
-                    PermissionsActions.admin_create_attribute,
-                    PermissionsActions.admin_edit_attribute,
-                    PermissionsActions.admin_delete_attribute
+                    PermissionsActions.app_access_attributes,
+                    PermissionsActions.app_create_attribute,
+                    PermissionsActions.app_edit_attribute,
+                    PermissionsActions.app_delete_attribute
                 ]
             },
             {
                 id: 'trees',
                 title: t('trees.title'),
                 actions: [
-                    PermissionsActions.admin_access_trees,
-                    PermissionsActions.admin_create_tree,
-                    PermissionsActions.admin_edit_tree,
-                    PermissionsActions.admin_delete_tree
+                    PermissionsActions.app_access_trees,
+                    PermissionsActions.app_create_tree,
+                    PermissionsActions.app_edit_tree,
+                    PermissionsActions.app_delete_tree
                 ]
             },
             {
                 id: 'forms',
                 title: t('forms.title'),
                 actions: [
-                    PermissionsActions.admin_access_forms,
-                    PermissionsActions.admin_create_form,
-                    PermissionsActions.admin_edit_form,
-                    PermissionsActions.admin_delete_form
+                    PermissionsActions.app_access_forms,
+                    PermissionsActions.app_create_form,
+                    PermissionsActions.app_edit_form,
+                    PermissionsActions.app_delete_form
                 ]
             },
             {
                 id: 'permissions',
                 title: t('permissions.title'),
-                actions: [PermissionsActions.admin_access_permissions, PermissionsActions.admin_edit_permission]
+                actions: [PermissionsActions.app_access_permissions, PermissionsActions.app_edit_permission]
             }
         ];
 

@@ -12,8 +12,8 @@ describe('ProtectedRoute', () => {
         id: 1,
         name: 'Test User',
         permissions: {
-            [PermissionsActions.admin_access_attributes]: true,
-            [PermissionsActions.admin_edit_attribute]: true
+            [PermissionsActions.app_access_attributes]: true,
+            [PermissionsActions.app_edit_attribute]: true
         }
     };
 
@@ -34,7 +34,7 @@ describe('ProtectedRoute', () => {
             <UserContext.Provider value={defaultContext}>
                 <Router>
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_attributes]}
+                        permissions={[PermissionsActions.app_access_attributes]}
                         path="/"
                         component={TestComp}
                     />{' '}
@@ -47,11 +47,11 @@ describe('ProtectedRoute', () => {
     test('Render forbidden if not allowed', async () => {
         const comp = mount(
             <UserContext.Provider
-                value={{...defaultContext, permissions: {[PermissionsActions.admin_access_attributes]: false}}}
+                value={{...defaultContext, permissions: {[PermissionsActions.app_access_attributes]: false}}}
             >
                 <Router>
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_attributes]}
+                        permissions={[PermissionsActions.app_access_attributes]}
                         path="/"
                         component={TestComp}
                     />{' '}
@@ -67,17 +67,14 @@ describe('ProtectedRoute', () => {
                 value={{
                     ...defaultContext,
                     permissions: {
-                        [PermissionsActions.admin_access_attributes]: false,
-                        [PermissionsActions.admin_edit_attribute]: true
+                        [PermissionsActions.app_access_attributes]: false,
+                        [PermissionsActions.app_edit_attribute]: true
                     }
                 }}
             >
                 <Router>
                     <ProtectedRoute
-                        permissions={[
-                            PermissionsActions.admin_access_attributes,
-                            PermissionsActions.admin_edit_attribute
-                        ]}
+                        permissions={[PermissionsActions.app_access_attributes, PermissionsActions.app_edit_attribute]}
                         path="/"
                         component={TestComp}
                     />{' '}

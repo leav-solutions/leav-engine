@@ -53,7 +53,7 @@ function FormsList({
     return (
         <>
             <Grid>
-                {permissions[PermissionsActions.admin_create_form] && (
+                {permissions[PermissionsActions.app_create_form] && (
                     <Grid.Column floated="right" width={4} textAlign="right" verticalAlign="middle">
                         <Button
                             icon

@@ -19,7 +19,7 @@ const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element
     const libraryId = match.params.id;
     const {lang} = useLang();
     const userData = useUserData();
-    const readOnly = !userData.permissions[PermissionsActions.admin_edit_library];
+    const readOnly = !userData.permissions[PermissionsActions.app_edit_library];
 
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
         variables: {id: libraryId, lang}

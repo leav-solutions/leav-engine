@@ -35,43 +35,43 @@ function Home(): JSX.Element {
                 </LeftCol>
                 <Content className="content flex-col height100" style={{overflowX: 'scroll'}}>
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_libraries]}
+                        permissions={[PermissionsActions.app_access_libraries]}
                         path="/libraries"
                         component={Libraries}
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_libraries]}
+                        permissions={[PermissionsActions.app_access_libraries]}
                         path="/libraries/edit/:id?"
                         component={EditLibrary}
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_attributes]}
+                        permissions={[PermissionsActions.app_access_attributes]}
                         path="/attributes"
                         component={Attributes}
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_attributes]}
+                        permissions={[PermissionsActions.app_access_attributes]}
                         path="/attributes/edit/:id?"
                         component={EditAttribute}
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_trees]}
+                        permissions={[PermissionsActions.app_access_trees]}
                         path="/trees"
                         component={Trees}
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_trees]}
+                        permissions={[PermissionsActions.app_access_trees]}
                         path="/trees/edit/:id?"
                         component={EditTree}
                         exact
                     />
                     <ProtectedRoute
-                        permissions={[PermissionsActions.admin_access_permissions]}
+                        permissions={[PermissionsActions.app_access_permissions]}
                         path="/permissions"
                         component={AdminPermissions}
                         exact

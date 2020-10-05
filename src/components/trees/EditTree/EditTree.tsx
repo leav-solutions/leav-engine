@@ -54,7 +54,7 @@ const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
     };
 
     const _getEditTreeForm = (treeToEdit: GET_TREES_trees_list | null) => {
-        const readOnly = !userData.permissions[PermissionsActions.admin_edit_tree];
+        const readOnly = !userData.permissions[PermissionsActions.app_edit_tree];
 
         const onFormSubmit = async treeData => {
             await saveTree({

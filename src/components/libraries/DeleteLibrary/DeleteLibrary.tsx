@@ -45,7 +45,7 @@ const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | n
         });
     };
 
-    return userData.permissions[PermissionsActions.admin_delete_library] ? (
+    return userData.permissions[PermissionsActions.app_delete_library] ? (
         <DeleteLibMutation mutation={deleteLibQuery} update={_updateCache}>
             {deleteLib => {
                 const onDelete = async () =>

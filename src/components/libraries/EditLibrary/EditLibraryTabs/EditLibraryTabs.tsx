@@ -63,7 +63,7 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
         },
         {
             key: 'forms',
-            mustBeDisplayed: !isCreationMode && permissions[PermissionsActions.admin_access_forms],
+            mustBeDisplayed: !isCreationMode && permissions[PermissionsActions.app_access_forms],
             menuItem: t('forms.title'),
             render: () => {
                 return (

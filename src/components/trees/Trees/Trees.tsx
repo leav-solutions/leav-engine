@@ -44,7 +44,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
                         {t('trees.title')}
                     </Header>
                 </Grid.Column>
-                {userData.permissions[PermissionsActions.admin_create_tree] && (
+                {userData.permissions[PermissionsActions.app_create_tree] && (
                     <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
                         <Button icon labelPosition="left" size="medium" as={Link} to={'/trees/edit/'}>
                             <Icon name="plus" />

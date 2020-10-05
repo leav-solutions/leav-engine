@@ -8,8 +8,8 @@ import EditPermissions from './EditPermissions';
 describe('EditPermissions', () => {
     test('Snapshot test', async () => {
         const permParams: GET_PERMISSIONSVariables = {
-            type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_create_library, PermissionsActions.admin_edit_library],
+            type: PermissionTypes.app,
+            actions: [PermissionsActions.app_create_library, PermissionsActions.app_edit_library],
             usersGroup: '1234567'
         };
 

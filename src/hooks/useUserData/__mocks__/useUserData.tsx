@@ -5,7 +5,7 @@ export default () => {
         id: 1,
         name: 'Test',
         permissions: Object.values(PermissionsActions)
-            .filter(a => !!a.match(/^admin_/))
+            .filter(a => !!a.match(/^app_/))
             .reduce((perms, p) => {
                 perms[p] = true;
 

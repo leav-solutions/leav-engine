@@ -50,7 +50,7 @@ const DeleteTree = ({tree, filters}: IDeleteTreeProps): JSX.Element | null => {
 
     // VERIF if you can delete the 'refetchQueries'
 
-    return !!tree && userData.permissions[PermissionsActions.admin_delete_tree] ? (
+    return !!tree && userData.permissions[PermissionsActions.app_delete_tree] ? (
         <DeleteTreeMutation mutation={deleteTreeQuery} refetchQueries={[getTreesQueryName]} update={_updateCache}>
             {deleteTree => {
                 const onDelete = async () =>
