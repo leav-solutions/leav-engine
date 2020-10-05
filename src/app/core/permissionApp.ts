@@ -2,7 +2,7 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IPermissionsHelperDomain} from 'domain/permission/permissionsHelperDomain';
 import {
-    AdminPermissionsActions,
+    AppPermissionsActions,
     AttributePermissionsActions,
     IPermission,
     ITreePermissionsConf,
@@ -56,7 +56,7 @@ export default function({
                     enum PermissionsActions {
                         ${Object.values(RecordPermissionsActions).join(' ')}
                         ${Object.values(AttributePermissionsActions).join(' ')}
-                        ${Object.values(AdminPermissionsActions).join(' ')}
+                        ${Object.values(AppPermissionsActions).join(' ')}
                     }
 
                     type HeritedPermissionAction {

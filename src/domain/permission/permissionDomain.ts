@@ -6,7 +6,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {ITreeNode} from '_types/tree';
 import PermissionError from '../../errors/PermissionError';
 import {
-    AdminPermissionsActions,
+    AppPermissionsActions,
     IPermission,
     IPermissionsTreeTarget,
     LibraryPermissionsActions,
@@ -78,7 +78,7 @@ export interface IPermissionDomain {
         userId,
         ctx
     }: {
-        action: AdminPermissionsActions;
+        action: AppPermissionsActions;
         userId: string;
         ctx: IQueryInfos;
     }): Promise<boolean>;
@@ -88,7 +88,7 @@ export interface IPermissionDomain {
         userGroupId,
         ctx
     }: {
-        action: AdminPermissionsActions;
+        action: AppPermissionsActions;
         userGroupId: string;
         ctx: IQueryInfos;
     }): Promise<boolean>;
@@ -136,7 +136,7 @@ export default function({
     const ret: IPermissionDomain = {
         async savePermission(permData: IPermission, ctx: IQueryInfos): Promise<IPermission> {
             // Does user have the permission to save permissions?
-            const action = AdminPermissionsActions.EDIT_PERMISSION;
+            const action = AppPermissionsActions.EDIT_PERMISSION;
             const canSavePermission = await ret.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
@@ -283,7 +283,7 @@ export default function({
             );
 
             const perm = await ret.getPermissionByUserGroups({
-                type: PermissionTypes.ADMIN,
+                type: PermissionTypes.APP,
                 action,
                 userGroupsPaths,
                 ctx
@@ -303,7 +303,7 @@ export default function({
             });
 
             const perm = await ret.getPermissionByUserGroups({
-                type: PermissionTypes.ADMIN,
+                type: PermissionTypes.APP,
                 action,
                 userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
                 ctx

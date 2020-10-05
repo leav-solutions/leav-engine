@@ -6,7 +6,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {AdminPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
@@ -166,7 +166,7 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
             expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                AdminPermissionsActions.CREATE_ATTRIBUTE
+                AppPermissionsActions.CREATE_ATTRIBUTE
             );
 
             expect(newAttr).toMatchObject({
@@ -254,7 +254,7 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
             expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                AdminPermissionsActions.EDIT_ATTRIBUTE
+                AppPermissionsActions.EDIT_ATTRIBUTE
             );
 
             expect(updatedLib).toMatchObject({id: 'test', system: false});
@@ -712,7 +712,7 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
             expect(mockPermDomain.getAdminPermission).toBeCalled();
             expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                AdminPermissionsActions.DELETE_ATTRIBUTE
+                AppPermissionsActions.DELETE_ATTRIBUTE
             );
         });
 

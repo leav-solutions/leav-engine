@@ -11,7 +11,7 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
-import {AdminPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
 import {ITree, ITreeElement, ITreeNode, TreeBehavior} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -215,7 +215,7 @@ export default function({
             const dataToSave = existingTree ? omit(treeData, uneditableFields) : {...defaultParams, ...treeData};
 
             // Check permissions
-            const action = existingTree ? AdminPermissionsActions.EDIT_TREE : AdminPermissionsActions.CREATE_TREE;
+            const action = existingTree ? AppPermissionsActions.EDIT_TREE : AppPermissionsActions.CREATE_TREE;
             const canSaveTree = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
@@ -258,7 +258,7 @@ export default function({
         },
         async deleteTree(id: string, ctx: IQueryInfos): Promise<ITree> {
             // Check permissions
-            const action = AdminPermissionsActions.DELETE_TREE;
+            const action = AppPermissionsActions.DELETE_TREE;
             const canSaveTree = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {

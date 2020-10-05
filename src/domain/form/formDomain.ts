@@ -11,7 +11,7 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {FormElementTypes, IForm, IFormStrict} from '../../_types/forms';
 import {IList, SortOrder} from '../../_types/list';
-import {AdminPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions} from '../../_types/permissions';
 import {validateLibrary} from './helpers/validateLibrary';
 
 export interface IFormDomain {
@@ -101,7 +101,7 @@ export default function(deps: IDeps = {}): IFormDomain {
                 : {...defaultParams, ...form};
 
             // Check permissions
-            const permToCheck = existingForm ? AdminPermissionsActions.EDIT_FORM : AdminPermissionsActions.CREATE_FORM;
+            const permToCheck = existingForm ? AppPermissionsActions.EDIT_FORM : AppPermissionsActions.CREATE_FORM;
             if (!(await permissionDomain.getAdminPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
                 throw new PermissionError(permToCheck);
             }
@@ -151,7 +151,7 @@ export default function(deps: IDeps = {}): IFormDomain {
         },
         async deleteForm({library, id, ctx}): Promise<IForm> {
             // Check permissions
-            const permToCheck = AdminPermissionsActions.DELETE_FORM;
+            const permToCheck = AppPermissionsActions.DELETE_FORM;
             if (!(await permissionDomain.getAdminPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
                 throw new PermissionError(permToCheck);
             }

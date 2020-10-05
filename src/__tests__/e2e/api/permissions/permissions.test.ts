@@ -337,19 +337,19 @@ describe('Permissions', () => {
             const resSaveAdminPerm = await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
-                        type: admin,
+                        type: app,
                         usersGroup: "${allUsersTreeElemId}",
                         actions: [
-                            {name: admin_create_library, allowed: true},
-                            {name: admin_edit_library, allowed: true},
-                            {name: admin_delete_library, allowed: true},
-                            {name: admin_create_attribute, allowed: true},
-                            {name: admin_edit_attribute, allowed: true},
-                            {name: admin_delete_attribute, allowed: true},
-                            {name: admin_create_tree, allowed: true},
-                            {name: admin_edit_tree, allowed: true},
-                            {name: admin_delete_tree, allowed: true},
-                            {name: admin_edit_permission allowed: true}
+                            {name: app_create_library, allowed: true},
+                            {name: app_edit_library, allowed: true},
+                            {name: app_delete_library, allowed: true},
+                            {name: app_create_attribute, allowed: true},
+                            {name: app_edit_attribute, allowed: true},
+                            {name: app_delete_attribute, allowed: true},
+                            {name: app_create_tree, allowed: true},
+                            {name: app_edit_tree, allowed: true},
+                            {name: app_delete_tree, allowed: true},
+                            {name: app_edit_permission allowed: true}
                         ]
                     }
                 ) {
@@ -369,9 +369,9 @@ describe('Permissions', () => {
             // Get admin permissions
             const resGetAdminPerm = await makeGraphQlCall(`{
                 permissions(
-                    type: admin,
+                    type: app,
                     usersGroup: "${allUsersTreeElemId}",
-                    actions: [admin_create_library]
+                    actions: [app_create_library]
                 ) {
                     name
                     allowed
@@ -379,13 +379,13 @@ describe('Permissions', () => {
             }`);
 
             expect(resGetAdminPerm.status).toBe(200);
-            expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'admin_create_library', allowed: true}]);
+            expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'app_create_library', allowed: true}]);
             expect(resGetAdminPerm.data.errors).toBeUndefined();
 
             const resIsAllowed = await makeGraphQlCall(`query {
                 isAllowed(
-                    type: admin,
-                    actions: [admin_create_library]
+                    type: app,
+                    actions: [app_create_library]
                 ) {
                     name
                     allowed
@@ -394,7 +394,7 @@ describe('Permissions', () => {
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toBeDefined();
-            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('admin_create_library');
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('app_create_library');
             expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(true);
             expect(resIsAllowed.data.errors).toBeUndefined();
         });
@@ -728,10 +728,10 @@ describe('Permissions', () => {
                 await makeGraphQlCall(`mutation {
                     savePermission(
                         permission: {
-                            type: admin,
+                            type: app,
                             usersGroup: "${userGroupId1}",
                             actions: [
-                                {name: admin_create_attribute, allowed: false},
+                                {name: app_create_attribute, allowed: false},
                             ]
                         }
                     ) { type }
@@ -740,14 +740,14 @@ describe('Permissions', () => {
                 // Get perm
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: heritedPermissions(
-                        type: admin,
-                        actions: [admin_create_attribute],
+                        type: app,
+                        actions: [app_create_attribute],
                         userGroupId: "${userGroupId2}",
                     ) { name allowed }
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('admin_create_attribute');
+                expect(permHeritGroup.data.data.p[0].name).toBe('app_create_attribute');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
             });
 
@@ -755,14 +755,14 @@ describe('Permissions', () => {
                 // Get perm
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: heritedPermissions(
-                        type: admin,
-                        actions: [admin_create_attribute],
+                        type: app,
+                        actions: [app_create_attribute],
                         userGroupId: "${userGroupId4}",
                     ) { name allowed }
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('admin_create_attribute');
+                expect(permHeritGroup.data.data.p[0].name).toBe('app_create_attribute');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
         });

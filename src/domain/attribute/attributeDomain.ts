@@ -8,7 +8,7 @@ import ValidationError from '../../errors/ValidationError';
 import {IAttribute, IOAllowedTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
-import {AdminPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
@@ -104,8 +104,8 @@ export default function({
 
             // Check permissions
             const action = isExistingAttr
-                ? AdminPermissionsActions.EDIT_ATTRIBUTE
-                : AdminPermissionsActions.CREATE_ATTRIBUTE;
+                ? AppPermissionsActions.EDIT_ATTRIBUTE
+                : AppPermissionsActions.CREATE_ATTRIBUTE;
             const canSavePermission = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
@@ -140,7 +140,7 @@ export default function({
         },
         async deleteAttribute({id, ctx}): Promise<IAttribute> {
             // Check permissions
-            const action = AdminPermissionsActions.DELETE_ATTRIBUTE;
+            const action = AppPermissionsActions.DELETE_ATTRIBUTE;
             const canSavePermission = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
