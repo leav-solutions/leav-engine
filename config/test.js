@@ -4,7 +4,7 @@ module.exports = {
         port: 7357
     },
     db: {
-        url: 'http://root:@arangodb:8529',
+        url: process.env.ARANGO_URL || 'http://root:@arangodb:8529',
         name: 'leav_test'
     },
     elasticsearch: {

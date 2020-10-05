@@ -6,7 +6,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
-import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permissions';
+import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import libraryDomain from './libraryDomain';
@@ -266,7 +266,7 @@ describe('LibraryDomain', () => {
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
                 expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                    AdminPermissionsActions.CREATE_LIBRARY
+                    AppPermissionsActions.CREATE_LIBRARY
                 );
             });
 
@@ -421,7 +421,7 @@ describe('LibraryDomain', () => {
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
                 expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                    AdminPermissionsActions.EDIT_LIBRARY
+                    AppPermissionsActions.EDIT_LIBRARY
                 );
             });
 
@@ -477,7 +477,7 @@ describe('LibraryDomain', () => {
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
                 expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                    AdminPermissionsActions.EDIT_LIBRARY
+                    AppPermissionsActions.EDIT_LIBRARY
                 );
             });
 
@@ -702,7 +702,7 @@ describe('LibraryDomain', () => {
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                AdminPermissionsActions.DELETE_LIBRARY
+                AppPermissionsActions.DELETE_LIBRARY
             );
         });
 

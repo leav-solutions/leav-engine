@@ -14,7 +14,7 @@ import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttribute
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
-import {AdminPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionDomain} from '../permission/permissionDomain';
 import checkSavePermission from './helpers/checkSavePermission';
@@ -230,7 +230,7 @@ export default function({
         },
         async deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary> {
             // Check permissions
-            const action = AdminPermissionsActions.DELETE_LIBRARY;
+            const action = AppPermissionsActions.DELETE_LIBRARY;
             const canSaveLibrary = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveLibrary) {

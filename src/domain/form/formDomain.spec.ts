@@ -6,7 +6,7 @@ import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {AdminPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions} from '../../_types/permissions';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
@@ -267,7 +267,7 @@ describe('formDomain', () => {
             await expect(domain.saveForm({form: {...mockForm}, ctx})).rejects.toThrow(PermissionError);
 
             expect(mockAdminPermForbiddenDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                AdminPermissionsActions.CREATE_FORM
+                AppPermissionsActions.CREATE_FORM
             );
             expect(mockFormRepo.createForm).not.toBeCalled();
             expect(mockFormRepo.updateForm).not.toBeCalled();
@@ -295,7 +295,7 @@ describe('formDomain', () => {
             await expect(domain.saveForm({form: {...mockForm}, ctx})).rejects.toThrow(PermissionError);
 
             expect(mockAdminPermForbiddenDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                AdminPermissionsActions.EDIT_FORM
+                AppPermissionsActions.EDIT_FORM
             );
             expect(mockFormRepo.createForm).not.toBeCalled();
             expect(mockFormRepo.updateForm).not.toBeCalled();
@@ -357,7 +357,7 @@ describe('formDomain', () => {
             );
 
             expect(mockAdminPermForbiddenDomain.getAdminPermission.mock.calls[0][0].action).toBe(
-                AdminPermissionsActions.DELETE_FORM
+                AppPermissionsActions.DELETE_FORM
             );
             expect(mockFormRepo.deleteForm).not.toBeCalled();
         });

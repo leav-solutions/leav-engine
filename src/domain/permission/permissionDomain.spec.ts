@@ -4,7 +4,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {
-    AdminPermissionsActions,
+    AppPermissionsActions,
     LibraryPermissionsActions,
     PermissionTypes,
     RecordPermissionsActions
@@ -289,8 +289,8 @@ describe('PermissionDomain', () => {
                 });
 
             const perm = await permDomain.getPermissionByUserGroups({
-                type: PermissionTypes.ADMIN,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                type: PermissionTypes.APP,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupsPaths: mockUserGroups,
                 ctx
             });
@@ -313,8 +313,8 @@ describe('PermissionDomain', () => {
                 });
 
             const perm = await permDomain.getPermissionByUserGroups({
-                type: PermissionTypes.ADMIN,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                type: PermissionTypes.APP,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupsPaths: mockUserGroups,
                 ctx
             });
@@ -333,8 +333,8 @@ describe('PermissionDomain', () => {
                 });
 
             const perm = await permDomain.getPermissionByUserGroups({
-                type: PermissionTypes.ADMIN,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                type: PermissionTypes.APP,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupsPaths: mockUserGroups,
                 ctx
             });
@@ -353,8 +353,8 @@ describe('PermissionDomain', () => {
                 });
 
             const perm = await permDomain.getPermissionByUserGroups({
-                type: PermissionTypes.ADMIN,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                type: PermissionTypes.APP,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupsPaths: [],
                 ctx
             });
@@ -369,8 +369,8 @@ describe('PermissionDomain', () => {
             permDomain.getSimplePermission = global.__mockPromise(null);
 
             const perm = await permDomain.getPermissionByUserGroups({
-                type: PermissionTypes.ADMIN,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                type: PermissionTypes.APP,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupsPaths: mockUserGroups,
                 ctx
             });
@@ -440,7 +440,7 @@ describe('PermissionDomain', () => {
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getAdminPermission({
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '12345',
                 ctx
             });
@@ -460,7 +460,7 @@ describe('PermissionDomain', () => {
             permDomain.getDefaultPermission = jest.fn().mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getAdminPermission({
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '12345',
                 ctx
             });
@@ -643,7 +643,7 @@ describe('PermissionDomain', () => {
             permDomain.getPermissionByUserGroups = global.__mockPromise(true);
 
             const perm = await permDomain.getHeritedAdminPermission({
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupId: '12345',
                 ctx
             });
@@ -656,7 +656,7 @@ describe('PermissionDomain', () => {
             permDomain.getDefaultPermission = global.__mockPromise(false);
 
             const perm = await permDomain.getHeritedAdminPermission({
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupId: '12345',
                 ctx
             });

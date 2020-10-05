@@ -1,7 +1,7 @@
 export enum PermissionTypes {
     RECORD = 'record',
     ATTRIBUTE = 'attribute',
-    ADMIN = 'admin',
+    APP = 'app',
     LIBRARY = 'library'
 }
 
@@ -26,33 +26,33 @@ export enum AttributePermissionsActions {
     DELETE_VALUE = 'delete_value'
 }
 
-export enum AdminPermissionsActions {
-    ACCESS_LIBRARIES = 'admin_access_libraries',
-    CREATE_LIBRARY = 'admin_create_library',
-    EDIT_LIBRARY = 'admin_edit_library',
-    DELETE_LIBRARY = 'admin_delete_library',
-    ACCESS_ATTRIBUTES = 'admin_access_attributes',
-    CREATE_ATTRIBUTE = 'admin_create_attribute',
-    EDIT_ATTRIBUTE = 'admin_edit_attribute',
-    DELETE_ATTRIBUTE = 'admin_delete_attribute',
-    ACCESS_TREES = 'admin_access_trees',
-    CREATE_TREE = 'admin_create_tree',
-    EDIT_TREE = 'admin_edit_tree',
-    DELETE_TREE = 'admin_delete_tree',
-    ACCESS_FORMS = 'admin_access_forms',
-    CREATE_FORM = 'admin_create_form',
-    EDIT_FORM = 'admin_edit_form',
-    DELETE_FORM = 'admin_delete_form',
-    ACCESS_PERMISSIONS = 'admin_access_permissions',
-    EDIT_PERMISSION = 'admin_edit_permission',
-    ACCESS_NAVIGATOR = 'admin_access_navigator'
+export enum AppPermissionsActions {
+    ACCESS_LIBRARIES = 'app_access_libraries',
+    CREATE_LIBRARY = 'app_create_library',
+    EDIT_LIBRARY = 'app_edit_library',
+    DELETE_LIBRARY = 'app_delete_library',
+    ACCESS_ATTRIBUTES = 'app_access_attributes',
+    CREATE_ATTRIBUTE = 'app_create_attribute',
+    EDIT_ATTRIBUTE = 'app_edit_attribute',
+    DELETE_ATTRIBUTE = 'app_delete_attribute',
+    ACCESS_TREES = 'app_access_trees',
+    CREATE_TREE = 'app_create_tree',
+    EDIT_TREE = 'app_edit_tree',
+    DELETE_TREE = 'app_delete_tree',
+    ACCESS_FORMS = 'app_access_forms',
+    CREATE_FORM = 'app_create_form',
+    EDIT_FORM = 'app_edit_form',
+    DELETE_FORM = 'app_delete_form',
+    ACCESS_PERMISSIONS = 'app_access_permissions',
+    EDIT_PERMISSION = 'app_edit_permission',
+    ACCESS_NAVIGATOR = 'app_access_navigator'
 }
 
 export type PermissionsActions =
     | LibraryPermissionsActions
     | RecordPermissionsActions
     | AttributePermissionsActions
-    | AdminPermissionsActions;
+    | AppPermissionsActions;
 
 export enum PermissionsRelations {
     AND = 'and',

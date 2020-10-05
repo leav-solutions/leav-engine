@@ -75,7 +75,8 @@ export default function({
                             {id: value as string, library: attrProps.linked_library},
                             ctx
                         );
-                        data.new[key] = String(recordIdentity.label);
+
+                        data.new[key] = String(recordIdentity.label || value);
                     }
                 }
 
@@ -126,7 +127,7 @@ export default function({
                                             ctx
                                         );
 
-                                        (val as IValue).value = recordIdentity.label;
+                                        (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
                                     }
 
                                     return {
@@ -176,7 +177,7 @@ export default function({
                                         ctx
                                     );
 
-                                    (val as IValue).value = recordIdentity.label;
+                                    (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
                                 }
 
                                 return {
@@ -195,7 +196,7 @@ export default function({
                             {id: String(data.value.new), library: attr.linked_library},
                             ctx
                         );
-                        data.value.new = recordIdentity.label;
+                        data.value.new = recordIdentity.label || String(data.value.new);
                     }
 
                     await elasticsearchService.update(data.libraryId, data.recordId, {

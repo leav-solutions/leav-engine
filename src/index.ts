@@ -60,6 +60,7 @@ import {initAmqp} from './infra/amqp';
         }
     } catch (e) {
         console.error(e);
+        process.exit(1);
     }
 })().catch(e => console.error(e));
 

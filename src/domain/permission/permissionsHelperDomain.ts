@@ -2,7 +2,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {
-    AdminPermissionsActions,
+    AppPermissionsActions,
     AttributePermissionsActions,
     IPermissionsTreeTarget,
     LibraryPermissionsActions,
@@ -106,8 +106,8 @@ export default function({
                         ctx
                     });
                     break;
-                case PermissionTypes.ADMIN:
-                    action = action as AdminPermissionsActions;
+                case PermissionTypes.APP:
+                    action = action as AppPermissionsActions;
                     perm = await permissionDomain.getHeritedAdminPermission({
                         action,
                         userGroupId,
@@ -173,8 +173,8 @@ export default function({
                         ctx
                     });
                     break;
-                case PermissionTypes.ADMIN:
-                    action = action as AdminPermissionsActions;
+                case PermissionTypes.APP:
+                    action = action as AppPermissionsActions;
                     perm = await permissionDomain.getAdminPermission({
                         action,
                         userId,

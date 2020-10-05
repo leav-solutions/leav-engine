@@ -1,7 +1,7 @@
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {
-    AdminPermissionsActions,
+    AppPermissionsActions,
     AttributePermissionsActions,
     LibraryPermissionsActions,
     PermissionTypes,
@@ -71,9 +71,9 @@ describe('HeritedPermissionDomain', () => {
             });
 
             const perm = await permsHelperDomain.getHeritedPermissions({
-                type: PermissionTypes.ADMIN,
+                type: PermissionTypes.APP,
                 applyTo: 'test_lib',
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userGroupId: '987654321',
                 ctx
             });
@@ -94,8 +94,8 @@ describe('HeritedPermissionDomain', () => {
             });
 
             const perm = await permsHelperDomain.isAllowed({
-                type: PermissionTypes.ADMIN,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                type: PermissionTypes.APP,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 ctx
             });
@@ -115,7 +115,7 @@ describe('HeritedPermissionDomain', () => {
 
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.LIBRARY,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 applyTo: 'test_lib',
                 ctx
@@ -136,7 +136,7 @@ describe('HeritedPermissionDomain', () => {
 
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.RECORD,
-                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 applyTo: 'test_lib',
                 target: {
@@ -162,7 +162,7 @@ describe('HeritedPermissionDomain', () => {
             await expect(
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
-                    action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                    action: AppPermissionsActions.CREATE_ATTRIBUTE,
                     userId: '123',
                     applyTo: 'test_lib',
                     ctx
@@ -173,7 +173,7 @@ describe('HeritedPermissionDomain', () => {
             await expect(
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
-                    action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+                    action: AppPermissionsActions.CREATE_ATTRIBUTE,
                     userId: '123',
                     applyTo: 'test_lib',
                     target: {},
