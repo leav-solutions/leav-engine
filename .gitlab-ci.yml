@@ -33,7 +33,7 @@ e2eTests:
     stage: test
     image: node:alpine
     services:
-        - arangodb:3.5
+        - arangodb:3.7
     variables:
         NODE_ENV: test
         ARANGO_NO_AUTH: 1
