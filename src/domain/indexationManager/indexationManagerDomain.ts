@@ -70,7 +70,7 @@ export default function({
                 for (const [key, value] of Object.entries(data.new)) {
                     const attrProps = await attributeDomain.getAttributeProperties({id: key, ctx});
 
-                    if (attrProps.type === AttributeTypes.SIMPLE_LINK) {
+                    if (typeof attrProps.linked_library !== 'undefined') {
                         const recordIdentity = await recordDomain.getRecordIdentity(
                             {id: value as string, library: attrProps.linked_library},
                             ctx
@@ -121,7 +121,7 @@ export default function({
                                     });
 
                                     // if simple link replace id by record label
-                                    if (fta.type === AttributeTypes.SIMPLE_LINK) {
+                                    if (typeof fta.linked_library !== 'undefined') {
                                         const recordIdentity = await recordDomain.getRecordIdentity(
                                             {id: (val as IValue).value.id, library: fta.linked_library},
                                             ctx
@@ -171,7 +171,7 @@ export default function({
                                 });
 
                                 // if simple link replace id by record label
-                                if (ati.type === AttributeTypes.SIMPLE_LINK) {
+                                if (typeof ati.linked_library !== 'undefined') {
                                     const recordIdentity = await recordDomain.getRecordIdentity(
                                         {id: (val as IValue).value.id, library: ati.linked_library},
                                         ctx
@@ -191,7 +191,7 @@ export default function({
                 } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
                     // if simple link replace id by record label
                     const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
-                    if (attr.type === AttributeTypes.SIMPLE_LINK) {
+                    if (typeof attr.linked_library !== 'undefined') {
                         const recordIdentity = await recordDomain.getRecordIdentity(
                             {id: String(data.value.new), library: attr.linked_library},
                             ctx
@@ -288,7 +288,7 @@ export default function({
                             });
 
                             // if simple link replace id by record label
-                            if (fta.type === AttributeTypes.SIMPLE_LINK) {
+                            if (typeof fta.linked_library !== 'undefined') {
                                 const recordIdentity = await recordDomain.getRecordIdentity(
                                     {id: (val as IValue).value.id, library: fta.linked_library},
                                     ctx

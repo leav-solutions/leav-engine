@@ -26,7 +26,6 @@ import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
 import {EventType} from '../../_types/event';
 import * as Config from '_types/config';
-import {exist} from '@hapi/joi';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
