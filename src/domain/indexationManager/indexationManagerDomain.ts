@@ -1,5 +1,5 @@
 import {IAmqpService} from 'infra/amqp/amqpService';
-import {IRecordDomain} from 'domain/record/recordDomain';
+import {IRecordDomain, IFindRecordParams} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
@@ -11,9 +11,9 @@ import * as Joi from '@hapi/joi';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {isEqual, pick} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributeTypes} from '../../_types/attribute';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {v4 as uuidv4} from 'uuid';
-import {Operator} from '../../_types/record';
+import {Operator, IRecord} from '../../_types/record';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
@@ -47,6 +47,46 @@ export default function({
     'core.domain.value': valueDomain = null,
     'core.utils': utils = null
 }: IDeps): IIndexationManagerDomain {
+    const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
+        const records = await recordDomain.find({
+            params: findRecordParams,
+            ctx
+        });
+
+        const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
+
+        for (const record of records.list) {
+            const data = (
+                await Promise.all(
+                    fullTextAttributes.map(async fta => {
+                        const val = await recordDomain.getRecordFieldValue({
+                            library: findRecordParams.library,
+                            record,
+                            attributeId: fta.id,
+                            ctx
+                        });
+
+                        // if simple link replace id by record label
+                        if (typeof fta.linked_library !== 'undefined') {
+                            const recordIdentity = await recordDomain.getRecordIdentity(
+                                {id: (val as IValue).value.id, library: fta.linked_library},
+                                ctx
+                            );
+
+                            (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
+                        }
+
+                        return {
+                            [fta.id]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
+                        };
+                    })
+                )
+            ).reduce((acc, e) => ({...acc, ...e}), {});
+
+            await elasticsearchService.index(findRecordParams.library, record.id, data);
+        }
+    };
+
     const _onMessage = async (msg: string): Promise<void> => {
         const event: IEvent = JSON.parse(msg);
         const ctx: IQueryInfos = {
@@ -101,45 +141,29 @@ export default function({
                         ))
                 ) {
                     if (exists) {
-                        await elasticsearchService.indiceDelete(data.id);
-                    }
+await elasticsearchService.indiceDelete(data.id);
+}
+                    await _indexRecords({library: data.id}, ctx);
+                }
 
-                    const records = await recordDomain.find({
-                        params: {library: data.id},
+                if (typeof data.label !== 'undefined') {
+                    const attrs = await attributeDomain.getAttributes({
+                        params: {
+                            filters: {linked_library: data.id}
+                        },
                         ctx
                     });
 
-                    for (const record of records.list) {
-                        const obj = (
-                            await Promise.all(
-                                fullTextAttributes.map(async fta => {
-                                    const val = await recordDomain.getRecordFieldValue({
-                                        library: data.id,
-                                        record,
-                                        attributeId: fta.id,
-                                        ctx
-                                    });
+                    let libraries = [];
+                    for (const attr of attrs.list) {
+                        const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
+                        libraries.push(res);
+                    }
 
-                                    // if simple link replace id by record label
-                                    if (typeof fta.linked_library !== 'undefined') {
-                                        const recordIdentity = await recordDomain.getRecordIdentity(
-                                            {id: (val as IValue).value.id, library: fta.linked_library},
-                                            ctx
-                                        );
+                    libraries = [...new Set([].concat(...libraries))];
 
-                                        (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
-                                    }
-
-                                    return {
-                                        [fta.id]: Array.isArray(val)
-                                            ? val.map(v => String(v?.value))
-                                            : String(val?.value)
-                                    };
-                                })
-                            )
-                        ).reduce((acc, e) => ({...acc, ...e}), {});
-
-                        await elasticsearchService.index(data.id, record.id, obj);
+                    for (const library of libraries) {
+                        await _indexRecords({library}, ctx);
                     }
                 }
 
@@ -150,44 +174,13 @@ export default function({
                 break;
             case EventType.VALUE_SAVE:
                 data = (event.payload as IValuePayload).data;
+
                 const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
 
                 if (data.attributeId === 'active' && data.value.new === false) {
                     await elasticsearchService.deleteDocument(data.libraryId, data.recordId);
                 } else if (data.attributeId === 'active' && data.value.new === true) {
-                    const records = await recordDomain.find({
-                        params: {library: data.libraryId, filters: [{field: 'id', value: data.recordId}]},
-                        ctx
-                    });
-
-                    const obj = (
-                        await Promise.all(
-                            attrToIndex.map(async ati => {
-                                const val = await recordDomain.getRecordFieldValue({
-                                    library: data.libraryId,
-                                    record: records.list[0],
-                                    attributeId: ati.id,
-                                    ctx
-                                });
-
-                                // if simple link replace id by record label
-                                if (typeof ati.linked_library !== 'undefined') {
-                                    const recordIdentity = await recordDomain.getRecordIdentity(
-                                        {id: (val as IValue).value.id, library: ati.linked_library},
-                                        ctx
-                                    );
-
-                                    (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
-                                }
-
-                                return {
-                                    [ati.id]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
-                                };
-                            })
-                        )
-                    ).reduce((acc, e) => ({...acc, ...e}), {});
-
-                    await elasticsearchService.index(data.libraryId, data.recordId, obj);
+                    await _indexRecords({library: data.libraryId, filters: [{field: 'id', value: data.recordId}]}, ctx);
                 } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
                     // if simple link replace id by record label
                     const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
@@ -264,48 +257,7 @@ export default function({
                   }, [])
                 : [];
 
-            const fullTextAttr = await libraryDomain.getLibraryFullTextAttributes(libraryId, ctx);
-
-            const res = (
-                await recordDomain.find({
-                    params: {
-                        library: libraryId,
-                        filters
-                    },
-                    ctx
-                })
-            ).list;
-
-            for (const record of res) {
-                const obj = (
-                    await Promise.all(
-                        fullTextAttr.map(async fta => {
-                            const val = await recordDomain.getRecordFieldValue({
-                                library: libraryId,
-                                record,
-                                attributeId: fta.id,
-                                ctx
-                            });
-
-                            // if simple link replace id by record label
-                            if (typeof fta.linked_library !== 'undefined') {
-                                const recordIdentity = await recordDomain.getRecordIdentity(
-                                    {id: (val as IValue).value.id, library: fta.linked_library},
-                                    ctx
-                                );
-
-                                (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
-                            }
-
-                            return {
-                                [fta.id]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
-                            };
-                        })
-                    )
-                ).reduce((acc, e) => ({...acc, ...e}), {});
-
-                await elasticsearchService.index(libraryId, record.id, obj);
-            }
+            await _indexRecords({library: libraryId, filters}, ctx);
 
             return true;
         }

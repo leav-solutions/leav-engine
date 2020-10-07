@@ -23,6 +23,7 @@ export interface IRecordPayload extends IPayload {
 export interface ILibraryPayload extends IPayload {
     data: {
         id: string;
+        label?: string;
     };
 }
 

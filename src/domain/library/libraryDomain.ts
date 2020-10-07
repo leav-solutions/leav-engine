@@ -34,6 +34,7 @@ export interface ILibraryDomain {
     getLibraryProperties(id: string, ctx: IQueryInfos): Promise<ILibrary>;
     getLibraryAttributes(id: string, ctx: IQueryInfos): Promise<IAttribute[]>;
     getLibraryFullTextAttributes(id: string, ctx: IQueryInfos): Promise<IAttribute[]>;
+    getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]>;
 }
 
 interface IDeps {
@@ -139,6 +140,9 @@ export default function({
             const currentFullTextAttributes = existingLib
                 ? (await this.getLibraryFullTextAttributes(libData.id, ctx)).map(a => a.id)
                 : [];
+            const currentRecordIdentityConf = existingLib
+                ? (await this.getLibraryProperties(libData.id, ctx)).recordIdentityConf
+                : {};
 
             // Check permissions
             const permCheck = await checkSavePermission(existingLib, ctx.userId, {permissionDomain}, ctx);
@@ -220,7 +224,13 @@ export default function({
             await eventsManager.send(
                 {
                     type: EventType.LIBRARY_SAVE,
-                    data: {id: lib.id}
+                    data: {
+                        id: lib.id,
+                        label:
+                            libData.recordIdentityConf?.label !== currentRecordIdentityConf?.label
+                                ? libData.recordIdentityConf?.label
+                                : undefined
+                    }
                 },
                 ctx
             );
@@ -262,6 +272,18 @@ export default function({
             );
 
             return deletedLibrary;
+        },
+        async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
+            const attrs = await attributeDomain.getAttributes({
+                params: {filters: {id: attributeId}, strictFilters: true},
+                ctx
+            });
+
+            if (!attrs.list.length) {
+                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
+            }
+
+            return libraryRepo.getLibrariesUsingAttribute(attributeId, ctx);
         }
     };
 }

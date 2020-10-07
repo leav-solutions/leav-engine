@@ -7,7 +7,7 @@ import {IAttribute} from '../../_types/attribute';
 import {ILibrary} from '../../_types/library';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
+import {LIB_ATTRIB_COLLECTION_NAME, LIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
@@ -15,11 +15,6 @@ export interface IAttributeRepo {
     updateAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     createAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     deleteAttribute({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): Promise<IAttribute>;
-
-    /**
-     * Get all libraries for which this attribute is enabled
-     */
-    getLibrariesUsingAttribute?({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<ILibrary[]>;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
@@ -127,19 +122,6 @@ export default function({
 
             // Return deleted attribute
             return dbUtils.cleanup(res.pop());
-        },
-        async getLibrariesUsingAttribute({attribute, ctx}): Promise<ILibrary[]> {
-            // TODO: use aql template tag, and find out why it doesn't work :)
-            const query = `
-                FOR v
-                IN 1 INBOUND '${ATTRIB_COLLECTION_NAME}/${attribute.id}'
-                ${LIB_ATTRIB_COLLECTION_NAME}
-                RETURN v
-            `;
-
-            const res = await dbService.execute({query, ctx});
-
-            return res.map(dbUtils.cleanup);
         }
     };
 }

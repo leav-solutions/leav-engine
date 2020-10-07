@@ -9,7 +9,7 @@ import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
 
-const LIB_COLLECTION_NAME = 'core_libraries';
+export const LIB_COLLECTION_NAME = 'core_libraries';
 export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
 
 export interface ILibraryRepo {
@@ -80,6 +80,7 @@ export interface ILibraryRepo {
 
     getLibraryAttributes({libId, ctx}: {libId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
     getLibraryFullTextAttributes({libId, ctx}: {libId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
+    getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]>;
 }
 
 interface IDeps {
@@ -278,6 +279,18 @@ export default function({
             });
 
             return attrs.map(dbUtils.cleanup);
+        },
+        async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
+            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+
+            const res = await dbService.execute({
+                query: aql`FOR e IN ${libAttributesCollec} 
+                        FILTER e._to == ${'core_attributes/' + attributeId} 
+                    RETURN LAST(SPLIT(e._from, ${LIB_COLLECTION_NAME + '/'}))`,
+                ctx
+            });
+
+            return res;
         }
     };
 }
