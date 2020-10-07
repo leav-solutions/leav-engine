@@ -94,7 +94,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             </div>
 
             <div>
-                <SearchItems dispatchItems={dispatchItems} />
+                <SearchItems />
             </div>
 
             <div>

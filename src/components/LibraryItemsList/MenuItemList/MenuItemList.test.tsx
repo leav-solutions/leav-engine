@@ -1,6 +1,8 @@
 import {Button} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import MenuItemList from './MenuItemList';
 
@@ -16,25 +18,37 @@ describe('MenuItemList', () => {
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
     test('should have button show filter', async () => {
-        const comp = mount(
-            <MenuItemList
-                stateItems={{...stateItems, showFilters: false}}
-                dispatchItems={dispatchItems}
-                refetch={jest.fn()}
-            />
-        );
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <MenuItemList
+                        stateItems={{...stateItems, showFilters: false}}
+                        dispatchItems={dispatchItems}
+                        refetch={jest.fn()}
+                    />
+                </MockedProviderWithFragments>
+            );
+        });
 
         expect(comp.find(Button).first().prop('name')).toBe('show-filter');
     });
 
     test("shouldn't have button show filter", async () => {
-        const comp = mount(
-            <MenuItemList
-                stateItems={{...stateItems, showFilters: false}}
-                dispatchItems={dispatchItems}
-                refetch={jest.fn()}
-            />
-        );
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <MenuItemList
+                        stateItems={{...stateItems, showFilters: false}}
+                        dispatchItems={dispatchItems}
+                        refetch={jest.fn()}
+                    />
+                </MockedProviderWithFragments>
+            );
+        });
 
         expect(comp.find(Button).first().prop('name')).toBe('show-filter');
     });

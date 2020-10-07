@@ -15,10 +15,15 @@ describe('SideBarMenu', () => {
     mockCache.writeQuery({
         query: getActiveLibrary,
         data: {
-            activeLibId: 'testLibId',
-            activeLibQueryName: 'testLibQueryName',
-            activeLibName: 'testLibName',
-            activeLibFilterName: 'testLibFilterName'
+            activeLib: {
+                id: 'testLibId',
+                name: 'testLibName',
+                filter: 'testLibFilterName',
+                gql: {
+                    query: 'testLibQueryName',
+                    type: 'testGqlType'
+                }
+            }
         }
     });
 
@@ -36,6 +41,7 @@ describe('SideBarMenu', () => {
                                 label: {fr: 'testLabel', en: 'testLabel'},
                                 gqlNames: {
                                     query: 'testGqlQuery',
+                                    type: 'testGqlType',
                                     filter: 'testGqlFilter',
                                     searchableFields: 'testGqlSearchableFields'
                                 }

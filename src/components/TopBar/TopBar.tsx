@@ -4,7 +4,7 @@ import {Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {getActiveLibrary, IGetActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import UserMenu from './UserMenu';
 
 interface ITopBarProps {
@@ -32,8 +32,8 @@ function TopBar({
 
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
-    const {data: activeLib} = useQuery(getActiveLibrary);
-    const {activeLibName} = activeLib ?? {};
+    const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
+    const activeLib = dataLib?.activeLib;
 
     const triggerMenuKey = 'trigger-side-menu';
     const userPanelKey = 'trigger-user-panel';
@@ -68,7 +68,7 @@ function TopBar({
             </Menu.Item>
             <Menu.SubMenu
                 key="lib-name"
-                title={activeLibName !== '' ? activeLibName : t('menu.app_name')}
+                title={activeLib?.name !== '' ? activeLib?.name : t('menu.app_name')}
             ></Menu.SubMenu>
 
             <MenuItemRight key={userPanelKey} onClick={handleUserPanelClick}>

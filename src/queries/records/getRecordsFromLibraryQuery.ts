@@ -1,10 +1,13 @@
 import gql from 'graphql-tag';
 import {AttributeType, IItemsColumn} from '../../_types/types';
+import {infosCol} from './../../constants/constants';
 
-export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, columns: IItemsColumn[]) => {
-    const libQueryName = libraryName.toUpperCase();
-
+export const getRecordsFields = (columns: IItemsColumn[]) => {
     const fields = columns.map(col => {
+        if (col.id === infosCol) {
+            return null;
+        }
+
         if (col.originAttributeData?.id) {
             // is attribute from a linked library or tree
 
@@ -55,6 +58,12 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
         return handleType(col);
     });
 
+    return fields;
+};
+
+export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, columns: IItemsColumn[]) => {
+    const libQueryName = libraryName.toUpperCase();
+
     return gql`
         query ${'GET_RECORDS_FROM_' + libQueryName} (
             $limit: Int!
@@ -70,7 +79,7 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
             ) {
                 totalCount
                 list {
-                    ${fields}
+                    ${getRecordsFields(columns)}
                     whoAmI {
                         id
                         label

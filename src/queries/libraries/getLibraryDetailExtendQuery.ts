@@ -26,6 +26,7 @@ export const getLibraryDetailExtendedQuery = gql`
                 }
                 gqlNames {
                     query
+                    type
                     filter
                     searchableFields
                 }

@@ -1,42 +1,81 @@
+import {useLazyQuery, useQuery} from '@apollo/client';
 import {Input} from 'antd';
-import React, {useState} from 'react';
-import {ConditionFilter, IQueryFilter} from '../../../_types/types';
-import {LibraryItemListReducerAction, LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
+import React, {useEffect, useState} from 'react';
+import {useStateItem} from '../../../Context/StateItemsContext';
+import {getActiveLibrary, IGetActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {getLang} from '../../../queries/cache/lang/getLangQuery';
+import {SearchFullText} from '../../../queries/searchFullText/searchFullText';
+import {IItem} from '../../../_types/types';
+import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
+import {manageItems} from '../manageItems';
 
-interface ISearchItemsProps {
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-}
-
-function SearchItems({dispatchItems}: ISearchItemsProps): JSX.Element {
+function SearchItems(): JSX.Element {
+    const {stateItems, dispatchItems} = useStateItem();
     const [search, setSearch] = useState<string>('');
+    const [updateSearch, setUpdateSearch] = useState(false);
+
+    const {data: dataLang} = useQuery(getLang);
+    const {lang} = dataLang ?? {lang: []};
+
+    const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
+    const activeLib = dataLib?.activeLib;
+
+    const [searchFullText, {data, called, loading, error}] = useLazyQuery(
+        SearchFullText(activeLib?.gql?.type || '', stateItems.columns),
+        {
+            variables: {
+                libId: activeLib?.id,
+                search
+            }
+        }
+    );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newSearch = event.target.value;
+
+        setSearch(newSearch);
+
         if (newSearch === '') {
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
                 queryFilters: []
             });
-        } else {
-            setSearch(newSearch);
         }
     };
 
-    const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSearch = (search: string) => {
+        setSearch(search);
+        setUpdateSearch(true);
 
-        const searchQuery: IQueryFilter[] = [{field: 'id', value: search, condition: ConditionFilter.contains}];
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
-            queryFilters: searchQuery
-        });
+        searchFullText();
     };
 
+    useEffect(() => {
+        if (called && !loading && data && updateSearch) {
+            const totalCount = data?.search?.totalCount;
+            const itemsFromQuery = data?.search.list;
+
+            const items = manageItems({items: itemsFromQuery, lang, columns: stateItems.columns});
+
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
+                totalCount,
+                items: (items as unknown) as IItem[]
+            });
+
+            setUpdateSearch(false);
+        }
+    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.columns]);
+
+    if (error) {
+        console.error(error);
+        return <>error</>;
+    }
+
     return (
-        <form onSubmit={handleSearch}>
-            <Input.Search value={search} onChange={e => handleChange(e)} />
-        </form>
+        <>
+            <Input.Search value={search} onChange={handleChange} onSearch={handleSearch} />
+        </>
     );
 }
 

@@ -4,7 +4,7 @@ import {Drawer, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink, useLocation} from 'react-router-dom';
-import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {getActiveLibrary, IGetActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import {localizedLabel} from '../../utils';
@@ -21,8 +21,8 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
 
     const activeKeys = location.pathname.split('/');
 
-    const {data: activeLib} = useQuery(getActiveLibrary);
-    const {activeLibId, activeLibQueryName, activeLibName, activeLibFilterName} = activeLib ?? {};
+    const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
+    const activeLib = dataLib?.activeLib;
 
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
@@ -66,16 +66,16 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                 defaultOpenKeys={['libraries', 'shortcuts']}
             >
                 <Menu.SubMenu key="shortcuts" icon={<UnorderedListOutlined />} title={t('sidebar.shortcuts')}>
-                    {activeLibId && (
-                        <Menu.Item key={activeLibId} icon={<DatabaseOutlined />}>
+                    {activeLib?.id && (
+                        <Menu.Item key={activeLib.id} icon={<DatabaseOutlined />}>
                             <NavLink
-                                to={`/library/items/${activeLibId}/${activeLibQueryName}/${activeLibFilterName}`}
+                                to={`/library/items/${activeLib.id}/${activeLib.gql.query}/${activeLib.filter}`}
                                 onClick={hide}
                                 strict
                                 activeClassName="nav-link-active"
                                 isActive={checkActive}
                             >
-                                {activeLibName}
+                                {activeLib.name}
                             </NavLink>
                         </Menu.Item>
                     )}

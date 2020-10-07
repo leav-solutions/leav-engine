@@ -23,6 +23,7 @@ export interface LibraryItemListState {
     libQuery: string;
     libFilter: string;
     libSearchableField: string;
+    libGqlType: string;
     itemsSortField: string;
     itemsSortOrder: OrderSearch;
     items?: IItem[];
@@ -43,6 +44,7 @@ export interface LibraryItemListState {
 export const LibraryItemListInitialState: LibraryItemListState = {
     libQuery: '',
     libFilter: '',
+    libGqlType: '',
     libSearchableField: '',
     itemsSortField: '',
     itemsSortOrder: OrderSearch.asc,
@@ -65,6 +67,7 @@ export type LibraryItemListReducerAction =
           type: LibraryItemListReducerActionTypes.SET_LIB_INFOS;
           libQuery: string;
           libFilter: string;
+          libGqlType: string;
           libSearchableField: string;
           itemsSortField: string;
           itemsSortOrder: OrderSearch;
@@ -136,8 +139,25 @@ export type LibraryItemListReducerAction =
 const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
     switch (action.type) {
         case LibraryItemListReducerActionTypes.SET_LIB_INFOS:
-            const {libQuery, libFilter, libSearchableField, itemsSortField, itemsSortOrder, attributes} = action;
-            return {...state, libQuery, libFilter, libSearchableField, itemsSortField, itemsSortOrder, attributes};
+            const {
+                libQuery,
+                libFilter,
+                libGqlType,
+                libSearchableField,
+                itemsSortField,
+                itemsSortOrder,
+                attributes
+            } = action;
+            return {
+                ...state,
+                libQuery,
+                libFilter,
+                libGqlType,
+                libSearchableField,
+                itemsSortField,
+                itemsSortOrder,
+                attributes
+            };
         case LibraryItemListReducerActionTypes.SET_SEARCH_INFOS:
             return {...state, itemsSortField: action.itemsSortField, itemsSortOrder: action.itemsSortOrder};
         case LibraryItemListReducerActionTypes.SET_ITEMS:

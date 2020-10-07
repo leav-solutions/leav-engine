@@ -11,11 +11,12 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
-import {checkTypeIsLink, getItemKeyFromColumn, localizedLabel} from '../../utils';
+import {checkTypeIsLink, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
 import reducer, {LibraryItemListInitialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
+import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 
@@ -39,7 +40,7 @@ const MenuWrapper = styled.div`
 `;
 
 function LibraryItemsList(): JSX.Element {
-    const {libId} = useParams();
+    const {libId} = useParams<{libId: string}>();
 
     const [state, dispatch] = useReducer(reducer, LibraryItemListInitialState);
 
@@ -53,8 +54,8 @@ function LibraryItemsList(): JSX.Element {
     });
 
     useEffect(() => {
-        if (!loadingLib) {
-            const {query, filter, searchableFields} = dataLib?.libraries?.list[0]?.gqlNames;
+        if (!loadingLib && dataLib) {
+            const {query, type, filter, searchableFields} = dataLib?.libraries?.list[0]?.gqlNames;
 
             const attributes: IAttribute[] = dataLib?.libraries?.list[0]?.attributes.reduce(
                 (acc: IAttribute[], attribute) => {
@@ -87,6 +88,7 @@ function LibraryItemsList(): JSX.Element {
                 type: LibraryItemListReducerActionTypes.SET_LIB_INFOS,
                 libQuery: query,
                 libFilter: filter,
+                libGqlType: type,
                 libSearchableField: searchableFields,
                 itemsSortField: 'id', // force the first sort by id
                 itemsSortOrder: OrderSearch.asc,
@@ -126,51 +128,7 @@ function LibraryItemsList(): JSX.Element {
         if (!loadingItem && calledItem && dataItem && client && state.libFilter) {
             const itemsFromQuery = dataItem ? dataItem[state.libQuery || ''].list : [];
 
-            const items = itemsFromQuery.map(item => {
-                return {
-                    ...{
-                        id: item.whoAmI.id,
-                        label:
-                            typeof item.whoAmI.label === 'string'
-                                ? item.whoAmI.label
-                                : localizedLabel(item.whoAmI.label, lang),
-                        color: item.whoAmI.color,
-                        preview: item.whoAmI.preview,
-                        library: {
-                            id: item.whoAmI.library.id,
-                            label: item.whoAmI.library.label
-                        }
-                    },
-                    ...state.columns.reduce(
-                        (acc, col) => {
-                            const key: string = getItemKeyFromColumn(col);
-
-                            if (col?.originAttributeData && item[col.originAttributeData.id]) {
-                                if (col.originAttributeData.type === AttributeType.tree) {
-                                    // linked tree
-                                    let value = item[col.originAttributeData.id].map(tree => tree.record[col.id]);
-
-                                    if (Array.isArray(value)) {
-                                        value = value.shift();
-                                    }
-
-                                    acc[key] = value;
-                                } else {
-                                    // linked attribute
-                                    acc[key] = item[col.originAttributeData.id][col.id];
-                                }
-                            } else if (item.whoAmI.library.id === col.library && item[col.id]) {
-                                // basic case
-                                acc[key] = item[col.id];
-                            }
-                            return acc;
-                        },
-                        {
-                            infos: item.whoAmI
-                        }
-                    )
-                };
-            });
+            const items = manageItems({items: itemsFromQuery, lang, columns: state.columns});
 
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
@@ -188,10 +146,15 @@ function LibraryItemsList(): JSX.Element {
             client.writeQuery({
                 query: getActiveLibrary,
                 data: {
-                    activeLibId: libId,
-                    activeLibQueryName: state.libQuery,
-                    activeLibName: localizedLabel(label, lang),
-                    activeLibFilterName: state.libFilter
+                    activeLib: {
+                        id: libId,
+                        name: localizedLabel(label, lang),
+                        filter: state.libFilter,
+                        gql: {
+                            query: state.libQuery,
+                            type: state.libGqlType
+                        }
+                    }
                 }
             });
         } else {
@@ -209,6 +172,7 @@ function LibraryItemsList(): JSX.Element {
         libId,
         state.libQuery,
         state.libFilter,
+        state.libGqlType,
         state.attributes,
         state.columns
     ]);
