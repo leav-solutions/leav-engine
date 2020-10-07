@@ -113,7 +113,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     library: '',
                     dataIndex: 'actions',
                     key: 'actions',
-                    fixed: 'left',
                     width: 20,
                     onHeaderCell: () => ({
                         width: 20,
@@ -201,7 +200,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                         library: '',
                         dataIndex: infosCol,
                         key: infosCol,
-                        fixed: 'left',
                         width: 100,
                         onHeaderCell: column => ({
                             width: column.width,

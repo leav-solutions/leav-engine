@@ -60,17 +60,14 @@ const ItemSelected = ({
     const {t} = useTranslation();
     return (
         <>
-            {!attributeChecked.fixed ? (
-                <DragHandle {...handleProps}>
-                    <Handle>
-                        {[...Array(8)].map((useless, index) => (
-                            <HandlePoint key={index} />
-                        ))}
-                    </Handle>
-                </DragHandle>
-            ) : (
-                <div></div>
-            )}
+            <DragHandle {...handleProps}>
+                <Handle>
+                    {[...Array(8)].map((useless, index) => (
+                        <HandlePoint key={index} />
+                    ))}
+                </Handle>
+            </DragHandle>
+
             <Content>
                 <Descriptions
                     title={

@@ -38,7 +38,7 @@ const ListingAttributeWrapper = styled.div<ListingAttributeWrapperProps>`
     ${props => props.attributesChecked && `border-right: 1px solid ${themingVar['@primary-color']};`}
     padding: 0.3rem 1rem 0 1rem;
     overflow-y: scroll;
-    height: 80vh;
+    height: calc(100vh - 15rem);
 `;
 
 interface IListAttributeProps {

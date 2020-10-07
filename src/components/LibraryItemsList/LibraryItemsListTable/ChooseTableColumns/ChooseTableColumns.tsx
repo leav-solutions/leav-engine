@@ -1,7 +1,6 @@
 import {Button, Modal} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {infosCol} from '../../../../constants/constants';
 import {useStateItem} from '../../../../Context/StateItemsContext';
 import {IAttribute, IAttributesChecked, IItemsColumn} from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
@@ -23,19 +22,13 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 attribute => attribute.id === col.id && attribute.library === col.library
             );
 
-            let fixed = false;
-            if (col.id === infosCol) {
-                fixed = true;
-            }
-
             return {
                 id: col.id,
                 library: col.library,
                 label: currentAttribute?.label ?? '',
                 type: col.type,
                 depth: 0,
-                checked: true,
-                fixed
+                checked: true
             };
         })
     );
@@ -47,19 +40,13 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                     attribute => attribute.id === col.id && attribute.library === col.library
                 );
 
-                let fixed = false;
-                if (col.id === infosCol) {
-                    fixed = true;
-                }
-
                 return {
                     id: col.id,
                     library: col.library,
                     label: currentAttribute?.label ?? '',
                     type: col.type,
                     depth: 0,
-                    checked: true,
-                    fixed
+                    checked: true
                 };
             })
         );

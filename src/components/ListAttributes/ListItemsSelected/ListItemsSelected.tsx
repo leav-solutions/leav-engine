@@ -1,6 +1,7 @@
 import React from 'react';
 import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
 import styled from 'styled-components';
+import {infosCol} from '../../../constants/constants';
 import {reorder} from '../../../utils';
 import {IAttributesChecked} from '../../../_types/types';
 import ItemSelected from '../ItemSelected';
@@ -12,7 +13,7 @@ import {
 
 const WrapperItemSelected = styled.div`
     overflow-y: auto;
-    height: 80vh;
+    height: calc(100vh - 15rem);
 
     &&& > *:first-child {
         margin-top: 0;
@@ -79,28 +80,27 @@ function ListItemsSelected({stateListAttribute, dispatchListAttribute}: IListIte
                 <Droppable droppableId="list-items-selected">
                     {provided => (
                         <div ref={provided.innerRef} {...provided.droppableProps}>
-                            {items.map((item, index) => (
-                                <Draggable
-                                    key={`${item.id}_${item.library}_${item.extendedData?.path}`}
-                                    index={index}
-                                    draggableId={`${item.id}_${item.library}_${item.extendedData?.path}`}
-                                    isDragDisabled={item.fixed}
-                                >
-                                    {provided => (
-                                        <CustomCard
-                                            ref={provided.innerRef}
-                                            {...(item.fixed ? [] : provided.draggableProps)}
+                            {items.map(
+                                (item, index) =>
+                                    item.id !== infosCol && (
+                                        <Draggable
+                                            key={`${item.id}_${item.library}_${item.extendedData?.path}`}
+                                            index={index}
+                                            draggableId={`${item.id}_${item.library}_${item.extendedData?.path}`}
                                         >
-                                            <ItemSelected
-                                                attributeChecked={item}
-                                                removeAttributeChecked={removeAttributeChecked}
-                                                stateListAttribute={stateListAttribute}
-                                                handleProps={provided.dragHandleProps}
-                                            />
-                                        </CustomCard>
-                                    )}
-                                </Draggable>
-                            ))}
+                                            {provided => (
+                                                <CustomCard ref={provided.innerRef} {...provided.draggableProps}>
+                                                    <ItemSelected
+                                                        attributeChecked={item}
+                                                        removeAttributeChecked={removeAttributeChecked}
+                                                        stateListAttribute={stateListAttribute}
+                                                        handleProps={provided.dragHandleProps}
+                                                    />
+                                                </CustomCard>
+                                            )}
+                                        </Draggable>
+                                    )
+                            )}
                             {provided.placeholder}
                         </div>
                     )}
