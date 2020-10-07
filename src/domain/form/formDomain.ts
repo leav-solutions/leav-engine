@@ -1,5 +1,6 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {difference} from 'lodash';
@@ -33,6 +34,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.app'?: IAppPermissionDomain;
     'core.infra.form'?: IFormRepo;
     'core.utils'?: IUtils;
 }
@@ -41,6 +43,7 @@ export default function(deps: IDeps = {}): IFormDomain {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.permission': permissionDomain = null,
+        'core.domain.permission.app': appPermissionDomain = null,
         'core.infra.form': formRepo = null,
         'core.utils': utils = null
     } = deps;
@@ -102,7 +105,7 @@ export default function(deps: IDeps = {}): IFormDomain {
 
             // Check permissions
             const permToCheck = existingForm ? AppPermissionsActions.EDIT_FORM : AppPermissionsActions.CREATE_FORM;
-            if (!(await permissionDomain.getAdminPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
+            if (!(await appPermissionDomain.getAppPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
                 throw new PermissionError(permToCheck);
             }
 
@@ -152,7 +155,7 @@ export default function(deps: IDeps = {}): IFormDomain {
         async deleteForm({library, id, ctx}): Promise<IForm> {
             // Check permissions
             const permToCheck = AppPermissionsActions.DELETE_FORM;
-            if (!(await permissionDomain.getAdminPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
+            if (!(await appPermissionDomain.getAppPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
                 throw new PermissionError(permToCheck);
             }
 

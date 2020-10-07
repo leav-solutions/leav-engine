@@ -117,7 +117,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.actionsList'?: IActionsListDomain;
-    'core.domain.permission.recordPermission'?: IRecordPermissionDomain;
+    'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
 }
 
@@ -126,7 +126,7 @@ export default function({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.actionsList': actionsListDomain = null,
-    'core.domain.permission.recordPermission': recordPermissionDomain = null,
+    'core.domain.permission.record': recordPermissionDomain = null,
     'core.domain.library': libraryDomain = null
 }: IDeps = {}): IRecordDomain {
     /**

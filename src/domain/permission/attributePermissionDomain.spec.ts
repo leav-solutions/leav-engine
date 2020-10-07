@@ -3,8 +3,10 @@ import {IQueryInfos} from '_types/queryInfos';
 import {AttributePermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import attributePermissionDomain from './attributePermissionDomain';
-import {IPermissionDomain} from './permissionDomain';
+import * as getDefaultPermission from './helpers/getDefaultPermission';
 import {ITreePermissionDomain} from './treePermissionDomain';
+
+jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -17,9 +19,6 @@ describe('AttributePermissionDomain', () => {
         };
 
         const defaultPerm = false;
-        const mockPermDomain: Mockify<IPermissionDomain> = {
-            getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
-        };
 
         const mockAttributeDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: global.__mockPromise({
@@ -32,7 +31,7 @@ describe('AttributePermissionDomain', () => {
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation(({library, recordId, attribute}) => {
+            getValues: jest.fn().mockImplementation(({attribute}) => {
                 let val;
                 switch (attribute.id) {
                     case 'category':
@@ -75,9 +74,10 @@ describe('AttributePermissionDomain', () => {
         };
 
         test('Return permission', async () => {
+            jest.spyOn(getDefaultPermission, 'default');
+
             const attrDomain = attributePermissionDomain({
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
-                'core.domain.permission.treePermission': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
@@ -91,12 +91,13 @@ describe('AttributePermissionDomain', () => {
                 ctx
             );
 
-            expect(mockPermDomain.getDefaultPermission.mock.calls.length).toBe(0);
+            expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(0);
             expect(mockTreePermDomain.getTreePermission.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 
         test('Return default permission if no config', async () => {
+            jest.spyOn(getDefaultPermission, 'default');
             const mockAttrNoPermsDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({
                     id: 'test_attr'
@@ -104,8 +105,7 @@ describe('AttributePermissionDomain', () => {
             };
 
             const attrDomain = attributePermissionDomain({
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
-                'core.domain.permission.treePermission': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
@@ -119,7 +119,7 @@ describe('AttributePermissionDomain', () => {
                 ctx
             );
 
-            expect(mockPermDomain.getDefaultPermission.mock.calls.length).toBe(1);
+            expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(1);
             expect(perm).toBe(defaultPerm);
         });
     });

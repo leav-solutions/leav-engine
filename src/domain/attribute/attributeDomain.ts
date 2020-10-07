@@ -1,3 +1,4 @@
+import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
@@ -10,7 +11,6 @@ import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import {IPermissionDomain} from '../permission/permissionDomain';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
 
@@ -38,7 +38,7 @@ export interface IAttributeDomain {
 interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.domain.actionsList'?: IActionsListDomain;
-    'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.app'?: IAppPermissionDomain;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
     config?: any;
@@ -47,7 +47,7 @@ interface IDeps {
 export default function({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
-    'core.domain.permission': permissionDomain = null,
+    'core.domain.permission.app': appPermissionDomain = null,
     'core.utils': utils = null,
     'core.infra.tree': treeRepo = null,
     config = null
@@ -106,7 +106,7 @@ export default function({
             const action = isExistingAttr
                 ? AppPermissionsActions.EDIT_ATTRIBUTE
                 : AppPermissionsActions.CREATE_ATTRIBUTE;
-            const canSavePermission = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSavePermission = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
@@ -141,7 +141,7 @@ export default function({
         async deleteAttribute({id, ctx}): Promise<IAttribute> {
             // Check permissions
             const action = AppPermissionsActions.DELETE_ATTRIBUTE;
-            const canSavePermission = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSavePermission = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);

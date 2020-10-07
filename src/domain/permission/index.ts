@@ -1,5 +1,6 @@
-export {default as attributePermission} from './attributePermissionDomain';
+export {default as app} from './appPermissionDomain';
+export {default as attribute} from './attributePermissionDomain';
+export {default as library} from './libraryPermissionDomain';
 export {default} from './permissionDomain';
-export {default as permissionsHelper} from './permissionsHelperDomain';
-export {default as recordPermission} from './recordPermissionDomain';
-export {default as treePermission} from './treePermissionDomain';
+export {default as record} from './recordPermissionDomain';
+export {default as tree} from './treePermissionDomain';

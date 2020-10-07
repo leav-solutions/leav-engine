@@ -33,7 +33,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
             });
 
             const createdRecord = await recDomain.createRecord('test', ctx);
@@ -60,7 +60,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.recordPermission': mockRecordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
             });
 
             const updatedRecord = await recDomain.updateRecord({
@@ -87,7 +87,7 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.recordPermission': recordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain
             });
 
             const deleteRes = await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
