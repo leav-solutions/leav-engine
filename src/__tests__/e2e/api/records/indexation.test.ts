@@ -25,12 +25,15 @@ describe('Search', () => {
     });
 
     test('index all libraries', async () => {
-        const res = await makeGraphQlCall('mutation { indexRecords }');
+        const res = await makeGraphQlCall(`mutation { indexRecords(libraryId: "${testLibName}") }`);
         expect(res.status).toBe(200);
     });
 
     test('index some records', async () => {
-        const res = await makeGraphQlCall(`mutation { indexRecords(records: ["${record1}", "${record2}"]) }`);
+        const res = await makeGraphQlCall(
+            `mutation { indexRecords(libraryId: "${testLibName}", 
+            records: ["${record1}", "${record2}"]) }`
+        );
         expect(res.status).toBe(200);
     });
 });

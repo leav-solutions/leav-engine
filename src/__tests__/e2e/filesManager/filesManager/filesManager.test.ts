@@ -83,10 +83,10 @@ describe('FilesManager', () => {
         await channel.assertQueue(queueResponse, {durable: true});
         await channel.assertQueue(queueAction, {durable: true});
 
-        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.filesEvents);
-        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.filesPreviewResponse);
+        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.events);
+        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.events);
 
-        await channel.purgeQueue(conf.filesManager.queues.filesEvents);
+        await channel.purgeQueue(conf.filesManager.queues.events);
         await channel.purgeQueue(conf.filesManager.queues.previewRequest);
         await channel.purgeQueue(conf.filesManager.queues.previewResponse);
 
@@ -315,10 +315,10 @@ describe('FilesManager with real files', () => {
         await channel.assertQueue(queueResponse, {durable: true});
         await channel.assertQueue(queueAction, {durable: true});
 
-        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.filesEvents);
-        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.filesPreviewResponse);
+        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.events);
+        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.events);
 
-        await channel.purgeQueue(conf.filesManager.queues.filesEvents);
+        await channel.purgeQueue(conf.filesManager.queues.events);
         await channel.purgeQueue(conf.filesManager.queues.previewRequest);
         await channel.purgeQueue(conf.filesManager.queues.previewResponse);
 
