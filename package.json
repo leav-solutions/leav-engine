@@ -19,7 +19,7 @@
         "lint:watch": "watch 'npm run lint' src/",
         "prettier": "prettier --write 'src/**/*.ts'",
         "dev": "run-p lint:watch start:watch test:watch",
-        "precommit": "lint-staged && npm test",
+        "precommit": "npm run tscheck && lint-staged && npm test",
         "db:migrate": "ts-node src/ --migrate",
         "import": "ts-node src/ import --clear",
         "benchmark": "ts-node src/ benchmark",
