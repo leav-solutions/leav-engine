@@ -1,6 +1,8 @@
+import {CloseOutlined} from '@ant-design/icons';
 import {useLazyQuery, useQuery} from '@apollo/client';
-import {Input} from 'antd';
+import {Input, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {getActiveLibrary, IGetActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
@@ -11,6 +13,9 @@ import {manageItems} from '../manageItems';
 
 function SearchItems(): JSX.Element {
     const {stateItems, dispatchItems} = useStateItem();
+
+    const {t} = useTranslation();
+
     const [search, setSearch] = useState<string>('');
     const [updateSearch, setUpdateSearch] = useState(false);
 
@@ -38,14 +43,16 @@ function SearchItems(): JSX.Element {
 
     const handleSearch = (search: string) => {
         if (search === '') {
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
-                searchFullTextActive: false
-            });
+            resetSearch();
         } else {
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
                 searchFullTextActive: true
+            });
+
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_OFFSET,
+                offset: 0
             });
 
             setSearch(search);
@@ -77,10 +84,30 @@ function SearchItems(): JSX.Element {
         return <>error</>;
     }
 
+    const resetSearch = () => {
+        setSearch('');
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
+            searchFullTextActive: false
+        });
+    };
+
     return (
-        <>
-            <Input.Search value={search} onChange={handleChange} onSearch={handleSearch} />
-        </>
+        <div style={{width: '20rem', display: 'flex'}}>
+            <Input.Search
+                placeholder={t('search.placeholder')}
+                value={search}
+                onChange={handleChange}
+                onSearch={handleSearch}
+                suffix={
+                    search && (
+                        <Tooltip placement="bottom" title={t('search.explain-cancel')}>
+                            <CloseOutlined onClick={resetSearch} />
+                        </Tooltip>
+                    )
+                }
+            />
+        </div>
     );
 }
 

@@ -168,5 +168,9 @@
         "add-view-tile": "Ajouter vue mosaïque",
         "add-view-list": "Ajouter vue liste",
         "default-view": "Vue par défault..."
+    },
+    "search": {
+        "placeholder": "Rechercher dans la bibliothèque",
+        "explain-cancel": "Annuler la recherche"
     }
 }
