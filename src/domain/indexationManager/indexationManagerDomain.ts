@@ -77,7 +77,9 @@ export default function({
                         }
 
                         return {
-                            [fta.id]: Array.isArray(val) ? val.map(v => String(v?.value)) : String(val?.value)
+                            [fta.id]: Array.isArray(val)
+                                ? val.map(v => v?.value && String(v?.value))
+                                : val?.value && String(val?.value)
                         };
                     })
                 )
@@ -116,7 +118,7 @@ export default function({
                             ctx
                         );
 
-                        data.new[key] = String(recordIdentity.label || value);
+                        data.new[key] = recordIdentity.label ? String(recordIdentity.label) : value && String(value);
                     }
                 }
 
@@ -141,11 +143,12 @@ export default function({
                         ))
                 ) {
                     if (exists) {
-await elasticsearchService.indiceDelete(data.id);
-}
+                        await elasticsearchService.indiceDelete(data.id);
+                    }
                     await _indexRecords({library: data.id}, ctx);
                 }
 
+                // if label change we re-index all linked libraries
                 if (typeof data.label !== 'undefined') {
                     const attrs = await attributeDomain.getAttributes({
                         params: {
