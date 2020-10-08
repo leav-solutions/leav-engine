@@ -34,20 +34,25 @@ function SearchItems(): JSX.Element {
         const newSearch = event.target.value;
 
         setSearch(newSearch);
-
-        if (newSearch === '') {
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
-                queryFilters: []
-            });
-        }
     };
 
     const handleSearch = (search: string) => {
-        setSearch(search);
-        setUpdateSearch(true);
+        if (search === '') {
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
+                searchFullTextActive: false
+            });
+        } else {
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
+                searchFullTextActive: true
+            });
 
-        searchFullText();
+            setSearch(search);
+            setUpdateSearch(true);
+
+            searchFullText();
+        }
     };
 
     useEffect(() => {

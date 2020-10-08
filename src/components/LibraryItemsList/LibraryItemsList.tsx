@@ -103,7 +103,7 @@ function LibraryItemsList(): JSX.Element {
     }, [dispatch, loadingLib, dataLib, libId]);
 
     const [
-        getRecord,
+        getRecords,
         {called: calledItem, loading: loadingItem, data: dataItem, error: errorItem, client, refetch}
     ] = useLazyQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
         state.libFilter && state.libQuery && state.libSearchableField
@@ -125,43 +125,45 @@ function LibraryItemsList(): JSX.Element {
     );
 
     useEffect(() => {
-        if (!loadingItem && calledItem && dataItem && client && state.libFilter) {
-            const itemsFromQuery = dataItem ? dataItem[state.libQuery || ''].list : [];
+        if (!state.searchFullTextActive) {
+            if (!loadingItem && calledItem && dataItem && client && state.libFilter) {
+                const itemsFromQuery = dataItem ? dataItem[state.libQuery || ''].list : [];
 
-            const items = manageItems({items: itemsFromQuery, lang, columns: state.columns});
+                const items = manageItems({items: itemsFromQuery, lang, columns: state.columns});
 
-            dispatch({
-                type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
-                items: (items as unknown) as IItem[],
-                totalCount: dataItem[state.libQuery]?.totalCount
-            });
+                dispatch({
+                    type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
+                    items: (items as unknown) as IItem[],
+                    totalCount: dataItem[state.libQuery]?.totalCount
+                });
 
-            dispatch({
-                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
-                itemLoading: false
-            });
+                dispatch({
+                    type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
+                    itemLoading: false
+                });
 
-            const label = dataItem[state.libQuery]?.list[0]?.whoAmI.library.label;
+                const label = dataItem[state.libQuery]?.list[0]?.whoAmI.library.label;
 
-            client.writeQuery({
-                query: getActiveLibrary,
-                data: {
-                    activeLib: {
-                        id: libId,
-                        name: localizedLabel(label, lang),
-                        filter: state.libFilter,
-                        gql: {
-                            query: state.libQuery,
-                            type: state.libGqlType
+                client.writeQuery({
+                    query: getActiveLibrary,
+                    data: {
+                        activeLib: {
+                            id: libId,
+                            name: localizedLabel(label, lang),
+                            filter: state.libFilter,
+                            gql: {
+                                query: state.libQuery,
+                                type: state.libGqlType
+                            }
                         }
                     }
-                }
-            });
-        } else {
-            dispatch({
-                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
-                itemLoading: true
-            });
+                });
+            } else {
+                dispatch({
+                    type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
+                    itemLoading: true
+                });
+            }
         }
     }, [
         loadingItem,
@@ -174,12 +176,23 @@ function LibraryItemsList(): JSX.Element {
         state.libFilter,
         state.libGqlType,
         state.attributes,
-        state.columns
+        state.columns,
+        state.searchFullTextActive
     ]);
 
     useEffect(() => {
-        getRecord();
-    }, [state.offset, state.pagination, state.queryFilters, state.itemsSortField, state.itemsSortOrder, getRecord]);
+        if (!state.searchFullTextActive) {
+            getRecords();
+        }
+    }, [
+        state.offset,
+        state.pagination,
+        state.queryFilters,
+        state.itemsSortField,
+        state.itemsSortOrder,
+        state.searchFullTextActive,
+        getRecords
+    ]);
 
     if (errorItem || errorLib) {
         return <div>error</div>;

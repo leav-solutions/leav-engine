@@ -16,7 +16,8 @@ export enum LibraryItemListReducerActionTypes {
     SET_ATTRIBUTES = 'SET_ATTRIBUTES',
     SET_COLUMNS = 'SET_COLUMNS',
     SET_ALL_SELECTED = 'SET_ALL_SELECTED',
-    SET_ITEM_LOADING = 'SET_ITEM_LOADING'
+    SET_ITEM_LOADING = 'SET_ITEM_LOADING',
+    SET_SEARCH_FULL_TEXT_ACTIVE = 'SET_SEARCH_FULL_TEXT_ACTIVE'
 }
 
 export interface LibraryItemListState {
@@ -39,6 +40,7 @@ export interface LibraryItemListState {
     attributes: IAttribute[];
     columns: IItemsColumn[];
     allSelected: boolean;
+    searchFullTextActive: boolean;
 }
 
 export const LibraryItemListInitialState: LibraryItemListState = {
@@ -59,7 +61,8 @@ export const LibraryItemListInitialState: LibraryItemListState = {
     queryFilters: [],
     attributes: [],
     columns: [],
-    allSelected: false
+    allSelected: false,
+    searchFullTextActive: false
 };
 
 export type LibraryItemListReducerAction =
@@ -134,6 +137,10 @@ export type LibraryItemListReducerAction =
     | {
           type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING;
           itemLoading: boolean;
+      }
+    | {
+          type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE;
+          searchFullTextActive: boolean;
       };
 
 const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
@@ -192,6 +199,8 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
             return finalState;
         case LibraryItemListReducerActionTypes.SET_ITEM_LOADING:
             return {...state, itemsLoading: action.itemLoading};
+        case LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE:
+            return {...state, searchFullTextActive: action.searchFullTextActive};
         default:
             return state;
     }
