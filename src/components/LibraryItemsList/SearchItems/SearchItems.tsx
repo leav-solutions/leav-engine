@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {getActiveLibrary, IGetActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
-import {SearchFullText} from '../../../queries/searchFullText/searchFullText';
+import {searchFullText} from '../../../queries/searchFullText/searchFullText';
 import {IItem} from '../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import {manageItems} from '../manageItems';
@@ -25,15 +25,69 @@ function SearchItems(): JSX.Element {
     const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
     const activeLib = dataLib?.activeLib;
 
-    const [searchFullText, {data, called, loading, error}] = useLazyQuery(
-        SearchFullText(activeLib?.gql?.type || '', stateItems.columns),
+    const [triggerSearch, {data, called, loading, error}] = useLazyQuery(
+        searchFullText(activeLib?.gql?.type || '', stateItems.columns),
         {
             variables: {
                 libId: activeLib?.id,
-                search
+                search,
+                from: stateItems.offset,
+                size: stateItems.pagination
             }
         }
     );
+
+    // when current lib change disabled search
+    useEffect(() => {
+        setSearch('');
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
+            searchFullTextActive: false
+        });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_OFFSET,
+            offset: 0
+        });
+    }, [stateItems.libQuery, dispatchItems, setSearch]);
+
+    // reload query when columns, pagination or offset change
+    useEffect(() => {
+        if (stateItems.searchFullTextActive) {
+            setUpdateSearch(true);
+            triggerSearch();
+        }
+    }, [
+        setUpdateSearch,
+        triggerSearch,
+        stateItems.columns,
+        stateItems.searchFullTextActive,
+        stateItems.pagination,
+        stateItems.offset
+    ]);
+
+    useEffect(() => {
+        if (called && !loading && data && updateSearch) {
+            const totalCount = data?.search?.totalCount;
+            const itemsFromQuery = data?.search.list;
+
+            const items = manageItems({items: itemsFromQuery, lang, columns: stateItems.columns});
+
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
+                totalCount,
+                items: (items as unknown) as IItem[]
+            });
+
+            setUpdateSearch(false);
+        }
+    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.columns]);
+
+    if (error) {
+        console.error(error);
+        return <>error</>;
+    }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newSearch = event.target.value;
@@ -58,45 +112,21 @@ function SearchItems(): JSX.Element {
             setSearch(search);
             setUpdateSearch(true);
 
-            searchFullText();
+            triggerSearch();
         }
     };
 
-    // reload query when columns change
-    useEffect(() => {
-        if (stateItems.searchFullTextActive) {
-            setUpdateSearch(true);
-            searchFullText();
-        }
-    }, [setUpdateSearch, searchFullText, stateItems.columns, stateItems.searchFullTextActive]);
-
-    useEffect(() => {
-        if (called && !loading && data && updateSearch) {
-            const totalCount = data?.search?.totalCount;
-            const itemsFromQuery = data?.search.list;
-
-            const items = manageItems({items: itemsFromQuery, lang, columns: stateItems.columns});
-
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
-                totalCount,
-                items: (items as unknown) as IItem[]
-            });
-
-            setUpdateSearch(false);
-        }
-    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.columns]);
-
-    if (error) {
-        console.error(error);
-        return <>error</>;
-    }
-
     const resetSearch = () => {
         setSearch('');
+
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
             searchFullTextActive: false
+        });
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_OFFSET,
+            offset: 0
         });
     };
 

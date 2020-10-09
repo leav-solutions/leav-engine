@@ -12,6 +12,12 @@ jest.mock('../LibraryItemsListMenuPagination', () => {
     };
 });
 
+jest.mock('../SearchItems', () => {
+    return function SearchItems() {
+        return <div>SearchItems</div>;
+    };
+});
+
 describe('MenuItemList', () => {
     const stateItems = LibraryItemListInitialState;
 
