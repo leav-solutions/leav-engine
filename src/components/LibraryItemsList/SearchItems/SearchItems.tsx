@@ -62,6 +62,14 @@ function SearchItems(): JSX.Element {
         }
     };
 
+    // reload query when columns change
+    useEffect(() => {
+        if (stateItems.searchFullTextActive) {
+            setUpdateSearch(true);
+            searchFullText();
+        }
+    }, [setUpdateSearch, searchFullText, stateItems.columns, stateItems.searchFullTextActive]);
+
     useEffect(() => {
         if (called && !loading && data && updateSearch) {
             const totalCount = data?.search?.totalCount;
