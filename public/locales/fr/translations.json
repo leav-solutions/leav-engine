@@ -133,7 +133,10 @@
         "filters-options": "Options de Filtres",
         "add-filters": "Ajouter des filtres",
         "remove-filters": "Supprimer les filtres",
-        "add-separator": "Ajouter une requête"
+        "add-separator": "Ajouter une requête",
+        "search-active": "Impossible d'appliquer les filtres tant que la recherche est active",
+        "no-filters": "Pas de filtres à appliquer",
+        "submit": "Appliquer les filtres"
     },
     "filter-item": {
         "no-operator": "Si"

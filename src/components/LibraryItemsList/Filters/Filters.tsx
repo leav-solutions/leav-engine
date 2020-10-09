@@ -1,5 +1,5 @@
 import {FilterFilled} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {Button, Dropdown, Menu, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
@@ -236,6 +236,15 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
         });
     };
 
+    const canApplyFilter =
+        stateItems.searchFullTextActive || !flatArray(filters).filter(f => f.type === FilterTypes.filter).length;
+
+    const submitMessage = stateItems.searchFullTextActive
+        ? t('filters.search-active')
+        : !flatArray(filters).filter(f => f.type === FilterTypes.filter).length
+        ? t('filters.no-filters')
+        : t('filters.submit');
+
     return (
         <WrapperFilter
             visible={stateItems.showFilters ? 1 : 0}
@@ -283,13 +292,11 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                         <span>{t('filters.filters-options')}</span>
                     </Dropdown>
 
-                    <Button
-                        disabled={!flatArray(filters).filter(f => f.type === FilterTypes.filter).length}
-                        onClick={applyFilters}
-                        type="primary"
-                    >
-                        {t('filters.apply')}
-                    </Button>
+                    <Tooltip title={submitMessage} placement="right">
+                        <Button disabled={canApplyFilter} onClick={applyFilters} type="primary">
+                            {t('filters.apply')}
+                        </Button>
+                    </Tooltip>
                 </FilterActions>
 
                 <FilterList>

@@ -134,7 +134,10 @@
         "filters-options": "Filters Options",
         "add-filters": "Add filters",
         "remove-filters": "Remove filters",
-        "add-separator": "Add request"
+        "add-separator": "Add request",
+        "search-active": "Can't apply filters while the search is active",
+        "no-filters": "No filter to apply",
+        "submit": "Apply filters"
     },
     "filter-item": {
         "no-operator": "If"
