@@ -41,13 +41,12 @@ const CloseWrapper = styled.div`
 const Handle = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 2px;
+    grid-gap: 3px;
 `;
 
 const HandlePoint = styled.div`
     padding: 2px;
-    background: #fffdfd 0% 0% no-repeat padding-box;
-    border: 1px solid hsla(0, 0%, 70%, 1);
+    background: hsla(0, 0%, 70%, 1);
     border-radius: 100%;
 `;
 
@@ -62,7 +61,7 @@ const ItemSelected = ({
         <>
             <DragHandle {...handleProps}>
                 <Handle>
-                    {[...Array(8)].map((useless, index) => (
+                    {[...Array(8)].map((_, index) => (
                         <HandlePoint key={index} />
                     ))}
                 </Handle>
