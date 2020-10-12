@@ -81,6 +81,11 @@ function SearchItems(): JSX.Element {
             });
 
             setUpdateSearch(false);
+
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
+                itemLoading: false
+            });
         }
     }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.columns]);
 
@@ -107,6 +112,11 @@ function SearchItems(): JSX.Element {
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_OFFSET,
                 offset: 0
+            });
+
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
+                itemLoading: true
             });
 
             setSearch(search);
