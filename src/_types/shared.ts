@@ -1,4 +1,5 @@
 import {IAttributeFilterOptions} from './attribute';
+import {IExtensionPoints} from './extensionPoints';
 import {IFormFilterOptions} from './forms';
 import {ILibraryFilterOptions} from './library';
 import {IPaginationParams, ISortParams} from './list';
@@ -10,10 +11,6 @@ export interface IGetCoreEntitiesParams {
     withCount?: boolean;
     pagination?: IPaginationParams;
     sort?: ISortParams;
-}
-
-export interface IExtensionPoints {
-    [name: string]: (...args: any[]) => void;
 }
 
 export interface IAppModule {

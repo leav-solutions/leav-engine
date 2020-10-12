@@ -317,7 +317,7 @@ export default function({
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             // Check permission
             const canUpdate = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.EDIT,
+                RecordPermissionsActions.EDIT_RECORD,
                 ctx.userId,
                 recordData.library,
                 recordData.id,
@@ -325,7 +325,7 @@ export default function({
             );
 
             if (!canUpdate) {
-                throw new PermissionError(RecordPermissionsActions.EDIT);
+                throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
             }
 
             return recordRepo.updateRecord({libraryId: library, recordData, ctx});
@@ -345,7 +345,7 @@ export default function({
 
             // Check permission
             const canDelete = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.DELETE,
+                RecordPermissionsActions.DELETE_RECORD,
                 ctx.userId,
                 library,
                 id,
@@ -353,7 +353,7 @@ export default function({
             );
 
             if (!canDelete) {
-                throw new PermissionError(RecordPermissionsActions.DELETE);
+                throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
             }
 
             return recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});

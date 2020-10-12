@@ -3,9 +3,10 @@ import {GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 import {i18n} from 'i18next';
 import {IUtils} from 'utils/utils';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {IAppModule} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;

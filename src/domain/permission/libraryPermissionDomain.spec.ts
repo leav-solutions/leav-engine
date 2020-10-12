@@ -79,7 +79,7 @@ describe('LibraryPermissionDomain', () => {
             jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getLibraryPermission({
-                action: LibraryPermissionsActions.ACCESS,
+                action: LibraryPermissionsActions.ACCESS_RECORD,
                 libraryId: 'test_lib',
                 userId: '12345',
                 ctx
@@ -101,7 +101,7 @@ describe('LibraryPermissionDomain', () => {
             jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getLibraryPermission({
-                action: LibraryPermissionsActions.ACCESS,
+                action: LibraryPermissionsActions.ACCESS_RECORD,
                 libraryId: 'test_lib',
                 userId: '12345',
                 ctx
@@ -141,7 +141,7 @@ describe('LibraryPermissionDomain', () => {
             jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
 
             const perm = await permDomain.getHeritedLibraryPermission({
-                action: LibraryPermissionsActions.ACCESS,
+                action: LibraryPermissionsActions.ACCESS_RECORD,
                 libraryId: 'test_lib',
                 userGroupId: '12345',
                 ctx
@@ -158,7 +158,7 @@ describe('LibraryPermissionDomain', () => {
             jest.spyOn(getDefaultPermission, 'default').mockReturnValue(false);
 
             const perm = await permDomain.getHeritedLibraryPermission({
-                action: LibraryPermissionsActions.ACCESS,
+                action: LibraryPermissionsActions.ACCESS_RECORD,
                 libraryId: 'test_lib',
                 userGroupId: '12345',
                 ctx

@@ -234,7 +234,7 @@ describe('TreePermissionDomain', () => {
 
         const params = {
             type: PermissionTypes.ATTRIBUTE,
-            action: RecordPermissionsActions.ACCESS,
+            action: RecordPermissionsActions.ACCESS_RECORD,
             userId: '987654',
             applyTo: 'test_lib',
             treeValues: {

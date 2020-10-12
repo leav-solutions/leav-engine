@@ -3,9 +3,10 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
-import {IAppGraphQLSchema, IGraphqlApp} from '../../graphql/graphqlApp';
+import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {getFormatFromALConf, getFormatFromAttribute} from './helpers/graphqlFormats';
 

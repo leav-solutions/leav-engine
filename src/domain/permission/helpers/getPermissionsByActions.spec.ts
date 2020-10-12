@@ -16,9 +16,9 @@ describe('getPermissionsByActions', () => {
                 applyTo: 'test_lib',
                 usersGroup: '12345',
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: null
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: null
                 },
                 permissionTreeTarget: 'test_lib/12345'
             })
@@ -29,9 +29,9 @@ describe('getPermissionsByActions', () => {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 actions: [
-                    RecordPermissionsActions.ACCESS,
-                    RecordPermissionsActions.EDIT,
-                    RecordPermissionsActions.DELETE
+                    RecordPermissionsActions.ACCESS_RECORD,
+                    RecordPermissionsActions.EDIT_RECORD,
+                    RecordPermissionsActions.DELETE_RECORD
                 ],
                 usersGroupId: '12345',
                 permissionTreeTarget: {
@@ -45,9 +45,9 @@ describe('getPermissionsByActions', () => {
         );
 
         expect(perms).toEqual({
-            [RecordPermissionsActions.ACCESS]: true,
-            [RecordPermissionsActions.EDIT]: false,
-            [RecordPermissionsActions.DELETE]: null
+            [RecordPermissionsActions.ACCESS_RECORD]: true,
+            [RecordPermissionsActions.EDIT_RECORD]: false,
+            [RecordPermissionsActions.DELETE_RECORD]: null
         });
     });
 
@@ -58,8 +58,8 @@ describe('getPermissionsByActions', () => {
                 applyTo: 'test_lib',
                 usersGroup: '12345',
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: 'test_lib/12345'
             })
@@ -70,9 +70,9 @@ describe('getPermissionsByActions', () => {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 actions: [
-                    RecordPermissionsActions.ACCESS,
-                    RecordPermissionsActions.EDIT,
-                    RecordPermissionsActions.DELETE
+                    RecordPermissionsActions.ACCESS_RECORD,
+                    RecordPermissionsActions.EDIT_RECORD,
+                    RecordPermissionsActions.DELETE_RECORD
                 ],
                 usersGroupId: '12345',
                 permissionTreeTarget: {
@@ -86,9 +86,9 @@ describe('getPermissionsByActions', () => {
         );
 
         expect(permEdit).toEqual({
-            [RecordPermissionsActions.ACCESS]: true,
-            [RecordPermissionsActions.EDIT]: null,
-            [RecordPermissionsActions.DELETE]: false
+            [RecordPermissionsActions.ACCESS_RECORD]: true,
+            [RecordPermissionsActions.EDIT_RECORD]: null,
+            [RecordPermissionsActions.DELETE_RECORD]: false
         });
     });
 
@@ -102,9 +102,9 @@ describe('getPermissionsByActions', () => {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 actions: [
-                    RecordPermissionsActions.ACCESS,
-                    RecordPermissionsActions.EDIT,
-                    RecordPermissionsActions.DELETE
+                    RecordPermissionsActions.ACCESS_RECORD,
+                    RecordPermissionsActions.EDIT_RECORD,
+                    RecordPermissionsActions.DELETE_RECORD
                 ],
                 usersGroupId: '12345',
                 permissionTreeTarget: {
@@ -118,9 +118,9 @@ describe('getPermissionsByActions', () => {
         );
 
         expect(permEdit).toEqual({
-            [RecordPermissionsActions.ACCESS]: null,
-            [RecordPermissionsActions.EDIT]: null,
-            [RecordPermissionsActions.DELETE]: null
+            [RecordPermissionsActions.ACCESS_RECORD]: null,
+            [RecordPermissionsActions.EDIT_RECORD]: null,
+            [RecordPermissionsActions.DELETE_RECORD]: null
         });
     });
 });

@@ -1,9 +1,10 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {IRecord} from '_types/record';
 import {PreviewSizes} from '../../_types/filesManager';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 
 export interface ICoreRecordApp {

@@ -1,28 +1,25 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {
-    AppPermissionsActions,
-    AttributePermissionsActions,
-    IPermission,
-    ITreePermissionsConf,
-    PermissionsRelations,
-    PermissionTypes,
-    RecordPermissionsActions
-} from '../../_types/permissions';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IAppModule} from '_types/shared';
+import {IPermission, ITreePermissionsConf, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
 
-export interface ICorePermissionApp {
+export interface IPluginPermission {
+    name: string;
+    type: PermissionTypes;
+    applyOn?: string[];
+}
+
+export interface ICorePermissionApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {
-    'core.app.graphql'?: IGraphqlApp;
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.attribute'?: IAttributeDomain;
 }
 
 export default function({
-    'core.app.graphql': graphqlApp = null,
     'core.domain.permission': permissionDomain = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps = {}): ICorePermissionApp {
@@ -38,6 +35,17 @@ export default function({
         };
     }
 
+    /**
+     * Return all possibles permissions actions, deduplicated, including plugins actions
+     */
+    const _graphqlActionsList = (): string => {
+        const actions = Object.values(PermissionTypes).reduce((acc, type): string[] => {
+            return [...acc, ...permissionDomain.getActionsByType({type, skipApplyOn: true})];
+        }, []);
+
+        return [...new Set(actions)].join(' ');
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -50,10 +58,8 @@ export default function({
                         ${Object.values(PermissionTypes).join(' ')}
                     }
 
-                    enum PermissionsActions {
-                        ${Object.values(RecordPermissionsActions).join(' ')}
-                        ${Object.values(AttributePermissionsActions).join(' ')}
-                        ${Object.values(AppPermissionsActions).join(' ')}
+                    enum PermissionsActions{
+                        ${_graphqlActionsList()}
                     }
 
                     type HeritedPermissionAction {
@@ -150,7 +156,7 @@ export default function({
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [HeritedPermissionAction!]
 
-                        permissionsActionsByType(type: PermissionTypes!): [PermissionsActions!]!
+                        permissionsActionsByType(type: PermissionTypes!, applyOn: String): [PermissionsActions!]!
                     }
 
                     extend type Mutation {
@@ -208,8 +214,11 @@ export default function({
                                 })
                             );
                         },
-                        permissionsActionsByType(_, {type}: {type: string}, ctx): string[] {
-                            return [];
+                        permissionsActionsByType(
+                            _,
+                            {type, applyOn}: {type: PermissionTypes; applyOn?: string}
+                        ): string[] {
+                            return permissionDomain.getActionsByType({type, applyOn});
                         }
                     },
                     Mutation: {
@@ -254,6 +263,11 @@ export default function({
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
+        },
+        extensionPoints: {
+            registerPermissionActions(type: PermissionTypes, actions: string[], applyOn?: string[]) {
+                permissionDomain.registerActions(type, actions, applyOn);
+            }
         }
     };
 }

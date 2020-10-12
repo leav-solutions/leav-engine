@@ -85,3 +85,8 @@ export interface IIsAllowedParams {
     target?: IPermissionTarget;
     ctx: IQueryInfos;
 }
+export interface IGetActionsByTypeParams {
+    type: PermissionTypes;
+    applyOn?: string;
+    skipApplyOn?: boolean;
+}

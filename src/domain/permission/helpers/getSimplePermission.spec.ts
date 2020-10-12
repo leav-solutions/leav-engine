@@ -12,9 +12,9 @@ describe('getSimplePermission', () => {
     test('Should return a permission', async () => {
         jest.spyOn(getPermissionsByActions, 'default').mockReturnValue(
             Promise.resolve({
-                [RecordPermissionsActions.ACCESS]: true,
-                [RecordPermissionsActions.EDIT]: false,
-                [RecordPermissionsActions.DELETE]: null
+                [RecordPermissionsActions.ACCESS_RECORD]: true,
+                [RecordPermissionsActions.EDIT_RECORD]: false,
+                [RecordPermissionsActions.DELETE_RECORD]: null
             })
         );
 
@@ -22,7 +22,7 @@ describe('getSimplePermission', () => {
             {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                action: RecordPermissionsActions.ACCESS,
+                action: RecordPermissionsActions.ACCESS_RECORD,
                 usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
@@ -38,7 +38,7 @@ describe('getSimplePermission', () => {
             {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                action: RecordPermissionsActions.EDIT,
+                action: RecordPermissionsActions.EDIT_RECORD,
                 usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',
@@ -54,7 +54,7 @@ describe('getSimplePermission', () => {
             {
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                action: RecordPermissionsActions.DELETE,
+                action: RecordPermissionsActions.DELETE_RECORD,
                 usersGroupId: '12345',
                 permissionTreeTarget: {
                     id: '123',

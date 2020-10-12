@@ -32,9 +32,9 @@ describe('PermissionDomain', () => {
                 type: PermissionTypes.RECORD,
                 userGroup: 'users/12345',
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: 'test_lib/12345'
             };
@@ -53,9 +53,9 @@ describe('PermissionDomain', () => {
                     type: PermissionTypes.RECORD,
                     usersGroup: 'users/12345',
                     actions: {
-                        [RecordPermissionsActions.ACCESS]: true,
-                        [RecordPermissionsActions.EDIT]: false,
-                        [RecordPermissionsActions.DELETE]: false
+                        [RecordPermissionsActions.ACCESS_RECORD]: true,
+                        [RecordPermissionsActions.EDIT_RECORD]: false,
+                        [RecordPermissionsActions.DELETE_RECORD]: false
                     },
                     permissionTreeTarget: {
                         library: 'test_lib',
@@ -237,6 +237,54 @@ describe('PermissionDomain', () => {
                     ctx
                 })
             ).rejects.toThrow(ValidationError);
+        });
+    });
+
+    describe('getActionsByType', () => {
+        test('Return actions by type with registered actions', async () => {
+            const permsDomain = permissionDomain({});
+
+            // Register actions
+            permsDomain.registerActions(PermissionTypes.APP, ['test_perm']);
+
+            // Retrieve actions
+            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP});
+
+            expect(permsByType.indexOf('test_perm')).toBeGreaterThanOrEqual(0);
+        });
+
+        test('Return actions by type with registered actions, filtered', async () => {
+            const permsDomain = permissionDomain({});
+
+            // Register actions
+            permsDomain.registerActions(PermissionTypes.APP, ['test_perm'], ['my_lib_name']);
+            permsDomain.registerActions(PermissionTypes.APP, ['other_test_perm'], ['my_other_lib_name']);
+
+            // Retrieve actions
+            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP, applyOn: 'my_lib_name'});
+
+            expect(permsByType.indexOf('test_perm')).toBeGreaterThanOrEqual(0);
+            expect(permsByType.indexOf('other_test_perm')).toBe(-1);
+
+            const otherPermsByType = permsDomain.getActionsByType({
+                type: PermissionTypes.APP,
+                applyOn: 'my_other_lib_name'
+            });
+
+            expect(otherPermsByType.indexOf('other_test_perm')).toBeGreaterThanOrEqual(0);
+            expect(otherPermsByType.indexOf('test_perm')).toBe(-1);
+        });
+
+        test('Return all actions if forced too', async () => {
+            const permsDomain = permissionDomain({});
+
+            // Register actions
+            permsDomain.registerActions(PermissionTypes.APP, ['test_perm'], ['my_lib_name']);
+
+            // Retrieve actions
+            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP, skipApplyOn: true});
+
+            expect(permsByType.indexOf('test_perm')).toBeGreaterThanOrEqual(0);
         });
     });
 });

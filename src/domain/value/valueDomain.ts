@@ -376,7 +376,7 @@ export default function({
 
             // Check permission
             const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.EDIT,
+                RecordPermissionsActions.EDIT_RECORD,
                 ctx.userId,
                 library,
                 recordId,
@@ -384,7 +384,7 @@ export default function({
             );
 
             if (!canUpdateRecord) {
-                throw new PermissionError(RecordPermissionsActions.EDIT);
+                throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
             }
 
             const isAllowedToDelete = await attributePermissionDomain.getAttributePermission(

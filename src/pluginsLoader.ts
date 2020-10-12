@@ -1,7 +1,8 @@
 import {ICorePluginsApp} from 'app/core/pluginsApp';
 import {AwilixContainer} from 'awilix';
 import * as fs from 'fs';
-import {IAppModule, IExtensionPoints} from '_types/shared';
+import {IExtensionPoints} from '_types/extensionPoints';
+import {IAppModule} from '_types/shared';
 
 export const initPlugins = async (folder: string, depsManager: AwilixContainer) => {
     const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];

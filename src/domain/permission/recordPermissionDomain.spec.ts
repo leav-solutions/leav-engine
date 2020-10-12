@@ -94,7 +94,7 @@ describe('recordPermissionDomain', () => {
             });
 
             const perm = await recordPermDomain.getRecordPermission(
-                RecordPermissionsActions.ACCESS,
+                RecordPermissionsActions.ACCESS_RECORD,
                 '987654',
                 'test_lib',
                 '123456',
@@ -124,7 +124,7 @@ describe('recordPermissionDomain', () => {
             });
 
             const perm = await recordPermDomain.getRecordPermission(
-                RecordPermissionsActions.ACCESS,
+                RecordPermissionsActions.ACCESS_RECORD,
                 '987654',
                 'test_lib',
                 '123456',
@@ -148,7 +148,7 @@ describe('recordPermissionDomain', () => {
             });
 
             const perm = await recordPermDomain.getHeritedRecordPermission(
-                RecordPermissionsActions.ACCESS,
+                RecordPermissionsActions.ACCESS_RECORD,
                 '12345',
                 'test_lib',
                 'test_tree',

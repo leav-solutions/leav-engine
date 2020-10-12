@@ -19,6 +19,7 @@ import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 import {
+    IGetActionsByTypeParams,
     IGetHeritedPermissionsParams,
     IGetPermissionsByActionsParams,
     IIsAllowedParams,
@@ -49,6 +50,10 @@ export interface IPermissionDomain {
     }: IGetHeritedPermissionsParams): Promise<boolean>;
 
     isAllowed({type, action, userId, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean>;
+
+    getActionsByType(params: IGetActionsByTypeParams): string[];
+
+    registerActions(type: PermissionTypes, actions: string[], applyOn?: string[]): void;
 }
 
 interface IDeps {
@@ -62,6 +67,8 @@ interface IDeps {
 }
 
 export default function(deps: IDeps = {}): IPermissionDomain {
+    const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
+
     const {
         'core.domain.permission.app': appPermissionDomain = null,
         'core.domain.permission.record': recordPermissionDomain = null,
@@ -230,10 +237,43 @@ export default function(deps: IDeps = {}): IPermissionDomain {
         return perm;
     };
 
+    const getActionsByType = ({type, applyOn, skipApplyOn = false}: IGetActionsByTypeParams) => {
+        let perms;
+        switch (type) {
+            case PermissionTypes.APP:
+                perms = Object.values(AppPermissionsActions);
+                break;
+            case PermissionTypes.LIBRARY:
+                perms = Object.values(LibraryPermissionsActions);
+                break;
+            case PermissionTypes.ATTRIBUTE:
+                perms = Object.values(AttributePermissionsActions);
+                break;
+            case PermissionTypes.RECORD:
+                perms = Object.values(RecordPermissionsActions);
+                break;
+        }
+
+        // Retrieve plugin permissions, applying filter if applyOn is specified
+        const pluginPermissions = (_pluginPermissions[type] ?? [])
+            .filter(p => skipApplyOn || !p.applyOn || p.applyOn.indexOf(applyOn) !== -1)
+            .map(p => p.name);
+
+        const res = [...perms, ...pluginPermissions];
+
+        return res;
+    };
+
+    const registerActions = (type: PermissionTypes, actions: string[], applyOn?: string[]) => {
+        _pluginPermissions[type] = [...(_pluginPermissions[type] ?? []), ...actions.map(a => ({name: a, applyOn}))];
+    };
+
     return {
         savePermission,
         getPermissionsByActions,
         getHeritedPermissions,
-        isAllowed
+        isAllowed,
+        getActionsByType,
+        registerActions
     };
 }
