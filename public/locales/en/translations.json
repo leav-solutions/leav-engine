@@ -35,7 +35,8 @@
         "lib_list": "Libraries",
         "setting": "Setting",
         "shortcuts": "Shortcuts",
-        "libraries": "Libraries"
+        "libraries": "Libraries",
+        "navigation": "Navigation"
     },
     "home": {
         "title": "Home"

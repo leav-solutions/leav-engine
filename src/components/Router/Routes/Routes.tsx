@@ -3,6 +3,7 @@ import {Route, Switch} from 'react-router-dom';
 import Home from '../../Home';
 import LibrariesList from '../../LibrariesList';
 import LibraryItemsList from '../../LibraryItemsList';
+import Navigation from '../../Navigation';
 import Setting from '../../Setting';
 import RouteNotFound from '../RouteNotFound';
 
@@ -15,6 +16,10 @@ function Routes(): JSX.Element {
 
             <Route path="/home">
                 <Home />
+            </Route>
+
+            <Route path="/navigation">
+                <Navigation />
             </Route>
 
             <Route exact path="/library/list/">

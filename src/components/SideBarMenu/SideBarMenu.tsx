@@ -1,4 +1,10 @@
-import {BookOutlined, DatabaseOutlined, SettingOutlined, UnorderedListOutlined} from '@ant-design/icons';
+import {
+    BookOutlined,
+    DatabaseOutlined,
+    FolderOutlined,
+    SettingOutlined,
+    UnorderedListOutlined
+} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
 import {Drawer, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
@@ -83,6 +89,12 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                     <Menu.Item key="list" icon={<BookOutlined />} onClick={hide}>
                         <NavLink to="/library/list/" activeClassName="nav-link-active">
                             {t('sidebar.lib_list')}
+                        </NavLink>
+                    </Menu.Item>
+
+                    <Menu.Item key="navigation" icon={<FolderOutlined />} onClick={hide}>
+                        <NavLink to="/navigation" activeClassName="nav-link-active">
+                            {t('sidebar.navigation')}
                         </NavLink>
                     </Menu.Item>
 
