@@ -4,6 +4,7 @@ import {Checkbox, Dropdown, Menu, Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Resizable} from 'react-resizable';
+import styled from 'styled-components';
 import {infosCol} from '../../../constants/constants';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
 import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
@@ -18,6 +19,12 @@ import ChooseTableColumns from './ChooseTableColumns';
 import Header from './Header';
 import './LibraryItemsListTable.css';
 import LibraryItemsModal from './LibraryItemsModal';
+
+const LoadingContainer = styled.div`
+    height: 60vh;
+    display: grid;
+    place-items: center;
+`;
 
 interface ILibraryItemsListTableProps {
     stateItems: LibraryItemListState;
@@ -267,7 +274,9 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
             <ChooseTableColumns openChangeColumns={openChangeColumns} setOpenChangeColumns={setOpenChangeColumns} />
 
             {stateItems.itemsLoading ? (
-                <Spin />
+                <LoadingContainer>
+                    <Spin size="large" style={{height: '20rem'}} />
+                </LoadingContainer>
             ) : (
                 <Table
                     bordered
