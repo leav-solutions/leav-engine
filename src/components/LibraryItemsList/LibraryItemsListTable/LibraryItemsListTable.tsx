@@ -275,7 +275,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
             {stateItems.itemsLoading ? (
                 <LoadingContainer>
-                    <Spin size="large" style={{height: '20rem'}} />
+                    <Spin size="large" />
                 </LoadingContainer>
             ) : (
                 <Table

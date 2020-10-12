@@ -1,7 +1,6 @@
 import {ExportOutlined, HeartOutlined, InfoCircleOutlined, ToolOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
 import {Card, Col} from 'antd';
-import Meta from 'antd/lib/card/Meta';
 import React from 'react';
 import {useHistory} from 'react-router-dom';
 import {getLang} from '../../../queries/cache/lang/getLangQuery';
@@ -27,7 +26,6 @@ function LibraryCard({lib, active}: ILibraryCardProps): JSX.Element {
     };
 
     const {data: dataLang} = useQuery(getLang);
-
     // handle case dataLang is null
     const {lang} = dataLang ?? {lang: []};
 
@@ -45,7 +43,7 @@ function LibraryCard({lib, active}: ILibraryCardProps): JSX.Element {
                 style={active ? {border: `1px solid ${themingVar['@primary-color']}`} : {}}
             >
                 <Card.Meta>{lib.id}</Card.Meta>
-                <Meta title={localizedLabel(lib.label, lang) ?? lib.id} description={lib.id} />
+                <Card.Meta title={localizedLabel(lib.label, lang) ?? lib.id} description={lib.id} />
             </Card>
         </Col>
     );

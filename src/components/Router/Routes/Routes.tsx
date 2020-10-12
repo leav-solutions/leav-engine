@@ -3,7 +3,9 @@ import {Route, Switch} from 'react-router-dom';
 import Home from '../../Home';
 import LibrariesList from '../../LibrariesList';
 import LibraryItemsList from '../../LibraryItemsList';
+import Navigation from '../../Navigation';
 import Setting from '../../Setting';
+import TreeList from '../../TreeList';
 import RouteNotFound from '../RouteNotFound';
 
 function Routes(): JSX.Element {
@@ -15,6 +17,14 @@ function Routes(): JSX.Element {
 
             <Route path="/home">
                 <Home />
+            </Route>
+
+            <Route path="/navigation/list">
+                <TreeList />
+            </Route>
+
+            <Route path="/navigation/:treeId">
+                <Navigation />
             </Route>
 
             <Route exact path="/library/list/">

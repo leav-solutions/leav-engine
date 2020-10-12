@@ -35,7 +35,8 @@
         "lib_list": "Libraries",
         "setting": "Setting",
         "shortcuts": "Shortcuts",
-        "libraries": "Libraries"
+        "libraries": "Libraries",
+        "navigation": "Navigation"
     },
     "home": {
         "title": "Home"
@@ -175,5 +176,15 @@
     "search": {
         "placeholder": "Search in library",
         "explain-cancel": "Cancel search"
+    },
+    "navigation": {
+        "list": {
+            "info": {
+                "tree": "Tree Information",
+                "library": "Library Information",
+                "id": "Id",
+                "label": "Label"
+            }
+        }
     }
 }

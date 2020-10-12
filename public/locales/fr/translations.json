@@ -46,7 +46,8 @@
         "lib_list": "Bibliothèques",
         "setting": "Paramètres",
         "shortcuts": "Raccourcis",
-        "libraries": "Bibliothèques"
+        "libraries": "Bibliothèques",
+        "navigation": "Navigation"
     },
     "lib_list": {
         "header": "Bibliothèques"
@@ -156,7 +157,6 @@
         "all-selected-enabled": "Tout sélectionné actif",
         "all-selected-disabled": "Tout sélectionné inactif",
         "unselect-all": "Tout désélectionner"
-
     },
     "table-columns-selection": {
         "header": "Colonnes disponibles",
@@ -175,5 +175,15 @@
     "search": {
         "placeholder": "Rechercher dans la bibliothèque",
         "explain-cancel": "Annuler la recherche"
+    },
+    "navigation": {
+        "list": {
+            "info": {
+                "tree": "Détail de l'Arbre",
+                "library": "Détail de la bibliothèque",
+                "id": "Identifiant",
+                "label": "Nom"
+            }
+        }
     }
 }

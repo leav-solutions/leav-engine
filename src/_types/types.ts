@@ -240,3 +240,12 @@ export interface IAttributeSelected {
     extendedData?: IExtendedData;
     treeData?: ITreeData;
 }
+
+export interface ITree {
+    id: string;
+    label: ILabel;
+    libraries: {
+        id: string;
+        label: ILabel;
+    }[];
+}
