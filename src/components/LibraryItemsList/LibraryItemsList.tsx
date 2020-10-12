@@ -1,10 +1,12 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useReducer} from 'react';
+import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
 import {StateItemsContext} from '../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../hook/ActiveLibHook';
 import {useLang} from '../../hook/LangHook';
+import {useNotificationBase} from '../../hook/NotificationBase';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {
@@ -12,7 +14,7 @@ import {
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
 import {checkTypeIsLink, localizedLabel} from '../../utils';
-import {AttributeFormat, AttributeType, IAttribute, IItem, OrderSearch} from '../../_types/types';
+import {AttributeFormat, AttributeType, IAttribute, IItem, NotificationType, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import Filters from './Filters';
 import reducer, {LibraryItemListInitialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
@@ -40,12 +42,13 @@ const MenuWrapper = styled.div`
 `;
 
 function LibraryItemsList(): JSX.Element {
+    const {t} = useTranslation();
     const {libId} = useParams<{libId: string}>();
 
     const [state, dispatch] = useReducer(reducer, LibraryItemListInitialState);
 
     const [{lang}] = useLang();
-
+    const [, updateNotificationBase] = useNotificationBase();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
 
     const {loading, data, error} = useQuery(getLibraryDetailExtendedQuery, {
@@ -59,16 +62,22 @@ function LibraryItemsList(): JSX.Element {
             const libId = data?.libraries?.list[0]?.id;
             const libLabel = data?.libraries?.list[0]?.label;
             const {query, type, filter, searchableFields} = data?.libraries?.list[0]?.gqlNames;
+            const libName = localizedLabel(libLabel, lang);
 
             updateActiveLibrary({
                 id: libId,
-                name: localizedLabel(libLabel, lang),
+                name: libName,
                 filter,
                 gql: {
                     searchableFields,
                     query,
                     type
                 }
+            });
+
+            updateNotificationBase({
+                content: t('notification.active-lib', {lib: libName}),
+                type: NotificationType.basic
             });
 
             const attributes: IAttribute[] = data?.libraries?.list[0]?.attributes.reduce(
@@ -110,7 +119,7 @@ function LibraryItemsList(): JSX.Element {
                 columns: []
             });
         }
-    }, [dispatch, updateActiveLibrary, loading, data, libId, activeLibrary, lang]);
+    }, [dispatch, updateActiveLibrary, loading, data, libId, activeLibrary, lang, t, updateNotificationBase]);
 
     const [
         getRecords,

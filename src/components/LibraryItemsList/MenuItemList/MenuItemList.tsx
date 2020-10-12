@@ -1,9 +1,10 @@
-import {FilterOutlined, PlusOutlined, RedoOutlined} from '@ant-design/icons';
+import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import {Button, Select, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {DisplayListItemTypes} from '../../../_types/types';
+import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -25,6 +26,14 @@ const Wrapper = styled.div`
     justify-content: space-between;
 `;
 
+const SubGroup = styled.div`
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-column-gap: 1rem;
+    align-items: center;
+    justify-content: end;
+`;
+
 function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
 
@@ -33,26 +42,25 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             key: 'list-small',
             text: t('items_list.display.list-small'),
             value: DisplayListItemTypes.listSmall,
-            icon: 'list layout'
+            icon: <MenuOutlined />
         },
         {
             key: 'list-medium',
             text: t('items_list.display.list-medium'),
             value: DisplayListItemTypes.listMedium,
-            icon: 'list layout'
+            icon: <MenuOutlined />
         },
         {
             key: 'list-big',
             text: t('items_list.display.list-big'),
             value: DisplayListItemTypes.listBig,
-            icon: 'list layout'
+            icon: <MenuOutlined />
         },
         {
             key: 'tile',
             text: t('items_list.display.tile'),
             value: DisplayListItemTypes.tile,
-            icon: 'th large',
-            default: true
+            icon: <AppstoreFilled />
         }
     ];
 
@@ -83,9 +91,6 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
                             <Button icon={<FilterOutlined />} name="show-filter" onClick={toggleShowFilter} />
                         </Tooltip>
                     </div>
-                    <div>
-                        <SelectView />
-                    </div>
                 </>
             )}
 
@@ -98,27 +103,30 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             </div>
 
             <div>
-                <Button icon={<PlusOutlined />}>{t('items_list.new')}</Button>
+                <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
+                    {t('items_list.new')}
+                </PrimaryBtn>
             </div>
 
-            <div>
+            <SubGroup>
+                <SelectView />
+
                 <Select
                     placeholder={t('items_list.display_type')}
                     defaultValue={stateItems.displayType}
                     onChange={value => changeDisplay(value)}
-                    bordered={false}
+                    bordered={true}
                 >
                     {displayOptions.map(display => (
                         <Select.Option key={display.key} value={display.value}>
+                            <span>{display.icon}</span>
                             {display.text}
                         </Select.Option>
                     ))}
                 </Select>
-            </div>
 
-            <div>
                 <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()}></Button>
-            </div>
+            </SubGroup>
         </Wrapper>
     );
 }

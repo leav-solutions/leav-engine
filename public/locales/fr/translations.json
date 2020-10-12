@@ -191,6 +191,7 @@
     },
     "notification": {
         "base-message": "Bienvenue sur l'explorateur",
-        "active-lib": "Vous êtes sur la bibliothèque {{lib}}"
+        "active-lib": "Vous êtes sur la bibliothèque {{lib}}",
+        "active-tree": "Vous êtes sur l'arbre {{tree}}"
     }
 }

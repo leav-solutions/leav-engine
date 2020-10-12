@@ -67,6 +67,20 @@ function App({token, onTokenInvalid}: IAppProps) {
                             }
                         }
                     }
+                },
+                Query: {
+                    fields: {
+                        notificationsStack: {
+                            merge(existing, incoming) {
+                                return [...incoming];
+                            }
+                        },
+                        notificationBase: {
+                            merge(existing, incoming) {
+                                return incoming;
+                            }
+                        }
+                    }
                 }
             }
         }),

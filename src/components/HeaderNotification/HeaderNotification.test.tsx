@@ -11,6 +11,8 @@ import {INotification, NotificationType} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import HeaderNotification from './HeaderNotification';
 
+jest.setTimeout(4000);
+
 describe('HeaderNotification', () => {
     test('should display base message', async () => {
         let comp: any;
@@ -27,7 +29,25 @@ describe('HeaderNotification', () => {
     });
 
     test('should display message given', async () => {
-        const mockCache = new InMemoryCache();
+        // A#dd custom merge notificationsStack and notificationBase to avoid warning from apollo
+        const mockCache = new InMemoryCache({
+            typePolicies: {
+                Query: {
+                    fields: {
+                        notificationsStack: {
+                            merge(existing, incoming) {
+                                return [...incoming];
+                            }
+                        },
+                        notificationBase: {
+                            merge(existing, incoming) {
+                                return incoming;
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         const mockNotification: INotification = {
             content: 'this is a test',
@@ -37,7 +57,7 @@ describe('HeaderNotification', () => {
         mockCache.writeQuery<IGetNotificationsStack>({
             query: getNotificationsStack,
             data: {
-                notifications: {stacks: [mockNotification]}
+                notificationsStack: [mockNotification]
             }
         });
 

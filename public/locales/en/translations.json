@@ -192,6 +192,7 @@
     },
     "notification": {
         "base-message": "Welcome to the explorer",
-        "active-lib": "You are currently on the library {{lib}}"
+        "active-lib": "You are currently on the library {{lib}}",
+        "active-tree": "You are currently on the tree {{tree}}"
     }
 }

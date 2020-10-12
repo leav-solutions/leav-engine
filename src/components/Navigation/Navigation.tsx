@@ -1,12 +1,15 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useReducer} from 'react';
+import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {StateNavigationContext} from '../../Context/StateNavigationContext';
 import {useActiveTree} from '../../hook/ActiveTreeHook';
 import {useLang} from '../../hook/LangHook';
+import {useNotificationBase} from '../../hook/NotificationBase';
 import {getTreeListQuery, IGetTreeListQuery, IGetTreeListQueryVar} from '../../queries/trees/getTreeListQuery';
 import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';
 import {localizedLabel} from '../../utils';
+import {NotificationType} from '../../_types/types';
 import NavigationView from '../NavigationView';
 
 interface INavigationParams {
@@ -14,12 +17,14 @@ interface INavigationParams {
 }
 
 function Navigation(): JSX.Element {
+    const {t} = useTranslation();
     const {treeId} = useParams<INavigationParams>();
 
     const [state, dispatch] = useReducer(NavigationReducer, NavigationReducerInitialState);
 
     const [{lang}] = useLang();
     const [, updateActiveTree] = useActiveTree();
+    const [, updateNotificationBase] = useNotificationBase();
 
     const {data, loading} = useQuery<IGetTreeListQuery, IGetTreeListQueryVar>(getTreeListQuery, {
         variables: {treeId}
@@ -28,14 +33,20 @@ function Navigation(): JSX.Element {
     useEffect(() => {
         const currentTree = data?.trees.list[0];
         if (!loading && currentTree) {
+            const treeName = localizedLabel(currentTree.label, lang);
             // set Active Tree Data
             updateActiveTree({
                 id: currentTree.id,
-                label: localizedLabel(currentTree.label, lang),
+                label: treeName,
                 libraries: currentTree.libraries.map(lib => ({id: lib.id}))
             });
+
+            updateNotificationBase({
+                content: t('notification.active-tree', {tree: treeName}),
+                type: NotificationType.basic
+            });
         }
-    }, [data, loading, lang, updateActiveTree]);
+    }, [data, loading, lang, updateActiveTree, t, updateNotificationBase]);
 
     return (
         <StateNavigationContext.Provider value={{stateNavigation: state, dispatchNavigation: dispatch}}>
