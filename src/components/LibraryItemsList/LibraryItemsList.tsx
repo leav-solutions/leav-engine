@@ -119,7 +119,7 @@ function LibraryItemsList(): JSX.Element {
                 columns: []
             });
         }
-    }, [dispatch, loadingLib, data, libId, activeLib, client]);
+    }, [dispatch, loadingLib, data, libId, activeLib, lang, client]);
 
     const [
         getRecords,
