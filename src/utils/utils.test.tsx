@@ -171,18 +171,18 @@ describe('utils', () => {
         test('Converts an array of permissions to an object', async () => {
             const perms: IS_ALLOWED_isAllowed[] = [
                 {
-                    name: PermissionsActions.access,
+                    name: PermissionsActions.access_record,
                     allowed: true
                 },
                 {
-                    name: PermissionsActions.edit,
+                    name: PermissionsActions.edit_record,
                     allowed: false
                 }
             ];
 
             expect(permsArrayToObject(perms)).toEqual({
-                access: true,
-                edit: false
+                access_record: true,
+                edit_record: false
             });
         });
     });

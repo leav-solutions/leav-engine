@@ -38,10 +38,10 @@ function DefineLibPermissionsView({applyTo, readOnly}: IDefineLibPermissionsView
                     applyTo,
                     usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
                     actions: [
-                        PermissionsActions.access,
-                        PermissionsActions.create,
-                        PermissionsActions.edit,
-                        PermissionsActions.delete
+                        PermissionsActions.access_record,
+                        PermissionsActions.create_record,
+                        PermissionsActions.edit_record,
+                        PermissionsActions.delete_record
                     ]
                 }}
                 readOnly={readOnly}

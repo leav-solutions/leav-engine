@@ -11,12 +11,12 @@ describe('EditPermissionsView', () => {
             <EditPermissionsView
                 onChange={onChange}
                 permissions={[
-                    {name: PermissionsActions.create, allowed: true},
-                    {name: PermissionsActions.edit, allowed: true}
+                    {name: PermissionsActions.create_record, allowed: true},
+                    {name: PermissionsActions.edit_record, allowed: true}
                 ]}
                 heritedPermissions={[
-                    {name: PermissionsActions.create, allowed: false},
-                    {name: PermissionsActions.edit, allowed: false}
+                    {name: PermissionsActions.create_record, allowed: false},
+                    {name: PermissionsActions.edit_record, allowed: false}
                 ]}
             />
         );

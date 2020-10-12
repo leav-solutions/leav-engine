@@ -20,7 +20,7 @@ describe('DefineTreePermissionsView', () => {
                     treeAttribute={mockTree}
                     permissionType={PermissionTypes.record}
                     applyTo="test_lib"
-                    actions={[PermissionsActions.access]}
+                    actions={[PermissionsActions.access_record]}
                 />
             </MockedProvider>
         );

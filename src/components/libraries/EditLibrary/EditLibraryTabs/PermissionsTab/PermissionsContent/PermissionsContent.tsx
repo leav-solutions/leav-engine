@@ -30,10 +30,10 @@ interface IEditLibraryPermissionsState {
 }
 
 const actions = [
-    PermissionsActions.access,
-    PermissionsActions.create,
-    PermissionsActions.edit,
-    PermissionsActions.delete
+    PermissionsActions.access_record,
+    PermissionsActions.create_record,
+    PermissionsActions.edit_record,
+    PermissionsActions.delete_record
 ];
 
 /* tslint:disable-next-line:variable-name */
