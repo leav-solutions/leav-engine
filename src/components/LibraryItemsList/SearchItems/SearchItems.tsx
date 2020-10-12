@@ -50,7 +50,7 @@ function SearchItems(): JSX.Element {
             type: LibraryItemListReducerActionTypes.SET_OFFSET,
             offset: 0
         });
-    }, [stateItems.libQuery, dispatchItems, setSearch]);
+    }, [activeLib, dispatchItems, setSearch]);
 
     // reload query when columns, pagination or offset change
     useEffect(() => {

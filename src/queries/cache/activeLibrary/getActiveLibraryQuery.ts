@@ -6,6 +6,7 @@ export interface IGetActiveLibrary {
         name: string;
         filter: string;
         gql: {
+            searchableFields: string;
             query: string;
             type: string;
         };
@@ -19,6 +20,7 @@ export const getActiveLibrary = gql`
             name @client
             filter @client
             gql @client {
+                searchableFields @client
                 query @client
                 type @client
             }

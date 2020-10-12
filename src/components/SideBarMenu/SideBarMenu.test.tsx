@@ -20,6 +20,7 @@ describe('SideBarMenu', () => {
                 name: 'testLibName',
                 filter: 'testLibFilterName',
                 gql: {
+                    searchableFields: 'testSearchableFields',
                     query: 'testLibQueryName',
                     type: 'testGqlType'
                 }
