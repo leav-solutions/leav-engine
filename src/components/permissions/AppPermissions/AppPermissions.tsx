@@ -14,7 +14,7 @@ const PermBlockWrapper = styled.div`
     margin-top: 1em;
 `;
 
-const AdminPermissions = (): JSX.Element => {
+const AppPermissions = (): JSX.Element => {
     const {t} = useTranslation();
     const usersGroupsTreeId = 'users_groups';
 
@@ -115,4 +115,4 @@ const AdminPermissions = (): JSX.Element => {
     );
 };
 
-export default AdminPermissions;
+export default AppPermissions;

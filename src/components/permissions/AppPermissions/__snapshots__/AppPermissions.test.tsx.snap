@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AdminPermissions Snapshot test 1`] = `
+exports[`AppPermissions Snapshot test 1`] = `
 initialize {
   "0": Object {
     "attribs": Object {

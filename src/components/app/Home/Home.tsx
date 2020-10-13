@@ -6,7 +6,7 @@ import Attributes from '../../attributes/Attributes';
 import EditAttribute from '../../attributes/EditAttribute';
 import EditLibrary from '../../libraries/EditLibrary';
 import Libraries from '../../libraries/Libraries';
-import AdminPermissions from '../../permissions/AdminPermissions';
+import AppPermissions from '../../permissions/AppPermissions';
 import Plugins from '../../plugins';
 import ProtectedRoute from '../../shared/ProtectedRoute';
 import EditTree from '../../trees/EditTree';
@@ -73,7 +73,7 @@ function Home(): JSX.Element {
                     <ProtectedRoute
                         permissions={[PermissionsActions.app_access_permissions]}
                         path="/permissions"
-                        component={AdminPermissions}
+                        component={AppPermissions}
                         exact
                     />
                     <ProtectedRoute path="/plugins" component={Plugins} exact />
