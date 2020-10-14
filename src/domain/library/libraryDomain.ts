@@ -158,7 +158,6 @@ export default function({
             validationErrors.push(await validatePermConf(dataToSave.permissions_conf, {attributeDomain}, ctx));
 
             // New library? Link default attributes. Otherwise, save given attributes if any
-            // const attributesToSave = dataToSave.attributes ? dataToSave.attributes.map(attr => attr.id) : [];
             const attributesToSave = dataToSave.attributes
                 ? dataToSave.attributes.map(attr => attr.id)
                 : currentLibraryAttributes;
