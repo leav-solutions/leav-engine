@@ -240,6 +240,13 @@ export default function({
 
     return {
         async init(): Promise<void> {
+            await amqpService.amqpConn.channel.assertQueue(config.indexationManager.queues.events);
+            await amqpService.amqpConn.channel.bindQueue(
+                config.indexationManager.queues.events,
+                config.amqp.exchange,
+                config.eventsManager.routingKeys.events
+            );
+
             return amqpService.consume(
                 config.indexationManager.queues.events,
                 config.eventsManager.routingKeys.events,

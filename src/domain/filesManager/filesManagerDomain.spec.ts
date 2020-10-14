@@ -33,6 +33,11 @@ describe('FilesManager', () => {
             }
         };
 
+        const logger: Mockify<winston.Winston> = {
+            error: jest.fn((...args) => console.log(args)),
+            warn: jest.fn((...args) => console.log(args))
+        };
+
         const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
             assertExchange: jest.fn(),
             checkExchange: jest.fn(),
@@ -51,6 +56,7 @@ describe('FilesManager', () => {
 
         const files = filesManager({
             config: mockConfig as Config.IConfig,
+            'core.utils.logger': logger as winston.Winston,
             'core.infra.amqp.amqpService': mockAmqpService as IAmqpService
         });
 
@@ -69,6 +75,11 @@ describe('FilesManager', () => {
         const rootKey = 'files1';
 
         const mockConfig: Mockify<Config.IConfig> = {
+            amqp: {
+                connOpt: {},
+                type: 'direct',
+                exchange: 'test_leav_core'
+            },
             filesManager: {
                 queues: {
                     events: 'files_events',
@@ -95,6 +106,7 @@ describe('FilesManager', () => {
         };
 
         const logger: Mockify<winston.Winston> = {
+            error: jest.fn((...args) => console.log(args)),
             warn: jest.fn((...args) => console.log(args))
         };
 
@@ -171,6 +183,7 @@ describe('FilesManager', () => {
 
             // expect to send a message to generate preview
             expect(mockAmqpService.publish).toBeCalledWith(
+                mockConfig.amqp.exchange,
                 mockConfig.filesManager.routingKeys.previewRequest,
                 expect.anything()
             );
@@ -277,6 +290,7 @@ describe('FilesManager', () => {
 
             // expect to send a message for generate preview
             expect(mockAmqpService.publish).toBeCalledWith(
+                mockConfig.amqp.exchange,
                 mockConfig.filesManager.routingKeys.previewRequest,
                 expect.anything()
             );

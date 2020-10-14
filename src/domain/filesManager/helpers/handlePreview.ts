@@ -9,7 +9,7 @@ export const _sendPreviewMessage = async (
     config: Config.IConfig
 ) => {
     const msg = JSON.stringify(previewMessage);
-    await amqpService.publish(config.filesManager.routingKeys.previewRequest, msg);
+    await amqpService.publish(config.amqp.exchange, config.filesManager.routingKeys.previewRequest, msg);
 };
 
 export const getPreviewMsg = (

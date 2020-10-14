@@ -19,6 +19,7 @@ export default function({
     return {
         async send(payload: Payload, ctx: IQueryInfos): Promise<void> {
             await amqpService.publish(
+                config.amqp.exchange,
                 config.eventsManager.routingKeys.events,
                 JSON.stringify({time: Date.now(), userId: ctx.userId, payload})
             );

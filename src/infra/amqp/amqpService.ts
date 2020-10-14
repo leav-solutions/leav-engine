@@ -4,7 +4,7 @@ import * as Config from '_types/config';
 
 export interface IAmqpService {
     amqpConn?: IAmqpConn;
-    publish?(routingKey: string, msg: string): Promise<void>;
+    publish?(exchange: string, routingKey: string, msg: string): Promise<void>;
     consume?(queue: string, routingKey: string, onMessage: onMessageFunc, prefetch?: number): Promise<void>;
 }
 
@@ -21,9 +21,9 @@ export default function({
 }: IDeps): IAmqpService {
     return {
         amqpConn,
-        async publish(routingKey: string, msg: string): Promise<void> {
-            await amqpConn.channel.checkExchange(config.amqp.exchange);
-            amqpConn.channel.publish(config.amqp.exchange, routingKey, Buffer.from(msg));
+        async publish(exchange: string, routingKey: string, msg: string): Promise<void> {
+            await amqpConn.channel.checkExchange(exchange);
+            amqpConn.channel.publish(exchange, routingKey, Buffer.from(msg));
             await amqpConn.channel.waitForConfirms();
         },
         async consume(queue: string, routingKey: string, onMessage: onMessageFunc, prefetch?: number): Promise<void> {

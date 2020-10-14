@@ -14,7 +14,9 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     publish: jest.fn(),
     prefetch: jest.fn(),
     checkExchange: jest.fn(),
-    waitForConfirms: jest.fn()
+    waitForConfirms: jest.fn(),
+    assertQueue: jest.fn(),
+    bindQueue: jest.fn()
 };
 
 const ctx: IQueryInfos = {

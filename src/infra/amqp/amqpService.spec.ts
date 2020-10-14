@@ -45,7 +45,7 @@ describe('amqp', () => {
             config: mockConfig as Config.IConfig
         });
 
-        await amqpServ.publish('someRoutingKey', JSON.stringify({test: 'Some value'}));
+        await amqpServ.publish('exchange', 'someRoutingKey', JSON.stringify({test: 'Some value'}));
 
         expect(mockAmqpChannel.checkExchange).toBeCalled();
         expect(mockAmqpChannel.publish).toBeCalled();
