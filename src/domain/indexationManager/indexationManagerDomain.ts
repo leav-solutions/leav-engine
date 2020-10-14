@@ -131,28 +131,31 @@ export default function({
             case EventType.LIBRARY_SAVE:
                 data = (event.payload as ILibraryPayload).data;
 
-                const exists = await elasticsearchService.indiceExists(data.id);
-                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(data.id, ctx);
+                const exists = await elasticsearchService.indiceExists(data.new.id);
+                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(data.new.id, ctx);
 
                 if (
                     !exists ||
                     (exists &&
                         !isEqual(
-                            (await elasticsearchService.indiceGetMapping(data.id)).sort(),
+                            (await elasticsearchService.indiceGetMapping(data.new.id)).sort(),
                             fullTextAttributes.map(fta => fta.id).sort()
                         ))
                 ) {
                     if (exists) {
-                        await elasticsearchService.indiceDelete(data.id);
+                        await elasticsearchService.indiceDelete(data.new.id);
                     }
-                    await _indexRecords({library: data.id}, ctx);
+                    await _indexRecords({library: data.new.id}, ctx);
                 }
 
                 // if label change we re-index all linked libraries
-                if (typeof data.label !== 'undefined') {
+                if (
+                    typeof data.old !== 'undefined' &&
+                    data.new?.recordIdentityConf.label !== data.old?.recordIdentityConf.label
+                ) {
                     const attrs = await attributeDomain.getAttributes({
                         params: {
-                            filters: {linked_library: data.id}
+                            filters: {linked_library: data.new.id}
                         },
                         ctx
                     });
@@ -173,7 +176,7 @@ export default function({
                 break;
             case EventType.LIBRARY_DELETE:
                 data = (event.payload as ILibraryPayload).data;
-                await elasticsearchService.indiceDelete(data.id);
+                await elasticsearchService.indiceDelete(data.old.id);
                 break;
             case EventType.VALUE_SAVE:
                 data = (event.payload as IValuePayload).data;

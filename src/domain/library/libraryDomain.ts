@@ -120,6 +120,7 @@ export default function({
         async saveLibrary(libData: ILibrary, ctx: IQueryInfos): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({params: {filters: {id: libData.id}}, ctx});
             const existingLib = !!libs.list.length;
+
             const defaultParams = {
                 id: '',
                 system: false,
@@ -224,11 +225,8 @@ export default function({
                 {
                     type: EventType.LIBRARY_SAVE,
                     data: {
-                        id: lib.id,
-                        label:
-                            libData.recordIdentityConf?.label !== currentRecordIdentityConf?.label
-                                ? libData.recordIdentityConf?.label
-                                : undefined
+                        new: lib,
+                        old: libs.list[0]
                     }
                 },
                 ctx
@@ -265,7 +263,7 @@ export default function({
             await eventsManager.send(
                 {
                     type: EventType.LIBRARY_DELETE,
-                    data: {id: deletedLibrary.id}
+                    data: {old: deletedLibrary}
                 },
                 ctx
             );

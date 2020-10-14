@@ -33,7 +33,7 @@ describe('Events Manager', () => {
             'core.infra.amqp.amqpService': amqpServ as IAmqpService
         });
 
-        await events.send({type: EventType.LIBRARY_SAVE, data: {id: 'test'}}, ctx);
+        await events.send({type: EventType.LIBRARY_SAVE, data: {new: {id: 'test'}}}, ctx);
 
         expect(mockAmqpChannel.publish).toBeCalledTimes(1);
     });

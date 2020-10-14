@@ -1,3 +1,6 @@
+import {ILibrary} from './library';
+import {IRecord} from './record';
+
 export enum EventType {
     RECORD_SAVE = 'RECORD_SAVE',
     RECORD_DELETE = 'RECORD_DELETE',
@@ -15,15 +18,15 @@ export interface IRecordPayload extends IPayload {
     data: {
         id: string;
         libraryId: string;
-        old?: any;
-        new?: any;
+        old?: IRecord;
+        new?: IRecord;
     };
 }
 
 export interface ILibraryPayload extends IPayload {
     data: {
-        id: string;
-        label?: string;
+        old?: ILibrary;
+        new?: ILibrary;
     };
 }
 
