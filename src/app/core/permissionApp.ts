@@ -2,7 +2,13 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IAppModule} from '_types/shared';
-import {IPermission, ITreePermissionsConf, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
+import {
+    ILabeledPermissionsAction,
+    IPermission,
+    ITreePermissionsConf,
+    PermissionsRelations,
+    PermissionTypes
+} from '../../_types/permissions';
 
 export interface IPluginPermission {
     name: string;
@@ -40,7 +46,7 @@ export default function({
      */
     const _graphqlActionsList = (): string => {
         const actions = Object.values(PermissionTypes).reduce((acc, type): string[] => {
-            return [...acc, ...permissionDomain.getActionsByType({type, skipApplyOn: true})];
+            return [...acc, ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name)];
         }, []);
 
         return [...new Set(actions)].join(' ');
@@ -60,6 +66,11 @@ export default function({
 
                     enum PermissionsActions{
                         ${_graphqlActionsList()}
+                    }
+
+                    type LabeledPermissionsActions {
+                        name: PermissionsActions!,
+                        label: SystemTranslation
                     }
 
                     type HeritedPermissionAction {
@@ -156,7 +167,7 @@ export default function({
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [HeritedPermissionAction!]
 
-                        permissionsActionsByType(type: PermissionTypes!, applyOn: String): [PermissionsActions!]!
+                        permissionsActionsByType(type: PermissionTypes!, applyOn: String): [LabeledPermissionsActions!]!
                     }
 
                     extend type Mutation {
@@ -217,7 +228,7 @@ export default function({
                         permissionsActionsByType(
                             _,
                             {type, applyOn}: {type: PermissionTypes; applyOn?: string}
-                        ): string[] {
+                        ): ILabeledPermissionsAction[] {
                             return permissionDomain.getActionsByType({type, applyOn});
                         }
                     },

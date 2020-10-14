@@ -1,4 +1,6 @@
+import {i18n} from 'i18next';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {
@@ -7,6 +9,7 @@ import {
     PermissionTypes,
     RecordPermissionsActions
 } from '../../_types/permissions';
+import {mockTranslator} from '../../__tests__/mocks/translator';
 import {IAppPermissionDomain} from './appPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
@@ -241,8 +244,14 @@ describe('PermissionDomain', () => {
     });
 
     describe('getActionsByType', () => {
+        const mockConfig = {
+            lang: {
+                available: ['fr']
+            }
+        };
+
         test('Return actions by type with registered actions', async () => {
-            const permsDomain = permissionDomain({});
+            const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
 
             // Register actions
             permsDomain.registerActions(PermissionTypes.APP, ['test_perm']);
@@ -250,11 +259,11 @@ describe('PermissionDomain', () => {
             // Retrieve actions
             const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP});
 
-            expect(permsByType.indexOf('test_perm')).toBeGreaterThanOrEqual(0);
+            expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
         });
 
         test('Return actions by type with registered actions, filtered', async () => {
-            const permsDomain = permissionDomain({});
+            const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
 
             // Register actions
             permsDomain.registerActions(PermissionTypes.APP, ['test_perm'], ['my_lib_name']);
@@ -263,20 +272,20 @@ describe('PermissionDomain', () => {
             // Retrieve actions
             const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP, applyOn: 'my_lib_name'});
 
-            expect(permsByType.indexOf('test_perm')).toBeGreaterThanOrEqual(0);
-            expect(permsByType.indexOf('other_test_perm')).toBe(-1);
+            expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
+            expect(permsByType.findIndex(p => p.name === 'other_test_perm')).toBe(-1);
 
             const otherPermsByType = permsDomain.getActionsByType({
                 type: PermissionTypes.APP,
                 applyOn: 'my_other_lib_name'
             });
 
-            expect(otherPermsByType.indexOf('other_test_perm')).toBeGreaterThanOrEqual(0);
-            expect(otherPermsByType.indexOf('test_perm')).toBe(-1);
+            expect(otherPermsByType.findIndex(p => p.name === 'other_test_perm')).toBeGreaterThanOrEqual(0);
+            expect(otherPermsByType.findIndex(p => p.name === 'test_perm')).toBe(-1);
         });
 
         test('Return all actions if forced too', async () => {
-            const permsDomain = permissionDomain({});
+            const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
 
             // Register actions
             permsDomain.registerActions(PermissionTypes.APP, ['test_perm'], ['my_lib_name']);
@@ -284,7 +293,7 @@ describe('PermissionDomain', () => {
             // Retrieve actions
             const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP, skipApplyOn: true});
 
-            expect(permsByType.indexOf('test_perm')).toBeGreaterThanOrEqual(0);
+            expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
         });
     });
 });

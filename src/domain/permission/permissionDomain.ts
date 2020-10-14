@@ -1,3 +1,4 @@
+import {i18n} from 'i18next';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
@@ -7,6 +8,7 @@ import {Errors} from '../../_types/errors';
 import {
     AppPermissionsActions,
     AttributePermissionsActions,
+    ILabeledPermissionsAction,
     IPermission,
     LibraryPermissionsActions,
     PermissionTypes,
@@ -51,7 +53,7 @@ export interface IPermissionDomain {
 
     isAllowed({type, action, userId, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean>;
 
-    getActionsByType(params: IGetActionsByTypeParams): string[];
+    getActionsByType(params: IGetActionsByTypeParams): ILabeledPermissionsAction[];
 
     registerActions(type: PermissionTypes, actions: string[], applyOn?: string[]): void;
 }
@@ -63,6 +65,7 @@ interface IDeps {
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
+    translator?: i18n;
     config?: IConfig;
 }
 
@@ -237,7 +240,11 @@ export default function(deps: IDeps = {}): IPermissionDomain {
         return perm;
     };
 
-    const getActionsByType = ({type, applyOn, skipApplyOn = false}: IGetActionsByTypeParams) => {
+    const getActionsByType = ({
+        type,
+        applyOn,
+        skipApplyOn = false
+    }: IGetActionsByTypeParams): ILabeledPermissionsAction[] => {
         let perms;
         switch (type) {
             case PermissionTypes.APP:
@@ -259,7 +266,17 @@ export default function(deps: IDeps = {}): IPermissionDomain {
             .filter(p => skipApplyOn || !p.applyOn || p.applyOn.indexOf(applyOn) !== -1)
             .map(p => p.name);
 
-        const res = [...perms, ...pluginPermissions];
+        const res: ILabeledPermissionsAction[] = [...perms, ...pluginPermissions].map(p => ({
+            name: p,
+            label: config.lang.available.reduce(
+                // Retrieve label for all available languages
+                (acc, l) => ({
+                    ...acc,
+                    [l]: deps.translator.t(`permissions.${p}`, {lng: l})
+                }),
+                {}
+            )
+        }));
 
         return res;
     };

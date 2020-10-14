@@ -1,3 +1,5 @@
+import {ISystemTranslation} from './systemTranslation';
+
 export enum PermissionTypes {
     RECORD = 'record',
     ATTRIBUTE = 'attribute',
@@ -53,6 +55,11 @@ export type PermissionsActions =
     | RecordPermissionsActions
     | AttributePermissionsActions
     | AppPermissionsActions;
+
+export interface ILabeledPermissionsAction {
+    label: ISystemTranslation;
+    name: PermissionsActions | string;
+}
 
 export enum PermissionsRelations {
     AND = 'and',

@@ -75,5 +75,35 @@
             "validateFormat": "Vérifier si la valeur correspond au format de l'attribut",
             "validateRegex": "Vérifier si la valeur est une chaîne de caractères qui correspond à une expression régulière donnée susdit"
         }
+    },
+    "permissions": {
+        "access_record": "Accéder",
+        "create_record": "Créer",
+        "edit_record": "Éditer",
+        "delete_record": "Supprimer",
+        "any_record": "Tous les éléments",
+        "app_access_libraries": "Accéder aux bibliothèques",
+        "app_create_library": "Créer une bibliothèque",
+        "app_edit_library": "Éditer une bibliothèque",
+        "app_delete_library": "Supprimer une bibliothèque",
+        "app_access_attributes": "Accéder aux attributs",
+        "app_create_attribute": "Créer un attribut",
+        "app_edit_attribute": "Éditer un attribut",
+        "app_delete_attribute": "Supprimer un attribut",
+        "app_access_trees": "Accéder aux arbres",
+        "app_create_tree": "Créer un arbre",
+        "app_edit_tree": "Éditer un arbre",
+        "app_delete_tree": "Supprimer un arbre",
+        "app_access_forms": "Accéder aux formulaires",
+        "app_create_form": "Créer un formulaire",
+        "app_edit_form": "Éditer un formulaire",
+        "app_delete_form": "Supprimer un formulaire",
+        "app_access_permissions": "Accéder aux permissions",
+        "app_edit_permission": "Éditer les permissions",
+        "app_access_navigator": "Accéder au navigateur",
+        "access_attribute": "Voir l'attribut",
+        "create_value": "Créer une valeur",
+        "edit_value": "Éditer une valeur",
+        "delete_value": "Supprimer une valeur"
     }
 }
