@@ -1,3 +1,4 @@
+import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
@@ -8,7 +9,6 @@ import {AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
 import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IPermissionDomain} from '../permission/permissionDomain';
 import libraryDomain from './libraryDomain';
 
 describe('LibraryDomain', () => {
@@ -35,10 +35,20 @@ describe('LibraryDomain', () => {
         })
     };
 
+    const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
+        getAppPermission: global.__mockPromise(true)
+    };
+
+    const mockAppPermForbiddenDomain: Mockify<IAppPermissionDomain> = {
+        getAppPermission: global.__mockPromise(false)
+    };
+
     const mockTreeRepo: Mockify<ITreeRepo> = {
         createTree: jest.fn(),
         deleteTree: jest.fn()
     };
+
+    beforeEach(() => jest.clearAllMocks());
 
     describe('getLibraries', () => {
         test('Should return a list of libs', async function() {
@@ -159,10 +169,6 @@ describe('LibraryDomain', () => {
 
         describe('Create library', () => {
             test('Should save a new library', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [], totalCount: 0}),
                     createLibrary: global.__mockPromise({id: 'test', system: false}),
@@ -173,7 +179,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -196,17 +202,13 @@ describe('LibraryDomain', () => {
 
                 expect(newLib).toMatchObject({id: 'test', system: false});
 
-                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                expect(mockAppPermDomain.getAppPermission).toBeCalled();
+                expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
                     AppPermissionsActions.CREATE_LIBRARY
                 );
             });
 
             test('Should throw if invalid ID', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockUtilsInvalidID: Mockify<IUtils> = {
                     validateID: jest.fn().mockReturnValue(false)
                 };
@@ -221,7 +223,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtilsInvalidID as IUtils
                 });
 
@@ -229,10 +231,6 @@ describe('LibraryDomain', () => {
             });
 
             test('Save behavior specific attributes', async () => {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [], totalCount: 0}),
                     createLibrary: global.__mockPromise({id: 'test', system: false}),
@@ -243,7 +241,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
@@ -261,10 +259,6 @@ describe('LibraryDomain', () => {
             });
 
             test('For FILES library, create linked tree', async () => {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [], totalCount: 0}),
                     createLibrary: global.__mockPromise({id: 'test', system: false, behavior: LibraryBehavior.FILES}),
@@ -275,7 +269,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
@@ -294,10 +288,6 @@ describe('LibraryDomain', () => {
 
         describe('Update library', () => {
             test('Should update a library', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -308,7 +298,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -320,17 +310,13 @@ describe('LibraryDomain', () => {
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
-                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                expect(mockAppPermDomain.getAppPermission).toBeCalled();
+                expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
                     AppPermissionsActions.EDIT_LIBRARY
                 );
             });
 
             test('Should update library attributes', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -341,7 +327,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -363,17 +349,13 @@ describe('LibraryDomain', () => {
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
-                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                expect(mockAppPermDomain.getAppPermission).toBeCalled();
+                expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
                     AppPermissionsActions.EDIT_LIBRARY
                 );
             });
 
             test('Should throw if unknown attributes', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -384,7 +366,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -406,10 +388,6 @@ describe('LibraryDomain', () => {
             });
 
             test('Should throw if unknown trees attributes in permissions conf', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -420,7 +398,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -442,10 +420,6 @@ describe('LibraryDomain', () => {
             });
 
             test('Should throw if attributes in recordIdentity are not binded to library', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -457,7 +431,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -475,10 +449,6 @@ describe('LibraryDomain', () => {
             });
 
             test('Should throw if forbidden action', async function() {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(false)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -489,7 +459,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -497,10 +467,6 @@ describe('LibraryDomain', () => {
             });
 
             test('Should not save behavior on existing library', async () => {
-                const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                    getAdminPermission: global.__mockPromise(true)
-                };
-
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -511,7 +477,7 @@ describe('LibraryDomain', () => {
                 const libDomain = libraryDomain({
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -526,14 +492,10 @@ describe('LibraryDomain', () => {
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
         test('Should delete an library and return deleted library', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
                 'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
             libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
 
@@ -541,8 +503,8 @@ describe('LibraryDomain', () => {
 
             expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
 
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAppPermDomain.getAppPermission).toBeCalled();
+            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
                 AppPermissionsActions.DELETE_LIBRARY
             );
         });
@@ -564,14 +526,10 @@ describe('LibraryDomain', () => {
         });
 
         test('Should throw if forbidden action', async function() {
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
-            };
-
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
                 'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain
             });
             libDomain.getLibraries = global.__mockPromise([libData]);
 
@@ -583,19 +541,22 @@ describe('LibraryDomain', () => {
                 getLibraryTreeId: jest.fn().mockReturnValue({})
             };
 
-            const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                deleteLibrary: global.__mockPromise(libData)
             };
-
-            const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
                 'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils
             });
             libDomain.getLibraries = global.__mockPromise({
-                list: [{...libData, behavior: LibraryBehavior.FILES}],
+                list: [
+                    {
+                        ...libData,
+                        behavior: LibraryBehavior.FILES
+                    }
+                ],
                 totalCount: 1
             });
 

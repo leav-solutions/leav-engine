@@ -1,5 +1,5 @@
-import {IAppGraphQLSchema} from 'app/graphql/graphqlApp';
 import {IPluginsDomain} from 'domain/plugins/pluginsDomain';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {IPluginInfos} from '../../_types/plugin';
 
 export interface ICorePluginsApp {

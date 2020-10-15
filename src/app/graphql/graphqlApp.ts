@@ -5,8 +5,8 @@ import {GraphQLResolveInfo, GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
 import * as winston from 'winston';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {IAppModule} from '_types/shared';
-import {IQueryInfos} from '../../_types/queryInfos';
 import {IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp extends IAppModule {
@@ -15,11 +15,6 @@ export interface IGraphqlApp extends IAppModule {
     SCHEMA_UPDATE_EVENT: string;
     generateSchema(): Promise<void>;
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
-}
-
-export interface IAppGraphQLSchema {
-    typeDefs: string;
-    resolvers: any;
 }
 
 interface IDeps {

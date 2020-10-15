@@ -1,5 +1,6 @@
 /* eslint-disable jsdoc/check-indentation */
 
+import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, omit} from 'lodash';
@@ -16,7 +17,6 @@ import {IRecord} from '../../_types/record';
 import {ITree, ITreeElement, ITreeNode, TreeBehavior} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
-import {IPermissionDomain} from '../permission/permissionDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import validateFilesParent from './helpers/validateFilesParent';
 
@@ -164,7 +164,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.app'?: IAppPermissionDomain;
     'core.domain.value'?: IValueDomain;
     'core.utils'?: IUtils;
 }
@@ -173,7 +173,7 @@ export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission': permissionDomain = null,
+    'core.domain.permission.app': appPermissionDomain = null,
     'core.domain.value': valueDomain = null,
     'core.utils': utils = null
 }: IDeps = {}): ITreeDomain {
@@ -216,7 +216,7 @@ export default function({
 
             // Check permissions
             const action = existingTree ? AppPermissionsActions.EDIT_TREE : AppPermissionsActions.CREATE_TREE;
-            const canSaveTree = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSaveTree = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
@@ -259,7 +259,7 @@ export default function({
         async deleteTree(id: string, ctx: IQueryInfos): Promise<ITree> {
             // Check permissions
             const action = AppPermissionsActions.DELETE_TREE;
-            const canSaveTree = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSaveTree = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);

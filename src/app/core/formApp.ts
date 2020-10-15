@@ -1,9 +1,9 @@
-import {IAppGraphQLSchema} from 'app/graphql/graphqlApp';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
 import {IForm} from '_types/forms';
+import {IAppGraphQLSchema} from '_types/graphql';
 
 export interface ICoreFormApp {
     getGraphQLSchema(): IAppGraphQLSchema;

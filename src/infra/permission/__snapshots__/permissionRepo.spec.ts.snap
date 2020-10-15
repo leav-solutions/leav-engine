@@ -48,9 +48,9 @@ Object {
   },
   "value1": Object {
     "actions": Object {
-      "access": true,
-      "delete": false,
-      "edit": false,
+      "access_record": true,
+      "delete_record": false,
+      "edit_record": false,
     },
     "applyTo": "test_lib",
     "permissionTreeTarget": Object {

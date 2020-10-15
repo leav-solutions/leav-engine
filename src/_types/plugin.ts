@@ -1,4 +1,4 @@
-import {IExtensionPoints} from './shared';
+import {IExtensionPointsFunctions} from './extensionPoints';
 
 export interface IPluginInfos {
     name: string;
@@ -13,5 +13,5 @@ export interface IRegisteredPlugin {
 }
 
 export interface IPluginInitModule {
-    init: (extensionPoints: IExtensionPoints) => void;
+    init: (extensionPoints: IExtensionPointsFunctions) => void;
 }

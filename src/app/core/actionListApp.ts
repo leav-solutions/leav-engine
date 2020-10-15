@@ -1,8 +1,8 @@
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {IActionsListFunction, ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
-import {IAppGraphQLSchema} from '../graphql/graphqlApp';
-import {IAppModule} from '_types/shared';
 import {i18n} from 'i18next';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IAppModule} from '_types/shared';
+import {ActionsListEvents, ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
 export interface ICoreActionListApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;

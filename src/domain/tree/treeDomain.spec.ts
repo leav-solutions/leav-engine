@@ -1,3 +1,4 @@
+import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
@@ -10,7 +11,6 @@ import {TreeBehavior} from '../../_types/tree';
 import {mockFilesTree} from '../../__tests__/mocks/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
-import {IPermissionDomain} from '../permission/permissionDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import treeDomain from './treeDomain';
 
@@ -31,15 +31,21 @@ describe('treeDomain', () => {
         getLibraries: global.__mockPromise({list: [{id: 'lib1'}, {id: 'lib2'}], totalCount: 2})
     };
 
+    const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
+        getAppPermission: global.__mockPromise(true)
+    };
+
+    const mockAppPermForbiddenDomain: Mockify<IAppPermissionDomain> = {
+        getAppPermission: global.__mockPromise(false)
+    };
+
+    beforeEach(() => jest.clearAllMocks());
+
     describe('saveTree', () => {
         const mockUtils: Mockify<IUtils> = {
             validateID: jest.fn().mockReturnValue(true)
         };
         test('Should create new tree', async () => {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: global.__mockPromise(mockTree),
                 updateTree: jest.fn(),
@@ -48,7 +54,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -59,15 +65,11 @@ describe('treeDomain', () => {
 
             expect(newTree).toMatchObject(mockTree);
 
-            expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.CREATE_TREE);
+            expect(mockAppPermDomain.getAppPermission).toBeCalled();
+            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.CREATE_TREE);
         });
 
         test('Should update existing tree', async () => {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree),
@@ -76,7 +78,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -87,15 +89,11 @@ describe('treeDomain', () => {
 
             expect(newTree).toMatchObject(mockTree);
 
-            expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.EDIT_TREE);
+            expect(mockAppPermDomain.getAppPermission).toBeCalled();
+            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.EDIT_TREE);
         });
 
         test('Should throw if unknown libraries', async () => {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({list: [], totalCount: 0})
@@ -109,7 +107,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -117,10 +115,6 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if forbidden action', async () => {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree),
@@ -129,7 +123,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -137,10 +131,6 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if invalid ID', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const mockUtilsInvalidID: Mockify<IUtils> = {
                 validateID: jest.fn().mockReturnValue(false)
             };
@@ -153,7 +143,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtilsInvalidID as IUtils
             });
 
@@ -161,9 +151,6 @@ describe('treeDomain', () => {
         });
 
         test('Should not save behavior on existing tree', async () => {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
             const mockFilesLibDomain: Mockify<ILibraryDomain> = {
                 getLibraries: global.__mockPromise({
                     list: [{id: 'lib1', behavior: LibraryBehavior.FILES}],
@@ -180,7 +167,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockFilesLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -190,10 +177,6 @@ describe('treeDomain', () => {
 
         test('On files behavior, throw if binding a non-files library', async () => {
             const treeToSave = {...mockFilesTree};
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(treeToSave),
@@ -203,7 +186,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -212,10 +195,6 @@ describe('treeDomain', () => {
 
         test('On files behavior, throw if binding more than one library', async () => {
             const treeToSave = {...mockFilesTree, libraries: ['lib1', 'lib2']};
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(treeToSave),
@@ -225,7 +204,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -235,17 +214,13 @@ describe('treeDomain', () => {
 
     describe('deleteTree', () => {
         test('Should delete a tree and return deleted tree', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission': mockPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
             domain.getTrees = global.__mockPromise({list: [mockTree], totalCount: 1});
 
@@ -253,32 +228,24 @@ describe('treeDomain', () => {
 
             expect(treeRepo.deleteTree.mock.calls.length).toBe(1);
 
-            expect(mockPermDomain.getAdminPermission).toBeCalled();
-            expect(mockPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.DELETE_TREE);
+            expect(mockAppPermDomain.getAppPermission).toBeCalled();
+            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.DELETE_TREE);
         });
 
         test('Should throw if unknown tree', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
 
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission': mockPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
             domain.getTrees = global.__mockPromise({list: [], totalCount: 0});
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if system tree', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
-            };
-
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
@@ -287,17 +254,13 @@ describe('treeDomain', () => {
 
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission': mockPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
             domain.getTrees = global.__mockPromise({list: [treeData], totalCount: 1});
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if action forbidden', async function() {
-            const mockPermDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
-            };
-
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
@@ -306,7 +269,7 @@ describe('treeDomain', () => {
 
             const domain = treeDomain({
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission': mockPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain
             });
             domain.getTrees = global.__mockPromise([treeData]);
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(PermissionError);

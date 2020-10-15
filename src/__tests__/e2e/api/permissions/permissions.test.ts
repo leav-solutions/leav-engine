@@ -130,7 +130,9 @@ describe('Permissions', () => {
                             tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
                         },
                         actions: [
-                            {name: access, allowed: true}, {name: edit, allowed: true}, {name: delete, allowed: false}
+                            {name: access_record, allowed: true},
+                            {name: edit_record, allowed: true},
+                            {name: delete_record, allowed: false}
                         ]
                     }
                 ) {
@@ -157,7 +159,7 @@ describe('Permissions', () => {
                     permissionTreeTarget: {
                         tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
                     },
-                    actions: [access]
+                    actions: [access_record]
                 ){
                     name
                     allowed
@@ -165,7 +167,7 @@ describe('Permissions', () => {
             }`);
 
             expect(resGetPerm.status).toBe(200);
-            expect(resGetPerm.data.data.permissions).toEqual([{name: 'access', allowed: true}]);
+            expect(resGetPerm.data.data.permissions).toEqual([{name: 'access_record', allowed: true}]);
             expect(resGetPerm.data.errors).toBeUndefined();
 
             // Save library's permissions config
@@ -190,7 +192,7 @@ describe('Permissions', () => {
             const resIsAllowed = await makeGraphQlCall(`query {
                 isAllowed(
                     type: record,
-                    actions: [delete],
+                    actions: [delete_record],
                     applyTo: "${testLibId}",
                     target: {recordId: "${testLibRecordId}"}
                 ) {
@@ -201,7 +203,7 @@ describe('Permissions', () => {
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toBeDefined();
-            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('delete');
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('delete_record');
             expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(false);
             expect(resIsAllowed.data.errors).toBeUndefined();
 
@@ -410,10 +412,10 @@ describe('Permissions', () => {
                         applyTo: "${testLibId}",
                         usersGroup: "${allUsersTreeElemId}",
                         actions: [
-                            {name: access, allowed: true},
-                            {name: edit, allowed: true},
-                            {name: create, allowed: true},
-                            {name: delete, allowed: true},
+                            {name: access_record, allowed: true},
+                            {name: edit_record, allowed: true},
+                            {name: create_record, allowed: true},
+                            {name: delete_record, allowed: true},
                         ]
                     }
                 ) {
@@ -436,7 +438,7 @@ describe('Permissions', () => {
                     type: library,
                     applyTo: "${testLibId}",
                     usersGroup: "${allUsersTreeElemId}",
-                    actions: [access]
+                    actions: [access_record]
                 ) {
                     name
                     allowed
@@ -444,13 +446,13 @@ describe('Permissions', () => {
             }`);
 
             expect(resGetLibPerm.status).toBe(200);
-            expect(resGetLibPerm.data.data.permissions).toEqual([{name: 'access', allowed: true}]);
+            expect(resGetLibPerm.data.data.permissions).toEqual([{name: 'access_record', allowed: true}]);
             expect(resGetLibPerm.data.errors).toBeUndefined();
 
             const resIsAllowed = await makeGraphQlCall(`query {
                 isAllowed(
                     type: library,
-                    actions: [access],
+                    actions: [access_record],
                     applyTo: "${testLibId}"
                 ) {
                     name
@@ -460,7 +462,7 @@ describe('Permissions', () => {
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toBeDefined();
-            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('access');
+            expect(resIsAllowed.data.data.isAllowed[0].name).toBe('access_record');
             expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(true);
             expect(resIsAllowed.data.errors).toBeUndefined();
         });
@@ -586,7 +588,7 @@ describe('Permissions', () => {
                                 id: "${treeElemId2}"
                             },
                             actions: [
-                                {name: access, allowed: false},
+                                {name: access_record, allowed: false},
                             ]
                         }
                     ) { type }
@@ -597,7 +599,7 @@ describe('Permissions', () => {
                     p: heritedPermissions(
                         type: record,
                         applyTo: "${heritTestLibName}",
-                        actions: [access],
+                        actions: [access_record],
                         userGroupId: "${userGroupId2}",
                         permissionTreeTarget: {
                             tree: "${heritTestTreeName}",
@@ -608,7 +610,7 @@ describe('Permissions', () => {
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].name).toBe('access_record');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
             });
 
@@ -626,7 +628,7 @@ describe('Permissions', () => {
                                 id: "${treeElemId1}"
                             },
                             actions: [
-                                {name: access, allowed: false},
+                                {name: access_record, allowed: false},
                             ]
                         }
                     ) { type }
@@ -637,7 +639,7 @@ describe('Permissions', () => {
                     p: heritedPermissions(
                         type: record,
                         applyTo: "${heritTestLibName}",
-                        actions: [access],
+                        actions: [access_record],
                         userGroupId: "${userGroupId4}",
                         permissionTreeTarget: {
                             tree: "${heritTestTreeName}",
@@ -648,7 +650,7 @@ describe('Permissions', () => {
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].name).toBe('access_record');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
             });
 
@@ -658,7 +660,7 @@ describe('Permissions', () => {
                     p: heritedPermissions(
                         type: record,
                         applyTo: "${heritTestLibName}",
-                        actions: [access],
+                        actions: [access_record],
                         userGroupId: "${userGroupId6}",
                         permissionTreeTarget: {
                             tree: "${heritTestTreeName}",
@@ -669,7 +671,7 @@ describe('Permissions', () => {
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].name).toBe('access_record');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
         });
@@ -684,7 +686,7 @@ describe('Permissions', () => {
                             applyTo: "${heritTestLibName}",
                             usersGroup: "${userGroupId1}",
                             actions: [
-                                {name: access, allowed: false},
+                                {name: access_record, allowed: false},
                             ]
                         }
                     ) { type }
@@ -695,13 +697,13 @@ describe('Permissions', () => {
                     p: heritedPermissions(
                         type: library,
                         applyTo: "${heritTestLibName}",
-                        actions: [access],
+                        actions: [access_record],
                         userGroupId: "${userGroupId2}",
                     ) { name allowed }
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].name).toBe('access_record');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
             });
 
@@ -711,13 +713,13 @@ describe('Permissions', () => {
                     p: heritedPermissions(
                         type: library,
                         applyTo: "${heritTestLibName}",
-                        actions: [access],
+                        actions: [access_record],
                         userGroupId: "${userGroupId4}",
                     ) { name allowed }
                   }
                 `);
 
-                expect(permHeritGroup.data.data.p[0].name).toBe('access');
+                expect(permHeritGroup.data.data.p[0].name).toBe('access_record');
                 expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
         });
@@ -801,7 +803,7 @@ describe('Permissions', () => {
                         applyTo: "${testLibId}",
                         usersGroup: null,
                         actions: [
-                            {name: access, allowed: false},
+                            {name: access_record, allowed: false},
                         ]
                     }
                 ) { type usersGroup }
@@ -816,14 +818,14 @@ describe('Permissions', () => {
                 p: heritedPermissions(
                     type: library,
                     applyTo: "${testLibId}",
-                    actions: [access],
+                    actions: [access_record],
                     userGroupId: "${userGroupId}",
                 ) { name allowed }
               }
             `);
             expect(resGetPerm.status).toBe(200);
             expect(resGetPerm.data.errors).toBeUndefined();
-            expect(resGetPerm.data.data.p[0].name).toBe('access');
+            expect(resGetPerm.data.data.p[0].name).toBe('access_record');
             expect(resGetPerm.data.data.p[0].allowed).toBe(false);
         });
 
@@ -836,7 +838,7 @@ describe('Permissions', () => {
                         applyTo: "${testLibId}",
                         usersGroup: "${userGroupId}",
                         actions: [
-                            {name: access, allowed: false},
+                            {name: access_record, allowed: false},
                         ],
                         permissionTreeTarget: {
                             tree: "${permTreeName}",
@@ -857,7 +859,7 @@ describe('Permissions', () => {
                 p: heritedPermissions(
                     type: record,
                     applyTo: "${testLibId}",
-                    actions: [access],
+                    actions: [access_record],
                     userGroupId: "${userGroupId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
@@ -869,7 +871,7 @@ describe('Permissions', () => {
             `);
             expect(resGetPerm.status).toBe(200);
             expect(resGetPerm.data.errors).toBeUndefined();
-            expect(resGetPerm.data.data.p[0].name).toBe('access');
+            expect(resGetPerm.data.data.p[0].name).toBe('access_record');
             expect(resGetPerm.data.data.p[0].allowed).toBe(false);
         });
     });

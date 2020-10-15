@@ -71,7 +71,7 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
 
     // Check permission
     const canUpdateRecord = await deps.recordPermissionDomain.getRecordPermission(
-        RecordPermissionsActions.EDIT,
+        RecordPermissionsActions.EDIT_RECORD,
         ctx.userId,
         library,
         recordId,
@@ -79,7 +79,7 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
     );
 
     if (!canUpdateRecord) {
-        return {canSave: false, reason: RecordPermissionsActions.EDIT};
+        return {canSave: false, reason: RecordPermissionsActions.EDIT_RECORD};
     }
 
     const permToCheck =

@@ -1,7 +1,9 @@
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributePermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import getDefaultPermission from './helpers/getDefaultPermission';
 import {IPermissionDomain} from './permissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 
@@ -18,16 +20,17 @@ export interface IAttributePermissionDomain {
 
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
-    'core.domain.permission.treePermission'?: ITreePermissionDomain;
+    'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
+    config?: IConfig;
 }
 
 export default function({
-    'core.domain.permission': permissionDomain = null,
-    'core.domain.permission.treePermission': treePermissionDomain = null,
+    'core.domain.permission.tree': treePermissionDomain = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.infra.value': valueRepo = null
+    'core.infra.value': valueRepo = null,
+    config = null
 }: IDeps = {}): IAttributePermissionDomain {
     return {
         async getAttributePermission(
@@ -40,7 +43,7 @@ export default function({
         ): Promise<boolean> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             if (typeof attrProps.permissions_conf === 'undefined') {
-                return permissionDomain.getDefaultPermission(ctx);
+                return getDefaultPermission(config);
             }
 
             const treesAttrValues = await Promise.all(
@@ -69,7 +72,7 @@ export default function({
                     applyTo: attributeId,
                     treeValues: valuesByAttr,
                     permissions_conf: attrProps.permissions_conf,
-                    getDefaultPermission: permissionDomain.getDefaultPermission
+                    getDefaultPermission: () => getDefaultPermission(config)
                 },
                 ctx
             );

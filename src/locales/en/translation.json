@@ -76,5 +76,34 @@
             "validateFormat": "Check if value matches attribute format",
             "validateRegex": "Check if value is a string matching given regex"
         }
+    },
+    "permissions": {
+        "access_record": "Access",
+        "create_record": "Create",
+        "edit_record": "Edit",
+        "delete_record": "Delete",
+        "app_access_libraries": "Access libraries",
+        "app_create_library": "Create library",
+        "app_edit_library": "Edit library",
+        "app_delete_library": "Delete library",
+        "app_access_attributes": "Access attributes",
+        "app_create_attribute": "Create attribute",
+        "app_edit_attribute": "Edit attribute",
+        "app_delete_attribute": "Delete attribute",
+        "app_access_trees": "Access trees",
+        "app_create_tree": "Create tree",
+        "app_edit_tree": "Edit tree",
+        "app_delete_tree": "Delete tree",
+        "app_access_forms": "Access forms",
+        "app_create_form": "Create form",
+        "app_edit_form": "Edit form",
+        "app_delete_form": "Delete form",
+        "app_access_permissions": "Access permissions",
+        "app_edit_permission": "Edit permission",
+        "app_access_navigator": "Access navigator",
+        "access_attribute": "Access attribute",
+        "create_value": "Create value",
+        "edit_value": "Edit value",
+        "delete_value": "Delete value"
     }
 }

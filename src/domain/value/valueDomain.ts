@@ -101,8 +101,8 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.library'?: ILibraryDomain;
-    'core.domain.permission.attributePermission'?: IAttributePermissionDomain;
-    'core.domain.permission.recordPermission'?: IRecordPermissionDomain;
+    'core.domain.permission.attribute'?: IAttributePermissionDomain;
+    'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.infra.record'?: IRecordRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
@@ -113,8 +113,8 @@ export default function({
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,
-    'core.domain.permission.attributePermission': attributePermissionDomain = null,
-    'core.domain.permission.recordPermission': recordPermissionDomain = null,
+    'core.domain.permission.attribute': attributePermissionDomain = null,
+    'core.domain.permission.record': recordPermissionDomain = null,
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.value': valueRepo = null,
@@ -376,7 +376,7 @@ export default function({
 
             // Check permission
             const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.EDIT,
+                RecordPermissionsActions.EDIT_RECORD,
                 ctx.userId,
                 library,
                 recordId,
@@ -384,7 +384,7 @@ export default function({
             );
 
             if (!canUpdateRecord) {
-                throw new PermissionError(RecordPermissionsActions.EDIT);
+                throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
             }
 
             const isAllowedToDelete = await attributePermissionDomain.getAttributePermission(

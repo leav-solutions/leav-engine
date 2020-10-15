@@ -1,33 +1,33 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {IPermissionsHelperDomain} from 'domain/permission/permissionsHelperDomain';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IAppModule} from '_types/shared';
 import {
-    AppPermissionsActions,
-    AttributePermissionsActions,
+    ILabeledPermissionsAction,
     IPermission,
     ITreePermissionsConf,
     PermissionsRelations,
-    PermissionTypes,
-    RecordPermissionsActions
+    PermissionTypes
 } from '../../_types/permissions';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
 
-export interface ICorePermissionApp {
+export interface IPluginPermission {
+    name: string;
+    type: PermissionTypes;
+    applyOn?: string[];
+}
+
+export interface ICorePermissionApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {
-    'core.app.graphql'?: IGraphqlApp;
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission.permissionsHelper'?: IPermissionsHelperDomain;
 }
 
 export default function({
-    'core.app.graphql': graphqlApp = null,
     'core.domain.permission': permissionDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission.permissionsHelper': permissionsHelperDomain = null
+    'core.domain.attribute': attributeDomain = null
 }: IDeps = {}): ICorePermissionApp {
     // Format permission data to match graphql schema, where "actions" field format is different
     // TODO: use a custom scalar type?
@@ -41,6 +41,17 @@ export default function({
         };
     }
 
+    /**
+     * Return all possibles permissions actions, deduplicated, including plugins actions
+     */
+    const _graphqlActionsList = (): string => {
+        const actions = Object.values(PermissionTypes).reduce((acc, type): string[] => {
+            return [...acc, ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name)];
+        }, []);
+
+        return [...new Set(actions)].join(' ');
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -53,10 +64,13 @@ export default function({
                         ${Object.values(PermissionTypes).join(' ')}
                     }
 
-                    enum PermissionsActions {
-                        ${Object.values(RecordPermissionsActions).join(' ')}
-                        ${Object.values(AttributePermissionsActions).join(' ')}
-                        ${Object.values(AppPermissionsActions).join(' ')}
+                    enum PermissionsActions{
+                        ${_graphqlActionsList()}
+                    }
+
+                    type LabeledPermissionsActions {
+                        name: PermissionsActions!,
+                        label: SystemTranslation
                     }
 
                     type HeritedPermissionAction {
@@ -152,6 +166,8 @@ export default function({
                             userGroupId: ID,
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [HeritedPermissionAction!]
+
+                        permissionsActionsByType(type: PermissionTypes!, applyOn: String): [LabeledPermissionsActions!]!
                     }
 
                     extend type Mutation {
@@ -165,7 +181,7 @@ export default function({
 
                             return Promise.all(
                                 actions.map(async action => {
-                                    const perm = await permissionsHelperDomain.isAllowed({
+                                    const perm = await permissionDomain.isAllowed({
                                         type,
                                         action,
                                         userId,
@@ -196,7 +212,7 @@ export default function({
                         async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}, ctx) {
                             return Promise.all(
                                 actions.map(async action => {
-                                    const perm = await permissionsHelperDomain.getHeritedPermissions({
+                                    const perm = await permissionDomain.getHeritedPermissions({
                                         type,
                                         applyTo,
                                         action,
@@ -208,6 +224,12 @@ export default function({
                                     return {name: action, allowed: perm};
                                 })
                             );
+                        },
+                        permissionsActionsByType(
+                            _,
+                            {type, applyOn}: {type: PermissionTypes; applyOn?: string}
+                        ): ILabeledPermissionsAction[] {
+                            return permissionDomain.getActionsByType({type, applyOn});
                         }
                     },
                     Mutation: {
@@ -252,6 +274,11 @@ export default function({
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
+        },
+        extensionPoints: {
+            registerPermissionActions(type: PermissionTypes, actions: string[], applyOn?: string[]) {
+                permissionDomain.registerActions(type, actions, applyOn);
+            }
         }
     };
 }
