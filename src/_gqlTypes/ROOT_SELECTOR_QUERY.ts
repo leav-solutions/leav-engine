@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {AvailableLanguage} from './globalTypes';
@@ -10,7 +11,7 @@ import {AvailableLanguage} from './globalTypes';
 
 export interface ROOT_SELECTOR_QUERY_libraries_list {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ROOT_SELECTOR_QUERY_libraries {

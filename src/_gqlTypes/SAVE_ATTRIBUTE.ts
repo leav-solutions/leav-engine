@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
@@ -10,13 +11,13 @@ import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, Val
 
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     linked_tree: string | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes =
@@ -36,7 +37,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf {
 
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
@@ -52,7 +53,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
@@ -62,13 +63,13 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     linked_tree: string | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export type SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf_permissionTreeAttributes =
@@ -88,14 +89,14 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf {
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_preview {
@@ -128,7 +129,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf | null;
@@ -139,13 +140,13 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     linked_tree: string | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export type SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes =
@@ -165,14 +166,14 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf {
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_preview {
@@ -196,7 +197,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview {
@@ -238,7 +239,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf | null;

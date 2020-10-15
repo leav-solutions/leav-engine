@@ -16,7 +16,7 @@ describe('formBuilderReducer', () => {
                 preview: null,
                 library: {
                     id: 'category',
-                    label: ''
+                    label: null
                 }
             },
             ancestors: [
@@ -27,7 +27,7 @@ describe('formBuilderReducer', () => {
                     preview: null,
                     library: {
                         id: 'category',
-                        label: ''
+                        label: null
                     }
                 },
                 {
@@ -37,7 +37,7 @@ describe('formBuilderReducer', () => {
                     preview: null,
                     library: {
                         id: 'category',
-                        label: ''
+                        label: null
                     }
                 }
             ]

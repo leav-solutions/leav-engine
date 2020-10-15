@@ -13,6 +13,7 @@ import {
 } from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
+import {IFormError} from '../../../../../_types/errors';
 import {onAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
 // import useLang from '../../../../../hooks/useLang';
@@ -30,7 +31,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: e => undefined,
         update: async (cache, {data: dataCached}) => {
-            const newAttribute = dataCached.saveAttribute;
+            const newAttribute = dataCached!.saveAttribute;
             const cachedData: any = cache.readQuery({query: getAttributesQuery, variables: {id: newAttribute.id}});
 
             clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.attributes/);
@@ -68,8 +69,8 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
             attrData: {
                 id: dataToSave.id,
                 label: {
-                    fr: dataToSave.label.fr,
-                    en: dataToSave.label.en
+                    fr: dataToSave.label?.fr ?? '',
+                    en: dataToSave.label?.en ?? ''
                 },
                 type: dataToSave.type,
                 format: dataToSave.format,
@@ -97,7 +98,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
     return (
         <InfosForm
             onSubmitInfos={onSubmitInfos}
-            errors={formErrors}
+            errors={(formErrors as unknown) as IFormError}
             attribute={attribute || null}
             readonly={false}
             onCheckIdExists={_isIdUnique}

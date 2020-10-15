@@ -60,7 +60,7 @@ export default (library: string, form: GET_FORM_forms_list): IFormBuilderState =
 
             const depKey = getKeyFromDepValue({
                 id: cur.dependencyValue.value.id || '',
-                library: {id: cur.dependencyValue.value.library || '', label: ''},
+                library: {id: cur.dependencyValue.value.library || '', label: null},
                 label: '',
                 color: '',
                 preview: null

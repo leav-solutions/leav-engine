@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {FormInput, FormElementTypes} from './globalTypes';
@@ -20,7 +21,7 @@ export interface SAVE_FORM_saveForm_elements_dependencyValue {
 
 export interface SAVE_FORM_saveForm_elements_elements_settings {
     key: string;
-    value: any;
+    value: Any;
 }
 
 export interface SAVE_FORM_saveForm_elements_elements {
@@ -39,12 +40,12 @@ export interface SAVE_FORM_saveForm_elements {
 
 export interface SAVE_FORM_saveForm_dependencyAttributes {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_FORM_saveForm {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     system: boolean;
     elements: SAVE_FORM_saveForm_elements[];
     dependencyAttributes: SAVE_FORM_saveForm_dependencyAttributes[] | null;

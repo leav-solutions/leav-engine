@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {AttributeInput, AttributeFormat} from './globalTypes';
@@ -10,7 +11,7 @@ import {AttributeInput, AttributeFormat} from './globalTypes';
 
 export interface SAVE_ATTRIBUTE_EMBEDDED_FIELDS_saveAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     format: AttributeFormat | null;
 }
 

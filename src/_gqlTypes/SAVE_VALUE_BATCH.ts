@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {ValueVersionInput, ValueBatchInput} from './globalTypes';
@@ -10,11 +11,11 @@ import {ValueVersionInput, ValueBatchInput} from './globalTypes';
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values {
     id_value: string | null;
-    value: any | null;
-    raw_value: any | null;
+    value: Any | null;
+    raw_value: Any | null;
     modified_at: number | null;
     created_at: number | null;
-    version: any | null;
+    version: ValueVersion | null;
     attribute: string | null;
 }
 

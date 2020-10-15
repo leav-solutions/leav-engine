@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -18,7 +19,7 @@ export interface AttributeValuesListDetails_StandardAttribute {
 
 export interface AttributeValuesListDetails_LinkAttribute_values_list_linkValues_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface AttributeValuesListDetails_LinkAttribute_values_list_linkValues_whoAmI_preview {
@@ -52,7 +53,7 @@ export interface AttributeValuesListDetails_LinkAttribute {
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues_record_whoAmI_preview {
@@ -76,7 +77,7 @@ export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview {

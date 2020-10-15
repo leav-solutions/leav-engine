@@ -7,6 +7,7 @@ import {saveTreeQuery} from '../../../queries/trees/saveTreeMutation';
 import {clearCacheQueriesFromRegexp} from '../../../utils';
 import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {IFormError} from '../../../_types/errors';
 import Loading from '../../shared/Loading';
 import EditTreeForm from '../EditTreeForm';
 
@@ -72,14 +73,14 @@ const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
             }
         };
 
-        const formErrors = errorSave && errorSave.graphQLErrors.length ? errorSave.graphQLErrors[0] : null;
+        const formErrors = errorSave?.graphQLErrors?.[0] ?? null;
 
         return (
             <EditTreeForm
                 tree={treeToEdit}
                 onSubmit={onFormSubmit}
                 readOnly={readOnly}
-                errors={formErrors}
+                errors={(formErrors as unknown) as IFormError}
                 onCheckIdExists={_isIdUnique}
                 history={history}
                 location={location}

@@ -1,10 +1,8 @@
-import React, {useMemo, useReducer, useEffect} from 'react';
-import {Segment, Input, Dropdown, Button, Icon, Label} from 'semantic-ui-react';
-
+import React, {useEffect, useMemo, useReducer} from 'react';
+import {Button, Dropdown, Icon, Input, Label, Segment} from 'semantic-ui-react';
+import styles from './FiltersPanel.module.css';
 import {IListProps} from './MainPanel';
 import {ActionTypes, IFilter} from './NavigatorReducer';
-
-import styles from './FiltersPanel.module.css';
 
 const emptyFilter: IFilter = {
     attribute: '',
@@ -69,7 +67,7 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
         return state.selectedRootAttributes.map(attribute => {
             return {
                 key: attribute.id,
-                text: attribute.label.fr,
+                text: attribute.label?.fr,
                 value: attribute.id
             };
         });

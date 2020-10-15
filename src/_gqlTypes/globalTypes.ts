@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -160,7 +161,7 @@ export interface FormElementInput {
 
 export interface FormElementSettingsInput {
     key: string;
-    value: any;
+    value: Any;
 }
 
 export interface FormElementsByDepsInput {
@@ -228,8 +229,7 @@ export interface RecordIdentityConfInput {
 }
 
 export interface SystemTranslationInput {
-    fr: string;
-    en?: string | null;
+    [lang: string]: string;
 }
 
 export interface TreeElementInput {
@@ -253,7 +253,7 @@ export interface ValueBatchInput {
     attribute?: string | null;
     id_value?: string | null;
     value?: string | null;
-    metadata?: any | null;
+    metadata?: ValueMetadata | null;
 }
 
 export interface ValueInput {

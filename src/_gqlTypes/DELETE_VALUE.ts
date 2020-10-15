@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {ValueInput} from './globalTypes';
@@ -11,7 +12,7 @@ import {ValueInput} from './globalTypes';
 export interface DELETE_VALUE_deleteValue {
     attribute: string | null;
     id_value: string | null;
-    value: any | null;
+    value: Any | null;
 }
 
 export interface DELETE_VALUE {

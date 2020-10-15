@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -10,15 +11,15 @@ export interface ValueDetails_Value {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: any | null;
-    metadata: any | null;
-    value: any | null;
-    raw_value: any | null;
+    version: ValueVersion | null;
+    metadata: ValueMetadata | null;
+    value: Any | null;
+    raw_value: Any | null;
 }
 
 export interface ValueDetails_LinkValue_linkValue_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ValueDetails_LinkValue_linkValue_whoAmI_preview {
@@ -44,14 +45,14 @@ export interface ValueDetails_LinkValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: any | null;
-    metadata: any | null;
+    version: ValueVersion | null;
+    metadata: ValueMetadata | null;
     linkValue: ValueDetails_LinkValue_linkValue;
 }
 
 export interface ValueDetails_TreeValue_treeValue_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ValueDetails_TreeValue_treeValue_record_whoAmI_preview {
@@ -75,7 +76,7 @@ export interface ValueDetails_TreeValue_treeValue_record {
 
 export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_preview {
@@ -110,8 +111,8 @@ export interface ValueDetails_TreeValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: any | null;
-    metadata: any | null;
+    version: ValueVersion | null;
+    metadata: ValueMetadata | null;
     treeValue: ValueDetails_TreeValue_treeValue;
 }
 

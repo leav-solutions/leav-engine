@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {AvailableLanguage, TreeBehavior} from './globalTypes';
@@ -10,12 +11,12 @@ import {AvailableLanguage, TreeBehavior} from './globalTypes';
 
 export interface GET_TREES_trees_list_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_TREES_trees_list {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     system: boolean;
     behavior: TreeBehavior;
     libraries: GET_TREES_trees_list_libraries[];

@@ -10,6 +10,7 @@ import {
     GET_LIBRARIESVariables,
     GET_LIBRARIES_libraries_list
 } from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {IFormError} from '../../../../../_types/errors';
 import InfosForm from './InfosForm';
 
 interface IInfosTabProps {
@@ -82,7 +83,7 @@ function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
             library={library}
             onSubmit={_handleSubmit}
             readonly={readonly}
-            errors={formErrors}
+            errors={(formErrors as unknown) as IFormError}
             onCheckIdExists={_handleCheckIdExists}
         />
     );

@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {TreeInput} from './globalTypes';
@@ -10,13 +11,13 @@ import {TreeInput} from './globalTypes';
 
 export interface SAVE_TREE_saveTree_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_TREE_saveTree {
     id: string;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     libraries: SAVE_TREE_saveTree_libraries[];
 }
 

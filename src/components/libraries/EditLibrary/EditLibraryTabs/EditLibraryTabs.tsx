@@ -24,7 +24,7 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
     const {permissions} = useUserData();
     const isCreationMode = library === null;
 
-    const label = isCreationMode ? t('libraries.new') : library?.label.fr || library?.label.en || library?.id;
+    const label = isCreationMode ? t('libraries.new') : library!.label?.fr || library!.label?.en || library!.id;
 
     const panes = [
         {

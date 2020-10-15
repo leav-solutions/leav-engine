@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {
@@ -17,19 +18,19 @@ import {
 
 export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: string | null;
 }
 
@@ -53,7 +54,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: GET_LIBRARIES_libraries_list_attributes_StandardAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf | null;
@@ -62,19 +63,19 @@ export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute {
 
 export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: string | null;
 }
 
@@ -98,7 +99,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: GET_LIBRARIES_libraries_list_attributes_LinkAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf | null;
@@ -108,19 +109,19 @@ export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute {
 
 export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: string | null;
 }
 
@@ -144,7 +145,7 @@ export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: GET_LIBRARIES_libraries_list_attributes_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf | null;
@@ -159,13 +160,13 @@ export type GET_LIBRARIES_libraries_list_attributes =
 
 export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     linked_tree: string | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export type GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes =
@@ -194,7 +195,7 @@ export interface GET_LIBRARIES_libraries_list_gqlNames {
 export interface GET_LIBRARIES_libraries_list {
     id: string;
     system: boolean | null;
-    label: any | null;
+    label: SystemTranslation | null;
     behavior: LibraryBehavior;
     attributes: GET_LIBRARIES_libraries_list_attributes[] | null;
     permissions_conf: GET_LIBRARIES_libraries_list_permissions_conf | null;

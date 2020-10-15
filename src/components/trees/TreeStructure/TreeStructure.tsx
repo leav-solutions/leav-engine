@@ -12,6 +12,7 @@ import {
     TreeItem
 } from '@casolutions/react-sortable-tree';
 import {ApolloClient} from 'apollo-client';
+import {FetchResult} from 'apollo-link';
 import React, {useState} from 'react';
 import 'react-sortable-tree/style.css';
 import styled from 'styled-components';
@@ -218,23 +219,25 @@ const TreeStructure = ({
         });
 
         // Update positions for all siblings in destination
-        const siblings = parentNode !== null ? parentNode.children : treeData;
-        if (siblings && siblings.length) {
+        const siblings: TreeItem[] = parentNode !== null ? parentNode.children : treeData;
+        if (siblings?.length) {
             await Promise.all(
-                (siblings as TreeItem[]).map((s, i) => {
-                    const siblingElement = _nodeToTreeElement(s);
-                    return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
-                        ? client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
-                              mutation: moveTreeElementQuery,
-                              variables: {
-                                  treeId: tree.id,
-                                  element: siblingElement,
-                                  parentTo,
-                                  order: i
-                              }
-                          })
-                        : Promise.resolve();
-                })
+                siblings.map(
+                    (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => {
+                        const siblingElement = _nodeToTreeElement(s);
+                        return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
+                            ? client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
+                                  mutation: moveTreeElementQuery,
+                                  variables: {
+                                      treeId: tree.id,
+                                      element: siblingElement,
+                                      parentTo,
+                                      order: i
+                                  }
+                              })
+                            : Promise.resolve();
+                    }
+                )
             );
         }
     };

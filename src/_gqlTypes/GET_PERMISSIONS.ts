@@ -1,8 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
-import {PermissionTypes, PermissionsActions, PermissionsTreeTargetInput} from './globalTypes';
+import {PermissionTypes, PermissionsTreeTargetInput, PermissionsActions} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_PERMISSIONS
@@ -32,7 +33,7 @@ export interface GET_PERMISSIONS {
 export interface GET_PERMISSIONSVariables {
     type: PermissionTypes;
     applyTo?: string | null;
-    actions: PermissionsActions[];
+    actions: string[];
     usersGroup?: string | null;
     permissionTreeTarget?: PermissionsTreeTargetInput | null;
 }

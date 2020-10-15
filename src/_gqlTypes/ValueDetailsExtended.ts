@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -10,13 +11,13 @@ export interface ValueDetailsExtended_Value {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: any | null;
-    metadata: any | null;
+    version: ValueVersion | null;
+    metadata: ValueMetadata | null;
 }
 
 export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_preview {
@@ -42,14 +43,14 @@ export interface ValueDetailsExtended_LinkValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: any | null;
-    metadata: any | null;
+    version: ValueVersion | null;
+    metadata: ValueMetadata | null;
     linkValue: ValueDetailsExtended_LinkValue_linkValue;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_preview {
@@ -73,7 +74,7 @@ export interface ValueDetailsExtended_TreeValue_treeValue_record {
 
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_preview {
@@ -108,8 +109,8 @@ export interface ValueDetailsExtended_TreeValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: any | null;
-    metadata: any | null;
+    version: ValueVersion | null;
+    metadata: ValueMetadata | null;
     treeValue: ValueDetailsExtended_TreeValue_treeValue;
 }
 

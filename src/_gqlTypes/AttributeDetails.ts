@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
@@ -10,19 +11,19 @@ import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} f
 
 export interface AttributeDetails_StandardAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: string | null;
 }
 
@@ -46,7 +47,7 @@ export interface AttributeDetails_StandardAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: AttributeDetails_StandardAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_StandardAttribute_permissions_conf | null;
@@ -55,19 +56,19 @@ export interface AttributeDetails_StandardAttribute {
 
 export interface AttributeDetails_LinkAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: string | null;
 }
 
@@ -91,7 +92,7 @@ export interface AttributeDetails_LinkAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: AttributeDetails_LinkAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_LinkAttribute_permissions_conf | null;
@@ -101,19 +102,19 @@ export interface AttributeDetails_LinkAttribute {
 
 export interface AttributeDetails_TreeAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: string | null;
 }
 
@@ -137,7 +138,7 @@ export interface AttributeDetails_TreeAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: AttributeDetails_TreeAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_TreeAttribute_permissions_conf | null;

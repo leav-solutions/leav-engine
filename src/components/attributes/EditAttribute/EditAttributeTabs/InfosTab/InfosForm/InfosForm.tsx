@@ -148,7 +148,7 @@ function InfosForm({
                                 disabled={readonly}
                                 onChange={_handleLabelChange}
                                 onBlur={handleBlur}
-                                value={values.label[lang] || ''}
+                                value={values.label?.[lang] ?? ''}
                             />
                         </FormFieldWrapper>
                     ))}

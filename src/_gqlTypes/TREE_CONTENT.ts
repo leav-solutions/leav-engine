@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {TreeElementInput, AvailableLanguage} from './globalTypes';
@@ -10,12 +11,12 @@ import {TreeElementInput, AvailableLanguage} from './globalTypes';
 
 export interface TREE_CONTENT_treeContent_record_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface TREE_CONTENT_treeContent_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface TREE_CONTENT_treeContent_record_whoAmI_preview {
@@ -41,7 +42,7 @@ export interface TREE_CONTENT_treeContent_record {
 
 export interface TREE_CONTENT_treeContent_ancestors_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface TREE_CONTENT_treeContent_ancestors_record_whoAmI_preview {
@@ -69,12 +70,12 @@ export interface TREE_CONTENT_treeContent_ancestors {
 
 export interface TREE_CONTENT_treeContent_children_record_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface TREE_CONTENT_treeContent_children_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface TREE_CONTENT_treeContent_children_record_whoAmI_preview {

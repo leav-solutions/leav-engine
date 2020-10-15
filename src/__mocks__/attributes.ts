@@ -73,7 +73,7 @@ export const mockAttrAdvLinkWithValuesList: GET_ATTRIBUTES_VALUES_LIST_attribute
             {
                 whoAmI: {
                     id: '132456',
-                    library: {id: 'test_lib', label: 'test'},
+                    library: {id: 'test_lib', label: {fr: 'test'}},
                     color: null,
                     label: null,
                     preview: null
@@ -82,7 +82,7 @@ export const mockAttrAdvLinkWithValuesList: GET_ATTRIBUTES_VALUES_LIST_attribute
             {
                 whoAmI: {
                     id: '987654',
-                    library: {id: 'test_lib', label: 'test'},
+                    library: {id: 'test_lib', label: {fr: 'test'}},
                     color: null,
                     label: null,
                     preview: null

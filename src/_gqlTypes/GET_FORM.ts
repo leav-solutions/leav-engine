@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {FormElementTypes} from './globalTypes';
@@ -20,7 +21,7 @@ export interface GET_FORM_forms_list_elements_dependencyValue {
 
 export interface GET_FORM_forms_list_elements_elements_settings {
     key: string;
-    value: any;
+    value: Any;
 }
 
 export interface GET_FORM_forms_list_elements_elements {
@@ -39,12 +40,12 @@ export interface GET_FORM_forms_list_elements {
 
 export interface GET_FORM_forms_list_dependencyAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_FORM_forms_list_dependencyAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: string | null;
 }
 
@@ -54,7 +55,7 @@ export type GET_FORM_forms_list_dependencyAttributes =
 
 export interface GET_FORM_forms_list {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     system: boolean;
     elements: GET_FORM_forms_list_elements[];
     dependencyAttributes: GET_FORM_forms_list_dependencyAttributes[] | null;

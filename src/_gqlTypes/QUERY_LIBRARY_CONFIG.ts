@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {AvailableLanguage, AttributeType, AttributeFormat} from './globalTypes';
@@ -17,12 +18,12 @@ export interface QUERY_LIBRARY_CONFIG_libraries_list_attributes {
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface QUERY_LIBRARY_CONFIG_libraries_list {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: QUERY_LIBRARY_CONFIG_libraries_list_gqlNames;
     attributes: QUERY_LIBRARY_CONFIG_libraries_list_attributes[] | null;
 }

@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {FormElementTypes} from './globalTypes';
@@ -20,7 +21,7 @@ export interface FormElementsByDeps_dependencyValue {
 
 export interface FormElementsByDeps_elements_settings {
     key: string;
-    value: any;
+    value: Any;
 }
 
 export interface FormElementsByDeps_elements {

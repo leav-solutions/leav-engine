@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import {ValueInput} from './globalTypes';
@@ -10,8 +11,8 @@ import {ValueInput} from './globalTypes';
 
 export interface SAVE_VALUE_saveValue {
     id_value: string | null;
-    value: any | null;
-    raw_value: any | null;
+    value: Any | null;
+    raw_value: Any | null;
     attribute: string | null;
 }
 

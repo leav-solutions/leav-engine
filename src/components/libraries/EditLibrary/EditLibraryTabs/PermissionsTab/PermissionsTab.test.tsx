@@ -20,7 +20,7 @@ jest.mock(
 describe('PermissionsTab', () => {
     const library: GET_LIBRARIES_libraries_list = {
         ...mockLibrary,
-        label: {fr: 'Test 1', en: null}
+        label: {fr: 'Test 1', en: ''}
     };
 
     test('Render content', async () => {

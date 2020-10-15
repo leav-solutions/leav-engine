@@ -140,7 +140,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                                 label={`${lang} ${lang === defaultLang ? '*' : ''}`}
                                 name={'label.' + lang}
                                 disabled={readonly}
-                                value={label[lang]}
+                                value={label?.[lang] ?? ''}
                                 onChange={_handleLabelChange}
                             />
                         </FormFieldWrapper>

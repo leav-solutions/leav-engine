@@ -1,4 +1,4 @@
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {MockedProvider, MockedResponse, wait} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
@@ -22,8 +22,8 @@ describe('InfosTab', () => {
         attrData: {
             id: mockAttrAdv.id,
             label: {
-                fr: mockAttrAdv.label.fr,
-                en: mockAttrAdv.label.en
+                fr: mockAttrAdv.label?.fr ?? '',
+                en: mockAttrAdv.label?.en ?? ''
             },
             type: mockAttrAdv.type,
             format: mockAttrAdv.format,
@@ -151,7 +151,7 @@ describe('InfosTab', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={mocksError} cache={mockCache} addTypename>
+                <MockedProvider mocks={(mocksError as unknown) as MockedResponse[]} cache={mockCache} addTypename>
                     <InfosTab />
                 </MockedProvider>
             );
