@@ -64,7 +64,6 @@ const DefineTreePermissionsView = ({
                         type: permissionType,
                         applyTo,
                         usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
-                        actions,
                         permissionTreeTarget: {
                             tree: tree.linked_tree,
                             id: selectedTreeNode.node.id !== 'root' ? selectedTreeNode.node.id : null,

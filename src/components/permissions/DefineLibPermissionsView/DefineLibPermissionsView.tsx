@@ -1,7 +1,7 @@
 import {NodeData, TreeNode} from '@casolutions/react-sortable-tree';
 import React from 'react';
 import {getTreeNodeKey} from '../../../utils/utils';
-import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
@@ -36,13 +36,7 @@ function DefineLibPermissionsView({applyTo, readOnly}: IDefineLibPermissionsView
                 permParams={{
                     type: PermissionTypes.library,
                     applyTo,
-                    usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
-                    actions: [
-                        PermissionsActions.access_record,
-                        PermissionsActions.create_record,
-                        PermissionsActions.edit_record,
-                        PermissionsActions.delete_record
-                    ]
+                    usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null
                 }}
                 readOnly={readOnly}
             />

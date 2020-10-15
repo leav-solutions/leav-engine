@@ -2,6 +2,7 @@ import {MockedProvider, wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {getPermissionsActionsQuery} from '../../../queries/permissions/getPermissionsActionsQuery';
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
 import {GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
@@ -21,6 +22,32 @@ describe('EditPermissions', () => {
     };
     test('Loading and success state', async () => {
         const mocks = [
+            {
+                request: {
+                    query: getPermissionsActionsQuery,
+                    variables: {type: permParams.type}
+                },
+                result: {
+                    data: {
+                        permissionsActionsByType: [
+                            {
+                                __typename: 'LabeledPermissionsActions',
+                                name: PermissionsActions.app_create_library,
+                                label: {
+                                    fr: 'Crea Lib'
+                                }
+                            },
+                            {
+                                __typename: 'LabeledPermissionsActions',
+                                name: PermissionsActions.app_edit_library,
+                                label: {
+                                    fr: 'Edit Lib'
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
             {
                 request: {
                     query: getPermissionsQuery,

@@ -3,6 +3,8 @@ import React from 'react';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import EditPermissionsView from './EditPermissionsView';
 
+jest.mock('../../../hooks/useLang');
+
 describe('EditPermissionsView', () => {
     test('Show permissions selector', async () => {
         const onChange = jest.fn();
@@ -18,11 +20,12 @@ describe('EditPermissionsView', () => {
                     {name: PermissionsActions.create_record, allowed: false},
                     {name: PermissionsActions.edit_record, allowed: false}
                 ]}
+                actions={[
+                    {name: PermissionsActions.create_record, label: {fr: 'Creation'}},
+                    {name: PermissionsActions.edit_record, label: {fr: 'Edition'}}
+                ]}
             />
         );
-
-        // const forbidColor = comp.find('Icon[name="ban"]').prop('style')!.color;
-        // const allowColor = comp.find('Icon[name="checkmark"]').prop('style')!.color;
 
         expect(comp.find('PermissionSelector')).toHaveLength(2);
         expect(

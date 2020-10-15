@@ -2,12 +2,17 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
+import useLang from '../../../hooks/useLang';
+import {localizedLabel} from '../../../utils';
 import {GET_PERMISSIONS_heritPerm, GET_PERMISSIONS_perm} from '../../../_gqlTypes/GET_PERMISSIONS';
+import {GET_PERMISSIONS_ACTIONS_permissionsActionsByType} from '../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
 import {SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PERMISSION';
+import {IKeyValue} from '../../../_types/shared';
 import PermissionSelector from '../PermissionSelector';
 
 interface IEditPermissionsViewProps {
     permissions: GET_PERMISSIONS_perm[];
+    actions: GET_PERMISSIONS_ACTIONS_permissionsActionsByType[];
     heritedPermissions: GET_PERMISSIONS_heritPerm[];
     onChange: (permToSave: SAVE_PERMISSION_savePermission_actions) => void;
     readOnly?: boolean;
@@ -32,15 +37,25 @@ const PermissionsHeader = styled.div`
 
 const EditPermissionsView = ({
     permissions,
+    actions,
     heritedPermissions,
     onChange,
-    readOnly
+    readOnly = false
 }: IEditPermissionsViewProps): JSX.Element => {
     const {t} = useTranslation();
-    const heritPermByName = heritedPermissions.reduce((heritPerms, p) => {
-        heritPerms[p.name] = p.allowed;
-        return heritPerms;
-    }, {});
+    const {lang} = useLang();
+    const permissionsByName: IKeyValue<boolean | null> = permissions.reduce(
+        (perms, perm) => ({
+            ...perms,
+            [perm.name]: perm.allowed
+        }),
+        {}
+    );
+
+    const heritPermByName: IKeyValue<boolean> = heritedPermissions.reduce(
+        (heritPerms, p) => ({...heritPerms, [p.name]: p.allowed}),
+        {}
+    );
 
     return (
         <Table celled>
@@ -57,22 +72,22 @@ const EditPermissionsView = ({
                 </Table.Row>
             </Table.Header>
             <Table.Body>
-                {permissions.map(p => {
-                    if (!p) {
+                {actions.map(a => {
+                    if (typeof permissionsByName[a.name] === undefined) {
                         return null;
                     }
 
-                    const _onPermUpdate = (permVal: boolean | null) => onChange({name: p.name, allowed: permVal});
+                    const _onPermUpdate = (permVal: boolean | null) => onChange({name: a.name, allowed: permVal});
 
                     return (
-                        <Table.Row key={p.name}>
+                        <Table.Row key={a.name}>
                             <Table.Cell>
-                                <p>{t('permissions.' + p.name)}</p>
+                                <p>{localizedLabel(a.label, lang)}</p>
                             </Table.Cell>
                             <PermissionSelector
                                 as={Table.Cell}
-                                value={p.allowed}
-                                heritValue={heritPermByName[p.name]}
+                                value={permissionsByName[a.name] ?? null}
+                                heritValue={heritPermByName[a.name]}
                                 onChange={_onPermUpdate}
                                 forbiddenColor={permissionForbiddenColor}
                                 allowedColor={permissionAllowedColor}
@@ -84,10 +99,6 @@ const EditPermissionsView = ({
             </Table.Body>
         </Table>
     );
-};
-
-EditPermissionsView.defaultProps = {
-    readOnly: false
 };
 
 export default EditPermissionsView;

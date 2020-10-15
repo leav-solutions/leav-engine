@@ -1,9 +1,11 @@
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import React from 'react';
+import {getPermissionsActionsQuery} from '../../../queries/permissions/getPermissionsActionsQuery';
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
 import {savePermissionsQuery} from '../../../queries/permissions/savePermissionMutation';
 import {GET_PERMISSIONS, GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
-import {PermissionsActions, PermissionsTreeTargetInput, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {GET_PERMISSIONS_ACTIONS, GET_PERMISSIONS_ACTIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
+import {PermissionsTreeTargetInput, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import {
     SAVE_PERMISSION,
     SAVE_PERMISSIONVariables,
@@ -15,7 +17,6 @@ import EditPermissionsView from '../EditPermissionsView';
 interface IEditPermissionParams {
     type: PermissionTypes;
     applyTo?: string | null;
-    actions: PermissionsActions[];
     usersGroup?: string | null;
     permissionTreeTarget?: PermissionsTreeTargetInput | null;
 }
@@ -26,22 +27,34 @@ interface IEditPermissionsProps {
 }
 
 const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps): JSX.Element => {
-    const {loading, error, data} = useQuery<GET_PERMISSIONS, GET_PERMISSIONSVariables>(getPermissionsQuery, {
-        variables: permParams,
+    const {loading: loadingActions, error: errorActions, data: dataActions} = useQuery<
+        GET_PERMISSIONS_ACTIONS,
+        GET_PERMISSIONS_ACTIONSVariables
+    >(getPermissionsActionsQuery, {
+        variables: {type: permParams.type, applyOn: permParams.applyTo},
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true
     });
 
+    const getPermsVariables = {...permParams, actions: (dataActions?.permissionsActionsByType ?? []).map(a => a.name)};
+
+    const {loading, error, data} = useQuery<GET_PERMISSIONS, GET_PERMISSIONSVariables>(getPermissionsQuery, {
+        variables: getPermsVariables,
+        fetchPolicy: 'network-only',
+        notifyOnNetworkStatusChange: true,
+        skip: !dataActions
+    });
+
     const [savePerms] = useMutation<SAVE_PERMISSION, SAVE_PERMISSIONVariables>(savePermissionsQuery);
 
-    if (loading) {
+    if (loadingActions || loading) {
         return <Loading />;
     }
 
-    if (error || !(data?.perm && data?.heritPerm)) {
+    if (error || errorActions || !(data?.perm && data?.heritPerm)) {
         return (
             <div className="error" data-test-id="error">
-                Error fetching permissions {error?.toString()}
+                Error fetching permissions {errorActions?.toString()} {error?.toString()}
             </div>
         );
     }
@@ -54,12 +67,13 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
                     actions: [permToSave]
                 }
             },
-            refetchQueries: [{query: getPermissionsQuery, variables: permParams}]
+            refetchQueries: [{query: getPermissionsQuery, variables: getPermsVariables}]
         });
 
     return (
         <EditPermissionsView
             onChange={_onSave}
+            actions={dataActions?.permissionsActionsByType ?? []}
             permissions={data.perm}
             heritedPermissions={data.heritPerm}
             readOnly={readOnly}

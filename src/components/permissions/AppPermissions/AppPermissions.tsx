@@ -40,69 +40,15 @@ const AppPermissions = (): JSX.Element => {
         const usersGroup = selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null;
         const type = PermissionTypes.app;
 
-        const permsGroups = [
-            {
-                id: 'libraries',
-                title: t('libraries.title'),
-                actions: [
-                    PermissionsActions.app_access_libraries,
-                    PermissionsActions.app_create_library,
-                    PermissionsActions.app_edit_library,
-                    PermissionsActions.app_delete_library
-                ]
-            },
-            {
-                id: 'attributes',
-                title: t('attributes.title'),
-                actions: [
-                    PermissionsActions.app_access_attributes,
-                    PermissionsActions.app_create_attribute,
-                    PermissionsActions.app_edit_attribute,
-                    PermissionsActions.app_delete_attribute
-                ]
-            },
-            {
-                id: 'trees',
-                title: t('trees.title'),
-                actions: [
-                    PermissionsActions.app_access_trees,
-                    PermissionsActions.app_create_tree,
-                    PermissionsActions.app_edit_tree,
-                    PermissionsActions.app_delete_tree
-                ]
-            },
-            {
-                id: 'forms',
-                title: t('forms.title'),
-                actions: [
-                    PermissionsActions.app_access_forms,
-                    PermissionsActions.app_create_form,
-                    PermissionsActions.app_edit_form,
-                    PermissionsActions.app_delete_form
-                ]
-            },
-            {
-                id: 'permissions',
-                title: t('permissions.title'),
-                actions: [PermissionsActions.app_access_permissions, PermissionsActions.app_edit_permission]
-            }
-        ];
-
         cols.push(
             <div className="flex-col">
-                {permsGroups.map(group => (
-                    <PermBlockWrapper key={group.id}>
-                        <h4>{group.title}</h4>
-                        <EditPermissions
-                            permParams={{
-                                type,
-                                usersGroup,
-                                actions: group.actions
-                            }}
-                            readOnly={readOnly}
-                        />
-                    </PermBlockWrapper>
-                ))}
+                <EditPermissions
+                    permParams={{
+                        type,
+                        usersGroup
+                    }}
+                    readOnly={readOnly}
+                />
             </div>
         );
     }
