@@ -29,7 +29,11 @@ export const initPlugins = async (folder: string, depsManager: AwilixContainer) 
     for (const pluginName of plugins) {
         // Ignore files (like .gitignore or any other files)
         const pluginFullPath = folder + '/' + pluginName;
-        if (!fs.existsSync(pluginFullPath) || !fs.lstatSync(pluginFullPath).isDirectory()) {
+
+        if (
+            !fs.existsSync(pluginFullPath) ||
+            (!fs.lstatSync(pluginFullPath).isDirectory() && !fs.lstatSync(pluginFullPath).isSymbolicLink())
+        ) {
             continue;
         }
 
