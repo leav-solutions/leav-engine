@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import {gqlUnchecked} from '../../utils';
 import {GET_LIBRARIES_libraries_list, GET_LIBRARIES_libraries_list_attributes} from '../../_gqlTypes/GET_LIBRARIES';
 import {AttributeFormat} from '../../_gqlTypes/globalTypes';
 import {valueDetailsExtendedFragment, valueDetailsFragment} from '../values/valueDetailsFragment';
@@ -28,7 +28,7 @@ export function getRecordDataQuery(
         ? valueDetailsExtendedFragment
         : '';
 
-    return gql`
+    return gqlUnchecked`
         ${recordIdentityFragment}
         ${valueDetailsFragment}
         ${detailsExtendedFragment}

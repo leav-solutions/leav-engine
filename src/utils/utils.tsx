@@ -1,5 +1,6 @@
 import {TreeNode} from '@casolutions/react-sortable-tree';
 import {FormikErrors, FormikTouched} from 'formik';
+import gql from 'graphql-tag';
 import {i18n} from 'i18next';
 import get from 'lodash/get';
 import {join} from 'path';
@@ -299,3 +300,11 @@ export function pick<T extends object, K extends keyof T>(obj: T, keys: K | K[])
 
     return newObj as Pick<T, K>;
 }
+
+/**
+ * Cloning gql template tag because some apollo tools like query validation and codegen won't be happy if we use
+ * interpolation in template strings. With a different tag name, the query won't be parsed by these tools
+ * thus they won't complain about it.
+ * It works exactly the same at runtime.
+ */
+export const gqlUnchecked = gql;

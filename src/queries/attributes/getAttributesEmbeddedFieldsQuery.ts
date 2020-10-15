@@ -1,7 +1,7 @@
-import gql from 'graphql-tag';
+import {gqlUnchecked} from '../../utils';
 
 export const getAttributesEmbeddedFieldsQuery = (depth: number) => {
-    const query = gql`
+    const query = gqlUnchecked`
         query GET_EMBEDDED_FIELDS_QUERY($attId: ID!) {
             attributes(filters: {id: $attId}) {
                 list {
@@ -46,7 +46,7 @@ export const generateEmbeddedFields = (depth: number) => {
             }
         }`;
 
-    return gql`
+    return gqlUnchecked`
         ${query}
     `;
 };

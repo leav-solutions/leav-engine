@@ -1,8 +1,8 @@
 import {useQuery} from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Pagination, Select, Table} from 'semantic-ui-react';
+import {gqlUnchecked} from '../../utils';
 import {IGetRecordData} from '../../_types/records';
 import Loading from '../shared/Loading';
 import RecordCard from '../shared/RecordCard';
@@ -140,7 +140,7 @@ function List({state, dispatch}: IListProps) {
 
 function ListLoader({selectedRootQuery, selectedRootFilter, filters, dispatch, lang, offset, limit}) {
     const {t} = useTranslation();
-    const LISTQUERY = gql`
+    const LISTQUERY = gqlUnchecked`
         query($filters:[${selectedRootFilter}], $pagination: RecordsPagination){
             ${selectedRootQuery} (filters:$filters, pagination:$pagination){
                 totalCount
