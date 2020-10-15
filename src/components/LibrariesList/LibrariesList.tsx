@@ -10,7 +10,7 @@ import LibraryDetail from './LibraryDetail';
 
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
-    const {libId, libQueryName, filterName} = useParams();
+    const {libId, libQueryName, filterName} = useParams<{libId: string; libQueryName: string; filterName: string}>();
 
     const [libraries, setLibraries] = useState<ILibrary[]>([]);
     const [activeLibrary, setActiveLibrary] = useState<string>(libId);

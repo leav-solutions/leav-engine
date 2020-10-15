@@ -176,5 +176,15 @@
     "search": {
         "placeholder": "Search in library",
         "explain-cancel": "Cancel search"
+    },
+    "navigation": {
+        "list": {
+            "info": {
+                "tree": "Tree Information",
+                "library": "Library Information",
+                "id": "Id",
+                "label": "Label"
+            }
+        }
     }
 }

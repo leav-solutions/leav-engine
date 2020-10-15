@@ -1,7 +1,7 @@
 import {
+    ApartmentOutlined,
     BookOutlined,
     DatabaseOutlined,
-    FolderOutlined,
     SettingOutlined,
     UnorderedListOutlined
 } from '@ant-design/icons';
@@ -92,8 +92,8 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                         </NavLink>
                     </Menu.Item>
 
-                    <Menu.Item key="navigation" icon={<FolderOutlined />} onClick={hide}>
-                        <NavLink to="/navigation" activeClassName="nav-link-active">
+                    <Menu.Item key="navigation" icon={<ApartmentOutlined />} onClick={hide}>
+                        <NavLink to="/navigation/list" activeClassName="nav-link-active">
                             {t('sidebar.navigation')}
                         </NavLink>
                     </Menu.Item>

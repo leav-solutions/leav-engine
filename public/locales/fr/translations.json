@@ -175,5 +175,15 @@
     "search": {
         "placeholder": "Rechercher dans la bibliothèque",
         "explain-cancel": "Annuler la recherche"
+    },
+    "navigation": {
+        "list": {
+            "info": {
+                "tree": "Détail de l'Arbre",
+                "library": "Détail de la bibliothèque",
+                "id": "Identifiant",
+                "label": "Nom"
+            }
+        }
     }
 }

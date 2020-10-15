@@ -1,4 +1,5 @@
 import React from 'react';
+import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 const Page = styled.div`
@@ -13,12 +14,14 @@ const Column = styled.div`
     box-shadow: 10px 0 10px -2px #888;
 `;
 
+interface INavigationParams {
+    treeId: string;
+}
+
 function Navigation(): JSX.Element {
-    return (
-        <Page>
-            <Column></Column>
-        </Page>
-    );
+    const {treeId} = useParams<INavigationParams>();
+
+    return <span>{treeId}</span>;
 }
 
 export default Navigation;
