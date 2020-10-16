@@ -1,15 +1,15 @@
-import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
+import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {ErrorFieldDetail, Errors} from '../../../_types/errors';
-import {AttributePermissionsActions, RecordPermissionsActions} from '../../../_types/permissions';
+import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../../_types/permissions';
 import doesValueExist from './doesValueExist';
 
 interface ICanSaveValueRes {
     canSave: boolean;
-    reason?: AttributePermissionsActions | RecordPermissionsActions;
+    reason?: RecordAttributePermissionsActions | RecordPermissionsActions;
     fields?: ErrorFieldDetail<IValue>;
 }
 
@@ -22,7 +22,7 @@ interface ICanSaveValueParams {
     keepEmpty: boolean;
     deps: {
         recordPermissionDomain: IRecordPermissionDomain;
-        attributePermissionDomain: IAttributePermissionDomain;
+        recordAttributePermissionDomain: IRecordAttributePermissionDomain;
     };
 }
 
@@ -32,13 +32,15 @@ const _canSaveMetadata = async (
     recordId: string,
     value: IValue,
     ctx: IQueryInfos,
-    deps: {attributePermissionDomain: IAttributePermissionDomain}
-): Promise<{canSave: boolean; fields?: ErrorFieldDetail<IValue>; reason?: AttributePermissionsActions}> => {
-    const permToCheck = valueExists ? AttributePermissionsActions.EDIT_VALUE : AttributePermissionsActions.CREATE_VALUE;
+    deps: {recordAttributePermissionDomain: IRecordAttributePermissionDomain}
+): Promise<{canSave: boolean; fields?: ErrorFieldDetail<IValue>; reason?: RecordAttributePermissionsActions}> => {
+    const permToCheck = valueExists
+        ? RecordAttributePermissionsActions.EDIT_VALUE
+        : RecordAttributePermissionsActions.CREATE_VALUE;
     const errors: string[] = await Object.keys(value.metadata).reduce(async (allErrorsProm, field) => {
         const allErrors = await allErrorsProm;
 
-        const canUpdateField = await deps.attributePermissionDomain.getAttributePermission(
+        const canUpdateField = await deps.recordAttributePermissionDomain.getRecordAttributePermission(
             permToCheck,
             ctx.userId,
             field,
@@ -84,12 +86,12 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
 
     const permToCheck =
         !keepEmpty && !value.value
-            ? AttributePermissionsActions.DELETE_VALUE
+            ? RecordAttributePermissionsActions.DELETE_VALUE
             : valueExists
-            ? AttributePermissionsActions.EDIT_VALUE
-            : AttributePermissionsActions.CREATE_VALUE;
+            ? RecordAttributePermissionsActions.EDIT_VALUE
+            : RecordAttributePermissionsActions.CREATE_VALUE;
 
-    const isAllowed = await deps.attributePermissionDomain.getAttributePermission(
+    const isAllowed = await deps.recordAttributePermissionDomain.getRecordAttributePermission(
         permToCheck,
         ctx.userId,
         attributeProps.id,
@@ -105,7 +107,7 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
     // Check metadata permissions
     if (value.metadata) {
         return _canSaveMetadata(valueExists, library, recordId, value, ctx, {
-            attributePermissionDomain: deps.attributePermissionDomain
+            recordAttributePermissionDomain: deps.recordAttributePermissionDomain
         });
     }
 

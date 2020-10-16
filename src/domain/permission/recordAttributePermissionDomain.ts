@@ -1,15 +1,15 @@
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributePermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {PermissionTypes, RecordAttributePermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import getDefaultPermission from './helpers/getDefaultPermission';
 import {IPermissionDomain} from './permissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 
-export interface IAttributePermissionDomain {
-    getAttributePermission(
-        action: AttributePermissionsActions,
+export interface IRecordAttributePermissionDomain {
+    getRecordAttributePermission(
+        action: RecordAttributePermissionsActions,
         userGroupId: string,
         attributeId: string,
         recordLibrary: string,
@@ -31,10 +31,10 @@ export default function({
     'core.domain.attribute': attributeDomain = null,
     'core.infra.value': valueRepo = null,
     config = null
-}: IDeps = {}): IAttributePermissionDomain {
+}: IDeps = {}): IRecordAttributePermissionDomain {
     return {
-        async getAttributePermission(
-            action: AttributePermissionsActions,
+        async getRecordAttributePermission(
+            action: RecordAttributePermissionsActions,
             userId: string,
             attributeId: string,
             recordLibrary: string,
@@ -66,7 +66,7 @@ export default function({
 
             const perm = treePermissionDomain.getTreePermission(
                 {
-                    type: PermissionTypes.ATTRIBUTE,
+                    type: PermissionTypes.RECORD_ATTRIBUTE,
                     action,
                     userId,
                     applyTo: attributeId,

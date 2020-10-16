@@ -1,9 +1,9 @@
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributePermissionsActions, PermissionsRelations} from '../../_types/permissions';
+import {PermissionsRelations, RecordAttributePermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import attributePermissionDomain from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/getDefaultPermission';
+import recordAttributePermissionDomain from './recordAttributePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 
 jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
@@ -76,14 +76,14 @@ describe('AttributePermissionDomain', () => {
         test('Return permission', async () => {
             jest.spyOn(getDefaultPermission, 'default');
 
-            const attrDomain = attributePermissionDomain({
+            const recordAttrPermDomain = recordAttributePermissionDomain({
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 
-            const perm = await attrDomain.getAttributePermission(
-                AttributePermissionsActions.EDIT_VALUE,
+            const perm = await recordAttrPermDomain.getRecordAttributePermission(
+                RecordAttributePermissionsActions.EDIT_VALUE,
                 '12345',
                 'test_attr',
                 'test_lib',
@@ -104,14 +104,14 @@ describe('AttributePermissionDomain', () => {
                 })
             };
 
-            const attrDomain = attributePermissionDomain({
+            const recordAttrPermDomain = recordAttributePermissionDomain({
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 
-            const perm = await attrDomain.getAttributePermission(
-                AttributePermissionsActions.EDIT_VALUE,
+            const perm = await recordAttrPermDomain.getRecordAttributePermission(
+                RecordAttributePermissionsActions.EDIT_VALUE,
                 '12345',
                 'test_attr',
                 'test_lib',
