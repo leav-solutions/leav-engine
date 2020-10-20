@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {PermissionTypes, PermissionTarget, PermissionsActions} from './globalTypes';
+import {PermissionTypes, PermissionsActions, PermissionTarget} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: IS_ALLOWED
@@ -24,6 +24,6 @@ export interface IS_ALLOWED {
 export interface IS_ALLOWEDVariables {
     type: PermissionTypes;
     applyTo?: string | null;
-    actions: string[];
+    actions: PermissionsActions[];
     target?: PermissionTarget | null;
 }
