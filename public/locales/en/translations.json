@@ -183,7 +183,8 @@
                 "tree": "Tree Information",
                 "library": "Library Information",
                 "id": "Id",
-                "label": "Label"
+                "label": "Label",
+                "no-label": "No label"
             }
         }
     }

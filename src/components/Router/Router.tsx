@@ -1,4 +1,3 @@
-import {Menu} from 'antd';
 import React, {useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import styled from 'styled-components';
@@ -62,9 +61,7 @@ function Router(): JSX.Element {
                         <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
                         <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
 
-                        <Menu>
-                            <Routes />
-                        </Menu>
+                        <Routes />
                     </BodyWrapper>
                 </PageWrapper>
             </BrowserRouter>

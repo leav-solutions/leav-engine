@@ -22,7 +22,6 @@ function TreeList(): JSX.Element {
 
     useEffect(() => {
         if (!loading && data) {
-            console.log(data?.trees?.list);
             setTreeList(data?.trees?.list);
         }
     }, [loading, data]);
@@ -38,7 +37,9 @@ function TreeList(): JSX.Element {
     return (
         <ContainerTreeList>
             {treeList.map(tree => (
-                <TreeItem key={tree.id} tree={tree} />
+                <div key={tree.id}>
+                    <TreeItem tree={tree} />
+                </div>
             ))}
         </ContainerTreeList>
     );

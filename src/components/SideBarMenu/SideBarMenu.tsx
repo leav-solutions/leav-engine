@@ -11,6 +11,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink, useLocation} from 'react-router-dom';
 import {getActiveLibrary, IGetActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {getActiveTree, IGetActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import {localizedLabel} from '../../utils';
@@ -29,6 +30,9 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
 
     const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
     const activeLib = dataLib?.activeLib;
+
+    const {data: dataTree} = useQuery<IGetActiveTree>(getActiveTree);
+    const activeTree = dataTree?.activeTree;
 
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
@@ -82,6 +86,20 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                                 isActive={checkActive}
                             >
                                 {activeLib.name}
+                            </NavLink>
+                        </Menu.Item>
+                    )}
+
+                    {activeTree?.id && (
+                        <Menu.Item key={activeTree.id} icon={<ApartmentOutlined />}>
+                            <NavLink
+                                to={`/navigation/${activeTree.id}`}
+                                onClick={hide}
+                                strict
+                                activeClassName="nav-link-active"
+                                isActive={checkActive}
+                            >
+                                {activeTree.label || activeTree.id}
                             </NavLink>
                         </Menu.Item>
                     )}
