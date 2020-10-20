@@ -60,11 +60,11 @@ const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPrevie
                     updateValues({
                         ...values,
                         preview: values.preview
-                            ? {...values.preview, [previewAttribute]: e.target.value}
-                            : {
+                            ? ({...values.preview, [previewAttribute]: e.target.value} as IPreview)
+                            : ({
                                   ...(defaultPreview as IPreview),
                                   [previewAttribute]: e.target.value
-                              }
+                              } as IPreview)
                     })
                 }
             />

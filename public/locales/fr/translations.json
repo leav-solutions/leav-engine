@@ -182,7 +182,8 @@
                 "tree": "Détail de l'Arbre",
                 "library": "Détail de la bibliothèque",
                 "id": "Identifiant",
-                "label": "Nom"
+                "label": "Label",
+                "no-label": "Pas de label"
             }
         }
     }
