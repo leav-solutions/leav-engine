@@ -1,4 +1,5 @@
 export {default as app} from './appPermissionDomain';
+export {default as attribute} from './attributePermissionDomain';
 export {default as library} from './libraryPermissionDomain';
 export {default} from './permissionDomain';
 export {default as recordAttribute} from './recordAttributePermissionDomain';

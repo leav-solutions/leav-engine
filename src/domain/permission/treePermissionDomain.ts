@@ -255,16 +255,11 @@ export default function(deps: IDeps = {}): ITreePermissionDomain {
             }
 
             // Nothing found? Return library permission
-            const libPerm = await getPermissionByUserGroups(
-                {
-                    type: PermissionTypes.LIBRARY,
-                    action,
-                    userGroupsPaths: [groupAncestors],
-                    applyTo,
-                    ctx
-                },
-                deps
-            );
+            const libPerm = await getDefaultPermission({
+                action,
+                applyTo,
+                userGroups: [groupAncestors]
+            });
 
             return libPerm !== null ? libPerm : getGlobalDefaultPermission(config);
         }

@@ -2,6 +2,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, RecordAttributePermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import {IAttributePermissionDomain} from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/getDefaultPermission';
 import recordAttributePermissionDomain from './recordAttributePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
@@ -104,8 +105,13 @@ describe('AttributePermissionDomain', () => {
                 })
             };
 
+            const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
+                getAttributePermission: global.__mockPromise(defaultPerm)
+            };
+
             const recordAttrPermDomain = recordAttributePermissionDomain({
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
@@ -119,7 +125,7 @@ describe('AttributePermissionDomain', () => {
                 ctx
             );
 
-            expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(1);
+            expect(mockAttrPermDomain.getAttributePermission).toBeCalled();
             expect(perm).toBe(defaultPerm);
         });
     });

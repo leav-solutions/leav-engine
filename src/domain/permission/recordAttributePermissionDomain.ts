@@ -1,11 +1,19 @@
+import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {PermissionTypes, RecordAttributePermissionsActions} from '../../_types/permissions';
+import {
+    AttributePermissionsActions,
+    PermissionTypes,
+    RecordAttributePermissionsActions
+} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import {IAttributePermissionDomain} from './attributePermissionDomain';
 import getDefaultPermission from './helpers/getDefaultPermission';
+import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
 import {IPermissionDomain} from './permissionDomain';
-import {ITreePermissionDomain} from './treePermissionDomain';
+import {IGetDefaultPermissionParams, ITreePermissionDomain} from './treePermissionDomain';
+import {IGetRecordAttributeHeritedPermissionsParams} from './_types';
 
 export interface IRecordAttributePermissionDomain {
     getRecordAttributePermission(
@@ -16,22 +24,31 @@ export interface IRecordAttributePermissionDomain {
         recordId: string,
         ctx: IQueryInfos
     ): Promise<boolean>;
+
+    getHeritedRecordAttributePermission(
+        params: IGetRecordAttributeHeritedPermissionsParams,
+        ctx: IQueryInfos
+    ): Promise<boolean>;
 }
 
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
+    'core.infra.permission'?: IPermissionRepo;
     config?: IConfig;
 }
 
-export default function({
-    'core.domain.permission.tree': treePermissionDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.infra.value': valueRepo = null,
-    config = null
-}: IDeps = {}): IRecordAttributePermissionDomain {
+export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
+    const {
+        'core.domain.permission.tree': treePermissionDomain = null,
+        'core.domain.permission.attribute': attrPermissionDomain = null,
+        'core.domain.attribute': attributeDomain = null,
+        'core.infra.value': valueRepo = null,
+        config = null
+    } = deps;
     return {
         async getRecordAttributePermission(
             action: RecordAttributePermissionsActions,
@@ -43,7 +60,19 @@ export default function({
         ): Promise<boolean> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             if (typeof attrProps.permissions_conf === 'undefined') {
-                return getDefaultPermission(config);
+                // Check if action is present in library permissions
+                const isAttrAction =
+                    Object.values(AttributePermissionsActions).indexOf(
+                        (action as unknown) as AttributePermissionsActions
+                    ) !== -1;
+
+                return isAttrAction
+                    ? attrPermissionDomain.getAttributePermission({
+                          action: (action as unknown) as AttributePermissionsActions,
+                          attributeId,
+                          ctx
+                      })
+                    : getDefaultPermission(config);
             }
 
             const treesAttrValues = await Promise.all(
@@ -72,12 +101,50 @@ export default function({
                     applyTo: attributeId,
                     treeValues: valuesByAttr,
                     permissions_conf: attrProps.permissions_conf,
-                    getDefaultPermission: () => getDefaultPermission(config)
+                    getDefaultPermission: () =>
+                        attrPermissionDomain.getAttributePermission({
+                            action: (action as unknown) as AttributePermissionsActions,
+                            attributeId,
+                            ctx
+                        })
                 },
                 ctx
             );
 
             return perm;
+        },
+        async getHeritedRecordAttributePermission(
+            {action, attributeId, userGroupId, permTree, permTreeNode}: IGetRecordAttributeHeritedPermissionsParams,
+            ctx: IQueryInfos
+        ): Promise<boolean> {
+            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
+                const {applyTo, userGroups} = params;
+
+                const libPerm = await getPermissionByUserGroups(
+                    {
+                        type: PermissionTypes.ATTRIBUTE,
+                        action,
+                        userGroupsPaths: userGroups,
+                        applyTo,
+                        ctx
+                    },
+                    deps
+                );
+
+                return libPerm !== null ? libPerm : getDefaultPermission(config);
+            };
+
+            return treePermissionDomain.getHeritedTreePermission(
+                {
+                    type: PermissionTypes.RECORD_ATTRIBUTE,
+                    applyTo: attributeId,
+                    action,
+                    userGroupId,
+                    permissionTreeTarget: {tree: permTree, ...permTreeNode},
+                    getDefaultPermission: _getDefaultPermission
+                },
+                ctx
+            );
         }
     };
 }

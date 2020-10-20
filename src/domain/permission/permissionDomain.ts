@@ -16,7 +16,7 @@ import {
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {IAppPermissionDomain} from './appPermissionDomain';
-import getDefaultPermission from './helpers/getDefaultPermission';
+import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
@@ -64,6 +64,7 @@ interface IDeps {
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
+    'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
     translator?: i18n;
@@ -78,6 +79,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.record': recordPermissionDomain = null,
         'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
+        'core.domain.permission.attribute': attributePermissionDomain = null,
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
         'core.infra.permission': permissionRepo = null,
         config = null
@@ -139,14 +141,13 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                 );
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
-                perm = treePermissionDomain.getHeritedTreePermission(
+                perm = recordAttributePermissionDomain.getHeritedRecordAttributePermission(
                     {
-                        type: PermissionTypes.RECORD_ATTRIBUTE,
-                        applyTo,
-                        action,
+                        attributeId: applyTo,
+                        action: action as RecordAttributePermissionsActions,
                         userGroupId,
-                        permissionTreeTarget,
-                        getDefaultPermission: () => getDefaultPermission(config)
+                        permTree: permissionTreeTarget.tree,
+                        permTreeNode: permissionTreeTarget
                     },
                     ctx
                 );
@@ -156,6 +157,15 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                 perm = await libraryPermissionDomain.getHeritedLibraryPermission({
                     action,
                     libraryId: applyTo,
+                    userGroupId,
+                    ctx
+                });
+                break;
+            case PermissionTypes.ATTRIBUTE:
+                action = action as AttributePermissionsActions;
+                perm = await attributePermissionDomain.getHeritedAttributePermission({
+                    action,
+                    attributeId: applyTo,
                     userGroupId,
                     ctx
                 });
@@ -196,11 +206,11 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                 }
 
                 if (!target.recordId) {
-                    errors.push('record ID');
+                    errors.push('recordId');
                 }
 
                 if (!target.attributeId) {
-                    errors.push('attribute ID');
+                    errors.push('attributeId');
                 }
 
                 if (errors.length) {
@@ -227,6 +237,15 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     userId,
                     ctx
                 });
+                break;
+            case PermissionTypes.ATTRIBUTE:
+                action = action as AttributePermissionsActions;
+                perm = await attributePermissionDomain.getAttributePermission({
+                    action,
+                    attributeId: applyTo,
+                    ctx
+                });
+
                 break;
             case PermissionTypes.APP:
                 action = action as AppPermissionsActions;

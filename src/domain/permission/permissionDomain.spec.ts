@@ -11,6 +11,7 @@ import {
 } from '../../_types/permissions';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {IAppPermissionDomain} from './appPermissionDomain';
+import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import permissionDomain from './permissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
@@ -111,6 +112,27 @@ describe('PermissionDomain', () => {
 
             expect(perm).toBe(true);
             expect(mockLibPermDomain.getLibraryPermission).toHaveBeenCalled();
+        });
+
+        test('Return attribute permission', async () => {
+            const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
+                getAttributePermission: global.__mockPromise(true)
+            };
+
+            const permsHelperDomain = permissionDomain({
+                'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain
+            });
+
+            const perm = await permsHelperDomain.isAllowed({
+                type: PermissionTypes.ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                userId: '123',
+                applyTo: 'test_attr',
+                ctx
+            });
+
+            expect(perm).toBe(true);
+            expect(mockAttrPermDomain.getAttributePermission).toHaveBeenCalled();
         });
 
         test('Return record permission', async () => {
