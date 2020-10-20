@@ -89,7 +89,7 @@ function PermissionsContent({
                                 <DefineTreePermissionsView
                                     key={a.id}
                                     treeAttribute={a}
-                                    permissionType={PermissionTypes.attribute}
+                                    permissionType={PermissionTypes.record_attribute}
                                     applyTo={attribute.id}
                                     readOnly={readonly}
                                     actions={actions}

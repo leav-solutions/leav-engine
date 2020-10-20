@@ -55,9 +55,9 @@ export enum LibraryBehavior {
 
 export enum PermissionTypes {
     app = 'app',
-    attribute = 'attribute',
     library = 'library',
-    record = 'record'
+    record = 'record',
+    record_attribute = 'record_attribute'
 }
 
 export enum PermissionsActions {
