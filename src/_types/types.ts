@@ -14,12 +14,12 @@ export interface ILibrary {
     };
 }
 
-export interface IPreview {
+export type IPreview = {
     small: string;
     medium: string;
     big: string;
     pages: string;
-}
+} | null;
 
 export interface IItem {
     [x: string]: any;
@@ -248,4 +248,10 @@ export interface ITree {
         id: string;
         label: ILabel;
     }[];
+}
+
+export interface INavigationPath {
+    id: string;
+    library: string;
+    label?: string;
 }

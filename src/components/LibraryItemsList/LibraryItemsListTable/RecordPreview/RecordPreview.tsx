@@ -67,15 +67,18 @@ ImagePreview.displayName = 'ImagePreview';
 
 function RecordPreviewList({label, color, image, size, style}: IRecordPreviewProps): JSX.Element {
     if (image) {
+        const limitSize = size
+            ? {maxHeight: `calc(${getPreviewSize(size)} - 0.5rem)`, maxWidth: `calc(${getPreviewSize(size)} - 0.5rem)`}
+            : {maxHeight: 'auto', maxWidth: 'auto'};
+
         return (
-            <ImagePreview size={size}>
+            <ImagePreview size={size} style={style}>
                 <img
                     src={image}
                     alt="record preview"
                     style={{
                         ...style,
-                        maxHeight: `calc(${getPreviewSize(size)} - 0.5rem)`,
-                        maxWidth: `calc(${getPreviewSize(size)} - 0.5rem)`
+                        ...limitSize
                     }}
                 />
             </ImagePreview>
@@ -111,7 +114,7 @@ const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
     color: ${props => props.fontColor};
     font-size: 4em;
     padding: 5px;
-    height: 10rem; 
+    height: 10rem;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -120,7 +123,11 @@ const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
 `;
 GeneratedPreviewTile.displayName = 'GeneratedPreviewTile';
 
-const ImagePreviewTile = styled.div`
+interface IImagePreviewTileProps {
+    style?: CSSObject;
+}
+
+const ImagePreviewTile = styled.div<IImagePreviewTileProps>`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -141,7 +148,7 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
     const [imgLoad, setImgLoad] = useState(false);
     if (image) {
         return (
-            <ImagePreviewTile>
+            <ImagePreviewTile style={{...style}}>
                 {!imgLoad && <CustomSkeletonImage style={{...style}} />}
                 <img src={image} alt="record preview" style={{...style}} onLoad={() => setImgLoad(true)} />
             </ImagePreviewTile>

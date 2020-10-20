@@ -43,7 +43,7 @@ export const LibraryItemListInitialState: LibraryItemListState = {
     itemsSortField: '',
     itemsSortOrder: OrderSearch.asc,
     itemsTotalCount: 0,
-    itemsLoading: true,
+    itemsLoading: false,
     offset: 0,
     pagination: 20,
     displayType: DisplayListItemTypes.listSmall,
@@ -134,12 +134,11 @@ export type LibraryItemListReducerAction =
 const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
     switch (action.type) {
         case LibraryItemListReducerActionTypes.SET_LIB_INFOS:
-            const {itemsSortField, itemsSortOrder, attributes} = action;
             return {
                 ...state,
-                itemsSortField,
-                itemsSortOrder,
-                attributes
+                itemsSortField: action.itemsSortField,
+                itemsSortOrder: action.itemsSortOrder,
+                attributes: action.attributes
             };
         case LibraryItemListReducerActionTypes.SET_SEARCH_INFOS:
             return {...state, itemsSortField: action.itemsSortField, itemsSortOrder: action.itemsSortOrder};
