@@ -20,6 +20,6 @@ describe('Navigation', () => {
             );
         });
 
-        expect(comp);
+        expect(comp.find('NavigationView')).toHaveLength(1);
     });
 });

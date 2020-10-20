@@ -22,7 +22,6 @@ function TreeList(): JSX.Element {
 
     useEffect(() => {
         if (!loading && data) {
-            console.log(data?.trees?.list);
             setTreeList(data?.trees?.list);
         }
     }, [loading, data]);

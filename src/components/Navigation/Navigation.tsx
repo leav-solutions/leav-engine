@@ -1,27 +1,16 @@
-import React from 'react';
-import {useParams} from 'react-router-dom';
-import styled from 'styled-components';
-
-const Page = styled.div`
-    width: 100vw;
-    height: calc(100vh - 3rem);
-    display: grid;
-    margin-left: 10rem;
-    grid-template-columns: repeat(4, 1fr);
-`;
-
-const Column = styled.div`
-    box-shadow: 10px 0 10px -2px #888;
-`;
-
-interface INavigationParams {
-    treeId: string;
-}
+import React, {useReducer} from 'react';
+import {StateNavigationContext} from '../../Context/StateNavigationContext';
+import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';
+import NavigationView from '../NavigationView';
 
 function Navigation(): JSX.Element {
-    const {treeId} = useParams<INavigationParams>();
+    const [state, dispatch] = useReducer(NavigationReducer, NavigationReducerInitialState);
 
-    return <span>{treeId}</span>;
+    return (
+        <StateNavigationContext.Provider value={{stateNavigation: state, dispatchNavigation: dispatch}}>
+            <NavigationView />
+        </StateNavigationContext.Provider>
+    );
 }
 
 export default Navigation;
