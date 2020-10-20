@@ -12,10 +12,11 @@ import {
 import ColumnNavigation from '../ColumnNavigation';
 
 const Page = styled.div`
-    width: 100vw;
+    width: auto;
     height: calc(100vh - 3rem);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 15rem);
+    display: flex;
+    flex-flow: row nowrap;
+    overflow-y: scroll;
 `;
 
 interface INavigationParams {

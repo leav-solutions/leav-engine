@@ -5,8 +5,8 @@ import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
 import CellNavigation from '../CellNavigation';
 
 const Column = styled.div`
-    /* box-shadow: 10px 0 10px -2px #888; */
     border-right: 1px solid #888;
+    min-width: 15rem;
     display: flex;
     flex-flow: column nowrap;
 `;
