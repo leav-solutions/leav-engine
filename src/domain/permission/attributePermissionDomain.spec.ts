@@ -1,126 +1,164 @@
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributePermissionsActions, PermissionsRelations} from '../../_types/permissions';
-import {IAttributeDomain} from '../attribute/attributeDomain';
+import {AttributePermissionsActions} from '../../_types/permissions';
 import attributePermissionDomain from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/getDefaultPermission';
-import {ITreePermissionDomain} from './treePermissionDomain';
+import * as getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
 
 jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'attributePermissionDomainTest'
+        queryId: 'permissionDomainTest'
     };
+
     describe('getAttributePermission', () => {
-        const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
-            getTreePermission: global.__mockPromise(true)
-        };
-
         const defaultPerm = false;
-
-        const mockAttributeDomain: Mockify<IAttributeDomain> = {
+        const mockAttrDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: global.__mockPromise({
-                id: 'test_attr',
-                permissions_conf: {
-                    permissionTreeAttributes: ['category'],
-                    relation: PermissionsRelations.AND
-                }
+                id: 'user_groups',
+                linked_tree: 'users_groups'
             })
         };
 
-        const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation(({attribute}) => {
-                let val;
-                switch (attribute.id) {
-                    case 'category':
-                        val = {
-                            id_value: 12345,
-                            value: {
-                                record: {
-                                    id: 1,
-                                    library: 'category'
-                                }
-                            }
-                        };
-                        break;
-                    case 'test_attr':
-                        val = {
-                            id_value: 12345,
-                            value: {
-                                record: {
-                                    id: 1,
-                                    library: 'category'
-                                }
-                            }
-                        };
-                        break;
-                    case 'user_groups':
-                        val = {
-                            id_value: 54321,
-                            value: {
-                                record: {
-                                    id: 1,
-                                    library: 'users_groups'
-                                }
-                            }
-                        };
-                        break;
+        const mockValRepo: Mockify<IValueRepo> = {
+            getValues: global.__mockPromise([
+                {
+                    id_value: 54321,
+                    value: {
+                        record: {
+                            id: 1,
+                            library: 'users_groups'
+                        }
+                    }
                 }
-
-                return Promise.resolve([val]);
-            })
+            ])
         };
 
-        test('Return permission', async () => {
-            jest.spyOn(getDefaultPermission, 'default');
+        const mockTreeRepo: Mockify<ITreeRepo> = {
+            getElementAncestors: global.__mockPromise([
+                {
+                    record: {
+                        id: 1,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 2,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 3,
+                        library: 'users_groups'
+                    }
+                }
+            ])
+        };
 
-            const attrDomain = attributePermissionDomain({
-                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
-                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo
+        test('Return attribute permission', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = attributePermissionDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.permission': mockPermRepo as IPermissionRepo,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
+            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
+            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
+
+            const perm = await permDomain.getAttributePermission({
+                action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
+                attributeId: 'test_attr',
+                ctx
             });
 
-            const perm = await attrDomain.getAttributePermission(
-                AttributePermissionsActions.EDIT_VALUE,
-                '12345',
-                'test_attr',
-                'test_lib',
-                '987654',
-                ctx
-            );
-
-            expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(0);
-            expect(mockTreePermDomain.getTreePermission.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 
-        test('Return default permission if no config', async () => {
-            jest.spyOn(getDefaultPermission, 'default');
-            const mockAttrNoPermsDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({
-                    id: 'test_attr'
-                })
-            };
-
-            const attrDomain = attributePermissionDomain({
-                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
-                'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo
+        test('Return default permission if nothing defined', async () => {
+            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const permDomain = attributePermissionDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.permission': mockPermRepo as IPermissionRepo,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
-            const perm = await attrDomain.getAttributePermission(
-                AttributePermissionsActions.EDIT_VALUE,
-                '12345',
-                'test_attr',
-                'test_lib',
-                '987654',
-                ctx
-            );
+            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
+            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
 
-            expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(1);
+            const perm = await permDomain.getAttributePermission({
+                action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
+                attributeId: 'test_attr',
+                ctx
+            });
+
             expect(perm).toBe(defaultPerm);
+        });
+    });
+
+    describe('getHeritedAttributePermission', () => {
+        const mockTreeRepo: Mockify<ITreeRepo> = {
+            getElementAncestors: global.__mockPromise([
+                {
+                    record: {
+                        id: 1,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 2,
+                        library: 'users_groups'
+                    }
+                },
+                {
+                    record: {
+                        id: 3,
+                        library: 'users_groups'
+                    }
+                }
+            ])
+        };
+        test('Return herited library permission', async () => {
+            const permDomain = attributePermissionDomain({
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
+            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
+
+            const perm = await permDomain.getHeritedAttributePermission({
+                action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
+                attributeId: 'test_attr',
+                userGroupId: '12345',
+                ctx
+            });
+
+            expect(perm).toBe(true);
+        });
+
+        test('Herit of default perm if nothing defined', async () => {
+            const permDomain = attributePermissionDomain({
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
+
+            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
+            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(false);
+
+            const perm = await permDomain.getHeritedAttributePermission({
+                action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
+                attributeId: 'test_attr',
+                userGroupId: '12345',
+                ctx
+            });
+
+            expect(perm).toBe(false);
         });
     });
 });

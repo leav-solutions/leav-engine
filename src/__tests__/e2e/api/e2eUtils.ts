@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
 import {AttributeFormats, AttributeTypes, IAttributeVersionsConf} from '_types/attribute';
+import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
 
 async function _getAuthToken() {
@@ -111,4 +112,41 @@ export async function gqlCreateRecord(library: string): Promise<number> {
     `);
 
     return res.data.data.c.id;
+}
+
+/**
+ * Retrieve "all users" element ID in users group tree
+ */
+export async function gqlGetAllUsersGroupId(): Promise<string> {
+    const usersGroupsTreeContent = await makeGraphQlCall(`{
+        treeContent(treeId: "users_groups") {
+            record {
+                id
+            }
+        }
+    }`);
+
+    return usersGroupsTreeContent.data.data.treeContent[0].record.id;
+}
+
+export async function gqlAddUserToGroup(groupId: string) {
+    const userGroupAttrId = 'user_groups';
+    await makeGraphQlCall(`mutation {
+        saveValue(library: "users", recordId: "1", attribute: "${userGroupAttrId}", value: {
+            value: "users_groups/${groupId}"
+        }) {
+            id_value
+            value
+        }
+    }`);
+}
+
+export async function gqlAddElemToTree(treeId: string, element: ITreeElement, parent?: ITreeElement) {
+    await makeGraphQlCall(`mutation {
+        treeAddElement(
+            treeId: "${treeId}",
+            element: {id: "${element.id}", library: "${element.library}"}
+            ${parent ? `parent: {id: "${parent.id}", library: "${parent.library}"}` : ''}
+        ) { id }
+    }`);
 }

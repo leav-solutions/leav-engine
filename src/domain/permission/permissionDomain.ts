@@ -12,12 +12,13 @@ import {
     IPermission,
     LibraryPermissionsActions,
     PermissionTypes,
+    RecordAttributePermissionsActions,
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {IAppPermissionDomain} from './appPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
-import getDefaultPermission from './helpers/getDefaultPermission';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
+import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 import {
@@ -64,6 +65,7 @@ interface IDeps {
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
+    'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
     translator?: i18n;
     config?: IConfig;
@@ -78,6 +80,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
+        'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
         'core.infra.permission': permissionRepo = null,
         config = null
     }: IDeps = deps;
@@ -137,15 +140,14 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     ctx
                 );
                 break;
-            case PermissionTypes.ATTRIBUTE:
-                perm = treePermissionDomain.getHeritedTreePermission(
+            case PermissionTypes.RECORD_ATTRIBUTE:
+                perm = recordAttributePermissionDomain.getHeritedRecordAttributePermission(
                     {
-                        type: PermissionTypes.ATTRIBUTE,
-                        applyTo,
-                        action,
+                        attributeId: applyTo,
+                        action: action as RecordAttributePermissionsActions,
                         userGroupId,
-                        permissionTreeTarget,
-                        getDefaultPermission: () => getDefaultPermission(config)
+                        permTree: permissionTreeTarget.tree,
+                        permTreeNode: permissionTreeTarget
                     },
                     ctx
                 );
@@ -155,6 +157,15 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                 perm = await libraryPermissionDomain.getHeritedLibraryPermission({
                     action,
                     libraryId: applyTo,
+                    userGroupId,
+                    ctx
+                });
+                break;
+            case PermissionTypes.ATTRIBUTE:
+                action = action as AttributePermissionsActions;
+                perm = await attributePermissionDomain.getHeritedAttributePermission({
+                    action,
+                    attributeId: applyTo,
                     userGroupId,
                     ctx
                 });
@@ -188,18 +199,18 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     ctx
                 );
                 break;
-            case PermissionTypes.ATTRIBUTE:
+            case PermissionTypes.RECORD_ATTRIBUTE:
                 const errors = [];
                 if (!target) {
                     throw new ValidationError({target: Errors.MISSING_TARGET});
                 }
 
                 if (!target.recordId) {
-                    errors.push('record ID');
+                    errors.push('recordId');
                 }
 
                 if (!target.attributeId) {
-                    errors.push('attribute ID');
+                    errors.push('attributeId');
                 }
 
                 if (errors.length) {
@@ -208,8 +219,8 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     });
                 }
 
-                perm = attributePermissionDomain.getAttributePermission(
-                    action as AttributePermissionsActions,
+                perm = recordAttributePermissionDomain.getRecordAttributePermission(
+                    action as RecordAttributePermissionsActions,
                     userId,
                     target.attributeId,
                     applyTo,
@@ -226,6 +237,15 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     userId,
                     ctx
                 });
+                break;
+            case PermissionTypes.ATTRIBUTE:
+                action = action as AttributePermissionsActions;
+                perm = await attributePermissionDomain.getAttributePermission({
+                    action,
+                    attributeId: applyTo,
+                    ctx
+                });
+
                 break;
             case PermissionTypes.APP:
                 action = action as AppPermissionsActions;
@@ -245,7 +265,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
         applyOn,
         skipApplyOn = false
     }: IGetActionsByTypeParams): ILabeledPermissionsAction[] => {
-        let perms;
+        let perms = [];
         switch (type) {
             case PermissionTypes.APP:
                 perms = Object.values(AppPermissionsActions);
@@ -253,11 +273,14 @@ export default function(deps: IDeps = {}): IPermissionDomain {
             case PermissionTypes.LIBRARY:
                 perms = Object.values(LibraryPermissionsActions);
                 break;
+            case PermissionTypes.RECORD:
+                perms = Object.values(RecordPermissionsActions);
+                break;
             case PermissionTypes.ATTRIBUTE:
                 perms = Object.values(AttributePermissionsActions);
                 break;
-            case PermissionTypes.RECORD:
-                perms = Object.values(RecordPermissionsActions);
+            case PermissionTypes.RECORD_ATTRIBUTE:
+                perms = Object.values(RecordAttributePermissionsActions);
                 break;
         }
 

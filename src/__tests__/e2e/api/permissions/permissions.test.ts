@@ -249,7 +249,7 @@ describe('Permissions', () => {
             const resSavePerm = await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
-                        type: attribute,
+                        type: record_attribute,
                         applyTo: "${testPermAttrId}",
                         usersGroup: "${allUsersTreeElemId}",
                         permissionTreeTarget: {
@@ -298,7 +298,7 @@ describe('Permissions', () => {
 
             const resIsAllowed = await makeGraphQlCall(`query {
                 isAllowed(
-                    type: attribute,
+                    type: record_attribute,
                     actions: [edit_value],
                     applyTo: "${testLibId}",
                     target: {recordId: "${testLibRecordId}", attributeId: "${testPermAttrId}"}

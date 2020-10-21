@@ -251,7 +251,7 @@ export default function({
                         __resolveType(obj: IPermission) {
                             const typesMapping = {
                                 [PermissionTypes.RECORD]: 'RecordPermisisons',
-                                [PermissionTypes.ATTRIBUTE]: 'AttributePermissions'
+                                [PermissionTypes.RECORD_ATTRIBUTE]: 'AttributePermissions'
                             };
 
                             return typesMapping[obj.type];

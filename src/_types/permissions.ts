@@ -2,9 +2,10 @@ import {ISystemTranslation} from './systemTranslation';
 
 export enum PermissionTypes {
     RECORD = 'record',
-    ATTRIBUTE = 'attribute',
+    RECORD_ATTRIBUTE = 'record_attribute',
     APP = 'app',
-    LIBRARY = 'library'
+    LIBRARY = 'library',
+    ATTRIBUTE = 'attribute'
 }
 
 export enum LibraryPermissionsActions {
@@ -19,6 +20,13 @@ export enum RecordPermissionsActions {
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',
     DELETE_RECORD = 'delete_record'
+}
+
+export enum RecordAttributePermissionsActions {
+    ACCESS_ATTRIBUTE = 'access_attribute',
+    CREATE_VALUE = 'create_value',
+    EDIT_VALUE = 'edit_value',
+    DELETE_VALUE = 'delete_value'
 }
 
 export enum AttributePermissionsActions {
@@ -53,8 +61,9 @@ export enum AppPermissionsActions {
 export type PermissionsActions =
     | LibraryPermissionsActions
     | RecordPermissionsActions
-    | AttributePermissionsActions
-    | AppPermissionsActions;
+    | RecordAttributePermissionsActions
+    | AppPermissionsActions
+    | AttributePermissionsActions;
 
 export interface ILabeledPermissionsAction {
     label: ISystemTranslation;
