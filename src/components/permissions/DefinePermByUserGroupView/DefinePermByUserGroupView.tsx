@@ -6,12 +6,13 @@ import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
 
-interface IDefineLibPermissionsViewProps {
-    applyTo: string;
-    readOnly: boolean;
+interface IDefinePermByUserGroupViewProps {
+    applyTo?: string;
+    readOnly?: boolean;
+    type: PermissionTypes;
 }
 
-function DefineLibPermissionsView({applyTo, readOnly}: IDefineLibPermissionsViewProps): JSX.Element {
+function DefinePermByUserGroupView({applyTo, readOnly, type}: IDefinePermByUserGroupViewProps): JSX.Element {
     const usersGroupsTreeId = 'users_groups';
 
     const [selectedGroupNode, setSelectedGroupNode] = React.useState<NodeData | null>(null);
@@ -34,7 +35,7 @@ function DefineLibPermissionsView({applyTo, readOnly}: IDefineLibPermissionsView
         cols.push(
             <EditPermissions
                 permParams={{
-                    type: PermissionTypes.library,
+                    type,
                     applyTo,
                     usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null
                 }}
@@ -46,4 +47,4 @@ function DefineLibPermissionsView({applyTo, readOnly}: IDefineLibPermissionsView
     return <ColumnsDisplay columnsNumber={2} columnsContent={cols} />;
 }
 
-export default DefineLibPermissionsView;
+export default DefinePermByUserGroupView;

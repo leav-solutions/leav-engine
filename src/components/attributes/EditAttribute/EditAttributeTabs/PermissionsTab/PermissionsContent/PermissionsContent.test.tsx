@@ -14,6 +14,12 @@ jest.mock('../../../../../permissions/DefineTreePermissionsView', () => {
     };
 });
 
+jest.mock('../../../../../permissions/DefinePermByUserGroupView', () => {
+    return function DefinePermByUserGroupView() {
+        return <div>DefinePermByUserGroupView</div>;
+    };
+});
+
 describe('PermissionsContent', () => {
     const mockTreeAttributes = [
         {...mockAttrTree, id: 'tree1', label: {fr: 'Tree Attr1'}},
@@ -55,7 +61,7 @@ describe('PermissionsContent', () => {
             />
         );
 
-        expect(comp.find('Tab').prop('panes')).toHaveLength(2);
+        expect(comp.find('Tab').prop('panes')).toHaveLength(3);
     });
 
     test('Calls submit function', async () => {

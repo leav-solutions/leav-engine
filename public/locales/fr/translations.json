@@ -136,6 +136,7 @@
         "herit": "Hériter",
         "grant": "Autoriser",
         "library_tab_name": "Bibliothèque",
+        "attribute_tab_name": "Attribut",
         "any_record": "Tous les éléments",
         "app_access_libraries": "Accéder aux bibliothèques",
         "app_create_library": "Créer une bibliothèque",

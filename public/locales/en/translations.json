@@ -137,6 +137,7 @@
         "herit": "Herit",
         "grant": "grant",
         "library_tab_name": "Library",
+        "attribute_tab_name": "Attribute",
         "any_record": "Any records",
         "app_access_libraries": "Access libraries",
         "app_create_library": "Create library",

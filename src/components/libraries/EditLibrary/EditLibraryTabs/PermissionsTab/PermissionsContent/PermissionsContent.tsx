@@ -10,12 +10,11 @@ import {
 } from '../../../../../../_gqlTypes/GET_LIBRARIES';
 import {
     AttributeType,
-    PermissionsActions,
     PermissionsRelation,
     PermissionTypes,
     Treepermissions_confInput
 } from '../../../../../../_gqlTypes/globalTypes';
-import DefineLibPermissionsView from '../../../../../permissions/DefineLibPermissionsView';
+import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
 interface IPermissionsContentProps {
@@ -28,13 +27,6 @@ interface IEditLibraryPermissionsState {
     permissionTreeAttributes: string[];
     relation: PermissionsRelation;
 }
-
-const actions = [
-    PermissionsActions.access_record,
-    PermissionsActions.create_record,
-    PermissionsActions.edit_record,
-    PermissionsActions.delete_record
-];
 
 /* tslint:disable-next-line:variable-name */
 const AccordionWithMargin = styled(Accordion)`
@@ -94,7 +86,6 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
                         permissionType={PermissionTypes.record}
                         applyTo={library.id}
                         readOnly={readonly}
-                        actions={actions}
                     />
                 ) : (
                     <p>Missing tree ID</p>
@@ -108,7 +99,14 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
         menuItem: t('permissions.library_tab_name'),
         render: () => (
             <Tab.Pane key="libPermissions" className="grow flex-col height100">
-                {<DefineLibPermissionsView key="libPermissions" applyTo={library.id} readOnly={readonly} />}
+                {
+                    <DefinePermByUserGroupView
+                        type={PermissionTypes.library}
+                        key="libPermissions"
+                        applyTo={library.id}
+                        readOnly={readonly}
+                    />
+                }
             </Tab.Pane>
         )
     });

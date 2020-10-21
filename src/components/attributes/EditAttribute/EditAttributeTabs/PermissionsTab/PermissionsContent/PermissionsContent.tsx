@@ -15,6 +15,7 @@ import {
     PermissionTypes,
     Treepermissions_confInput
 } from '../../../../../../_gqlTypes/globalTypes';
+import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
 interface IPermissionsContentProps {
@@ -61,7 +62,7 @@ function PermissionsContent({
     const [settingsExpanded, setSettingsExpanded] = React.useState<boolean>(false);
     const onClickToggle = () => setSettingsExpanded(!settingsExpanded);
 
-    const _handleSubmit = (formData: any) => {
+    const _handleSubmit = () => {
         onSubmitSettings({permissionTreeAttributes, relation});
     };
 
@@ -75,33 +76,45 @@ function PermissionsContent({
         [treeAttributes, lang]
     );
 
-    const panes = useMemo(
-        () =>
-            treeAttributes
-                .filter(a => permissionTreeAttributes.indexOf(a.id) !== -1)
-                .map(a => ({
-                    key: a.id,
-                    menuItem: localizedLabel(a.label, lang),
-                    render: () => (
-                        <Tab.Pane key={a.id} className="grow flex-col height100">
-                            {(a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
-                                .linked_tree ? (
-                                <DefineTreePermissionsView
-                                    key={a.id}
-                                    treeAttribute={a}
-                                    permissionType={PermissionTypes.record_attribute}
-                                    applyTo={attribute.id}
-                                    readOnly={readonly}
-                                    actions={actions}
-                                />
-                            ) : (
-                                <p>Missing tree ID</p>
-                            )}
-                        </Tab.Pane>
-                    )
-                })),
-        [permissionTreeAttributes, treeAttributes, attribute, readonly, lang]
-    );
+    const panes = treeAttributes
+        .filter(a => permissionTreeAttributes.indexOf(a.id) !== -1)
+        .map(a => ({
+            key: a.id,
+            menuItem: localizedLabel(a.label, lang),
+            render: () => (
+                <Tab.Pane key={a.id} className="grow flex-col height100">
+                    {(a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
+                        .linked_tree ? (
+                        <DefineTreePermissionsView
+                            key={a.id}
+                            treeAttribute={a}
+                            permissionType={PermissionTypes.record_attribute}
+                            applyTo={attribute.id}
+                            readOnly={readonly}
+                        />
+                    ) : (
+                        <p>Missing tree ID</p>
+                    )}
+                </Tab.Pane>
+            )
+        }));
+
+    panes.unshift({
+        key: 'libPermissions',
+        menuItem: t('permissions.attribute_tab_name'),
+        render: () => (
+            <Tab.Pane key="libPermissions" className="grow flex-col height100">
+                {
+                    <DefinePermByUserGroupView
+                        type={PermissionTypes.attribute}
+                        key="attrPermissions"
+                        applyTo={attribute.id}
+                        readOnly={readonly}
+                    />
+                }
+            </Tab.Pane>
+        )
+    });
 
     return (
         <>
