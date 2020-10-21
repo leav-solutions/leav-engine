@@ -18,10 +18,23 @@ interface IColumnNavigationProps {
 function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
     const {stateNavigation} = useStateNavigation();
 
+    const elementsSort = [...treeElements].sort((a, b) => {
+        const fa = a.children ? a.children.length : 0;
+        const fb = b.children ? b.children.length : 0;
+
+        if (fa < fb) {
+            return 1;
+        }
+        if (fa > fb) {
+            return -1;
+        }
+        return 0;
+    });
+
     return (
         <>
             <Column>
-                {treeElements.map(treeElement => (
+                {elementsSort.map(treeElement => (
                     <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={1} />
                 ))}
             </Column>
@@ -48,9 +61,21 @@ const ColumnFromPath = ({pathPart, treeElements, depth}: IColumnFromPathProps) =
     const parent = findPathInTree(pathPart, treeElements);
 
     if (parent) {
+        const elementsSort = [...parent.children].sort((a, b) => {
+            const fa = a.children ? a.children.length : 0;
+            const fb = b.children ? b.children.length : 0;
+
+            if (fa < fb) {
+                return 1;
+            }
+            if (fa > fb) {
+                return -1;
+            }
+            return 0;
+        });
         return (
             <>
-                {parent.children?.map(treeElement => (
+                {elementsSort?.map(treeElement => (
                     <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
                 ))}
             </>

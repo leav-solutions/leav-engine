@@ -1,6 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {mockTreeElements} from '../../__mocks__/Navigation/treeElements';
 import ColumnNavigation from './ColumnNavigation';
 
@@ -9,7 +10,11 @@ describe('ColumnNavigation', () => {
         let comp: any;
 
         await act(async () => {
-            comp = mount(<ColumnNavigation treeElements={mockTreeElements} />);
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <ColumnNavigation treeElements={mockTreeElements} />
+                </MockedProviderWithFragments>
+            );
         });
 
         expect(comp.find('CellNavigation')).toHaveLength(1);

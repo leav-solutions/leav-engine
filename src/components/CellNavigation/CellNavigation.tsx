@@ -1,9 +1,14 @@
 import {RightOutlined} from '@ant-design/icons';
+import {useQuery} from '@apollo/client';
 import React from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
+import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
 import {setPath} from '../../Reducer/NavigationReducer';
+import {localizedLabel} from '../../utils';
+import {PreviewSize, RecordIdentity_whoAmI} from '../../_types/types';
+import RecordCard from '../shared/RecordCard';
 
 const Cell = styled.div`
     display: flex;
@@ -13,6 +18,12 @@ const Cell = styled.div`
 
     &:hover {
         background: #ccc;
+    }
+`;
+
+const RecordCardWrapper = styled.div`
+    & > * > * {
+        justify-content: space-around;
     }
 `;
 
@@ -35,13 +46,33 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
         dispatchNavigation(setPath(newPath));
     };
 
+    const {data: dataLang} = useQuery(getLang);
+    // handle case dataLang is null
+    const {lang} = dataLang ?? {lang: []};
+
+    const record: RecordIdentity_whoAmI = {
+        ...treeElement.record.whoAmI,
+        label: localizedLabel(treeElement.record.whoAmI.label, lang)
+    };
+
     return (
         <Cell onClick={addPath}>
-            <div>{treeElement.record.whoAmI.id}</div>
-            <div>{treeElement.children?.length}</div>
-            <div>
-                <RightOutlined />
-            </div>
+            <RecordCardWrapper>
+                <RecordCard record={record} size={PreviewSize.small} />
+            </RecordCardWrapper>
+            {treeElement.children?.length ? (
+                <>
+                    <div>{treeElement.children?.length}</div>
+                    <div>
+                        <RightOutlined />
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div></div>
+                    <div></div>
+                </>
+            )}
         </Cell>
     );
 }
