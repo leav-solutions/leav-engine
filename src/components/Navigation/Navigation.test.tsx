@@ -9,7 +9,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Navigation', () => {
-    test('', async () => {
+    test('should call NavigationView', async () => {
         let comp: any;
 
         await act(async () => {

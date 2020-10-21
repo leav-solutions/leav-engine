@@ -2,7 +2,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import {mockTreeElement} from '../../__mocks__/Navigation/treeElements';
+import {mockTreeElement} from '../../__mocks__/Navigation/mockTreeElements';
 import CellNavigation from './CellNavigation';
 
 describe('CellNavigation', () => {

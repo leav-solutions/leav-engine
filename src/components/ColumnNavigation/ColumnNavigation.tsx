@@ -1,3 +1,4 @@
+import {Spin} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
@@ -11,6 +12,26 @@ const Column = styled.div`
     flex-flow: column nowrap;
 `;
 
+const SpinWrapper = styled.div`
+    width: 100%;
+    height: 5rem;
+    display: grid;
+    place-items: center;
+`;
+
+const sortChildren = (a, b) => {
+    const fa = a.children ? a.children.length : 0;
+    const fb = b.children ? b.children.length : 0;
+
+    if (fa < fb) {
+        return 1;
+    }
+    if (fa > fb) {
+        return -1;
+    }
+    return 0;
+};
+
 interface IColumnNavigationProps {
     treeElements: IRecordAndChildren[];
 }
@@ -18,18 +39,7 @@ interface IColumnNavigationProps {
 function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
     const {stateNavigation} = useStateNavigation();
 
-    const elementsSort = [...treeElements].sort((a, b) => {
-        const fa = a.children ? a.children.length : 0;
-        const fb = b.children ? b.children.length : 0;
-
-        if (fa < fb) {
-            return 1;
-        }
-        if (fa > fb) {
-            return -1;
-        }
-        return 0;
-    });
+    const elementsSort = [...treeElements].sort(sortChildren);
 
     return (
         <>
@@ -41,7 +51,12 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
 
             {stateNavigation.path.map((pathPart, index) => (
                 <Column key={pathPart.id}>
-                    <ColumnFromPath pathPart={pathPart} treeElements={treeElements} depth={index + 2} />
+                    <ColumnFromPath
+                        pathPart={pathPart}
+                        treeElements={treeElements}
+                        depth={index + 2}
+                        showLoading={stateNavigation.isLoading && index === stateNavigation.path.length - 1}
+                    />
                 </Column>
             ))}
         </>
@@ -55,27 +70,26 @@ interface IColumnFromPathProps {
         library: string;
     };
     depth: number;
+    showLoading: boolean;
 }
 
-const ColumnFromPath = ({pathPart, treeElements, depth}: IColumnFromPathProps) => {
+const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFromPathProps) => {
     const parent = findPathInTree(pathPart, treeElements);
 
     if (parent) {
-        const elementsSort = [...parent.children].sort((a, b) => {
-            const fa = a.children ? a.children.length : 0;
-            const fb = b.children ? b.children.length : 0;
+        const elementsSort = [...parent.children].sort(sortChildren);
 
-            if (fa < fb) {
-                return 1;
-            }
-            if (fa > fb) {
-                return -1;
-            }
-            return 0;
-        });
+        if (showLoading) {
+            return (
+                <SpinWrapper>
+                    <Spin />
+                </SpinWrapper>
+            );
+        }
+
         return (
             <>
-                {elementsSort?.map(treeElement => (
+                {elementsSort?.map((treeElement, index) => (
                     <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
                 ))}
             </>

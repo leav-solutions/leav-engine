@@ -4,6 +4,7 @@ import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import {getTreeContentQuery} from '../../queries/trees/getTreeContentQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
+import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
 import NavigationView from './NavigationView';
 
 jest.mock('react-router-dom', () => ({
@@ -40,9 +41,11 @@ describe('NavigationView', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
-                    <NavigationView />
-                </MockedProviderWithFragments>
+                <MockStateNavigation>
+                    <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                        <NavigationView />
+                    </MockedProviderWithFragments>
+                </MockStateNavigation>
             );
 
             await wait(5);

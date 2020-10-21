@@ -249,3 +249,8 @@ export interface ITree {
         label: ILabel;
     }[];
 }
+
+export interface INavigationPath {
+    id: string;
+    library: string;
+}

@@ -1,14 +1,15 @@
 import {useQuery} from '@apollo/client';
-import {Spin} from 'antd';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {
     getTreeContentQuery,
     IGetTreeContentQuery,
-    IGetTreeContentQueryVar
+    IGetTreeContentQueryVar,
+    IRecordAndChildren
 } from '../../queries/trees/getTreeContentQuery';
+import {setIsLoading} from '../../Reducer/NavigationReducer';
 import ColumnNavigation from '../ColumnNavigation';
 
 const Page = styled.div`
@@ -24,7 +25,8 @@ interface INavigationParams {
 }
 
 function NavigationView(): JSX.Element {
-    const {stateNavigation} = useStateNavigation();
+    const [tree, setTree] = useState<IRecordAndChildren[]>([]);
+    const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
     const {treeId} = useParams<INavigationParams>();
 
@@ -36,14 +38,20 @@ function NavigationView(): JSX.Element {
         }
     });
 
+    useEffect(() => {
+        if (!loading && data) {
+            setTree(data.treeContent);
+        }
+        dispatchNavigation(setIsLoading(loading));
+    }, [data, loading, dispatchNavigation]);
+
     if (error) {
         return <>error</>;
     }
 
     return (
         <Page>
-            {data && <ColumnNavigation treeElements={data.treeContent} />}
-            {loading && <Spin />}
+            <ColumnNavigation treeElements={tree} />
         </Page>
     );
 }
