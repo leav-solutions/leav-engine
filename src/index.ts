@@ -16,7 +16,4 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-// Get first arg
-const configPathArg = process.argv[2];
-
-startWatch(configPathArg);
+startWatch();
