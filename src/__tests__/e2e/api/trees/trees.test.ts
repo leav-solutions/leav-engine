@@ -4,7 +4,7 @@ describe('Trees', () => {
     const testTreeName = 'test_tree';
     const testLibName = 'trees_library_test';
     const testLibTypeName = 'treesLibraryTest';
-    const attrTreeName = 'values_attribute_test_tree';
+    const attrTreeName = 'trees_attribute_test_tree';
 
     test('Create Tree', async () => {
         const res = await makeGraphQlCall(`mutation {
@@ -206,7 +206,7 @@ describe('Trees', () => {
             ) { id }
         }`);
 
-        await makeGraphQlCall(`mutation { refreshSchema }`);
+        await makeGraphQlCall('mutation { refreshSchema }');
 
         // Create library for tests
         await makeGraphQlCall(`mutation {
