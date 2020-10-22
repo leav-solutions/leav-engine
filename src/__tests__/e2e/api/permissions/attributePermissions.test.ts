@@ -7,7 +7,12 @@ describe('AttributePermissions', () => {
 
     beforeAll(async () => {
         // Create attribute
-        await gqlSaveAttribute(permAttrName, AttributeTypes.SIMPLE, 'Test attr', AttributeFormats.TEXT);
+        await gqlSaveAttribute({
+            id: permAttrName,
+            type: AttributeTypes.SIMPLE,
+            label: 'Test attr',
+            format: AttributeFormats.TEXT
+        });
 
         allUsersTreeElemId = await gqlGetAllUsersGroupId();
         await gqlAddUserToGroup(allUsersTreeElemId);

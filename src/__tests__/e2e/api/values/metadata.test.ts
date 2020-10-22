@@ -9,15 +9,19 @@ describe('Values Metadata', () => {
     let recordId;
 
     beforeAll(async () => {
-        await gqlSaveAttribute(metaAttrId, AttributeTypes.SIMPLE, 'Simple attribute', AttributeFormats.TEXT);
-        await gqlSaveAttribute(
-            attrWithMetaId,
-            AttributeTypes.ADVANCED,
-            'Adv attribute with metadta',
-            AttributeFormats.TEXT,
-            null,
-            [metaAttrId]
-        );
+        await gqlSaveAttribute({
+            id: metaAttrId,
+            type: AttributeTypes.SIMPLE,
+            label: 'Simple attribute',
+            format: AttributeFormats.TEXT
+        });
+        await gqlSaveAttribute({
+            id: attrWithMetaId,
+            type: AttributeTypes.ADVANCED,
+            label: 'Adv attribute with metadta',
+            format: AttributeFormats.TEXT,
+            metadataFields: [metaAttrId]
+        });
         await gqlSaveLibrary(metadataLibId, 'Test Metadata', [attrWithMetaId]);
         recordId = await gqlCreateRecord(metadataLibId);
     });

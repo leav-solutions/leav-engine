@@ -20,7 +20,12 @@ describe('RecordAttributePermissions', () => {
     let treeElemId2;
 
     beforeAll(async () => {
-        await gqlSaveAttribute(permAttrName, AttributeTypes.SIMPLE, 'Test attr', AttributeFormats.TEXT);
+        await gqlSaveAttribute({
+            id: permAttrName,
+            type: AttributeTypes.SIMPLE,
+            label: 'Test attr',
+            format: AttributeFormats.TEXT
+        });
         await gqlSaveLibrary(permTreeLibName, 'Test Lib');
         await gqlSaveTree(permTreeName, 'Test tree', [permTreeLibName]);
 

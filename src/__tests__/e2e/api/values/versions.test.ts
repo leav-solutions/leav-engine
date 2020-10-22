@@ -17,16 +17,16 @@ describe('Versions', () => {
 
         // Create attribute
         // Add tree to versions conf on attribute
-        const saveAttr = await gqlSaveAttribute(
-            attrAdvName,
-            AttributeTypes.ADVANCED,
-            'Test Attr',
-            AttributeFormats.TEXT,
-            {
+        await gqlSaveAttribute({
+            id: attrAdvName,
+            type: AttributeTypes.ADVANCED,
+            label: 'Test Attr',
+            format: AttributeFormats.TEXT,
+            versionsConf: {
                 versionable: true,
                 trees: [treeName]
             }
-        );
+        });
 
         // Create libraries
         await gqlSaveLibrary(testLibName, 'Test Lib');
