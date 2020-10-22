@@ -1,12 +1,12 @@
 import React, {createContext, useContext} from 'react';
 import {
+    INavigationReducerState,
     NavigationReducerAction,
-    NavigationReducerInitialState,
-    NavigationReducerState
+    NavigationReducerInitialState
 } from '../Reducer/NavigationReducer';
 
 interface IStateNavigationContext {
-    stateNavigation: NavigationReducerState;
+    stateNavigation: INavigationReducerState;
     dispatchNavigation: React.Dispatch<NavigationReducerAction>;
 }
 

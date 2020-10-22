@@ -7,13 +7,13 @@ export enum NavigationReducerActionsTypes {
     SET_RECORD_DETAIL = 'SET_RECORD_DETAIL'
 }
 
-export interface NavigationReducerState {
+export interface INavigationReducerState {
     path: INavigationPath[];
     isLoading: boolean;
     recordDetail?: IRecordField;
 }
 
-export const NavigationReducerInitialState: NavigationReducerState = {
+export const NavigationReducerInitialState: INavigationReducerState = {
     path: [],
     isLoading: true
 };
@@ -32,7 +32,7 @@ export type NavigationReducerAction =
           recordDetail: IRecordField;
       };
 
-export const NavigationReducer = (state: NavigationReducerState, action: NavigationReducerAction) => {
+export const NavigationReducer = (state: INavigationReducerState, action: NavigationReducerAction) => {
     switch (action.type) {
         case NavigationReducerActionsTypes.SET_PATH:
             return {...state, path: action.path};
