@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
-import {setPath} from '../../Reducer/NavigationReducer';
+import {setPath, setRecordDetail} from '../../Reducer/NavigationReducer';
 import {localizedLabel} from '../../utils';
 import {INavigationPath, PreviewSize, RecordIdentity_whoAmI} from '../../_types/types';
 import RecordCard from '../shared/RecordCard';
@@ -36,14 +36,18 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
     const addPath = () => {
-        const newPathElement: INavigationPath = {
-            id: treeElement.record.whoAmI.id,
-            library: treeElement.record.whoAmI.library.id
-        };
+        if (treeElement.children?.length) {
+            const newPathElement: INavigationPath = {
+                id: treeElement.record.whoAmI.id,
+                library: treeElement.record.whoAmI.library.id
+            };
 
-        let newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
+            let newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
 
-        dispatchNavigation(setPath(newPath));
+            dispatchNavigation(setPath(newPath));
+        } else {
+            dispatchNavigation(setRecordDetail(treeElement.record));
+        }
     };
 
     const {data: dataLang} = useQuery(getLang);

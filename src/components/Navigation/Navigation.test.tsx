@@ -8,6 +8,14 @@ jest.mock('react-router-dom', () => ({
     useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'}))
 }));
 
+jest.mock(
+    '../NavigationView',
+    () =>
+        function NavigationView() {
+            return <div>NavigationView</div>;
+        }
+);
+
 describe('Navigation', () => {
     test('should call NavigationView', async () => {
         let comp: any;

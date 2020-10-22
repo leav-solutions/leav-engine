@@ -11,6 +11,7 @@ import {
 } from '../../queries/trees/getTreeContentQuery';
 import {setIsLoading} from '../../Reducer/NavigationReducer';
 import ColumnNavigation from '../ColumnNavigation';
+import DetailNavigation from '../DetailNavigation';
 
 const Page = styled.div`
     width: auto;
@@ -52,6 +53,7 @@ function NavigationView(): JSX.Element {
     return (
         <Page>
             <ColumnNavigation treeElements={tree} />
+            <DetailNavigation />
         </Page>
     );
 }
