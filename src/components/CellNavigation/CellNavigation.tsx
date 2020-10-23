@@ -1,5 +1,6 @@
 import {RightOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
+import {Badge} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
@@ -67,7 +68,9 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
 
             {treeElement.children?.length ? (
                 <>
-                    <div>{treeElement.children?.length}</div>
+                    <div>
+                        <Badge count={treeElement.children?.length} />
+                    </div>
                     <div>
                         <RightOutlined />
                     </div>

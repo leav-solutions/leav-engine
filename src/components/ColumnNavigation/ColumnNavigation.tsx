@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
+import themingVar from '../../themingVar';
 import CellNavigation from '../CellNavigation';
 
 const Column = styled.div`
@@ -10,6 +11,8 @@ const Column = styled.div`
     min-width: 15rem;
     display: flex;
     flex-flow: column nowrap;
+
+    background: ${themingVar['@default-bg']};
 `;
 
 const SpinWrapper = styled.div`
