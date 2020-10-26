@@ -1,5 +1,6 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useRef} from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
@@ -20,6 +21,12 @@ const Detail = styled.div`
     border-right: 1px solid ${themingVar['@divider-color']};
 `;
 
+const DetailElement = styled.div`
+    span {
+        font-weight: 600;
+    }
+`;
+
 const PreviewWrapper = styled.div`
     padding: 2rem;
     height: 25rem;
@@ -30,6 +37,8 @@ const PreviewWrapper = styled.div`
 `;
 
 const DetailNavigation = (): JSX.Element => {
+    const {t} = useTranslation();
+
     const {stateNavigation} = useStateNavigation();
 
     const detailRef = useRef<HTMLDivElement>(null);
@@ -51,7 +60,7 @@ const DetailNavigation = (): JSX.Element => {
 
     const recordData = stateNavigation.recordDetail.whoAmI;
 
-    const label = recordData.label ? localizedLabel(recordData.label, lang) : 'No label';
+    const label = recordData.label ? localizedLabel(recordData.label, lang) : t('navigation.list.info.no-label');
     const img = recordData.preview.big;
 
     return (
@@ -65,12 +74,12 @@ const DetailNavigation = (): JSX.Element => {
                     style={{height: '20rem'}}
                 />
             </PreviewWrapper>
-            <div>
-                <span>Id:</span> {recordData.id}
-            </div>
-            <div>
-                <span>Label:</span> {label}
-            </div>
+            <DetailElement>
+                <span>{t('navigation.list.info.id')}:</span> {recordData.id}
+            </DetailElement>
+            <DetailElement>
+                <span>{t('navigation.list.info.label')}:</span> {label}
+            </DetailElement>
         </Detail>
     );
 };
