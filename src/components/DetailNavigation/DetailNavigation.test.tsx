@@ -1,6 +1,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import wait from 'waait';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
 import {mockTreeRecord} from '../../__mocks__/Navigation/mockTreeElements';
@@ -26,6 +27,10 @@ describe('DetailNavigation', () => {
                     </MockedProviderWithFragments>
                 </MockStateNavigation>
             );
+
+            await wait();
+
+            comp.update();
         });
 
         expect(comp.find('RecordPreview')).toHaveLength(1);

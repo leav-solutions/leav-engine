@@ -29,7 +29,7 @@ export type NavigationReducerAction =
       }
     | {
           type: NavigationReducerActionsTypes.SET_RECORD_DETAIL;
-          recordDetail: IRecordField;
+          recordDetail?: IRecordField;
       };
 
 export const NavigationReducer = (state: INavigationReducerState, action: NavigationReducerAction) => {
@@ -63,5 +63,11 @@ export const setRecordDetail = (recordDetail: IRecordField): NavigationReducerAc
     return {
         type: NavigationReducerActionsTypes.SET_RECORD_DETAIL,
         recordDetail
+    };
+};
+
+export const resetRecordDetail = (): NavigationReducerAction => {
+    return {
+        type: NavigationReducerActionsTypes.SET_RECORD_DETAIL
     };
 };

@@ -1,5 +1,5 @@
 import {Spin} from 'antd';
-import React from 'react';
+import React, {createRef, useEffect} from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
@@ -79,6 +79,17 @@ interface IColumnFromPathProps {
 const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFromPathProps) => {
     const parent = findPathInTree(pathPart, treeElements);
 
+    const ref = createRef<HTMLDivElement>();
+    const {stateNavigation} = useStateNavigation();
+
+    useEffect(() => {
+        if (ref.current && ref.current.scrollIntoView) {
+            ref.current?.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    }, [ref, stateNavigation.recordDetail]);
+
     if (parent) {
         const elementsSort = [...parent.children].sort(sortChildren);
 
@@ -91,11 +102,11 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
         }
 
         return (
-            <>
+            <div ref={ref}>
                 {elementsSort?.map((treeElement, index) => (
                     <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
                 ))}
-            </>
+            </div>
         );
     }
 

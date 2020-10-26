@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
@@ -28,11 +28,21 @@ const PreviewWrapper = styled.div`
     grid-column-end: 3;
 `;
 
-function DetailNavigation(): JSX.Element {
+const DetailNavigation = (): JSX.Element => {
     const {stateNavigation} = useStateNavigation();
+
+    const detailRef = useRef<HTMLDivElement>(null);
 
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
+
+    useEffect(() => {
+        if (detailRef.current && detailRef.current.scrollIntoView) {
+            detailRef.current.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    }, [detailRef, stateNavigation.recordDetail]);
 
     if (!stateNavigation.recordDetail) {
         return <></>;
@@ -44,7 +54,7 @@ function DetailNavigation(): JSX.Element {
     const img = recordData.preview.big;
 
     return (
-        <Detail>
+        <Detail ref={detailRef}>
             <PreviewWrapper>
                 <RecordPreview
                     label={recordData.label ? label : recordData.id}
@@ -62,6 +72,6 @@ function DetailNavigation(): JSX.Element {
             </div>
         </Detail>
     );
-}
+};
 
 export default DetailNavigation;

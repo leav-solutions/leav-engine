@@ -27,6 +27,7 @@ interface INavigationParams {
 
 function NavigationView(): JSX.Element {
     const [tree, setTree] = useState<IRecordAndChildren[]>([]);
+
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
     const {treeId} = useParams<INavigationParams>();
