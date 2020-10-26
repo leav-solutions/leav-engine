@@ -17,6 +17,7 @@ const Detail = styled.div`
     grid-template-rows: 25rem auto;
 
     background: ${themingVar['@default-bg']};
+    border-right: 1px solid ${themingVar['@divider-color']};
 `;
 
 const PreviewWrapper = styled.div`
@@ -37,12 +38,12 @@ const DetailNavigation = (): JSX.Element => {
     const {lang} = dataLang ?? {lang: []};
 
     useEffect(() => {
-        if (detailRef.current && detailRef.current.scrollIntoView) {
+        if (!stateNavigation.isLoading && detailRef.current && detailRef.current.scrollIntoView) {
             detailRef.current.scrollIntoView({
                 behavior: 'smooth'
             });
         }
-    }, [detailRef, stateNavigation.recordDetail]);
+    }, [detailRef, stateNavigation.recordDetail, stateNavigation.isLoading]);
 
     if (!stateNavigation.recordDetail) {
         return <></>;

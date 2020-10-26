@@ -7,7 +7,7 @@ import themingVar from '../../themingVar';
 import CellNavigation from '../CellNavigation';
 
 const Column = styled.div`
-    border-right: 1px solid #888;
+    border-right: 1px solid ${themingVar['@divider-color']};
     min-width: 15rem;
     display: flex;
     flex-flow: column nowrap;
@@ -52,16 +52,18 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
                 ))}
             </Column>
 
-            {stateNavigation.path.map((pathPart, index) => (
-                <Column key={pathPart.id}>
-                    <ColumnFromPath
-                        pathPart={pathPart}
-                        treeElements={treeElements}
-                        depth={index + 2}
-                        showLoading={stateNavigation.isLoading && index === stateNavigation.path.length - 1}
-                    />
-                </Column>
-            ))}
+            {stateNavigation.path.map(
+                (pathPart, index) =>
+                    treeElements.length && (
+                        <ColumnFromPath
+                            key={pathPart.id}
+                            pathPart={pathPart}
+                            treeElements={treeElements}
+                            depth={index + 2}
+                            showLoading={stateNavigation.isLoading && index === stateNavigation.path.length - 1}
+                        />
+                    )
+            )}
         </>
     );
 }
@@ -91,22 +93,30 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
     }, [ref, stateNavigation.recordDetail]);
 
     if (parent) {
+        if (!parent.children.length) {
+            return <></>;
+        }
+
         const elementsSort = [...parent.children].sort(sortChildren);
 
         if (showLoading) {
             return (
-                <SpinWrapper>
-                    <Spin />
-                </SpinWrapper>
+                <Column>
+                    <SpinWrapper>
+                        <Spin />
+                    </SpinWrapper>
+                </Column>
             );
         }
 
         return (
-            <div ref={ref}>
-                {elementsSort?.map((treeElement, index) => (
-                    <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
-                ))}
-            </div>
+            <Column>
+                <div ref={ref}>
+                    {elementsSort?.map((treeElement, index) => (
+                        <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
+                    ))}
+                </div>
+            </Column>
         );
     }
 
