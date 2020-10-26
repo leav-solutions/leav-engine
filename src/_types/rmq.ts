@@ -1,4 +1,5 @@
 import * as amqp from 'amqplib';
+import {EventTypes} from './events';
 
 export interface RMQConn {
     connection: amqp.Connection;
@@ -6,7 +7,7 @@ export interface RMQConn {
 }
 
 export interface RMQMsg {
-    event: string;
+    event: EventTypes;
     time: number;
     pathAfter: string;
     pathBefore: string;

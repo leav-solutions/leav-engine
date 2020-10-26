@@ -1,6 +1,11 @@
 import * as amqp from 'amqplib';
 import {generateMsg, send} from '.';
 import {getConfig} from '../config';
+import {EventTypes} from '../_types/events';
+
+const _logEvent = (params: {eventType: EventTypes; pathBefore?: string; pathAfter?: string}) => {
+    console.info('Event detected', params);
+};
 
 export const create = async (
     path: string,
@@ -10,12 +15,16 @@ export const create = async (
     hash?: string
 ) => {
     const cfg = await getConfig();
-    await send(cfg.rmq, generateMsg('CREATE', null, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
+
+    await send(cfg.rmq, generateMsg(EventTypes.CREATE, null, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
+    _logEvent({eventType: EventTypes.CREATE, pathAfter: path});
 };
 
 export const remove = async (path: string, inode: number, isDirectory: boolean, channel: amqp.ConfirmChannel) => {
     const cfg = await getConfig();
-    await send(cfg.rmq, generateMsg('REMOVE', path, null, inode, isDirectory, cfg.rmq.rootKey), channel);
+
+    await send(cfg.rmq, generateMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.rmq.rootKey), channel);
+    _logEvent({eventType: EventTypes.REMOVE, pathBefore: path});
 };
 
 export const move = async (
@@ -26,7 +35,13 @@ export const move = async (
     channel: amqp.ConfirmChannel
 ) => {
     const cfg = await getConfig();
-    await send(cfg.rmq, generateMsg('MOVE', pathBefore, pathAfter, inode, isDirectory, cfg.rmq.rootKey), channel);
+
+    await send(
+        cfg.rmq,
+        generateMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.rmq.rootKey),
+        channel
+    );
+    _logEvent({eventType: EventTypes.MOVE, pathBefore, pathAfter});
 };
 
 export const update = async (
@@ -37,5 +52,7 @@ export const update = async (
     hash: string
 ) => {
     const cfg = await getConfig();
-    await send(cfg.rmq, generateMsg('UPDATE', path, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
+
+    await send(cfg.rmq, generateMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
+    _logEvent({eventType: EventTypes.UPDATE, pathAfter: path, pathBefore: path});
 };

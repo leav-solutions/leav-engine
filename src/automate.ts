@@ -1,7 +1,7 @@
-import {FullTreeContent} from './_types/queries';
-import {FilesystemContent, FileContent} from './_types/filesystem';
-import * as events from './rmq/events';
 import * as amqp from 'amqplib';
+import * as events from './rmq/events';
+import {FileContent, FilesystemContent} from './_types/filesystem';
+import {FullTreeContent} from './_types/queries';
 
 enum Attr {
     NOTHING = 0,
@@ -150,5 +150,8 @@ export default async (
     let dbEl: FullTreeContent;
 
     dbEl = _extractChildrenDbElems(dbScan, dbEl);
+
     await _process(fsScan, dbEl, 0, channel);
+
+    console.info('Sync finished.');
 };

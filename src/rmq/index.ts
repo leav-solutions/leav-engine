@@ -1,6 +1,7 @@
 import * as amqp from 'amqplib';
-import {RMQConn, RMQMsg} from '../_types/rmq';
 import * as Config from '../_types/config';
+import {EventTypes} from '../_types/events';
+import {RMQConn, RMQMsg} from '../_types/rmq';
 
 export const send = ({exchange, routingKey}: Config.RMQ, msg: string, channel: amqp.ConfirmChannel): Promise<void> =>
     new Promise(async (resolve, reject) => {
@@ -18,7 +19,7 @@ export const send = ({exchange, routingKey}: Config.RMQ, msg: string, channel: a
     });
 
 export const generateMsg = (
-    event: string,
+    event: EventTypes,
     pathBefore: string | null,
     pathAfter: string | null,
     inode: number,
