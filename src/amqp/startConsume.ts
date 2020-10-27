@@ -20,5 +20,5 @@ export const startConsume = async (config: IConfig) => {
     // init queue where send response
     await initAmqp(channel, config.amqp.type, config.amqp.publish);
 
-    return consume(channel, config);
+    await consume(channel, config);
 };

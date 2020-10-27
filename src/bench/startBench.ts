@@ -4,7 +4,7 @@ import {ConsumeMessage} from 'amqplib';
 import {processPreview} from '../processPreview/processPreview';
 import {IConfig} from '../types/types';
 
-export const startBench = (jsonFile: string, dest: string, config: IConfig) => {
+export const startBench = async (jsonFile: string, dest: string, config: IConfig) => {
     const data: string = fs.readFileSync(jsonFile, 'utf8');
     const files: string[] = JSON.parse(data);
 
@@ -32,7 +32,8 @@ export const startBench = (jsonFile: string, dest: string, config: IConfig) => {
             content,
         };
 
-        processPreview(msg as ConsumeMessage, config);
+        await processPreview(msg as ConsumeMessage, config);
     }
+
     console.info((Date.now() - begin) / 1000);
 };
