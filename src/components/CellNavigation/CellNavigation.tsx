@@ -43,10 +43,17 @@ interface ICellNavigationProps {
 function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element {
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
+    const {data: dataLang} = useQuery(getLang);
+    // handle case dataLang is null
+    const {lang} = dataLang ?? {lang: []};
+
+    const recordLabel = localizedLabel(treeElement.record.whoAmI.label, lang);
+
     const addPath = () => {
         const newPathElement: INavigationPath = {
             id: treeElement.record.whoAmI.id,
-            library: treeElement.record.whoAmI.library.id
+            library: treeElement.record.whoAmI.library.id,
+            label: recordLabel
         };
 
         let newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
@@ -59,10 +66,6 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
             dispatchNavigation(setRecordDetail(treeElement.record));
         }
     };
-
-    const {data: dataLang} = useQuery(getLang);
-    // handle case dataLang is null
-    const {lang} = dataLang ?? {lang: []};
 
     const record: RecordIdentity_whoAmI = {
         ...treeElement.record.whoAmI,

@@ -12,13 +12,15 @@ import {
 import {setIsLoading} from '../../Reducer/NavigationReducer';
 import ColumnNavigation from '../ColumnNavigation';
 import DetailNavigation from '../DetailNavigation';
+import MenuNavigation from '../MenuNavigation';
 
 const Page = styled.div`
     width: auto;
-    height: calc(100vh - 3rem);
+    height: calc(100vh - 6rem);
     display: flex;
     flex-flow: row nowrap;
-    overflow-y: scroll;
+    overflow-x: scroll;
+    overflow-y: hidden;
 `;
 
 interface INavigationParams {
@@ -52,10 +54,13 @@ function NavigationView(): JSX.Element {
     }
 
     return (
-        <Page>
-            <ColumnNavigation treeElements={tree} />
-            <DetailNavigation />
-        </Page>
+        <div>
+            <MenuNavigation />
+            <Page>
+                <ColumnNavigation treeElements={tree} />
+                <DetailNavigation />
+            </Page>
+        </div>
     );
 }
 
