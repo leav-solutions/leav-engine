@@ -1,5 +1,10 @@
 stages:
-    - test
+    - test    
+    - deploy
+
+include:
+  - project: 'infra/shared_ci'
+    file: '/omnipublish-v6.yml'
 
 # Environment variables are defined in GitLab CI/CD settings at projet level:
 # NEXUS_URL is the private registry URL
