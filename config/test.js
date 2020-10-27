@@ -19,5 +19,8 @@ module.exports = {
             previewResponse: 'test_files_preview_response'
         }
     },
+    logs: {
+        transport: ['console']
+    },
     debug: true
 };
