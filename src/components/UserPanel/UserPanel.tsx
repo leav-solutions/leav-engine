@@ -1,7 +1,8 @@
-import {LogoutOutlined} from '@ant-design/icons';
+import {LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Drawer, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {NavLink} from 'react-router-dom';
 
 interface IUserPanelProps {
     userPanelVisible: boolean;
@@ -36,6 +37,11 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                 <Menu.Item>{t('menu.user_menu.events')}</Menu.Item>
                 <Menu.Item>{t('menu.user_menu.admin')}</Menu.Item>
                 <Menu.Item>{t('menu.user_menu.leav_engine')}</Menu.Item>
+
+                <Menu.Item icon={<SettingOutlined />} onClick={hideUserPanel}>
+                    <NavLink to="/setting">{t('sidebar.setting')}</NavLink>
+                </Menu.Item>
+
                 <Menu.Item>
                     <LogoutOutlined />
                     {t('menu.user_menu.logout')}
