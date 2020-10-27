@@ -1,37 +1,27 @@
-import {handleError} from './../../utils/log';
-import {access} from 'fs';
-import {ErrorPreview} from './../../types/ErrorPreview';
+import * as fs from 'fs';
 import {IConfig} from './../../types/types';
+import {ErrorPreview} from './../../types/ErrorPreview';
+import {handleError} from './../../utils/log';
 
-export const initialCheck = async (config: IConfig) => {
-    // check input rootPath
-    const errInputRootPathExist = await new Promise(res => access(config.inputRootPath, e => res(e)));
-
-    if (errInputRootPathExist) {
-        const errorId = handleError(errInputRootPathExist);
-
+export const initialCheck = async (config: IConfig): Promise<void> => {
+    try {
+        await fs.promises.access(config.inputRootPath);
+    } catch (e) {
         throw new ErrorPreview({
             error: 101,
             params: {
-                errorId,
+                errorId: handleError(e),
             },
         });
     }
 
-    // check output rootPath
-    const errOutputRootPathExist = await new Promise(r =>
-        access(config.outputRootPath, e => {
-            r(e);
-        }),
-    );
-
-    if (errOutputRootPathExist) {
-        const errorId = handleError(errOutputRootPathExist);
-
+    try {
+        await fs.promises.access(config.outputRootPath);
+    } catch (e) {
         throw new ErrorPreview({
             error: 102,
             params: {
-                errorId,
+                errorId: handleError(e),
             },
         });
     }

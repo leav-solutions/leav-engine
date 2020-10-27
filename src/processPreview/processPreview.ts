@@ -3,16 +3,9 @@ import {handleCheck} from '../check/handleCheck';
 import {IConfig, IMessageConsume, IResponse, IResult} from '../types/types';
 import {generatePreview} from './../generatePreview/generatePreview';
 import {getFileType} from './getFileType/getFileType';
-import {getMsgContent} from './getMsgContent/getMsgContent';
 
 export const processPreview = async (msg: ConsumeMessage, config: IConfig): Promise<IResponse> => {
-    let msgContent: IMessageConsume;
-
-    try {
-        msgContent = getMsgContent(msg);
-    } catch (e) {
-        return e;
-    }
+    const msgContent: IMessageConsume = JSON.parse(msg.content.toString());
 
     if (config.verbose) {
         console.info('input:', msgContent.input);
@@ -23,11 +16,14 @@ export const processPreview = async (msg: ConsumeMessage, config: IConfig): Prom
 
     try {
         await handleCheck(msgContent, config);
-
         type = getFileType(msgContent.input);
-
         results = await generatePreview(msgContent, type, config);
     } catch (e) {
+        // is not a custom error
+        if (typeof e.params === 'undefined') {
+            console.error(e);
+        }
+
         const {error, params} = e;
         const result: IResult = {error, params};
 

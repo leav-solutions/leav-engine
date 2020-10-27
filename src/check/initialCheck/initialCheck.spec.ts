@@ -1,4 +1,4 @@
-import {access} from 'fs';
+import * as fs from 'fs';
 import {ErrorPreview} from './../../types/ErrorPreview';
 import {IConfig} from './../../types/types';
 import {initialCheck} from './initialCheck';
@@ -20,19 +20,19 @@ describe('initialCheck', () => {
         );
     });
 
-    test('check outputRootPath should be call with ', async () => {
-        (access as jest.FunctionLike) = jest.fn((...args) => args[1]());
+    test('check intputRootPath should be called two timeswith', async () => {
+        (fs.promises.access as jest.FunctionLike) = global.__mockPromise((...args) => args[1]());
 
         await initialCheck(config as IConfig);
 
-        expect(access).nthCalledWith(1, config.outputRootPath, expect.anything());
+        expect(fs.promises.access).nthCalledWith(1, config.inputRootPath);
     });
 
     test('check outputRootPath should be call with ', async () => {
-        (access as jest.FunctionLike) = jest.fn((...args) => args[1]());
+        (fs.promises.access as jest.FunctionLike) = global.__mockPromise((...args) => args[1]());
 
         await initialCheck(config as IConfig);
 
-        expect(access).lastCalledWith(config.outputRootPath, expect.anything());
+        expect(fs.promises.access).lastCalledWith(config.outputRootPath);
     });
 });

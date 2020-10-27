@@ -1,5 +1,4 @@
 import {handleCheck} from './../check/handleCheck';
-import {getMsgContent} from './getMsgContent/getMsgContent';
 import {IConfig} from '../types/types';
 import {ConsumeMessage} from 'amqplib';
 import {processPreview} from './processPreview';
@@ -26,23 +25,14 @@ describe('processPreview', () => {
 
     const config = {
         inputRootPath: '/app',
+        outputRootPath: '/app',
     };
 
-    test('use getMsgContent', () => {
-        (getMsgContent as jest.FunctionLike) = jest.fn(() => msg);
-        (handleCheck as jest.FunctionLike) = jest.fn();
+    test('process preview', async () => {
+        (handleCheck as jest.FunctionLike) = global.__mockPromise();
 
-        processPreview(msg as ConsumeMessage, config as IConfig);
+        await processPreview(msg as ConsumeMessage, config as IConfig);
 
-        expect(getMsgContent).toBeCalledWith(msg);
-    });
-
-    test('use handleCheck', () => {
-        (getMsgContent as jest.FunctionLike) = jest.fn(() => msg);
-        (handleCheck as jest.FunctionLike) = jest.fn();
-
-        processPreview(msg as ConsumeMessage, config as IConfig);
-
-        expect(handleCheck).toBeCalledWith(msg, config);
+        expect(handleCheck).toBeCalledWith(JSON.parse(msg.content.toString()), config);
     });
 });

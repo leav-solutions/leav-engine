@@ -1,4 +1,7 @@
 module.exports = {
+    inputRootPath: '/files',
+    outputRootPath: '/results',
+    ICCPath: '/app/profile/',
     amqp: {
         hostname: 'message_broker',
         username: 'guest',

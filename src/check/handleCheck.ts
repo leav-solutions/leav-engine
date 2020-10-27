@@ -8,7 +8,6 @@ export const handleCheck = async (msgContent: IMessageConsume, config: IConfig) 
     const {input, versions} = msgContent;
 
     await initialCheck(config);
-
     await checkInput(input, config.inputRootPath);
 
     for (const version of versions) {

@@ -1,2 +1,2 @@
 /usr/local/bin/unoconv --listener &
-npm run start:watch
+npm run start:watch:test
