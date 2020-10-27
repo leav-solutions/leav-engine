@@ -24,6 +24,7 @@ const checkConfig = (conf: Config) => {
                     .keys({
                         protocol: Joi.string().required(),
                         hostname: Joi.string().required(),
+                        port: Joi.number().required(),
                         username: Joi.string().required(),
                         password: Joi.string().required()
                     })
@@ -40,7 +41,7 @@ const checkConfig = (conf: Config) => {
 
     const isValid: Joi.ValidationResult<Config> = configSchema.validate(conf);
 
-    if (typeof isValid.error !== 'undefined') {
+    if (isValid.error) {
         const errorMsg: string = isValid.error.details.map(e => e.message).join(', ');
         throw new Error(errorMsg);
     }
