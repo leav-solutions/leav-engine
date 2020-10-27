@@ -6,6 +6,7 @@
   "scripts": {
     "start:watch": "ts-node-dev --respawn src/ ",
     "start:dev": "ts-node-dev src/ ",
+    "start:watch:test": "NODE_ENV=test ts-node-dev --respawn src/",
     "dev": "npm run start:watch",
     "build": "tsc",
     "test": "jest -c jest-unit-config.json",
