@@ -25,7 +25,7 @@ export interface ILang {
 export interface ILogs {
     level: string;
     transport: string[];
-    destinationFile: string;
+    destinationFile?: string;
 }
 
 export interface IPermissions {
