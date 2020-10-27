@@ -1,7 +1,8 @@
 import {ICorePluginsApp} from 'app/core/pluginsApp';
 import {AwilixContainer} from 'awilix';
 import * as fs from 'fs';
-import {IAppModule, IExtensionPoints} from '_types/shared';
+import {IExtensionPoints} from '_types/extensionPoints';
+import {IAppModule} from '_types/shared';
 
 export const initPlugins = async (folder: string, depsManager: AwilixContainer) => {
     const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];
@@ -28,7 +29,11 @@ export const initPlugins = async (folder: string, depsManager: AwilixContainer) 
     for (const pluginName of plugins) {
         // Ignore files (like .gitignore or any other files)
         const pluginFullPath = folder + '/' + pluginName;
-        if (!fs.existsSync(pluginFullPath) || !fs.lstatSync(pluginFullPath).isDirectory()) {
+
+        if (
+            !fs.existsSync(pluginFullPath) ||
+            (!fs.lstatSync(pluginFullPath).isDirectory() && !fs.lstatSync(pluginFullPath).isSymbolicLink())
+        ) {
             continue;
         }
 

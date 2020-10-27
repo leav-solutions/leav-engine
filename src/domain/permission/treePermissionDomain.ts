@@ -1,5 +1,7 @@
+import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITreeNode} from '_types/tree';
 import {
@@ -10,6 +12,8 @@ import {
     PermissionTypes
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import getGlobalDefaultPermission from './helpers/getDefaultPermission';
+import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
 import {IPermissionDomain} from './permissionDomain';
 
 export interface ITreePermissionDomain {
@@ -45,17 +49,20 @@ export interface IGetHeritedTreePermissionParams {
 
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
-    'core.infra.tree'?: ITreeRepo;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
+    'core.infra.permission'?: IPermissionRepo;
+    config?: IConfig;
 }
 
-export default function({
-    'core.domain.permission': permissionDomain = null,
-    'core.infra.tree': treeRepo = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.infra.value': valueRepo = null
-}: IDeps = {}): ITreePermissionDomain {
+export default function(deps: IDeps = {}): ITreePermissionDomain {
+    const {
+        'core.domain.attribute': attributeDomain = null,
+        'core.infra.tree': treeRepo = null,
+        'core.infra.value': valueRepo = null,
+        config = null
+    } = deps;
     /**
      * Return permission for given permission tree attribute.
      * Get record's value on this tree attribute, then run through its ancestors to look for any permission defined
@@ -86,18 +93,22 @@ export default function({
             });
 
             for (const treeElem of permTreePath.slice().reverse()) {
-                const perm = await permissionDomain.getPermissionByUserGroups({
-                    type,
-                    action,
-                    userGroupsPaths,
-                    applyTo,
-                    permissionTreeTarget: {
-                        id: treeElem.record.id,
-                        library: treeElem.record.library,
-                        tree: permTreeId
+                const perm = await getPermissionByUserGroups(
+                    {
+                        type,
+                        action,
+                        userGroupsPaths,
+                        applyTo,
+                        permissionTreeTarget: {
+                            id: treeElem.record.id,
+                            library: treeElem.record.library,
+                            tree: permTreeId
+                        },
+                        ctx
                     },
-                    ctx
-                });
+
+                    deps
+                );
 
                 if (perm !== null) {
                     return perm;
@@ -106,18 +117,22 @@ export default function({
         }
 
         // Nothing found on tree or no value defined, return root level permission
-        const rootPerm = await permissionDomain.getPermissionByUserGroups({
-            type,
-            action,
-            userGroupsPaths,
-            applyTo,
-            permissionTreeTarget: {
-                id: null,
-                library: null,
-                tree: permTreeId
+        const rootPerm = await getPermissionByUserGroups(
+            {
+                type,
+                action,
+                userGroupsPaths,
+                applyTo,
+                permissionTreeTarget: {
+                    id: null,
+                    library: null,
+                    tree: permTreeId
+                },
+                ctx
             },
-            ctx
-        });
+
+            deps
+        );
 
         return rootPerm;
     }
@@ -198,14 +213,18 @@ export default function({
                 ctx
             });
 
-            const parentPerm = await permissionDomain.getPermissionByUserGroups({
-                type,
-                action,
-                userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
-                applyTo,
-                permissionTreeTarget,
-                ctx
-            });
+            const parentPerm = await getPermissionByUserGroups(
+                {
+                    type,
+                    action,
+                    userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
+                    applyTo,
+                    permissionTreeTarget,
+                    ctx
+                },
+
+                deps
+            );
 
             if (parentPerm !== null) {
                 return parentPerm;
@@ -236,15 +255,18 @@ export default function({
             }
 
             // Nothing found? Return library permission
-            const libPerm = await permissionDomain.getPermissionByUserGroups({
-                type: PermissionTypes.LIBRARY,
-                action,
-                userGroupsPaths: [groupAncestors],
-                applyTo,
-                ctx
-            });
+            const libPerm = await getPermissionByUserGroups(
+                {
+                    type: PermissionTypes.LIBRARY,
+                    action,
+                    userGroupsPaths: [groupAncestors],
+                    applyTo,
+                    ctx
+                },
+                deps
+            );
 
-            return libPerm !== null ? libPerm : permissionDomain.getDefaultPermission(ctx);
+            return libPerm !== null ? libPerm : getGlobalDefaultPermission(config);
         }
     };
 }

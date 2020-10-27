@@ -1,3 +1,4 @@
+import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -16,7 +17,6 @@ import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IPermissionDomain} from '../permission/permissionDomain';
 import checkSavePermission from './helpers/checkSavePermission';
 import runBehaviorPostDelete from './helpers/runBehaviorPostDelete';
 import runBehaviorPostSave from './helpers/runBehaviorPostSave';
@@ -41,7 +41,7 @@ interface IDeps {
     config?: Config.IConfig;
     'core.infra.library'?: ILibraryRepo;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.app'?: IAppPermissionDomain;
     'core.utils'?: IUtils;
     translator?: i18n;
     'core.infra.tree'?: ITreeRepo;
@@ -52,7 +52,7 @@ export default function({
     config = null,
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission': permissionDomain = null,
+    'core.domain.permission.app': appPermissionDomain = null,
     'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
@@ -141,12 +141,9 @@ export default function({
             const currentFullTextAttributes = existingLib
                 ? (await this.getLibraryFullTextAttributes(libData.id, ctx)).map(a => a.id)
                 : [];
-            const currentRecordIdentityConf = existingLib
-                ? (await this.getLibraryProperties(libData.id, ctx)).recordIdentityConf
-                : {};
 
             // Check permissions
-            const permCheck = await checkSavePermission(existingLib, ctx.userId, {permissionDomain}, ctx);
+            const permCheck = await checkSavePermission(existingLib, ctx.userId, {appPermissionDomain}, ctx);
             if (!permCheck.canSave) {
                 throw new PermissionError(permCheck.action);
             }
@@ -237,7 +234,7 @@ export default function({
         async deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary> {
             // Check permissions
             const action = AppPermissionsActions.DELETE_LIBRARY;
-            const canSaveLibrary = await permissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSaveLibrary = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveLibrary) {
                 throw new PermissionError(action);

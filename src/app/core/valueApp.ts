@@ -2,9 +2,10 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {GraphQLScalarType} from 'graphql';
 import {IUtils} from 'utils/utils';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {IValue, IValueVersion} from '_types/value';
 import {AttributeTypes} from '../../_types/attribute';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;

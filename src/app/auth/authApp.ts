@@ -5,9 +5,10 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import * as jwt from 'jsonwebtoken';
 import * as winston from 'winston';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface IAuthApp {
     registerRoute(server: Server): void;

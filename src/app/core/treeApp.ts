@@ -3,8 +3,9 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLScalarType} from 'graphql';
 import {isNumber} from 'util';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {ITree, ITreeElement, TreeBehavior} from '../../_types/tree';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreApp} from './coreApp';
 
 export interface ITreeAttributeApp {

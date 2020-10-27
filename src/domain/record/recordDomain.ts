@@ -139,7 +139,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.actionsList'?: IActionsListDomain;
-    'core.domain.permission.recordPermission'?: IRecordPermissionDomain;
+    'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
 }
@@ -150,7 +150,7 @@ export default function({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.actionsList': actionsListDomain = null,
-    'core.domain.permission.recordPermission': recordPermissionDomain = null,
+    'core.domain.permission.record': recordPermissionDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.eventsManager': eventsManager = null
 }: IDeps = {}): IRecordDomain {
@@ -359,7 +359,7 @@ export default function({
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             // Check permission
             const canUpdate = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.EDIT,
+                RecordPermissionsActions.EDIT_RECORD,
                 ctx.userId,
                 recordData.library,
                 recordData.id,
@@ -367,7 +367,7 @@ export default function({
             );
 
             if (!canUpdate) {
-                throw new PermissionError(RecordPermissionsActions.EDIT);
+                throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
             }
 
             return recordRepo.updateRecord({libraryId: library, recordData, ctx});
@@ -383,7 +383,7 @@ export default function({
 
             // Check permission
             const canDelete = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.DELETE,
+                RecordPermissionsActions.DELETE_RECORD,
                 ctx.userId,
                 library,
                 id,
@@ -391,7 +391,7 @@ export default function({
             );
 
             if (!canDelete) {
-                throw new PermissionError(RecordPermissionsActions.DELETE);
+                throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
             }
 
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});

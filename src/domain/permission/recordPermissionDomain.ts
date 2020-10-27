@@ -1,4 +1,6 @@
+import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {
     LibraryPermissionsActions,
@@ -8,6 +10,9 @@ import {
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
+import getDefaultPermission from './helpers/getDefaultPermission';
+import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {IGetDefaultPermissionParams, ITreePermissionDomain} from './treePermissionDomain';
 
@@ -31,19 +36,25 @@ export interface IRecordPermissionDomain {
 
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
-    'core.domain.permission.treePermission'?: ITreePermissionDomain;
+    'core.domain.permission.tree'?: ITreePermissionDomain;
+    'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
+    'core.infra.permission'?: IPermissionRepo;
+    config?: IConfig;
 }
 
-export default function({
-    'core.domain.permission': permissionDomain = null,
-    'core.domain.permission.treePermission': treePermissionDomain = null,
-    'core.domain.library': libraryDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.infra.value': valueRepo = null
-}: IDeps = {}): IRecordPermissionDomain {
+export default function(deps: IDeps = {}): IRecordPermissionDomain {
+    const {
+        'core.domain.permission.tree': treePermissionDomain = null,
+        'core.domain.permission.library': libraryPermissionDomain = null,
+        'core.domain.library': libraryDomain = null,
+        'core.domain.attribute': attributeDomain = null,
+        'core.infra.value': valueRepo = null,
+        config = null
+    } = deps;
+
     return {
         async getRecordPermission(
             action: RecordPermissionsActions,
@@ -61,13 +72,13 @@ export default function({
                     ) !== -1;
 
                 return isLibAction
-                    ? permissionDomain.getLibraryPermission({
+                    ? libraryPermissionDomain.getLibraryPermission({
                           action: (action as unknown) as LibraryPermissionsActions,
                           libraryId: recordLibrary,
                           userId,
                           ctx
                       })
-                    : permissionDomain.getDefaultPermission(ctx);
+                    : getDefaultPermission(config);
             }
 
             const treesAttrValues = await Promise.all(
@@ -97,7 +108,7 @@ export default function({
                     treeValues: valuesByAttr,
                     permissions_conf: lib.permissions_conf,
                     getDefaultPermission: params =>
-                        permissionDomain.getLibraryPermission({
+                        libraryPermissionDomain.getLibraryPermission({
                             action: params.action,
                             libraryId: params.applyTo,
                             userId: params.userId,
@@ -117,18 +128,21 @@ export default function({
             permTreeNode: {id: string; library: string},
             ctx: IQueryInfos
         ): Promise<boolean> {
-            const getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
+            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
                 const {applyTo, userGroups} = params;
 
-                const libPerm = await permissionDomain.getPermissionByUserGroups({
-                    type: PermissionTypes.LIBRARY,
-                    action,
-                    userGroupsPaths: userGroups,
-                    applyTo,
-                    ctx
-                });
+                const libPerm = await getPermissionByUserGroups(
+                    {
+                        type: PermissionTypes.LIBRARY,
+                        action,
+                        userGroupsPaths: userGroups,
+                        applyTo,
+                        ctx
+                    },
+                    deps
+                );
 
-                return libPerm !== null ? libPerm : permissionDomain.getDefaultPermission(ctx);
+                return libPerm !== null ? libPerm : getDefaultPermission(config);
             };
 
             return treePermissionDomain.getHeritedTreePermission(
@@ -138,7 +152,7 @@ export default function({
                     action,
                     userGroupId,
                     permissionTreeTarget: {tree: permTree, ...permTreeNode},
-                    getDefaultPermission
+                    getDefaultPermission: _getDefaultPermission
                 },
                 ctx
             );

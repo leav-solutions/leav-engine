@@ -2,7 +2,7 @@ import {aql} from 'arangojs';
 import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {CollectionType} from 'arangojs/lib/cjs/collection';
 import {AwilixContainer} from 'awilix';
-import {readdirSync} from 'fs';
+import {accessSync, constants, readdirSync} from 'fs';
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import * as path from 'path';
 import {isArray} from 'util';
@@ -156,6 +156,13 @@ export default function({
             const plugins = pluginsRepo.getRegisteredPlugins();
             for (const plugin of plugins) {
                 const pluginMigrationFolder = path.resolve(plugin.path + '/infra/db/migrations');
+
+                try {
+                    accessSync(pluginMigrationFolder, constants.R_OK);
+                } catch (e) {
+                    continue;
+                }
+
                 const pluginMigrationFiles = readdirSync(pluginMigrationFolder).filter(
                     file => file.indexOf('.map') === -1
                 );

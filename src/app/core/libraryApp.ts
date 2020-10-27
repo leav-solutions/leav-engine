@@ -1,13 +1,14 @@
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
+import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IValue, IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IRecord} from '../../_types/record';
-import {IAppGraphQLSchema, IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICoreApp} from './coreApp';
 import {IAttribute} from '_types/attribute';

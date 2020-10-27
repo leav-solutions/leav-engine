@@ -1,3 +1,5 @@
+import {ISystemTranslation} from './systemTranslation';
+
 export enum PermissionTypes {
     RECORD = 'record',
     ATTRIBUTE = 'attribute',
@@ -6,17 +8,17 @@ export enum PermissionTypes {
 }
 
 export enum LibraryPermissionsActions {
-    ACCESS = 'access',
-    CREATE = 'create',
-    EDIT = 'edit',
-    DELETE = 'delete'
+    ACCESS_RECORD = 'access_record',
+    CREATE_RECORD = 'create_record',
+    EDIT_RECORD = 'edit_record',
+    DELETE_RECORD = 'delete_record'
 }
 
 export enum RecordPermissionsActions {
-    ACCESS = 'access',
-    CREATE = 'create',
-    EDIT = 'edit',
-    DELETE = 'delete'
+    ACCESS_RECORD = 'access_record',
+    CREATE_RECORD = 'create_record',
+    EDIT_RECORD = 'edit_record',
+    DELETE_RECORD = 'delete_record'
 }
 
 export enum AttributePermissionsActions {
@@ -53,6 +55,11 @@ export type PermissionsActions =
     | RecordPermissionsActions
     | AttributePermissionsActions
     | AppPermissionsActions;
+
+export interface ILabeledPermissionsAction {
+    label: ISystemTranslation;
+    name: PermissionsActions | string;
+}
 
 export enum PermissionsRelations {
     AND = 'and',

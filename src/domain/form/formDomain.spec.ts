@@ -1,6 +1,6 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
@@ -30,8 +30,8 @@ describe('formDomain', () => {
         getAttributes: global.__mockPromise({list: [{...mockAttrSimple, id: 'test_attribute'}]})
     };
 
-    const mockAdminPermDomain: Mockify<IPermissionDomain> = {
-        getAdminPermission: global.__mockPromise(true)
+    const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
+        getAppPermission: global.__mockPromise(true)
     };
 
     const mockUtils: Mockify<IUtils> = {
@@ -47,7 +47,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
 
             const res = await domain.getFormsByLib({library: 'my_lib', ctx});
@@ -64,7 +64,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
 
             await expect(domain.getFormsByLib({library: 'my_lib', ctx})).rejects.toThrow(ValidationError);
@@ -80,7 +80,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
 
             const res = await domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx});
@@ -97,7 +97,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
 
             await expect(domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
@@ -113,7 +113,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
 
             await expect(domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
@@ -133,7 +133,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -156,7 +156,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -183,7 +183,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -207,7 +207,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtilsInvalidID as IUtils
             });
@@ -233,7 +233,7 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomainNoMatch as IAttributeDomain,
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -246,8 +246,8 @@ describe('formDomain', () => {
         });
 
         test('If creation not allowed, throw permission error', async () => {
-            const mockAdminPermForbiddenDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
+            const mockAdminPermForbiddenDomain: Mockify<IAppPermissionDomain> = {
+                getAppPermission: global.__mockPromise(false)
             };
 
             const mockFormRepo: Mockify<IFormRepo> = {
@@ -259,14 +259,14 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermForbiddenDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAdminPermForbiddenDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
 
             await expect(domain.saveForm({form: {...mockForm}, ctx})).rejects.toThrow(PermissionError);
 
-            expect(mockAdminPermForbiddenDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermForbiddenDomain.getAppPermission.mock.calls[0][0].action).toBe(
                 AppPermissionsActions.CREATE_FORM
             );
             expect(mockFormRepo.createForm).not.toBeCalled();
@@ -274,8 +274,8 @@ describe('formDomain', () => {
         });
 
         test('If edition not allowed, throw permission error', async () => {
-            const mockAdminPermForbiddenDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
+            const mockAdminPermForbiddenDomain: Mockify<IAppPermissionDomain> = {
+                getAppPermission: global.__mockPromise(false)
             };
 
             const mockFormRepo: Mockify<IFormRepo> = {
@@ -287,14 +287,14 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission': mockAdminPermForbiddenDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAdminPermForbiddenDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
 
             await expect(domain.saveForm({form: {...mockForm}, ctx})).rejects.toThrow(PermissionError);
 
-            expect(mockAdminPermForbiddenDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermForbiddenDomain.getAppPermission.mock.calls[0][0].action).toBe(
                 AppPermissionsActions.EDIT_FORM
             );
             expect(mockFormRepo.createForm).not.toBeCalled();
@@ -310,7 +310,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo
             });
 
@@ -327,7 +327,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
-                'core.domain.permission': mockAdminPermDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo
             });
 
@@ -338,8 +338,8 @@ describe('formDomain', () => {
         });
 
         test('If not allowed, throw permission error', async () => {
-            const mockAdminPermForbiddenDomain: Mockify<IPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
+            const mockAdminPermForbiddenDomain: Mockify<IAppPermissionDomain> = {
+                getAppPermission: global.__mockPromise(false)
             };
 
             const mockFormRepo: Mockify<IFormRepo> = {
@@ -348,7 +348,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
-                'core.domain.permission': mockAdminPermForbiddenDomain as IPermissionDomain,
+                'core.domain.permission.app': mockAdminPermForbiddenDomain as IAppPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo
             });
 
@@ -356,7 +356,7 @@ describe('formDomain', () => {
                 PermissionError
             );
 
-            expect(mockAdminPermForbiddenDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermForbiddenDomain.getAppPermission.mock.calls[0][0].action).toBe(
                 AppPermissionsActions.DELETE_FORM
             );
             expect(mockFormRepo.deleteForm).not.toBeCalled();

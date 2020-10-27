@@ -16,9 +16,9 @@ describe('PermissionRepo', () => {
                 applyTo: 'test_lib',
                 usersGroup: '12345',
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
                     id: 'test_lib/123445',
@@ -31,9 +31,9 @@ describe('PermissionRepo', () => {
                 applyTo: 'test_lib',
                 usersGroup: '12345',
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
                     id: '123445',
@@ -72,9 +72,9 @@ describe('PermissionRepo', () => {
                 applyTo: 'test_lib',
                 usersGroup: null,
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
                     id: 'test_lib/123445',
@@ -87,9 +87,9 @@ describe('PermissionRepo', () => {
                 applyTo: 'test_lib',
                 usersGroup: null,
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
                     id: '123445',
@@ -127,9 +127,9 @@ describe('PermissionRepo', () => {
                 applyTo: 'test_lib',
                 usersGroup: '12345',
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
                     id: null,
@@ -142,9 +142,9 @@ describe('PermissionRepo', () => {
                 applyTo: 'test_lib',
                 usersGroup: null,
                 actions: {
-                    [RecordPermissionsActions.ACCESS]: true,
-                    [RecordPermissionsActions.EDIT]: false,
-                    [RecordPermissionsActions.DELETE]: false
+                    [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    [RecordPermissionsActions.EDIT_RECORD]: false,
+                    [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
                     id: null,

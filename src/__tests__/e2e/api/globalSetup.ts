@@ -1,11 +1,31 @@
+import appRoot from 'app-root-path';
 import {Database} from 'arangojs';
+import {promises as fs} from 'fs';
+import path from 'path';
 import {getConfig} from '../../../config';
 import {init as initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {initAmqp} from '../../../infra/amqp';
+import {initPlugins} from '../../../pluginsLoader';
+
+const _setupFakePlugin = async () => {
+    // Copy fake plugin to appropriate folder
+    const pluginsFolder = path.resolve(appRoot + '/src/plugins/');
+    const fakePluginSrc = `${__dirname}/_fixtures/fakeplugin`;
+    const fakePluginDest = `${pluginsFolder}/fakeplugin`;
+    const relativePath = path.relative(pluginsFolder, fakePluginSrc);
+
+    try {
+        await fs.symlink(relativePath, fakePluginDest);
+    } catch (e) {
+        // It's ok, already exists
+    }
+};
 
 export async function setup() {
     try {
+        await _setupFakePlugin();
+
         const conf = await getConfig();
 
         // Init DB
@@ -28,8 +48,10 @@ export async function setup() {
         // Init AMQP
         const amqpConn = await initAmqp({config: conf});
 
-        const {coreContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
+        const {coreContainer, pluginsContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+
+        await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 
         await dbUtils.migrate(coreContainer);
 
