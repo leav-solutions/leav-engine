@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
-import {AttributeFormats, AttributeTypes, IAttributeVersionsConf} from '_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '_types/attribute';
+import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
 
 async function _getAuthToken() {
@@ -58,14 +59,33 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
     return saveLibRes.data.data;
 }
 
-export async function gqlSaveAttribute(
-    id: string,
-    type: AttributeTypes,
-    label: string,
-    format?: AttributeFormats,
-    versionsConf?: IAttributeVersionsConf,
-    metadataFields?: string[]
-) {
+export async function gqlSaveAttribute(params: {
+    id: string;
+    type: AttributeTypes;
+    label: string;
+    format?: AttributeFormats;
+    versionsConf?: IAttributeVersionsConf;
+    metadataFields?: string[];
+    embeddedFields?: IEmbeddedAttribute[];
+    linkedLibrary?: string;
+    linkedTree?: string;
+}) {
+    const {id, type, label, format, versionsConf, metadataFields, embeddedFields, linkedLibrary, linkedTree} = params;
+
+    const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => {
+        return `
+            {
+                id: "${field.id}",
+                format: ${field.format ?? 'null'},
+                label: {fr: "${field.id}"},
+                validation_regex: ${field.validation_regex ? `"${field.validation_regex}"` : 'null'},
+                embedded_fields: ${
+                    field.embedded_fields ? `[${field.embedded_fields.map(_convertEmbeddedFields).join(', ')}]` : 'null'
+                }
+            }
+        `;
+    };
+
     const query = `mutation {
         saveAttribute(
             attribute: {
@@ -73,6 +93,8 @@ export async function gqlSaveAttribute(
                 type: ${type},
                 format: ${format || 'text'},
                 label: {fr: "${label}"},
+                linked_library: ${linkedLibrary ? `"${linkedLibrary}"` : 'null'},
+                linked_tree: ${linkedTree ? `"${linkedTree}"` : 'null'},
                 metadata_fields: ${metadataFields ? `[${metadataFields.map(t => `"${t}"`).join(', ')}]` : 'null'},
                 versions_conf: ${
                     versionsConf
@@ -80,10 +102,12 @@ export async function gqlSaveAttribute(
                               versionsConf.versionable ? 'true' : 'false'
                           }, trees: [${versionsConf.trees.map(t => `"${t}"`).join(', ')}]}`
                         : 'null'
-                }
+                },
+                embedded_fields: ${embeddedFields ? `${embeddedFields.map(_convertEmbeddedFields).join(', ')}` : 'null'}
             }
         ) { id }
     }`;
+
     const saveAttrRes = await makeGraphQlCall(query);
     await makeGraphQlCall('mutation { refreshSchema }');
 
@@ -111,4 +135,41 @@ export async function gqlCreateRecord(library: string): Promise<number> {
     `);
 
     return res.data.data.c.id;
+}
+
+/**
+ * Retrieve "all users" element ID in users group tree
+ */
+export async function gqlGetAllUsersGroupId(): Promise<string> {
+    const usersGroupsTreeContent = await makeGraphQlCall(`{
+        treeContent(treeId: "users_groups") {
+            record {
+                id
+            }
+        }
+    }`);
+
+    return usersGroupsTreeContent.data.data.treeContent[0].record.id;
+}
+
+export async function gqlAddUserToGroup(groupId: string) {
+    const userGroupAttrId = 'user_groups';
+    await makeGraphQlCall(`mutation {
+        saveValue(library: "users", recordId: "1", attribute: "${userGroupAttrId}", value: {
+            value: "users_groups/${groupId}"
+        }) {
+            id_value
+            value
+        }
+    }`);
+}
+
+export async function gqlAddElemToTree(treeId: string, element: ITreeElement, parent?: ITreeElement) {
+    await makeGraphQlCall(`mutation {
+        treeAddElement(
+            treeId: "${treeId}",
+            element: {id: "${element.id}", library: "${element.library}"}
+            ${parent ? `parent: {id: "${parent.id}", library: "${parent.library}"}` : ''}
+        ) { id }
+    }`);
 }

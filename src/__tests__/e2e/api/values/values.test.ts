@@ -2,7 +2,6 @@ import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Values', () => {
     const testLibName = 'values_library_test';
-    const testLibNameType = 'valuesLibraryTest';
 
     const treeName = 'tree_test';
     const treeLibName = 'tree_library_test';
@@ -163,7 +162,7 @@ describe('Values', () => {
         const resRecord = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}") { id },
             c2: createRecord(library: "${testLibName}") { id },
-            c3: createRecord(library: "${testLibName}") { id }
+            c3: createRecord(library: "${testLibName}") { id },
             c4: createRecord(library: "${treeLibName}") { id },
         }`);
 
@@ -203,28 +202,6 @@ describe('Values', () => {
         expect(res.data.data.saveValue.value).toBe(treeLibName + '/' + treeElemId);
     });
 
-    test('Get record filtered by tree value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "${attrTreeName}.id", value: "${treeElemId}"}]) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(1);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
-    });
-
-    test('Get record sorted by tree value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(sort: {field: "${attrTreeName}.id", order: asc}) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(3);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordIdBatch);
-    });
-
     test('Save value simple', async () => {
         const res = await makeGraphQlCall(`mutation {
                 saveValue(
@@ -243,26 +220,6 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeNull();
         expect(res.data.data.saveValue.value).toBe('TEST VAL');
-    });
-
-    test('Get record filtered by simple value ', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "id", value: "${recordId}"}]) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(1);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
-    });
-
-    test('Get record sorted by simple value ', async () => {
-        const res = await makeGraphQlCall(`{ ${testLibNameType}(sort: {field: "id", order: asc}) { list {id}} }`);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(3);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
     });
 
     test("Don't save invalid value", async () => {
@@ -304,28 +261,6 @@ describe('Values', () => {
         expect(res.data.data.saveValue.value).toBeTruthy();
     });
 
-    test('Get record filtered by simple extended value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "${attrSimpleExtendedName}.city.name", value: "Gre"}]) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(1);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
-    });
-
-    test('Get record sorted by simple extended value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(sort: {field: "${attrSimpleExtendedName}.city.name", order: asc}) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(3);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordIdBatch);
-    });
-
     test("Don't save invalid simple extended", async () => {
         const query = `mutation {
             saveValue(
@@ -365,28 +300,6 @@ describe('Values', () => {
         expect(res.data.data.saveValue.value).toBe(recordIdLinked);
     });
 
-    test('Get record filtered by simple link value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "${attrSimpleLinkName}.id", value: "${recordIdLinked}"}]) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(1);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
-    });
-
-    test('Get record sorted by simple link value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(sort: {field: "${attrSimpleLinkName}.id", order: asc}) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(3);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordIdBatch);
-    });
-
     test('Save value advanced', async () => {
         const res = await makeGraphQlCall(`mutation {
                 saveValue(
@@ -405,28 +318,6 @@ describe('Values', () => {
         advValueId = res.data.data.saveValue.id_value;
     });
 
-    test('Get record filtered by advanced value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "${attrAdvancedName}", value: "TEST VAL ADV"}]) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(1);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
-    });
-
-    test('Get record sorted by advanced value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(sort: {field: "${attrAdvancedName}", order: asc}) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(3);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordIdBatch);
-    });
-
     test('Save value advanced link', async () => {
         const res = await makeGraphQlCall(`mutation {
                 saveValue(
@@ -441,28 +332,6 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeTruthy();
         expect(res.data.data.saveValue.value).toBe(recordIdLinked);
-    });
-
-    test('Get record filtered by advanced link value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "${attrAdvancedLinkName}.id", value: "${recordIdLinked}"}]) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(1);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
-    });
-
-    test('Get record sorted by advanced link value', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(sort: {field: "${attrAdvancedLinkName}.id", order: asc}) { list {id}} }`
-        );
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(3);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordIdBatch);
     });
 
     test('Delete value advanced', async () => {

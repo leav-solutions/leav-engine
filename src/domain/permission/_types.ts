@@ -1,9 +1,11 @@
 import {
     AppPermissionsActions,
+    AttributePermissionsActions,
     IPermissionsTreeTarget,
     LibraryPermissionsActions,
     PermissionsActions,
-    PermissionTypes
+    PermissionTypes,
+    RecordAttributePermissionsActions
 } from '_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITreeNode} from '_types/tree';
@@ -68,6 +70,19 @@ export interface IGetHeritedLibraryPermissionParams {
     ctx: IQueryInfos;
 }
 
+export interface IGetAttributePermissionParams {
+    action: AttributePermissionsActions;
+    attributeId: string;
+    ctx: IQueryInfos;
+}
+
+export interface IGetHeritedAttributePermissionParams {
+    action: AttributePermissionsActions;
+    attributeId: string;
+    userGroupId: string;
+    ctx: IQueryInfos;
+}
+
 export interface IGetHeritedPermissionsParams {
     type: PermissionTypes;
     applyTo: string;
@@ -89,4 +104,11 @@ export interface IGetActionsByTypeParams {
     type: PermissionTypes;
     applyOn?: string;
     skipApplyOn?: boolean;
+}
+export interface IGetRecordAttributeHeritedPermissionsParams {
+    action: RecordAttributePermissionsActions;
+    attributeId: string;
+    userGroupId: string;
+    permTree: string;
+    permTreeNode: {id: string; library: string};
 }

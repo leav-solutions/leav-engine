@@ -233,7 +233,7 @@ describe('TreePermissionDomain', () => {
         };
 
         const params = {
-            type: PermissionTypes.ATTRIBUTE,
+            type: PermissionTypes.RECORD_ATTRIBUTE,
             action: RecordPermissionsActions.ACCESS_RECORD,
             userId: '987654',
             applyTo: 'test_lib',

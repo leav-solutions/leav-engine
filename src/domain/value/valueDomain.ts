@@ -6,13 +6,13 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
-import {AttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IValue, IValuesOptions} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
-import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
+import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import canSaveValue from './helpers/canSaveValue';
 import findValue from './helpers/findValue';
@@ -108,7 +108,7 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.library'?: ILibraryDomain;
-    'core.domain.permission.attribute'?: IAttributePermissionDomain;
+    'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.infra.record'?: IRecordRepo;
     'core.infra.tree'?: ITreeRepo;
@@ -124,7 +124,7 @@ export default function({
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,
-    'core.domain.permission.attribute': attributePermissionDomain = null,
+    'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
@@ -219,7 +219,7 @@ export default function({
                 ctx,
                 deps: {
                     recordPermissionDomain,
-                    attributePermissionDomain
+                    recordAttributePermissionDomain
                 }
             });
 
@@ -323,7 +323,7 @@ export default function({
                             ctx,
                             deps: {
                                 recordPermissionDomain,
-                                attributePermissionDomain
+                                recordAttributePermissionDomain
                             }
                         });
 
@@ -457,8 +457,8 @@ export default function({
                 throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
             }
 
-            const isAllowedToDelete = await attributePermissionDomain.getAttributePermission(
-                AttributePermissionsActions.DELETE_VALUE,
+            const isAllowedToDelete = await recordAttributePermissionDomain.getRecordAttributePermission(
+                RecordAttributePermissionsActions.DELETE_VALUE,
                 ctx.userId,
                 attribute,
                 library,
@@ -467,7 +467,7 @@ export default function({
             );
 
             if (!isAllowedToDelete) {
-                throw new PermissionError(AttributePermissionsActions.DELETE_VALUE);
+                throw new PermissionError(RecordAttributePermissionsActions.DELETE_VALUE);
             }
 
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});

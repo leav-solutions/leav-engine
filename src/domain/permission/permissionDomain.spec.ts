@@ -5,8 +5,8 @@ import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {
     AppPermissionsActions,
-    AttributePermissionsActions,
     PermissionTypes,
+    RecordAttributePermissionsActions,
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {mockTranslator} from '../../__tests__/mocks/translator';
@@ -14,6 +14,7 @@ import {IAppPermissionDomain} from './appPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import permissionDomain from './permissionDomain';
+import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
 
 describe('PermissionDomain', () => {
@@ -113,6 +114,27 @@ describe('PermissionDomain', () => {
             expect(mockLibPermDomain.getLibraryPermission).toHaveBeenCalled();
         });
 
+        test('Return attribute permission', async () => {
+            const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
+                getAttributePermission: global.__mockPromise(true)
+            };
+
+            const permsHelperDomain = permissionDomain({
+                'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain
+            });
+
+            const perm = await permsHelperDomain.isAllowed({
+                type: PermissionTypes.ATTRIBUTE,
+                action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                userId: '123',
+                applyTo: 'test_attr',
+                ctx
+            });
+
+            expect(perm).toBe(true);
+            expect(mockAttrPermDomain.getAttributePermission).toHaveBeenCalled();
+        });
+
         test('Return record permission', async () => {
             const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
@@ -170,18 +192,18 @@ describe('PermissionDomain', () => {
             ).rejects.toThrow(ValidationError);
         });
 
-        test('Return attribute permission', async () => {
-            const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
+        test('Return record attribute permission', async () => {
+            const mockRecordAttrPermDomain: Mockify<IRecordAttributePermissionDomain> = {
+                getRecordAttributePermission: global.__mockPromise(true)
             };
 
             const permsHelperDomain = permissionDomain({
-                'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain
             });
 
             const perm = await permsHelperDomain.isAllowed({
-                type: PermissionTypes.ATTRIBUTE,
-                action: AttributePermissionsActions.EDIT_VALUE,
+                type: PermissionTypes.RECORD_ATTRIBUTE,
+                action: RecordAttributePermissionsActions.EDIT_VALUE,
                 userId: '123',
                 applyTo: 'test_lib',
                 target: {
@@ -192,23 +214,23 @@ describe('PermissionDomain', () => {
             });
 
             expect(perm).toBe(true);
-            expect(mockAttrPermDomain.getAttributePermission).toHaveBeenCalled();
+            expect(mockRecordAttrPermDomain.getRecordAttributePermission).toHaveBeenCalled();
         });
 
         test('Throw if asked attribute permission without record and attribute ID', async () => {
-            const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
+            const mockRecordAttrPermDomain: Mockify<IRecordAttributePermissionDomain> = {
+                getRecordAttributePermission: global.__mockPromise(true)
             };
 
             const permsHelperDomain = permissionDomain({
-                'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain
             });
 
             // No target at all
             await expect(
                 permsHelperDomain.isAllowed({
-                    type: PermissionTypes.ATTRIBUTE,
-                    action: AttributePermissionsActions.EDIT_VALUE,
+                    type: PermissionTypes.RECORD_ATTRIBUTE,
+                    action: RecordAttributePermissionsActions.EDIT_VALUE,
                     userId: '123',
                     applyTo: 'test_lib',
                     ctx
@@ -218,8 +240,8 @@ describe('PermissionDomain', () => {
             // Missing record ID
             await expect(
                 permsHelperDomain.isAllowed({
-                    type: PermissionTypes.ATTRIBUTE,
-                    action: AttributePermissionsActions.EDIT_VALUE,
+                    type: PermissionTypes.RECORD_ATTRIBUTE,
+                    action: RecordAttributePermissionsActions.EDIT_VALUE,
                     userId: '123',
                     applyTo: 'test_lib',
                     target: {},
@@ -230,8 +252,8 @@ describe('PermissionDomain', () => {
             // Missing attribute ID
             await expect(
                 permsHelperDomain.isAllowed({
-                    type: PermissionTypes.ATTRIBUTE,
-                    action: AttributePermissionsActions.EDIT_VALUE,
+                    type: PermissionTypes.RECORD_ATTRIBUTE,
+                    action: RecordAttributePermissionsActions.EDIT_VALUE,
                     userId: '123',
                     applyTo: 'test_lib',
                     target: {
