@@ -6,7 +6,7 @@ stages:
 # NEXUS_AUTH is the base64 encoded credentials on Nexus registry.
 tslint:
     stage: test
-    image: node:alpine
+    image: node:14-alpine
     before_script:
         - npm config set _auth $NEXUS_AUTH
         - npm install
@@ -14,7 +14,7 @@ tslint:
         - npm run lint:test
 tscheck:
     stage: test
-    image: node:alpine
+    image: node:14-alpine
     before_script:
         - npm config set _auth $NEXUS_AUTH
         - npm install
@@ -22,7 +22,7 @@ tscheck:
         - npm run tscheck
 unitTests:
     stage: test
-    image: node:alpine
+    image: node:14-alpine
     before_script:
         - npm config set _auth $NEXUS_AUTH
         - npm install
@@ -31,7 +31,7 @@ unitTests:
 
 e2eTests:
     stage: test
-    image: node:alpine
+    image: node:14-alpine
     services:
         - arangodb:3.7
     variables:
