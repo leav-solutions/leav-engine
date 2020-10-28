@@ -34,7 +34,7 @@ export const validateConfig = (conf: Config.IConfig) => {
             transport: Joi.array()
                 .items(Joi.string())
                 .required(),
-            destinationFile: Joi.string().required()
+            destinationFile: Joi.string()
         }),
         permissions: Joi.object().keys({
             default: Joi.boolean().required()
@@ -103,7 +103,7 @@ export const validateConfig = (conf: Config.IConfig) => {
  * @return {Promise} Full config
  */
 export const getConfig = async (folder?: string): Promise<Config.IConfig> => {
-    const definedEnv: string = appEnv || '';
+    const definedEnv: string = appEnv;
     const confRootFolder = folder ?? rootPath.path;
     const conf = await loadConfig<Config.IConfig>(confRootFolder + '/config', definedEnv);
 

@@ -1,7 +1,7 @@
 module.exports = {
     server: {
-        host: 'localhost',
-        port: 4001
+        host: process.env.SERVER_HOST || 'localhost',
+        port: process.env.SERVER_PORT || 4001
     },
     db: {
         url: process.env.ARANGO_URL,
@@ -14,34 +14,34 @@ module.exports = {
         scheme: 'jwt',
         key: process.env.AUTH_KEY,
         algorithm: 'HS256',
-        tokenExpiration: '7d'
+        tokenExpiration: process.env.TOKEN_TTL || '7d'
     },
     lang: {
-        available: ['fr', 'en'],
-        default: 'fr'
+        available: process.env.LANG_AVAILABLE || ['fr', 'en'],
+        default: process.env.LANG_DEFAULT || 'fr'
     },
     logs: {
-        level: 'info',
-        transport: ['console', 'file'], // Array containing one or more of : console, file
-        destinationFile: '/var/log/leav.log' // If logging in file
+        level: process.env.LOG_LEVEL || 'info',
+        transport: process.env.LOG_TRANSPORT || ['console', 'file'], // Array containing one or more of : console, file
+        destinationFile: process.env.LOG_FILE // If logging in file
     },
     permissions: {default: true},
     amqp: {
         connOpt: {
             protocol: 'amqp',
-            hostname: 'rabbitmq.leav.localhost',
-            username: 'guest',
-            password: 'guest',
-            port: '5672'
+            hostname: process.env.AMQP_HOST,
+            username: process.env.AMQP_USERNAME,
+            password: process.env.AMQP_PASSWORD,
+            port: process.env.AMQP_PORT || '5672',
         },
-        exchange: 'leav_core',
-        type: 'direct'
+        exchange: process.env.AMQP_EXCHANGE || 'leav_core',
+        type: process.env.AMQP_TYPE || 'direct'
     },
     filesManager: {
         queues: {
-            events: 'files_events',
-            previewRequest: 'files_preview_request',
-            previewResponse: 'files_preview_response'
+            events: process.env.FM_EVENTS_QUEUE || 'files_events',
+            previewRequest: process.env.FM_PREVIEW_REQUEST_QUEUE || 'files_preview_request',
+            previewResponse: process.env.FM_PREVIEW_RESPONSE_QUEUE ||'files_preview_response'
         },
         routingKeys: {
             events: 'files.event',
@@ -51,7 +51,7 @@ module.exports = {
         rootKeys: {
             files1: 'files'
         },
-        userId: '1',
+        userId: process.env.FM_USER_ID || '1',
         prefetch: 1
     },
     eventsManager: {
@@ -65,5 +65,5 @@ module.exports = {
         },
         prefetch: 1
     },
-    debug: false
+    debug: process.env.DEBUG || false
 };

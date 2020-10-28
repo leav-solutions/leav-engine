@@ -12,10 +12,11 @@ module.exports = {
     },
     amqp: {
         connOpt: {
-            hostname: 'message_broker'
+            hostname: 'message_broker',
+            username: 'guest',
+            password: 'guest',
         },
         exchange: 'test_leav_core',
-        type: 'direct'
     },
     filesManager: {
         queues: {
@@ -34,6 +35,9 @@ module.exports = {
             events: 'test_indexation_event'
         },
         prefetch: 1
+    },
+    logs: {
+        transport: ['console']
     },
     debug: true
 };
