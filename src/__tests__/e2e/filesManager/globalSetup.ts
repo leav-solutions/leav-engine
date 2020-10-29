@@ -1,86 +1,33 @@
-import {connect, Options} from 'amqplib';
 import {Database} from 'arangojs';
 import {getConfig} from '../../../config';
 import {init as initDI} from '../../../depsManager';
-import * as Config from '../../../_types/config';
+import i18nextInit from '../../../i18nextInit';
+import {initAmqp} from '../../../infra/amqp';
+import {initDb} from '../../../infra/db/db';
 
 export async function setup() {
     try {
         const conf = await getConfig();
 
-        await _resetAmqpQueues(conf);
-        await _initDB(conf);
+        await initDb(conf);
+
+        // Init i18next
+        const translator = await i18nextInit(conf);
+
+        // Init AMQP
+        const amqpConn = await initAmqp({config: conf});
+
+        const {coreContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
+        const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+
+        await dbUtils.migrate(coreContainer);
+
+        const server = coreContainer.cradle['core.interface.server'];
+        const filesManager = coreContainer.cradle['core.interface.filesManager'];
+
+        await server.init();
+        await filesManager.init();
     } catch (e) {
         console.error(e);
     }
 }
-
-const _resetAmqpQueues = async (conf: Config.IConfig) => {
-    // reset amqp queue
-    const amqpConfig: Options.Connect = {
-        hostname: conf.amqp.connOpt.hostname,
-        username: conf.amqp.connOpt.username,
-        password: conf.amqp.connOpt.password
-    };
-    const connection = await connect(amqpConfig);
-    const channel = await connection.createChannel();
-
-    // delete exchange to avoid error with type
-    await channel.deleteExchange(conf.amqp.exchange);
-    await channel.assertExchange(conf.amqp.exchange, conf.amqp.type);
-
-    // create queue to avoid error if not exist
-    await channel.assertQueue(conf.filesManager.queues.events, {durable: true});
-    await channel.assertQueue(conf.filesManager.queues.previewRequest, {durable: true});
-    await channel.assertQueue(conf.filesManager.queues.previewResponse, {durable: true});
-
-    await channel.purgeQueue(conf.filesManager.queues.events);
-    await channel.purgeQueue(conf.filesManager.queues.previewRequest);
-    await channel.purgeQueue(conf.filesManager.queues.previewResponse);
-};
-
-const _initDB = async (conf: Config.IConfig) => {
-    // Init DB
-    const db = new Database({
-        url: conf.db.url
-    });
-
-    const databases = await db.listDatabases();
-    const dbExists = databases.reduce((exists, d) => exists || d === conf.db.name, false);
-
-    if (dbExists) {
-        await db.dropDatabase(conf.db.name);
-    }
-
-    await db.createDatabase(conf.db.name);
-
-    const {coreContainer} = await initDI();
-
-    const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
-
-    await dbUtils.migrate(coreContainer);
-
-    const filesManager = coreContainer.cradle['core.interface.filesManager'];
-    await filesManager.init();
-};
-
-export const getCoreContainer = async () => {
-    const {coreContainer} = await initDI();
-    return coreContainer;
-};
-
-export const getAmqpChannel = async () => {
-    const conf = await getConfig();
-
-    // reset amqp queue
-    const amqpConfig: Options.Connect = {
-        hostname: conf.amqp.connOpt.hostname,
-        username: conf.amqp.connOpt.username,
-        password: conf.amqp.connOpt.password
-    };
-    const connection = await connect(amqpConfig);
-
-    const channel = await connection.createChannel();
-
-    return {connection, channel};
-};

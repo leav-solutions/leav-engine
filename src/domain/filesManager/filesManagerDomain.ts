@@ -136,6 +136,13 @@ export default function({
 
     return {
         async init(): Promise<void> {
+            await amqpService.amqpConn.channel.assertQueue(config.filesManager.queues.events);
+            await amqpService.amqpConn.channel.bindQueue(
+                config.filesManager.queues.events,
+                config.amqp.exchange,
+                config.filesManager.routingKeys.events
+            );
+
             await handlePreviewResponse(config, logger, {
                 amqpService,
                 recordDomain,

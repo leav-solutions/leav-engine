@@ -1,34 +1,23 @@
-import {Channel} from 'amqplib';
-import {
-    copyFileSync,
-    existsSync,
-    lstatSync,
-    mkdirSync,
-    readdirSync,
-    renameSync,
-    rmdirSync,
-    unlinkSync,
-    writeFileSync
-} from 'fs';
+import * as fs from 'fs';
 import {join} from 'path';
-import {IQueryInfos} from '_types/queryInfos';
-import {Operator} from '_types/record';
-import {getConfig} from '../../../../config';
-import {IRecordDomain} from '../../../../domain/record/recordDomain';
-import {FileEvents, FilesAttributes, IFileEventData, IPreviewResponse} from '../../../../_types/filesManager';
-import {getAmqpChannel, getCoreContainer} from '../globalSetup';
+import {Operator} from '../../../../_types/record';
+import {FilesAttributes} from '../../../../_types/filesManager';
+import {makeGraphQlCall} from '../../api/e2eUtils';
 
-// can't use the rootKey to find library
+jest.setTimeout(30000);
+
 const library = 'files';
 
-let queueAction: string;
-let queueResponse: string;
+const rand = Math.random()
+    .toString()
+    .substring(2);
 
-const wait = time => new Promise(r => setTimeout(r, time));
+const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(e => false));
 
-describe('FilesManager', () => {
+describe('Files manager', () => {
     const rootPath = '/files';
     const filePath = '.';
+    const pathToTestsFile = '/app/src/__tests__/e2e/filesManager/filesForTest';
 
     let fileName = 'test.jpg';
     let newFileName = 'newTest.jpg';
@@ -44,603 +33,630 @@ describe('FilesManager', () => {
     let fileInBaseDir: string;
     let fileInWorkDir: string;
 
-    let channel: Channel;
-
-    beforeEach(async () => {
-        const conf = await getConfig();
-
-        const rand = Math.random()
-            .toString()
-            .substring(2);
-
-        fileName = rand + 'F.jpg';
-        newFileName = rand + 'F1.jpg';
-
-        dirName = rand + 'D';
-        newDirName = rand + 'D1';
-
-        baseDir = join(rootPath, filePath, dirName);
-        workDir = join(rootPath, filePath, newDirName);
-
-        baseFile = join(rootPath, filePath, fileName);
-        workFile = join(rootPath, filePath, newFileName);
-        fileInBaseDir = join(rootPath, filePath, dirName, fileName);
-        fileInWorkDir = join(rootPath, filePath, newDirName, fileName);
-
-        // create file for test
-        writeFileSync(baseFile, '');
-
-        // create dir for test
-        mkdirSync(baseDir);
-
-        const {channel: ch} = await getAmqpChannel();
-
-        channel = ch;
-
-        queueAction = rand + '_test_temp_event';
-        queueResponse = rand + '_test_temp_response';
-
-        await channel.assertQueue(queueResponse, {durable: true});
-        await channel.assertQueue(queueAction, {durable: true});
-
-        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.events);
-        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.events);
-
-        await channel.purgeQueue(conf.filesManager.queues.events);
-        await channel.purgeQueue(conf.filesManager.queues.previewRequest);
-        await channel.purgeQueue(conf.filesManager.queues.previewResponse);
-
-        // magic timeout, some test fail without him
-        await new Promise(r => setTimeout(r, 100));
-    });
-
-    afterEach(async () => {
-        // clean what is created in tests
-        const filesToDelete = [baseFile, workFile, fileInBaseDir, fileInWorkDir];
-
-        for (const file of filesToDelete) {
-            if (existsSync(file)) {
-                unlinkSync(file);
-            }
-        }
-
-        if (existsSync(baseDir)) {
-            _deleteFolderRecursive(baseDir);
-        }
-
-        if (existsSync(workDir)) {
-            _deleteFolderRecursive(workDir);
-        }
-
-        await channel.deleteQueue(queueAction);
-        await channel.deleteQueue(queueResponse);
-
-        await channel.close();
-    });
-
-    test('create file', async done => {
-        jest.setTimeout(25000);
-
-        await _consumeResponse(filePath, newFileName, channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, newFileName);
-
-            expect(recordsFind.list).toHaveLength(1);
-            expect(recordsFind.list[0]).toEqual(
-                expect.objectContaining({
-                    [FilesAttributes.IS_DIRECTORY]: false
-                })
-            );
-            expect(existsSync(baseFile)).toBeTruthy();
-
-            done();
-        });
-
-        writeFileSync(workFile, '');
-    });
-
-    test('create dir', async done => {
-        jest.setTimeout(25000);
-
-        await _consumeEvent(filePath, newDirName, FileEvents.CREATE, 'pathAfter', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, newDirName);
-
-            expect(recordsFind.list).toHaveLength(1);
-            expect(recordsFind.list[0]).toEqual(
-                expect.objectContaining({
-                    [FilesAttributes.IS_DIRECTORY]: true
-                })
-            );
-
-            expect(existsSync(workDir)).toBeTruthy();
-
-            done();
-        });
-
-        mkdirSync(workDir);
-    });
-
-    test('update file', async done => {
-        jest.setTimeout(25000);
-
-        await _consumeEvent(filePath, fileName, FileEvents.UPDATE, 'pathAfter', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName);
-
-            expect(recordsFind.list).toHaveLength(1);
-
-            done();
-        });
-
-        await wait(200);
-
-        writeFileSync(baseFile, 'new content');
-    });
-
-    test('move in a folder', async done => {
-        jest.setTimeout(10000);
-
-        await _consumeEvent(join(filePath, dirName), fileName, FileEvents.MOVE, 'pathAfter', channel, async () => {
-            const recordsFind = await _useRecordDomain(join(filePath, dirName), fileName);
-            expect(recordsFind.list).toHaveLength(1);
-
-            done();
-        });
-
-        await wait(200);
-        renameSync(baseFile, fileInBaseDir);
-    });
-
-    test('rename file', async done => {
-        jest.setTimeout(10000);
-
-        await _consumeEvent(filePath, newFileName, FileEvents.MOVE, 'pathAfter', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, newFileName);
-            expect(recordsFind.list).toHaveLength(1);
-
-            done();
-        });
-
-        await wait(200);
-        renameSync(baseFile, workFile);
-    });
-
-    test('overwrite file', async done => {
-        jest.setTimeout(10000);
-
-        await _consumeEvent(filePath, fileName, FileEvents.UPDATE, 'pathAfter', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName);
-            const overwriteRecordsFind = await _useRecordDomain(filePath, newFileName);
-
-            expect(recordsFind.list).toHaveLength(1);
-            expect(overwriteRecordsFind.list).toHaveLength(0);
-
-            done();
-        });
-
-        await wait(200);
-        writeFileSync(workFile, '');
-        renameSync(workFile, baseFile);
-    });
-
-    test('move folder with file inside', async done => {
-        jest.setTimeout(10000);
-
-        await _consumeEvent(join(filePath, newDirName), fileName, FileEvents.MOVE, 'pathAfter', channel, async () => {
-            const recordsFind = await _useRecordDomain(join(filePath, newDirName), fileName);
-
-            expect(recordsFind.list).toHaveLength(1);
-
-            done();
-        });
-
-        await wait(200);
-        renameSync(baseFile, fileInBaseDir);
-        renameSync(baseDir, workDir);
-    });
-
-    test('move folder with file inside into other folder', async done => {
-        jest.setTimeout(10000);
-
-        await _consumeEvent(
-            join(filePath, dirName, newDirName),
-            fileName,
-            FileEvents.CREATE,
-            'pathAfter',
-            channel,
-            async () => {
-                const dirRecordsFind = await _useRecordDomain(join(filePath, dirName), newDirName);
-                const fileRecordsFind = await _useRecordDomain(join(filePath, dirName, newDirName), fileName);
-
-                expect(dirRecordsFind.list).toHaveLength(1);
-                expect(fileRecordsFind.list).toHaveLength(1);
-                expect(existsSync(join(rootPath, filePath, dirName, newDirName))).toBeTruthy();
-
-                done();
-            }
-        );
-
-        await wait(200);
-
-        mkdirSync(workDir);
-        writeFileSync(fileInWorkDir, '');
-
-        renameSync(baseFile, fileInBaseDir);
-        renameSync(workDir, `${baseDir}/${newDirName}`);
-
-        await new Promise(r => setTimeout(r, 3000));
-    });
-
-    test('remove file', async done => {
-        jest.setTimeout(10000);
-
-        await _consumeEvent(filePath, fileName, FileEvents.REMOVE, 'pathBefore', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName);
-
-            expect(recordsFind.list).toHaveLength(0);
-
-            done();
-        });
-
-        unlinkSync(baseFile);
-    });
-});
-
-describe('FilesManager with real files', () => {
-    // test file
-    const pathToTestsFile = '/app/src/__tests__/e2e/filesManager/filesForTest';
-    const rootPath = '/files';
-    const filePath = '.';
-
-    let fileName: string;
     let file: string;
 
-    let channel: Channel;
+    describe('FilesManager with real files', () => {
+        beforeEach(async () => {
+            fileName = rand + 'F';
+            newFileName = rand + 'F1';
 
-    beforeEach(async done => {
-        const conf = await getConfig();
+            dirName = rand + 'D';
+            newDirName = rand + 'D1';
 
-        const rand = Math.random()
-            .toString()
-            .substring(2);
+            baseDir = join(rootPath, filePath, dirName);
+            workDir = join(rootPath, filePath, newDirName);
 
-        fileName = rand + '_test';
-        file = join(rootPath, filePath, fileName);
+            baseFile = join(rootPath, filePath, fileName);
+            workFile = join(rootPath, filePath, newFileName);
+            fileInBaseDir = join(rootPath, filePath, dirName, fileName);
+            fileInWorkDir = join(rootPath, filePath, newDirName, fileName);
 
-        const {channel: ch} = await getAmqpChannel();
+            // create file for test
+            await fs.promises.writeFile(baseFile, '');
 
-        channel = ch;
-
-        queueAction = rand + '_test_temp_event';
-        queueResponse = rand + '_test_temp_response';
-
-        await channel.assertQueue(queueResponse, {durable: true});
-        await channel.assertQueue(queueAction, {durable: true});
-
-        await channel.bindQueue(queueAction, conf.amqp.exchange, conf.filesManager.routingKeys.events);
-        await channel.bindQueue(queueResponse, conf.amqp.exchange, conf.filesManager.routingKeys.events);
-
-        await channel.purgeQueue(conf.filesManager.queues.events);
-        await channel.purgeQueue(conf.filesManager.queues.previewRequest);
-        await channel.purgeQueue(conf.filesManager.queues.previewResponse);
-
-        done();
-    });
-
-    afterEach(async done => {
-        // clean what is created in tests
-        const extList = ['', '.jpg', '.psd', '.docx', '.eps', '.mp4', '.pdf', '.odp', '.pptx'];
-        for (const ext of extList) {
-            if (existsSync(file + ext)) {
-                unlinkSync(file + ext);
-            }
-        }
-
-        await channel.deleteQueue(queueAction);
-        await channel.deleteQueue(queueResponse);
-
-        await channel.close();
-        channel = null;
-
-        done();
-    });
-
-    test('create jpg with clipping path', async done => {
-        jest.setTimeout(25000);
-
-        await _consumeResponse(filePath, fileName + '.jpg', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.jpg');
-
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (preview !== 'pages') {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
-                }
-            }
-            done();
+            // create dir for test
+            await fs.promises.mkdir(baseDir);
         });
 
-        const jpgClippingPath = `${pathToTestsFile}/clippingPath.jpg`;
-        copyFileSync(jpgClippingPath, `${file}.jpg`);
+        afterEach(async () => {
+            // clean what is created in tests
+            const filesToDelete = [baseFile, workFile, fileInBaseDir, fileInWorkDir];
+
+            for (const f of filesToDelete) {
+                if (await fileExists(f)) {
+                    await fs.promises.unlink(f);
+                }
+            }
+
+            if (await fileExists(baseDir)) {
+                await _deleteFolderRecursive(baseDir);
+            }
+            if (await fileExists(workDir)) {
+                await _deleteFolderRecursive(workDir);
+            }
+        });
+
+        test('create file', async done => {
+            expect.assertions(5);
+
+            await fs.promises.writeFile(workFile, '');
+
+            setTimeout(async () => {
+                const res = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[library].list.length).toBe(1);
+                expect(res.data.data[library].list[0]).toEqual(
+                    expect.objectContaining({
+                        [FilesAttributes.IS_DIRECTORY]: false
+                    })
+                );
+
+                expect(await fileExists(baseFile)).toBeTruthy();
+                done();
+            }, 1500);
+        });
+
+        test('create dir', async done => {
+            expect.assertions(5);
+            await fs.promises.mkdir(workDir);
+
+            setTimeout(async () => {
+                const res = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${newDirName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[library].list).toHaveLength(1);
+                expect(res.data.data[library].list[0]).toEqual(
+                    expect.objectContaining({
+                        [FilesAttributes.IS_DIRECTORY]: true
+                    })
+                );
+
+                expect(await fileExists(workDir)).toBeTruthy();
+                done();
+            }, 1500);
+        });
+
+        test('update file', async done => {
+            expect.assertions(3);
+            await fs.promises.writeFile(baseFile, 'new content');
+
+            setTimeout(async () => {
+                const res = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[library].list).toHaveLength(1);
+                done();
+            }, 1500);
+        });
+
+        test('move in a folder', async done => {
+            expect.assertions(3);
+            await fs.promises.rename(baseFile, fileInBaseDir);
+
+            setTimeout(async () => {
+                const res = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[library].list).toHaveLength(1);
+                done();
+            }, 1500);
+        });
+
+        test('rename file', async done => {
+            expect.assertions(3);
+            await fs.promises.rename(baseFile, workFile);
+
+            setTimeout(async () => {
+                const res = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[library].list).toHaveLength(1);
+                done();
+            }, 1500);
+        });
+
+        test('overwrite file', async done => {
+            expect.assertions(6);
+            await fs.promises.writeFile(workFile, '');
+            await fs.promises.rename(workFile, baseFile);
+
+            setTimeout(async () => {
+                const res1 = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                const res2 = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(res1.data.errors).toBeUndefined();
+                expect(res2.data.errors).toBeUndefined();
+                expect(res1.status).toBe(200);
+                expect(res2.status).toBe(200);
+                expect(res1.data.data[library].list).toHaveLength(1);
+                expect(res2.data.data[library].list).toHaveLength(0);
+                done();
+            }, 1500);
+        });
+
+        test('move folder with file inside', async done => {
+            expect.assertions(3);
+            await fs.promises.rename(baseFile, fileInBaseDir);
+            await fs.promises.rename(baseDir, workDir);
+
+            setTimeout(async () => {
+                const res = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, newDirName)}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[library].list).toHaveLength(1);
+                done();
+            }, 1500);
+        });
+
+        test('move folder with file inside into other folder', async done => {
+            expect.assertions(7);
+            await fs.promises.mkdir(workDir);
+            await fs.promises.writeFile(fileInWorkDir, '');
+            await fs.promises.rename(baseFile, fileInBaseDir);
+            await fs.promises.rename(workDir, `${baseDir}/${newDirName}`);
+
+            setTimeout(async () => {
+                const dirRecordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                const fileRecordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName, newDirName)}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(dirRecordsFind.data.errors).toBeUndefined();
+                expect(fileRecordsFind.data.errors).toBeUndefined();
+                expect(dirRecordsFind.status).toBe(200);
+                expect(fileRecordsFind.status).toBe(200);
+                expect(dirRecordsFind.data.data[library].list).toHaveLength(1);
+                expect(fileRecordsFind.data.data[library].list).toHaveLength(1);
+                expect(await fileExists(join(rootPath, filePath, dirName, newDirName))).toBeTruthy();
+                done();
+            }, 1500);
+        });
+
+        test('remove file', async done => {
+            expect.assertions(3);
+            await fs.promises.unlink(baseFile);
+
+            setTimeout(async () => {
+                const res = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                    ]) { list {id is_directory} } }`
+                );
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[library].list).toHaveLength(0);
+                done();
+            }, 1500);
+        });
     });
 
-    test('create jpg with rbg colorspace', async done => {
-        jest.setTimeout(25000);
+    describe('FilesManager with real files', () => {
+        beforeEach(() => {
+            fileName = rand + '_test';
+            file = join(rootPath, filePath, fileName);
+        });
 
-        // sometimes the consume is run multiple times, this flag allow to avoid it
-        let alreadyExec = false;
+        afterEach(async () => {
+            // clean what is created in tests
+            const extList = ['', '.jpg', '.psd', '.docx', '.eps', '.mp4', '.pdf', '.odp', '.pptx'];
+            for (const ext of extList) {
+                if (await fileExists(file + ext)) {
+                    await fs.promises.unlink(file + ext);
+                }
+            }
+        });
 
-        await _consumeResponse(filePath, fileName + '.jpg', channel, async () => {
-            if (!alreadyExec) {
-                alreadyExec = true;
-                const recordsFind = await _useRecordDomain(filePath, fileName + '.jpg');
+        test('create jpg with clipping path', async done => {
+            expect.assertions(7);
+            const jpgClippingPath = `${pathToTestsFile}/clippingPath.jpg`;
+            await fs.promises.copyFile(jpgClippingPath, `${file}.jpg`);
 
-                expect(recordsFind.list).toHaveLength(1);
-                for (const preview in recordsFind.list[0].previews) {
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
+
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
+
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (preview !== 'pages') {
-                        expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
                     }
                 }
-            }
-            done();
+
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/rgb.jpg`;
-        copyFileSync(jpgRgbColorspace, `${file}.jpg`);
-    });
+        test('create jpg with rbg colorspace', async done => {
+            expect.assertions(7);
+            const jpgRgbColorspace = `${pathToTestsFile}/rgb.jpg`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.jpg`);
 
-    test('create psd with clipping path', async done => {
-        jest.setTimeout(35000);
-        await _consumeResponse(filePath, fileName + '.psd', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.psd');
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (preview !== 'pages') {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
+
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (preview !== 'pages') {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/clippingPath.psd`;
-        copyFileSync(jpgRgbColorspace, `${file}.psd`);
-    });
+        test('create psd with clipping path', async done => {
+            expect.assertions(7);
+            const jpgRgbColorspace = `${pathToTestsFile}/clippingPath.psd`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.psd`);
 
-    test('create psd with no clipping path', async done => {
-        jest.setTimeout(35000);
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-        await _consumeResponse(filePath, fileName + '.psd', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.psd');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (preview !== 'pages') {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (preview !== 'pages') {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/noClippingPath.psd`;
-        copyFileSync(jpgRgbColorspace, `${file}.psd`);
-    });
+        test('create psd with no clipping path', async done => {
+            expect.assertions(7);
+            const jpgRgbColorspace = `${pathToTestsFile}/noClippingPath.psd`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.psd`);
 
-    test('create pdf with pages', async done => {
-        jest.setTimeout(35000);
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-        await _consumeResponse(filePath, fileName + '.pdf', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.pdf');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (recordsFind.list[0].previews[preview]) {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (preview !== 'pages') {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/multiPages.pdf`;
-        copyFileSync(jpgRgbColorspace, `${file}.pdf`);
-    });
+        test('create pdf with pages', async done => {
+            expect.assertions(9);
+            const jpgRgbColorspace = `${pathToTestsFile}/multiPages.pdf`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.pdf`);
 
-    test('create odp', async done => {
-        jest.setTimeout(35000);
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pdf'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-        await _consumeResponse(filePath, fileName + '.odp', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.odp');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (recordsFind.list[0].previews[preview]) {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (recordsFind.data.data[library].list[0].previews[preview]) {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/odp.odp`;
-        copyFileSync(jpgRgbColorspace, `${file}.odp`);
-    });
+        test('create odp', async done => {
+            expect.assertions(9);
+            const jpgRgbColorspace = `${pathToTestsFile}/odp.odp`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.odp`);
 
-    test('create pptx', async done => {
-        jest.setTimeout(35000);
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.odp'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-        await _consumeResponse(filePath, fileName + '.pptx', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.pptx');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (recordsFind.list[0].previews[preview]) {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (recordsFind.data.data[library].list[0].previews[preview]) {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/pptx.pptx`;
-        copyFileSync(jpgRgbColorspace, `${file}.pptx`);
-    });
+        test('create pptx', async done => {
+            expect.assertions(9);
+            const jpgRgbColorspace = `${pathToTestsFile}/pptx.pptx`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.pptx`);
 
-    test('create docx', async done => {
-        jest.setTimeout(35000);
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pptx'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-        await _consumeResponse(filePath, fileName + '.docx', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.docx');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (recordsFind.list[0].previews[preview]) {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (recordsFind.data.data[library].list[0].previews[preview]) {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/docx.docx`;
-        copyFileSync(jpgRgbColorspace, `${file}.docx`);
-    });
+        test('create docx', async done => {
+            expect.assertions(9);
+            const jpgRgbColorspace = `${pathToTestsFile}/docx.docx`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.docx`);
 
-    test('create mp4 video', async done => {
-        jest.setTimeout(35000);
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.docx'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-        await _consumeResponse(filePath, fileName + '.mp4', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.mp4');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (preview !== 'pages') {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (recordsFind.data.data[library].list[0].previews[preview]) {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/mp4.mp4`;
-        copyFileSync(jpgRgbColorspace, `${file}.mp4`);
-    });
+        test('create eps', async done => {
+            expect.assertions(7);
+            const jpgRgbColorspace = `${pathToTestsFile}/eps.eps`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.eps`);
 
-    test('create eps', async done => {
-        jest.setTimeout(35000);
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.eps'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
 
-        await _consumeResponse(filePath, fileName + '.eps', channel, async () => {
-            const recordsFind = await _useRecordDomain(filePath, fileName + '.eps');
-
-            expect(recordsFind.list).toHaveLength(1);
-            for (const preview in recordsFind.list[0].previews) {
-                if (preview !== 'pages') {
-                    expect(recordsFind.list[0].previews_status[preview].status).toEqual(0);
-                    expect(recordsFind.list[0].previews[preview]).not.toBe('');
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (preview !== 'pages') {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
                 }
-            }
 
-            done();
+                done();
+            }, 5000);
         });
 
-        const jpgRgbColorspace = `${pathToTestsFile}/eps.eps`;
-        copyFileSync(jpgRgbColorspace, `${file}.eps`);
+        test('create mp4 video', async done => {
+            expect.assertions(7);
+            const jpgRgbColorspace = `${pathToTestsFile}/mp4.mp4`;
+            await fs.promises.copyFile(jpgRgbColorspace, `${file}.mp4`);
+
+            setTimeout(async () => {
+                const recordsFind = await makeGraphQlCall(
+                    `{ files(filters: [
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {operator: ${Operator.AND}},
+                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.mp4'}"}
+                    ]) { list {id is_directory previews previews_status} } }`
+                );
+
+                expect(recordsFind.data.data[library].list).toHaveLength(1);
+
+                recordsFind.data.data[library].list[0].previews = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews
+                );
+                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                    recordsFind.data.data[library].list[0].previews_status
+                );
+                for (const preview in recordsFind.data.data[library].list[0].previews) {
+                    if (preview !== 'pages') {
+                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    }
+                }
+
+                done();
+            }, 5000);
+        });
     });
 });
 
-const _useRecordDomain = async (path: string, name: string) => {
-    const coreContainer = await getCoreContainer();
+const _deleteFolderRecursive = async (path: string) => {
+    if (await fileExists(path)) {
+        const files = await fs.promises.readdir(path);
 
-    const recordDomain: IRecordDomain = coreContainer.cradle['core.domain.record'];
-    const ctx: IQueryInfos = {
-        userId: '0',
-        queryId: 'fileManagerE2eTest'
-    };
+        for (const f of files) {
+            const curPath = path + '/' + f;
+            const stat = await fs.promises.lstat(curPath);
 
-    const recordsFind = await recordDomain.find({
-        params: {
-            library,
-            filters: [
-                {field: FilesAttributes.FILE_PATH, value: path},
-                {operator: Operator.AND},
-                {field: FilesAttributes.FILE_NAME, value: name}
-            ]
-        },
-        ctx
-    });
-    return recordsFind;
-};
-
-const _deleteFolderRecursive = (path: string) => {
-    if (existsSync(path)) {
-        readdirSync(path).forEach(file => {
-            const curPath = path + '/' + file;
-            if (lstatSync(curPath).isDirectory()) {
+            if (stat.isDirectory()) {
                 // recursive
-                _deleteFolderRecursive(curPath);
+                await _deleteFolderRecursive(curPath);
             } else {
                 // delete file
-                unlinkSync(curPath);
+                await fs.promises.unlink(curPath);
             }
-        });
-        rmdirSync(path);
+        }
+
+        await fs.promises.rmdir(path);
     }
-};
-
-const _consumeEvent = async (
-    filePath: string,
-    fileName: string,
-    event: string,
-    pathToUse: 'pathBefore' | 'pathAfter',
-    channel: Channel,
-    func: (msg: IFileEventData) => Promise<void>
-) => {
-    // handle only one message at the time
-    channel.prefetch(1);
-
-    channel.consume(queueAction, async msg => {
-        if (msg) {
-            channel.ack(msg);
-            const msgBody: IFileEventData = JSON.parse(msg.content.toString());
-            if (msgBody.event === event && msgBody[pathToUse] === join(filePath, fileName)) {
-                // wait for the core to handle the message
-                await new Promise(r => setTimeout(r, 500));
-
-                await func(msgBody);
-            }
-        }
-    });
-};
-
-const _consumeResponse = async (
-    filePath: string,
-    fileName: string,
-    channel: Channel,
-    func: (channel: Channel, msg: IPreviewResponse) => Promise<void>
-) => {
-    // handle only one message at the time
-    channel.prefetch(1);
-
-    channel.consume(queueResponse, async msg => {
-        if (msg) {
-            channel.ack(msg);
-            const msgBody: IPreviewResponse = JSON.parse(msg.content.toString());
-
-            if (msgBody.input === join(filePath, fileName)) {
-                // wait for the core to handle the response
-                await new Promise(r => setTimeout(r, 100));
-
-                await func(channel, msgBody);
-            }
-        }
-    });
 };

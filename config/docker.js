@@ -14,9 +14,4 @@ module.exports = {
         tokenExpiration: '99y'
     },
     debug: true,
-    amqp: {
-        connOpt: {
-            hostname: 'message_broker'
-        }
-    }
 };

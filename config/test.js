@@ -4,18 +4,12 @@ module.exports = {
         port: 7357
     },
     db: {
-        url: process.env.ARANGO_URL || 'http://root:@arangodb:8529',
         name: 'leav_test'
     },
     elasticsearch: {
         url: 'http://elasticsearch:9200'
     },
     amqp: {
-        connOpt: {
-            hostname: 'message_broker',
-            username: 'guest',
-            password: 'guest',
-        },
         exchange: 'test_leav_core',
     },
     filesManager: {

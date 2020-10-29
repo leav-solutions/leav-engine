@@ -47,11 +47,9 @@ import {initAmqp} from './infra/amqp';
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
-
             // Make sure we always exit process. Sometimes we don't and we're stuck here forever
             process.exit(0);
         } else if (typeof opt !== 'undefined' && opt.indexOf('filesManager') !== -1) {
-            // Init files management
             await filesManager.init();
         } else if (typeof opt !== 'undefined' && opt.indexOf('indexationManager') !== -1) {
             await indexationManager.init();

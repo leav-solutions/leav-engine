@@ -112,13 +112,12 @@ export const createRecordFile = async (
         }));
 
         try {
-            const responses = await deps.valueDomain.saveValueBatch({
+            await deps.valueDomain.saveValueBatch({
                 library,
                 recordId: newRecord.id,
                 values,
                 ctx
             });
-            // check error in responses
         } catch (e) {
             deps.logger.warn(`[FilesManager] Error when save values for new record : ${newRecord.id}`);
         }
