@@ -5,6 +5,7 @@ import {
     AppPermissionsActions,
     AttributePermissionsActions,
     IPermissionsTreeTarget,
+    ITreePermissionsConf,
     LibraryPermissionsActions,
     PermissionsActions,
     PermissionTypes,
@@ -114,4 +115,30 @@ export interface IGetRecordAttributeHeritedPermissionsParams {
     userGroupId: string;
     permTree: string;
     permTreeNode: {id: string; library: string};
+}
+
+export interface IGetDefaultPermissionParams {
+    action?: any;
+    applyTo?: string;
+    userId?: string;
+    userGroups?: ITreeNode[][];
+}
+
+export interface IGetTreeBasedPermissionParams {
+    type: PermissionTypes;
+    action: PermissionsActions;
+    userId: string;
+    applyTo: string;
+    treeValues: {[treeAttributeId: string]: ITreeNode[]};
+    permissions_conf: ITreePermissionsConf;
+    getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
+}
+
+export interface IGetHeritedTreeBasedPermissionParams {
+    type: PermissionTypes;
+    action: PermissionsActions;
+    userGroupId: string;
+    applyTo: string;
+    permissionTreeTarget: IPermissionsTreeTarget;
+    getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
 }

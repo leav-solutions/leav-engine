@@ -7,10 +7,10 @@ import {RecordPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import * as getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import recordPermissionDomain from './recordPermissionDomain';
-import {ITreePermissionDomain} from './treePermissionDomain';
 
 jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
 
@@ -22,8 +22,8 @@ describe('recordPermissionDomain', () => {
 
     const defaultPerm = false;
     describe('getRecordPermission', () => {
-        const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
-            getTreePermission: global.__mockPromise(true)
+        const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
+            getTreeBasedPermission: global.__mockPromise(true)
         };
 
         const mockPermDomain: Mockify<IPermissionDomain> = {};
@@ -90,7 +90,7 @@ describe('recordPermissionDomain', () => {
 
             const recordPermDomain = recordPermissionDomain({
                 'core.domain.permission': mockPermDomain as IPermissionDomain,
-                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -105,7 +105,7 @@ describe('recordPermissionDomain', () => {
                 ctx
             );
 
-            expect(mockTreePermDomain.getTreePermission.mock.calls.length).toBe(1);
+            expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
             expect(mockValueRepo.getValues.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
@@ -117,7 +117,7 @@ describe('recordPermissionDomain', () => {
 
             const recordPermDomain = recordPermissionDomain({
                 'core.domain.permission': mockPermDomain as IPermissionDomain,
-                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -140,12 +140,12 @@ describe('recordPermissionDomain', () => {
     describe('getHeritedRecordPermission', () => {
         test('Return herited tree permission', async () => {
             jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
-            const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
-                getHeritedTreePermission: global.__mockPromise(true)
+            const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
+                getHeritedTreeBasedPermission: global.__mockPromise(true)
             };
 
             const recordPermDomain = recordPermissionDomain({
-                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
             });
 
             const perm = await recordPermDomain.getHeritedRecordPermission(

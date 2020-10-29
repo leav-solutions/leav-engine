@@ -1,11 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IConfig} from '_types/config';
-import {Errors} from '../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
+import ValidationError from '../../errors/ValidationError';
+import {Errors} from '../../_types/errors';
 import {
     LibraryPermissionsActions,
     PermissionsActions,
@@ -13,13 +15,12 @@ import {
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
 import getDefaultPermission from './helpers/getDefaultPermission';
 import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
-import {IGetDefaultPermissionParams, ITreePermissionDomain} from './treePermissionDomain';
-import ValidationError from '../../errors/ValidationError';
+import {IGetDefaultPermissionParams} from './_types';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(
@@ -41,9 +42,9 @@ export interface IRecordPermissionDomain {
 
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
-    'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.infra.library'?: ILibraryRepo;
+    'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
     'core.infra.permission'?: IPermissionRepo;
@@ -52,9 +53,9 @@ interface IDeps {
 
 export default function(deps: IDeps = {}): IRecordPermissionDomain {
     const {
-        'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.infra.library': libraryRepo = null,
+        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
         'core.domain.attribute': attributeDomain = null,
         'core.infra.value': valueRepo = null,
         config = null
@@ -114,7 +115,7 @@ export default function(deps: IDeps = {}): IRecordPermissionDomain {
                 return allVal;
             }, {});
 
-            const perm = await treePermissionDomain.getTreePermission(
+            const perm = await treeBasedPermissionsHelper.getTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD,
                     action,
@@ -160,7 +161,7 @@ export default function(deps: IDeps = {}): IRecordPermissionDomain {
                 return libPerm !== null ? libPerm : getDefaultPermission(config);
             };
 
-            return treePermissionDomain.getHeritedTreePermission(
+            return treeBasedPermissionsHelper.getHeritedTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD,
                     applyTo: recordLibrary,

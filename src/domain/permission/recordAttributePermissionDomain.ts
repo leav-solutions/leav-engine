@@ -14,9 +14,9 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import getDefaultPermission from './helpers/getDefaultPermission';
 import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {IPermissionDomain} from './permissionDomain';
-import {IGetDefaultPermissionParams, ITreePermissionDomain} from './treePermissionDomain';
-import {IGetRecordAttributeHeritedPermissionsParams} from './_types';
+import {IGetDefaultPermissionParams, IGetRecordAttributeHeritedPermissionsParams} from './_types';
 
 export interface IRecordAttributePermissionDomain {
     getRecordAttributePermission(
@@ -37,7 +37,7 @@ export interface IRecordAttributePermissionDomain {
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
-    'core.domain.permission.tree'?: ITreePermissionDomain;
+    'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
     'core.infra.permission'?: IPermissionRepo;
@@ -46,8 +46,8 @@ interface IDeps {
 
 export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
     const {
-        'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.attribute': attrPermissionDomain = null,
+        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
         'core.domain.attribute': attributeDomain = null,
         'core.infra.value': valueRepo = null,
         config = null
@@ -96,7 +96,7 @@ export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
                 return allVal;
             }, {});
 
-            const perm = treePermissionDomain.getTreePermission(
+            const perm = treeBasedPermissionsHelper.getTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     action,
@@ -137,7 +137,7 @@ export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
                 return libPerm !== null ? libPerm : getDefaultPermission(config);
             };
 
-            return treePermissionDomain.getHeritedTreePermission(
+            return treeBasedPermissionsHelper.getHeritedTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     applyTo: attributeId,

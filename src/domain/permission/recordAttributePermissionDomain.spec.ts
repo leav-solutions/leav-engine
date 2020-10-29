@@ -7,8 +7,8 @@ import {PermissionsRelations, RecordAttributePermissionsActions} from '../../_ty
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/getDefaultPermission';
+import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import recordAttributePermissionDomain from './recordAttributePermissionDomain';
-import {ITreePermissionDomain} from './treePermissionDomain';
 
 jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
 
@@ -18,8 +18,8 @@ describe('AttributePermissionDomain', () => {
         queryId: 'attributePermissionDomainTest'
     };
     describe('getAttributePermission', () => {
-        const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
-            getTreePermission: global.__mockPromise(true)
+        const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
+            getTreeBasedPermission: global.__mockPromise(true)
         };
 
         const defaultPerm = false;
@@ -81,7 +81,7 @@ describe('AttributePermissionDomain', () => {
             jest.spyOn(getDefaultPermission, 'default');
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
-                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
@@ -96,7 +96,7 @@ describe('AttributePermissionDomain', () => {
             );
 
             expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(0);
-            expect(mockTreePermDomain.getTreePermission.mock.calls.length).toBe(1);
+            expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 
@@ -113,7 +113,7 @@ describe('AttributePermissionDomain', () => {
             };
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
-                'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo

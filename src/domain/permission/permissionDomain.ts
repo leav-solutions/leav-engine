@@ -23,7 +23,6 @@ import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
-import {ITreePermissionDomain} from './treePermissionDomain';
 import {
     IGetActionsByTypeParams,
     IGetHeritedPermissionsParams,
@@ -65,7 +64,6 @@ export interface IPermissionDomain {
 interface IDeps {
     'core.domain.permission.app'?: IAppPermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
@@ -80,7 +78,6 @@ export default function(deps: IDeps = {}): IPermissionDomain {
     const {
         'core.domain.permission.app': appPermissionDomain = null,
         'core.domain.permission.record': recordPermissionDomain = null,
-        'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
