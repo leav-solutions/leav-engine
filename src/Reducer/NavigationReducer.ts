@@ -35,7 +35,7 @@ export type NavigationReducerAction =
 export const NavigationReducer = (state: INavigationReducerState, action: NavigationReducerAction) => {
     switch (action.type) {
         case NavigationReducerActionsTypes.SET_PATH:
-            return {...state, path: action.path};
+            return {...state, path: action.path, recordDetail: undefined};
         case NavigationReducerActionsTypes.SET_IS_LOADING:
             return {...state, isLoading: action.isLoading};
         case NavigationReducerActionsTypes.SET_RECORD_DETAIL:

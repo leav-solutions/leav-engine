@@ -12,11 +12,10 @@ import {
 import {setIsLoading} from '../../Reducer/NavigationReducer';
 import ColumnNavigation from '../ColumnNavigation';
 import DetailNavigation from '../DetailNavigation';
-import MenuNavigation from '../MenuNavigation';
 
 const Page = styled.div`
     width: auto;
-    height: calc(100vh - 6rem);
+    height: calc(100vh - 3rem);
     display: flex;
     flex-flow: row nowrap;
     overflow-x: scroll;
@@ -29,33 +28,33 @@ interface INavigationParams {
 
 function NavigationView(): JSX.Element {
     const [tree, setTree] = useState<IRecordAndChildren[]>([]);
-
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
-
     const {treeId} = useParams<INavigationParams>();
 
     const depth = stateNavigation.path.length + 1; // add 1 to depth to count children
 
-    const {data, loading, error} = useQuery<IGetTreeContentQuery, IGetTreeContentQueryVar>(getTreeContentQuery(depth), {
+    const {data: dataTreeContent, loading: loadingTreeContent, error: errorTreeContent} = useQuery<
+        IGetTreeContentQuery,
+        IGetTreeContentQueryVar
+    >(getTreeContentQuery(depth), {
         variables: {
             treeId
         }
     });
 
     useEffect(() => {
-        if (!loading && data) {
-            setTree(data.treeContent);
+        if (!loadingTreeContent && dataTreeContent) {
+            setTree(dataTreeContent.treeContent);
         }
-        dispatchNavigation(setIsLoading(loading));
-    }, [data, loading, dispatchNavigation]);
+        dispatchNavigation(setIsLoading(loadingTreeContent));
+    }, [dataTreeContent, loadingTreeContent, dispatchNavigation]);
 
-    if (error) {
+    if (errorTreeContent) {
         return <>error</>;
     }
 
     return (
         <div>
-            <MenuNavigation />
             <Page>
                 <ColumnNavigation treeElements={tree} />
                 <DetailNavigation />

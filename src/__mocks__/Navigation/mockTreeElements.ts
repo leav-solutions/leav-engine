@@ -4,10 +4,7 @@ export const mockTreeRecord: IRecordField = {
     whoAmI: {
         id: 'id',
         color: 'color',
-        label: {
-            fr: 'label',
-            en: 'label'
-        },
+        label: 'label',
         preview: {
             small: 'preview',
             medium: 'preview',

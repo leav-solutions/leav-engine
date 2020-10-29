@@ -32,26 +32,4 @@ describe('DisplayTypeSelector', () => {
 
         expect(comp.find(TileDisplay)).toHaveLength(1);
     });
-
-    // disabled for now
-    // test('Should call LibraryItemsListTable', async () => {
-    //     const mockState = {...stateItems, displayType: DisplayListItemTypes.listSmall};
-    //     const comp = mount(<DisplayTypeSelector stateItems={mockState} dispatchItems={dispatchItems} />);
-
-    //     expect(comp.find(LibraryItemsListTable)).toHaveLength(1);
-    // });
-
-    // test('Should call LibraryItemsListTable', async () => {
-    //     const mockState = {...stateItems, displayType: DisplayListItemTypes.listMedium};
-    //     const comp = mount(<DisplayTypeSelector stateItems={mockState} dispatchItems={dispatchItems} />);
-
-    //     expect(comp.find(LibraryItemsListTable)).toHaveLength(1);
-    // });
-
-    // test('Should call LibraryItemsListTable', async () => {
-    //     const mockState = {...stateItems, displayType: DisplayListItemTypes.listBig};
-    //     const comp = mount(<DisplayTypeSelector stateItems={mockState} dispatchItems={dispatchItems} />);
-
-    //     expect(comp.find(LibraryItemsListTable)).toHaveLength(1);
-    // });
 });

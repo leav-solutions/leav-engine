@@ -37,7 +37,9 @@ function TreeList(): JSX.Element {
     return (
         <ContainerTreeList>
             {treeList.map(tree => (
-                <TreeItem key={tree.id} tree={tree} />
+                <div key={tree.id}>
+                    <TreeItem tree={tree} />
+                </div>
             ))}
         </ContainerTreeList>
     );

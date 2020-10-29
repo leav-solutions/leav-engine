@@ -2,11 +2,19 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import Router from '../../Router';
+import AppHandler from '../AppHandler';
 import ThemeHandler from './ThemeHandler';
 
+jest.mock(
+    '../AppHandler',
+    () =>
+        function AppHandler() {
+            return <div>AppHandler</div>;
+        }
+);
+
 describe('ThemeHandler', () => {
-    test('should call Router', async () => {
+    test('should call AppHandler', async () => {
         let comp: any;
 
         await act(async () => {
@@ -17,6 +25,6 @@ describe('ThemeHandler', () => {
             );
         });
 
-        expect(comp.find(Router)).toHaveLength(1);
+        expect(comp.find(AppHandler)).toHaveLength(1);
     });
 });

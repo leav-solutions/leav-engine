@@ -1,14 +1,11 @@
 import {RightOutlined} from '@ant-design/icons';
-import {useQuery} from '@apollo/client';
 import {Badge} from 'antd';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
 import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducer';
 import themingVar from '../../themingVar';
-import {localizedLabel} from '../../utils';
 import {INavigationPath, PreviewSize, RecordIdentity_whoAmI} from '../../_types/types';
 import RecordCard from '../shared/RecordCard';
 
@@ -19,7 +16,7 @@ interface ICellProps {
 
 const Cell = styled.div<ICellProps>`
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     padding: 1rem;
     background: ${props => (props.isInPath ? themingVar['@item-active-bg'] : 'none')};
@@ -43,11 +40,7 @@ interface ICellNavigationProps {
 function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element {
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
-    const {data: dataLang} = useQuery(getLang);
-    // handle case dataLang is null
-    const {lang} = dataLang ?? {lang: []};
-
-    const recordLabel = localizedLabel(treeElement.record.whoAmI.label, lang);
+    const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
         const newPathElement: INavigationPath = {
@@ -69,7 +62,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
 
     const record: RecordIdentity_whoAmI = {
         ...treeElement.record.whoAmI,
-        label: localizedLabel(treeElement.record.whoAmI.label, lang)
+        label: recordLabel
     };
 
     const isInPath = stateNavigation.path.some(

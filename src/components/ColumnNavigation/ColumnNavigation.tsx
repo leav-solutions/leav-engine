@@ -5,6 +5,7 @@ import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
 import themingVar from '../../themingVar';
 import CellNavigation from '../CellNavigation';
+import HeaderCellNavigation from '../HeaderCellNavigation';
 
 const Column = styled.div`
     border-right: 1px solid ${themingVar['@divider-color']};
@@ -47,6 +48,7 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
     return (
         <>
             <Column>
+                <HeaderCellNavigation depth={1} />
                 {elementsSort.map(treeElement => (
                     <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={1} />
                 ))}
@@ -102,6 +104,7 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
         if (showLoading) {
             return (
                 <Column>
+                    <HeaderCellNavigation depth={depth} />
                     <SpinWrapper>
                         <Spin />
                     </SpinWrapper>
@@ -111,6 +114,7 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
 
         return (
             <Column>
+                <HeaderCellNavigation depth={depth} />
                 <div ref={ref}>
                     {elementsSort?.map((treeElement, index) => (
                         <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />

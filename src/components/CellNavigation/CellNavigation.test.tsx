@@ -17,6 +17,6 @@ describe('CellNavigation', () => {
             );
         });
 
-        expect(comp.text()).toContain(mockTreeElement.record.whoAmI.label.en);
+        expect(comp.text()).toContain(mockTreeElement.record.whoAmI.label);
     });
 });

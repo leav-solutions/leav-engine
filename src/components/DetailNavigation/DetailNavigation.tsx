@@ -1,11 +1,9 @@
-import {useQuery} from '@apollo/client';
 import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {getLang} from '../../queries/cache/lang/getLangQuery';
 import themingVar from '../../themingVar';
-import {getPreviewUrl, localizedLabel} from '../../utils';
+import {getPreviewUrl} from '../../utils';
 import RecordPreview from '../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 
 const Detail = styled.div`
@@ -43,9 +41,6 @@ const DetailNavigation = (): JSX.Element => {
 
     const detailRef = useRef<HTMLDivElement>(null);
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
-
     useEffect(() => {
         if (!stateNavigation.isLoading && detailRef.current && detailRef.current.scrollIntoView) {
             detailRef.current.scrollIntoView({
@@ -60,7 +55,7 @@ const DetailNavigation = (): JSX.Element => {
 
     const recordData = stateNavigation.recordDetail.whoAmI;
 
-    const label = recordData.label ? localizedLabel(recordData.label, lang) : t('navigation.list.info.no-label');
+    const label = recordData.label ? recordData.label : t('navigation.list.info.no-label');
     const img = recordData.preview.big;
 
     return (

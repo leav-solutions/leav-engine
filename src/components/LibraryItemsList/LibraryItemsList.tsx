@@ -91,7 +91,7 @@ function LibraryItemsList(): JSX.Element {
                 []
             );
 
-            client.writeQuery({
+            client.writeQuery<IGetActiveLibrary>({
                 query: getActiveLibrary,
                 data: {
                     activeLib: {
