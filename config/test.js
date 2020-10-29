@@ -1,11 +1,5 @@
 module.exports = {
-    inputRootPath: '/files',
-    outputRootPath: '/results',
-    ICCPath: '/app/profile/',
     amqp: {
-        hostname: 'message_broker',
-        username: 'guest',
-        password: 'guest',
         consume: {
             queue: 'test_files_preview_request',
             exchange: 'test_leav_core',
@@ -17,5 +11,5 @@ module.exports = {
             routingKey: 'files.previewResponse',
         },
     },
-    verbose: true,
+    verbose: true
 };
