@@ -85,7 +85,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                     )}
 
                     {activeTree?.id && (
-                        <Menu.Item key={activeTree.id} icon={<DatabaseOutlined />}>
+                        <Menu.Item key={activeTree.id} icon={<ApartmentOutlined />}>
                             <NavLink
                                 to={`/navigation/${activeTree.id}`}
                                 onClick={hide}
