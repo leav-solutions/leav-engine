@@ -11,12 +11,23 @@ const Detail = styled.div`
     max-width: 30rem;
 
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     justify-items: center;
     grid-template-rows: 25rem auto;
+    word-break: break-all;
 
     background: ${themingVar['@default-bg']};
     border-right: 1px solid ${themingVar['@divider-color']};
+`;
+
+const Content = styled.div`
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: start;
+
+    & > * {
+        margin: 1rem;
+    }
 `;
 
 const DetailElement = styled.div`
@@ -29,9 +40,6 @@ const PreviewWrapper = styled.div`
     padding: 2rem;
     height: 25rem;
     width: 100%;
-
-    grid-column-start: 1;
-    grid-column-end: 3;
 `;
 
 const DetailNavigation = (): JSX.Element => {
@@ -56,6 +64,7 @@ const DetailNavigation = (): JSX.Element => {
     const recordData = stateNavigation.recordDetail.whoAmI;
 
     const label = recordData.label ? recordData.label : t('navigation.list.info.no-label');
+
     const img = recordData.preview.big;
 
     return (
@@ -69,12 +78,14 @@ const DetailNavigation = (): JSX.Element => {
                     style={{height: '20rem'}}
                 />
             </PreviewWrapper>
-            <DetailElement>
-                <span>{t('navigation.list.info.id')}:</span> {recordData.id}
-            </DetailElement>
-            <DetailElement>
-                <span>{t('navigation.list.info.label')}:</span> {label}
-            </DetailElement>
+            <Content>
+                <DetailElement>
+                    <span>{t('navigation.list.info.id')}:</span> {recordData.id}
+                </DetailElement>
+                <DetailElement>
+                    <span>{t('navigation.list.info.label')}:</span> {label}
+                </DetailElement>
+            </Content>
         </Detail>
     );
 };

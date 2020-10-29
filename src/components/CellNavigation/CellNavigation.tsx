@@ -1,5 +1,5 @@
 import {RightOutlined} from '@ant-design/icons';
-import {Badge} from 'antd';
+import {Badge, Tooltip} from 'antd';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
@@ -37,10 +37,15 @@ interface ICellNavigationProps {
     depth: number;
 }
 
+const labelLimit = 13;
+
 function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element {
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
-    const recordLabel = treeElement.record.whoAmI.label;
+    const recordLabel =
+        treeElement.record.whoAmI.label.length > labelLimit
+            ? treeElement.record.whoAmI.label.substr(0, labelLimit) + '...'
+            : treeElement.record.whoAmI.label;
 
     const addPath = () => {
         const newPathElement: INavigationPath = {
@@ -72,9 +77,11 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
 
     return (
         <Cell onClick={addPath} isInPath={isInPath}>
-            <RecordCardWrapper>
-                <RecordCard record={record} size={PreviewSize.small} />
-            </RecordCardWrapper>
+            <Tooltip title={treeElement.record.whoAmI.label}>
+                <RecordCardWrapper>
+                    <RecordCard record={record} size={PreviewSize.small} />
+                </RecordCardWrapper>
+            </Tooltip>
 
             {treeElement.children?.length ? (
                 <>
