@@ -52,14 +52,14 @@ function LibraryItemsList(): JSX.Element {
     const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
     const activeLib = dataLib?.activeLib;
 
-    const {loading: loadingLib, data, error: errorLib} = useQuery(getLibraryDetailExtendedQuery, {
+    const {loading, data, error} = useQuery(getLibraryDetailExtendedQuery, {
         variables: {
             libId
         }
     });
 
     useEffect(() => {
-        if (!loadingLib && data) {
+        if (!loading && data) {
             const libId = data?.libraries?.list[0]?.id;
             const libLabel = data?.libraries?.list[0]?.label;
             const {query, type, filter, searchableFields} = data?.libraries?.list[0]?.gqlNames;
@@ -119,7 +119,7 @@ function LibraryItemsList(): JSX.Element {
                 columns: []
             });
         }
-    }, [dispatch, loadingLib, data, libId, activeLib, lang, client]);
+    }, [dispatch, loading, data, libId, activeLib, lang, client]);
 
     const [
         getRecords,
@@ -196,7 +196,7 @@ function LibraryItemsList(): JSX.Element {
         getRecords
     ]);
 
-    if (errorItem || errorLib) {
+    if (errorItem || error) {
         return <div>error</div>;
     }
 
