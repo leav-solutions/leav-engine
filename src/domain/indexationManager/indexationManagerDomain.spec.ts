@@ -68,15 +68,15 @@ describe('Indexation Manager', () => {
             getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
         };
 
-        const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
-            send: jest.fn()
-        };
+        // const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
+        //     send: jest.fn()
+        // };
 
         const indexation = indexationManager({
             config: conf as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.library': mockLibraryDomain as ILibraryDomain,
-            'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+            // 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
             'core.infra.elasticsearch.elasticsearchService': mockElasticsearchService as IElasticsearchService
         });
 

@@ -73,6 +73,7 @@ interface ISearchResponse<T> {
 export interface IElasticsearchService {
     client?: Client;
     indiceGetMapping?(index: string): Promise<string[]>;
+    indiceCreate?(index: string): Promise<void>;
     indiceDelete?(index: string): Promise<void>;
     indiceExists?(index: string): Promise<boolean>;
     index?(index: string, documentId: string, data: any): Promise<void>;
@@ -96,7 +97,7 @@ export default function({'core.infra.elasticsearch': client = null}: IDeps = {})
         client,
         async indiceGetMapping(index: string): Promise<string[]> {
             const res = await client.indices.getMapping({index});
-            return Object.keys(res.body[index].mappings.properties);
+            return Object.keys(res.body[index].mappings.properties || []);
         },
         async indiceExists(index: string): Promise<boolean> {
             const res = await client.indices.exists({index});
@@ -120,6 +121,9 @@ export default function({'core.infra.elasticsearch': client = null}: IDeps = {})
                 },
                 refresh: 'true'
             });
+        },
+        async indiceCreate(index: string): Promise<void> {
+            await client.indices.create({index});
         },
         async indiceDelete(index: string): Promise<void> {
             await client.indices.delete({index});

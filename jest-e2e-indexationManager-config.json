@@ -1,0 +1,16 @@
+{
+    "moduleFileExtensions": [
+        "ts",
+        "js"
+    ],
+    "transform": {
+        "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": "src\/__tests__\/e2e\/indexationManager\/.*(.test.ts)$",
+    "globalSetup": "./src/__tests__/e2e/indexationManager/globalSetupHook.js",
+    "globalTeardown": "./src/__tests__/e2e/indexationManager/teardownHook.js",
+    "setupFiles": [
+        "<rootDir>/src/__tests__/setup.ts",
+        "<rootDir>/src/__tests__/jestUtils.ts"
+    ]
+}

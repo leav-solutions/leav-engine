@@ -1,20 +1,15 @@
 import {IAmqpService} from 'infra/amqp/amqpService';
 import {IRecordDomain, IFindRecordParams} from 'domain/record/recordDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
-import winston from 'winston';
 import {IEvent, EventType, IRecordPayload, ILibraryPayload, IValuePayload} from '../../_types/event';
 import {IValue} from '../../_types/value';
 import * as Joi from '@hapi/joi';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
-import {isEqual, pick} from 'lodash';
+import {isEqual} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {v4 as uuidv4} from 'uuid';
-import {Operator, IRecord} from '../../_types/record';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {Operator} from '../../_types/record';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 export interface IIndexationManagerDomain {
@@ -25,27 +20,19 @@ export interface IIndexationManagerDomain {
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.amqp.amqpService'?: IAmqpService;
-    'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
     'core.domain.library'?: ILibraryDomain;
-    'core.utils'?: IUtils;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.value'?: IValueDomain;
 }
 
 export default function({
     config = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.amqp.amqpService': amqpService = null,
-    'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library': libraryDomain = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.value': valueDomain = null,
-    'core.utils': utils = null
+    'core.domain.attribute': attributeDomain = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
         const records = await recordDomain.find({
@@ -145,13 +132,15 @@ export default function({
                     if (exists) {
                         await elasticsearchService.indiceDelete(data.new.id);
                     }
+
+                    // await elasticsearchService.indiceCreate(data.new.id); // FIXME:
                     await _indexRecords({library: data.new.id}, ctx);
                 }
 
                 // if label change we re-index all linked libraries
                 if (
-                    typeof data.old !== 'undefined' &&
-                    data.new?.recordIdentityConf.label !== data.old?.recordIdentityConf.label
+                    // typeof data.old !== 'undefined' &&
+                    data.new.recordIdentityConf?.label !== data.old?.recordIdentityConf?.label
                 ) {
                     const attrs = await attributeDomain.getAttributes({
                         params: {

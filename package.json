@@ -1,5 +1,5 @@
 {
-    "name": "leav_core",
+    "name": "core",
     "version": "1.0.0",
     "description": "",
     "main": "build/index.js",
@@ -12,8 +12,9 @@
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",
         "test:e2e": "npm run test:e2e:api",
-        "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json --forceExit",
-        "test:e2e:filesManager": "NODE_ENV=test jest -c jest-e2e-filesManager-config.json",
+        "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json --forceExit --detectOpenHandles",
+        "test:e2e:filesManager": "NODE_ENV=test jest -c jest-e2e-filesManager-config.json --forceExit --detectOpenHandles",
+        "test:e2e:indexationManager": "NODE_ENV=test jest -c jest-e2e-indexationManager-config.json --forceExit --detectOpenHandles",
         "lint": "eslint --fix src/",
         "lint:test": "eslint src/",
         "lint:watch": "watch 'npm run lint' src/",
@@ -29,11 +30,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://gitlab.cacom.fr/dev/leav/leav_core"
+        "url": "https://gitlab.cacom.fr/dev/leav/core"
     },
     "author": "",
     "license": "ISC",
-    "homepage": "https://gitlab.cacom.fr/dev/leav/leav_core",
+    "homepage": "https://gitlab.cacom.fr/dev/leav/core",
     "devDependencies": {
         "@casolutions/eslint-config": "^2.0.0",
         "@casolutions/prettier-config": "^1.0.0",

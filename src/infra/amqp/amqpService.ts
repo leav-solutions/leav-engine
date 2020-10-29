@@ -40,9 +40,10 @@ export default function({
                 try {
                     await onMessage(msgString);
                 } catch (e) {
+                    console.error(e);
                     logger.error(
                         `[${queue}/${routingKey}] Error while processing message:
-                            ${e.message}.
+                            ${e}.
                             Message was: ${msgString}
                         `
                     );
