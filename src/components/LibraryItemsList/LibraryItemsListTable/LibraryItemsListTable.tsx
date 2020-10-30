@@ -156,11 +156,15 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     const attribute = stateItems.attributes.find(att => att.id === col.id);
 
                     if (attribute) {
-                        const display = col.extendedData?.path
-                            ? col.extendedData?.path.split('.').pop() || ''
-                            : typeof attribute.label === 'string'
-                            ? attribute.label
-                            : localizedLabel(attribute.label, lang);
+                        let displayLabel: string;
+
+                        if (col.extendedData?.path) {
+                            displayLabel = col.extendedData?.path.split('.').pop() || '';
+                        } else if (typeof attribute.label === 'string') {
+                            displayLabel = attribute.label;
+                        } else {
+                            displayLabel = localizedLabel(attribute.label, lang);
+                        }
 
                         return {
                             title: (
@@ -169,7 +173,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                                     type={attribute.type}
                                     setOpenChangeColumns={setOpenChangeColumns}
                                 >
-                                    {display}
+                                    {displayLabel}
                                 </Header>
                             ),
                             type: attribute.type,

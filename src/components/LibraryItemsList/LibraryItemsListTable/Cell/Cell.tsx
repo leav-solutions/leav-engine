@@ -3,7 +3,7 @@ import objectPath from 'object-path';
 import React from 'react';
 import {checkTypeIsLink} from '../../../../utils';
 import {AttributeFormat, AttributeType, IItemsColumn, PreviewSize} from '../../../../_types/types';
-import RecordCard from '../../../shared/RecordCard';
+import CellRecordCard from './CellRecordCard';
 
 interface CellProps {
     value: any;
@@ -18,7 +18,7 @@ const Cell = ({value, column, size, format, isMultiple, lang}: CellProps) => {
     if (value !== undefined && value !== null) {
         // handle infos column
         if (!column) {
-            return <RecordCard record={{...value}} size={size} lang={lang} />;
+            return <CellRecordCard record={value} size={size} lang={lang} />;
         }
 
         switch (format) {
@@ -63,12 +63,12 @@ const Cell = ({value, column, size, format, isMultiple, lang}: CellProps) => {
                         />
                     ));
                 } else if (checkTypeIsLink(column.type)) {
-                    return <RecordCard record={{...value.whoAmI}} size={size} lang={lang} />;
+                    return <CellRecordCard record={{...value.whoAmI}} size={size} lang={lang} />;
                 } else if (column.type === AttributeType.tree) {
                     return (
-                        <RecordCard
+                        <CellRecordCard
                             key={value?.record?.whoAmI?.id}
-                            record={{...value?.record?.whoAmI}}
+                            record={value?.record?.whoAmI}
                             size={size}
                             lang={lang}
                         />

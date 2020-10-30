@@ -37,6 +37,7 @@ const PreviewWrapper = styled(CardPart)`
 
 const RecordLabel = styled.div`
     font-weight: bold;
+    word-break: keep-all;
 `;
 
 const LibLabel = styled.div`
