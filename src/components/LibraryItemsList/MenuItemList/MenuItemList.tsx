@@ -4,12 +4,12 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {DisplayListItemTypes} from '../../../_types/types';
-import LibraryItemsListMenuPagination from '../LibraryItemsListMenuPagination';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../LibraryItemsListReducer';
+import MenuSelection from '../MenuSelection';
 import SearchItems from '../SearchItems';
 import SelectView from '../SelectView';
 
@@ -90,7 +90,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             )}
 
             <div>
-                <LibraryItemsListMenuPagination stateItems={stateItems} dispatchItems={dispatchItems} />
+                <MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />
             </div>
 
             <div>

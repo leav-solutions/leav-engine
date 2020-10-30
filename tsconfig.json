@@ -27,6 +27,6 @@
     "downlevelIteration": true
   },
   "include": [
-    "src"
+    "src", "src/components/LibraryItemsList/LibraryItemsListMenuPagination/.tsx"
   ]
 }

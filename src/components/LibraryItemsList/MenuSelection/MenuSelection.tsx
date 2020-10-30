@@ -1,6 +1,5 @@
 import {DownOutlined} from '@ant-design/icons';
-import {Button, Col, Dropdown, Menu, Row} from 'antd';
-import SubMenu from 'antd/lib/menu/SubMenu';
+import {Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -9,18 +8,13 @@ import {
     LibraryItemListState
 } from '../LibraryItemsListReducer';
 
-interface ILibraryItemsListMenuPaginationProps {
+interface IMenuSelectionProps {
     stateItems: LibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
-function LibraryItemsListMenuPagination({
-    stateItems,
-    dispatchItems
-}: ILibraryItemsListMenuPaginationProps): JSX.Element {
+function MenuSelection({stateItems, dispatchItems}: IMenuSelectionProps): JSX.Element {
     const {t} = useTranslation();
-
-    const paginationOptions = [5, 10, 20, 50, 100];
 
     const offsetDisplay = stateItems.itemsTotalCount > 0 ? stateItems.offset + 1 : 0;
     const nextOffsetDisplay =
@@ -67,37 +61,12 @@ function LibraryItemsListMenuPagination({
         <Dropdown
             overlay={
                 <Menu>
-                    <Menu.Item>
-                        <Row>
-                            <Col>
-                                <Button onClick={selectAll}>
-                                    {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
-                                </Button>
-                            </Col>
-
-                            <Col>
-                                <Button onClick={selectVisible}>
-                                    {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
-                                </Button>
-                            </Col>
-                        </Row>
+                    <Menu.Item onClick={selectAll}>
+                        {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
                     </Menu.Item>
-                    <SubMenu title={t('items-menu-dropdown.items-display')}>
-                        {paginationOptions.map(pagOption => (
-                            <Menu.Item
-                                key={pagOption}
-                                active={stateItems.pagination === pagOption}
-                                onClick={() =>
-                                    dispatchItems({
-                                        type: LibraryItemListReducerActionTypes.SET_PAGINATION,
-                                        pagination: pagOption
-                                    })
-                                }
-                            >
-                                {pagOption}
-                            </Menu.Item>
-                        ))}
-                    </SubMenu>
+                    <Menu.Item onClick={selectVisible}>
+                        {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
+                    </Menu.Item>
                 </Menu>
             }
         >
@@ -113,4 +82,4 @@ function LibraryItemsListMenuPagination({
     );
 }
 
-export default LibraryItemsListMenuPagination;
+export default MenuSelection;

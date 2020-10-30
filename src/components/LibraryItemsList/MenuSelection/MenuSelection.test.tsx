@@ -3,9 +3,9 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
-import LibraryItemsListMenuPagination from './LibraryItemsListMenuPagination';
+import MenuSelection from './MenuSelection';
 
-describe('LibraryItemsListMenuPagination', () => {
+describe('MenuSelection', () => {
     const stateItems = LibraryItemListInitialState;
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
@@ -14,7 +14,7 @@ describe('LibraryItemsListMenuPagination', () => {
         let comp: any;
 
         await act(async () => {
-            comp = mount(<LibraryItemsListMenuPagination stateItems={stateItems} dispatchItems={dispatchItems} />);
+            comp = mount(<MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />);
         });
 
         expect(comp.find(Dropdown)).toHaveLength(1);

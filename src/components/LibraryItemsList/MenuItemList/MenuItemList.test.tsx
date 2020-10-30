@@ -6,9 +6,9 @@ import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFr
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import MenuItemList from './MenuItemList';
 
-jest.mock('../LibraryItemsListMenuPagination', () => {
-    return function LibraryItemsListMenuPagination() {
-        return <div>LibraryItemsListMenuPagination</div>;
+jest.mock('../MenuSelection', () => {
+    return function MenuSelection() {
+        return <div>MenuSelection</div>;
     };
 });
 

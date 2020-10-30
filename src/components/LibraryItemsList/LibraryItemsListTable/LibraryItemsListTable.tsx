@@ -237,7 +237,8 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
         stateItems.columns,
         stateItems.displayType,
         stateItems.itemsSelected,
-        stateItems.selectionMode
+        stateItems.selectionMode,
+        stateItems.allSelected
     ]);
 
     useEffect(() => {
