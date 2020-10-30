@@ -1,9 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {
     AttributePermissionsActions,
@@ -12,10 +10,9 @@ import {
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
-import getDefaultPermission from './helpers/getDefaultPermission';
-import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import {IPermissionDomain} from './permissionDomain';
 import {IGetDefaultPermissionParams, IGetRecordAttributeHeritedPermissionsParams} from './_types';
 
 export interface IRecordAttributePermissionDomain {
@@ -35,22 +32,22 @@ export interface IRecordAttributePermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission'?: IPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
+    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
-    'core.infra.permission'?: IPermissionRepo;
-    config?: IConfig;
 }
 
 export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
     const {
         'core.domain.permission.attribute': attrPermissionDomain = null,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
         'core.domain.attribute': attributeDomain = null,
-        'core.infra.value': valueRepo = null,
-        config = null
+        'core.infra.value': valueRepo = null
     } = deps;
     return {
         async getRecordAttributePermission(
@@ -75,7 +72,7 @@ export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
                           attributeId,
                           ctx
                       })
-                    : getDefaultPermission(config);
+                    : defaultPermHelper.getDefaultPermission();
             }
 
             const treesAttrValues = await Promise.all(
@@ -123,18 +120,15 @@ export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
             const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
                 const {applyTo, userGroups} = params;
 
-                const libPerm = await getPermissionByUserGroups(
-                    {
-                        type: PermissionTypes.ATTRIBUTE,
-                        action,
-                        userGroupsPaths: userGroups,
-                        applyTo,
-                        ctx
-                    },
-                    deps
-                );
+                const libPerm = await permByUserGroupsHelper.getPermissionByUserGroups({
+                    type: PermissionTypes.ATTRIBUTE,
+                    action,
+                    userGroupsPaths: userGroups,
+                    applyTo,
+                    ctx
+                });
 
-                return libPerm !== null ? libPerm : getDefaultPermission(config);
+                return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
             };
 
             return treeBasedPermissionsHelper.getHeritedTreeBasedPermission(

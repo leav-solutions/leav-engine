@@ -1,15 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IConfig} from '_types/config';
 import {PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import getDefaultPermission from './helpers/getDefaultPermission';
-import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
-import {IPermissionDomain} from './permissionDomain';
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {IGetAttributePermissionParams, IGetHeritedAttributePermissionParams} from './_types';
 
 export interface IAttributePermissionDomain {
@@ -18,20 +15,20 @@ export interface IAttributePermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
-    'core.infra.permission'?: IPermissionRepo;
-    config?: IConfig;
 }
 
 export default function(deps: IDeps = {}): IAttributePermissionDomain {
     const {
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
         'core.domain.attribute': attributeDomain = null,
         'core.infra.tree': treeRepo = null,
-        'core.infra.value': valueRepo = null,
-        config = null
+        'core.infra.value': valueRepo = null
     } = deps;
 
     const getAttributePermission = async ({
@@ -62,18 +59,15 @@ export default function(deps: IDeps = {}): IAttributePermissionDomain {
             )
         );
 
-        const perm = await getPermissionByUserGroups(
-            {
-                type: PermissionTypes.ATTRIBUTE,
-                action,
-                userGroupsPaths,
-                applyTo: attributeId,
-                ctx
-            },
-            deps
-        );
+        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type: PermissionTypes.ATTRIBUTE,
+            action,
+            userGroupsPaths,
+            applyTo: attributeId,
+            ctx
+        });
 
-        return perm !== null ? perm : getDefaultPermission(config);
+        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
     const getHeritedAttributePermission = async ({
@@ -92,18 +86,15 @@ export default function(deps: IDeps = {}): IAttributePermissionDomain {
             ctx
         });
 
-        const perm = await getPermissionByUserGroups(
-            {
-                type: PermissionTypes.ATTRIBUTE,
-                action,
-                userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
-                applyTo: attributeId,
-                ctx
-            },
-            deps
-        );
+        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type: PermissionTypes.ATTRIBUTE,
+            action,
+            userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
+            applyTo: attributeId,
+            ctx
+        });
 
-        return perm !== null ? perm : getDefaultPermission(config);
+        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
     return {

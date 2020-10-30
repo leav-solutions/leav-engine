@@ -6,8 +6,8 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {PermissionTypes} from '../../_types/permissions';
-import getDefaultPermission from './helpers/getDefaultPermission';
-import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {IGetHeritedLibraryPermissionParams, IGetLibraryPermissionParams} from './_types';
 
 export interface ILibraryPermissionDomain {
@@ -16,6 +16,8 @@ export interface ILibraryPermissionDomain {
 }
 
 interface IDeps {
+    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.attribute'?: IAttributeRepo;
     'core.infra.tree'?: ITreeRepo;
@@ -25,6 +27,8 @@ interface IDeps {
 
 export default function(deps: IDeps = {}): ILibraryPermissionDomain {
     const {
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
         'core.infra.attribute': attributeRepo = null,
         'core.infra.value': valueRepo = null,
         'core.infra.tree': treeRepo = null,
@@ -64,19 +68,15 @@ export default function(deps: IDeps = {}): ILibraryPermissionDomain {
                 })
             )
         );
+        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type: PermissionTypes.LIBRARY,
+            action,
+            userGroupsPaths,
+            applyTo: libraryId,
+            ctx
+        });
 
-        const perm = await getPermissionByUserGroups(
-            {
-                type: PermissionTypes.LIBRARY,
-                action,
-                userGroupsPaths,
-                applyTo: libraryId,
-                ctx
-            },
-            deps
-        );
-
-        return perm !== null ? perm : getDefaultPermission(config);
+        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
     const getHeritedLibraryPermission = async ({
@@ -95,18 +95,15 @@ export default function(deps: IDeps = {}): ILibraryPermissionDomain {
             ctx
         });
 
-        const perm = await getPermissionByUserGroups(
-            {
-                type: PermissionTypes.LIBRARY,
-                action,
-                userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
-                applyTo: libraryId,
-                ctx
-            },
-            deps
-        );
+        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type: PermissionTypes.LIBRARY,
+            action,
+            userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
+            applyTo: libraryId,
+            ctx
+        });
 
-        return perm !== null ? perm : getDefaultPermission(config);
+        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
     return {

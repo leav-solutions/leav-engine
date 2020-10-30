@@ -6,11 +6,9 @@ import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, RecordAttributePermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
-import * as getDefaultPermission from './helpers/getDefaultPermission';
+import * as getDefaultPermission from './helpers/defaultPermission';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import recordAttributePermissionDomain from './recordAttributePermissionDomain';
-
-jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {

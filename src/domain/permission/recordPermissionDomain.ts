@@ -2,9 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
@@ -15,11 +13,10 @@ import {
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import getDefaultPermission from './helpers/getDefaultPermission';
-import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import {IPermissionDomain} from './permissionDomain';
 import {IGetDefaultPermissionParams} from './_types';
 
 export interface IRecordPermissionDomain {
@@ -41,14 +38,13 @@ export interface IRecordPermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission'?: IPermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.infra.library'?: ILibraryRepo;
     'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
+    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
-    'core.infra.permission'?: IPermissionRepo;
-    config?: IConfig;
 }
 
 export default function(deps: IDeps = {}): IRecordPermissionDomain {
@@ -56,9 +52,10 @@ export default function(deps: IDeps = {}): IRecordPermissionDomain {
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.infra.library': libraryRepo = null,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper = null,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
         'core.domain.attribute': attributeDomain = null,
-        'core.infra.value': valueRepo = null,
-        config = null
+        'core.infra.value': valueRepo = null
     } = deps;
 
     return {
@@ -94,7 +91,7 @@ export default function(deps: IDeps = {}): IRecordPermissionDomain {
                           userId,
                           ctx
                       })
-                    : getDefaultPermission(config);
+                    : defaultPermHelper.getDefaultPermission();
             }
 
             const treesAttrValues = await Promise.all(
@@ -147,18 +144,15 @@ export default function(deps: IDeps = {}): IRecordPermissionDomain {
             const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
                 const {applyTo, userGroups} = params;
 
-                const libPerm = await getPermissionByUserGroups(
-                    {
-                        type: PermissionTypes.LIBRARY,
-                        action,
-                        userGroupsPaths: userGroups,
-                        applyTo,
-                        ctx
-                    },
-                    deps
-                );
+                const libPerm = await permByUserGroupHelper.getPermissionByUserGroups({
+                    type: PermissionTypes.LIBRARY,
+                    action,
+                    userGroupsPaths: userGroups,
+                    applyTo,
+                    ctx
+                });
 
-                return libPerm !== null ? libPerm : getDefaultPermission(config);
+                return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
             };
 
             return treeBasedPermissionsHelper.getHeritedTreeBasedPermission(

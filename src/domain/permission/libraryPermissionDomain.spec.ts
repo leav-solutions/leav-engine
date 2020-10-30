@@ -2,16 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {LibraryPermissionsActions} from '../../_types/permissions';
-import * as getDefaultPermission from './helpers/getDefaultPermission';
-import * as getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import libraryPermissionDomain from './libraryPermissionDomain';
-
-jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
 
 describe('LibraryPermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -19,8 +16,12 @@ describe('LibraryPermissionDomain', () => {
         queryId: 'permissionDomainTest'
     };
 
+    const defaultPerm = false;
+    const mockDefaultPermHelper: Mockify<IDefaultPermissionHelper> = {
+        getDefaultPermission: global.__mockPromise(defaultPerm)
+    };
+
     describe('getLibraryPermission', () => {
-        const defaultPerm = false;
         const mockAttrRepo: Mockify<IAttributeRepo> = {
             getAttributes: global.__mockPromise({
                 list: [
@@ -71,15 +72,17 @@ describe('LibraryPermissionDomain', () => {
         };
 
         test('Return library permission', async () => {
-            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
             const permDomain = libraryPermissionDomain({
-                'core.infra.permission': mockPermRepo as IPermissionRepo,
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
-            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS_RECORD,
@@ -92,16 +95,17 @@ describe('LibraryPermissionDomain', () => {
         });
 
         test('Return default permission if nothing defined', async () => {
-            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(null)
+            };
+
             const permDomain = libraryPermissionDomain({
-                'core.infra.permission': mockPermRepo as IPermissionRepo,
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
-            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS_RECORD,
@@ -138,10 +142,14 @@ describe('LibraryPermissionDomain', () => {
             ])
         };
         test('Return herited library permission', async () => {
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
             const permDomain = libraryPermissionDomain({
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
 
             const perm = await permDomain.getHeritedLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS_RECORD,
@@ -153,12 +161,15 @@ describe('LibraryPermissionDomain', () => {
             expect(perm).toBe(true);
         });
         test('Herit of default perm if nothing defined', async () => {
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(null)
+            };
+
             const permDomain = libraryPermissionDomain({
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
-            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(false);
 
             const perm = await permDomain.getHeritedLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS_RECORD,

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IConfig} from '_types/config';
-import getDefaultPermission from './getDefaultPermission';
+import defaultPermission from './defaultPermission';
 
 describe('getDefaultPermission', () => {
     test('Return default permissions', async () => {
@@ -12,7 +12,9 @@ describe('getDefaultPermission', () => {
             }
         };
 
-        const perm = getDefaultPermission(config as IConfig);
+        const defaultPermHelper = defaultPermission({config: config as IConfig});
+
+        const perm = defaultPermHelper.getDefaultPermission();
 
         expect(perm).toBe(config.permissions.default);
     });
@@ -24,7 +26,9 @@ describe('getDefaultPermission', () => {
             }
         };
 
-        const perm = getDefaultPermission(config as IConfig);
+        const defaultPermHelper = defaultPermission({config: config as IConfig});
+
+        const perm = defaultPermHelper.getDefaultPermission();
 
         expect(perm).toBe(true);
     });

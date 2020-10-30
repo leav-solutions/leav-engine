@@ -8,14 +8,17 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {AppPermissionsActions} from '../../_types/permissions';
 import appPermissionDomain from './appPermissionDomain';
-import * as getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
-
-jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 
 describe('PermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'permissionDomainTest'
+    };
+
+    const mockDefaultPermHelper: Mockify<IDefaultPermissionHelper> = {
+        getDefaultPermission: global.__mockPromise(false)
     };
 
     describe('getAppPermission', () => {
@@ -67,14 +70,17 @@ describe('PermissionDomain', () => {
         };
 
         test('Return app permission', async () => {
-            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
             const permDomain = appPermissionDomain({
-                'core.infra.permission': mockPermRepo as IPermissionRepo,
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
 
             const perm = await permDomain.getAppPermission({
                 action: AppPermissionsActions.CREATE_ATTRIBUTE,
@@ -87,13 +93,19 @@ describe('PermissionDomain', () => {
 
         test('Return default permission if nothing defined', async () => {
             const mockPermRepo: Mockify<IPermissionRepo> = {};
+
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(null)
+            };
+
             const permDomain = appPermissionDomain({
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.permission': mockPermRepo as IPermissionRepo,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
 
             const perm = await permDomain.getAppPermission({
                 action: AppPermissionsActions.CREATE_ATTRIBUTE,
@@ -129,8 +141,15 @@ describe('PermissionDomain', () => {
             ])
         };
         test('Return herited admin permission', async () => {
-            const permDomain = appPermissionDomain({'core.infra.tree': mockTreeRepo as ITreeRepo});
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
+            const permDomain = appPermissionDomain({
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const perm = await permDomain.getHeritedAppPermission({
                 action: AppPermissionsActions.CREATE_ATTRIBUTE,
@@ -141,8 +160,15 @@ describe('PermissionDomain', () => {
             expect(perm).toBe(true);
         });
         test('Herit of default perm if nothing defined', async () => {
-            const permDomain = appPermissionDomain({'core.infra.tree': mockTreeRepo as ITreeRepo});
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(null)
+            };
+
+            const permDomain = appPermissionDomain({
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
+            });
 
             const perm = await permDomain.getHeritedAppPermission({
                 action: AppPermissionsActions.CREATE_ATTRIBUTE,

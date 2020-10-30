@@ -2,16 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributePermissionsActions} from '../../_types/permissions';
 import attributePermissionDomain from './attributePermissionDomain';
-import * as getDefaultPermission from './helpers/getDefaultPermission';
-import * as getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
-
-jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -19,8 +16,12 @@ describe('AttributePermissionDomain', () => {
         queryId: 'permissionDomainTest'
     };
 
+    const defaultPerm = false;
+    const mockDefaultPermHelper: Mockify<IDefaultPermissionHelper> = {
+        getDefaultPermission: global.__mockPromise(defaultPerm)
+    };
+
     describe('getAttributePermission', () => {
-        const defaultPerm = false;
         const mockAttrDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: global.__mockPromise({
                 id: 'user_groups',
@@ -66,15 +67,17 @@ describe('AttributePermissionDomain', () => {
         };
 
         test('Return attribute permission', async () => {
-            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
             const permDomain = attributePermissionDomain({
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.permission': mockPermRepo as IPermissionRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
-            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getAttributePermission({
                 action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
@@ -86,16 +89,17 @@ describe('AttributePermissionDomain', () => {
         });
 
         test('Return default permission if nothing defined', async () => {
-            const mockPermRepo: Mockify<IPermissionRepo> = {};
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(null)
+            };
+
             const permDomain = attributePermissionDomain({
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.permission': mockPermRepo as IPermissionRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
-            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(defaultPerm);
 
             const perm = await permDomain.getAttributePermission({
                 action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
@@ -131,10 +135,14 @@ describe('AttributePermissionDomain', () => {
             ])
         };
         test('Return herited library permission', async () => {
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
             const permDomain = attributePermissionDomain({
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
 
             const perm = await permDomain.getHeritedAttributePermission({
                 action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
@@ -147,12 +155,15 @@ describe('AttributePermissionDomain', () => {
         });
 
         test('Herit of default perm if nothing defined', async () => {
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(null)
+            };
+
             const permDomain = attributePermissionDomain({
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
-
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(null));
-            jest.spyOn(getDefaultPermission, 'default').mockReturnValue(false);
 
             const perm = await permDomain.getHeritedAttributePermission({
                 action: AttributePermissionsActions.ACCESS_ATTRIBUTE,

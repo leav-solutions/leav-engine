@@ -1,18 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import * as getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import {IPermissionDomain} from './permissionDomain';
 import recordPermissionDomain from './recordPermissionDomain';
-
-jest.mock('./helpers/getDefaultPermission', () => jest.fn().mockReturnValue(false));
 
 describe('recordPermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -21,12 +18,11 @@ describe('recordPermissionDomain', () => {
     };
 
     const defaultPerm = false;
+
     describe('getRecordPermission', () => {
         const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
             getTreeBasedPermission: global.__mockPromise(true)
         };
-
-        const mockPermDomain: Mockify<IPermissionDomain> = {};
 
         const mockLibPermDomain: Mockify<ILibraryPermissionDomain> = {
             getLibraryPermission: jest.fn().mockReturnValue(defaultPerm)
@@ -89,7 +85,6 @@ describe('recordPermissionDomain', () => {
             };
 
             const recordPermDomain = recordPermissionDomain({
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
@@ -116,7 +111,6 @@ describe('recordPermissionDomain', () => {
             };
 
             const recordPermDomain = recordPermissionDomain({
-                'core.domain.permission': mockPermDomain as IPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
@@ -139,12 +133,16 @@ describe('recordPermissionDomain', () => {
 
     describe('getHeritedRecordPermission', () => {
         test('Return herited tree permission', async () => {
-            jest.spyOn(getPermissionByUserGroups, 'default').mockReturnValue(Promise.resolve(true));
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromise(true)
+            };
+
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
                 getHeritedTreeBasedPermission: global.__mockPromise(true)
             };
 
             const recordPermDomain = recordPermissionDomain({
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
             });
 

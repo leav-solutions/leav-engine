@@ -6,8 +6,8 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {PermissionTypes} from '../../_types/permissions';
-import getDefaultPermission from './helpers/getDefaultPermission';
-import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
+import {IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {IGetAppPermissionParams, IGetHeritedAppPermissionParams} from './_types';
 
 export interface IAppPermissionDomain {
@@ -16,19 +16,21 @@ export interface IAppPermissionDomain {
 }
 
 interface IDeps {
+    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.attribute'?: IAttributeRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
-    config?: any;
 }
 
 export default function(deps: IDeps = {}): IAppPermissionDomain {
     const {
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
         'core.infra.attribute': attributeRepo = null,
         'core.infra.value': valueRepo = null,
-        'core.infra.tree': treeRepo = null,
-        config = null
+        'core.infra.tree': treeRepo = null
     } = deps;
 
     const getAppPermission = async ({action, userId, ctx}: IGetAppPermissionParams): Promise<boolean> => {
@@ -60,17 +62,14 @@ export default function(deps: IDeps = {}): IAppPermissionDomain {
             )
         );
 
-        const perm = await getPermissionByUserGroups(
-            {
-                type: PermissionTypes.APP,
-                action,
-                userGroupsPaths,
-                ctx
-            },
-            deps
-        );
+        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type: PermissionTypes.APP,
+            action,
+            userGroupsPaths,
+            ctx
+        });
 
-        return perm !== null ? perm : getDefaultPermission(config);
+        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
     const getHeritedAppPermission = async ({
@@ -88,17 +87,14 @@ export default function(deps: IDeps = {}): IAppPermissionDomain {
             ctx
         });
 
-        const perm = await getPermissionByUserGroups(
-            {
-                type: PermissionTypes.APP,
-                action,
-                userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
-                ctx
-            },
-            deps
-        );
+        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type: PermissionTypes.APP,
+            action,
+            userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
+            ctx
+        });
 
-        return perm !== null ? perm : getDefaultPermission(config);
+        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
     return {
