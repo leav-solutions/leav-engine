@@ -130,6 +130,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                             <Checkbox
                                 checked={stateItems.itemsSelected[item.id]}
                                 onClick={() => handleCheckboxClick(item)}
+                                disabled={stateItems.allSelected}
                             />
                         ) : (
                             <Dropdown
