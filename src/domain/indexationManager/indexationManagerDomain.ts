@@ -76,6 +76,25 @@ export default function({
         }
     };
 
+    const _getLinkedLibraries = async (library: string, ctx: IQueryInfos): Promise<string[]> => {
+        // get all attributes with the new library as linked library
+        const attrs = await attributeDomain.getAttributes({
+            params: {
+                filters: {linked_library: library}
+            },
+            ctx
+        });
+
+        // get all libraries using theses attributes
+        const libraries = [];
+        for (const attr of attrs.list) {
+            const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
+            libraries.push(res);
+        }
+
+        return [...new Set([].concat(...libraries))];
+    };
+
     const _onMessage = async (msg: string): Promise<void> => {
         const event: IEvent = JSON.parse(msg);
         const ctx: IQueryInfos = {
@@ -133,32 +152,15 @@ export default function({
                         await elasticsearchService.indiceDelete(data.new.id);
                     }
 
-                    // await elasticsearchService.indiceCreate(data.new.id); // FIXME:
                     await _indexRecords({library: data.new.id}, ctx);
                 }
 
                 // if label change we re-index all linked libraries
-                if (
-                    // typeof data.old !== 'undefined' &&
-                    data.new.recordIdentityConf?.label !== data.old?.recordIdentityConf?.label
-                ) {
-                    const attrs = await attributeDomain.getAttributes({
-                        params: {
-                            filters: {linked_library: data.new.id}
-                        },
-                        ctx
-                    });
+                if (data.new.recordIdentityConf?.label !== data.old?.recordIdentityConf?.label) {
+                    const linkedLibraries = await _getLinkedLibraries(data.new.id, ctx);
 
-                    let libraries = [];
-                    for (const attr of attrs.list) {
-                        const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
-                        libraries.push(res);
-                    }
-
-                    libraries = [...new Set([].concat(...libraries))];
-
-                    for (const library of libraries) {
-                        await _indexRecords({library}, ctx);
+                    for (const ll of linkedLibraries) {
+                        await _indexRecords({library: ll}, ctx);
                     }
                 }
 
@@ -190,6 +192,27 @@ export default function({
                     await elasticsearchService.update(data.libraryId, data.recordId, {
                         [data.attributeId]: data.value.new
                     });
+                }
+
+                // FIXME: A voir pour les actives
+                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
+
+                // if new value of the attribute is the label of the library
+                // we have to re-index all linked libraries
+                if (library.recordIdentityConf?.label === data.attributeId) {
+                    const linkedLibraries = await _getLinkedLibraries(data.libraryId, ctx);
+
+                    for (const ll of linkedLibraries) {
+                        let attrs = await libraryDomain.getLibraryFullTextAttributes(ll, ctx);
+                        attrs = attrs.filter(a => a.linked_library === data.libraryId);
+
+                        const filters = attrs.map(attr => ({
+                            field: attr.id,
+                            value: data.recordId
+                        }));
+
+                        await _indexRecords({library: ll, filters}, ctx);
+                    }
                 }
 
                 break;

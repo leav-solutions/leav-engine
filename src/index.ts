@@ -1,4 +1,3 @@
-import {IDbUtils} from 'infra/db/dbUtils';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import * as Config from '_types/config';
