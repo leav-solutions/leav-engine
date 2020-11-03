@@ -4,16 +4,23 @@ import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
 import themingVar from '../../themingVar';
+import {INavigationPath} from '../../_types/types';
 import CellNavigation from '../CellNavigation';
 import HeaderCellNavigation from '../HeaderCellNavigation';
 
 const Column = styled.div`
     border-right: 1px solid ${themingVar['@divider-color']};
-    min-width: 15rem;
+    min-width: 20rem;
+    height: 100%;
     display: flex;
     flex-flow: column nowrap;
 
     background: ${themingVar['@default-bg']};
+`;
+
+const ColumnContent = styled.div`
+    overflow-y: scroll;
+    height: 100%;
 `;
 
 const SpinWrapper = styled.div`
@@ -23,19 +30,6 @@ const SpinWrapper = styled.div`
     place-items: center;
 `;
 
-const sortChildren = (a, b) => {
-    const fa = a.children ? a.children.length : 0;
-    const fb = b.children ? b.children.length : 0;
-
-    if (fa < fb) {
-        return 1;
-    }
-    if (fa > fb) {
-        return -1;
-    }
-    return 0;
-};
-
 interface IColumnNavigationProps {
     treeElements: IRecordAndChildren[];
 }
@@ -43,15 +37,15 @@ interface IColumnNavigationProps {
 function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
     const {stateNavigation} = useStateNavigation();
 
-    const elementsSort = [...treeElements].sort(sortChildren);
-
     return (
         <>
             <Column>
                 <HeaderCellNavigation depth={1} />
-                {elementsSort.map(treeElement => (
-                    <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={1} />
-                ))}
+                <ColumnContent>
+                    {treeElements.map(treeElement => (
+                        <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={1} />
+                    ))}
+                </ColumnContent>
             </Column>
 
             {stateNavigation.path.map(
@@ -95,11 +89,9 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
     }, [ref, stateNavigation.recordDetail]);
 
     if (parent) {
-        if (!parent.children.length) {
+        if (!parent.children?.length) {
             return <></>;
         }
-
-        const elementsSort = [...parent.children].sort(sortChildren);
 
         if (showLoading) {
             return (
@@ -115,11 +107,11 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
         return (
             <Column>
                 <HeaderCellNavigation depth={depth} />
-                <div ref={ref}>
-                    {elementsSort?.map((treeElement, index) => (
+                <ColumnContent ref={ref}>
+                    {parent.children.map((treeElement, index) => (
                         <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
                     ))}
-                </div>
+                </ColumnContent>
             </Column>
         );
     }
@@ -128,21 +120,18 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
 };
 
 const findPathInTree = (
-    pathPart: {
-        id: string;
-        library: string;
-    },
+    pathPart: INavigationPath,
     treeElements: IRecordAndChildren[]
-): IRecordAndChildren | any => {
+): IRecordAndChildren | undefined => {
     const parent = treeElements.find(treeElement => {
-        return treeElement.record.whoAmI.id === pathPart.id;
+        return treeElement.record.whoAmI.id.toString() === pathPart.id.toString();
     });
 
     if (parent) {
         return parent;
     }
 
-    const childs = treeElements.reduce((acc, treeElement) => {
+    const children = treeElements.reduce((acc, treeElement) => {
         if (treeElement.children && treeElement.children.length) {
             return [...acc, treeElement.children];
         }
@@ -150,9 +139,16 @@ const findPathInTree = (
         return acc;
     }, [] as IRecordAndChildren[][]);
 
-    for (let child of childs) {
-        return findPathInTree(pathPart, child);
+    if (children.length) {
+        for (let child of children) {
+            const parent = findPathInTree(pathPart, child);
+            if (parent) {
+                return parent;
+            }
+        }
     }
+
+    return;
 };
 
 export default ColumnNavigation;

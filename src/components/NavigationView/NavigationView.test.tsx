@@ -48,7 +48,7 @@ describe('NavigationView', () => {
                 </MockStateNavigation>
             );
 
-            await wait(5);
+            await wait();
 
             await comp.update();
         });

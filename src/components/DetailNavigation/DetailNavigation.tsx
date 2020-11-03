@@ -50,11 +50,13 @@ const DetailNavigation = (): JSX.Element => {
     const detailRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!stateNavigation.isLoading && detailRef.current && detailRef.current.scrollIntoView) {
-            detailRef.current.scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
+        setImmediate(() => {
+            if (!stateNavigation.isLoading && detailRef.current && detailRef.current.scrollIntoView) {
+                detailRef.current.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
     }, [detailRef, stateNavigation.recordDetail, stateNavigation.isLoading]);
 
     if (!stateNavigation.recordDetail) {
@@ -75,7 +77,7 @@ const DetailNavigation = (): JSX.Element => {
                     color={recordData.color}
                     image={img && getPreviewUrl(img)}
                     tile
-                    style={{height: '20rem'}}
+                    style={{maxHeight: '20rem', maxWidth: '100%', height: 'auto'}}
                 />
             </PreviewWrapper>
             <Content>
