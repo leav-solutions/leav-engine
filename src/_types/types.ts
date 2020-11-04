@@ -255,3 +255,16 @@ export interface INavigationPath {
     library: string;
     label?: string;
 }
+
+export enum NotificationType {
+    basic = 'basic',
+    success = 'success',
+    warning = 'warning',
+    error = 'error'
+}
+
+export interface INotification {
+    content: string;
+    type: NotificationType;
+    time?: number;
+}

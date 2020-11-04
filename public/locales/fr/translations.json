@@ -186,5 +186,9 @@
                 "no-label": "Pas de label"
             }
         }
+    },
+    "notification": {
+        "base-message": "Bienvenue sur l'explorateur",
+        "active-lib": "Vous êtes sur la bibliothèque {{lib}}"
     }
 }

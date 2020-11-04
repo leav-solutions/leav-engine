@@ -1,16 +1,18 @@
 import gql from 'graphql-tag';
 
-export interface IGetActiveLibrary {
-    activeLib: {
-        id: string;
-        name: string;
-        filter: string;
-        gql: {
-            searchableFields: string;
-            query: string;
-            type: string;
-        };
+export interface IActiveLibrary {
+    id: string;
+    name: string;
+    filter: string;
+    gql: {
+        searchableFields: string;
+        query: string;
+        type: string;
     };
+}
+
+export interface IGetActiveLibrary {
+    activeLib: IActiveLibrary;
 }
 
 export const getActiveLibrary = gql`

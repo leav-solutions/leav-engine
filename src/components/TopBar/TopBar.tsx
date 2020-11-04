@@ -1,12 +1,10 @@
 import {BellOutlined, MenuOutlined, SelectOutlined} from '@ant-design/icons';
-import {useQuery} from '@apollo/client';
-import {Menu} from 'antd';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {getActiveLibrary, IGetActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import themingVars from '../../themingVar';
+import HeaderNotification from '../HeaderNotification';
 import UserMenu from './UserMenu';
-
 interface ITopBarProps {
     sideBarVisible: boolean;
     userPanelVisible: boolean;
@@ -14,12 +12,46 @@ interface ITopBarProps {
     toggleUserPanelVisible: () => void;
 }
 
-const WrapperUserMenu = styled.div`
-    width: 6rem;
+const Wrapper = styled.div`
+    display: grid;
+    grid-template-rows: 5rem;
+    grid-template-columns: 5rem 1fr repeat(2, 8rem) 10rem;
+    align-items: start;
+    justify-items: start;
+    justify-content: start;
+
+    color: white;
+    background: transparent linear-gradient(85deg, #0f2027 0%, #203a43 52%, #2c5364 100%) 0% 0% no-repeat padding-box;
+`;
+interface MenuItemProps {
+    isActive?: boolean;
+}
+const MenuItem = styled.div<MenuItemProps>`
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    transition: 275ms ease-out;
+    padding: 0 1rem;
+    background: ${props => (props.isActive ? themingVars['@primary-color'] : 'none')};
+
+    & > * {
+        margin: 0 0.5rem;
+    }
+
+    &:hover {
+        background: ${themingVars['@primary-color']};
+    }
 `;
 
-const MenuItemRight = styled(Menu.Item)`
-    float: right;
+const MenuItemUser = styled(MenuItem)`
+    justify-self: end;
+`;
+
+const WrapperHeaderNotification = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
 `;
 
 function TopBar({
@@ -30,28 +62,8 @@ function TopBar({
 }: ITopBarProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-
-    const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
-    const activeLib = dataLib?.activeLib;
-
     const triggerMenuKey = 'trigger-side-menu';
     const userPanelKey = 'trigger-user-panel';
-
-    useEffect(() => {
-        setSelectedKeys(
-            keys =>
-                !sideBarVisible
-                    ? keys.filter(key => key !== triggerMenuKey) // remove
-                    : [...keys, triggerMenuKey] // add
-        );
-        setSelectedKeys(
-            keys =>
-                !userPanelVisible
-                    ? keys.filter(key => key !== userPanelKey) // remove
-                    : [...keys, userPanelKey] // add
-        );
-    }, [sideBarVisible, userPanelVisible, setSelectedKeys]);
 
     const handleSideMenuClick = () => {
         toggleSidebarVisible();
@@ -62,28 +74,29 @@ function TopBar({
     };
 
     return (
-        <Menu mode="horizontal" theme="dark" selectedKeys={selectedKeys}>
-            <Menu.Item key={triggerMenuKey} onClick={handleSideMenuClick}>
+        <Wrapper>
+            <MenuItem key={triggerMenuKey} onClick={handleSideMenuClick} isActive={sideBarVisible}>
                 <MenuOutlined />
-            </Menu.Item>
-            <Menu.SubMenu
-                key="lib-name"
-                title={activeLib?.name !== '' ? activeLib?.name : t('menu.app_name')}
-            ></Menu.SubMenu>
+            </MenuItem>
 
-            <MenuItemRight key={userPanelKey} onClick={handleUserPanelClick}>
-                <WrapperUserMenu>
-                    <UserMenu />
-                </WrapperUserMenu>
-            </MenuItemRight>
+            <WrapperHeaderNotification key="lib-name">
+                <HeaderNotification />
+            </WrapperHeaderNotification>
 
-            <MenuItemRight key="event" icon={<BellOutlined />}>
-                {t('menu.events')}
-            </MenuItemRight>
-            <MenuItemRight key="shortcuts" icon={<SelectOutlined />}>
+            <MenuItem key="shortcuts">
+                <SelectOutlined />
                 {t('menu.shortcuts')}
-            </MenuItemRight>
-        </Menu>
+            </MenuItem>
+
+            <MenuItem key="event">
+                <BellOutlined />
+                {t('menu.events')}
+            </MenuItem>
+
+            <MenuItemUser key={userPanelKey} onClick={handleUserPanelClick} isActive={userPanelVisible}>
+                <UserMenu />
+            </MenuItemUser>
+        </Wrapper>
     );
 }
 

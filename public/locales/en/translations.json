@@ -187,5 +187,9 @@
                 "no-label": "No label"
             }
         }
+    },
+    "notification": {
+        "base-message": "Welcome to the explorer",
+        "active-lib": "You are currently on the library {{lib}}"
     }
 }

@@ -10,7 +10,7 @@ const Wrapper = styled.div`
         align-items: center;
         justify-content: space-between;
         cursor: pointer;
-        width: 100%;
+        width: 5rem;
     }
 `;
 
