@@ -1,7 +1,6 @@
-import {useQuery} from '@apollo/client';
 import React from 'react';
 import styled from 'styled-components';
-import {getUser} from '../../../queries/cache/user/userQuery';
+import {useUser} from '../../../hook/UserHook';
 
 const Wrapper = styled.div`
     & {
@@ -31,15 +30,14 @@ const CustomIcon = styled.div`
 `;
 
 function UserMenu(): JSX.Element {
-    const {data: dataUser} = useQuery(getUser);
-    const userName = dataUser?.userName ?? dataUser?.userId ?? '';
+    const [user] = useUser();
 
-    const iconContent = userName.split(' ').map(word => word[0]);
+    const iconContent = user?.userName.split(' ').map(word => word[0]);
 
     return (
         <Wrapper>
             <CustomIcon>{iconContent}</CustomIcon>
-            <div>{userName}</div>
+            <div>{user?.userName}</div>
         </Wrapper>
     );
 }

@@ -1,9 +1,8 @@
-import {useApolloClient} from '@apollo/client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useActiveLibrary} from '../../../hook/ActiveLibHook';
 import {useLang} from '../../../hook/LangHook';
-import {getUser} from '../../../queries/cache/user/userQuery';
+import {useUser} from '../../../hook/UserHook';
 import {getSysTranslationQueryLanguage} from '../../../utils';
 import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
@@ -18,11 +17,9 @@ function AppHandler(): JSX.Element {
         : [];
     const defaultLang = i18n.language ? AvailableLanguage[i18n.language as AvailableLanguage] : AvailableLanguage.en;
 
-    const client = useApolloClient();
-
-    const [, updateActiveLibrary] = useActiveLibrary();
-
     const [, updateLang] = useLang();
+    const [, updateActiveLibrary] = useActiveLibrary();
+    const [, updateUser] = useUser();
 
     updateLang({lang, availableLangs, defaultLang});
 
@@ -37,19 +34,14 @@ function AppHandler(): JSX.Element {
         }
     });
 
-    // Add user info to the cache
-
     // TODO: get real user ID and name
     const userData = {
-        id: 1,
+        id: '1',
         name: 'Admin',
         permissions: {}
     };
 
-    client.writeQuery({
-        query: getUser,
-        data: {userId: userData.id, userName: userData.name, userPermissions: userData.permissions}
-    });
+    updateUser({userId: userData.id, userName: userData.name, userPermissions: userData.permissions});
 
     return <Router />;
 }
