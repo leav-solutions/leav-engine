@@ -3,6 +3,7 @@ import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
 import {StateItemsContext} from '../../Context/StateItemsContext';
+import {useActiveLib} from '../../hook/ActiveLibHook';
 import {getActiveLibrary, IGetActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
@@ -49,8 +50,7 @@ function LibraryItemsList(): JSX.Element {
     const {data: dataLang} = useQuery(getLang);
     const {lang} = dataLang ?? {lang: []};
 
-    const {data: dataLib} = useQuery<IGetActiveLibrary>(getActiveLibrary);
-    const activeLib = dataLib?.activeLib;
+    const activeLib = useActiveLib();
 
     const {loading, data, error} = useQuery(getLibraryDetailExtendedQuery, {
         variables: {
