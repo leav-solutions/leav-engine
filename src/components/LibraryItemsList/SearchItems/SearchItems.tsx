@@ -4,7 +4,7 @@ import {Input, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLib} from '../../../hook/ActiveLibHook';
+import {useActiveLibrary} from '../../../hook/ActiveLibHook';
 import {useLang} from '../../../hook/LangHook';
 import {searchFullText} from '../../../queries/searchFullText/searchFullText';
 import {IItem} from '../../../_types/types';
@@ -21,7 +21,7 @@ function SearchItems(): JSX.Element {
 
     const [{lang}] = useLang();
 
-    const activeLib = useActiveLib();
+    const [activeLib] = useActiveLibrary();
 
     const [triggerSearch, {data, called, loading, error}] = useLazyQuery(
         searchFullText(activeLib?.gql?.type || '', stateItems.columns),

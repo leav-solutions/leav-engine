@@ -1,11 +1,10 @@
-import {useApolloClient, useLazyQuery, useQuery} from '@apollo/client';
+import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
 import {StateItemsContext} from '../../Context/StateItemsContext';
-import {useActiveLib} from '../../hook/ActiveLibHook';
+import {useActiveLibrary} from '../../hook/ActiveLibHook';
 import {useLang} from '../../hook/LangHook';
-import {getActiveLibrary, IGetActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {
@@ -45,11 +44,9 @@ function LibraryItemsList(): JSX.Element {
 
     const [state, dispatch] = useReducer(reducer, LibraryItemListInitialState);
 
-    const client = useApolloClient();
-
     const [{lang}] = useLang();
 
-    const activeLib = useActiveLib();
+    const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
 
     const {loading, data, error} = useQuery(getLibraryDetailExtendedQuery, {
         variables: {
@@ -62,6 +59,17 @@ function LibraryItemsList(): JSX.Element {
             const libId = data?.libraries?.list[0]?.id;
             const libLabel = data?.libraries?.list[0]?.label;
             const {query, type, filter, searchableFields} = data?.libraries?.list[0]?.gqlNames;
+
+            updateActiveLibrary({
+                id: libId,
+                name: localizedLabel(libLabel, lang),
+                filter,
+                gql: {
+                    searchableFields,
+                    query,
+                    type
+                }
+            });
 
             const attributes: IAttribute[] = data?.libraries?.list[0]?.attributes.reduce(
                 (acc: IAttribute[], attribute) => {
@@ -90,22 +98,6 @@ function LibraryItemsList(): JSX.Element {
                 []
             );
 
-            client.writeQuery<IGetActiveLibrary>({
-                query: getActiveLibrary,
-                data: {
-                    activeLib: {
-                        id: libId,
-                        name: localizedLabel(libLabel, lang),
-                        filter,
-                        gql: {
-                            searchableFields,
-                            query,
-                            type
-                        }
-                    }
-                }
-            });
-
             dispatch({
                 type: LibraryItemListReducerActionTypes.SET_LIB_INFOS,
                 itemsSortField: 'id', // force the first sort by id
@@ -118,16 +110,16 @@ function LibraryItemsList(): JSX.Element {
                 columns: []
             });
         }
-    }, [dispatch, loading, data, libId, activeLib, lang, client]);
+    }, [dispatch, updateActiveLibrary, loading, data, libId, activeLibrary, lang]);
 
     const [
         getRecords,
         {called: calledItem, loading: loadingItem, data: dataItem, error: errorItem, refetch}
     ] = useLazyQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
-        activeLib?.filter && activeLib.gql.query && activeLib.gql.searchableFields
+        activeLibrary?.filter && activeLibrary.gql.query && activeLibrary.gql.searchableFields
             ? getRecordsFromLibraryQuery(
-                  activeLib.gql.query || '',
-                  activeLib.filter,
+                  activeLibrary.gql.query || '',
+                  activeLibrary.filter,
                   state.columns.filter(col => state.attributes.find(att => att.id === col.id))
               )
             : getLibraryDetailExtendedQuery,
@@ -144,10 +136,10 @@ function LibraryItemsList(): JSX.Element {
 
     useEffect(() => {
         if (!state.searchFullTextActive) {
-            if (!loadingItem && calledItem && dataItem && client && activeLib?.filter) {
-                const libQuery = activeLib.gql.query;
+            if (!loadingItem && calledItem && dataItem && activeLibrary?.filter) {
+                const libQuery = activeLibrary.gql.query;
 
-                const itemsFromQuery = dataItem ? dataItem[activeLib.gql.query || ''].list : [];
+                const itemsFromQuery = dataItem ? dataItem[activeLibrary.gql.query || ''].list : [];
 
                 const items = manageItems({items: itemsFromQuery, lang, columns: state.columns});
 
@@ -172,10 +164,9 @@ function LibraryItemsList(): JSX.Element {
         loadingItem,
         dataItem,
         calledItem,
-        client,
         lang,
         libId,
-        activeLib,
+        activeLibrary,
         state.attributes,
         state.columns,
         state.searchFullTextActive

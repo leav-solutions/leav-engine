@@ -4,7 +4,7 @@ import {Drawer, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink, useLocation} from 'react-router-dom';
-import {useActiveLib} from '../../hook/ActiveLibHook';
+import {useActiveLibrary} from '../../hook/ActiveLibHook';
 import {useLang} from '../../hook/LangHook';
 import {getActiveTree, IGetActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
@@ -22,7 +22,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
 
     const activeKeys = location.pathname.split('/');
 
-    const activeLib = useActiveLib();
+    const [activeLib] = useActiveLibrary();
 
     const {data: dataTree} = useQuery<IGetActiveTree>(getActiveTree);
     const activeTree = dataTree?.activeTree;

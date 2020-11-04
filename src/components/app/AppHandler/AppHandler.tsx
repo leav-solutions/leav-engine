@@ -1,8 +1,8 @@
 import {useApolloClient} from '@apollo/client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {useActiveLibrary} from '../../../hook/ActiveLibHook';
 import {useLang} from '../../../hook/LangHook';
-import {getActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {getUser} from '../../../queries/cache/user/userQuery';
 import {getSysTranslationQueryLanguage} from '../../../utils';
 import {AvailableLanguage} from '../../../_types/types';
@@ -20,24 +20,20 @@ function AppHandler(): JSX.Element {
 
     const client = useApolloClient();
 
+    const [, updateActiveLibrary] = useActiveLibrary();
+
     const [, updateLang] = useLang();
 
     updateLang({lang, availableLangs, defaultLang});
 
-    // Add active library info to the cache
-    client.writeQuery({
-        query: getActiveLibrary,
-        data: {
-            activeLib: {
-                id: '',
-                name: '',
-                filter: '',
-                gql: {
-                    searchableFields: '',
-                    query: '',
-                    type: ''
-                }
-            }
+    updateActiveLibrary({
+        id: '',
+        name: '',
+        filter: '',
+        gql: {
+            searchableFields: '',
+            query: '',
+            type: ''
         }
     });
 
