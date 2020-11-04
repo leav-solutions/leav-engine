@@ -1,5 +1,6 @@
 import {mount} from 'enzyme';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import Router from '../../Router';
 import AppHandler from './AppHandler';
@@ -14,11 +15,15 @@ jest.mock(
 
 describe('AppHandler', () => {
     test('Should contain Router', async () => {
-        const comp = mount(
-            <MockedProviderWithFragments>
-                <AppHandler />
-            </MockedProviderWithFragments>
-        );
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <AppHandler />
+                </MockedProviderWithFragments>
+            );
+        });
 
         expect(comp.find(Router)).toHaveLength(1);
     });

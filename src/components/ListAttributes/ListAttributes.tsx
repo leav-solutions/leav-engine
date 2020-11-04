@@ -1,9 +1,8 @@
-import {useQuery} from '@apollo/client';
 import {Input, List} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import {getLang} from '../../queries/cache/lang/getLangQuery';
+import {useLang} from '../../hook/LangHook';
 import themingVar from '../../themingVar.js';
 import {localizedLabel} from '../../utils';
 import {IAttribute, IAttributesChecked, IAttributeSelected, IOriginAttributeData, ITreeData} from '../../_types/types';
@@ -72,8 +71,7 @@ function ListAttributes({
         attributesChecked: attributesChecked ?? []
     });
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     const handleSearchChange = (search: string) => {
         let attributesFilter = attrs.filter(

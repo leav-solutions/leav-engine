@@ -1,10 +1,9 @@
 import {ExportOutlined, HeartOutlined, InfoCircleOutlined, ToolOutlined} from '@ant-design/icons';
-import {useQuery} from '@apollo/client';
 import {Card, Divider, Drawer} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
-import {getLang} from '../../queries/cache/lang/getLangQuery';
+import {useLang} from '../../hook/LangHook';
 import {localizedLabel} from '../../utils';
 import {ITree} from '../../_types/types';
 
@@ -17,8 +16,7 @@ function TreeItem({tree}: ITreeItemProps): JSX.Element {
 
     const {t} = useTranslation();
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     const history = useHistory();
 

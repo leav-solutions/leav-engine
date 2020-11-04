@@ -1,12 +1,11 @@
 import {CheckOutlined, EditOutlined, HeartOutlined, SettingOutlined} from '@ant-design/icons';
-import {useQuery} from '@apollo/client';
 import {Checkbox, Dropdown, Menu, Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Resizable} from 'react-resizable';
 import styled from 'styled-components';
 import {infosCol} from '../../../constants/constants';
-import {getLang} from '../../../queries/cache/lang/getLangQuery';
+import {useLang} from '../../../hook/LangHook';
 import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
 import {AttributeFormat, AttributeType, IItem, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
 import {
@@ -36,8 +35,7 @@ const initialColumnsLimit = 5;
 function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTableProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     const [tableColumns, setTableColumn] = useState<ITableHeader[]>([]);
     const [tableData, setTableData] = useState<any[]>([]);

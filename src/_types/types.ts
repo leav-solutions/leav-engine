@@ -268,3 +268,5 @@ export interface INotification {
     type: NotificationType;
     time?: number;
 }
+
+export type ILang = string[];

@@ -5,8 +5,8 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink, useLocation} from 'react-router-dom';
 import {useActiveLib} from '../../hook/ActiveLibHook';
+import {useLang} from '../../hook/LangHook';
 import {getActiveTree, IGetActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
-import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import {localizedLabel} from '../../utils';
 import {ILibrary} from '../../_types/types';
@@ -27,8 +27,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
     const {data: dataTree} = useQuery<IGetActiveTree>(getActiveTree);
     const activeTree = dataTree?.activeTree;
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     const [libraries, setLibraries] = useState<ILibrary[]>([]);
 

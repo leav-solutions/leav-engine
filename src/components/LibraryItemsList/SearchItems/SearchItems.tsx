@@ -1,11 +1,11 @@
 import {CloseOutlined} from '@ant-design/icons';
-import {useLazyQuery, useQuery} from '@apollo/client';
+import {useLazyQuery} from '@apollo/client';
 import {Input, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLib} from '../../../hook/ActiveLibHook';
-import {getLang} from '../../../queries/cache/lang/getLangQuery';
+import {useLang} from '../../../hook/LangHook';
 import {searchFullText} from '../../../queries/searchFullText/searchFullText';
 import {IItem} from '../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
@@ -19,8 +19,7 @@ function SearchItems(): JSX.Element {
     const [search, setSearch] = useState<string>('');
     const [updateSearch, setUpdateSearch] = useState(false);
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     const activeLib = useActiveLib();
 

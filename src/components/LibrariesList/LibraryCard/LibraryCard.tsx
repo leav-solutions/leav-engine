@@ -1,9 +1,8 @@
 import {ExportOutlined, HeartOutlined, InfoCircleOutlined, ToolOutlined} from '@ant-design/icons';
-import {useQuery} from '@apollo/client';
 import {Card, Col} from 'antd';
 import React from 'react';
 import {useHistory} from 'react-router-dom';
-import {getLang} from '../../../queries/cache/lang/getLangQuery';
+import {useLang} from '../../../hook/LangHook';
 import themingVar from '../../../themingVar.js';
 import {localizedLabel} from '../../../utils';
 import {ILibrary} from '../../../_types/types';
@@ -25,9 +24,7 @@ function LibraryCard({lib, active}: ILibraryCardProps): JSX.Element {
         history.push(`/library/list/${lib.id}/${lib.gqlNames.query}/${lib.gqlNames.filter}`);
     };
 
-    const {data: dataLang} = useQuery(getLang);
-    // handle case dataLang is null
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     return (
         <Col span={6}>

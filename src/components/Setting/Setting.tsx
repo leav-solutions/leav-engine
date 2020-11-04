@@ -1,10 +1,9 @@
 import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
-import {useQuery} from '@apollo/client';
 import {Card, Col, PageHeader, Row, Select, Switch} from 'antd';
 import React, {useState} from 'react';
 import {useThemeSwitcher} from 'react-css-theme-switcher';
 import {useTranslation} from 'react-i18next';
-import {getAvailableLangs, getLangAndDefaultLang} from '../../queries/cache/lang/getLangQuery';
+import {useLang} from '../../hook/LangHook';
 import {AvailableLanguage} from '../../_types/types';
 
 function Setting(): JSX.Element {
@@ -13,8 +12,7 @@ function Setting(): JSX.Element {
     const {switcher, themes} = useThemeSwitcher();
     const [darkMode, setDarkMode] = useState(false);
 
-    const {data: dataLang, client} = useQuery(getAvailableLangs);
-    const {availableLangs, lang} = dataLang ?? {availableLangs: [], lang: []};
+    const [{lang, availableLangs}, updateLang] = useLang();
 
     const langOption = availableLangs.map((l: string) => ({
         key: l,
@@ -37,12 +35,9 @@ function Setting(): JSX.Element {
             ? AvailableLanguage[i18nClient.language as AvailableLanguage]
             : AvailableLanguage.en;
 
-        client.writeQuery({
-            query: getLangAndDefaultLang,
-            data: {
-                lang: newLang,
-                defaultLang
-            }
+        updateLang({
+            lang: newLang,
+            defaultLang
         });
     };
 

@@ -2,8 +2,8 @@ import {useApolloClient, useQuery} from '@apollo/client';
 import React, {useEffect, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
 import {StateNavigationContext} from '../../Context/StateNavigationContext';
+import {useLang} from '../../hook/LangHook';
 import {getActiveTree, IGetActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
-import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getTreeListQuery, IGetTreeListQuery, IGetTreeListQueryVar} from '../../queries/trees/getTreeListQuery';
 import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';
 import {localizedLabel} from '../../utils';
@@ -20,8 +20,7 @@ function Navigation(): JSX.Element {
 
     const client = useApolloClient();
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     const {data, loading} = useQuery<IGetTreeListQuery, IGetTreeListQueryVar>(getTreeListQuery, {
         variables: {treeId}

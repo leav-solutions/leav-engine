@@ -4,8 +4,8 @@ import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
 import {StateItemsContext} from '../../Context/StateItemsContext';
 import {useActiveLib} from '../../hook/ActiveLibHook';
+import {useLang} from '../../hook/LangHook';
 import {getActiveLibrary, IGetActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
-import {getLang} from '../../queries/cache/lang/getLangQuery';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {
@@ -47,8 +47,7 @@ function LibraryItemsList(): JSX.Element {
 
     const client = useApolloClient();
 
-    const {data: dataLang} = useQuery(getLang);
-    const {lang} = dataLang ?? {lang: []};
+    const [{lang}] = useLang();
 
     const activeLib = useActiveLib();
 

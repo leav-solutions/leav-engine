@@ -4,7 +4,7 @@ import {Button, Card, Col, Divider, Row} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
-import {getLang} from '../../../queries/cache/lang/getLangQuery';
+import {useLang} from '../../../hook/LangHook';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import {localizedLabel} from '../../../utils';
 import {ILabel} from '../../../_types/types';
@@ -32,7 +32,7 @@ function LibraryDetail({libId, libQueryName, filterName}: ILibraryDetailProps): 
     const {t} = useTranslation();
     const [details, setDetails] = useState<IDetails>();
 
-    const {data: dataLang} = useQuery(getLang);
+    const [dataLang] = useLang();
 
     const {loading, data, error} = useQuery(getLibraryDetailQuery(libQueryName), {
         variables: {
