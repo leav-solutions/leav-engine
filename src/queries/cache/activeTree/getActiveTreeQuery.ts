@@ -1,11 +1,13 @@
 import gql from 'graphql-tag';
 
+export interface IActiveTree {
+    id: string;
+    libraries: {id: string}[];
+    label: string;
+}
+
 export interface IGetActiveTree {
-    activeTree?: {
-        id: string;
-        libraries: {id: string}[];
-        label: string;
-    };
+    activeTree?: IActiveTree;
 }
 
 export const getActiveTree = gql`

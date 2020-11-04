@@ -1,8 +1,7 @@
-import {useQuery} from '@apollo/client';
 import React from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {getActiveTree, IGetActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
+import {useActiveTree} from '../../hook/ActiveTreeHook';
 import {setPath} from '../../Reducer/NavigationReducer';
 import themingVar from '../../themingVar';
 
@@ -27,8 +26,7 @@ function HeaderCellNavigation({depth}: IHeaderCellNavigationProps): JSX.Element 
 
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
-    const {data: dataTree} = useQuery<IGetActiveTree>(getActiveTree);
-    const activeTree = dataTree?.activeTree;
+    const [activeTree] = useActiveTree();
 
     const currentPath = stateNavigation.path[currentPositionInPath];
 
