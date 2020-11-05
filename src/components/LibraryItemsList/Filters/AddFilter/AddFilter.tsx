@@ -129,6 +129,7 @@ function AddFilter({
     };
 
     const handleCancel = () => {
+        setAttributesChecked([]);
         setShowAttr(false);
     };
 

@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
+import {useActiveLibrary} from '../../../hook/ActiveLibHook';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
@@ -90,6 +91,8 @@ interface IFiltersProps {
 
 function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
     const {t} = useTranslation();
+
+    const [activeLibrary] = useActiveLibrary();
 
     const [showAttr, setShowAttr] = useState(false);
 
@@ -228,6 +231,12 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
             return so;
         });
     }, [filterOperator]);
+
+    // reset filter when change library
+    const activeLibraryId = activeLibrary?.id;
+    useEffect(() => {
+        setFilters([]);
+    }, [activeLibraryId, setFilters]);
 
     const handleHide = () => {
         dispatchItems({

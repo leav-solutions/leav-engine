@@ -29,7 +29,6 @@ function Navigation(): JSX.Element {
         const currentTree = data?.trees.list[0];
         if (!loading && currentTree) {
             // set Active Tree Data
-
             updateActiveTree({
                 id: currentTree.id,
                 label: localizedLabel(currentTree.label, lang),
