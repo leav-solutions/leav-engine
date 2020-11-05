@@ -47,7 +47,9 @@
         "setting": "Paramètres",
         "shortcuts": "Raccourcis",
         "libraries": "Bibliothèques",
-        "navigation": "Navigation"
+        "trees": "Arbres",
+        "navigation": "Navigation",
+        "recent": "Récent"
     },
     "lib_list": {
         "header": "Bibliothèques"

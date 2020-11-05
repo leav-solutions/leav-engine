@@ -36,7 +36,9 @@
         "setting": "Setting",
         "shortcuts": "Shortcuts",
         "libraries": "Libraries",
-        "navigation": "Navigation"
+        "trees": "Trees",
+        "navigation": "Navigation",
+        "recent": "Recent"
     },
     "home": {
         "title": "Home"

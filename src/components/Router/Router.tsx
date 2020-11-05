@@ -10,6 +10,9 @@ const PageWrapper = styled.div`
     height: 100%;
     padding: 0;
     margin: 0;
+
+    display: flex;
+    flex-flow: column;
 `;
 
 const TopBarWrapper = styled.div`

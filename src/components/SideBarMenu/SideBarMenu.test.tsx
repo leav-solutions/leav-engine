@@ -6,7 +6,10 @@ import {act} from 'react-dom/test-utils';
 import {BrowserRouter} from 'react-router-dom';
 import wait from 'waait';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
-import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
+import {
+    getLibrariesAndTreesListQuery,
+    IGetLibrariesAndTreesListQuery
+} from '../../queries/LibrariesAndTrees/getLibrariesAndTreesList';
 import SideBarMenu from './SideBarMenu';
 
 describe('SideBarMenu', () => {
@@ -28,28 +31,49 @@ describe('SideBarMenu', () => {
         }
     });
 
+    const queryMocks: IGetLibrariesAndTreesListQuery = {
+        trees: {
+            list: [
+                {
+                    id: 'treeId',
+                    label: {
+                        fr: 'treeLabel',
+                        en: 'treeLabel'
+                    },
+                    libraries: [
+                        {
+                            id: 'treeLibraryId',
+                            label: {
+                                fr: 'treeLibraryLabel',
+                                en: 'treeLibraryLabel'
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        libraries: {
+            list: [
+                {
+                    id: 'testId',
+                    label: {fr: 'testLabel', en: 'testLabel'},
+                    gqlNames: {
+                        query: 'testGqlQuery',
+                        filter: 'testGqlFilter',
+                        searchableFields: 'testGqlSearchableFields'
+                    }
+                }
+            ]
+        }
+    };
+
     const mocks = [
         {
             request: {
-                query: getLibrariesListQuery
+                query: getLibrariesAndTreesListQuery
             },
             result: {
-                data: {
-                    libraries: {
-                        list: [
-                            {
-                                id: 'testId',
-                                label: {fr: 'testLabel', en: 'testLabel'},
-                                gqlNames: {
-                                    query: 'testGqlQuery',
-                                    type: 'testGqlType',
-                                    filter: 'testGqlFilter',
-                                    searchableFields: 'testGqlSearchableFields'
-                                }
-                            }
-                        ]
-                    }
-                }
+                data: queryMocks
             }
         }
     ];
@@ -70,7 +94,7 @@ describe('SideBarMenu', () => {
         expect(comp.text()).toContain('testLibName');
     });
 
-    test('should display label from libraries', async () => {
+    test('should have sub-menu for libraries and trees', async () => {
         let comp: any;
 
         await act(async () => {
@@ -87,6 +111,9 @@ describe('SideBarMenu', () => {
             comp.update();
         });
 
-        expect(comp.text()).toContain('testLabel');
+        expect(comp.text()).toContain('sidebar.recent');
+        expect(comp.text()).toContain('sidebar.shortcuts');
+        expect(comp.text()).toContain('sidebar.libraries');
+        expect(comp.text()).toContain('sidebar.trees');
     });
 });
