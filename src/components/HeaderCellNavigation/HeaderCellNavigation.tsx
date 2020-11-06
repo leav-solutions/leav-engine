@@ -39,7 +39,7 @@ function HeaderCellNavigation({depth}: IHeaderCellNavigationProps): JSX.Element 
     }
 
     const goToPath = () => {
-        dispatchNavigation(setPath(stateNavigation.path.slice(0, currentPositionInPath)));
+        dispatchNavigation(setPath(stateNavigation.path.slice(0, currentPositionInPath + 1)));
     };
 
     return <HeaderCell onClick={goToPath}>{currentPath.label || currentPath.id}</HeaderCell>;
