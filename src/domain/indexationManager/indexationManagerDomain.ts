@@ -54,14 +54,22 @@ export default function({
                             ctx
                         });
 
-                        // if simple link replace id by record label
-                        if (typeof fta.linked_library !== 'undefined') {
-                            const recordIdentity = await recordDomain.getRecordIdentity(
-                                {id: (val as IValue).value.id, library: fta.linked_library},
-                                ctx
-                            );
-
-                            (val as IValue).value = recordIdentity.label || (val as IValue).value.id;
+                        if (fta.type === AttributeTypes.SIMPLE_LINK || fta.type === AttributeTypes.ADVANCED_LINK) {
+                            if (Array.isArray(val)) {
+                                for (const v of val) {
+                                    const recordIdentity = await recordDomain.getRecordIdentity(
+                                        {id: v.value.id, library: fta.linked_library},
+                                        ctx
+                                    );
+                                    v.value = recordIdentity.label || v.value.id;
+                                }
+                            } else {
+                                const recordIdentity = await recordDomain.getRecordIdentity(
+                                    {id: val.value.id, library: fta.linked_library},
+                                    ctx
+                                );
+                                val.value = recordIdentity.label || val.value.id;
+                            }
                         }
 
                         return {
@@ -186,11 +194,21 @@ export default function({
                     // if simple link replace id by record label
                     const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
                     if (attr.type === AttributeTypes.SIMPLE_LINK || attr.type === AttributeTypes.ADVANCED_LINK) {
-                        const recordIdentity = await recordDomain.getRecordIdentity(
-                            {id: String(data.value.new), library: attr.linked_library},
-                            ctx
-                        );
-                        data.value.new = recordIdentity.label || String(data.value.new);
+                        if (Array.isArray(data.value.new)) {
+                            for (const v of data.value.new) {
+                                const recordIdentity = await recordDomain.getRecordIdentity(
+                                    {id: v.value.id, library: attr.linked_library},
+                                    ctx
+                                );
+                                v.value = recordIdentity.label || v.value.id;
+                            }
+                        } else {
+                            const recordIdentity = await recordDomain.getRecordIdentity(
+                                {id: String(data.value.new), library: attr.linked_library},
+                                ctx
+                            );
+                            data.value.new = recordIdentity.label || String(data.value.new);
+                        }
                     }
 
                     await elasticsearchService.update(data.libraryId, data.recordId, {
