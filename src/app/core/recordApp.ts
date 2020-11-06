@@ -110,15 +110,6 @@ export default function({
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
                     }
-
-                    extend type Query {
-                        search(
-                            library: ID!, 
-                            query: String!,
-                            from: Int,
-                            size: Int
-                        ): RecordsList!
-                    }
                 `,
                 resolvers: {
                     Record: {
@@ -135,11 +126,6 @@ export default function({
                         },
                         async indexRecords(parent, {libraryId, records}, ctx): Promise<boolean> {
                             return indexationManagerApp.indexDatabase(ctx, libraryId, records);
-                        }
-                    },
-                    Query: {
-                        async search(parent, {library, query, from, size}, ctx): Promise<IList<IRecord>> {
-                            return recordDomain.search({library, query, from, size, ctx});
                         }
                     }
                 }
