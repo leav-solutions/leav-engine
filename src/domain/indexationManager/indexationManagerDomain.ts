@@ -11,6 +11,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {AttributeTypes} from '../../_types/attribute';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -118,7 +119,10 @@ export default function({
                 for (const [key, value] of Object.entries(data.new)) {
                     const attrProps = await attributeDomain.getAttributeProperties({id: key, ctx});
 
-                    if (typeof attrProps.linked_library !== 'undefined') {
+                    if (
+                        attrProps.type === AttributeTypes.SIMPLE_LINK ||
+                        attrProps.type === AttributeTypes.ADVANCED_LINK
+                    ) {
                         const recordIdentity = await recordDomain.getRecordIdentity(
                             {id: value as string, library: attrProps.linked_library},
                             ctx
@@ -181,7 +185,7 @@ export default function({
                 } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
                     // if simple link replace id by record label
                     const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
-                    if (typeof attr.linked_library !== 'undefined') {
+                    if (attr.type === AttributeTypes.SIMPLE_LINK || attr.type === AttributeTypes.ADVANCED_LINK) {
                         const recordIdentity = await recordDomain.getRecordIdentity(
                             {id: String(data.value.new), library: attr.linked_library},
                             ctx
