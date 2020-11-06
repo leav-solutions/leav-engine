@@ -5,7 +5,6 @@ import indexationManager from '././indexationManagerDomain';
 import {IQueryInfos} from '_types/queryInfos';
 import {getConfig} from '../../config';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 
@@ -68,15 +67,10 @@ describe('Indexation Manager', () => {
             getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
         };
 
-        // const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
-        //     send: jest.fn()
-        // };
-
         const indexation = indexationManager({
             config: conf as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.library': mockLibraryDomain as ILibraryDomain,
-            // 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
             'core.infra.elasticsearch.elasticsearchService': mockElasticsearchService as IElasticsearchService
         });
 
