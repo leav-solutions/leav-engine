@@ -9,7 +9,8 @@ import {
     LibraryPermissionsActions,
     PermissionsActions,
     PermissionTypes,
-    RecordAttributePermissionsActions
+    RecordAttributePermissionsActions,
+    TreePermissionsActions
 } from '_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITreeNode} from '_types/tree';
@@ -67,9 +68,23 @@ export interface IGetLibraryPermissionParams {
     ctx: IQueryInfos;
 }
 
+export interface IGetTreePermissionParams {
+    action: TreePermissionsActions;
+    treeId: string;
+    userId: string;
+    ctx: IQueryInfos;
+}
+
 export interface IGetHeritedLibraryPermissionParams {
     action: LibraryPermissionsActions;
     libraryId: string;
+    userGroupId: string;
+    ctx: IQueryInfos;
+}
+
+export interface IGetHeritedTreePermissionParams {
+    action: TreePermissionsActions;
+    treeId: string;
     userGroupId: string;
     ctx: IQueryInfos;
 }

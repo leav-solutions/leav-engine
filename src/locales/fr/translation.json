@@ -105,6 +105,9 @@
         "access_attribute": "Voir l'attribut",
         "create_value": "Créer une valeur",
         "edit_value": "Éditer une valeur",
-        "delete_value": "Supprimer une valeur"
+        "delete_value": "Supprimer une valeur",
+        "access_tree": "Accéder",
+        "edit_tree": "Éditer",
+        "edit_children": "Éditer les enfants"
     }
 }

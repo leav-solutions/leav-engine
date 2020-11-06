@@ -8,7 +8,8 @@ export enum PermissionTypes {
     RECORD_ATTRIBUTE = 'record_attribute',
     APP = 'app',
     LIBRARY = 'library',
-    ATTRIBUTE = 'attribute'
+    ATTRIBUTE = 'attribute',
+    TREE = 'tree'
 }
 
 export enum LibraryPermissionsActions {
@@ -39,6 +40,12 @@ export enum AttributePermissionsActions {
     DELETE_VALUE = 'delete_value'
 }
 
+export enum TreePermissionsActions {
+    ACCESS_TREE = 'access_tree',
+    EDIT_TREE = 'edit_tree',
+    EDIT_CHILDREN = 'edit_children'
+}
+
 export enum AppPermissionsActions {
     ACCESS_LIBRARIES = 'app_access_libraries',
     CREATE_LIBRARY = 'app_create_library',
@@ -66,7 +73,8 @@ export type PermissionsActions =
     | RecordPermissionsActions
     | RecordAttributePermissionsActions
     | AppPermissionsActions
-    | AttributePermissionsActions;
+    | AttributePermissionsActions
+    | TreePermissionsActions;
 
 export interface ILabeledPermissionsAction {
     label: ISystemTranslation;

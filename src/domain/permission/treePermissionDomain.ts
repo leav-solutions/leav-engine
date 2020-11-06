@@ -1,30 +1,25 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {PermissionTypes} from '../../_types/permissions';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
-import {IGetHeritedLibraryPermissionParams, IGetLibraryPermissionParams} from './_types';
+import {IGetHeritedTreePermissionParams, IGetTreePermissionParams} from './_types';
 
-export interface ILibraryPermissionDomain {
-    getLibraryPermission(params: IGetLibraryPermissionParams): Promise<boolean>;
-    getHeritedLibraryPermission({action, userGroupId, ctx}: IGetHeritedLibraryPermissionParams): Promise<boolean>;
+export interface ITreePermissionDomain {
+    getTreePermission(params: IGetTreePermissionParams): Promise<boolean>;
+    getHeritedTreePermission(params: IGetHeritedTreePermissionParams): Promise<boolean>;
 }
 
 interface IDeps {
     'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.infra.permission'?: IPermissionRepo;
     'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
+    'core.infra.tree'?: ITreeRepo;
 }
 
-export default function(deps: IDeps = {}): ILibraryPermissionDomain {
+export default function(deps: IDeps = {}): ITreePermissionDomain {
     const {
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
@@ -33,12 +28,7 @@ export default function(deps: IDeps = {}): ILibraryPermissionDomain {
         'core.infra.tree': treeRepo = null
     } = deps;
 
-    const getLibraryPermission = async ({
-        action,
-        libraryId,
-        userId,
-        ctx
-    }: IGetLibraryPermissionParams): Promise<boolean> => {
+    const getTreePermission = async ({action, treeId, userId, ctx}: IGetTreePermissionParams): Promise<boolean> => {
         const userGroupAttr = await attributeRepo.getAttributes({
             params: {
                 filters: {id: 'user_groups'},
@@ -54,6 +44,7 @@ export default function(deps: IDeps = {}): ILibraryPermissionDomain {
             attribute: userGroupAttr.list[0],
             ctx
         });
+
         const userGroupsPaths = await Promise.all(
             userGroups.map(userGroupVal =>
                 treeRepo.getElementAncestors({
@@ -66,23 +57,24 @@ export default function(deps: IDeps = {}): ILibraryPermissionDomain {
                 })
             )
         );
+
         const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
-            type: PermissionTypes.LIBRARY,
+            type: PermissionTypes.TREE,
             action,
             userGroupsPaths,
-            applyTo: libraryId,
+            applyTo: treeId,
             ctx
         });
 
         return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
-    const getHeritedLibraryPermission = async ({
+    const getHeritedTreePermission = async ({
         action,
-        libraryId,
+        treeId,
         userGroupId,
         ctx
-    }: IGetHeritedLibraryPermissionParams): Promise<boolean> => {
+    }: IGetHeritedTreePermissionParams): Promise<boolean> => {
         // Get perm for user group's parent
         const groupAncestors = await treeRepo.getElementAncestors({
             treeId: 'users_groups',
@@ -94,10 +86,10 @@ export default function(deps: IDeps = {}): ILibraryPermissionDomain {
         });
 
         const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
-            type: PermissionTypes.LIBRARY,
+            type: PermissionTypes.TREE,
             action,
             userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
-            applyTo: libraryId,
+            applyTo: treeId,
             ctx
         });
 
@@ -105,7 +97,7 @@ export default function(deps: IDeps = {}): ILibraryPermissionDomain {
     };
 
     return {
-        getLibraryPermission,
-        getHeritedLibraryPermission
+        getTreePermission,
+        getHeritedTreePermission
     };
 }

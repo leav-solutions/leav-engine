@@ -16,13 +16,15 @@ import {
     LibraryPermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
-    RecordPermissionsActions
+    RecordPermissionsActions,
+    TreePermissionsActions
 } from '../../_types/permissions';
 import {IAppPermissionDomain} from './appPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
+import {ITreePermissionDomain} from './treePermissionDomain';
 import {
     IGetActionsByTypeParams,
     IGetHeritedPermissionsParams,
@@ -67,6 +69,7 @@ interface IDeps {
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
+    'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
     translator?: i18n;
     config?: IConfig;
@@ -81,6 +84,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
+        'core.domain.permission.tree': treePermissionDomain = null,
         'core.infra.permission': permissionRepo = null,
         config = null
     }: IDeps = deps;
@@ -178,6 +182,15 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
+            case PermissionTypes.TREE:
+                action = action as TreePermissionsActions;
+                perm = await treePermissionDomain.getHeritedTreePermission({
+                    action,
+                    treeId: applyTo,
+                    userGroupId,
+                    ctx
+                });
+                break;
         }
 
         return perm;
@@ -255,6 +268,15 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
+            case PermissionTypes.TREE:
+                action = action as TreePermissionsActions;
+                perm = await treePermissionDomain.getTreePermission({
+                    action,
+                    treeId: applyTo,
+                    userId,
+                    ctx
+                });
+                break;
         }
 
         return perm;
@@ -281,6 +303,9 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
                 perms = Object.values(RecordAttributePermissionsActions);
+                break;
+            case PermissionTypes.TREE:
+                perms = Object.values(TreePermissionsActions);
                 break;
         }
 

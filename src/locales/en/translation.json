@@ -105,6 +105,9 @@
         "access_attribute": "Access attribute",
         "create_value": "Create value",
         "edit_value": "Edit value",
-        "delete_value": "Delete value"
+        "delete_value": "Delete value",
+        "access_tree": "Access",
+        "edit_tree": "Edit",
+        "edit_children": "Edit children"
     }
 }
