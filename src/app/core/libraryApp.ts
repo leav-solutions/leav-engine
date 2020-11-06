@@ -252,14 +252,15 @@ export default function({
                             sort: ${_getLibGqlSortType(libTypeName)}
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
-                            retrieveInactive: Boolean
+                            retrieveInactive: Boolean,
+                            searchQuery: String
                         ): ${_getLibGqlListType(libTypeName)}!
                     }
                 `;
 
                 baseSchema.resolvers.Query[libQueryName] = async (
                     parent,
-                    {filters, sort, version, pagination, retrieveInactive = false},
+                    {filters, sort, version, pagination, retrieveInactive = false, searchQuery},
                     ctx,
                     info
                 ): Promise<IList<IRecord>> => {
@@ -290,7 +291,8 @@ export default function({
                             pagination,
                             options: {version: formattedVersion},
                             withCount: fields.includes('totalCount'),
-                            retrieveInactive
+                            retrieveInactive,
+                            searchQuery
                         },
                         ctx
                     });

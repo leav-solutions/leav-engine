@@ -56,6 +56,7 @@ export interface IFindRecordParams {
     pagination?: IPaginationParams | ICursorPaginationParams;
     withCount?: boolean;
     retrieveInactive?: boolean;
+    searchQuery?: string;
 }
 
 const allowedTypeOperator = {
@@ -419,40 +420,69 @@ export default function({
             return recordRepo.search(library, query, from, size);
         },
         async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
-            const {library, filters, sort, pagination, withCount, retrieveInactive = false} = params;
+            const {library, sort, pagination, withCount, retrieveInactive = false, searchQuery} = params;
+            let {filters = []} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
+            let searchFilters: IRecordFiltersLight = [];
 
-            // Hydrate filters with attribute properties and cast filters values if needed
-            if (filters && typeof filters !== 'undefined' && filters.length) {
-                for (const f of filters) {
-                    let filter: IRecordFilterOption = {};
+            // Add ids filters if searchQuery is defined
+            if (typeof searchQuery !== 'undefined') {
+                const searchRecords = await recordRepo.search(library, searchQuery);
 
-                    if (!f.operator) {
-                        const attributes = await _getAttributesFromField(f.field, ctx);
-                        let value: any = f.value;
-
-                        const lastAttr = attributes[attributes.length - 1];
-                        if (value && lastAttr.format === AttributeFormats.NUMERIC) {
-                            value = Number(f.value);
-                        } else if (value && lastAttr.format === AttributeFormats.BOOLEAN) {
-                            value = f.value === 'true';
-                        }
-
-                        const valueType = value === null ? 'null' : typeof value;
-
-                        if (f.condition && !allowedTypeOperator[valueType].includes(f.condition)) {
-                            throw new ValidationError({id: Errors.INVALID_FILTER_CONDITION_VALUE});
-                        }
-
-                        filter = {attributes, value, condition: f.condition};
-                    } else {
-                        filter = f;
-                    }
-
-                    fullFilters.push(filter);
+                if (searchRecords.list.length) {
+                    searchFilters = searchRecords.list.flatMap((r, i, arr) =>
+                        i < arr.length - 1
+                            ? [{field: 'id', value: r.id}, {operator: Operator.OR}]
+                            : {field: 'id', value: r.id}
+                    );
                 }
 
+                if (searchQuery !== '' && !searchFilters.length) {
+                    return {
+                        totalCount: 0,
+                        list: [],
+                        cursor: {}
+                    };
+                }
+
+                if (filters.length && searchFilters.length) {
+                    searchFilters.push({operator: Operator.CLOSE_BRACKET});
+                    searchFilters.unshift({operator: Operator.OPEN_BRACKET});
+                    searchFilters.unshift({operator: Operator.AND});
+                }
+            }
+
+            filters = filters.concat(searchFilters);
+
+            // Hydrate filters with attribute properties and cast filters values if needed
+            for (const f of filters) {
+                let filter: IRecordFilterOption = {};
+                if (!f.operator) {
+                    const attributes = await _getAttributesFromField(f.field, ctx);
+                    let value: any = f.value;
+                    const lastAttr = attributes[attributes.length - 1];
+
+                    if (value && lastAttr.format === AttributeFormats.NUMERIC) {
+                        value = Number(f.value);
+                    } else if (value && lastAttr.format === AttributeFormats.BOOLEAN) {
+                        value = f.value === 'true';
+                    }
+
+                    const valueType = value === null ? 'null' : typeof value;
+                    if (f.condition && !allowedTypeOperator[valueType].includes(f.condition)) {
+                        throw new ValidationError({id: Errors.INVALID_FILTER_CONDITION_VALUE});
+                    }
+
+                    filter = {attributes, value, condition: f.condition};
+                } else {
+                    filter = f;
+                }
+
+                fullFilters.push(filter);
+            }
+
+            if (filters.length) {
                 _checkLogicExpr(fullFilters);
             }
 
