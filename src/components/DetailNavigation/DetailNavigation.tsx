@@ -67,7 +67,7 @@ const DetailNavigation = (): JSX.Element => {
 
     const label = recordData.label ? recordData.label : t('navigation.list.info.no-label');
 
-    const img = recordData.preview.big;
+    const img = recordData.preview?.big;
 
     return (
         <Detail ref={detailRef}>

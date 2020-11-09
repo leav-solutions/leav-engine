@@ -14,12 +14,12 @@ export interface ILibrary {
     };
 }
 
-export interface IPreview {
+export type IPreview = {
     small: string;
     medium: string;
     big: string;
     pages: string;
-}
+} | null;
 
 export interface IItem {
     [x: string]: any;
