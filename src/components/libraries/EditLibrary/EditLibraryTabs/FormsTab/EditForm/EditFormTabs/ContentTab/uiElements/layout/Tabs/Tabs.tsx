@@ -130,7 +130,7 @@ function Tabs({settings, elementData, state, dispatch}: ITabsProps): JSX.Element
                 <Icon name="plus" />
             </Menu.Item>
         ),
-        render: () => <Tab.Pane></Tab.Pane>
+        render: () => <Tab.Pane />
     });
 
     return (

@@ -61,7 +61,7 @@ function StandardValuesList({values: initialValues, onValuesUpdate}: IStandardVa
                                 action={{
                                     icon: 'trash',
                                     onClick: _deleteValue(i),
-                                    'data-test-id': `values-list-del-btn`,
+                                    'data-test-id': 'values-list-del-btn',
                                     type: 'button'
                                 }}
                             />
