@@ -150,15 +150,10 @@ export default function({
                 data = (event.payload as ILibraryPayload).data;
 
                 const exists = await elasticsearchService.indiceExists(data.new.id);
-                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(data.new.id, ctx);
 
                 if (
                     !exists ||
-                    (exists &&
-                        !isEqual(
-                            (await elasticsearchService.indiceGetMapping(data.new.id)).sort(),
-                            fullTextAttributes.map(fta => fta.id).sort()
-                        ))
+                    (exists && !isEqual(data.old.fullTextAttributes.sort(), data.new.fullTextAttributes.sort()))
                 ) {
                     if (exists) {
                         await elasticsearchService.indiceDelete(data.new.id);
@@ -168,7 +163,7 @@ export default function({
                 }
 
                 // if label change we re-index all linked libraries
-                if (data.new.recordIdentityConf?.label !== data.old?.recordIdentityConf?.label) {
+                if (data.new.recordIdentityConfLabel !== data.old?.recordIdentityConfLabel) {
                     const linkedLibraries = await _getLinkedLibraries(data.new.id, ctx);
 
                     for (const ll of linkedLibraries) {

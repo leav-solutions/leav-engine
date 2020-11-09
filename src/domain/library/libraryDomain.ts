@@ -222,8 +222,22 @@ export default function({
                 {
                     type: EventType.LIBRARY_SAVE,
                     data: {
-                        new: lib,
-                        old: libs.list[0]
+                        new: {
+                            id: lib.id,
+                            system: lib.system,
+                            recordIdentityConfLabel: lib.recordIdentityConf?.label,
+                            fullTextAttributes: libFullTextAttributes,
+                            attributes: libAttributes
+                        },
+                        ...(existingLib && {
+                            old: {
+                                id: libs.list[0].id,
+                                system: libs.list[0].system,
+                                recordIdentityConfLabel: libs.list[0].recordIdentityConf?.label,
+                                fullTextAttributes: currentFullTextAttributes,
+                                attributes: currentLibraryAttributes
+                            }
+                        })
                     }
                 },
                 ctx
@@ -260,7 +274,7 @@ export default function({
             await eventsManager.send(
                 {
                     type: EventType.LIBRARY_DELETE,
-                    data: {old: deletedLibrary}
+                    data: {old: {id: deletedLibrary.id}}
                 },
                 ctx
             );

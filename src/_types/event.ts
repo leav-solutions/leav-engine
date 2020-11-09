@@ -1,4 +1,3 @@
-import {ILibrary} from './library';
 import {IRecord} from './record';
 
 export enum EventType {
@@ -23,10 +22,18 @@ export interface IRecordPayload extends IPayload {
     };
 }
 
+interface IDataLibrary {
+    id: string;
+    system?: boolean;
+    attributes?: string[];
+    fullTextAttributes?: string[];
+    recordIdentityConfLabel?: string;
+}
+
 export interface ILibraryPayload extends IPayload {
     data: {
-        old?: ILibrary;
-        new?: ILibrary;
+        old?: IDataLibrary;
+        new?: IDataLibrary;
     };
 }
 
