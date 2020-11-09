@@ -7,39 +7,40 @@ import Navigation from '../../Navigation';
 import Setting from '../../Setting';
 import TreeList from '../../TreeList';
 import RouteNotFound from '../RouteNotFound';
+import {routes} from './ListRoutes';
 
 function Routes(): JSX.Element {
     return (
         <Switch>
-            <Route exact path="/">
+            <Route exact path={routes.root}>
                 <LibrariesList />
             </Route>
 
-            <Route path="/home">
+            <Route path={routes.home}>
                 <Home />
             </Route>
 
-            <Route path="/navigation/list">
+            <Route path={routes.navigation.listTree}>
                 <TreeList />
             </Route>
 
-            <Route path="/navigation/:treeId">
+            <Route path={routes.navigation.tree}>
                 <Navigation />
             </Route>
 
-            <Route exact path="/library/list/">
+            <Route exact path={routes.library.list}>
                 <LibrariesList />
             </Route>
 
-            <Route exact path="/library/list/:libId/:libQueryName/:filterName">
+            <Route exact path={routes.library.listWithDetail}>
                 <LibrariesList />
             </Route>
 
-            <Route exact path="/library/items/:libId/:libQueryName/:filterName">
+            <Route exact path={routes.library.items}>
                 <LibraryItemsList />
             </Route>
 
-            <Route path="/setting">
+            <Route path={routes.settings}>
                 <Setting />
             </Route>
 
