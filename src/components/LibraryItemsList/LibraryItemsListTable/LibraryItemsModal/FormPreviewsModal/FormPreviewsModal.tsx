@@ -51,23 +51,21 @@ interface IFormPreviewModal {
 const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPreview}: IFormPreviewModal) => {
     const att: 'small' | 'medium' | 'big' | 'pages' = previewAttribute as any;
 
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        updateValues({
+            ...values,
+            preview: values.preview
+                ? ({...values.preview, [previewAttribute]: e.target.value} as IPreview)
+                : ({
+                      ...(defaultPreview as IPreview),
+                      [previewAttribute]: e.target.value
+                  } as IPreview)
+        });
+    };
+
     return (
         <Form.Item label={previewAttribute}>
-            <Input
-                disabled
-                value={(values.preview && values.preview[att]) ?? ''}
-                onChange={e =>
-                    updateValues({
-                        ...values,
-                        preview: values.preview
-                            ? {...values.preview, [previewAttribute]: e.target.value}
-                            : {
-                                  ...(defaultPreview as IPreview),
-                                  [previewAttribute]: e.target.value
-                              }
-                    })
-                }
-            />
+            <Input disabled value={(values.preview && values.preview[att]) ?? ''} onChange={onChange} />
         </Form.Item>
     );
 };
