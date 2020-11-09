@@ -1,6 +1,6 @@
-import {map, TreeItem} from '@casolutions/react-sortable-tree';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {map, TreeItem} from 'react-sortable-tree';
 import {Button, ButtonGroup} from 'semantic-ui-react';
 import {IFlatItem} from '../EmbeddedFieldsTab';
 

@@ -4,8 +4,10 @@ import {mockTree} from '../../../__mocks__/trees';
 import TreeStructureView from './TreeStructureView';
 
 jest.mock('react-sortable-tree', () => {
-    return function SortableTree() {
-        return <div>MOCK TestComponent</div>;
+    return {
+        SortableTreeWithoutDndContext() {
+            return <div>MOCK TestComponent</div>;
+        }
     };
 });
 

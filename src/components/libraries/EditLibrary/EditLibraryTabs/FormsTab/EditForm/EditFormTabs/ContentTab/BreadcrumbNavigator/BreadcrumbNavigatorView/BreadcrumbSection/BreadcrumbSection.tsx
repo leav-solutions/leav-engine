@@ -1,6 +1,6 @@
-import {NodeData} from '@casolutions/react-sortable-tree';
 import {relative} from 'path';
 import React, {useState} from 'react';
+import {NodeData} from 'react-sortable-tree';
 import {Breadcrumb, Icon, Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../../../../../../hooks/useLang';

@@ -1,4 +1,7 @@
 import {ApolloConsumer} from '@apollo/react-common';
+import {ApolloClient} from 'apollo-client';
+import {FetchResult} from 'apollo-link';
+import React, {useState} from 'react';
 import {
     addNodeUnderParent,
     changeNodeAtPath,
@@ -10,10 +13,7 @@ import {
     OnMovePreviousAndNextLocation,
     removeNodeAtPath,
     TreeItem
-} from '@casolutions/react-sortable-tree';
-import {ApolloClient} from 'apollo-client';
-import {FetchResult} from 'apollo-link';
-import React, {useState} from 'react';
+} from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
 import styled from 'styled-components';
 import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
@@ -28,6 +28,7 @@ import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../../../_gqlTypes/TREE_CONTENT';
+import {ITreeItem} from '../../attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import RecordCard from '../../shared/RecordCard';
 import TreeStructureView from '../TreeStructureView';
 
@@ -219,10 +220,10 @@ const TreeStructure = ({
         });
 
         // Update positions for all siblings in destination
-        const siblings: TreeItem[] = parentNode !== null ? parentNode.children : treeData;
+        const siblings = parentNode !== null ? parentNode.children : treeData;
         if (siblings?.length) {
             await Promise.all(
-                siblings.map(
+                (siblings as ITreeItem[]).map(
                     (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => {
                         const siblingElement = _nodeToTreeElement(s);
                         return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element

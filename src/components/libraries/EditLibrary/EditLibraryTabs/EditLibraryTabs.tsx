@@ -94,7 +94,7 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
-            setActiveIndex(parseInt(data.activeIndex.toString(), 0));
+            setActiveIndex(Number(data.activeIndex.toString()));
             history?.push(`#${data.panes[data.activeIndex].key}`);
         }
     };

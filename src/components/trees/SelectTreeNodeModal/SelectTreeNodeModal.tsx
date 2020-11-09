@@ -1,7 +1,7 @@
 import {useQuery} from '@apollo/react-hooks';
-import {NodeData} from '@casolutions/react-sortable-tree';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {NodeData} from 'react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {GET_TREES, GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';

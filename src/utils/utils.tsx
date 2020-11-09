@@ -1,9 +1,9 @@
-import {TreeNode} from '@casolutions/react-sortable-tree';
 import {FormikErrors, FormikTouched} from 'formik';
 import gql from 'graphql-tag';
 import {i18n} from 'i18next';
 import get from 'lodash/get';
 import {join} from 'path';
+import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
 import {
     GET_ATTRIBUTES_attributes_list,

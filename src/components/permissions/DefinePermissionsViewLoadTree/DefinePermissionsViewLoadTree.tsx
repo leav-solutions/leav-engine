@@ -1,6 +1,6 @@
-import {NodeData} from '@casolutions/react-sortable-tree';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {NodeData} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';

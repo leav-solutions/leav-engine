@@ -1,5 +1,5 @@
-import {TreeNode} from '@casolutions/react-sortable-tree';
 import {i18n} from 'i18next';
+import {TreeNode} from 'react-sortable-tree';
 import {PermissionsActions} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {Mockify} from '../_types/Mockify';

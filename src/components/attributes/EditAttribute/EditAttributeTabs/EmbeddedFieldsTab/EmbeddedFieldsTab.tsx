@@ -1,14 +1,16 @@
 import {useMutation, useQuery} from '@apollo/react-hooks';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import SortableTree, {
     addNodeUnderParent,
     ExtendedNodeData,
     OnDragStateChangedData,
     OnVisibilityToggleData,
-    removeNodeAtPath
-} from '@casolutions/react-sortable-tree';
-import React, {useCallback, useEffect, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {TreeIndex, TreeItem, TreeNode} from 'react-sortable-tree';
+    removeNodeAtPath,
+    TreeIndex,
+    TreeItem,
+    TreeNode
+} from 'react-sortable-tree';
 import {Button} from 'semantic-ui-react';
 import {getAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/getAttributesEmbeddedFieldsQuery';
 import {saveAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/saveAttributesEmbeddedFieldsQuery';

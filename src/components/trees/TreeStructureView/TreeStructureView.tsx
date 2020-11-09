@@ -1,11 +1,6 @@
-import {
-    ExtendedNodeData,
-    NodeData,
-    SortableTreeWithoutDndContext as SortableTree,
-    TreeItem
-} from '@casolutions/react-sortable-tree';
 import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {ExtendedNodeData, NodeData, SortableTreeWithoutDndContext as SortableTree, TreeItem} from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
