@@ -43,7 +43,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
     const recordLabel =
-        treeElement.record.whoAmI.label.length > labelLimit
+        treeElement.record.whoAmI.label && treeElement.record.whoAmI.label.length > labelLimit
             ? treeElement.record.whoAmI.label.substr(0, labelLimit) + '...'
             : treeElement.record.whoAmI.label;
 
@@ -67,7 +67,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
 
     const record: RecordIdentity_whoAmI = {
         ...treeElement.record.whoAmI,
-        label: recordLabel
+        label: recordLabel ?? ''
     };
 
     const isInPath = stateNavigation.path.some(

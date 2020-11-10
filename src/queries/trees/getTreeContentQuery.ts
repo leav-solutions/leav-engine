@@ -4,7 +4,7 @@ import {ILabel, IPreview} from '../../_types/types';
 export interface IRecordField {
     whoAmI: {
         id: string;
-        label: string;
+        label: string | null;
         color?: string;
         preview: IPreview;
         library: {
