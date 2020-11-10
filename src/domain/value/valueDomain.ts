@@ -474,7 +474,7 @@ export default function({
 
             // if simple attribute type
             let value = {};
-            if (attr.type === AttributeTypes.SIMPLE) {
+            if (attr.type === AttributeTypes.SIMPLE || attr.type === AttributeTypes.SIMPLE_LINK) {
                 value = (await valueRepo.getValues({library, recordId, attribute: attr, ctx})).pop();
             } else {
                 value = await valueRepo.getValueById({library, recordId, attribute: attr, valueId, ctx});
