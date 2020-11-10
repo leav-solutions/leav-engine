@@ -473,10 +473,10 @@ export default function({
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
             // if simple attribute type
-            let value = (await valueRepo.getValues({library, recordId, attribute: attr, ctx})).pop();
-
-            // if not, get value by value id
-            if (attr.type !== AttributeTypes.SIMPLE) {
+            let value = {};
+            if (attr.type === AttributeTypes.SIMPLE) {
+                value = (await valueRepo.getValues({library, recordId, attribute: attr, ctx})).pop();
+            } else {
                 value = await valueRepo.getValueById({library, recordId, attribute: attr, valueId, ctx});
                 if (value === null) {
                     throw new ValidationError({id: Errors.UNKNOWN_VALUE});
