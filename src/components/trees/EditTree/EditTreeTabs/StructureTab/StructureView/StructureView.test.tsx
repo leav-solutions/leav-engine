@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {mockTree} from '../../../__mocks__/trees';
-import TreeStructureView from './TreeStructureView';
+import {mockTree} from '../../../../../../__mocks__/trees';
+import StructureView from './StructureView';
 
 jest.mock('react-sortable-tree', () => {
     return {
@@ -14,9 +14,9 @@ jest.mock('react-sortable-tree', () => {
     };
 });
 
-jest.mock('../../../hooks/useLang');
+jest.mock('../../../../../../hooks/useLang');
 
-describe('TreeStructureView', () => {
+describe('StructureView', () => {
     test('Render loading if no data', async () => {
         const onTreeChange = jest.fn();
         const onVisibilityToggle = jest.fn();
@@ -24,7 +24,7 @@ describe('TreeStructureView', () => {
         const onDeleteNode = jest.fn();
 
         const comp = shallow(
-            <TreeStructureView
+            <StructureView
                 treeSettings={mockTree}
                 readOnly={false}
                 treeData={[]}
@@ -46,7 +46,7 @@ describe('TreeStructureView', () => {
         const onDeleteNode = jest.fn();
 
         const comp = shallow(
-            <TreeStructureView
+            <StructureView
                 treeSettings={mockTree}
                 readOnly={false}
                 treeData={[{id: 1234, library: {id: 'test_lib'}}]}

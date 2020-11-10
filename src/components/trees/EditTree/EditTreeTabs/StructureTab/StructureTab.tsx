@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloConsumer} from '@apollo/react-common';
 import {ApolloClient} from 'apollo-client';
 import {FetchResult} from 'apollo-link';
@@ -19,25 +16,25 @@ import {
 } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
 import styled from 'styled-components';
-import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
-import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
-import {deleteTreeElementQuery} from '../../../queries/trees/treeDeleteElementMutation';
-import {moveTreeElementQuery} from '../../../queries/trees/treeMoveElementMutation';
-import {getTreeNodeKey} from '../../../utils/utils';
-import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/ADD_TREE_ELEMENT';
-import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
-import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
-import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../../../_gqlTypes/TREE_CONTENT';
-import {ITreeItem} from '../../attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
-import RecordCard from '../../shared/RecordCard';
-import StructureView from '../EditTree/EditTreeTabs/StructureTab/StructureView';
+import {addTreeElementQuery} from '../../../../../queries/trees/treeAddElementMutation';
+import {getTreeContentQuery} from '../../../../../queries/trees/treeContentQuery';
+import {deleteTreeElementQuery} from '../../../../../queries/trees/treeDeleteElementMutation';
+import {moveTreeElementQuery} from '../../../../../queries/trees/treeMoveElementMutation';
+import {getTreeNodeKey} from '../../../../../utils';
+import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '../../../../../_gqlTypes/ADD_TREE_ELEMENT';
+import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../../../_gqlTypes/DELETE_TREE_ELEMENT';
+import {GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
+import {TreeElementInput} from '../../../../../_gqlTypes/globalTypes';
+import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../../../_gqlTypes/MOVE_TREE_ELEMENT';
+import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
+import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../../../../../_gqlTypes/TREE_CONTENT';
+import {ITreeItem} from '../../../../attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
+import RecordCard from '../../../../shared/RecordCard';
+import StructureView from './StructureView';
 
-interface ITreeStructureProps {
+interface IStructureTabProps {
     tree: GET_TREES_trees_list;
-    readOnly?: boolean;
+    readonly?: boolean;
     onClickNode?: (nodeData: NodeData) => void;
     selection?: NodeData[] | null;
     withFakeRoot?: boolean;
@@ -77,16 +74,16 @@ const RootElem = styled.div`
     justify-content: center;
 `;
 
-const TreeStructure = ({
+const StructureTab = ({
     tree,
-    readOnly,
+    readonly,
     onClickNode,
     selection,
     withFakeRoot,
     fakeRootLabel,
     startAt,
     compact = false
-}: ITreeStructureProps) => {
+}: IStructureTabProps) => {
     const fakeRootData = [
         {
             record: {
@@ -377,7 +374,7 @@ const TreeStructure = ({
                     <StructureView
                         treeSettings={tree}
                         treeData={treeData}
-                        readOnly={readOnly || false}
+                        readOnly={readonly || false}
                         onTreeChange={setTreeData}
                         onVisibilityToggle={onVisibilityToggle}
                         onMoveNode={onMoveNode}
@@ -393,4 +390,4 @@ const TreeStructure = ({
     );
 };
 
-export default TreeStructure;
+export default StructureTab;

@@ -13,6 +13,7 @@ export const saveTreeQuery = gql`
             id
             system
             label
+            behavior
             libraries {
                 id
                 label

@@ -61,12 +61,14 @@ export enum PermissionTypes {
     attribute = 'attribute',
     library = 'library',
     record = 'record',
-    record_attribute = 'record_attribute'
+    record_attribute = 'record_attribute',
+    tree = 'tree'
 }
 
 export enum PermissionsActions {
     access_attribute = 'access_attribute',
     access_record = 'access_record',
+    access_tree = 'access_tree',
     app_access_attributes = 'app_access_attributes',
     app_access_forms = 'app_access_forms',
     app_access_libraries = 'app_access_libraries',
@@ -90,7 +92,9 @@ export enum PermissionsActions {
     create_value = 'create_value',
     delete_record = 'delete_record',
     delete_value = 'delete_value',
+    edit_children = 'edit_children',
     edit_record = 'edit_record',
+    edit_tree = 'edit_tree',
     edit_value = 'edit_value'
 }
 

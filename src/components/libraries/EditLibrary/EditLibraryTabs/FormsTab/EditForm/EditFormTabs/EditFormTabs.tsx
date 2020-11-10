@@ -21,7 +21,7 @@ function EditFormTabs({form, library}: IEditFormTabsProps): JSX.Element {
     const {lang} = useLang();
     const isCreationMode = form === null;
 
-    const label = isCreationMode ? t('forms.new') : localizedLabel(form?.label, lang);
+    const label = isCreationMode ? t('forms.new') : localizedLabel(form?.label ?? null, lang);
 
     const panes = [
         {

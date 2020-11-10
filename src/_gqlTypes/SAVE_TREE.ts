@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeInput} from './globalTypes';
+import {TreeInput, TreeBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_TREE
@@ -21,6 +21,7 @@ export interface SAVE_TREE_saveTree {
     id: string;
     system: boolean;
     label: SystemTranslation | null;
+    behavior: TreeBehavior;
     libraries: SAVE_TREE_saveTree_libraries[];
 }
 

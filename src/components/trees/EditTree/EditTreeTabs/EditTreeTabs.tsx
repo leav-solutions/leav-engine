@@ -5,67 +5,52 @@ import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
-import useLang from '../../../hooks/useLang';
-import {localizedLabel} from '../../../utils/utils';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {IFormError} from '../../../_types/errors';
-import EditTreeInfosForm from '../EditTreeInfosForm';
-import TreeStructure from '../TreeStructure';
+import useLang from '../../../../hooks/useLang';
+import {localizedLabel} from '../../../../utils';
+import {GET_TREES_trees_list} from '../../../../_gqlTypes/GET_TREES';
+import TreeInfosTab from './InfosTab';
+import StructureTab from './StructureTab';
 
-interface IEditTreeFormProps {
+export interface IEditTreeMatchParams {
+    id: string;
+}
+
+interface IEditTreeTabsProps {
     tree: GET_TREES_trees_list | null;
-    onSubmit: (formData: any) => void;
-    readOnly: boolean;
-    errors?: IFormError;
-    onCheckIdExists: (val: string) => Promise<boolean>;
-    history?: History;
+    readonly: boolean;
+    history: History;
     location?: Location;
 }
 
-const EditTreeForm = ({
-    tree,
-    onSubmit,
-    readOnly,
-    errors,
-    onCheckIdExists,
-    history,
-    location
-}: IEditTreeFormProps): JSX.Element => {
+function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): JSX.Element {
     const {t} = useTranslation();
-    const availableLanguages = useLang().lang;
-    const label = tree === null ? t('trees.new') : localizedLabel(tree.label, availableLanguages);
+    const {lang} = useLang();
+    const isCreationMode = tree === null;
+
+    const label = isCreationMode ? t('trees.new') : localizedLabel(tree?.label ?? null, lang) || tree!.id;
 
     const panes = [
         {
             key: 'infos',
+            mustBeDisplayed: true,
             menuItem: t('trees.informations'),
             render: () => (
-                <Tab.Pane key="infos" className="grow flex-col">
-                    <EditTreeInfosForm
-                        tree={tree}
-                        onSubmit={onSubmit}
-                        readOnly={readOnly}
-                        errors={errors}
-                        onCheckIdExists={onCheckIdExists}
-                    />
+                <Tab.Pane key="infos" className="grow">
+                    <TreeInfosTab tree={tree} readonly={readonly} history={history} />
                 </Tab.Pane>
             )
-        }
-    ];
-
-    if (tree !== null) {
-        panes.push({
+        },
+        {
             key: 'structure',
+            mustBeDisplayed: !isCreationMode,
             menuItem: t('trees.structure'),
             render: () => (
                 <Tab.Pane key="structure" className="grow">
-                    <div className="flex-col height100">
-                        <TreeStructure tree={tree} readOnly={readOnly} withFakeRoot fakeRootLabel={label} />
-                    </div>
+                    <StructureTab tree={tree as GET_TREES_trees_list} readonly={readonly} />
                 </Tab.Pane>
             )
-        });
-    }
+        }
+    ].filter(p => p.mustBeDisplayed);
 
     const tabName = location ? location.hash.replace('#', '') : undefined;
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
@@ -87,10 +72,10 @@ const EditTreeForm = ({
                 onTabChange={_handleOnTabChange}
                 menu={{secondary: true, pointing: true}}
                 panes={panes}
-                className="grow flex-col"
+                className="grow flex-col height100"
             />
         </>
     );
-};
+}
 
-export default EditTreeForm;
+export default EditTreeTabs;

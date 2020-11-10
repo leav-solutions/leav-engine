@@ -6,17 +6,17 @@ import {useTranslation} from 'react-i18next';
 import {ExtendedNodeData, NodeData, SortableTreeWithoutDndContext as SortableTree, TreeItem} from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
-import useLang from '../../../hooks/useLang';
-import {getTreeNodeKey, localizedLabel, stringToColor} from '../../../utils/utils';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
-import EditRecordModal from '../../records/EditRecordModal';
-import SelectRecordModal from '../../records/SelectRecordModal';
-import Loading from '../../shared/Loading';
+import useLang from '../../../../../../hooks/useLang';
+import {getTreeNodeKey, localizedLabel, stringToColor} from '../../../../../../utils/utils';
+import {GET_TREES_trees_list} from '../../../../../../_gqlTypes/GET_TREES';
+import {TreeElementInput} from '../../../../../../_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '../../../../../../_gqlTypes/RecordIdentity';
+import EditRecordModal from '../../../../../records/EditRecordModal';
+import SelectRecordModal from '../../../../../records/SelectRecordModal';
+import Loading from '../../../../../shared/Loading';
 import './rstOverride.css';
 
-interface IEditTreeStructureViewProps {
+interface IStructureViewProps {
     treeSettings: GET_TREES_trees_list;
     treeData: TreeItem[];
     onTreeChange: (treeData) => void;
@@ -49,7 +49,7 @@ const editionReducer = (prevState: IEditionState | undefined, newState: IEdition
     return {...newState};
 };
 
-const TreeStructureView = ({
+const StructureView = ({
     treeSettings,
     treeData,
     onTreeChange,
@@ -61,7 +61,7 @@ const TreeStructureView = ({
     readOnly,
     onAddElement,
     compact = false
-}: IEditTreeStructureViewProps) => {
+}: IStructureViewProps) => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const [editRecordModalOpen, setEditRecordModalOpen] = useState<boolean>(false);
@@ -269,4 +269,4 @@ const TreeStructureView = ({
         </div>
     );
 };
-export default TreeStructureView;
+export default StructureView;

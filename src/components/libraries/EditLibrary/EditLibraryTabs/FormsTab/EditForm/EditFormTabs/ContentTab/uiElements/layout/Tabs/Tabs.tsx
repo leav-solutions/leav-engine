@@ -92,7 +92,7 @@ function Tabs({settings, elementData, state, dispatch}: ITabsProps): JSX.Element
     const panes = tabsToDisplay.map(tab => ({
         menuItem: (
             <Menu.Item key={tab.id}>
-                {localizedLabel(tab.label, lang)}
+                {localizedLabel(tab.label ?? null, lang)}
                 <Button.Group icon compact basic size="small" style={{marginLeft: '10px'}}>
                     <Button onClick={_handleShowEditTabModal}>
                         <Icon name="edit" />

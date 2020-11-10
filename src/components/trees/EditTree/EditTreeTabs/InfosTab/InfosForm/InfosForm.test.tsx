@@ -5,19 +5,19 @@ import {MockedProvider} from '@apollo/react-testing';
 import {render} from 'enzyme';
 import React from 'react';
 import {act, create} from 'react-test-renderer';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
-import EditTreeInfosForm from './EditTreeInfosForm';
+import {GET_TREES_trees_list} from '../../../../../../_gqlTypes/GET_TREES';
+import {TreeBehavior} from '../../../../../../_gqlTypes/globalTypes';
+import TreeInfosForm from './InfosForm';
 
-jest.mock('../../../utils/utils', () => ({
+jest.mock('../../../../../../utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr),
     getFieldError: jest.fn().mockReturnValue(''),
     getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr'])
 }));
-jest.mock('../../../hooks/useLang', () => jest.fn().mockReturnValue(['fr']));
+jest.mock('../../../../../../hooks/useLang', () => jest.fn().mockReturnValue(['fr']));
 
-describe('EditTreeInfosForm', () => {
+describe('TreeInfosForm', () => {
     const mockTree: GET_TREES_trees_list = {
         id: 'test',
         label: {fr: 'Test'},
@@ -31,12 +31,7 @@ describe('EditTreeInfosForm', () => {
     test('Render form for existing tree', async () => {
         const comp = render(
             <MockedProvider>
-                <EditTreeInfosForm
-                    tree={mockTree}
-                    onSubmit={onSubmit}
-                    readOnly={false}
-                    onCheckIdExists={onCheckIdExists}
-                />
+                <TreeInfosForm tree={mockTree} onSubmit={onSubmit} readonly={false} onCheckIdExists={onCheckIdExists} />
             </MockedProvider>
         );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(true);
@@ -45,7 +40,7 @@ describe('EditTreeInfosForm', () => {
     test('Render form for new tree', async () => {
         const comp = render(
             <MockedProvider>
-                <EditTreeInfosForm tree={null} onSubmit={onSubmit} readOnly={false} onCheckIdExists={onCheckIdExists} />
+                <TreeInfosForm tree={null} onSubmit={onSubmit} readonly={false} onCheckIdExists={onCheckIdExists} />
             </MockedProvider>
         );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(false);
@@ -56,12 +51,7 @@ describe('EditTreeInfosForm', () => {
         await act(async () => {
             comp = create(
                 <MockedProvider>
-                    <EditTreeInfosForm
-                        onSubmit={onSubmit}
-                        tree={null}
-                        readOnly={false}
-                        onCheckIdExists={onCheckIdExists}
-                    />
+                    <TreeInfosForm onSubmit={onSubmit} tree={null} readonly={false} onCheckIdExists={onCheckIdExists} />
                 </MockedProvider>
             );
         });

@@ -7,19 +7,19 @@ import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
-import useLang from '../../../hooks/useLang';
-import {formatIDString, getFieldError} from '../../../utils/utils';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
-import {ErrorTypes, IFormError} from '../../../_types/errors';
-import {Override} from '../../../_types/Override';
-import LibrariesSelector from '../../libraries/LibrariesSelector';
-import FormFieldWrapper from '../../shared/FormFieldWrapper';
+import useLang from '../../../../../../hooks/useLang';
+import {formatIDString, getFieldError} from '../../../../../../utils';
+import {GET_TREES_trees_list} from '../../../../../../_gqlTypes/GET_TREES';
+import {TreeBehavior} from '../../../../../../_gqlTypes/globalTypes';
+import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
+import {Override} from '../../../../../../_types/Override';
+import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
+import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 
-interface IEditTreeInfosFormProps {
+interface ITreeInfosFormProps {
     tree: GET_TREES_trees_list | null;
-    onSubmit: (formData: any) => void;
-    readOnly: boolean;
+    onSubmit: (formData: GET_TREES_trees_list) => void;
+    readonly: boolean;
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
@@ -35,13 +35,7 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-const EditTreeInfosForm = ({
-    tree,
-    onSubmit,
-    readOnly,
-    errors,
-    onCheckIdExists
-}: IEditTreeInfosFormProps): JSX.Element => {
+const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITreeInfosFormProps): JSX.Element => {
     const {t} = useTranslation();
     const defaultTree = {
         id: '',
@@ -136,7 +130,7 @@ const EditTreeInfosForm = ({
                                 label={`${lang} ${lang === defaultLang ? '*' : ''}`}
                                 width="4"
                                 name={'label.' + lang}
-                                disabled={readOnly}
+                                disabled={readonly}
                                 value={label && label[lang] ? label[lang] : ''}
                                 onChange={_handleLabelChange}
                             />
@@ -147,7 +141,7 @@ const EditTreeInfosForm = ({
                     <Form.Input
                         label={t('trees.ID')}
                         width="4"
-                        disabled={existingTree || readOnly}
+                        disabled={existingTree || readonly}
                         name="id"
                         onChange={_handleChange}
                         onBlur={handleBlur}
@@ -167,7 +161,7 @@ const EditTreeInfosForm = ({
                 </FormFieldWrapper>
                 <FormFieldWrapper error={_getErrorByField('libraries')}>
                     <LibrariesSelector
-                        disabled={system || readOnly}
+                        disabled={system || readonly}
                         lang={userLang}
                         fluid
                         selection
@@ -180,7 +174,7 @@ const EditTreeInfosForm = ({
                         value={libraries}
                     />
                 </FormFieldWrapper>
-                {!readOnly && (
+                {!readonly && (
                     <FormGroupWithMargin>
                         <Form.Button type="submit">{t('admin.submit')}</Form.Button>
                     </FormGroupWithMargin>
@@ -199,4 +193,4 @@ const EditTreeInfosForm = ({
     );
 };
 
-export default EditTreeInfosForm;
+export default TreeInfosForm;

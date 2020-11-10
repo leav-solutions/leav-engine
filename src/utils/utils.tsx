@@ -19,7 +19,7 @@ import {IErrorByField} from '../_types/errors';
 import {IGenericValue, ILinkValue, ITreeLinkValue, IValue} from '../_types/records';
 import {IKeyValue} from '../_types/shared';
 
-export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[]): string => {
+export const localizedLabel = (labels: SystemTranslation | null, availableLanguages: AvailableLanguage[]): string => {
     if (labels === null) {
         return '';
     }
