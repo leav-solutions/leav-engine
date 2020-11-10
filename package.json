@@ -34,7 +34,7 @@
     "license": "ISC",
     "homepage": "https://gitlab.cacom.fr/dev/leav/leav_core",
     "devDependencies": {
-        "@casolutions/eslint-config": "^2.0.0",
+        "@casolutions/eslint-config": "^2.0.1",
         "@casolutions/prettier-config": "^1.0.0",
         "@types/debug": "0.0.30",
         "@types/glob": "^5.0.35",
