@@ -346,10 +346,7 @@ export default function({
                     data: {
                         id: newRecord.id,
                         libraryId: newRecord.library,
-                        new: pick(
-                            newRecord,
-                            (await libraryDomain.getLibraryFullTextAttributes(library, ctx)).map(a => a.id)
-                        )
+                        new: newRecord
                     }
                 },
                 ctx
@@ -403,10 +400,7 @@ export default function({
                     data: {
                         id: deletedRecord.id,
                         libraryId: deletedRecord.library,
-                        old: pick(
-                            deletedRecord.old,
-                            (await libraryDomain.getLibraryFullTextAttributes(library, ctx)).map(a => a.id)
-                        )
+                        old: deletedRecord.old
                     }
                 },
                 ctx

@@ -273,6 +273,7 @@ export default function({
             const deletedRecord = await collection.remove({_key: String(recordId)}, {returnOld: true});
 
             deletedRecord.library = deletedRecord._id.split('/')[0];
+            deletedRecord.old = dbUtils.cleanup(deletedRecord.old);
 
             return dbUtils.cleanup(deletedRecord);
         },

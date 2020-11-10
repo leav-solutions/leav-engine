@@ -3,10 +3,9 @@ import {IRecordDomain, IFindRecordParams} from 'domain/record/recordDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import * as Config from '_types/config';
 import {IEvent, EventType, IRecordPayload, ILibraryPayload, IValuePayload} from '../../_types/event';
-import {IValue} from '../../_types/value';
 import * as Joi from '@hapi/joi';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
-import {isEqual} from 'lodash';
+import {isEqual, pick} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
@@ -131,6 +130,12 @@ export default function({
         switch (event.payload.type) {
             case EventType.RECORD_SAVE:
                 data = (event.payload as IRecordPayload).data;
+
+                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
+                data.new = pick(
+                    data.new,
+                    fullTextAttributes.map(a => a.id)
+                );
 
                 // if simple link replace id by record label
                 for (const [key, value] of Object.entries(data.new)) {

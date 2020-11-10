@@ -168,7 +168,7 @@ describe('RecordRepo', () => {
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
             expect(mockDbCollec.remove).toBeCalledWith({_key: String(recordData.id)}, {returnOld: true});
 
-            expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
+            expect(mockDbUtils.cleanup.mock.calls.length).toBe(2);
 
             expect(deleteRes).toMatchObject(recordData);
         });
