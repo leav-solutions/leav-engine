@@ -43,23 +43,23 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
     const recordLabel =
-        treeElement.record.whoAmI.label.length > labelLimit
+        treeElement.record.whoAmI.label && treeElement.record.whoAmI.label.length > labelLimit
             ? treeElement.record.whoAmI.label.substr(0, labelLimit) + '...'
             : treeElement.record.whoAmI.label;
 
     const addPath = () => {
-        const newPathElement: INavigationPath = {
-            id: treeElement.record.whoAmI.id,
-            library: treeElement.record.whoAmI.library.id,
-            label: recordLabel
-        };
-
-        let newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
-
-        dispatchNavigation(setPath(newPath));
-
         if (treeElement.children?.length) {
             dispatchNavigation(resetRecordDetail());
+
+            const newPathElement: INavigationPath = {
+                id: treeElement.record.whoAmI.id,
+                library: treeElement.record.whoAmI.library.id,
+                label: recordLabel
+            };
+
+            let newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
+
+            dispatchNavigation(setPath(newPath));
         } else {
             dispatchNavigation(setRecordDetail(treeElement.record));
         }
@@ -67,7 +67,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
 
     const record: RecordIdentity_whoAmI = {
         ...treeElement.record.whoAmI,
-        label: recordLabel
+        label: recordLabel ?? ''
     };
 
     const isInPath = stateNavigation.path.some(

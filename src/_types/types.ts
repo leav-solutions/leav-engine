@@ -253,5 +253,5 @@ export interface ITree {
 export interface INavigationPath {
     id: string;
     library: string;
-    label?: string;
+    label?: string | null;
 }
