@@ -68,6 +68,7 @@ export default function({
                                     {id: val.value.id, library: fta.linked_library},
                                     ctx
                                 );
+
                                 val.value = recordIdentity.label || val.value.id;
                             }
                         }
@@ -98,6 +99,14 @@ export default function({
         const libraries = [];
         for (const attr of attrs.list) {
             const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
+
+            for (let i = res.length - 1; i >= 0; i--) {
+                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(res[i], ctx);
+                if (!fullTextAttributes.map(a => a.id).includes(attr.id)) {
+                    res.splice(i, 1);
+                }
+            }
+
             libraries.push(res);
         }
 
@@ -163,7 +172,7 @@ export default function({
                 }
 
                 // if label change we re-index all linked libraries
-                if (data.new.recordIdentityConfLabel !== data.old?.recordIdentityConfLabel) {
+                if (data.new.recordIdentityConf?.label !== data.old?.recordIdentityConf?.label) {
                     const linkedLibraries = await _getLinkedLibraries(data.new.id, ctx);
 
                     for (const ll of linkedLibraries) {
@@ -174,6 +183,7 @@ export default function({
                 break;
             case EventType.LIBRARY_DELETE:
                 data = (event.payload as ILibraryPayload).data;
+
                 await elasticsearchService.indiceDelete(data.old.id);
                 break;
             case EventType.VALUE_SAVE:

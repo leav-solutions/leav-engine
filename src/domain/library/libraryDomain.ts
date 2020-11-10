@@ -223,17 +223,13 @@ export default function({
                     type: EventType.LIBRARY_SAVE,
                     data: {
                         new: {
-                            id: lib.id,
-                            system: lib.system,
-                            recordIdentityConfLabel: lib.recordIdentityConf?.label,
+                            ...lib,
                             fullTextAttributes: libFullTextAttributes,
                             attributes: libAttributes
                         },
                         ...(existingLib && {
                             old: {
-                                id: libs.list[0].id,
-                                system: libs.list[0].system,
-                                recordIdentityConfLabel: libs.list[0].recordIdentityConf?.label,
+                                ...libs.list[0],
                                 fullTextAttributes: currentFullTextAttributes,
                                 attributes: currentLibraryAttributes
                             }
@@ -274,7 +270,7 @@ export default function({
             await eventsManager.send(
                 {
                     type: EventType.LIBRARY_DELETE,
-                    data: {old: {id: deletedLibrary.id}}
+                    data: {old: {...deletedLibrary, attributes: undefined, fullTextAttributes: undefined}}
                 },
                 ctx
             );

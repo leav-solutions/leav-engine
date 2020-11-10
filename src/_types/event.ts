@@ -1,4 +1,5 @@
 import {IRecord} from './record';
+import {ILibrary} from './library';
 
 export enum EventType {
     RECORD_SAVE = 'RECORD_SAVE',
@@ -22,18 +23,15 @@ export interface IRecordPayload extends IPayload {
     };
 }
 
-interface IDataLibrary {
-    id: string;
-    system?: boolean;
+export type DataLibrary = Omit<ILibrary, 'attributes' | 'fullTextAttributes'> & {
     attributes?: string[];
     fullTextAttributes?: string[];
-    recordIdentityConfLabel?: string;
-}
+};
 
 export interface ILibraryPayload extends IPayload {
     data: {
-        old?: IDataLibrary;
-        new?: IDataLibrary;
+        old?: DataLibrary;
+        new?: DataLibrary;
     };
 }
 
