@@ -36,7 +36,7 @@
     "license": "ISC",
     "homepage": "https://gitlab.cacom.fr/dev/leav/core",
     "devDependencies": {
-        "@casolutions/eslint-config": "^2.0.0",
+        "@casolutions/eslint-config": "^2.0.1",
         "@casolutions/prettier-config": "^1.0.0",
         "@elastic/elasticsearch-mock": "^0.3.0",
         "@types/amqplib": "^0.5.13",
