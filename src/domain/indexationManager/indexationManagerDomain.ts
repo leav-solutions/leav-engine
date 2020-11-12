@@ -11,6 +11,7 @@ import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {AttributeTypes} from '../../_types/attribute';
+import {IValueDomain} from 'domain/value/valueDomain';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -24,6 +25,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.value'?: IValueDomain;
 }
 
 export default function({
@@ -32,7 +34,8 @@ export default function({
     'core.infra.amqp.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library': libraryDomain = null,
-    'core.domain.attribute': attributeDomain = null
+    'core.domain.attribute': attributeDomain = null,
+    'core.domain.value': valueDomain = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
         const records = await recordDomain.find({
@@ -128,7 +131,7 @@ export default function({
         let data: any;
 
         switch (event.payload.type) {
-            case EventType.RECORD_SAVE:
+            case EventType.RECORD_SAVE: {
                 data = (event.payload as IRecordPayload).data;
 
                 const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
@@ -156,11 +159,13 @@ export default function({
 
                 await elasticsearchService.index(data.libraryId, data.id, data.new);
                 break;
-            case EventType.RECORD_DELETE:
+            }
+            case EventType.RECORD_DELETE: {
                 data = (event.payload as IRecordPayload).data;
                 await elasticsearchService.deleteDocument(data.libraryId, data.id);
                 break;
-            case EventType.LIBRARY_SAVE:
+            }
+            case EventType.LIBRARY_SAVE: {
                 data = (event.payload as ILibraryPayload).data;
 
                 const exists = await elasticsearchService.indiceExists(data.new.id);
@@ -186,12 +191,14 @@ export default function({
                 }
 
                 break;
-            case EventType.LIBRARY_DELETE:
+            }
+            case EventType.LIBRARY_DELETE: {
                 data = (event.payload as ILibraryPayload).data;
 
                 await elasticsearchService.indiceDelete(data.old.id);
                 break;
-            case EventType.VALUE_SAVE:
+            }
+            case EventType.VALUE_SAVE: {
                 data = (event.payload as IValuePayload).data;
 
                 const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
@@ -248,18 +255,30 @@ export default function({
                 }
 
                 break;
-            case EventType.VALUE_DELETE:
+            }
+            case EventType.VALUE_DELETE: {
                 data = (event.payload as IValuePayload).data;
 
-                if (!!data.value) {
+                const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
+
+                if (attrProps.multiple_values) {
+                    const values = await valueDomain.getValues({
+                        library: data.libraryId,
+                        recordId: data.recordId,
+                        attribute: data.attributeId,
+                        options: {forceGetAllValues: true},
+                        ctx
+                    });
+
                     await elasticsearchService.update(data.libraryId, data.recordId, {
-                        [data.attributeId]: String(data.value.new)
+                        [data.attributeId]: values.map(v => String(v.value))
                     });
                 } else {
                     await elasticsearchService.delete(data.libraryId, data.recordId, data.attributeId);
                 }
 
                 break;
+            }
         }
     };
 

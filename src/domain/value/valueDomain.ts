@@ -281,7 +281,7 @@ export default function({
                 val = val.map((v: IValue) => v.value);
             }
 
-            // TODO: get old value
+            // TODO: get old value ?
             await eventsManager.send(
                 {
                     type: EventType.VALUE_SAVE,
@@ -289,9 +289,7 @@ export default function({
                         libraryId: library,
                         recordId,
                         attributeId: attributeProps.id,
-                        value: {
-                            new: val
-                        }
+                        value: {new: val}
                     }
                 },
                 ctx
@@ -394,7 +392,7 @@ export default function({
                             val = val.map((v: IValue) => v.value);
                         }
 
-                        // TODO: get value retrieve old value
+                        // TODO: get old value ?
                         await eventsManager.send(
                             {
                                 type: EventType.VALUE_SAVE,
@@ -402,9 +400,7 @@ export default function({
                                     libraryId: library,
                                     recordId,
                                     attributeId: attributeProps.id,
-                                    value: {
-                                        new: val
-                                    }
+                                    value: {new: val}
                                 }
                             },
                             ctx
@@ -473,7 +469,7 @@ export default function({
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
             // if simple attribute type
-            let value = {};
+            let value: IValue = {};
             if (attr.type === AttributeTypes.SIMPLE || attr.type === AttributeTypes.SIMPLE_LINK) {
                 value = (await valueRepo.getValues({library, recordId, attribute: attr, ctx})).pop();
             } else {
@@ -512,19 +508,7 @@ export default function({
                         libraryId: library,
                         recordId,
                         attributeId: attribute,
-                        ...(attr.multiple_values && {
-                            value: {
-                                new: (
-                                    await valueRepo.getValues({
-                                        library,
-                                        recordId,
-                                        attribute: attr,
-                                        forceGetAllValues: true,
-                                        ctx
-                                    })
-                                ).map(v => v.value)
-                            }
-                        })
+                        value: {old: actionsListRes.value}
                     }
                 },
                 ctx

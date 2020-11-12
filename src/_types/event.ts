@@ -40,8 +40,8 @@ export interface IValuePayload extends IPayload {
         libraryId: string;
         recordId: string;
         attributeId: string;
-        value?: {
-            new: any;
+        value: {
+            new?: any;
             old?: any;
         };
     };
