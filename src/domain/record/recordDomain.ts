@@ -12,7 +12,6 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
-import {IList} from '../../_types/list';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {EventType} from '../../_types/event';
@@ -28,7 +27,6 @@ import {
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import {pick} from 'lodash';
 import * as Config from '_types/config';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
@@ -98,20 +96,6 @@ export interface IRecordDomain {
      * Fields to retrieve on each records
      */
     find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
-
-    search({
-        library,
-        query,
-        from,
-        size,
-        ctx
-    }: {
-        library: string;
-        query: string;
-        from?: number;
-        size?: number;
-        ctx: IQueryInfos;
-    }): Promise<IList<IRecord>>;
 
     getRecordFieldValue({
         library,
@@ -407,11 +391,6 @@ export default function({
             );
 
             return deletedRecord;
-        },
-        async search({library, query, from, size, ctx}): Promise<IList<IRecord>> {
-            await validateLibrary(library, {libraryDomain}, ctx);
-
-            return recordRepo.search(library, query, from, size);
         },
         async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
             const {library, sort, pagination, withCount, retrieveInactive = false, searchQuery} = params;

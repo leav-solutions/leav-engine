@@ -8,7 +8,7 @@ import {IRecord} from '_types/record';
 import {IValue} from '_types/value';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeTypes} from '../../_types/attribute';
+import {AttributeTypes, AttributeFormats} from '../../_types/attribute';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -138,14 +138,17 @@ describe('RecordDomain', () => {
 
     describe('find', () => {
         test('Should find records', async function() {
-            const mockRes = [
-                {
-                    id: '222536515',
-                    created_at: 1520931648,
-                    modified_at: 1520931648,
-                    ean: '9876543219999999'
-                }
-            ];
+            const mockRes = {
+                totalCount: 1,
+                list: [
+                    {
+                        id: '222536515',
+                        created_at: 1520931648,
+                        modified_at: 1520931648,
+                        ean: '9876543219999999'
+                    }
+                ]
+            };
 
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
@@ -154,7 +157,7 @@ describe('RecordDomain', () => {
             const findRes = await recDomain.find({params: {library: 'test_lib'}, ctx});
 
             expect(recRepo.find.mock.calls.length).toBe(1);
-            expect(findRes).toEqual([
+            expect(findRes.list).toEqual([
                 {
                     id: '222536515',
                     created_at: 1520931648,
@@ -163,9 +166,7 @@ describe('RecordDomain', () => {
                 }
             ]);
         });
-    });
 
-    describe('search', () => {
         test('Should search records', async function() {
             const mockRes = {
                 totalCount: 1,
@@ -177,17 +178,36 @@ describe('RecordDomain', () => {
                 ]
             };
 
-            const recRepo: Mockify<IRecordRepo> = {search: global.__mockPromise(mockRes)};
+            const recRepo: Mockify<IRecordRepo> = {
+                find: global.__mockPromise(mockRes),
+                search: global.__mockPromise(mockRes)
+            };
+
             const libDomain: Mockify<ILibraryDomain> = {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib', system: false}], totalCount: 1})
             };
 
+            const attributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    id: 'id',
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.TEXT
+                })
+            };
+
             const recDomain = recordDomain({
+                'core.domain.attribute': attributeDomain as IAttributeDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.library': libDomain as ILibraryDomain
             });
 
-            const findRes = await recDomain.search({library: 'test_lib', query: 'text', ctx});
+            const findRes = await recDomain.find({
+                params: {
+                    library: 'test_lib',
+                    searchQuery: 'text'
+                },
+                ctx
+            });
 
             expect(recRepo.search.mock.calls.length).toBe(1);
             expect(findRes).toEqual({
