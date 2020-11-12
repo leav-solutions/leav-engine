@@ -88,18 +88,18 @@ export default function({
         }
     };
 
-    const _getLinkedLibraries = async (library: string, ctx: IQueryInfos): Promise<string[]> => {
+    const _indexLinkedLibraries = async (libraryId: string, ctx: IQueryInfos, recordId?: string): Promise<void> => {
         // get all attributes with the new library as linked library
-        const attrs = await attributeDomain.getAttributes({
+        const attributes = await attributeDomain.getAttributes({
             params: {
-                filters: {linked_library: library}
+                filters: {linked_library: libraryId}
             },
             ctx
         });
 
         // get all libraries using theses attributes
         const libraries = [];
-        for (const attr of attrs.list) {
+        for (const attr of attributes.list) {
             const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
 
             for (let i = res.length - 1; i >= 0; i--) {
@@ -112,7 +112,23 @@ export default function({
             libraries.push(res);
         }
 
-        return [...new Set([].concat(...libraries))];
+        const linkedLibraries = [...new Set([].concat(...libraries))];
+
+        for (const ll of linkedLibraries) {
+            let filters;
+
+            if (typeof recordId !== 'undefined') {
+                let fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(ll, ctx);
+                fullTextAttributes = fullTextAttributes.filter(a => a.linked_library === libraryId);
+
+                filters = fullTextAttributes.map(attr => ({
+                    field: attr.id,
+                    value: recordId
+                }));
+            }
+
+            await _indexRecords({library: ll, filters}, ctx);
+        }
     };
 
     const _onMessage = async (msg: string): Promise<void> => {
@@ -183,11 +199,7 @@ export default function({
 
                 // if label change we re-index all linked libraries
                 if (data.new.recordIdentityConf?.label !== data.old?.recordIdentityConf?.label) {
-                    const linkedLibraries = await _getLinkedLibraries(data.new.id, ctx);
-
-                    for (const ll of linkedLibraries) {
-                        await _indexRecords({library: ll}, ctx);
-                    }
+                    await _indexLinkedLibraries(data.new.id, ctx);
                 }
 
                 break;
@@ -238,19 +250,7 @@ export default function({
                 // if new value of the attribute is the label of the library
                 // we have to re-index all linked libraries
                 if (library.recordIdentityConf?.label === data.attributeId) {
-                    const linkedLibraries = await _getLinkedLibraries(data.libraryId, ctx);
-
-                    for (const ll of linkedLibraries) {
-                        let attrs = await libraryDomain.getLibraryFullTextAttributes(ll, ctx);
-                        attrs = attrs.filter(a => a.linked_library === data.libraryId);
-
-                        const filters = attrs.map(attr => ({
-                            field: attr.id,
-                            value: data.recordId
-                        }));
-
-                        await _indexRecords({library: ll, filters}, ctx);
-                    }
+                    await _indexLinkedLibraries(data.libraryId, ctx, data.recordId);
                 }
 
                 break;
@@ -274,6 +274,15 @@ export default function({
                     });
                 } else {
                     await elasticsearchService.delete(data.libraryId, data.recordId, data.attributeId);
+                }
+
+                // TODO: then = test
+                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
+
+                // if attribute updated/deleted is the label of the library
+                // we have to re-index all linked libraries
+                if (library.recordIdentityConf?.label === data.attributeId) {
+                    await _indexLinkedLibraries(data.libraryId, ctx, data.recordId);
                 }
 
                 break;
