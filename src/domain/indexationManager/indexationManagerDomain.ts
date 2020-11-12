@@ -233,7 +233,6 @@ export default function({
                     });
                 }
 
-                // FIXME: A voir pour les actives
                 const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
 
                 // if new value of the attribute is the label of the library
