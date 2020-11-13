@@ -8,8 +8,6 @@ module.exports = {
         name: 'leav_test'
     },
     amqp: {
-        host: 'message_broker',
-        type: 'direct',
         exchange: 'test_leav_core'
     },
     filesManager: {
