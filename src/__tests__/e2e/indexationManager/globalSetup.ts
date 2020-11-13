@@ -13,9 +13,6 @@ export async function setup() {
         // Init i18next
         const translator = await i18nextInit(conf);
 
-        // Init DB
-        await initDb(conf);
-
         // Init AMQP
         const amqpConn = await initAmqp({config: conf});
 
