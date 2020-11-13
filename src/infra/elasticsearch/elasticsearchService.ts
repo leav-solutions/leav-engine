@@ -8,25 +8,6 @@ interface IMultiMatchQuery {
     };
 }
 
-interface IFilterQuery {
-    term?: {
-        active?: boolean;
-    };
-}
-
-interface ISearchBody {
-    from: number;
-    size: number;
-    query: {
-        bool: {
-            must: {
-                should: IMultiMatchQuery[];
-            };
-            filter?: IFilterQuery;
-        };
-    };
-}
-
 // Complete definition of the Search response
 interface IShardsResponse {
     total: number;
