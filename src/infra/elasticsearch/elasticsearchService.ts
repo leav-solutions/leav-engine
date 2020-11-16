@@ -85,10 +85,10 @@ export default function({'core.infra.elasticsearch': client = null}: IDeps = {})
             return (res.body as unknown) as boolean;
         },
         async index(index: string, documentId: string, data: any): Promise<void> {
-            await client.index({index, id: documentId, body: data, refresh: 'true'});
+            await client.index({index, id: documentId, body: data, refresh: true});
         },
         async update(index: string, documentId: string, data: any): Promise<void> {
-            await client.update({index, id: documentId, body: {doc: data}, refresh: 'true'});
+            await client.update({index, id: documentId, body: {doc: data}, refresh: true});
         },
         async delete(index: string, documentId: string, attributeId: string): Promise<void> {
             await client.update({
@@ -100,7 +100,7 @@ export default function({'core.infra.elasticsearch': client = null}: IDeps = {})
                         params: {attribute: attributeId}
                     }
                 },
-                refresh: 'true'
+                refresh: true
             });
         },
         async indiceCreate(index: string): Promise<void> {
@@ -110,7 +110,7 @@ export default function({'core.infra.elasticsearch': client = null}: IDeps = {})
             await client.indices.delete({index});
         },
         async deleteDocument(index: string, documentId: string): Promise<void> {
-            await client.delete({index, id: documentId, refresh: 'true'});
+            await client.delete({index, id: documentId, refresh: true});
         },
         async multiMatch<T extends any = any>(
             index: string,
