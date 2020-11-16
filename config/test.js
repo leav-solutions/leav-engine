@@ -10,7 +10,7 @@ module.exports = {
         url: 'http://elasticsearch:9200'
     },
     amqp: {
-        exchange: 'test_leav_core',
+        exchange: 'test_leav_core'
     },
     filesManager: {
         queues: {
