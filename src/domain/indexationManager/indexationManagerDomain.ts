@@ -56,7 +56,10 @@ export default function({
                             ctx
                         });
 
-                        if (fta.type === AttributeTypes.SIMPLE_LINK || fta.type === AttributeTypes.ADVANCED_LINK) {
+                        if (
+                            !!val &&
+                            (fta.type === AttributeTypes.SIMPLE_LINK || fta.type === AttributeTypes.ADVANCED_LINK)
+                        ) {
                             if (Array.isArray(val)) {
                                 for (const v of val) {
                                     const recordIdentity = await recordDomain.getRecordIdentity(
@@ -215,33 +218,36 @@ export default function({
 
                 const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
 
-                if (data.attributeId === 'active' && data.value.new === false) {
+                if (data.attributeId === 'active' && data.value.new.value === false) {
                     await elasticsearchService.deleteDocument(data.libraryId, data.recordId);
-                } else if (data.attributeId === 'active' && data.value.new === true) {
+                } else if (data.attributeId === 'active' && data.value.new.value === true) {
                     await _indexRecords({library: data.libraryId, filters: [{field: 'id', value: data.recordId}]}, ctx);
                 } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
-                    // if simple link replace id by record label
                     const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
+
                     if (attr.type === AttributeTypes.SIMPLE_LINK || attr.type === AttributeTypes.ADVANCED_LINK) {
-                        if (Array.isArray(data.value.new)) {
-                            for (const v of data.value.new) {
+                        if (attr.multiple_values) {
+                            for (const [i, v] of data.value.new.entries()) {
                                 const recordIdentity = await recordDomain.getRecordIdentity(
                                     {id: v.value.id, library: attr.linked_library},
                                     ctx
                                 );
-                                v.value = recordIdentity.label || v.value.id;
+
+                                data.value.new[i].value = recordIdentity.label || v.value.id;
                             }
                         } else {
                             const recordIdentity = await recordDomain.getRecordIdentity(
-                                {id: String(data.value.new), library: attr.linked_library},
+                                {id: String(data.value.new.value), library: attr.linked_library},
                                 ctx
                             );
-                            data.value.new = recordIdentity.label || String(data.value.new);
+                            data.value.new.value = recordIdentity.label || String(data.value.new.value);
                         }
                     }
 
                     await elasticsearchService.update(data.libraryId, data.recordId, {
-                        [data.attributeId]: data.value.new
+                        [data.attributeId]: Array.isArray(data.value.new)
+                            ? data.value.new.map(v => v.value)
+                            : data.value.new.value
                     });
                 }
 
@@ -269,6 +275,18 @@ export default function({
                         ctx
                     });
 
+                    // set label instead of id
+                    if (attrProps.type === AttributeTypes.ADVANCED_LINK) {
+                        for (const [i, v] of values.entries()) {
+                            const recordIdentity = await recordDomain.getRecordIdentity(
+                                {id: v.value.id, library: attrProps.linked_library},
+                                ctx
+                            );
+
+                            values[i].value = recordIdentity.label || v.value.id;
+                        }
+                    }
+
                     await elasticsearchService.update(data.libraryId, data.recordId, {
                         [data.attributeId]: values.map(v => String(v.value))
                     });
@@ -276,7 +294,6 @@ export default function({
                     await elasticsearchService.delete(data.libraryId, data.recordId, data.attributeId);
                 }
 
-                // TODO: then = test
                 const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
 
                 // if attribute updated/deleted is the label of the library

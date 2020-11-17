@@ -1,5 +1,6 @@
 import {IRecord} from './record';
 import {ILibrary} from './library';
+import {IValue} from './value';
 
 export enum EventType {
     RECORD_SAVE = 'RECORD_SAVE',
@@ -41,8 +42,8 @@ export interface IValuePayload extends IPayload {
         recordId: string;
         attributeId: string;
         value: {
-            new?: any;
-            old?: any;
+            new?: IValue | IValue[];
+            old?: IValue | IValue[];
         };
     };
 }

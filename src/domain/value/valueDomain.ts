@@ -268,7 +268,7 @@ export default function({
 
             await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
-            let val: IValue | IValue[] = savedVal.value;
+            let val: IValue | IValue[] = savedVal;
             if (attributeProps.multiple_values) {
                 val = await valueRepo.getValues({
                     library,
@@ -277,8 +277,6 @@ export default function({
                     forceGetAllValues: true,
                     ctx
                 });
-
-                val = val.map((v: IValue) => v.value);
             }
 
             // TODO: get old value ?
@@ -379,7 +377,7 @@ export default function({
 
                         prevRes.values.push({...savedVal, attribute: value.attribute});
 
-                        let val: IValue | IValue[] = savedVal.value;
+                        let val: IValue | IValue[] = savedVal;
                         if (attributeProps.multiple_values) {
                             val = await valueRepo.getValues({
                                 library,
@@ -388,8 +386,6 @@ export default function({
                                 forceGetAllValues: true,
                                 ctx
                             });
-
-                            val = val.map((v: IValue) => v.value);
                         }
 
                         // TODO: get old value ?
@@ -508,7 +504,7 @@ export default function({
                         libraryId: library,
                         recordId,
                         attributeId: attribute,
-                        value: {old: actionsListRes.value}
+                        value: {old: actionsListRes}
                     }
                 },
                 ctx
