@@ -34,7 +34,7 @@ unitTests:
     script:
         - npm run test
 
-e2eTests:
+e2eApi:
     stage: test
     image: node:14-alpine
     services:
@@ -53,3 +53,24 @@ e2eTests:
         - npm install
     script:
         - npm run test:e2e:api
+
+e2eIndexationManager:
+    stage: test
+    image: node:14-alpine
+    services:
+        - arangodb:3.7
+        - rabbitmq:3-management-alpine
+        - docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    variables:
+        NODE_ENV: test
+        ARANGO_NO_AUTH: 1
+        ARANGO_URL: 'http://root:@arangodb:8529'
+        AUTH_KEY: 123456789
+        AMQP_HOST: rabbitmq
+        AMQP_USERNAME: guest
+        AMQP_PASSWORD: guest
+    before_script:
+        - npm config set _auth $NEXUS_AUTH
+        - npm install
+    script:
+        - npm run test:e2e:indexationManager
