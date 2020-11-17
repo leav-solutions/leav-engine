@@ -60,7 +60,7 @@ e2eIndexationManager:
     services:
         - arangodb:3.7
         - rabbitmq:3-management-alpine
-        - docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+        - elasticsearch:7.8.0
     variables:
         NODE_ENV: test
         ARANGO_NO_AUTH: 1
