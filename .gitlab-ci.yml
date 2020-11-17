@@ -1,11 +1,11 @@
 stages:
-    - test 
+    - test
     - deploy
 
 include:
   - project: 'infra/shared_ci'
     file: '/omnipublish-v6.yml'
-    
+
 # Environment variables are defined in GitLab CI/CD settings at projet level:
 # NEXUS_URL is the private registry URL
 # NEXUS_AUTH is the base64 encoded credentials on Nexus registry.
@@ -39,11 +39,15 @@ e2eTests:
     image: node:14-alpine
     services:
         - arangodb:3.7
+        - rabbitmq:3-management-alpine
     variables:
         NODE_ENV: test
         ARANGO_NO_AUTH: 1
         ARANGO_URL: 'http://root:@arangodb:8529'
         AUTH_KEY: 123456789
+        AMQP_HOST: rabbitmq
+        AMQP_USERNAME: guest
+        AMQP_PASSWORD: guest
     before_script:
         - npm config set _auth $NEXUS_AUTH
         - npm install
