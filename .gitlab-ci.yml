@@ -69,6 +69,8 @@ e2eIndexationManager:
         AMQP_HOST: rabbitmq
         AMQP_USERNAME: guest
         AMQP_PASSWORD: guest
+        discovery.type: single-node # For ElasticSearch
+        ES_JAVA_OPTS: -Xms512m -Xmx512m # For ElasticSearch
     before_script:
         - npm config set _auth $NEXUS_AUTH
         - npm install
