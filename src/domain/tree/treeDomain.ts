@@ -220,11 +220,18 @@ export default function({
 
             // Get data to save
             const defaultParams = {id: '', behavior: TreeBehavior.STANDARD, system: false, label: {fr: '', en: ''}};
+            const treeProps = await _getTreeProps(treeData.id, ctx);
 
             // If existing tree, skip all uneditable fields from supplied params.
             // If new tree, merge default params with supplied params
             const uneditableFields = ['behavior', 'system'];
-            const dataToSave = isExistingTree ? omit(treeData, uneditableFields) : {...defaultParams, ...treeData};
+            const dataToSave = isExistingTree
+                ? {
+                      ...defaultParams,
+                      ...treeProps,
+                      ...omit(treeData, uneditableFields)
+                  }
+                : {...defaultParams, ...treeData};
 
             // Validate tree data
             await treeDataValidationHelper.validate(dataToSave as ITree, ctx);

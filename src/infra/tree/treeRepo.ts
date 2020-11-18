@@ -204,7 +204,7 @@ export default function({
             const docToSave = dbUtils.convertToDoc(treeData);
 
             const treeRes = await dbService.execute({
-                query: aql`UPDATE ${docToSave} IN ${collec} RETURN NEW`,
+                query: aql`UPDATE ${docToSave} IN ${collec} OPTIONS { mergeObjects: false } RETURN NEW`,
                 ctx
             });
 

@@ -7,6 +7,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLScalarType} from 'graphql';
 import {isNumber} from 'util';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {ITreePermissionsConf} from '_types/permissions';
 import {ITree, ITreeElement, TreeBehavior} from '../../_types/tree';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreApp} from './coreApp';
@@ -76,6 +77,12 @@ export default function({
                         libraries: [Library!]!,
                         behavior: TreeBehavior!,
                         label(lang: [AvailableLanguage!]): SystemTranslation
+                        permissions_conf: [TreeNodePermissionsConf!]
+                    }
+
+                    type TreeNodePermissionsConf {
+                        libraryId: ID!,
+                        permissionsConf: Treepermissions_conf!
                     }
 
                     input TreeInput {
@@ -83,6 +90,12 @@ export default function({
                         libraries: [String!],
                         behavior: TreeBehavior,
                         label: SystemTranslation
+                        permissions_conf: [TreeNodePermissionsConfInput!]
+                    }
+
+                    input TreeNodePermissionsConfInput {
+                        libraryId: ID!,
+                        permissionsConf: Treepermissions_confInput!
                     }
 
                     type TreeElement {
@@ -180,8 +193,32 @@ export default function({
                         }
                     },
                     Mutation: {
-                        async saveTree(parent, {tree}, ctx): Promise<ITree> {
-                            return treeDomain.saveTree(tree, ctx);
+                        async saveTree(
+                            _,
+                            {
+                                tree
+                            }: {
+                                tree: Omit<ITree, 'permissions_conf'> & {
+                                    permissions_conf: [{libraryId: string; permissionsConf: ITreePermissionsConf}];
+                                };
+                            },
+                            ctx
+                        ): Promise<ITree> {
+                            // Convert permissions conf
+                            const treeToSave: ITree = {
+                                ...tree,
+                                permissions_conf: tree.permissions_conf
+                                    ? tree.permissions_conf.reduce(
+                                          (acc, cur) => ({
+                                              ...acc,
+                                              [cur.libraryId]: cur.permissionsConf
+                                          }),
+                                          {}
+                                      )
+                                    : null
+                            };
+
+                            return treeDomain.saveTree(treeToSave, ctx);
                         },
                         async deleteTree(parent, {id}, ctx): Promise<ITree> {
                             return treeDomain.deleteTree(id, ctx);
@@ -232,6 +269,16 @@ export default function({
                                     return lib.list[0];
                                 })
                             );
+                        },
+                        permissions_conf: (
+                            treeData: ITree
+                        ): Array<{libraryId: string; permissionsConf: ITreePermissionsConf}> | null => {
+                            return treeData.permissions_conf
+                                ? Object.keys(treeData.permissions_conf).map(libId => ({
+                                      libraryId: libId,
+                                      permissionsConf: treeData.permissions_conf[libId]
+                                  }))
+                                : null;
                         }
                     },
                     TreeNode: {

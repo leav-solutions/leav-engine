@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ITreeNodePermissionsConf} from './permissions';
 import {IRecord} from './record';
 import {ISystemTranslation} from './systemTranslation';
 
@@ -10,6 +11,7 @@ export interface ITree {
     behavior?: TreeBehavior;
     label: ISystemTranslation;
     system?: boolean;
+    permissions_conf?: ITreeNodePermissionsConf;
 }
 
 export interface ITreeFilterOptions {

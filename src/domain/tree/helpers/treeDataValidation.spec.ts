@@ -2,6 +2,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
+import {PermissionsRelations} from '../../../_types/permissions';
 import {mockLibrary, mockLibraryFiles} from '../../../__tests__/mocks/library';
 import {mockFilesTree, mockTree} from '../../../__tests__/mocks/tree';
 import treeDataValidation from './treeDataValidation';
@@ -31,7 +32,7 @@ describe('TreeDataValidation', () => {
             };
 
             const validationHelper = treeDataValidation({
-                'core.library.domain': mockLibDomain as ILibraryDomain,
+                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.utils': mockUtilsInvalidId as IUtils
             });
 
@@ -46,11 +47,33 @@ describe('TreeDataValidation', () => {
             };
 
             const validationHelper = treeDataValidation({
-                'core.library.domain': mockLibDomainNotFound as ILibraryDomain,
+                'core.domain.library': mockLibDomainNotFound as ILibraryDomain,
                 'core.utils': mockUtils as IUtils
             });
 
             await expect(validationHelper.validate({...mockTree}, ctx)).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if saving permissions conf on invalid library', async () => {
+            const validationHelper = treeDataValidation({
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.utils': mockUtils as IUtils
+            });
+
+            await expect(
+                validationHelper.validate(
+                    {
+                        ...mockTree,
+                        permissions_conf: {
+                            invalid_lib: {
+                                permissionTreeAttributes: ['category'],
+                                relation: PermissionsRelations.AND
+                            }
+                        }
+                    },
+                    ctx
+                )
+            ).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if, on files behavior, binding a non-files library', async () => {
@@ -58,7 +81,7 @@ describe('TreeDataValidation', () => {
                 getLibraries: global.__mockPromise({list: [{...mockLibrary, id: 'lib1'}]})
             };
             const validationHelper = treeDataValidation({
-                'core.library.domain': mockLibDomainNotFiles as ILibraryDomain,
+                'core.domain.library': mockLibDomainNotFiles as ILibraryDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -76,7 +99,7 @@ describe('TreeDataValidation', () => {
             };
 
             const validationHelper = treeDataValidation({
-                'core.library.domain': mockLibDomainNotFiles as ILibraryDomain,
+                'core.domain.library': mockLibDomainNotFiles as ILibraryDomain,
                 'core.utils': mockUtils as IUtils
             });
 

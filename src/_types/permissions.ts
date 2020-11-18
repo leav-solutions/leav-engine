@@ -9,7 +9,8 @@ export enum PermissionTypes {
     APP = 'app',
     LIBRARY = 'library',
     ATTRIBUTE = 'attribute',
-    TREE = 'tree'
+    TREE = 'tree',
+    TREE_NODE = 'tree_node'
 }
 
 export enum LibraryPermissionsActions {
@@ -43,6 +44,12 @@ export enum AttributePermissionsActions {
 export enum TreePermissionsActions {
     ACCESS_TREE = 'access_tree',
     EDIT_TREE = 'edit_tree',
+    EDIT_CHILDREN = 'edit_children'
+}
+
+export enum TreeNodePermissionsActions {
+    ACCESS_NODE = 'access_node',
+    EDIT_NODE = 'edit_node',
     EDIT_CHILDREN = 'edit_children'
 }
 
@@ -84,6 +91,10 @@ export interface ILabeledPermissionsAction {
 export enum PermissionsRelations {
     AND = 'and',
     OR = 'or'
+}
+
+export interface ITreeNodePermissionsConf {
+    [libraryId: string]: ITreePermissionsConf;
 }
 
 export interface ITreePermissionsConf {

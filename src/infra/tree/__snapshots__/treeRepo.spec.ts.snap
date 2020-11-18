@@ -264,7 +264,7 @@ Object {
 }
 `;
 
-exports[`TreeRepo updateTree Should update a tree 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+exports[`TreeRepo updateTree Should update a tree 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
 
 exports[`TreeRepo updateTree Should update a tree 2`] = `
 Object {

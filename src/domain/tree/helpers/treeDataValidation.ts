@@ -12,12 +12,12 @@ export interface ITreeDataValidationHelper {
 }
 
 interface IDeps {
-    'core.library.domain'?: ILibraryDomain;
+    'core.domain.library'?: ILibraryDomain;
     'core.utils'?: IUtils;
 }
 
 export default function({
-    'core.library.domain': libraryDomain = null,
+    'core.domain.library': libraryDomain = null,
     'core.utils': utils = null
 }: IDeps): ITreeDataValidationHelper {
     const _validateId = (treeData: ITree) => {
@@ -49,14 +49,34 @@ export default function({
         }
     };
 
+    const _validatePermissionsConf = (treeData: ITree) => {
+        if (!treeData.permissions_conf) {
+            return;
+        }
+
+        const permConfLibs = Object.keys(treeData.permissions_conf);
+
+        const invalidLibs = difference(permConfLibs, treeData.libraries);
+
+        if (invalidLibs.length) {
+            throw new ValidationError({
+                permissions_conf: {
+                    msg: Errors.INVALID_PERMISSIONS_CONF_LIBRARIES,
+                    vars: {libraries: invalidLibs.join(', ')}
+                }
+            });
+        }
+    };
+
     const validate = async (treeData: ITree, ctx: IQueryInfos): Promise<void> => {
-        const {list: treeLibraries} = await libraryDomain.getLibraries({ctx});
+        const {list: existingLibraries} = await libraryDomain.getLibraries({ctx});
 
         _validateId(treeData);
-        _checkLibExists(treeData, treeLibraries);
+        _checkLibExists(treeData, existingLibraries);
+        _validatePermissionsConf(treeData);
 
         if (treeData.behavior === TreeBehavior.FILES) {
-            _validateFilesTree(treeLibraries);
+            _validateFilesTree(existingLibraries);
         }
     };
 
