@@ -60,14 +60,14 @@ describe('Utils', () => {
         test('Check ID format is correct', async () => {
             const utilsModule = utils();
 
-            expect(utilsModule.validateID('correct_id')).toEqual(true);
-            expect(utilsModule.validateID('correct_id42')).toEqual(true);
-            expect(utilsModule.validateID('invalid id')).toEqual(false);
-            expect(utilsModule.validateID('invalid id')).toEqual(false);
-            expect(utilsModule.validateID('Invalid_id')).toEqual(false);
-            expect(utilsModule.validateID('')).toEqual(false);
-            expect(utilsModule.validateID(null)).toEqual(false);
-            expect(utilsModule.validateID(undefined)).toEqual(false);
+            expect(utilsModule.isIdValid('correct_id')).toEqual(true);
+            expect(utilsModule.isIdValid('correct_id42')).toEqual(true);
+            expect(utilsModule.isIdValid('invalid id')).toEqual(false);
+            expect(utilsModule.isIdValid('invalid id')).toEqual(false);
+            expect(utilsModule.isIdValid('Invalid_id')).toEqual(false);
+            expect(utilsModule.isIdValid('')).toEqual(false);
+            expect(utilsModule.isIdValid(null)).toEqual(false);
+            expect(utilsModule.isIdValid(undefined)).toEqual(false);
         });
     });
 

@@ -18,7 +18,7 @@ export interface IUtils {
      *
      * @param id
      */
-    validateID(id: string): boolean;
+    isIdValid(id: string): boolean;
 
     /**
      * Rethrow an error prefixed by optional message.
@@ -61,7 +61,7 @@ export default function(): IUtils {
         libNameToTypeName(name: string): string {
             return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(name);
         },
-        validateID(id: string): boolean {
+        isIdValid(id: string): boolean {
             if (!id) {
                 return false;
             }

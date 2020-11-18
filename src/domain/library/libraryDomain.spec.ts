@@ -123,7 +123,7 @@ describe('LibraryDomain', () => {
 
     describe('saveLibrary', () => {
         const mockUtils: Mockify<IUtils> = {
-            validateID: jest.fn().mockReturnValue(true),
+            isIdValid: jest.fn().mockReturnValue(true),
             getLibraryTreeId: jest.fn().mockReturnValue({})
         };
 
@@ -206,7 +206,7 @@ describe('LibraryDomain', () => {
 
             test('Should throw if invalid ID', async function() {
                 const mockUtilsInvalidID: Mockify<IUtils> = {
-                    validateID: jest.fn().mockReturnValue(false)
+                    isIdValid: jest.fn().mockReturnValue(false)
                 };
 
                 const mockLibRepo: Mockify<ILibraryRepo> = {

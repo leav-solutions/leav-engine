@@ -150,7 +150,7 @@ export default function({
             }
 
             // Validate ID format
-            if (!utils.validateID(dataToSave.id)) {
+            if (!utils.isIdValid(dataToSave.id)) {
                 throw new ValidationError({id: Errors.INVALID_ID_FORMAT});
             }
 

@@ -38,7 +38,7 @@ describe('formDomain', () => {
     };
 
     const mockUtils: Mockify<IUtils> = {
-        validateID: jest.fn().mockReturnValue(true)
+        isIdValid: jest.fn().mockReturnValue(true)
     };
 
     describe('Get forms by lib', () => {
@@ -204,7 +204,7 @@ describe('formDomain', () => {
             };
 
             const mockUtilsInvalidID: Mockify<IUtils> = {
-                validateID: jest.fn().mockReturnValue(false)
+                isIdValid: jest.fn().mockReturnValue(false)
             };
 
             const domain = formDomain({

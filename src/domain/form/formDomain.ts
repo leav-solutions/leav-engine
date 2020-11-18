@@ -115,7 +115,7 @@ export default function(deps: IDeps = {}): IFormDomain {
             await validateLibrary(dataToSave.library, deps, ctx);
 
             // Validate ID
-            if (!utils.validateID(dataToSave.id)) {
+            if (!utils.isIdValid(dataToSave.id)) {
                 throw new ValidationError({id: Errors.INVALID_ID_FORMAT});
             }
 

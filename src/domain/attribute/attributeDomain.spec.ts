@@ -224,7 +224,7 @@ describe('attributeDomain', () => {
         };
 
         const mockUtils: Mockify<IUtils> = {
-            validateID: jest.fn().mockReturnValue(true),
+            isIdValid: jest.fn().mockReturnValue(true),
             mergeConcat: jest.fn().mockImplementation(o => o),
             getDefaultActionsList: jest.fn().mockReturnValue({
                 [ActionsListEvents.SAVE_VALUE]: [
@@ -523,7 +523,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if invalid ID', async function() {
             const mockUtilsInvalidID: Mockify<IUtils> = {
-                validateID: jest.fn().mockReturnValue(false)
+                isIdValid: jest.fn().mockReturnValue(false)
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {

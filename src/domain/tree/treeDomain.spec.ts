@@ -10,11 +10,12 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {LibraryBehavior} from '../../_types/library';
 import {AppPermissionsActions} from '../../_types/permissions';
-import {TreeBehavior} from '../../_types/tree';
+import {ITree, TreeBehavior} from '../../_types/tree';
 import {mockFilesTree} from '../../__tests__/mocks/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
+import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import treeDomain from './treeDomain';
 
 describe('treeDomain', () => {
@@ -30,10 +31,6 @@ describe('treeDomain', () => {
         behavior: TreeBehavior.STANDARD
     };
 
-    const mockLibDomain: Mockify<ILibraryDomain> = {
-        getLibraries: global.__mockPromise({list: [{id: 'lib1'}, {id: 'lib2'}], totalCount: 2})
-    };
-
     const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
         getAppPermission: global.__mockPromise(true)
     };
@@ -42,11 +39,15 @@ describe('treeDomain', () => {
         getAppPermission: global.__mockPromise(false)
     };
 
+    const treeDataValidationHelper: Mockify<ITreeDataValidationHelper> = {
+        validate: jest.fn()
+    };
+
     beforeEach(() => jest.clearAllMocks());
 
     describe('saveTree', () => {
         const mockUtils: Mockify<IUtils> = {
-            validateID: jest.fn().mockReturnValue(true)
+            isIdValid: jest.fn().mockReturnValue(true)
         };
         test('Should create new tree', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
@@ -55,8 +56,8 @@ describe('treeDomain', () => {
                 getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
@@ -79,8 +80,8 @@ describe('treeDomain', () => {
                 getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
@@ -96,36 +97,16 @@ describe('treeDomain', () => {
             expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.EDIT_TREE);
         });
 
-        test('Should throw if unknown libraries', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
-                createTree: global.__mockPromise(mockTree),
-                getTrees: global.__mockPromise({list: [], totalCount: 0})
-            };
-
-            const treeData = {
-                ...mockTree,
-                libraries: ['lib1', 'unexisting_lib']
-            };
-
-            const domain = treeDomain({
-                'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
-                'core.utils': mockUtils as IUtils
-            });
-
-            await expect(domain.saveTree(treeData, ctx)).rejects.toThrow(ValidationError);
-        });
-
         test('Should throw if forbidden action', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
+
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
@@ -133,21 +114,26 @@ describe('treeDomain', () => {
             await expect(domain.saveTree(mockTree, ctx)).rejects.toThrow(PermissionError);
         });
 
-        test('Should throw if invalid ID', async function() {
-            const mockUtilsInvalidID: Mockify<IUtils> = {
-                validateID: jest.fn().mockReturnValue(false)
+        test('Should throw if validation fails', async () => {
+            const treeRepo: Mockify<ITreeRepo> = {
+                createTree: global.__mockPromise(mockTree),
+                updateTree: jest.fn(),
+                getTrees: global.__mockPromise({list: [], totalCount: 0})
             };
 
-            const treeRepo: Mockify<ITreeRepo> = {
-                createTree: jest.fn(),
-                updateTree: global.__mockPromise(mockTree),
-                getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
+            const failingDataValidationHelper: Mockify<ITreeDataValidationHelper> = {
+                validate: jest.fn().mockImplementation(() => {
+                    throw new ValidationError<ITree>({
+                        id: 'Invalid ID'
+                    });
+                })
             };
+
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': failingDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
-                'core.utils': mockUtilsInvalidID as IUtils
+                'core.utils': mockUtils as IUtils
             });
 
             await expect(domain.saveTree(mockTree, ctx)).rejects.toThrow(ValidationError);
@@ -168,50 +154,14 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockFilesLibDomain as ILibraryDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
             await domain.saveTree({...mockFilesTree}, ctx);
             expect(treeRepo.updateTree.mock.calls[0][0].behavior).toBeUndefined();
-        });
-
-        test('On files behavior, throw if binding a non-files library', async () => {
-            const treeToSave = {...mockFilesTree};
-            const treeRepo: Mockify<ITreeRepo> = {
-                createTree: jest.fn(),
-                updateTree: global.__mockPromise(treeToSave),
-                getTrees: global.__mockPromise({list: [treeToSave], totalCount: 1})
-            };
-
-            const domain = treeDomain({
-                'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
-                'core.utils': mockUtils as IUtils
-            });
-
-            await expect(domain.saveTree(treeToSave, ctx)).rejects.toHaveProperty('fields.libraries');
-        });
-
-        test('On files behavior, throw if binding more than one library', async () => {
-            const treeToSave = {...mockFilesTree, libraries: ['lib1', 'lib2']};
-            const treeRepo: Mockify<ITreeRepo> = {
-                createTree: jest.fn(),
-                updateTree: global.__mockPromise(treeToSave),
-                getTrees: global.__mockPromise({list: [treeToSave], totalCount: 1})
-            };
-
-            const domain = treeDomain({
-                'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
-                'core.utils': mockUtils as IUtils
-            });
-
-            await expect(domain.saveTree(treeToSave, ctx)).rejects.toHaveProperty('fields.libraries');
         });
     });
 
@@ -222,6 +172,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
@@ -241,6 +192,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
@@ -256,6 +208,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
@@ -271,6 +224,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain
             });
@@ -284,7 +238,10 @@ describe('treeDomain', () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
             };
-            const domain = treeDomain({'core.infra.tree': treeRepo as ITreeRepo});
+            const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
+                'core.infra.tree': treeRepo as ITreeRepo
+            });
 
             const trees = await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
 
@@ -296,7 +253,10 @@ describe('treeDomain', () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
             };
-            const domain = treeDomain({'core.infra.tree': treeRepo as ITreeRepo});
+            const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
+                'core.infra.tree': treeRepo as ITreeRepo
+            });
 
             const trees = await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
 
@@ -316,6 +276,7 @@ describe('treeDomain', () => {
                 getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 0})
             };
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
@@ -338,6 +299,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
@@ -366,6 +328,7 @@ describe('treeDomain', () => {
                 })
             };
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain
             });
@@ -399,6 +362,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain
@@ -426,6 +390,7 @@ describe('treeDomain', () => {
                 getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 0})
             };
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
@@ -454,6 +419,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain
             });
@@ -487,6 +453,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain
@@ -515,6 +482,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
@@ -540,6 +508,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain
             });
@@ -621,8 +590,8 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain
             });
@@ -647,8 +616,8 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain
             });
 
@@ -665,8 +634,8 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.library': mockLibDomain as ILibraryDomain
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
+                'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
             const isPresent = await domain.isElementPresent({

@@ -26,7 +26,7 @@ const _validateSettings = (
 ): ErrorFieldDetail<IAttribute> => {
     const errors: ErrorFieldDetail<IAttribute> = {};
 
-    if (!deps.utils.validateID(attrData.id)) {
+    if (!deps.utils.isIdValid(attrData.id)) {
         errors.id = Errors.INVALID_ID_FORMAT;
     }
     if (

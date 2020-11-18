@@ -6,21 +6,20 @@
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {difference, omit} from 'lodash';
+import {omit} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
 import {ITree, ITreeElement, ITreeNode, TreeBehavior} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
+import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import validateFilesParent from './helpers/validateFilesParent';
 
 export interface ITreeDomain {
@@ -163,21 +162,22 @@ export interface ITreeDomain {
 }
 
 interface IDeps {
-    'core.infra.tree'?: ITreeRepo;
-    'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission.app'?: IAppPermissionDomain;
     'core.domain.value'?: IValueDomain;
+    'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
+    'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
 }
+
 export default function({
-    'core.infra.tree': treeRepo = null,
-    'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.app': appPermissionDomain = null,
     'core.domain.value': valueDomain = null,
+    'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
+    'core.infra.tree': treeRepo = null,
     'core.utils': utils = null
 }: IDeps = {}): ITreeDomain {
     async function _getTreeProps(treeId: string, ctx: IQueryInfos): Promise<ITree | null> {
@@ -186,7 +186,7 @@ export default function({
         return trees.list.length ? trees.list[0] : null;
     }
 
-    async function _treeExists(treeId: string, ctx: IQueryInfos): Promise<boolean> {
+    async function _isExistingTree(treeId: string, ctx: IQueryInfos): Promise<boolean> {
         const treeProps = await _getTreeProps(treeId, ctx);
 
         return !!treeProps;
@@ -207,53 +207,30 @@ export default function({
 
     return {
         async saveTree(treeData: ITree, ctx: IQueryInfos): Promise<ITree> {
-            const trees = await treeRepo.getTrees({params: {filters: {id: treeData.id}}, ctx});
-            const existingTree = !!trees.list.length;
-
-            const defaultParams = {id: '', behavior: TreeBehavior.STANDARD, system: false, label: {fr: '', en: ''}};
-
-            // If existing tree, skip all uneditable fields from supplied params.
-            // If new tree, merge default params with supplied params
-            const uneditableFields = ['behavior', 'system'];
-            const dataToSave = existingTree ? omit(treeData, uneditableFields) : {...defaultParams, ...treeData};
+            // Check is existing tree
+            const isExistingTree = await _isExistingTree(treeData.id, ctx);
 
             // Check permissions
-            const action = existingTree ? AppPermissionsActions.EDIT_TREE : AppPermissionsActions.CREATE_TREE;
+            const action = isExistingTree ? AppPermissionsActions.EDIT_TREE : AppPermissionsActions.CREATE_TREE;
             const canSaveTree = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
             }
 
-            if (!utils.validateID(treeData.id)) {
-                throw new ValidationError({id: Errors.INVALID_ID_FORMAT});
-            }
+            // Get data to save
+            const defaultParams = {id: '', behavior: TreeBehavior.STANDARD, system: false, label: {fr: '', en: ''}};
 
-            // Check if all libraries exists
-            const libs = await libraryDomain.getLibraries({ctx});
-            const libsIds = libs.list.map(lib => lib.id);
+            // If existing tree, skip all uneditable fields from supplied params.
+            // If new tree, merge default params with supplied params
+            const uneditableFields = ['behavior', 'system'];
+            const dataToSave = isExistingTree ? omit(treeData, uneditableFields) : {...defaultParams, ...treeData};
 
-            const unknownLibs = difference(dataToSave.libraries, libsIds);
+            // Validate tree data
+            await treeDataValidationHelper.validate(dataToSave as ITree, ctx);
 
-            if (unknownLibs.length) {
-                throw new ValidationError({
-                    libraries: {msg: Errors.UNKNOWN_LIBRARIES, vars: {libraries: unknownLibs.join(', ')}}
-                });
-            }
-
-            // On files behavior, check if we have only 1 files lib
-            if (treeData.behavior === TreeBehavior.FILES) {
-                if (dataToSave.libraries.length > 1) {
-                    throw new ValidationError<ITree>({libraries: Errors.TOO_MUCH_LIBRARIES_ON_FILES_TREE});
-                }
-
-                const linkedLib = libs.list.filter(l => l.id === dataToSave.libraries[0])[0];
-                if (linkedLib.behavior !== LibraryBehavior.FILES) {
-                    throw new ValidationError<ITree>({libraries: Errors.NON_FILES_LIBRARY});
-                }
-            }
-
-            const savedTree = existingTree
+            // Save
+            const savedTree = isExistingTree
                 ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
                 : await treeRepo.createTree({treeData: dataToSave as ITree, ctx});
 
@@ -293,7 +270,7 @@ export default function({
             const treeProps = await _getTreeProps(treeId, ctx);
             const treeExists = !!treeProps;
 
-            if (!(await _treeExists(treeId, ctx))) {
+            if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
@@ -329,7 +306,7 @@ export default function({
             const treeProps = await _getTreeProps(treeId, ctx);
             const treeExists = !!treeProps;
 
-            if (!(await _treeExists(treeId, ctx))) {
+            if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
@@ -358,7 +335,7 @@ export default function({
         async deleteElement({treeId, element, deleteChildren = true, ctx}): Promise<ITreeElement> {
             const errors: any = {};
 
-            if (!(await _treeExists(treeId, ctx))) {
+            if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
@@ -374,7 +351,7 @@ export default function({
         },
         async getTreeContent({treeId, startingNode = null, ctx}): Promise<ITreeNode[]> {
             const errors: any = {};
-            if (!(await _treeExists(treeId, ctx))) {
+            if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
