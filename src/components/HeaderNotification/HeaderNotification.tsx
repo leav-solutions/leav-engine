@@ -22,7 +22,10 @@ function HeaderNotification(): JSX.Element {
     const [notificationsStack, updateNotificationsStack] = useNotificationsStack();
 
     const [message, setMessage] = useState<INotification>(notificationBase);
-    const [activeTimers, setActiveTimers] = useState<boolean>(false);
+    const [activeTimeouts, setActiveTimeouts] = useState<{notification: any; base: any}>({
+        notification: null,
+        base: null
+    });
 
     useEffect(() => {
         if (notificationsStack.length) {
@@ -34,28 +37,45 @@ function HeaderNotification(): JSX.Element {
                 return bp - ap;
             });
 
-            // take the first notification
+            // Take the first notification
             const [notification, ...restNotifications] = sortNotificationsStack;
 
-            if (notification && !activeTimers) {
+            if (notification && !activeTimeouts.notification) {
                 setMessage(notification);
 
                 const notificationTime = notification.time ?? defaultNotificationsTime;
 
-                // reset notifications
-                setTimeout(() => {
-                    if (!activeTimers) {
-                        setMessage(notificationBase);
+                if (activeTimeouts.base) {
+                    clearTimeout(activeTimeouts.base);
+                }
+
+                // Reset notifications
+                const notificationTimeout = setTimeout(() => {
+                    if (!activeTimeouts.notification) {
+                        const baseTimeout = setTimeout(() => {
+                            setMessage(notificationBase);
+                        }, 100);
+
+                        setActiveTimeouts(at => ({
+                            notification: at.notification,
+                            base: baseTimeout
+                        }));
                     }
 
-                    setActiveTimers(false);
+                    setActiveTimeouts(at => ({
+                        notification: null,
+                        base: at.base
+                    }));
                 }, notificationTime);
 
-                setActiveTimers(true);
+                setActiveTimeouts(at => ({
+                    notification: notificationTimeout,
+                    base: at.base
+                }));
 
                 updateNotificationsStack(restNotifications);
             }
-        } else if (!activeTimers) {
+        } else if (!activeTimeouts.notification) {
             setMessage(msg => {
                 if (notificationBase.content !== msg.content) {
                     return notificationBase;
@@ -63,7 +83,7 @@ function HeaderNotification(): JSX.Element {
                 return msg;
             });
         }
-    }, [setMessage, updateNotificationsStack, notificationsStack, notificationBase, setActiveTimers, activeTimers]);
+    }, [setMessage, updateNotificationsStack, notificationsStack, notificationBase, setActiveTimeouts, activeTimeouts]);
 
     return <Wrapper>{message.content}</Wrapper>;
 }

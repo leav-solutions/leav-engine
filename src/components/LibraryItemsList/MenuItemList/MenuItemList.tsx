@@ -3,7 +3,8 @@ import {Button, Select, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {DisplayListItemTypes} from '../../../_types/types';
+import {useAddNotification} from '../../../hook/NotificationsStack';
+import {DisplayListItemTypes, NotificationPriority, NotificationType} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import {
     LibraryItemListReducerAction,
@@ -82,6 +83,18 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
         });
     };
 
+    const addNotification = useAddNotification();
+    const testNotification = async () => {
+        const priority = Math.floor(Math.random() * Math.floor(3)) as NotificationPriority;
+        const content = `test ${Math.round(Math.random() * 1000)} | priority ${priority}`;
+
+        addNotification({
+            content,
+            type: NotificationType.basic,
+            priority
+        });
+    };
+
     return (
         <Wrapper>
             {!stateItems.showFilters && (
@@ -103,7 +116,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             </div>
 
             <div>
-                <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
+                <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={testNotification}>
                     {t('items_list.new')}
                 </PrimaryBtn>
             </div>
