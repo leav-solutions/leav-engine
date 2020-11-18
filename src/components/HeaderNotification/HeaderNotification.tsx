@@ -1,3 +1,4 @@
+import {CloseOutlined} from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {defaultNotificationsTime} from '../../constants/constants';
@@ -15,6 +16,10 @@ const Wrapper = styled.div`
     background: #0d1e26 0% 0% no-repeat padding-box;
     border: 1px solid #70707031;
     border-radius: 3px;
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
 `;
 
 function HeaderNotification(): JSX.Element {
@@ -46,7 +51,14 @@ function HeaderNotification(): JSX.Element {
                 const notificationTime = notification.time ?? defaultNotificationsTime;
 
                 if (activeTimeouts.base) {
-                    clearTimeout(activeTimeouts.base);
+                    setActiveTimeouts(timeouts => {
+                        clearTimeout(timeouts.base);
+
+                        return {
+                            base: null,
+                            notification: timeouts.notification
+                        };
+                    });
                 }
 
                 // Reset notifications
@@ -56,8 +68,8 @@ function HeaderNotification(): JSX.Element {
                             setMessage(notificationBase);
                         }, 100);
 
-                        setActiveTimeouts(at => ({
-                            notification: at.notification,
+                        setActiveTimeouts(timeouts => ({
+                            notification: timeouts.notification,
                             base: baseTimeout
                         }));
                     }
@@ -68,9 +80,9 @@ function HeaderNotification(): JSX.Element {
                     }));
                 }, notificationTime);
 
-                setActiveTimeouts(at => ({
+                setActiveTimeouts(timeouts => ({
                     notification: notificationTimeout,
-                    base: at.base
+                    base: timeouts.base
                 }));
 
                 updateNotificationsStack(restNotifications);
@@ -85,7 +97,20 @@ function HeaderNotification(): JSX.Element {
         }
     }, [setMessage, updateNotificationsStack, notificationsStack, notificationBase, setActiveTimeouts, activeTimeouts]);
 
-    return <Wrapper>{message.content}</Wrapper>;
+    const cancelNotification = () => {
+        clearTimeout(activeTimeouts.notification);
+        setActiveTimeouts(timeouts => ({
+            notification: null,
+            base: timeouts.base
+        }));
+    };
+
+    return (
+        <Wrapper>
+            <span>{message.content}</span>
+            <span>{activeTimeouts.notification && <CloseOutlined onClick={cancelNotification} />}</span>
+        </Wrapper>
+    );
 }
 
 export default HeaderNotification;

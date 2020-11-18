@@ -1,9 +1,11 @@
 import {useQuery} from '@apollo/client';
 import {Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {useNotificationBase} from '../../hook/NotificationBase';
 import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
-import {ITree} from '../../_types/types';
+import {ITree, NotificationType} from '../../_types/types';
 import TreeItem from '../TreeItem';
 
 const ContainerTreeList = styled.div`
@@ -16,9 +18,15 @@ const ContainerTreeList = styled.div`
 `;
 
 function TreeList(): JSX.Element {
+    const {t} = useTranslation();
     const [treeList, setTreeList] = useState<ITree[]>([]);
+    const [, setNotificationBase] = useNotificationBase();
 
     const {data, loading, error} = useQuery(getTreeListQuery);
+
+    useEffect(() => {
+        setNotificationBase({content: t('notification.base-message'), type: NotificationType.basic});
+    }, [setNotificationBase, t]);
 
     useEffect(() => {
         if (!loading && data) {

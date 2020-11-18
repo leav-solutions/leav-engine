@@ -3,19 +3,25 @@ import {Divider, PageHeader, Row} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
+import {useNotificationBase} from '../../hook/NotificationBase';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
-import {ILibrary} from '../../_types/types';
+import {ILibrary, NotificationType} from '../../_types/types';
 import LibraryCard from './LibraryCard';
 import LibraryDetail from './LibraryDetail';
 
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
     const {libId, libQueryName, filterName} = useParams<{libId: string; libQueryName: string; filterName: string}>();
+    const [, setNotificationBase] = useNotificationBase();
 
     const [libraries, setLibraries] = useState<ILibrary[]>([]);
     const [activeLibrary, setActiveLibrary] = useState<string>(libId);
 
     const {loading, data, error} = useQuery(getLibrariesListQuery);
+
+    useEffect(() => {
+        setNotificationBase({content: t('notification.base-message'), type: NotificationType.basic});
+    }, [setNotificationBase, t]);
 
     useEffect(() => {
         if (!loading) {
