@@ -1,4 +1,4 @@
-import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, RedoOutlined} from '@ant-design/icons';
+import {AppstoreFilled, MenuOutlined, PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
 import {Button, Select, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -11,7 +11,6 @@ import {
     LibraryItemListState
 } from '../LibraryItemsListReducer';
 import MenuSelection from '../MenuSelection';
-import SearchItems from '../SearchItems';
 import SelectView from '../SelectView';
 
 interface IMenuItemListProps {
@@ -24,6 +23,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
 `;
 
 const SubGroup = styled.div`
@@ -84,23 +84,15 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
 
     return (
         <Wrapper>
-            {!stateItems.showFilters && (
-                <>
-                    <div>
-                        <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
-                            <Button icon={<FilterOutlined />} name="show-filter" onClick={toggleShowFilter} />
-                        </Tooltip>
-                    </div>
-                </>
-            )}
+            <SubGroup>
+                <SelectView />
 
-            <div>
+                <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
+                    <Button icon={<SearchOutlined />} name="show-filter" onClick={toggleShowFilter} />
+                </Tooltip>
+
                 <MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />
-            </div>
-
-            <div>
-                <SearchItems />
-            </div>
+            </SubGroup>
 
             <div>
                 <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
@@ -109,8 +101,6 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             </div>
 
             <SubGroup>
-                <SelectView />
-
                 <Select
                     placeholder={t('items_list.display_type')}
                     defaultValue={stateItems.displayType}

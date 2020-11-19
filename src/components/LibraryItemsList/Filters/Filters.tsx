@@ -1,4 +1,4 @@
-import {FilterFilled} from '@ant-design/icons';
+import {LeftOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
@@ -12,7 +12,7 @@ import {
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../LibraryItemsListReducer';
-import SelectView from '../SelectView';
+import SearchItems from '../SearchItems';
 import AddFilter from './AddFilter';
 import FilterItem from './FilterItem';
 import './Filters.css';
@@ -272,16 +272,11 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingLeft: '1rem'
+                        justifyContent: 'space-between'
                     }}
                 >
-                    <div>
-                        <Button icon={<FilterFilled />} onClick={handleHide} />
-                    </div>
-                    <div>
-                        <SelectView />
-                    </div>
+                    <Button icon={<LeftOutlined />} onClick={handleHide} />
+                    <SearchItems />
                 </div>
 
                 <FilterActions>

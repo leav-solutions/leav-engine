@@ -38,7 +38,11 @@ const Wrapper = styled.div<IWrapperProps>`
 const MenuWrapper = styled.div`
     border-bottom: 1px solid rgb(235, 237, 240);
     padding: 0 1rem;
-    height: 3rem;
+    height: 4rem;
+
+    display: flex;
+    align-content: center;
+    justify-content: space-around;
 `;
 
 function LibraryItemsList(): JSX.Element {
@@ -201,19 +205,19 @@ function LibraryItemsList(): JSX.Element {
 
     return (
         <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
-            <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
-                <Filters stateItems={state} dispatchItems={dispatch} />
-                <div style={{maxWidth: state.showFilters ? 'calc(100% - 23rem)' : '100%'}}>
-                    <MenuWrapper>
-                        {state.selectionMode ? (
-                            <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
-                        ) : (
-                            <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
-                        )}
-                    </MenuWrapper>
+            <MenuWrapper>
+                {state.selectionMode ? (
+                    <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
+                ) : (
+                    <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
+                )}
+            </MenuWrapper>
+            <div style={{maxWidth: state.showFilters ? 'calc(100% - 23rem)' : '100%'}}>
+                <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
+                    <Filters stateItems={state} dispatchItems={dispatch} />
                     <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
-                </div>
-            </Wrapper>
+                </Wrapper>
+            </div>
         </StateItemsContext.Provider>
     );
 }
