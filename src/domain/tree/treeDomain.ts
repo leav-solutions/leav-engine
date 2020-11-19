@@ -35,6 +35,7 @@ export interface ITreeDomain {
     saveTree(tree: ITree, ctx: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, ctx: IQueryInfos): Promise<ITree>;
     getTrees({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
+    getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree>;
 
     /**
      * Add an element to the tree
@@ -181,7 +182,7 @@ export default function({
     'core.utils': utils = null
 }: IDeps = {}): ITreeDomain {
     async function _getTreeProps(treeId: string, ctx: IQueryInfos): Promise<ITree | null> {
-        const trees = await treeRepo.getTrees({params: {filters: {id: treeId}}, ctx});
+        const trees = await treeRepo.getTrees({params: {filters: {id: treeId}, strictFilters: true}, ctx});
 
         return trees.list.length ? trees.list[0] : null;
     }
@@ -271,6 +272,17 @@ export default function({
             }
 
             return treeRepo.getTrees({params: initializedParams, ctx});
+        },
+        async getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree> {
+            const tree = await _getTreeProps(treeId, ctx);
+
+            if (!tree) {
+                throw new ValidationError({
+                    id: Errors.UNKNOWN_TREE
+                });
+            }
+
+            return tree;
         },
         async addElement({treeId, element, parent = null, order = 0, ctx}): Promise<ITreeElement> {
             const errors: any = {};

@@ -249,7 +249,7 @@ describe('treeDomain', () => {
             expect(trees.list.length).toBe(2);
         });
 
-        test('Should return a list of trees', async () => {
+        test('Should add default sort', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
             };
@@ -258,9 +258,33 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo
             });
 
-            const trees = await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
+            await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
 
             expect(treeRepo.getTrees.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
+        });
+    });
+
+    describe('getTreeProperties', () => {
+        test('Should return tree properties', async () => {
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise({list: [{...mockTree}], totalCount: 1})
+            };
+
+            const domain = treeDomain({'core.infra.tree': mockTreeRepo as ITreeRepo});
+
+            const treeProps = await domain.getTreeProperties('test', ctx);
+
+            expect(treeProps.id).toBe(mockTree.id);
+        });
+
+        test('Should throw if unknown tree', async () => {
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise({list: [], totalCount: 0})
+            };
+
+            const domain = treeDomain({'core.infra.tree': mockTreeRepo as ITreeRepo});
+
+            await expect(domain.getTreeProperties('test', ctx)).rejects.toThrow(ValidationError);
         });
     });
 
