@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
 import {Drawer, Menu} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink, useLocation} from 'react-router-dom';
 import {useActiveLibrary} from '../../hook/ActiveLibHook';
@@ -38,59 +38,26 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
 
     const {data, error} = useQuery<IGetLibrariesAndTreesListQuery>(getLibrariesAndTreesListQuery);
 
+    useEffect(() => {
+        if (activeLib && makeActiveLibraryRoute(activeLib) === location.pathname) {
+            setSelectedKey([`library_${activeLib.id}`]);
+        }
+        if (activeTree && makeActiveTreeRoute(activeTree) === location.pathname) {
+            setSelectedKey([`tree_${activeTree.id}`]);
+        }
+
+        if (routes.library.list === location.pathname) {
+            setSelectedKey([`list-library`]);
+        }
+
+        if (routes.navigation.listTree === location.pathname) {
+            setSelectedKey([`navigation`]);
+        }
+    }, [location, setSelectedKey, activeLib, activeTree]);
+
     if (error) {
         return <div>error</div>;
     }
-
-    const checkActiveLibrary = () => {
-        if (!activeLib) {
-            return false;
-        } else if (makeActiveLibraryRoute(activeLib) === location.pathname) {
-            // error in state in render if setState not delayed
-            setImmediate(() => {
-                setSelectedKey([`library_${activeLib.id}`]);
-            });
-
-            return true;
-        }
-        return false;
-    };
-
-    const checkActiveTree = () => {
-        if (!activeTree) {
-            return false;
-        } else if (makeActiveTreeRoute(activeTree) === location.pathname) {
-            // error in state in render if setState not delayed
-            setImmediate(() => {
-                setSelectedKey([`tree_${activeTree.id}`]);
-            });
-
-            return true;
-        }
-        return false;
-    };
-
-    const checkActiveListLibrary = () => {
-        if (routes.library.list === location.pathname) {
-            setImmediate(() => {
-                setSelectedKey([`list-library`]);
-            });
-            return true;
-        }
-        return false;
-    };
-
-    const checkActiveListTree = () => {
-        if (routes.navigation.listTree === location.pathname) {
-            setImmediate(() => {
-                setSelectedKey([`navigation`]);
-            });
-            return true;
-        }
-        return false;
-    };
-
-    const openKey = ['recent', 'shortcuts'];
 
     return (
         <Drawer
@@ -106,7 +73,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                 theme="dark"
                 style={{height: '100%'}}
                 mode="inline"
-                defaultOpenKeys={openKey}
+                defaultOpenKeys={['recent', 'shortcuts']}
                 selectedKeys={selectedKeys}
             >
                 {(activeLib || activeTree) && (
@@ -118,7 +85,6 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                                     onClick={hide}
                                     strict
                                     activeClassName="nav-link-active"
-                                    isActive={checkActiveLibrary}
                                 >
                                     {activeLib.name}
                                 </NavLink>
@@ -132,7 +98,6 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                                     onClick={hide}
                                     strict
                                     activeClassName="nav-link-active"
-                                    isActive={checkActiveTree}
                                 >
                                     {activeTree.label || activeTree.id}
                                 </NavLink>
@@ -143,17 +108,13 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
 
                 <Menu.SubMenu key="shortcuts" icon={<UnorderedListOutlined />} title={t('sidebar.shortcuts')}>
                     <Menu.Item key="list-library" icon={<BookOutlined />} onClick={hide}>
-                        <NavLink
-                            to="/library/list/"
-                            activeClassName="nav-link-active"
-                            isActive={checkActiveListLibrary}
-                        >
+                        <NavLink to="/library/list/" activeClassName="nav-link-active">
                             {t('sidebar.lib_list')}
                         </NavLink>
                     </Menu.Item>
 
                     <Menu.Item key="navigation" icon={<ApartmentOutlined />} onClick={hide}>
-                        <NavLink to="/navigation/list" activeClassName="nav-link-active" isActive={checkActiveListTree}>
+                        <NavLink to="/navigation/list" activeClassName="nav-link-active">
                             {t('sidebar.navigation')}
                         </NavLink>
                     </Menu.Item>
