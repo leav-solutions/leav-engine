@@ -11,7 +11,7 @@ import {IValue} from '_types/value';
 import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {AttributeTypes} from '../../_types/attribute';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IValueDomain} from 'domain/value/valueDomain';
 
 export interface IIndexationManagerDomain {
@@ -61,38 +61,7 @@ export default function({
                             return {};
                         }
 
-                        if (fta.type === AttributeTypes.TREE) {
-                            val = Array.isArray(val)
-                                ? val.map(v => ({
-                                      ...v,
-                                      value: v.value?.record
-                                  }))
-                                : {...val, value: val.value.record};
-                        }
-
-                        if (
-                            fta.type === AttributeTypes.SIMPLE_LINK ||
-                            fta.type === AttributeTypes.ADVANCED_LINK ||
-                            fta.type === AttributeTypes.TREE
-                        ) {
-                            if (Array.isArray(val)) {
-                                for (const [i, v] of val.entries()) {
-                                    const recordIdentity = await recordDomain.getRecordIdentity(
-                                        {id: v.value.id, library: fta.linked_library || v.value.library},
-                                        ctx
-                                    );
-
-                                    val[i].value = recordIdentity.label || v.value.id;
-                                }
-                            } else {
-                                const recordIdentity = await recordDomain.getRecordIdentity(
-                                    {id: val.value.id, library: fta.linked_library || val.value.library},
-                                    ctx
-                                );
-
-                                val.value = recordIdentity.label || val.value.id;
-                            }
-                        }
+                        val = await _getFormattedValuesAndLabels(fta, val, ctx);
 
                         return {
                             [fta.id]: Array.isArray(val)
@@ -105,6 +74,50 @@ export default function({
 
             await elasticsearchService.index(findRecordParams.library, record.id, data);
         }
+    };
+
+    const _getFormattedValuesAndLabels = async (
+        attribute: IAttribute,
+        values: IValue | IValue[],
+        ctx: IQueryInfos
+    ): Promise<IValue | IValue[]> => {
+        if (attribute.type === AttributeTypes.TREE) {
+            values = Array.isArray(values)
+                ? values.map(v => ({
+                      ...v,
+                      value: v.value?.record
+                  }))
+                : {...values, value: values.value.record};
+        }
+
+        if (
+            attribute.type === AttributeTypes.SIMPLE_LINK ||
+            attribute.type === AttributeTypes.ADVANCED_LINK ||
+            attribute.type === AttributeTypes.TREE
+        ) {
+            if (Array.isArray(values)) {
+                for (const [i, v] of values.entries()) {
+                    const recordIdentity = await recordDomain.getRecordIdentity(
+                        {id: v.value.id, library: attribute.linked_library || v.value.library},
+                        ctx
+                    );
+
+                    values[i].value = recordIdentity.label || v.value.id;
+                }
+            } else {
+                const recordIdentity = await recordDomain.getRecordIdentity(
+                    {
+                        id: values.value.id,
+                        library: attribute.linked_library || values.value.library
+                    },
+                    ctx
+                );
+
+                values.value = recordIdentity.label || values.value.id;
+            }
+        }
+
+        return values;
     };
 
     const _indexLinkedLibraries = async (libraryId: string, ctx: IQueryInfos, recordId?: string): Promise<void> => {
@@ -260,41 +273,7 @@ export default function({
                         ctx
                     });
 
-                    if (attr.type === AttributeTypes.TREE) {
-                        data.value.new = Array.isArray(data.value.new)
-                            ? data.value.new.map(v => ({
-                                  ...v,
-                                  value: v.value?.record
-                              }))
-                            : {...data.value.new, value: data.value.new.value.record};
-                    }
-
-                    if (
-                        attr.type === AttributeTypes.SIMPLE_LINK ||
-                        attr.type === AttributeTypes.ADVANCED_LINK ||
-                        attr.type === AttributeTypes.TREE
-                    ) {
-                        if (attr.multiple_values) {
-                            for (const [i, v] of data.value.new.entries()) {
-                                const recordIdentity = await recordDomain.getRecordIdentity(
-                                    {id: v.value.id, library: attr.linked_library || v.value.library},
-                                    ctx
-                                );
-
-                                data.value.new[i].value = recordIdentity.label || v.value.id;
-                            }
-                        } else {
-                            const recordIdentity = await recordDomain.getRecordIdentity(
-                                {
-                                    id: data.value.new.value.id,
-                                    library: attr.linked_library || data.value.new.value.library
-                                },
-                                ctx
-                            );
-
-                            data.value.new.value = recordIdentity.label || data.value.new.value.id;
-                        }
-                    }
+                    data.value.new = await _getFormattedValuesAndLabels(attr, data.value.new, ctx);
 
                     await elasticsearchService.update(data.libraryId, data.recordId, {
                         [data.attributeId]: Array.isArray(data.value.new)
@@ -319,31 +298,14 @@ export default function({
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
 
                 if (attrProps.multiple_values) {
-                    let values = (await recordDomain.getRecordFieldValue({
+                    let values = await recordDomain.getRecordFieldValue({
                         library: data.libraryId,
                         record: {id: data.recordId},
                         attributeId: data.attributeId,
                         ctx
-                    })) as IValue[];
+                    });
 
-                    if (attrProps.type === AttributeTypes.TREE) {
-                        values = values.map(v => ({
-                            ...v,
-                            value: v.value?.record
-                        }));
-                    }
-
-                    // set label instead of id
-                    if (attrProps.type === AttributeTypes.ADVANCED_LINK || attrProps.type === AttributeTypes.TREE) {
-                        for (const [i, v] of values.entries()) {
-                            const recordIdentity = await recordDomain.getRecordIdentity(
-                                {id: v.value.id, library: attrProps.linked_library || v.value.library},
-                                ctx
-                            );
-
-                            values[i].value = recordIdentity.label || v.value.id;
-                        }
-                    }
+                    values = (await _getFormattedValuesAndLabels(attrProps, values, ctx)) as IValue[];
 
                     await elasticsearchService.update(data.libraryId, data.recordId, {
                         [data.attributeId]: values.map(v => String(v.value))
