@@ -263,14 +263,18 @@ export enum NotificationType {
     error = 'error'
 }
 
-export type NotificationPriority = 0 | 1 | 2;
+export enum NotificationPriority {
+    low = 'low',
+    medium = 'medium',
+    high = 'high'
+}
 
-export interface INotificationBase {
+export interface IBaseNotification {
     content: string;
     type: NotificationType;
 }
 
-export interface INotification extends INotificationBase {
+export interface INotification extends IBaseNotification {
     time?: number;
     priority?: NotificationPriority;
 }

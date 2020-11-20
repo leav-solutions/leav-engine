@@ -3,7 +3,7 @@ import {Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useNotificationBase} from '../../hook/NotificationBase';
+import {useBaseNotification} from '../../hooks/BaseNotificationHook';
 import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
 import {ITree, NotificationType} from '../../_types/types';
 import TreeItem from '../TreeItem';
@@ -20,13 +20,13 @@ const ContainerTreeList = styled.div`
 function TreeList(): JSX.Element {
     const {t} = useTranslation();
     const [treeList, setTreeList] = useState<ITree[]>([]);
-    const [, setNotificationBase] = useNotificationBase();
+    const [, setBaseNotification] = useBaseNotification();
 
     const {data, loading, error} = useQuery(getTreeListQuery);
 
     useEffect(() => {
-        setNotificationBase({content: t('notification.base-message'), type: NotificationType.basic});
-    }, [setNotificationBase, t]);
+        setBaseNotification({content: t('notification.base-message'), type: NotificationType.basic});
+    }, [setBaseNotification, t]);
 
     useEffect(() => {
         if (!loading && data) {

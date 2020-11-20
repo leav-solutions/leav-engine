@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import {useActiveLibrary} from '../../../hook/ActiveLibHook';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {

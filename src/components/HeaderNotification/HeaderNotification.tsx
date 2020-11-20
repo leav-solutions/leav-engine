@@ -2,9 +2,9 @@ import {CloseOutlined} from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {defaultNotificationsTime} from '../../constants/constants';
-import {useNotificationBase} from '../../hook/NotificationBase';
-import {useNotificationsStack} from '../../hook/NotificationsStack';
-import {INotification} from '../../_types/types';
+import {useBaseNotification} from '../../hooks/BaseNotificationHook';
+import {useNotificationsStack} from '../../hooks/NotificationsStackHook';
+import {INotification, NotificationPriority} from '../../_types/types';
 
 const Wrapper = styled.div`
     padding: 0.3rem 1rem;
@@ -23,10 +23,10 @@ const Wrapper = styled.div`
 `;
 
 function HeaderNotification(): JSX.Element {
-    const [notificationBase] = useNotificationBase();
+    const [baseNotification] = useBaseNotification();
     const [notificationsStack, updateNotificationsStack] = useNotificationsStack();
 
-    const [message, setMessage] = useState<INotification>(notificationBase);
+    const [message, setMessage] = useState<INotification>(baseNotification);
     const [activeTimeouts, setActiveTimeouts] = useState<{notification: any; base: any}>({
         notification: null,
         base: null
@@ -36,10 +36,39 @@ function HeaderNotification(): JSX.Element {
         if (notificationsStack.length) {
             // Sort notification by priority
             const sortNotificationsStack = [...notificationsStack].sort((a, b) => {
-                const ap = a.priority ?? 0;
-                const bp = b.priority ?? 0;
-
-                return bp - ap;
+                switch (a.priority) {
+                    case NotificationPriority.low:
+                        switch (b.priority) {
+                            case NotificationPriority.low:
+                                return 0;
+                            case NotificationPriority.medium:
+                                return 1;
+                            case NotificationPriority.high:
+                                return 1;
+                        }
+                        return 0;
+                    case NotificationPriority.medium:
+                        switch (b.priority) {
+                            case NotificationPriority.low:
+                                return -1;
+                            case NotificationPriority.medium:
+                                return 0;
+                            case NotificationPriority.high:
+                                return 1;
+                        }
+                        return 0;
+                    case NotificationPriority.high:
+                        switch (b.priority) {
+                            case NotificationPriority.low:
+                                return -1;
+                            case NotificationPriority.medium:
+                                return -1;
+                            case NotificationPriority.high:
+                                return 0;
+                        }
+                        return 0;
+                }
+                return 0;
             });
 
             // Take the first notification
@@ -65,7 +94,7 @@ function HeaderNotification(): JSX.Element {
                 const notificationTimeout = setTimeout(() => {
                     if (!activeTimeouts.notification) {
                         const baseTimeout = setTimeout(() => {
-                            setMessage(notificationBase);
+                            setMessage(baseNotification);
                         }, 100);
 
                         setActiveTimeouts(timeouts => ({
@@ -89,13 +118,13 @@ function HeaderNotification(): JSX.Element {
             }
         } else if (!activeTimeouts.notification) {
             setMessage(msg => {
-                if (notificationBase.content !== msg.content) {
-                    return notificationBase;
+                if (baseNotification.content !== msg.content) {
+                    return baseNotification;
                 }
                 return msg;
             });
         }
-    }, [setMessage, updateNotificationsStack, notificationsStack, notificationBase, setActiveTimeouts, activeTimeouts]);
+    }, [setMessage, updateNotificationsStack, notificationsStack, baseNotification, setActiveTimeouts, activeTimeouts]);
 
     const cancelNotification = () => {
         clearTimeout(activeTimeouts.notification);

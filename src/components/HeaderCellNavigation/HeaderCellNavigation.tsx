@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {useActiveTree} from '../../hook/ActiveTreeHook';
+import {useActiveTree} from '../../hooks/ActiveTreeHook';
 import {setPath} from '../../Reducer/NavigationReducer';
 import themingVar from '../../themingVar';
 

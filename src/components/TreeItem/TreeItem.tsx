@@ -3,7 +3,7 @@ import {Card, Divider, Drawer} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
-import {useLang} from '../../hook/LangHook';
+import {useLang} from '../../hooks/LangHook';
 import {localizedLabel} from '../../utils';
 import {ITree} from '../../_types/types';
 

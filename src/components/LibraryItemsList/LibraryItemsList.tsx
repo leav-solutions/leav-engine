@@ -4,9 +4,9 @@ import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
 import {StateItemsContext} from '../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../hook/ActiveLibHook';
-import {useLang} from '../../hook/LangHook';
-import {useNotificationBase} from '../../hook/NotificationBase';
+import {useActiveLibrary} from '../../hooks/ActiveLibHook';
+import {useBaseNotification} from '../../hooks/BaseNotificationHook';
+import {useLang} from '../../hooks/LangHook';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {
@@ -48,7 +48,7 @@ function LibraryItemsList(): JSX.Element {
     const [state, dispatch] = useReducer(reducer, LibraryItemListInitialState);
 
     const [{lang}] = useLang();
-    const [, updateNotificationBase] = useNotificationBase();
+    const [, updateBaseNotification] = useBaseNotification();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
 
     const {loading, data, error} = useQuery(getLibraryDetailExtendedQuery, {
@@ -75,7 +75,7 @@ function LibraryItemsList(): JSX.Element {
                 }
             });
 
-            updateNotificationBase({
+            updateBaseNotification({
                 content: t('notification.active-lib', {lib: libName}),
                 type: NotificationType.basic
             });
@@ -119,7 +119,7 @@ function LibraryItemsList(): JSX.Element {
                 columns: []
             });
         }
-    }, [dispatch, updateActiveLibrary, loading, data, libId, activeLibrary, lang, t, updateNotificationBase]);
+    }, [dispatch, updateActiveLibrary, loading, data, libId, activeLibrary, lang, t, updateBaseNotification]);
 
     const [
         getRecords,

@@ -29,7 +29,7 @@ describe('HeaderNotification', () => {
     });
 
     test('should display message given', async () => {
-        // A#dd custom merge notificationsStack and notificationBase to avoid warning from apollo
+        // A#dd custom merge notificationsStack and baseNotification to avoid warning from apollo
         const mockCache = new InMemoryCache({
             typePolicies: {
                 Query: {
@@ -39,7 +39,7 @@ describe('HeaderNotification', () => {
                                 return [...incoming];
                             }
                         },
-                        notificationBase: {
+                        baseNotification: {
                             merge(existing, incoming) {
                                 return incoming;
                             }

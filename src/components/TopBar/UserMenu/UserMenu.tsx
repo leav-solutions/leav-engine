@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {useUser} from '../../../hook/UserHook';
+import {useUser} from '../../../hooks/UserHook';
 
 const Wrapper = styled.div`
     & {

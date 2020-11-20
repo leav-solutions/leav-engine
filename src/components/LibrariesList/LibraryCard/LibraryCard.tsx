@@ -2,7 +2,7 @@ import {ExportOutlined, HeartOutlined, InfoCircleOutlined, ToolOutlined} from '@
 import {Card, Col} from 'antd';
 import React from 'react';
 import {useHistory} from 'react-router-dom';
-import {useLang} from '../../../hook/LangHook';
+import {useLang} from '../../../hooks/LangHook';
 import themingVar from '../../../themingVar.js';
 import {localizedLabel} from '../../../utils';
 import {ILibrary} from '../../../_types/types';
