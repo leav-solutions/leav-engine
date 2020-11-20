@@ -50,6 +50,7 @@ export interface IAttributeFilterOptions {
     system?: boolean;
     label?: string;
     linked_library?: string;
+    linked_tree?: string;
     multiple_values?: boolean;
     libraries?: string[];
 }

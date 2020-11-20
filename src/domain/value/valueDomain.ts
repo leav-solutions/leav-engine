@@ -23,7 +23,6 @@ import validateLibrary from './helpers/validateLibrary';
 import validateRecord from './helpers/validateRecord';
 import validateValue from './helpers/validateValue';
 import {EventType} from '../../_types/event';
-import {IAmqpService} from 'infra/amqp/amqpService';
 import * as Config from '_types/config';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
@@ -114,13 +113,11 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
     'core.utils'?: IUtils;
-    'core.infra.amqp.amqpService'?: IAmqpService;
     'core.domain.eventsManager'?: IEventsManagerDomain;
 }
 
 export default function({
     config = null,
-    'core.infra.amqp.amqpService': amqpService = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,
@@ -268,17 +265,6 @@ export default function({
 
             await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
-            let val: IValue | IValue[] = savedVal;
-            if (attributeProps.multiple_values) {
-                val = await valueRepo.getValues({
-                    library,
-                    recordId,
-                    attribute: attributeProps,
-                    forceGetAllValues: true,
-                    ctx
-                });
-            }
-
             // TODO: get old value ?
             await eventsManager.send(
                 {
@@ -287,7 +273,7 @@ export default function({
                         libraryId: library,
                         recordId,
                         attributeId: attributeProps.id,
-                        value: {new: val}
+                        value: {new: savedVal}
                     }
                 },
                 ctx
@@ -377,17 +363,6 @@ export default function({
 
                         prevRes.values.push({...savedVal, attribute: value.attribute});
 
-                        let val: IValue | IValue[] = savedVal;
-                        if (attributeProps.multiple_values) {
-                            val = await valueRepo.getValues({
-                                library,
-                                recordId,
-                                attribute: attributeProps,
-                                forceGetAllValues: true,
-                                ctx
-                            });
-                        }
-
                         // TODO: get old value ?
                         await eventsManager.send(
                             {
@@ -396,7 +371,7 @@ export default function({
                                     libraryId: library,
                                     recordId,
                                     attributeId: attributeProps.id,
-                                    value: {new: val}
+                                    value: {new: savedVal}
                                 }
                             },
                             ctx

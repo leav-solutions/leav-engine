@@ -7,6 +7,7 @@ import * as Joi from '@hapi/joi';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {isEqual, pick} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
+import {IValue} from '_types/value';
 import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -49,28 +50,43 @@ export default function({
             const data = (
                 await Promise.all(
                     fullTextAttributes.map(async fta => {
-                        const val = await recordDomain.getRecordFieldValue({
+                        let val = await recordDomain.getRecordFieldValue({
                             library: findRecordParams.library,
                             record,
                             attributeId: fta.id,
                             ctx
                         });
 
+                        if (typeof val === 'undefined') {
+                            return {};
+                        }
+
+                        if (fta.type === AttributeTypes.TREE) {
+                            val = Array.isArray(val)
+                                ? val.map(v => ({
+                                      ...v,
+                                      value: v.value?.record
+                                  }))
+                                : {...val, value: val.value.record};
+                        }
+
                         if (
-                            !!val &&
-                            (fta.type === AttributeTypes.SIMPLE_LINK || fta.type === AttributeTypes.ADVANCED_LINK)
+                            fta.type === AttributeTypes.SIMPLE_LINK ||
+                            fta.type === AttributeTypes.ADVANCED_LINK ||
+                            fta.type === AttributeTypes.TREE
                         ) {
                             if (Array.isArray(val)) {
-                                for (const v of val) {
+                                for (const [i, v] of val.entries()) {
                                     const recordIdentity = await recordDomain.getRecordIdentity(
-                                        {id: v.value.id, library: fta.linked_library},
+                                        {id: v.value.id, library: fta.linked_library || v.value.library},
                                         ctx
                                     );
-                                    v.value = recordIdentity.label || v.value.id;
+
+                                    val[i].value = recordIdentity.label || v.value.id;
                                 }
                             } else {
                                 const recordIdentity = await recordDomain.getRecordIdentity(
-                                    {id: val.value.id, library: fta.linked_library},
+                                    {id: val.value.id, library: fta.linked_library || val.value.library},
                                     ctx
                                 );
 
@@ -92,17 +108,28 @@ export default function({
     };
 
     const _indexLinkedLibraries = async (libraryId: string, ctx: IQueryInfos, recordId?: string): Promise<void> => {
-        // get all attributes with the new library as linked library
-        const attributes = await attributeDomain.getAttributes({
-            params: {
-                filters: {linked_library: libraryId}
-            },
-            ctx
-        });
+        // get all attributes with the new library as linked library / linked_tree
+        const attributes = (
+            await attributeDomain.getAttributes({
+                params: {
+                    filters: {linked_library: libraryId}
+                },
+                ctx
+            })
+        ).list.concat(
+            (
+                await attributeDomain.getAttributes({
+                    params: {
+                        filters: {linked_tree: libraryId}
+                    },
+                    ctx
+                })
+            ).list
+        );
 
         // get all libraries using theses attributes
         const libraries = [];
-        for (const attr of attributes.list) {
+        for (const attr of attributes) {
             const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
 
             for (let i = res.length - 1; i >= 0; i--) {
@@ -225,11 +252,32 @@ export default function({
                 } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
                     const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
 
-                    if (attr.type === AttributeTypes.SIMPLE_LINK || attr.type === AttributeTypes.ADVANCED_LINK) {
+                    // get format value(s)
+                    data.value.new = await recordDomain.getRecordFieldValue({
+                        library: data.libraryId,
+                        record: {id: data.recordId},
+                        attributeId: data.attributeId,
+                        ctx
+                    });
+
+                    if (attr.type === AttributeTypes.TREE) {
+                        data.value.new = Array.isArray(data.value.new)
+                            ? data.value.new.map(v => ({
+                                  ...v,
+                                  value: v.value?.record
+                              }))
+                            : {...data.value.new, value: data.value.new.value.record};
+                    }
+
+                    if (
+                        attr.type === AttributeTypes.SIMPLE_LINK ||
+                        attr.type === AttributeTypes.ADVANCED_LINK ||
+                        attr.type === AttributeTypes.TREE
+                    ) {
                         if (attr.multiple_values) {
                             for (const [i, v] of data.value.new.entries()) {
                                 const recordIdentity = await recordDomain.getRecordIdentity(
-                                    {id: v.value.id, library: attr.linked_library},
+                                    {id: v.value.id, library: attr.linked_library || v.value.library},
                                     ctx
                                 );
 
@@ -237,10 +285,14 @@ export default function({
                             }
                         } else {
                             const recordIdentity = await recordDomain.getRecordIdentity(
-                                {id: String(data.value.new.value), library: attr.linked_library},
+                                {
+                                    id: data.value.new.value.id,
+                                    library: attr.linked_library || data.value.new.value.library
+                                },
                                 ctx
                             );
-                            data.value.new.value = recordIdentity.label || String(data.value.new.value);
+
+                            data.value.new.value = recordIdentity.label || data.value.new.value.id;
                         }
                     }
 
@@ -267,19 +319,25 @@ export default function({
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
 
                 if (attrProps.multiple_values) {
-                    const values = await valueDomain.getValues({
+                    let values = (await recordDomain.getRecordFieldValue({
                         library: data.libraryId,
-                        recordId: data.recordId,
-                        attribute: data.attributeId,
-                        options: {forceGetAllValues: true},
+                        record: {id: data.recordId},
+                        attributeId: data.attributeId,
                         ctx
-                    });
+                    })) as IValue[];
+
+                    if (attrProps.type === AttributeTypes.TREE) {
+                        values = values.map(v => ({
+                            ...v,
+                            value: v.value?.record
+                        }));
+                    }
 
                     // set label instead of id
-                    if (attrProps.type === AttributeTypes.ADVANCED_LINK) {
+                    if (attrProps.type === AttributeTypes.ADVANCED_LINK || attrProps.type === AttributeTypes.TREE) {
                         for (const [i, v] of values.entries()) {
                             const recordIdentity = await recordDomain.getRecordIdentity(
-                                {id: v.value.id, library: attrProps.linked_library},
+                                {id: v.value.id, library: attrProps.linked_library || v.value.library},
                                 ctx
                             );
 
