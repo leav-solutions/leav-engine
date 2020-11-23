@@ -2,6 +2,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {INotification, NotificationType} from '../../../_types/types';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import DisplayNotification from './DisplayNotification';
 
 describe('DisplayNotification', () => {
@@ -20,11 +21,13 @@ describe('DisplayNotification', () => {
 
         await act(async () => {
             comp = mount(
-                <DisplayNotification
-                    message={mockMessage}
-                    activeTimeouts={mockActiveTimeouts}
-                    cancelNotification={jest.fn()}
-                />
+                <MockedProviderWithFragments>
+                    <DisplayNotification
+                        message={mockMessage}
+                        activeTimeouts={mockActiveTimeouts}
+                        cancelNotification={jest.fn()}
+                    />
+                </MockedProviderWithFragments>
             );
         });
 
