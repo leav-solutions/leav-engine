@@ -2,8 +2,7 @@ import {CloseOutlined} from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {defaultNotificationsTime} from '../../constants/constants';
-import {useBaseNotification} from '../../hooks/BaseNotificationHook';
-import {useNotificationsStack} from '../../hooks/NotificationsStackHook';
+import {useNotifications} from '../../hooks/NotificationsHook';
 import {INotification, NotificationPriority} from '../../_types/types';
 
 const Wrapper = styled.div`
@@ -23,8 +22,7 @@ const Wrapper = styled.div`
 `;
 
 function HeaderNotification(): JSX.Element {
-    const [baseNotification] = useBaseNotification();
-    const [notificationsStack, updateNotificationsStack] = useNotificationsStack();
+    const {notificationsStack, updateNotificationsStack, baseNotification} = useNotifications();
 
     const [message, setMessage] = useState<INotification>(baseNotification);
     const [activeTimeouts, setActiveTimeouts] = useState<{notification: any; base: any}>({

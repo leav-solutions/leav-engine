@@ -4,8 +4,8 @@ import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {StateNavigationContext} from '../../Context/StateNavigationContext';
 import {useActiveTree} from '../../hooks/ActiveTreeHook';
-import {useBaseNotification} from '../../hooks/BaseNotificationHook';
 import {useLang} from '../../hooks/LangHook';
+import {useNotifications} from '../../hooks/NotificationsHook';
 import {getTreeListQuery, IGetTreeListQuery, IGetTreeListQueryVar} from '../../queries/trees/getTreeListQuery';
 import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';
 import {localizedLabel} from '../../utils';
@@ -24,7 +24,7 @@ function Navigation(): JSX.Element {
 
     const [{lang}] = useLang();
     const [, updateActiveTree] = useActiveTree();
-    const [, updateBaseNotification] = useBaseNotification();
+    const {updateBaseNotification} = useNotifications();
 
     const {data, loading} = useQuery<IGetTreeListQuery, IGetTreeListQueryVar>(getTreeListQuery, {
         variables: {treeId}

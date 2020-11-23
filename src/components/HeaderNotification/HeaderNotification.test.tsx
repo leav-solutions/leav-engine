@@ -3,11 +3,8 @@ import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {
-    getNotificationsStack,
-    IGetNotificationsStack
-} from '../../queries/cache/notifications/getNotificationsStackQuery';
-import {INotification, NotificationType} from '../../_types/types';
+import {getNotifications, IGetNotification} from '../../queries/cache/notifications/getNotificationsQuery';
+import {IBaseNotification, INotification, NotificationType} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import HeaderNotification from './HeaderNotification';
 
@@ -49,14 +46,20 @@ describe('HeaderNotification', () => {
             }
         });
 
+        const mockBaseNotification: IBaseNotification = {
+            content: 'base notification',
+            type: NotificationType.basic
+        };
+
         const mockNotification: INotification = {
             content: 'this is a test',
             type: NotificationType.basic
         };
 
-        mockCache.writeQuery<IGetNotificationsStack>({
-            query: getNotificationsStack,
+        mockCache.writeQuery<IGetNotification>({
+            query: getNotifications,
             data: {
+                baseNotification: mockBaseNotification,
                 notificationsStack: [mockNotification]
             }
         });
