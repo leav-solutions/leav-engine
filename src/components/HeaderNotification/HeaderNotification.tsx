@@ -1,25 +1,8 @@
-import {CloseOutlined} from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
-import styled from 'styled-components';
 import {defaultNotificationsTime} from '../../constants/constants';
 import {useNotifications} from '../../hooks/NotificationsHook';
 import {INotification, NotificationPriority} from '../../_types/types';
-
-const Wrapper = styled.div`
-    padding: 0.3rem 1rem;
-    min-width: 25%;
-    width: auto;
-    text-overflow: hidden;
-    font-weight: 600;
-
-    background: #0d1e26 0% 0% no-repeat padding-box;
-    border: 1px solid #70707031;
-    border-radius: 3px;
-
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-`;
+import DisplayNotification from './DisplayNotification';
 
 function HeaderNotification(): JSX.Element {
     const {notificationsStack, updateNotificationsStack, baseNotification} = useNotifications();
@@ -133,10 +116,11 @@ function HeaderNotification(): JSX.Element {
     };
 
     return (
-        <Wrapper>
-            <span>{message.content}</span>
-            <span>{activeTimeouts.notification && <CloseOutlined onClick={cancelNotification} />}</span>
-        </Wrapper>
+        <DisplayNotification
+            message={message}
+            activeTimeouts={activeTimeouts}
+            cancelNotification={cancelNotification}
+        />
     );
 }
 
