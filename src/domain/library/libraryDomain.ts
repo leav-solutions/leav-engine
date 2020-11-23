@@ -165,7 +165,10 @@ export default function({
                 : currentFullTextAttributes;
 
             const libAttributes = union(defaultAttributes, attributesToSave);
-            const libFullTextAttributes = [...new Set(['id', ...fullTextAttributesToSave])];
+
+            const libFullTextAttributes = [...new Set(['id', ...fullTextAttributesToSave])].filter(a =>
+                libAttributes.includes(a)
+            );
 
             // We can get rid of attributes and full text attributes in lib data, it will be saved separately
             delete dataToSave.attributes;
