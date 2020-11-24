@@ -7,6 +7,7 @@ import {deleteValueQuery} from '../../../../../queries/values/deleteValueMutatio
 import {saveValueQuery} from '../../../../../queries/values/saveValueMutation';
 import {isLinkAttribute, versionObjToGraphql} from '../../../../../utils';
 import {isLinkValue, isTreeValue} from '../../../../../utils/utils';
+import {DELETE_VALUE, DELETE_VALUEVariables} from '../../../../../_gqlTypes/DELETE_VALUE';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {
     GET_LIBRARIES_libraries_list,
@@ -14,6 +15,7 @@ import {
 } from '../../../../../_gqlTypes/GET_LIBRARIES';
 import {TreeElementInput, ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
+import {SAVE_VALUE, SAVE_VALUEVariables} from '../../../../../_gqlTypes/SAVE_VALUE';
 import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {IGetRecordData, ILinkValue, ITreeLinkValue, IValue, RecordData} from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
@@ -57,11 +59,11 @@ const EditRecordForm = ({
         skip: !recordId
     });
 
-    const [deleteValueMutation] = useMutation(deleteValueQuery, {
+    const [deleteValueMutation] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueQuery, {
         refetchQueries: [{query, variables: getRecordDataVariables}]
     });
 
-    const [saveValueMutation] = useMutation(saveValueQuery, {
+    const [saveValueMutation] = useMutation<SAVE_VALUE, SAVE_VALUEVariables>(saveValueQuery, {
         refetchQueries: [{query, variables: getRecordDataVariables}]
     });
 
@@ -118,7 +120,7 @@ const EditRecordForm = ({
                 library: library.id,
                 recordId,
                 attribute: attribute.id,
-                value
+                valueId: value.id_value
             }
         });
     };

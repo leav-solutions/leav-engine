@@ -3,8 +3,6 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueInput} from './globalTypes';
-
 // ====================================================
 // GraphQL mutation operation: DELETE_VALUE
 // ====================================================
@@ -20,8 +18,8 @@ export interface DELETE_VALUE {
 }
 
 export interface DELETE_VALUEVariables {
-    library?: string | null;
-    recordId?: string | null;
-    attribute?: string | null;
-    value?: ValueInput | null;
+    library: string;
+    recordId: string;
+    attribute: string;
+    valueId?: string | null;
 }
