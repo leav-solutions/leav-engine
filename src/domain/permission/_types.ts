@@ -10,14 +10,16 @@ import {
     PermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
+    TreeNodePermissionsActions,
     TreePermissionsActions
 } from '_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITreeNode} from '_types/tree';
+import {ITreeElement, ITreeNode} from '_types/tree';
 
 export interface IPermissionTarget {
     attributeId?: string;
     recordId?: string;
+    libraryId?: string;
 }
 
 export interface IGetSimplePermissionsParams {
@@ -72,6 +74,24 @@ export interface IGetTreePermissionParams {
     action: TreePermissionsActions;
     treeId: string;
     userId: string;
+    ctx: IQueryInfos;
+}
+
+export interface IGetTreeNodePermissionParams {
+    action: TreeNodePermissionsActions;
+    userId: string;
+    node: ITreeElement;
+    treeId: string;
+    ctx: IQueryInfos;
+}
+
+export interface IGetHeritedTreeNodePermissionParams {
+    action: TreeNodePermissionsActions;
+    userGroupId: string;
+    treeId: string;
+    libraryId: string;
+    permTree: string;
+    permTreeNode: {id: string; library: string};
     ctx: IQueryInfos;
 }
 

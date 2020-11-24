@@ -138,9 +138,11 @@ export default function({
 
                     # Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
                     # attributeId is only required for attribute permission
+                    # libraryId and recordId are mandatory for tree node permission
                     input PermissionTarget {
                         attributeId: ID,
                         recordId: ID!
+                        libraryId: ID
                     }
 
                     extend type Query {

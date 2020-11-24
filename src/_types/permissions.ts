@@ -48,8 +48,8 @@ export enum TreePermissionsActions {
 }
 
 export enum TreeNodePermissionsActions {
-    ACCESS_NODE = 'access_node',
-    EDIT_NODE = 'edit_node',
+    ACCESS_TREE = 'access_tree',
+    EDIT_TREE = 'edit_tree',
     EDIT_CHILDREN = 'edit_children'
 }
 
@@ -81,7 +81,8 @@ export type PermissionsActions =
     | RecordAttributePermissionsActions
     | AppPermissionsActions
     | AttributePermissionsActions
-    | TreePermissionsActions;
+    | TreePermissionsActions
+    | TreeNodePermissionsActions;
 
 export interface ILabeledPermissionsAction {
     label: ISystemTranslation;

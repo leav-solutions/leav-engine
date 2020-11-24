@@ -1,6 +1,6 @@
 import {gqlAddUserToGroup, gqlGetAllUsersGroupId, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
 
-describe('AttributePermissions', () => {
+describe('TreePermissions', () => {
     const permTreeName = 'tree_permissions_test_tree';
     let allUsersTreeElemId;
 

@@ -132,7 +132,7 @@ describe('recordPermissionDomain', () => {
     });
 
     describe('getHeritedRecordPermission', () => {
-        test('Return herited tree permission', async () => {
+        test('Return herited record permission', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
                 getPermissionByUserGroups: global.__mockPromise(true)
             };
