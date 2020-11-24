@@ -5,8 +5,8 @@ export interface IGetRecordsFromLibraryQueryElement {
     whoAmI: {
         id: string;
         label: ILabel;
-        color: string;
-        preview: {
+        color?: string;
+        preview?: {
             small: string;
             medium: string;
             big: string;
