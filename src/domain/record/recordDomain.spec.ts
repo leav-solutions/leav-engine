@@ -114,11 +114,16 @@ describe('RecordDomain', () => {
                 send: global.__mockPromise()
             };
 
+            const attrDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise({totalCount: 0, list: []})
+            };
+
             const recDomain = recordDomain({
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.library': libDomain as ILibraryDomain,
+                'core.domain.attribute': attrDomain as IAttributeDomain,
                 'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain
             });
 

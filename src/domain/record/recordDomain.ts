@@ -3,7 +3,6 @@ import {join} from 'path';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import validateLibrary from './helpers/validateLibrary';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
@@ -312,6 +311,46 @@ export default function({
         return attributes;
     };
 
+    const _getSimpleLinkedRecords = async (
+        library: string,
+        value: string,
+        ctx: IQueryInfos
+    ): Promise<Array<{attribute: string; records: IRecord[]}>> => {
+        // get all attributes linked to the library param
+        const attributes = await attributeDomain.getAttributes({
+            params: {
+                filters: {type: [AttributeTypes.SIMPLE_LINK], linked_library: library}
+            },
+            ctx
+        });
+
+        const linkedValuesToDel: Array<{records: IRecord[]; attribute: string}> = [];
+        const libraryAttrs: {[library: string]: IAttribute[]} = {};
+
+        for (const attr of attributes.list) {
+            const libs = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
+            for (const l of libs) {
+                libraryAttrs[l] = !!libraryAttrs[l] ? [...libraryAttrs[l], attr] : [attr];
+            }
+        }
+
+        for (const [lib, attrs] of Object.entries(libraryAttrs)) {
+            for (const attr of attrs) {
+                const records = await recordRepo.find({
+                    libraryId: lib,
+                    filters: [{attributes: [attr], value}],
+                    ctx
+                });
+
+                if (records.list.length) {
+                    linkedValuesToDel.push({records: records.list, attribute: attr.id});
+                }
+            }
+        }
+
+        return linkedValuesToDel;
+    };
+
     return {
         async createRecord(library: string, ctx: IQueryInfos): Promise<IRecord> {
             const recordData = {
@@ -376,7 +415,22 @@ export default function({
                 throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
             }
 
+            const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
+
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
+
+            // delete simple linked values
+            for (const e of simpleLinkedRecords) {
+                for (const r of e.records) {
+                    await valueDomain.deleteValue({
+                        library: r.library,
+                        recordId: r.id,
+                        attribute: e.attribute,
+                        valueId: undefined,
+                        ctx
+                    });
+                }
+            }
 
             await eventsManager.send(
                 {
