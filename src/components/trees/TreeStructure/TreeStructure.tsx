@@ -26,7 +26,7 @@ import {moveTreeElementQuery} from '../../../queries/trees/treeMoveElementMutati
 import {getTreeNodeKey} from '../../../utils/utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/ADD_TREE_ELEMENT';
 import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
@@ -36,7 +36,7 @@ import RecordCard from '../../shared/RecordCard';
 import StructureView from '../EditTree/EditTreeTabs/StructureTab/StructureView';
 
 interface ITreeStructureProps {
-    tree: GET_TREES_trees_list;
+    tree: GET_TREE_BY_ID_trees_list;
     readOnly?: boolean;
     onClickNode?: (nodeData: NodeData) => void;
     selection?: NodeData[] | null;

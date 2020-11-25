@@ -8,7 +8,7 @@ import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui
 import styled from 'styled-components';
 import useLang from '../../../../../../hooks/useLang';
 import {getTreeNodeKey, localizedLabel, stringToColor} from '../../../../../../utils/utils';
-import {GET_TREES_trees_list} from '../../../../../../_gqlTypes/GET_TREES';
+import {GET_TREE_BY_ID_trees_list} from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {TreeElementInput} from '../../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../../_gqlTypes/RecordIdentity';
 import EditRecordModal from '../../../../../records/EditRecordModal';
@@ -17,7 +17,7 @@ import Loading from '../../../../../shared/Loading';
 import './rstOverride.css';
 
 interface IStructureViewProps {
-    treeSettings: GET_TREES_trees_list;
+    treeSettings: GET_TREE_BY_ID_trees_list;
     treeData: TreeItem[];
     onTreeChange: (treeData) => void;
     onVisibilityToggle: (data) => void;

@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/react-hooks';
 import React from 'react';
-import {getTreesQuery} from '../../../../../../../../../queries/trees/getTreesQuery';
+import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import {GET_FORM_forms_list_dependencyAttributes_TreeAttribute} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {GET_TREES, GET_TREESVariables} from '../../../../../../../../../_gqlTypes/GET_TREES';
+import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import Loading from '../../../../../../../../shared/Loading';
 import {IFormBuilderStateAndDispatch} from '../formBuilderReducer/formBuilderReducer';
 import BreadcrumbNavigatorView from './BreadcrumbNavigatorView';
@@ -18,7 +18,7 @@ function BreadcrumbNavigator({state, dispatch}: IFormBuilderStateAndDispatch): J
     const linkedTree = selectedDepAttribute.linked_tree;
 
     // Get tree attribute props
-    const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
+    const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
         variables: {id: linkedTree},
         skip: !linkedTree
     });

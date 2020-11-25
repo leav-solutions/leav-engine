@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {Breadcrumb, BreadcrumbSectionProps} from 'semantic-ui-react';
-import {GET_TREES_trees_list} from '../../../../../../../../../../_gqlTypes/GET_TREES';
+import {GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {RecordIdentity_whoAmI} from '../../../../../../../../../../_gqlTypes/RecordIdentity';
 import {defaultDepValue, IFormBuilderStateAndDispatch} from '../../formBuilderReducer/formBuilderReducer';
 import BreadcrumbSection from './BreadcrumbSection';
 
 interface IBreadcrumbNavigatorViewProps extends IFormBuilderStateAndDispatch {
-    treeData: GET_TREES_trees_list;
+    treeData: GET_TREE_BY_ID_trees_list;
 }
 
 function BreadcrumbNavigatorView({treeData, state, dispatch}: IBreadcrumbNavigatorViewProps): JSX.Element {

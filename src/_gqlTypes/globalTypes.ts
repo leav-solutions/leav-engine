@@ -62,7 +62,8 @@ export enum PermissionTypes {
     library = 'library',
     record = 'record',
     record_attribute = 'record_attribute',
-    tree = 'tree'
+    tree = 'tree',
+    tree_node = 'tree_node'
 }
 
 export enum PermissionsActions {
@@ -216,10 +217,12 @@ export interface PermissionInput {
 /**
  * Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
  * attributeId is only required for attribute permission
+ * libraryId and recordId are mandatory for tree node permission
  */
 export interface PermissionTarget {
     attributeId?: string | null;
     recordId: string;
+    libraryId?: string | null;
 }
 
 /**
@@ -247,6 +250,12 @@ export interface TreeInput {
     libraries?: string[] | null;
     behavior?: TreeBehavior | null;
     label?: SystemTranslation | null;
+    permissions_conf?: TreeNodePermissionsConfInput[] | null;
+}
+
+export interface TreeNodePermissionsConfInput {
+    libraryId: string;
+    permissionsConf: Treepermissions_confInput;
 }
 
 export interface Treepermissions_confInput {

@@ -5,7 +5,7 @@ import {MockedProvider, wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {getTreesQuery} from '../../../../../../../../../queries/trees/getTreesQuery';
+import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import {TreeBehavior} from '../../../../../../../../../_gqlTypes/globalTypes';
 import {initialState} from '../formBuilderReducer/_fixtures/fixtures';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
@@ -21,7 +21,7 @@ describe('BreadcrumbNavigator', () => {
         const mocks = [
             {
                 request: {
-                    query: getTreesQuery,
+                    query: getTreeByIdQuery,
                     variables: {
                         id: 'categories'
                     }
@@ -41,7 +41,10 @@ describe('BreadcrumbNavigator', () => {
                                         fr: 'Categories'
                                     },
                                     behavior: TreeBehavior.standard,
-                                    libraries: [{id: 'category', label: {fr: 'My Lib'}, __typename: 'Library'}]
+                                    libraries: [
+                                        {id: 'category', label: {fr: 'My Lib'}, attributes: [], __typename: 'Library'}
+                                    ],
+                                    permissions_conf: null
                                 }
                             ]
                         }

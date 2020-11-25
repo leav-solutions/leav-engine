@@ -8,7 +8,7 @@ import {Breadcrumb, Icon, Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
-import {GET_TREES_trees_list} from '../../../../../../../../../../../_gqlTypes/GET_TREES';
+import {GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {RecordIdentity_whoAmI} from '../../../../../../../../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../../../../../../../../../shared/RecordCard';
 import TreeStructure from '../../../../../../../../../../trees/TreeStructure';
@@ -20,7 +20,7 @@ import {
 } from '../../../formBuilderReducer/formBuilderReducer';
 
 interface IBreadcrumbSectionProps extends IFormBuilderStateAndDispatch {
-    treeData: GET_TREES_trees_list;
+    treeData: GET_TREE_BY_ID_trees_list;
     element?: RecordIdentity_whoAmI;
     ancestors?: RecordIdentity_whoAmI[];
 }

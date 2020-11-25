@@ -17,6 +17,24 @@ export const saveTreeQuery = gql`
             libraries {
                 id
                 label
+                attributes {
+                    id
+                    label
+                    type
+                    ... on TreeAttribute {
+                        linked_tree
+                    }
+                }
+            }
+            permissions_conf {
+                libraryId
+                permissionsConf {
+                    permissionTreeAttributes {
+                        id
+                        label
+                    }
+                    relation
+                }
             }
         }
     }

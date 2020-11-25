@@ -7,8 +7,9 @@ import {useTranslation} from 'react-i18next';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils';
-import {GET_TREES_trees_list} from '../../../../_gqlTypes/GET_TREES';
+import {GET_TREE_BY_ID_trees_list} from '../../../../_gqlTypes/GET_TREE_BY_ID';
 import TreeInfosTab from './InfosTab';
+import PermissionsTab from './PermissionsTab';
 import StructureTab from './StructureTab';
 
 export interface IEditTreeMatchParams {
@@ -16,7 +17,7 @@ export interface IEditTreeMatchParams {
 }
 
 interface IEditTreeTabsProps {
-    tree: GET_TREES_trees_list | null;
+    tree: GET_TREE_BY_ID_trees_list | null;
     readonly: boolean;
     history: History;
     location?: Location;
@@ -46,7 +47,17 @@ function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): 
             menuItem: t('trees.structure'),
             render: () => (
                 <Tab.Pane key="structure" className="grow">
-                    <StructureTab tree={tree as GET_TREES_trees_list} readonly={readonly} />
+                    <StructureTab tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
+                </Tab.Pane>
+            )
+        },
+        {
+            key: 'permissions',
+            mustBeDisplayed: !isCreationMode,
+            menuItem: t('trees.permissions'),
+            render: () => (
+                <Tab.Pane key="structure" className="grow">
+                    <PermissionsTab tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
                 </Tab.Pane>
             )
         }

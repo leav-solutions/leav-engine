@@ -6,8 +6,8 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NodeData} from 'react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
-import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
-import {GET_TREES, GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';
+import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
+import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import Loading from '../../shared/Loading';
 import TreeStructure from '../TreeStructure';
 
@@ -21,7 +21,7 @@ interface ISelectTreeNodeModalProps {
 const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeModalProps): JSX.Element => {
     const {t} = useTranslation();
     const [currentSelection, setCurrentSelection] = useState<NodeData[] | null>(null);
-    const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
+    const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
         variables: {
             id: tree
         }
