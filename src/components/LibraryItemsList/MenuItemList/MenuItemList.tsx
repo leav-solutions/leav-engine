@@ -1,10 +1,10 @@
-import {AppstoreFilled, MenuOutlined, PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
-import {Button, Select, Tooltip} from 'antd';
+import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
+import {Button, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {DisplayListItemTypes} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
+import DisplayOptions from '../DisplayOptions';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
@@ -37,44 +37,6 @@ const SubGroup = styled.div`
 function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const displayOptions = [
-        {
-            key: 'list-small',
-            text: t('items_list.display.list-small'),
-            value: DisplayListItemTypes.listSmall,
-            icon: <MenuOutlined />
-        },
-        {
-            key: 'list-medium',
-            text: t('items_list.display.list-medium'),
-            value: DisplayListItemTypes.listMedium,
-            icon: <MenuOutlined />
-        },
-        {
-            key: 'list-big',
-            text: t('items_list.display.list-big'),
-            value: DisplayListItemTypes.listBig,
-            icon: <MenuOutlined />
-        },
-        {
-            key: 'tile',
-            text: t('items_list.display.tile'),
-            value: DisplayListItemTypes.tile,
-            icon: <AppstoreFilled />
-        }
-    ];
-
-    const changeDisplay = (value: string) => {
-        const newDisplay = value?.toString();
-
-        if (newDisplay) {
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE,
-                displayType: DisplayListItemTypes[newDisplay]
-            });
-        }
-    };
-
     const toggleShowFilter = () => {
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS,
@@ -101,19 +63,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             </div>
 
             <SubGroup>
-                <Select
-                    placeholder={t('items_list.display_type')}
-                    defaultValue={stateItems.displayType}
-                    onChange={value => changeDisplay(value)}
-                    bordered={true}
-                >
-                    {displayOptions.map(display => (
-                        <Select.Option key={display.key} value={display.value}>
-                            <span>{display.icon}</span>
-                            {display.text}
-                        </Select.Option>
-                    ))}
-                </Select>
+                <DisplayOptions />
 
                 <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()}></Button>
             </SubGroup>
