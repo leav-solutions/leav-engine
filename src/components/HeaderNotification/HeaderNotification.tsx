@@ -1,22 +1,44 @@
 import React, {useEffect, useState} from 'react';
 import {defaultNotificationsTime} from '../../constants/constants';
-import {useNotifications} from '../../hooks/NotificationsHook';
-import {INotification, NotificationPriority} from '../../_types/types';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
+import {INotification, NotificationChannel, NotificationPriority} from '../../_types/types';
 import DisplayNotification from './DisplayNotification';
 
 function HeaderNotification(): JSX.Element {
     const {notificationsStack, updateNotificationsStack, baseNotification} = useNotifications();
 
     const [message, setMessage] = useState<INotification>(baseNotification);
+    const [triggerNotifications, setTriggerNotifications] = useState<INotification[]>([]);
     const [activeTimeouts, setActiveTimeouts] = useState<{notification: any; base: any}>({
         notification: null,
         base: null
     });
 
     useEffect(() => {
-        if (notificationsStack.length) {
+        const {passiveNotifications} = notificationsStack.reduce(
+            (acc, notification) => {
+                switch (notification.channel) {
+                    case NotificationChannel.trigger:
+                        setTriggerNotifications(notifications => [...notifications, notification]);
+                        return acc;
+                    case NotificationChannel.passive:
+                    default:
+                        return {...acc, passiveNotifications: [...acc.passiveNotifications, notification]};
+                }
+            },
+            {
+                passiveNotifications: [] as INotification[]
+            }
+        );
+
+        // if trigger notifications, remove it for notificationsStack
+        if (passiveNotifications.length !== notificationsStack.length) {
+            updateNotificationsStack(passiveNotifications);
+        }
+
+        if (passiveNotifications.length) {
             // Sort notification by priority
-            const sortNotificationsStack = [...notificationsStack].sort((a, b) => {
+            const sortNotificationsStack = [...passiveNotifications].sort((a, b) => {
                 switch (a.priority) {
                     case NotificationPriority.low:
                         switch (b.priority) {
@@ -120,6 +142,8 @@ function HeaderNotification(): JSX.Element {
             message={message}
             activeTimeouts={activeTimeouts}
             cancelNotification={cancelNotification}
+            triggerNotifications={triggerNotifications}
+            setTriggerNotifications={setTriggerNotifications}
         />
     );
 }

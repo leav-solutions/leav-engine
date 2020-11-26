@@ -3,8 +3,7 @@ import {Button, Select, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useNotifications} from '../../../hooks/NotificationsHook';
-import {DisplayListItemTypes, NotificationPriority, NotificationType} from '../../../_types/types';
+import {DisplayListItemTypes} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import {
     LibraryItemListReducerAction,
@@ -37,26 +36,6 @@ const SubGroup = styled.div`
 
 function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
-
-    const {addNotification} = useNotifications();
-
-    const testNotification = async () => {
-        function randomEnum<T>(anEnum: T): T[keyof T] {
-            const enumValues = (Object.keys(anEnum) as unknown) as T[keyof T][];
-            const randomIndex = Math.floor(Math.random() * enumValues.length);
-            const randomEnumValue = enumValues[randomIndex];
-            return randomEnumValue;
-        }
-
-        const priority = randomEnum(NotificationPriority);
-        const content = `test ${Math.round(Math.random() * 1000)} | priority ${priority}`;
-
-        addNotification({
-            content,
-            type: NotificationType.basic,
-            priority
-        });
-    };
 
     const displayOptions = [
         {
@@ -124,7 +103,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             </div>
 
             <div>
-                <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={testNotification}>
+                <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
                     {t('items_list.new')}
                 </PrimaryBtn>
             </div>

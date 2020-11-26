@@ -16,8 +16,12 @@ describe('DisplayNotification', () => {
         base: null
     };
 
+    const mockTriggerNotification: INotification[] = [];
+
     test('should display message content', async () => {
         let comp: any;
+
+        const mockSetTriggerNotification = jest.fn();
 
         await act(async () => {
             comp = mount(
@@ -26,11 +30,39 @@ describe('DisplayNotification', () => {
                         message={mockMessage}
                         activeTimeouts={mockActiveTimeouts}
                         cancelNotification={jest.fn()}
+                        triggerNotifications={mockTriggerNotification}
+                        setTriggerNotifications={mockSetTriggerNotification}
                     />
                 </MockedProviderWithFragments>
             );
         });
 
         expect(comp.text()).toContain(mockMessage.content);
+    });
+
+    test('should display trigger notification', async () => {
+        const mockNotification: INotification[] = [
+            {
+                content: 'test is a text',
+                type: NotificationType.basic
+            }
+        ];
+        const mockSetTriggerNotification = jest.fn();
+
+        await act(async () => {
+            mount(
+                <MockedProviderWithFragments>
+                    <DisplayNotification
+                        message={mockMessage}
+                        activeTimeouts={mockActiveTimeouts}
+                        cancelNotification={jest.fn()}
+                        triggerNotifications={mockNotification}
+                        setTriggerNotifications={mockSetTriggerNotification}
+                    />
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(mockSetTriggerNotification).toHaveBeenCalled();
     });
 });

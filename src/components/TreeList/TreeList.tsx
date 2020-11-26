@@ -3,7 +3,7 @@ import {Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useNotifications} from '../../hooks/NotificationsHook';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
 import {ITree, NotificationType} from '../../_types/types';
 import TreeItem from '../TreeItem';
