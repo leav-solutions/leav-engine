@@ -1,10 +1,13 @@
 import {useQuery} from '@apollo/client';
 import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
-import {getBaseNotification, IGetBaseNotification} from '../queries/cache/notifications/getBaseNotificationQuery';
-import {getNotifications, IGetNotification} from '../queries/cache/notifications/getNotificationsQuery';
-import {getNotificationsStack, IGetNotificationsStack} from '../queries/cache/notifications/getNotificationsStackQuery';
-import {IBaseNotification, INotification, NotificationType} from '../_types/types';
+import {getBaseNotification, IGetBaseNotification} from '../../queries/cache/notifications/getBaseNotificationQuery';
+import {IGetNotification} from '../../queries/cache/notifications/getNotificationsQuery';
+import {
+    getNotificationsStack,
+    IGetNotificationsStack
+} from '../../queries/cache/notifications/getNotificationsStackQuery';
+import {IBaseNotification, INotification, NotificationType} from '../../_types/types';
 
 type IUseNotificationsStackReturn = {
     notificationsStack: INotification[];
@@ -16,15 +19,16 @@ type IUseNotificationsStackReturn = {
 
 export const useNotifications = (): IUseNotificationsStackReturn => {
     const {t} = useTranslation();
-    const {data, client} = useQuery<IGetNotification>(getNotifications);
+    const {data: dataStack, client} = useQuery<IGetNotification>(getNotificationsStack);
+    const {data: dataBase} = useQuery<IGetNotification>(getBaseNotification);
 
     const defaultBaseNotification: IBaseNotification = {
         content: t('notification.base-message'),
         type: NotificationType.basic
     };
 
-    const notificationsStack = data?.notificationsStack || [];
-    const baseNotification = data?.baseNotification || defaultBaseNotification;
+    const notificationsStack = dataStack?.notificationsStack || [];
+    const baseNotification = dataBase?.baseNotification || defaultBaseNotification;
 
     const updateNotificationsStack = useCallback(
         (newNotificationsStack: INotification[]) => {

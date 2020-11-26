@@ -6,7 +6,7 @@ import styled, {CSSObject} from 'styled-components';
 import {StateItemsContext} from '../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../hooks/ActiveLibHook';
 import {useLang} from '../../hooks/LangHook';
-import {useNotifications} from '../../hooks/NotificationsHook';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {

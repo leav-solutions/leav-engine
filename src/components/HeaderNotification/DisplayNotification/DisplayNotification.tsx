@@ -1,9 +1,9 @@
 import {CloseOutlined} from '@ant-design/icons';
-import {Badge} from 'antd';
-import React from 'react';
+import {Badge, message as antMessage} from 'antd';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
-import {useNotifications} from '../../../hooks/NotificationsHook';
-import {INotification} from '../../../_types/types';
+import {useNotifications} from '../../../hooks/NotificationsHook/NotificationsHook';
+import {INotification, NotificationType} from '../../../_types/types';
 
 const Wrapper = styled.div`
     padding: 0.3rem 1rem;
@@ -33,14 +33,47 @@ interface IDisplayNotificationProps {
     message: INotification;
     activeTimeouts: {notification: any; base: any};
     cancelNotification: () => void;
+    triggerNotifications: INotification[];
+    setTriggerNotifications: React.Dispatch<React.SetStateAction<INotification[]>>;
 }
 
-function DisplayNotification({message, activeTimeouts, cancelNotification}: IDisplayNotificationProps): JSX.Element {
+function DisplayNotification({
+    message,
+    activeTimeouts,
+    cancelNotification,
+    triggerNotifications,
+    setTriggerNotifications
+}: IDisplayNotificationProps): JSX.Element {
     const {notificationsStack} = useNotifications();
+
+    useEffect(() => {
+        if (triggerNotifications.length) {
+            const [notification, ...restNotifications] = triggerNotifications;
+
+            switch (notification.type) {
+                case NotificationType.error:
+                    antMessage.error(notification.content);
+                    break;
+                case NotificationType.success:
+                    antMessage.success(notification.content);
+                    break;
+                case NotificationType.warning:
+                    antMessage.warning(notification.content);
+                    break;
+                case NotificationType.basic:
+                default:
+                    antMessage.info(notification.content);
+                    break;
+            }
+
+            setTriggerNotifications(restNotifications);
+        }
+    }, [triggerNotifications, setTriggerNotifications]);
+
     return (
         <>
             <Wrapper>
-                <span>{message.content}</span>
+                <Message notification={message} />
                 <span>
                     {activeTimeouts.notification && (
                         <div>
@@ -53,5 +86,34 @@ function DisplayNotification({message, activeTimeouts, cancelNotification}: IDis
         </>
     );
 }
+
+const ErrorMessage = styled.span`
+    color: #e02020;
+    font-weight: 800;
+`;
+
+const WarningMessage = styled.span`
+    color: orange;
+    font-weight: 600;
+`;
+
+const SuccessMessage = styled.span`
+    color: greenyellow;
+    font-weight: 600;
+`;
+
+const Message = ({notification}: {notification: INotification}) => {
+    switch (notification.type) {
+        case NotificationType.error:
+            return <ErrorMessage>{notification.content}</ErrorMessage>;
+        case NotificationType.warning:
+            return <WarningMessage>{notification.content}</WarningMessage>;
+        case NotificationType.success:
+            return <SuccessMessage>{notification.content}</SuccessMessage>;
+        case NotificationType.basic:
+        default:
+            return <span>{notification.content}</span>;
+    }
+};
 
 export default DisplayNotification;

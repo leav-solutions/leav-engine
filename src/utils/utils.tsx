@@ -11,8 +11,10 @@ import {
     IAttributesChecked,
     IExtendedData,
     IItemsColumn,
+    INotification,
     IOriginAttributeData,
     ITreeData,
+    NotificationPriority,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -308,4 +310,40 @@ export const flatArray = (arrays: any[]): any[] => {
 
 export const getUniqueId = () => {
     return '_' + Math.random().toString(36).substr(2, 9);
+};
+
+export const sortNotificationByPriority = (a: INotification, b: INotification) => {
+    switch (a.priority) {
+        case NotificationPriority.low:
+            switch (b.priority) {
+                case NotificationPriority.low:
+                    return 0;
+                case NotificationPriority.medium:
+                    return 1;
+                case NotificationPriority.high:
+                    return 1;
+            }
+            return 0;
+        case NotificationPriority.medium:
+            switch (b.priority) {
+                case NotificationPriority.low:
+                    return -1;
+                case NotificationPriority.medium:
+                    return 0;
+                case NotificationPriority.high:
+                    return 1;
+            }
+            return 0;
+        case NotificationPriority.high:
+            switch (b.priority) {
+                case NotificationPriority.low:
+                    return -1;
+                case NotificationPriority.medium:
+                    return -1;
+                case NotificationPriority.high:
+                    return 0;
+            }
+            return 0;
+    }
+    return 0;
 };

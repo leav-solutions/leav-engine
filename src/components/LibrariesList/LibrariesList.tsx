@@ -3,7 +3,7 @@ import {Divider, PageHeader, Row} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
-import {useNotifications} from '../../hooks/NotificationsHook';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import {ILibrary, NotificationType} from '../../_types/types';
 import LibraryCard from './LibraryCard';

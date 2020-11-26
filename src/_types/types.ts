@@ -269,6 +269,11 @@ export enum NotificationPriority {
     high = 'high'
 }
 
+export enum NotificationChannel {
+    trigger = 'trigger',
+    passive = 'passive'
+}
+
 export interface IBaseNotification {
     content: string;
     type: NotificationType;
@@ -277,6 +282,7 @@ export interface IBaseNotification {
 export interface INotification extends IBaseNotification {
     time?: number;
     priority?: NotificationPriority;
+    channel?: NotificationChannel;
 }
 
 export type ILang = string[];

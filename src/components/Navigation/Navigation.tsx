@@ -5,7 +5,7 @@ import {useParams} from 'react-router-dom';
 import {StateNavigationContext} from '../../Context/StateNavigationContext';
 import {useActiveTree} from '../../hooks/ActiveTreeHook';
 import {useLang} from '../../hooks/LangHook';
-import {useNotifications} from '../../hooks/NotificationsHook';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getTreeListQuery, IGetTreeListQuery, IGetTreeListQueryVar} from '../../queries/trees/getTreeListQuery';
 import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';
 import {localizedLabel} from '../../utils';
