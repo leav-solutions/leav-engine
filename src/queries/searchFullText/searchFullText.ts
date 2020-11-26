@@ -1,6 +1,35 @@
 import {gql} from '@apollo/client';
-import {IItemsColumn} from '../../_types/types';
+import {IItemsColumn, ILabel} from '../../_types/types';
 import {getRecordsFields} from './../records/getRecordsFromLibraryQuery';
+
+export interface ISearchFullTextQuery {
+    [x: string]: {
+        totalCount: number;
+        list: {
+            [x: string]: any;
+            whoAmI: {
+                id: string;
+                label: ILabel;
+                color?: string;
+                preview?: {
+                    small: string;
+                    medium: string;
+                    big: string;
+                };
+                library: {
+                    id: string;
+                    label: ILabel;
+                };
+            };
+        }[];
+    };
+}
+
+export interface ISearchFullTextVar {
+    search: string;
+    from: number;
+    size: number;
+}
 
 const getFields = (libType?: string, fields?: IItemsColumn[]) => {
     if (!libType || !fields || !fields.length) {
@@ -14,10 +43,10 @@ const getFields = (libType?: string, fields?: IItemsColumn[]) => {
     `;
 };
 
-export const searchFullText = (libType?: string, fields?: IItemsColumn[]) => {
+export const searchFullText = (libId?: string, libType?: string, fields?: IItemsColumn[]) => {
     return gql`
-        query USE_SEARCH_FULL_TEXT($libId: ID!, $search: String!, $from: Int, $size: Int) {
-            search(library: $libId, query: $search, from: $from, size: $size) {
+        query USE_SEARCH_FULL_TEXT($search: String!, $from: Int!, $size: Int!) {
+            ${libId}(pagination: { limit: $size, offset: $from }, searchQuery: $search) {
                 totalCount
                 list {
                     ${getFields(libType, fields)}

@@ -1,45 +1,77 @@
-import {CloseOutlined} from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
-import styled from 'styled-components';
 import {defaultNotificationsTime} from '../../constants/constants';
-import {useNotificationBase} from '../../hook/NotificationBase';
-import {useNotificationsStack} from '../../hook/NotificationsStack';
-import {INotification} from '../../_types/types';
-
-const Wrapper = styled.div`
-    padding: 0.3rem 1rem;
-    min-width: 25%;
-    width: auto;
-    text-overflow: hidden;
-    font-weight: 600;
-
-    background: #0d1e26 0% 0% no-repeat padding-box;
-    border: 1px solid #70707031;
-    border-radius: 3px;
-
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-`;
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
+import {INotification, NotificationChannel, NotificationPriority} from '../../_types/types';
+import DisplayNotification from './DisplayNotification';
 
 function HeaderNotification(): JSX.Element {
-    const [notificationBase] = useNotificationBase();
-    const [notificationsStack, updateNotificationsStack] = useNotificationsStack();
+    const {notificationsStack, updateNotificationsStack, baseNotification} = useNotifications();
 
-    const [message, setMessage] = useState<INotification>(notificationBase);
+    const [message, setMessage] = useState<INotification>(baseNotification);
+    const [triggerNotifications, setTriggerNotifications] = useState<INotification[]>([]);
     const [activeTimeouts, setActiveTimeouts] = useState<{notification: any; base: any}>({
         notification: null,
         base: null
     });
 
     useEffect(() => {
-        if (notificationsStack.length) {
-            // Sort notification by priority
-            const sortNotificationsStack = [...notificationsStack].sort((a, b) => {
-                const ap = a.priority ?? 0;
-                const bp = b.priority ?? 0;
+        const {passiveNotifications} = notificationsStack.reduce(
+            (acc, notification) => {
+                switch (notification.channel) {
+                    case NotificationChannel.trigger:
+                        setTriggerNotifications(notifications => [...notifications, notification]);
+                        return acc;
+                    case NotificationChannel.passive:
+                    default:
+                        return {...acc, passiveNotifications: [...acc.passiveNotifications, notification]};
+                }
+            },
+            {
+                passiveNotifications: [] as INotification[]
+            }
+        );
 
-                return bp - ap;
+        // if trigger notifications, remove it for notificationsStack
+        if (passiveNotifications.length !== notificationsStack.length) {
+            updateNotificationsStack(passiveNotifications);
+        }
+
+        if (passiveNotifications.length) {
+            // Sort notification by priority
+            const sortNotificationsStack = [...passiveNotifications].sort((a, b) => {
+                switch (a.priority) {
+                    case NotificationPriority.low:
+                        switch (b.priority) {
+                            case NotificationPriority.low:
+                                return 0;
+                            case NotificationPriority.medium:
+                                return 1;
+                            case NotificationPriority.high:
+                                return 1;
+                        }
+                        return 0;
+                    case NotificationPriority.medium:
+                        switch (b.priority) {
+                            case NotificationPriority.low:
+                                return -1;
+                            case NotificationPriority.medium:
+                                return 0;
+                            case NotificationPriority.high:
+                                return 1;
+                        }
+                        return 0;
+                    case NotificationPriority.high:
+                        switch (b.priority) {
+                            case NotificationPriority.low:
+                                return -1;
+                            case NotificationPriority.medium:
+                                return -1;
+                            case NotificationPriority.high:
+                                return 0;
+                        }
+                        return 0;
+                }
+                return 0;
             });
 
             // Take the first notification
@@ -65,7 +97,7 @@ function HeaderNotification(): JSX.Element {
                 const notificationTimeout = setTimeout(() => {
                     if (!activeTimeouts.notification) {
                         const baseTimeout = setTimeout(() => {
-                            setMessage(notificationBase);
+                            setMessage(baseNotification);
                         }, 100);
 
                         setActiveTimeouts(timeouts => ({
@@ -89,13 +121,13 @@ function HeaderNotification(): JSX.Element {
             }
         } else if (!activeTimeouts.notification) {
             setMessage(msg => {
-                if (notificationBase.content !== msg.content) {
-                    return notificationBase;
+                if (baseNotification.content !== msg.content) {
+                    return baseNotification;
                 }
                 return msg;
             });
         }
-    }, [setMessage, updateNotificationsStack, notificationsStack, notificationBase, setActiveTimeouts, activeTimeouts]);
+    }, [setMessage, updateNotificationsStack, notificationsStack, baseNotification, setActiveTimeouts, activeTimeouts]);
 
     const cancelNotification = () => {
         clearTimeout(activeTimeouts.notification);
@@ -106,10 +138,13 @@ function HeaderNotification(): JSX.Element {
     };
 
     return (
-        <Wrapper>
-            <span>{message.content}</span>
-            <span>{activeTimeouts.notification && <CloseOutlined onClick={cancelNotification} />}</span>
-        </Wrapper>
+        <DisplayNotification
+            message={message}
+            activeTimeouts={activeTimeouts}
+            cancelNotification={cancelNotification}
+            triggerNotifications={triggerNotifications}
+            setTriggerNotifications={setTriggerNotifications}
+        />
     );
 }
 

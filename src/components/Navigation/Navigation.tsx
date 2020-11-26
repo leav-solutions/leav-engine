@@ -3,9 +3,9 @@ import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {StateNavigationContext} from '../../Context/StateNavigationContext';
-import {useActiveTree} from '../../hook/ActiveTreeHook';
-import {useLang} from '../../hook/LangHook';
-import {useNotificationBase} from '../../hook/NotificationBase';
+import {useActiveTree} from '../../hooks/ActiveTreeHook';
+import {useLang} from '../../hooks/LangHook';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getTreeListQuery, IGetTreeListQuery, IGetTreeListQueryVar} from '../../queries/trees/getTreeListQuery';
 import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';
 import {localizedLabel} from '../../utils';
@@ -24,7 +24,7 @@ function Navigation(): JSX.Element {
 
     const [{lang}] = useLang();
     const [, updateActiveTree] = useActiveTree();
-    const [, updateNotificationBase] = useNotificationBase();
+    const {updateBaseNotification} = useNotifications();
 
     const {data, loading} = useQuery<IGetTreeListQuery, IGetTreeListQueryVar>(getTreeListQuery, {
         variables: {treeId}
@@ -41,12 +41,12 @@ function Navigation(): JSX.Element {
                 libraries: currentTree.libraries.map(lib => ({id: lib.id}))
             });
 
-            updateNotificationBase({
+            updateBaseNotification({
                 content: t('notification.active-tree', {tree: treeName}),
                 type: NotificationType.basic
             });
         }
-    }, [data, loading, lang, updateActiveTree, t, updateNotificationBase]);
+    }, [data, loading, lang, updateActiveTree, t, updateBaseNotification]);
 
     return (
         <StateNavigationContext.Provider value={{stateNavigation: state, dispatchNavigation: dispatch}}>

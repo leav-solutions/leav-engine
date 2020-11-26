@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 import {Resizable} from 'react-resizable';
 import styled from 'styled-components';
 import {infosCol} from '../../../constants/constants';
-import {useLang} from '../../../hook/LangHook';
+import {useLang} from '../../../hooks/LangHook';
 import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
 import {AttributeFormat, AttributeType, IItem, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
 import {

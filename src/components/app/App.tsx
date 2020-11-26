@@ -75,7 +75,7 @@ function App({token, onTokenInvalid}: IAppProps) {
                                 return [...incoming];
                             }
                         },
-                        notificationBase: {
+                        baseNotification: {
                             merge(existing, incoming) {
                                 return incoming;
                             }

@@ -3,13 +3,24 @@ import {useLazyQuery} from '@apollo/client';
 import {Input, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled, {CSSObject} from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../../hook/ActiveLibHook';
-import {useLang} from '../../../hook/LangHook';
-import {searchFullText} from '../../../queries/searchFullText/searchFullText';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook';
+import {useLang} from '../../../hooks/LangHook';
+import {getLibrariesListQuery} from '../../../queries/libraries/getLibrariesListQuery';
+import {ISearchFullTextQuery, ISearchFullTextVar, searchFullText} from '../../../queries/searchFullText/searchFullText';
 import {IItem} from '../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import {manageItems} from '../manageItems';
+
+interface IDeleteSearchCross {
+    style?: CSSObject;
+    search: string;
+}
+
+const DeleteSearchCross = styled.div<IDeleteSearchCross>`
+    opacity: ${props => (props.search ? 1 : 0)};
+`;
 
 function SearchItems(): JSX.Element {
     const {stateItems, dispatchItems} = useStateItem();
@@ -23,11 +34,12 @@ function SearchItems(): JSX.Element {
 
     const [activeLib] = useActiveLibrary();
 
-    const [triggerSearch, {data, called, loading, error}] = useLazyQuery(
-        searchFullText(activeLib?.gql?.type || '', stateItems.columns),
+    const [triggerSearch, {data, called, loading, error}] = useLazyQuery<ISearchFullTextQuery, ISearchFullTextVar>(
+        activeLib?.id
+            ? searchFullText(activeLib?.id, activeLib?.gql?.type || '', stateItems.columns)
+            : getLibrariesListQuery,
         {
             variables: {
-                libId: activeLib?.id,
                 search,
                 from: stateItems.offset,
                 size: stateItems.pagination
@@ -66,9 +78,9 @@ function SearchItems(): JSX.Element {
     ]);
 
     useEffect(() => {
-        if (called && !loading && data && updateSearch) {
-            const totalCount = data?.search?.totalCount;
-            const itemsFromQuery = data?.search.list;
+        if (called && !loading && data && updateSearch && activeLib) {
+            const totalCount = data[activeLib.id]?.totalCount;
+            const itemsFromQuery = data[activeLib.id].list;
 
             const items = manageItems({items: itemsFromQuery, lang, columns: stateItems.columns});
 
@@ -85,7 +97,7 @@ function SearchItems(): JSX.Element {
                 itemLoading: false
             });
         }
-    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.columns]);
+    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.columns, activeLib]);
 
     if (error) {
         console.error(error);
@@ -146,11 +158,11 @@ function SearchItems(): JSX.Element {
                 onChange={handleChange}
                 onSearch={handleSearch}
                 suffix={
-                    search && (
+                    <DeleteSearchCross search={search}>
                         <Tooltip placement="bottom" title={t('search.explain-cancel')}>
                             <CloseOutlined onClick={resetSearch} />
                         </Tooltip>
-                    )
+                    </DeleteSearchCross>
                 }
             />
         </div>
