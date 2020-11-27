@@ -52,4 +52,22 @@ describe('MenuItemList', () => {
 
         expect(comp.find(Button).first().prop('name')).toBe('show-filter');
     });
+
+    test('should have change column button', async () => {
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <MenuItemList
+                        stateItems={{...stateItems, showFilters: false}}
+                        dispatchItems={dispatchItems}
+                        refetch={jest.fn()}
+                    />
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(comp.find(Button).at(2).prop('name')).toBe('show-change-column');
+    });
 });

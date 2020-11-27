@@ -14,7 +14,6 @@ import {
     LibraryItemListState
 } from '../LibraryItemsListReducer';
 import Cell from './Cell';
-import ChooseTableColumns from './ChooseTableColumns';
 import Header from './Header';
 import './LibraryItemsListTable.css';
 import LibraryItemsModal from './LibraryItemsModal';
@@ -39,7 +38,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
     const [tableColumns, setTableColumn] = useState<ITableHeader[]>([]);
     const [tableData, setTableData] = useState<any[]>([]);
-    const [openChangeColumns, setOpenChangeColumns] = useState(false);
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
         show: false
     });
@@ -167,11 +165,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
                         return {
                             title: (
-                                <Header
-                                    name={attribute.id}
-                                    type={attribute.type}
-                                    setOpenChangeColumns={setOpenChangeColumns}
-                                >
+                                <Header name={attribute.id} type={attribute.type}>
                                     {displayLabel}
                                 </Header>
                             ),
@@ -198,11 +192,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                     // only the infos columns as no attributes
                     return {
                         title: (
-                            <Header
-                                name={infosCol}
-                                type={AttributeType.simple}
-                                setOpenChangeColumns={setOpenChangeColumns}
-                            >
+                            <Header name={infosCol} type={AttributeType.simple}>
                                 {t('items_list.table.infos')}
                             </Header>
                         ),
@@ -275,8 +265,6 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
     return (
         <>
-            <ChooseTableColumns openChangeColumns={openChangeColumns} setOpenChangeColumns={setOpenChangeColumns} />
-
             {stateItems.itemsLoading ? (
                 <LoadingContainer>
                     <Spin size="large" />

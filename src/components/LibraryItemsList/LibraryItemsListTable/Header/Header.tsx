@@ -11,10 +11,9 @@ interface HeaderPros {
     children: React.ReactNode;
     name: string;
     type: AttributeType;
-    setOpenChangeColumns: any;
 }
 
-const Header = ({children, name, type, setOpenChangeColumns}: HeaderPros) => {
+const Header = ({children, name, type}: HeaderPros) => {
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useContext(StateItemsContext);
@@ -58,10 +57,6 @@ const Header = ({children, name, type, setOpenChangeColumns}: HeaderPros) => {
                     <Menu.Item>{t('items_list.table.header-cell-menu.sort-advance')}</Menu.Item>
                     <Menu.Divider />
                     <Menu.Item>{t('items_list.table.header-cell-menu.regroup')}</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item onClick={() => setOpenChangeColumns(true)}>
-                        {t('items_list.table.header-cell-menu.choose-columns')}
-                    </Menu.Item>
                 </Menu>
             }
         >
