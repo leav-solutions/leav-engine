@@ -214,7 +214,7 @@ export default function(deps: IDeps): ITreeBasedPermissionHelper {
             applyTo,
             userGroupsPaths: [groupAncestors],
             permTreeId: permissionTreeTarget.tree,
-            permTreeVal: treeElemAncestors.slice(0, -1),
+            permTreeVal: treeElemAncestors.slice(-1),
             ctx
         });
 
