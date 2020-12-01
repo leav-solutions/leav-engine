@@ -1,5 +1,5 @@
 module.exports = {
-    '@primary-color': '#1DA57A',
+    '@primary-color': '#0F97E4',
     '@default-bg': '#FFF',
     '@divider-color': 'rgba(0, 0, 0, 6%)',
     '@item-active-bg': '#e5e5e5',
