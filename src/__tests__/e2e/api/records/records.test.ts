@@ -163,7 +163,7 @@ describe('Records', () => {
         let sfTreeRecord3;
 
         beforeAll(async () => {
-            jest.setTimeout(10000);
+            jest.setTimeout(15000);
 
             // Create libs
             await gqlSaveLibrary(sfTestLibId, 'Test');
