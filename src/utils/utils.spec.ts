@@ -1,4 +1,3 @@
-import {Kind, ValueNode} from 'graphql';
 import utils from './utils';
 
 describe('Utils', () => {
@@ -103,52 +102,6 @@ describe('Utils', () => {
         test('When array if empty or undefined, return null', () => {
             expect(utilsModule.nameValArrayToObj([])).toBe(null);
             expect(utilsModule.nameValArrayToObj()).toBe(null);
-        });
-    });
-    describe('graphqlParseLiteral', () => {
-        test('Convert an AST tree to an object', async () => {
-            const utilsModule = utils();
-            const ast: ValueNode = {
-                kind: Kind.LIST,
-                values: [
-                    {
-                        kind: Kind.OBJECT,
-                        fields: [
-                            {
-                                kind: Kind.OBJECT_FIELD,
-                                name: {
-                                    kind: Kind.NAME,
-                                    value: 'id'
-                                },
-                                value: {
-                                    kind: Kind.STRING,
-                                    value: 'some_container',
-                                    block: false
-                                }
-                            },
-                            {
-                                kind: Kind.OBJECT_FIELD,
-                                name: {
-                                    kind: Kind.NAME,
-                                    value: 'type'
-                                },
-                                value: {
-                                    kind: Kind.STRING,
-                                    value: 'fields_container',
-                                    block: false
-                                }
-                            }
-                        ]
-                    }
-                ]
-            };
-
-            expect(utilsModule.graphqlParseLiteral('JSON', ast)).toEqual([
-                {
-                    id: 'some_container',
-                    type: 'fields_container'
-                }
-            ]);
         });
     });
 

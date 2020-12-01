@@ -79,7 +79,7 @@ export default function({
                         id: ID!
                         libraries: [String!],
                         behavior: TreeBehavior,
-                        label: SystemTranslationInput
+                        label: SystemTranslation
                     }
 
                     type TreeElement {

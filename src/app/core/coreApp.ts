@@ -2,7 +2,6 @@ import {constants, promises as fs} from 'fs';
 import {GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 import {i18n} from 'i18next';
-import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IAppModule} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
@@ -15,7 +14,9 @@ export interface ICoreApp extends IAppModule {
 
 interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
-    'core.utils'?: IUtils;
+    'core.app.graphql.customScalars.systemTranslation'?: GraphQLScalarType;
+    'core.app.graphql.customScalars.dateTime'?: GraphQLScalarType;
+    'core.app.graphql.customScalars.any'?: GraphQLScalarType;
     config?: any;
     translator?: i18n;
 }
@@ -45,7 +46,9 @@ const _parseLiteralAny = ast => {
 export default function(
     {
         'core.app.graphql': graphqlApp = null,
-        'core.utils': utils = null,
+        'core.app.graphql.customScalars.systemTranslation': SystemTranslation = null,
+        'core.app.graphql.customScalars.dateTime': DateTime = null,
+        'core.app.graphql.customScalars.any': Any = null,
         config = null,
         translator = null
     }: IDeps = ({} = {})
@@ -74,53 +77,15 @@ export default function(
                         asc
                         desc
                     }
-
-                    input SystemTranslationInput {
-                        ${config.lang.available.map(l => `${l}: String${l === config.lang.default ? '!' : ''}`)}
-                    }
                 `,
                 resolvers: {
                     Query: {} as any,
                     Mutation: {} as any,
                     JSON: GraphQLJSON,
                     JSONObject: GraphQLJSONObject,
-                    Any: new GraphQLScalarType({
-                        name: 'Any',
-                        description: 'Can be anything',
-                        serialize: val => val,
-                        parseValue: val => val,
-                        parseLiteral: _parseLiteralAny
-                    }),
-                    SystemTranslation: new GraphQLScalarType({
-                        name: 'SystemTranslation',
-                        description: 'System entities fields translation (label...)',
-                        serialize: val => val,
-                        parseValue: val => val,
-                        parseLiteral: ast => ast
-                    }),
-                    DateTime: new GraphQLScalarType({
-                        name: 'DateTime',
-                        description: `The DateTime scalar type represents time data,
-                            represented as an ISO-8601 encoded UTC date string.`,
-                        parseValue(value: string) {
-                            return new Date(value); // value from the client
-                        },
-                        serialize(value: Date | number | string) {
-                            if (!(value instanceof Date) && typeof value !== 'string' && typeof value !== 'number') {
-                                throw new Error(`Invalid date ${value}`);
-                            }
-
-                            const dateValue = value instanceof Date ? value : utils.timestampToDate(value);
-
-                            return dateValue.toISOString(); // value sent to the client
-                        },
-                        parseLiteral(ast) {
-                            if (ast.kind === Kind.STRING) {
-                                return ast.value;
-                            }
-                            return null;
-                        }
-                    })
+                    Any,
+                    SystemTranslation,
+                    DateTime
                 }
             };
 
