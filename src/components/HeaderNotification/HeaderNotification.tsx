@@ -34,14 +34,16 @@ function HeaderNotification(): JSX.Element {
 
         if (triggerNotifications.length) {
             setTriggerNotifications(notifications => [...notifications, ...triggerNotifications]);
+
+            updateNotificationsStack(passiveNotifications);
         }
 
         if (passiveNotifications.length) {
             // Sort notification by priority
-            const sortNotificationsStack = [...passiveNotifications].sort(sortNotificationByPriority);
+            const sortPassiveNotifications = [...passiveNotifications].sort(sortNotificationByPriority);
 
             // Take the first notification
-            const [notification, ...restNotifications] = sortNotificationsStack;
+            const [notification, ...restNotifications] = sortPassiveNotifications;
 
             if (notification && !activeTimeouts.notification) {
                 setMessage(notification);
