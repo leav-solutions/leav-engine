@@ -1,4 +1,3 @@
-import {ValueNode} from 'graphql';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
 import {IActionsListConfig} from '_types/actionsList';
@@ -6,7 +5,6 @@ import {IAttribute} from '_types/attribute';
 import {LibraryBehavior} from '_types/library';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
-import {graphqlParseLiteral} from './helpers/graphqlParseLiteral';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -40,8 +38,6 @@ export interface IUtils {
      * @param library
      */
     getLibraryTreeId(library: string): string;
-
-    graphqlParseLiteral(typeName: string, ast: ValueNode, variables?: {[key: string]: any}): any;
 
     forceArray<T>(val: T | T[]): T[];
 
@@ -101,7 +97,6 @@ export default function(): IUtils {
         getLibraryTreeId(library) {
             return `${library}_tree`;
         },
-        graphqlParseLiteral,
         forceArray<T>(val: T | T[]): T[] {
             return Array.isArray(val) ? val : [val];
         },

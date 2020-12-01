@@ -159,7 +159,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         id: ID!
                         type: AttributeType
                         format: AttributeFormat
-                        label: SystemTranslationInput,
+                        label: SystemTranslation,
                         linked_library: String,
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttributeInput],
@@ -182,7 +182,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                     input EmbeddedAttributeInput {
                         id: ID!
                         format: AttributeFormat
-                        label: SystemTranslationInput,
+                        label: SystemTranslation,
                         validation_regex: String,
                         embedded_fields: [EmbeddedAttributeInput]
                     }

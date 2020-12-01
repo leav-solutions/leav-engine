@@ -1,8 +1,10 @@
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
+import {IAttribute} from '_types/attribute';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
+import {ISystemTranslation} from '_types/systemTranslation';
 import {IValue, IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
@@ -11,8 +13,6 @@ import {IRecord} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICoreApp} from './coreApp';
-import {IAttribute} from '_types/attribute';
-import {ISystemTranslation} from '_types/systemTranslation';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -79,7 +79,7 @@ export default function({
 
                     input LibraryInput {
                         id: ID!
-                        label: SystemTranslationInput,
+                        label: SystemTranslation,
                         attributes: [ID!],
                         fullTextAttributes: [ID!],
                         behavior: LibraryBehavior,

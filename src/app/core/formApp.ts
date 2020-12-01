@@ -63,7 +63,7 @@ export default function({
                     input FormInput {
                         id: ID!,
                         library: ID!,
-                        label: SystemTranslationInput,
+                        label: SystemTranslation,
                         dependencyAttributes: [ID!],
                         elements: [FormElementsByDepsInput!]
                     }
