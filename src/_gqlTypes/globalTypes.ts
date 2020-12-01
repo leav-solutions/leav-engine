@@ -126,7 +126,7 @@ export interface AttributeInput {
     id: string;
     type?: AttributeType | null;
     format?: AttributeFormat | null;
-    label?: SystemTranslationInput | null;
+    label?: SystemTranslation | null;
     linked_library?: string | null;
     linked_tree?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
@@ -141,7 +141,7 @@ export interface AttributeInput {
 export interface EmbeddedAttributeInput {
     id: string;
     format?: AttributeFormat | null;
-    label?: SystemTranslationInput | null;
+    label?: SystemTranslation | null;
     validation_regex?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
 }
@@ -173,15 +173,16 @@ export interface FormElementsByDepsInput {
 export interface FormInput {
     id: string;
     library: string;
-    label?: SystemTranslationInput | null;
+    label?: SystemTranslation | null;
     dependencyAttributes?: string[] | null;
     elements?: FormElementsByDepsInput[] | null;
 }
 
 export interface LibraryInput {
     id: string;
-    label?: SystemTranslationInput | null;
+    label?: SystemTranslation | null;
     attributes?: string[] | null;
+    fullTextAttributes?: string[] | null;
     behavior?: LibraryBehavior | null;
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
@@ -229,10 +230,6 @@ export interface RecordIdentityConfInput {
     preview?: string | null;
 }
 
-export interface SystemTranslationInput {
-    [lang: string]: string;
-}
-
 export interface TreeElementInput {
     id: string;
     library: string;
@@ -242,7 +239,7 @@ export interface TreeInput {
     id: string;
     libraries?: string[] | null;
     behavior?: TreeBehavior | null;
-    label?: SystemTranslationInput | null;
+    label?: SystemTranslation | null;
 }
 
 export interface Treepermissions_confInput {

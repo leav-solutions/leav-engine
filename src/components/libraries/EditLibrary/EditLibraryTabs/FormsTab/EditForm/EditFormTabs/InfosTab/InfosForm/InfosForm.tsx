@@ -5,7 +5,7 @@ import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {arrayPick, formatIDString, getFieldError, omit, pick} from '../../../../../../../../../utils';
 import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {AttributeType, FormInput, SystemTranslationInput} from '../../../../../../../../../_gqlTypes/globalTypes';
+import {AttributeType, FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
 import AttributeSelector from '../../../../../../../../attributes/AttributeSelector';
 import FormFieldWrapper from '../../../../../../../../shared/FormFieldWrapper';
 
@@ -49,7 +49,7 @@ function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.El
     const _handleSubmit = (values: FormValues) => {
         const valuesToSubmit: FormInput = {
             ...omit(values, ['system']),
-            label: (values?.label as SystemTranslationInput) ?? null,
+            label: (values?.label as SystemTranslation) ?? null,
             library
         };
 
