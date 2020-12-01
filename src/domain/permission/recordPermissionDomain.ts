@@ -1,6 +1,7 @@
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IConfig} from '_types/config';
+import {Errors} from '../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {
     LibraryPermissionsActions,
@@ -9,12 +10,13 @@ import {
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryDomain} from '../library/libraryDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import getDefaultPermission from './helpers/getDefaultPermission';
 import getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
 import {IGetDefaultPermissionParams, ITreePermissionDomain} from './treePermissionDomain';
+import ValidationError from '../../errors/ValidationError';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(
@@ -38,7 +40,7 @@ interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.library'?: ILibraryDomain;
+    'core.infra.library'?: ILibraryRepo;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
     'core.infra.permission'?: IPermissionRepo;
@@ -49,7 +51,7 @@ export default function(deps: IDeps = {}): IRecordPermissionDomain {
     const {
         'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
-        'core.domain.library': libraryDomain = null,
+        'core.infra.library': libraryRepo = null,
         'core.domain.attribute': attributeDomain = null,
         'core.infra.value': valueRepo = null,
         config = null
@@ -63,7 +65,17 @@ export default function(deps: IDeps = {}): IRecordPermissionDomain {
             recordId: string,
             ctx: IQueryInfos
         ): Promise<boolean> {
-            const lib = await libraryDomain.getLibraryProperties(recordLibrary, ctx);
+            const libs = await libraryRepo.getLibraries({
+                params: {filters: {id: recordLibrary}, strictFilters: true},
+                ctx
+            });
+
+            if (!libs.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            const lib = libs.list[0];
+
             if (typeof lib.permissions_conf === 'undefined') {
                 // Check if action is present in library permissions
                 const isLibAction =

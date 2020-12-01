@@ -1,4 +1,5 @@
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -21,6 +22,7 @@ export interface ICoreLibraryApp {
 interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
+    'core.domain.attribute'?: IAttributeDomain;
     'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
@@ -30,6 +32,7 @@ interface IDeps {
 export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
+    'core.domain.attribute': attributeDomain = null,
     'core.app.core.attribute': coreAttributeApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.utils': utils = null,
@@ -160,10 +163,10 @@ export default function({
                     },
                     Library: {
                         attributes: async (parent, args, ctx, info): Promise<IAttribute[]> => {
-                            return libraryDomain.getLibraryAttributes(parent.id, ctx);
+                            return attributeDomain.getLibraryAttributes(parent.id, ctx);
                         },
                         fullTextAttributes: async (parent, args, ctx, info) => {
-                            return libraryDomain.getLibraryFullTextAttributes(parent.id, ctx);
+                            return attributeDomain.getLibraryFullTextAttributes(parent.id, ctx);
                         },
                         /**
                          * Return library label, potentially filtered by requested language

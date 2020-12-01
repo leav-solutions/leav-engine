@@ -4,10 +4,9 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {IAttribute} from '../../_types/attribute';
-import {ILibrary} from '../../_types/library';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {LIB_ATTRIB_COLLECTION_NAME, LIB_COLLECTION_NAME} from '../library/libraryRepo';
+import {LIB_COLLECTION_NAME, LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
@@ -15,6 +14,8 @@ export interface IAttributeRepo {
     updateAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     createAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     deleteAttribute({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): Promise<IAttribute>;
+    getLibraryAttributes({libraryId, ctx}: {libraryId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
+    getLibraryFullTextAttributes({libraryId, ctx}: {libraryId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
@@ -37,6 +38,39 @@ export default function({
     'core.utils': utils = null
 }: IDeps = {}): IAttributeRepo {
     return {
+        async getLibraryAttributes({libraryId, ctx}): Promise<IAttribute[]> {
+            // TODO: use aql template tag, and find out why it doesn't work :)
+            const query = `
+                FOR v
+                IN 1 OUTBOUND '${LIB_COLLECTION_NAME}/${libraryId}'
+                ${LIB_ATTRIB_COLLECTION_NAME}
+                RETURN v
+            `;
+
+            const res = await dbService.execute({query, ctx});
+
+            return res.map(dbUtils.cleanup);
+        },
+        async getLibraryFullTextAttributes({libraryId, ctx}): Promise<IAttribute[]> {
+            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const attributesCollec = dbService.db.edgeCollection(ATTRIB_COLLECTION_NAME);
+
+            const attrs = await dbService.execute({
+                query: aql`LET fullTextAttrs = (
+                            FOR e IN ${libAttributesCollec}
+                                FILTER e._from == ${LIB_COLLECTION_NAME + '/' + libraryId}
+                                FILTER e.full_text_search == true
+                            RETURN LAST(SPLIT(e._to, '/'))
+                        )
+                        FOR a IN ${attributesCollec}
+                            FILTER POSITION(fullTextAttrs, a._key)
+                        RETURN a
+                    `,
+                ctx
+            });
+
+            return attrs.map(dbUtils.cleanup);
+        },
         async getAttributes({params, ctx}): Promise<IList<IAttribute>> {
             const _generateLibrariesFilterConds = (filterKey: string, filterVal: string | boolean | string[]) => {
                 if (typeof filterVal === 'boolean') {

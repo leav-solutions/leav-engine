@@ -3,7 +3,6 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IRecord} from '_types/record';
-import {IList} from '_types/list';
 import {PreviewSizes} from '../../_types/filesManager';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';

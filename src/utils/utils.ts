@@ -47,7 +47,7 @@ export interface IUtils {
 
     getDefaultActionsList(attribute: IAttribute): IActionsListConfig;
 
-    getLibraryDefaultAttributes(behavior: LibraryBehavior): string[];
+    getLibraryDefaultAttributes(behavior: LibraryBehavior, libraryId: string): string[];
 
     timestampToDate(t: number | string): Date;
 

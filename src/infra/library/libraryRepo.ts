@@ -78,8 +78,6 @@ export interface ILibraryRepo {
         ctx: IQueryInfos;
     }): Promise<void>;
 
-    getLibraryAttributes({libId, ctx}: {libId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
-    getLibraryFullTextAttributes({libId, ctx}: {libId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
     getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]>;
 }
 
@@ -183,7 +181,7 @@ export default function({
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
             // Get current library attributes
-            const currentAttrs = await this.getLibraryAttributes({libId, ctx});
+            const currentAttrs = await attributeRepo.getLibraryAttributes({libraryId: libId, ctx});
             const deletedAttrs = difference(
                 currentAttrs.filter(a => !a.system).map(a => a.id),
                 attributes
@@ -228,22 +226,6 @@ export default function({
 
             return libAttribRes.map(res => res._to.split('/')[1]);
         },
-        async getLibraryAttributes({libId, ctx}): Promise<IAttribute[]> {
-            const col = dbService.db.collection(LIB_COLLECTION_NAME);
-            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
-
-            // TODO: use aql template tag, and find out why it doesn't work :)
-            const query = `
-                FOR v
-                IN 1 OUTBOUND '${LIB_COLLECTION_NAME}/${libId}'
-                ${LIB_ATTRIB_COLLECTION_NAME}
-                RETURN v
-            `;
-
-            const res = await dbService.execute({query, ctx});
-
-            return res.map(dbUtils.cleanup);
-        },
         async saveLibraryFullTextAttributes({libId, fullTextAttributes, ctx}): Promise<void> {
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
@@ -259,26 +241,6 @@ export default function({
                 `,
                 ctx
             });
-        },
-        async getLibraryFullTextAttributes({libId, ctx}): Promise<IAttribute[]> {
-            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
-            const attributesCollec = dbService.db.edgeCollection(ATTRIB_COLLECTION_NAME);
-
-            const attrs = await dbService.execute({
-                query: aql`LET fullTextAttrs = (
-                            FOR e IN ${libAttributesCollec}
-                                FILTER e._from == ${LIB_COLLECTION_NAME + '/' + libId}
-                                FILTER e.full_text_search == true
-                            RETURN LAST(SPLIT(e._to, '/'))
-                        )
-                        FOR a IN ${attributesCollec}
-                            FILTER POSITION(fullTextAttrs, a._key)
-                        RETURN a
-                    `,
-                ctx
-            });
-
-            return attrs.map(dbUtils.cleanup);
         },
         async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
             const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);

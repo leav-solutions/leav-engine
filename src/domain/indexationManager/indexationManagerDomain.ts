@@ -44,7 +44,7 @@ export default function({
             ctx
         });
 
-        const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
+        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
 
         for (const record of records.list) {
             const data = (
@@ -146,7 +146,7 @@ export default function({
             const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
 
             for (let i = res.length - 1; i >= 0; i--) {
-                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(res[i], ctx);
+                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(res[i], ctx);
                 if (!fullTextAttributes.map(a => a.id).includes(attr.id)) {
                     res.splice(i, 1);
                 }
@@ -161,7 +161,7 @@ export default function({
             let filters;
 
             if (typeof recordId !== 'undefined') {
-                let fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(ll, ctx);
+                let fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(ll, ctx);
                 fullTextAttributes = fullTextAttributes.filter(a => a.linked_library === libraryId);
 
                 filters = fullTextAttributes.map(attr => ({
@@ -193,7 +193,7 @@ export default function({
             case EventType.RECORD_SAVE: {
                 data = (event.payload as IRecordPayload).data;
 
-                const fullTextAttributes = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
+                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
                 data.new = pick(
                     data.new,
                     fullTextAttributes.map(a => a.id)
@@ -256,7 +256,7 @@ export default function({
             case EventType.VALUE_SAVE: {
                 data = (event.payload as IValuePayload).data;
 
-                const attrToIndex = await libraryDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
+                const attrToIndex = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
 
                 if (data.attributeId === 'active' && data.value.new.value === false) {
                     await elasticsearchService.deleteDocument(data.libraryId, data.recordId);

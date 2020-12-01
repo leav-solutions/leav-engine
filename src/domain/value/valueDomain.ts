@@ -11,7 +11,6 @@ import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IValue, IValuesOptions} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import canSaveValue from './helpers/canSaveValue';
@@ -19,8 +18,7 @@ import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import updateRecordLastModif from './helpers/updateRecordLastModif';
-import validateLibrary from './helpers/validateLibrary';
-import validateRecord from './helpers/validateRecord';
+import {IValidateHelper} from '../helpers/validate';
 import validateValue from './helpers/validateValue';
 import {EventType} from '../../_types/event';
 import * as Config from '_types/config';
@@ -106,7 +104,6 @@ interface IDeps {
     config?: Config.IConfig;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.library'?: ILibraryDomain;
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.infra.record'?: IRecordRepo;
@@ -114,25 +111,26 @@ interface IDeps {
     'core.infra.value'?: IValueRepo;
     'core.utils'?: IUtils;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.domain.helpers.validate'?: IValidateHelper;
 }
 
 export default function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.domain.library': libraryDomain = null,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.value': valueRepo = null,
     'core.utils': utils = null,
-    'core.domain.eventsManager': eventsManager = null
+    'core.domain.eventsManager': eventsManager = null,
+    'core.domain.helpers.validate': validate = null
 }: IDeps = {}): IValueDomain {
     return {
         async getValues({library, recordId, attribute, options, ctx}): Promise<IValue[]> {
-            await validateLibrary(library, {libraryDomain}, ctx);
-            await validateRecord(library, recordId, {recordRepo}, ctx);
+            await validate.validateLibrary(library, ctx);
+            await validate.validateRecord(library, recordId, ctx);
 
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
@@ -198,8 +196,8 @@ export default function({
         async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
-            await validateLibrary(library, {libraryDomain}, ctx);
-            await validateRecord(library, recordId, {recordRepo}, ctx);
+            await validate.validateLibrary(library, ctx);
+            await validate.validateRecord(library, recordId, ctx);
 
             const valueChecksParams = {
                 attributeProps,
@@ -282,8 +280,8 @@ export default function({
             return savedVal;
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
-            await validateLibrary(library, {libraryDomain}, ctx);
-            await validateRecord(library, recordId, {recordRepo}, ctx);
+            await validate.validateLibrary(library, ctx);
+            await validate.validateRecord(library, recordId, ctx);
 
             const saveRes: ISaveBatchValueResult = await values.reduce(
                 async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
@@ -408,8 +406,8 @@ export default function({
             return saveRes;
         },
         async deleteValue({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
-            await validateLibrary(library, {libraryDomain}, ctx);
-            await validateRecord(library, recordId, {recordRepo}, ctx);
+            await validate.validateLibrary(library, ctx);
+            await validate.validateRecord(library, recordId, ctx);
 
             // Check permission
             const canUpdateRecord = await recordPermissionDomain.getRecordPermission(

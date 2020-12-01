@@ -1,6 +1,6 @@
 import moment from 'moment';
 import {join} from 'path';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
@@ -124,7 +124,7 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
-    'core.domain.library'?: ILibraryDomain;
+    'core.infra.library'?: ILibraryRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
 }
 
@@ -135,7 +135,7 @@ export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
-    'core.domain.library': libraryDomain = null,
+    'core.infra.library': libraryRepo = null,
     'core.domain.eventsManager': eventsManager = null
 }: IDeps = {}): IRecordDomain {
     /**
@@ -292,7 +292,8 @@ export default function({
         let extended = false;
         for (const f of fields) {
             if (linkedLibrary) {
-                const attrLinkedLibrary = await libraryDomain.getLibraryAttributes(linkedLibrary, ctx);
+                const attrLinkedLibrary = await attributeDomain.getLibraryAttributes(linkedLibrary, ctx);
+
                 if (!attrLinkedLibrary.find(a => a.id === f)) {
                     throw new ValidationError({id: Errors.INVALID_FILTER_FIELDS});
                 }
@@ -328,7 +329,7 @@ export default function({
         const libraryAttrs: {[library: string]: IAttribute[]} = {};
 
         for (const attr of attributes.list) {
-            const libs = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
+            const libs = await libraryRepo.getLibrariesUsingAttribute(attr.id, ctx);
             for (const l of libs) {
                 libraryAttrs[l] = !!libraryAttrs[l] ? [...libraryAttrs[l], attr] : [attr];
             }
@@ -395,7 +396,7 @@ export default function({
         },
         async deleteRecord({library, id, ctx}): Promise<IRecord> {
             // Get library
-            const lib = await libraryDomain.getLibraries({params: {filters: {id: library}, strictFilters: true}, ctx});
+            const lib = await libraryRepo.getLibraries({params: {filters: {id: library}, strictFilters: true}, ctx});
 
             // Check if exists and can delete
             if (!lib.list.length) {
@@ -534,7 +535,16 @@ export default function({
             return records;
         },
         async getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> {
-            const lib = await libraryDomain.getLibraryProperties(record.library, ctx);
+            const libs = await libraryRepo.getLibraries({
+                params: {filters: {id: record.library}, strictFilters: true},
+                ctx
+            });
+
+            if (!libs.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            const lib = libs.list.pop();
             const conf = lib.recordIdentityConf || {};
 
             let label = null;
@@ -566,7 +576,7 @@ export default function({
                 library: lib,
                 label,
                 color,
-                preview: (await getPreviews({conf, lib, record, valueDomain, libraryDomain, ctx})) ?? null
+                preview: (await getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null
             };
         },
         async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[]> {
@@ -610,16 +620,26 @@ interface IGetPreview {
     lib: ILibrary;
     record: IRecord;
     valueDomain: IValueDomain;
-    libraryDomain: ILibraryDomain;
+    libraryRepo: ILibraryRepo;
     ctx: any;
 }
 
-const getPreviews = async ({conf, lib, record, valueDomain, libraryDomain, ctx}: IGetPreview) => {
+const getPreviews = async ({conf, lib, record, valueDomain, libraryRepo, ctx}: IGetPreview) => {
     const _getPreviewFromRecord = async (valueRecord: IRecord) => {
         let previewAttribute: string;
 
         if (valueRecord.library) {
-            const valueLib = await libraryDomain.getLibraryProperties(valueRecord.library, ctx);
+            const libs = await libraryRepo.getLibraries({
+                params: {filters: {id: valueRecord.library}, strictFilters: true},
+                ctx
+            });
+
+            if (!libs.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            const valueLib = libs.list.pop();
+
             const valueConf = valueLib.recordIdentityConf || {};
 
             return valueConf.preview;

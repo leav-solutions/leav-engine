@@ -1,6 +1,7 @@
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
@@ -27,18 +28,18 @@ export interface IAttributeDomain {
      * If attribute doesn't exist => create a new one, otherwise update existing
      */
     saveAttribute({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): Promise<IAttribute>;
-
     deleteAttribute({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
-
     getInputTypes({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): IOAllowedTypes;
-
     getOutputTypes({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): IOAllowedTypes;
+    getLibraryAttributes(libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
+    getLibraryFullTextAttributes(libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
 }
 
 interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
     config?: any;
@@ -48,11 +49,30 @@ export default function({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.app': appPermissionDomain = null,
+    'core.infra.library': libraryRepo = null,
     'core.utils': utils = null,
     'core.infra.tree': treeRepo = null,
     config = null
 }: IDeps = {}): IAttributeDomain {
     return {
+        async getLibraryAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
+            const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
+
+            if (!libs.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            return attributeRepo.getLibraryAttributes({libraryId, ctx});
+        },
+        async getLibraryFullTextAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
+            const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
+
+            if (!libs.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            return attributeRepo.getLibraryFullTextAttributes({libraryId, ctx});
+        },
         async getAttributeProperties({id, ctx}): Promise<IAttribute> {
             const attrs = await attributeRepo.getAttributes({
                 params: {filters: {id}, strictFilters: true},

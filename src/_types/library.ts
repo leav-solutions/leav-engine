@@ -40,3 +40,6 @@ export enum LibraryBehavior {
     STANDARD = 'standard',
     FILES = 'files'
 }
+
+export const USERS_LIBRARY = 'users';
+export const USERS_GROUPS_LIBRARY = 'users_groups';

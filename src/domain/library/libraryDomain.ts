@@ -3,7 +3,7 @@ import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {omit, union} from 'lodash';
+import {omit, union, difference} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {ErrorFieldDetail} from '_types/errors';
@@ -17,6 +17,7 @@ import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import {IRecordDomain} from '../record/recordDomain';
 import checkSavePermission from './helpers/checkSavePermission';
 import runBehaviorPostDelete from './helpers/runBehaviorPostDelete';
 import runBehaviorPostSave from './helpers/runBehaviorPostSave';
@@ -26,14 +27,13 @@ import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
 import {EventType} from '../../_types/event';
 import * as Config from '_types/config';
+import {IDeleteAssociateValuesHelper} from './helpers/deleteAssociateValues';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
     saveLibrary(library: ILibrary, ctx: IQueryInfos): Promise<ILibrary>;
     deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary>;
     getLibraryProperties(id: string, ctx: IQueryInfos): Promise<ILibrary>;
-    getLibraryAttributes(id: string, ctx: IQueryInfos): Promise<IAttribute[]>;
-    getLibraryFullTextAttributes(id: string, ctx: IQueryInfos): Promise<IAttribute[]>;
     getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]>;
 }
 
@@ -46,6 +46,8 @@ interface IDeps {
     translator?: i18n;
     'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.domain.record'?: IRecordDomain;
+    'core.domain.library.helpers.deleteAssociateValues'?: IDeleteAssociateValuesHelper;
 }
 
 export default function({
@@ -56,6 +58,8 @@ export default function({
     'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
+    'core.domain.record': recordDomain = null,
+    'core.domain.library.helpers.deleteAssociateValues': deleteAssociateValues = null,
     translator: translator
 }: IDeps = {}): ILibraryDomain {
     return {
@@ -69,8 +73,8 @@ export default function({
 
             const libs = await Promise.all(
                 libsList.list.map(async lib => {
-                    lib.attributes = await libraryRepo.getLibraryAttributes({libId: lib.id, ctx});
-                    lib.fullTextAttributes = await libraryRepo.getLibraryFullTextAttributes({libId: lib.id, ctx});
+                    lib.attributes = await attributeDomain.getLibraryAttributes(lib.id, ctx);
+                    lib.fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(lib.id, ctx);
 
                     return lib;
                 })
@@ -99,23 +103,17 @@ export default function({
 
             return props;
         },
-        async getLibraryAttributes(id: string, ctx): Promise<IAttribute[]> {
-            const libs = await libraryRepo.getLibraries({params: {filters: {id}}, ctx});
+        async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
+            const attrs = await attributeDomain.getAttributes({
+                params: {filters: {id: attributeId}, strictFilters: true},
+                ctx
+            });
 
-            if (!libs.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            if (!attrs.list.length) {
+                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
             }
 
-            return libraryRepo.getLibraryAttributes({libId: id, ctx});
-        },
-        async getLibraryFullTextAttributes(id: string, ctx): Promise<IAttribute[]> {
-            const libs = await libraryRepo.getLibraries({params: {filters: {id}}, ctx});
-
-            if (!libs.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
-
-            return libraryRepo.getLibraryFullTextAttributes({libId: id, ctx});
+            return libraryRepo.getLibrariesUsingAttribute(attributeId, ctx);
         },
         async saveLibrary(libData: ILibrary, ctx: IQueryInfos): Promise<ILibrary> {
             const libs = await libraryRepo.getLibraries({params: {filters: {id: libData.id}}, ctx});
@@ -134,12 +132,12 @@ export default function({
             const dataToSave = existingLib ? omit(libData, uneditableFields) : {...defaultParams, ...libData};
 
             const validationErrors: Array<ErrorFieldDetail<ILibrary>> = [];
-            const defaultAttributes = getDefaultAttributes(dataToSave.behavior);
+            const defaultAttributes = getDefaultAttributes(dataToSave.behavior, libData.id);
             const currentLibraryAttributes = existingLib
-                ? (await this.getLibraryAttributes(libData.id, ctx)).map(a => a.id)
+                ? (await attributeDomain.getLibraryAttributes(libData.id, ctx)).map(a => a.id)
                 : [];
             const currentFullTextAttributes = existingLib
-                ? (await this.getLibraryFullTextAttributes(libData.id, ctx)).map(a => a.id)
+                ? (await attributeDomain.getLibraryFullTextAttributes(libData.id, ctx)).map(a => a.id)
                 : [];
 
             // Check permissions
@@ -166,9 +164,7 @@ export default function({
 
             const libAttributes = union(defaultAttributes, attributesToSave);
 
-            const libFullTextAttributes = [...new Set(['id', ...fullTextAttributesToSave])].filter(a =>
-                libAttributes.includes(a)
-            );
+            const libFullTextAttributes = [...new Set(['id', ...fullTextAttributesToSave])];
 
             // We can get rid of attributes and full text attributes in lib data, it will be saved separately
             delete dataToSave.attributes;
@@ -184,12 +180,14 @@ export default function({
                     dataToSave as ILibrary,
                     libAttributes,
                     {
-                        attributeDomain,
-                        libraryRepo
+                        attributeDomain
                     },
                     ctx
                 )
             );
+
+            // remove full text attributes if attribute is delete
+            libFullTextAttributes.filter(a => libAttributes.includes(a));
 
             const mergedValidationErrors = validationErrors.reduce((acc, cur) => ({...acc, ...cur}), {});
             if (Object.keys(mergedValidationErrors).length) {
@@ -219,6 +217,12 @@ export default function({
             });
 
             await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils}, ctx);
+
+            // delete associate values if attribute is delete
+            const deletedAttrs = difference(difference(currentLibraryAttributes, defaultAttributes), libAttributes);
+            if (deletedAttrs.length) {
+                await deleteAssociateValues.deleteAssociateValues(deletedAttrs, libData.id, ctx);
+            }
 
             // sending indexation event
             await eventsManager.send(
@@ -267,6 +271,13 @@ export default function({
 
             await runBehaviorPostDelete(lib, {treeRepo, utils}, ctx);
 
+            // TODO: delete all records
+            // get all records and delete them
+            const records = await recordDomain.find({params: {library: id}, ctx});
+            for (const r of records.list) {
+                await recordDomain.deleteRecord({library: id, id: r.id, ctx});
+            }
+
             const deletedLibrary = await libraryRepo.deleteLibrary({id, ctx});
 
             // sending indexation event
@@ -279,18 +290,6 @@ export default function({
             );
 
             return deletedLibrary;
-        },
-        async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
-            const attrs = await attributeDomain.getAttributes({
-                params: {filters: {id: attributeId}, strictFilters: true},
-                ctx
-            });
-
-            if (!attrs.list.length) {
-                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
-            }
-
-            return libraryRepo.getLibrariesUsingAttribute(attributeId, ctx);
         }
     };
 }
