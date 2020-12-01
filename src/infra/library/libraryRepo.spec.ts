@@ -196,30 +196,36 @@ describe('LibraryRepo', () => {
                 execute: global.__mockPromise(mockQueryRes)
             };
 
-            const libRepo = libraryRepo({'core.infra.db.dbService': mockDbServ});
-            libRepo.getLibraryAttributes = global.__mockPromise([
-                {
-                    id: 'id',
-                    format: 'text',
-                    label: {en: 'ID'},
-                    system: true,
-                    type: 'link'
-                },
-                {
-                    id: 'other_attr',
-                    format: 'numeric',
-                    label: {en: 'Attr'},
-                    system: false,
-                    type: 'index'
-                },
-                {
-                    id: 'created_at',
-                    format: 'numeric',
-                    label: {en: 'Modification date'},
-                    system: true,
-                    type: 'index'
-                }
-            ]);
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getLibraryAttributes: global.__mockPromise([
+                    {
+                        id: 'id',
+                        format: 'text',
+                        label: {en: 'ID'},
+                        system: true,
+                        type: 'link'
+                    },
+                    {
+                        id: 'other_attr',
+                        format: 'numeric',
+                        label: {en: 'Attr'},
+                        system: false,
+                        type: 'index'
+                    },
+                    {
+                        id: 'created_at',
+                        format: 'numeric',
+                        label: {en: 'Modification date'},
+                        system: true,
+                        type: 'index'
+                    }
+                ])
+            };
+
+            const libRepo = libraryRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo
+            });
 
             const createdAttrs = await libRepo.saveLibraryAttributes({
                 libId: 'users',
@@ -243,119 +249,6 @@ describe('LibraryRepo', () => {
             expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
 
             expect(createdAttrs).toEqual(['id', 'my_attr']);
-        });
-    });
-
-    describe('getLibraryAttributes', () => {
-        test('Should get library attributes through graph query', async function() {
-            const mockQueryRes = [
-                {
-                    _key: 'modified_by',
-                    _id: 'core_attributes/modified_by',
-                    _rev: '_WSfp4UC--_',
-                    format: 'text',
-                    label: {en: 'Modified by', fr: 'Modifié par'},
-                    system: true,
-                    type: 'link'
-                },
-                {
-                    _key: 'modified_at',
-                    _id: 'core_attributes/modified_at',
-                    _rev: '_WSfp4UG--_',
-                    format: 'numeric',
-                    label: {en: 'Modification date', fr: 'Date de modification'},
-                    system: true,
-                    type: 'index'
-                }
-            ];
-            const mockDbServ = {
-                db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
-            };
-
-            const mockCleanupRes = [
-                {
-                    id: 'modified_by',
-                    format: 'text',
-                    label: {en: 'Modified by', fr: 'Modifié par'},
-                    system: true,
-                    type: 'link'
-                },
-                {
-                    id: 'modified_at',
-                    format: 'numeric',
-                    label: {en: 'Modification date', fr: 'Date de modification'},
-                    system: true,
-                    type: 'index'
-                }
-            ];
-            const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest
-                    .fn()
-                    .mockReturnValueOnce(mockCleanupRes[0])
-                    .mockReturnValueOnce(mockCleanupRes[1])
-            };
-
-            const libRepo = libraryRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
-            });
-
-            const libAttrs = await libRepo.getLibraryAttributes({libId: 'users', ctx});
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-
-            // First call is to insert library
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/IN 1 OUTBOUND/);
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-
-            expect(libAttrs).toEqual(mockCleanupRes);
-        });
-    });
-
-    describe('getLibraryFullTextAttributes', () => {
-        test('Should get library full text attributes through graph query', async function() {
-            const mockQueryRes = [
-                {
-                    _key: 'modified_by',
-                    _id: 'core_attributes/modified_by',
-                    _rev: '_WSfp4UC--_',
-                    format: 'text',
-                    label: {en: 'Modified by', fr: 'Modifié par'},
-                    system: true,
-                    type: 'link'
-                }
-            ];
-            const mockDbServ = {
-                db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
-            };
-
-            const mockCleanupRes = [
-                {
-                    id: 'modified_by',
-                    format: 'text',
-                    label: {en: 'Modified by', fr: 'Modifié par'},
-                    system: true,
-                    type: 'link'
-                }
-            ];
-            const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0])
-            };
-
-            const libRepo = libraryRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
-            });
-
-            const libFullTextAttrs = await libRepo.getLibraryFullTextAttributes({libId: 'users', ctx});
-
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/POSITION/);
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
-
-            expect(libFullTextAttrs).toEqual(mockCleanupRes);
         });
     });
 

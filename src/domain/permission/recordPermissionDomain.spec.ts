@@ -2,7 +2,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryDomain} from '../library/libraryDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import * as getPermissionByUserGroups from './helpers/getPermissionByUserGroups';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IPermissionDomain} from './permissionDomain';
@@ -35,9 +35,6 @@ describe('recordPermissionDomain', () => {
                 relation: 'AND',
                 permissionTreeAttributes: ['category']
             }
-        };
-        const mockLibDomain: Mockify<ILibraryDomain> = {
-            getLibraryProperties: global.__mockPromise(mockLibSimplePerms)
         };
 
         const mockAttrProps = {
@@ -84,11 +81,15 @@ describe('recordPermissionDomain', () => {
         };
 
         test('Return tree permission', async () => {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibSimplePerms]})
+            };
+
             const recordPermDomain = recordPermissionDomain({
                 'core.domain.permission': mockPermDomain as IPermissionDomain,
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
@@ -107,18 +108,15 @@ describe('recordPermissionDomain', () => {
         });
 
         test('Return default permission if no config', async () => {
-            const mockLibNoPermsDomain = {
-                ...mockLibDomain,
-                getLibraryProperties: global.__mockPromise({
-                    system: false
-                })
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({totalCount: 1, list: [{system: false}]})
             };
 
             const recordPermDomain = recordPermissionDomain({
                 'core.domain.permission': mockPermDomain as IPermissionDomain,
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
-                'core.domain.library': mockLibNoPermsDomain as ILibraryDomain,
+                'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });

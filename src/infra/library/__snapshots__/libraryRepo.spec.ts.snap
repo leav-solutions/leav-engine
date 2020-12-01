@@ -25,28 +25,6 @@ Object {
 }
 `;
 
-exports[`LibraryRepo getLibraryAttributes Should get library attributes through graph query 1`] = `
-"
-                FOR v
-                IN 1 OUTBOUND 'core_libraries/users'
-                core_edge_libraries_attributes
-                RETURN v
-            "
-`;
-
-exports[`LibraryRepo getLibraryFullTextAttributes Should get library full text attributes through graph query 1`] = `
-"LET fullTextAttrs = (
-                            FOR e IN @@value0
-                                FILTER e._from == @value1
-                                FILTER e.full_text_search == true
-                            RETURN LAST(SPLIT(e._to, '/'))
-                        )
-                        FOR a IN @@value2
-                            FILTER POSITION(fullTextAttrs, a._key)
-                        RETURN a
-                    "
-`;
-
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 1`] = `
 "
                         FOR attr IN @value0

@@ -11,9 +11,9 @@ import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissi
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
-import {IAmqpService} from 'infra/amqp/amqpService';
 import * as Config from '_types/config';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
@@ -25,29 +25,6 @@ describe('LibraryDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'libraryDomainTest'
-    };
-
-    const mockAmqpServ: Mockify<IAmqpService> = {
-        publish: global.__mockPromise()
-    };
-
-    const mockAttrDomain: Mockify<IAttributeDomain> = {
-        getAttributes: global.__mockPromise({
-            list: [
-                {id: 'id', type: AttributeTypes.SIMPLE},
-                {id: 'created_at', type: AttributeTypes.SIMPLE},
-                {id: 'created_by', type: AttributeTypes.SIMPLE},
-                {id: 'modified_at', type: AttributeTypes.SIMPLE},
-                {id: 'modified_by', type: AttributeTypes.SIMPLE},
-                {id: 'active', type: AttributeTypes.SIMPLE},
-                {id: 'attr1', type: AttributeTypes.SIMPLE},
-                {id: 'attr2', type: AttributeTypes.SIMPLE},
-                {id: 'root_key', type: AttributeTypes.SIMPLE},
-                {id: 'is_directory', type: AttributeTypes.SIMPLE},
-                {id: 'file_path', type: AttributeTypes.SIMPLE}
-            ],
-            totalCount: 0
-        })
     };
 
     const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
@@ -68,20 +45,27 @@ describe('LibraryDomain', () => {
     describe('getLibraries', () => {
         test('Should return a list of libs', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2}),
+                getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2})
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
                 getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
             };
 
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+            });
+
             const lib = await libDomain.getLibraries({
                 params: {withCount: true},
                 ctx
             });
 
             expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(2);
-            expect(mockLibRepo.getLibraryFullTextAttributes.mock.calls.length).toBe(2);
+            expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(2);
+            expect(mockAttrDomain.getLibraryFullTextAttributes.mock.calls.length).toBe(2);
             expect(lib.totalCount).toBe(2);
 
             expect(lib.list[0].attributes).toBeDefined();
@@ -89,14 +73,20 @@ describe('LibraryDomain', () => {
 
         test('Should add default sort', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2}),
+                getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2})
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
                 getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
             };
 
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-            const lib = await libDomain.getLibraries({params: {withCount: true}, ctx});
+            const libDomain = libraryDomain({
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+            });
 
+            const lib = await libDomain.getLibraries({params: {withCount: true}, ctx});
             expect(mockLibRepo.getLibraries.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });
@@ -120,99 +110,11 @@ describe('LibraryDomain', () => {
 
         test('Should throw if unknown library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([]),
-                getLibraryFullTextAttributes: global.__mockPromise([])
+                getLibraries: global.__mockPromise([])
             };
-
             const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
 
             await expect(libDomain.getLibraryProperties('test', ctx)).rejects.toThrow();
-        });
-    });
-
-    describe('getLibraryAttributes', () => {
-        test('Should return library attributes with all details', async () => {
-            const attrs = [
-                {
-                    id: 'id',
-                    format: 'text',
-                    label: {en: 'ID'},
-                    system: true,
-                    type: 'link'
-                },
-                {
-                    id: 'created_at',
-                    format: 'numeric',
-                    label: {en: 'Creation date'},
-                    system: true,
-                    type: 'index'
-                },
-                {
-                    id: 'modified_at',
-                    format: 'numeric',
-                    label: {en: 'Modification date'},
-                    system: true,
-                    type: 'index'
-                }
-            ];
-
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraryAttributes: global.__mockPromise(attrs),
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
-            };
-
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-            const libAttrs = await libDomain.getLibraryAttributes('test', ctx);
-
-            expect(mockLibRepo.getLibraryAttributes.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraryAttributes.mock.calls[0][0].libId).toBe('test');
-            expect(libAttrs).toEqual(attrs);
-        });
-
-        test('Should throw if unknown library', async function() {
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([])
-            };
-
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-
-            await expect(libDomain.getLibraryAttributes('test', ctx)).rejects.toThrow();
-        });
-    });
-
-    describe('getLibraryFullTextAttributes', () => {
-        test('Should return library full text attributes with all details', async () => {
-            const attrs = [
-                {
-                    id: 'id',
-                    format: 'text',
-                    label: {en: 'ID'},
-                    system: true,
-                    type: 'link'
-                }
-            ];
-
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraryFullTextAttributes: global.__mockPromise(attrs),
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
-            };
-
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-            const libAttrs = await libDomain.getLibraryFullTextAttributes('test', ctx);
-
-            expect(mockLibRepo.getLibraryFullTextAttributes.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraryFullTextAttributes.mock.calls[0][0].libId).toBe('test');
-            expect(libAttrs).toEqual(attrs);
-        });
-
-        test('Should throw if unknown library', async function() {
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise([])
-            };
-
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
-
-            await expect(libDomain.getLibraryFullTextAttributes('test', ctx)).rejects.toThrow();
         });
     });
 
@@ -234,6 +136,29 @@ describe('LibraryDomain', () => {
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -285,13 +210,18 @@ describe('LibraryDomain', () => {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'id'}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -317,6 +247,29 @@ describe('LibraryDomain', () => {
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -354,6 +307,29 @@ describe('LibraryDomain', () => {
                     send: global.__mockPromise()
                 };
 
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
+                };
+
                 const libDomain = libraryDomain({
                     config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
@@ -383,13 +359,34 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryFullTextAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -421,13 +418,34 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryFullTextAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -450,7 +468,7 @@ describe('LibraryDomain', () => {
                     ctx
                 );
 
-                const defaultAttributes = getDefaultAttributes(updatedLib.behavior);
+                const defaultAttributes = getDefaultAttributes(updatedLib.behavior, updatedLib.id);
 
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
@@ -473,13 +491,34 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryFullTextAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -513,13 +552,34 @@ describe('LibraryDomain', () => {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -553,13 +613,34 @@ describe('LibraryDomain', () => {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -589,13 +670,18 @@ describe('LibraryDomain', () => {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -615,13 +701,34 @@ describe('LibraryDomain', () => {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
-                    getLibraryAttributes: global.__mockPromise([{id: 'attr1', type: AttributeTypes.SIMPLE}]),
-                    getLibraryFullTextAttributes: global.__mockPromise([])
+                    saveLibraryFullTextAttributes: jest.fn()
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
                     send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
                 };
 
                 const libDomain = libraryDomain({
@@ -649,10 +756,15 @@ describe('LibraryDomain', () => {
                 send: global.__mockPromise()
             };
 
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({totalCount: 0, list: []})
+            };
+
             const libDomain = libraryDomain({
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
             });
 
@@ -727,11 +839,16 @@ describe('LibraryDomain', () => {
             };
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
 
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({totalCount: 0, list: []})
+            };
+
             const libDomain = libraryDomain({
                 config: mockConfig as Config.IConfig,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils
             });

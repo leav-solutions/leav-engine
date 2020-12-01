@@ -1,6 +1,6 @@
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IQueryInfos} from '_types/queryInfos';
@@ -13,6 +13,7 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import * as Config from '_types/config';
+import {mockLibrary} from '__tests__/mocks/library';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
@@ -39,7 +40,7 @@ describe('RecordDomain', () => {
             };
             const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
 
-            const mockLibDomain: Mockify<ILibraryDomain> = {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([])
             };
 
@@ -50,7 +51,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
             });
@@ -106,9 +107,9 @@ describe('RecordDomain', () => {
             const recordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
             };
-            const libDomain: Mockify<ILibraryDomain> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1}),
-                getLibraryFullTextAttributes: global.__mockPromise([])
+            const libRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1})
+                // getLibraryFullTextAttributes: global.__mockPromise([])
             };
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 send: global.__mockPromise()
@@ -122,7 +123,7 @@ describe('RecordDomain', () => {
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.library': libDomain as ILibraryDomain,
+                'core.infra.library': libRepo as ILibraryRepo,
                 'core.domain.attribute': attrDomain as IAttributeDomain,
                 'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain
             });
@@ -188,7 +189,7 @@ describe('RecordDomain', () => {
                 search: global.__mockPromise(mockRes)
             };
 
-            const libDomain: Mockify<ILibraryDomain> = {
+            const libRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise({list: [{id: 'test_lib', system: false}], totalCount: 1})
             };
 
@@ -203,7 +204,7 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 'core.domain.attribute': attributeDomain as IAttributeDomain,
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.library': libDomain as ILibraryDomain
+                'core.infra.library': libRepo as ILibraryRepo
             });
 
             const findRes = await recDomain.find({
@@ -247,8 +248,8 @@ describe('RecordDomain', () => {
                 }
             };
 
-            const mockLibDomain: Mockify<ILibraryDomain> = {
-                getLibraryProperties: global.__mockPromise(libData)
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({totalCount: 1, list: [libData]})
             };
 
             const mockValDomain: Mockify<IValueDomain> = {
@@ -277,7 +278,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
-                'core.domain.library': mockLibDomain as ILibraryDomain
+                'core.infra.library': mockLibRepo as ILibraryRepo
             });
 
             const res = await recDomain.getRecordIdentity(record, ctx);
@@ -307,8 +308,8 @@ describe('RecordDomain', () => {
                 id: 'test_lib'
             };
 
-            const mockLibDomain: Mockify<ILibraryDomain> = {
-                getLibraryProperties: global.__mockPromise(libData)
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({totalCount: 1, list: [libData]})
             };
 
             const mockValDomain: Mockify<IValueDomain> = {
@@ -317,7 +318,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
-                'core.domain.library': mockLibDomain as ILibraryDomain
+                'core.infra.library': mockLibRepo as ILibraryRepo
             });
 
             const res = await recDomain.getRecordIdentity(record, ctx);

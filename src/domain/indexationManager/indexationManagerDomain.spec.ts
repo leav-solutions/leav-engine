@@ -5,6 +5,7 @@ import indexationManager from '././indexationManagerDomain';
 import {IQueryInfos} from '_types/queryInfos';
 import {getConfig} from '../../config';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 
@@ -62,14 +63,18 @@ describe('Indexation Manager', () => {
             getRecordFieldValue: global.__mockPromise({value: '1337'})
         };
 
-        const mockLibraryDomain: Mockify<ILibraryDomain> = {
-            getLibraries: global.__mockPromise({list: [{id: 'test'}], totalCount: 1}),
+        const mockAttributeDomain: Mockify<IAttributeDomain> = {
             getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+        };
+
+        const mockLibraryDomain: Mockify<ILibraryDomain> = {
+            getLibraries: global.__mockPromise({list: [{id: 'test'}], totalCount: 1})
         };
 
         const indexation = indexationManager({
             config: conf as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
             'core.domain.library': mockLibraryDomain as ILibraryDomain,
             'core.infra.elasticsearch.elasticsearchService': mockElasticsearchService as IElasticsearchService
         });
@@ -77,7 +82,7 @@ describe('Indexation Manager', () => {
         await indexation.indexDatabase(ctx, 'test');
         await indexation.indexDatabase(ctx, 'test', ['1337']);
 
-        expect(mockLibraryDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
+        expect(mockAttributeDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);
     });

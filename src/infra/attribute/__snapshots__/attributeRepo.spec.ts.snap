@@ -44,6 +44,28 @@ Object {
 }
 `;
 
+exports[`AttributeRepo getLibraryAttributes Should get library attributes through graph query 1`] = `
+"
+                FOR v
+                IN 1 OUTBOUND 'core_libraries/users'
+                core_edge_libraries_attributes
+                RETURN v
+            "
+`;
+
+exports[`AttributeRepo getLibraryFullTextAttributes Should get library full text attributes through graph query 1`] = `
+"LET fullTextAttrs = (
+                            FOR e IN @@value0
+                                FILTER e._from == @value1
+                                FILTER e.full_text_search == true
+                            RETURN LAST(SPLIT(e._to, '/'))
+                        )
+                        FOR a IN @@value2
+                            FILTER POSITION(fullTextAttrs, a._key)
+                        RETURN a
+                    "
+`;
+
 exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
 exports[`AttributeRepo updateAttribute Should update an existing attribute 2`] = `
