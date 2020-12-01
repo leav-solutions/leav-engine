@@ -3,7 +3,7 @@ import {Card, Col, PageHeader, Row, Select, Switch} from 'antd';
 import React, {useState} from 'react';
 import {useThemeSwitcher} from 'react-css-theme-switcher';
 import {useTranslation} from 'react-i18next';
-import {useLang} from '../../hooks/LangHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import {AvailableLanguage} from '../../_types/types';
 
 function Setting(): JSX.Element {

@@ -10,9 +10,9 @@ import {Drawer, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink, useLocation} from 'react-router-dom';
-import {useActiveLibrary} from '../../hooks/ActiveLibHook';
-import {useActiveTree} from '../../hooks/ActiveTreeHook';
-import {useLang} from '../../hooks/LangHook';
+import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
+import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import {
     getLibrariesAndTreesListQuery,
     IGetLibrariesAndTreesListQuery

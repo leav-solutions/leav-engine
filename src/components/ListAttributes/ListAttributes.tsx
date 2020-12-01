@@ -2,7 +2,7 @@ import {Input, List} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import {useLang} from '../../hooks/LangHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import themingVar from '../../themingVar.js';
 import {localizedLabel} from '../../utils';
 import {IAttribute, IAttributesChecked, IAttributeSelected, IOriginAttributeData, ITreeData} from '../../_types/types';

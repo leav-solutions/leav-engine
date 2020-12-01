@@ -4,7 +4,7 @@ import {
     getActiveLibrary,
     IActiveLibrary,
     IGetActiveLibrary
-} from '../queries/cache/activeLibrary/getActiveLibraryQuery';
+} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 
 export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibrary: IActiveLibrary) => void] => {
     const {data, client} = useQuery<IGetActiveLibrary>(getActiveLibrary);
