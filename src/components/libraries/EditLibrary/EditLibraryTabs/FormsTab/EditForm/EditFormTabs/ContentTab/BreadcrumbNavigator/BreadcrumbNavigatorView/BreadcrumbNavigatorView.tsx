@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {Breadcrumb, BreadcrumbSectionProps} from 'semantic-ui-react';
 import {GET_TREES_trees_list} from '../../../../../../../../../../_gqlTypes/GET_TREES';

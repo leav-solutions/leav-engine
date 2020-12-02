@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Label, Icon, Divider} from 'semantic-ui-react';

@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_FORM_forms_list} from '../_gqlTypes/GET_FORM';
 import {GET_FORMS_LIST_forms_list} from '../_gqlTypes/GET_FORMS_LIST';
 import {FormElementTypes} from '../_gqlTypes/globalTypes';
