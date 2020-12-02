@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IBenchmarkApp} from 'app/benchmark/benchmarkApp';
 import {IImporterApp} from 'app/importer/importerApp';
 import program from 'commander';

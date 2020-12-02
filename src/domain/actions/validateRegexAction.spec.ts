@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';

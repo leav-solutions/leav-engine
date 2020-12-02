@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IAppGraphQLSchema} from '_types/graphql';

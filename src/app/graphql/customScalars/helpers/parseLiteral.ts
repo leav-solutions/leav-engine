@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Kind, ObjectValueNode, print, ValueNode} from 'graphql';
 
 const _parseObject = (typeName: string, ast: ObjectValueNode, variables?: {[key: string]: any}) => {

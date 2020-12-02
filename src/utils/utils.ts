@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
 import {IActionsListConfig} from '_types/actionsList';
