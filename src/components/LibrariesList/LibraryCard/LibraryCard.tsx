@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ExportOutlined, HeartOutlined, InfoCircleOutlined, ToolOutlined} from '@ant-design/icons';
 import {Card, Col} from 'antd';
 import React from 'react';
