@@ -30,7 +30,7 @@ export default function({
                 ctx
             });
 
-            return perms[action];
+            return perms[action] ?? null;
         }
     };
 }

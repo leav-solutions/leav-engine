@@ -39,11 +39,7 @@ export default function(deps: IDeps): ITreeBasedPermissionHelper {
      * Return permission for given permission tree attribute.
      * Get record's value on this tree attribute, then run through its ancestors to look for any permission defined
      *
-     * @param action
-     * @param recordLibrary
-     * @param recordId
-     * @param permTreeAttr
-     * @param userGroupsPaths
+     * @param params
      */
     const _getPermTreePermission = async (params: {
         type: PermissionTypes;
@@ -51,38 +47,61 @@ export default function(deps: IDeps): ITreeBasedPermissionHelper {
         applyTo: string;
         userGroupsPaths: ITreeNode[][];
         permTreeId: string;
-        permTreeVal: ITreeNode[];
+        permTreeValues: ITreeNode[];
         ctx: IQueryInfos;
     }): Promise<boolean> => {
-        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeVal, ctx} = params;
+        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, ctx} = params;
 
-        if (permTreeVal.length) {
-            const permTreePath = await treeRepo.getElementAncestors({
-                treeId: permTreeId,
-                element: {
-                    id: permTreeVal[0].record.id,
-                    library: permTreeVal[0].record.library
-                },
-                ctx
-            });
+        if (permTreeValues.length) {
+            // Get permissions for all values, then check if we're allowed somewhere
 
-            for (const treeElem of permTreePath.slice().reverse()) {
-                const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
-                    type,
-                    action,
-                    userGroupsPaths,
-                    applyTo,
-                    permissionTreeTarget: {
-                        id: treeElem.record.id,
-                        library: treeElem.record.library,
-                        tree: permTreeId
-                    },
-                    ctx
-                });
+            const allValuesPermissions = await Promise.all(
+                permTreeValues.map(
+                    async (value): Promise<boolean | null> => {
+                        const permTreePath = await treeRepo.getElementAncestors({
+                            treeId: permTreeId,
+                            element: {
+                                id: value.record.id,
+                                library: value.record.library
+                            },
+                            ctx
+                        });
 
-                if (perm !== null) {
-                    return perm;
+                        for (const treeElem of permTreePath.slice().reverse()) {
+                            const valuePerm = await permByUserGroupsHelper.getPermissionByUserGroups({
+                                type,
+                                action,
+                                userGroupsPaths,
+                                applyTo,
+                                permissionTreeTarget: {
+                                    id: treeElem.record.id,
+                                    library: treeElem.record.library,
+                                    tree: permTreeId
+                                },
+                                ctx
+                            });
+
+                            if (valuePerm !== null) {
+                                return valuePerm;
+                            }
+                        }
+
+                        return null;
+                    }
+                )
+            );
+
+            // Looks for a true somewhere, but keeps null if everything is null
+            const perm = allValuesPermissions.reduce((globalPerm, valuePerm) => {
+                if (globalPerm === null) {
+                    return valuePerm;
                 }
+
+                return globalPerm || valuePerm;
+            }, null);
+
+            if (perm !== null) {
+                return perm;
             }
         }
 
@@ -144,7 +163,7 @@ export default function(deps: IDeps): ITreeBasedPermissionHelper {
                     applyTo,
                     userGroupsPaths,
                     permTreeId: permTreeAttrProps.linked_tree,
-                    permTreeVal: treeValues[permTreeAttr],
+                    permTreeValues: treeValues[permTreeAttr],
                     ctx
                 });
 
@@ -214,7 +233,7 @@ export default function(deps: IDeps): ITreeBasedPermissionHelper {
             applyTo,
             userGroupsPaths: [groupAncestors],
             permTreeId: permissionTreeTarget.tree,
-            permTreeVal: treeElemAncestors.slice(-1),
+            permTreeValues: treeElemAncestors.slice(-1),
             ctx
         });
 

@@ -270,6 +270,44 @@ describe('TreePermissionDomain', () => {
             expect(mockPermByUserGroupsHelper.getPermissionByUserGroups.mock.calls.length).toBe(1);
         });
 
+        test('1 tree with multiple values on tree attribute', async () => {
+            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+                getPermissionByUserGroups: global.__mockPromiseMultiple([false, true])
+            };
+
+            const treePermDomain = treeBasedPermissions({
+                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
+
+            const perm = await treePermDomain.getTreeBasedPermission(
+                {
+                    ...params,
+                    treeValues: {
+                        category: [
+                            {
+                                record: {
+                                    id: 'cat1',
+                                    library: 'category'
+                                }
+                            },
+                            {
+                                record: {
+                                    id: 'cat2',
+                                    library: 'category'
+                                }
+                            }
+                        ]
+                    }
+                },
+                ctx
+            );
+
+            expect(perm).toBe(true);
+        });
+
         test('No permissions defined (default config)', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
                 getPermissionByUserGroups: global.__mockPromise(null)

@@ -71,8 +71,20 @@ export async function gqlSaveAttribute(params: {
     embeddedFields?: IEmbeddedAttribute[];
     linkedLibrary?: string;
     linkedTree?: string;
+    multipleValues?: boolean;
 }) {
-    const {id, type, label, format, versionsConf, metadataFields, embeddedFields, linkedLibrary, linkedTree} = params;
+    const {
+        id,
+        type,
+        label,
+        format,
+        versionsConf,
+        metadataFields,
+        embeddedFields,
+        linkedLibrary,
+        linkedTree,
+        multipleValues
+    } = params;
 
     const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => {
         return `
@@ -106,6 +118,7 @@ export async function gqlSaveAttribute(params: {
                         : 'null'
                 },
                 embedded_fields: ${embeddedFields ? `${embeddedFields.map(_convertEmbeddedFields).join(', ')}` : 'null'}
+                multiple_values: ${multipleValues ? 'true' : 'false'}
             }
         ) { id }
     }`;

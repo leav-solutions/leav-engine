@@ -46,7 +46,19 @@ describe('Permissions', () => {
             type: AttributeTypes.TREE,
             linkedTree: permTreeName
         });
-        await gqlSaveLibrary(testLibId, 'Test lib using permissions', [testLibAttrId]);
+
+        await makeGraphQlCall(`mutation {
+            saveLibrary(library: {
+                id: "${testLibId}",
+                attributes: [
+                    "${testLibAttrId}"
+                ],
+                permissions_conf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
+            }) {
+                id
+            }
+        }`);
+        await makeGraphQlCall('mutation { refreshSchema }');
 
         // Create a record on this library
         const resCreaRecordTestLib = await makeGraphQlCall(`mutation {

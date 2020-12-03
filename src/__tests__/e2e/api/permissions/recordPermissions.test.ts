@@ -14,19 +14,28 @@ describe('Records permissions', () => {
     const permTreeName = 'perm_tree_record_permissions';
     const permTreeLibName = 'perm_tree_lib_record_permissions';
     const testLibId = 'test_lib_record_permission';
-    const testLibAttrId = 'test_attr_permission';
+    const testLibAttrId = 'test_attr_record_permission';
 
     let permTreeElemId;
+    let permTreeElemIdForMultiVal1;
+    let permTreeElemIdForMultiVal2;
     let allUsersTreeElemId;
+
     let testLibRecordId;
+    let testLibRecordIdForMultival;
 
     beforeAll(async () => {
         await gqlSaveLibrary(permTreeLibName, 'Test lib on permissions tree');
 
         await gqlSaveTree(permTreeName, 'Test', [permTreeLibName]);
         permTreeElemId = await gqlCreateRecord(permTreeLibName);
+        permTreeElemIdForMultiVal1 = await gqlCreateRecord(permTreeLibName);
+        permTreeElemIdForMultiVal2 = await gqlCreateRecord(permTreeLibName);
 
         await gqlAddElemToTree(permTreeName, {id: permTreeElemId, library: permTreeLibName});
+        await gqlAddElemToTree(permTreeName, {id: permTreeElemIdForMultiVal1, library: permTreeLibName});
+        await gqlAddElemToTree(permTreeName, {id: permTreeElemIdForMultiVal2, library: permTreeLibName});
+
         allUsersTreeElemId = await gqlGetAllUsersGroupId();
         await gqlAddUserToGroup(allUsersTreeElemId);
 
@@ -35,20 +44,58 @@ describe('Records permissions', () => {
             id: testLibAttrId,
             label: 'Test Attr tree record permissions',
             type: AttributeTypes.TREE,
-            linkedTree: permTreeName
+            linkedTree: permTreeName,
+            multipleValues: true
         });
-        await gqlSaveLibrary(testLibId, 'Test lib using permissions', [testLibAttrId]);
+
+        await makeGraphQlCall(`mutation {
+            saveLibrary(library: {
+                id: "${testLibId}",
+                attributes: [
+                    "${testLibAttrId}"
+                ],
+                permissions_conf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
+            }) {
+                id
+            }
+        }`);
+        await makeGraphQlCall('mutation { refreshSchema }');
 
         testLibRecordId = await gqlCreateRecord(testLibId);
+        testLibRecordIdForMultival = await gqlCreateRecord(testLibId);
 
-        // Link this record to perm tree
+        // Save some values to link record to permissions tree:
+        // - one for single value tests
+        // - two for multiple values tests
         await makeGraphQlCall(`mutation {
-            saveValue(library: "${testLibId}", recordId: "${testLibRecordId}", attribute: "${testLibAttrId}", value: {
-                value: "${permTreeLibName}/${permTreeElemId}"
-            }) {
-                id_value
-                value
-            }
+            v1: saveValue(library: "${testLibId}", recordId: "${testLibRecordId}", attribute: "${testLibAttrId}", value: {
+                    value: "${permTreeLibName}/${permTreeElemId}"
+                }) {
+                    id_value
+                    value
+                },
+            v2: saveValue(
+                    library: "${testLibId}",
+                    recordId: "${testLibRecordIdForMultival}",
+                    attribute: "${testLibAttrId}",
+                    value: {
+                        value: "${permTreeLibName}/${permTreeElemIdForMultiVal1}"
+                    }
+                ) {
+                    id_value
+                    value
+                },
+            v3: saveValue(
+                    library: "${testLibId}",
+                    recordId: "${testLibRecordIdForMultival}",
+                    attribute: "${testLibAttrId}",
+                    value: {
+                        value: "${permTreeLibName}/${permTreeElemIdForMultiVal2}"
+                    }
+                ) {
+                    id_value
+                    value
+                }
         }`);
     });
 
@@ -151,5 +198,56 @@ describe('Records permissions', () => {
         expect(resDelRecord.data.data).toBe(null);
         expect(resDelRecord.data.errors).toBeDefined();
         expect(resDelRecord.data.errors.length).toBeGreaterThanOrEqual(1);
+    });
+
+    test('Handle multivalues tree attributes', async () => {
+        // We save 2 contradictory permissions (false and true) for the 2 values of our attributes
+        // We expect to be allowed
+        // Save Permission
+        await makeGraphQlCall(`mutation {
+            p1: savePermission(
+                permission: {
+                    type: record,
+                    applyTo: "${testLibId}",
+                    usersGroup: "${allUsersTreeElemId}",
+                    permissionTreeTarget: {
+                        tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemIdForMultiVal1}"
+                    },
+                    actions: [
+                        {name: delete_record, allowed: false}
+                    ]
+                }
+            ) { type },
+            p2: savePermission(
+                permission: {
+                    type: record,
+                    applyTo: "${testLibId}",
+                    usersGroup: "${allUsersTreeElemId}",
+                    permissionTreeTarget: {
+                        tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemIdForMultiVal2}"
+                    },
+                    actions: [
+                        {name: delete_record, allowed: true}
+                    ]
+                }
+            ) { type }
+        }`);
+
+        const resIsAllowed = await makeGraphQlCall(`query {
+            isAllowed(
+                type: record,
+                actions: [delete_record],
+                applyTo: "${testLibId}",
+                target: {recordId: "${testLibRecordIdForMultival}"}
+            ) {
+                name
+                allowed
+            }
+        }`);
+
+        expect(resIsAllowed.status).toBe(200);
+        expect(resIsAllowed.data.data.isAllowed[0].name).toBe('delete_record');
+        expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(true);
+        expect(resIsAllowed.data.errors).toBeUndefined();
     });
 });
