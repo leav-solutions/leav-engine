@@ -1,12 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
 import {PermissionTypes} from '../../_types/permissions';
-import {IDefaultPermissionHelper} from './helpers/defaultPermission';
-import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
+import {IGlobalPermissionHelper} from './helpers/globalPermission';
 import {IGetHeritedTreePermissionParams, IGetTreePermissionParams} from './_types';
 
 export interface ITreePermissionDomain {
@@ -15,61 +11,21 @@ export interface ITreePermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.value'?: IValueRepo;
-    'core.infra.tree'?: ITreeRepo;
+    'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
 }
-
-export default function(deps: IDeps = {}): ITreePermissionDomain {
-    const {
-        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
-        'core.infra.attribute': attributeRepo = null,
-        'core.infra.value': valueRepo = null,
-        'core.infra.tree': treeRepo = null
-    } = deps;
-
+export default function({
+    'core.domain.permission.helpers.globalPermission': globalPermHelper = null
+}: IDeps = {}): ITreePermissionDomain {
     const getTreePermission = async ({action, treeId, userId, ctx}: IGetTreePermissionParams): Promise<boolean> => {
-        const userGroupAttr = await attributeRepo.getAttributes({
-            params: {
-                filters: {id: 'user_groups'},
-                strictFilters: true
+        return globalPermHelper.getGlobalPermission(
+            {
+                type: PermissionTypes.TREE,
+                action,
+                applyTo: treeId,
+                userId
             },
             ctx
-        });
-
-        // Get user group, retrieve ancestors
-        const userGroups = await valueRepo.getValues({
-            library: 'users',
-            recordId: userId,
-            attribute: userGroupAttr.list[0],
-            ctx
-        });
-
-        const userGroupsPaths = await Promise.all(
-            userGroups.map(userGroupVal =>
-                treeRepo.getElementAncestors({
-                    treeId: 'users_groups',
-                    element: {
-                        id: userGroupVal.value.record.id,
-                        library: 'users_groups'
-                    },
-                    ctx
-                })
-            )
         );
-
-        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
-            type: PermissionTypes.TREE,
-            action,
-            userGroupsPaths,
-            applyTo: treeId,
-            ctx
-        });
-
-        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
     };
 
     const getHeritedTreePermission = async ({
@@ -78,25 +34,15 @@ export default function(deps: IDeps = {}): ITreePermissionDomain {
         userGroupId,
         ctx
     }: IGetHeritedTreePermissionParams): Promise<boolean> => {
-        // Get perm for user group's parent
-        const groupAncestors = await treeRepo.getElementAncestors({
-            treeId: 'users_groups',
-            element: {
-                id: userGroupId,
-                library: 'users_groups'
+        return globalPermHelper.getInheritedGlobalPermission(
+            {
+                type: PermissionTypes.TREE,
+                action,
+                applyTo: treeId,
+                userGroupId
             },
             ctx
-        });
-
-        const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
-            type: PermissionTypes.TREE,
-            action,
-            userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
-            applyTo: treeId,
-            ctx
-        });
-
-        return perm !== null ? perm : defaultPermHelper.getDefaultPermission();
+        );
     };
 
     return {
