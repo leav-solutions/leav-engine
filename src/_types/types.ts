@@ -286,3 +286,15 @@ export interface INotification extends IBaseNotification {
 }
 
 export type ILang = string[];
+
+export enum TypeSideItem {
+    filters = 'filters',
+    view = 'view'
+}
+
+export interface IView {
+    value: number;
+    text: string;
+    type: string;
+    color?: string;
+}

@@ -1,41 +1,52 @@
-import {AppstoreFilled, DownOutlined, MenuOutlined, PlusOutlined} from '@ant-design/icons';
+import {AppstoreFilled, MenuOutlined, PlusOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
-import React, {useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
+import styled, {CSSObject} from 'styled-components';
+import {useStateItem} from '../../../Context/StateItemsContext';
+import themingVar from '../../../themingVar';
+import {TypeSideItem} from '../../../_types/types';
+import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
-interface IView {
-    value: number;
-    text: string;
-    type: string;
+interface InnerDropdown {
+    color?: string;
+    style?: CSSObject;
 }
 
-const defaultViews: IView[] = [
-    {value: 0, text: 'My view list 1', type: 'list'},
-    {value: 1, text: 'My view list 2', type: 'list'},
-    {value: 2, text: 'My view tile 3', type: 'tile'},
-    {value: 3, text: 'My view list 4', type: 'list'},
-    {value: 4, text: 'My view tile 5', type: 'tile'}
-];
+const InnerDropdown = styled.span<InnerDropdown>`
+    transform: translate(5px);
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: -11px;
+        top: 8px;
+        border-radius: 50%;
+        padding: 3px;
+        background: ${({color}) => color ?? themingVar['@primary-color']};
+    }
+`;
 
 function SelectView(): JSX.Element {
     const {t} = useTranslation();
 
-    const [views] = useState(defaultViews);
-    const [currentView, setCurrentView] = useState<IView>();
+    const {stateItems, dispatchItems} = useStateItem();
 
-    const changeView = (view: IView) => {
-        setCurrentView(view);
+    const toggleShowView = () => {
+        const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.view ? true : false;
+
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
+            sideItems: {
+                visible,
+                type: TypeSideItem.view
+            }
+        });
     };
 
     const menu = (
         <Menu>
-            {views.map(view => (
-                <Menu.Item key={view.value} onClick={() => changeView(view)}>
-                    {view.type === 'list' ? <MenuOutlined /> : <AppstoreFilled />} {view.text}
-                </Menu.Item>
-            ))}
-
-            <Menu.Divider />
             <Menu.Item>
                 <span>
                     <PlusOutlined />
@@ -54,11 +65,11 @@ function SelectView(): JSX.Element {
     );
 
     return (
-        <Dropdown overlay={menu}>
-            <span>
-                {currentView?.text ?? t('select-view.default-view')} <DownOutlined />
-            </span>
-        </Dropdown>
+        <Dropdown.Button overlay={menu}>
+            <InnerDropdown onClick={toggleShowView} color={stateItems.view.current?.color}>
+                {stateItems.view.current?.text ?? t('select-view.default-view')}
+            </InnerDropdown>
+        </Dropdown.Button>
     );
 }
 

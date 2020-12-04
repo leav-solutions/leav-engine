@@ -4,7 +4,7 @@ import {act} from 'react-dom/test-utils';
 import LibraryItemsList from '.';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
-import {OrderSearch} from '../../_types/types';
+import {AttributeType, OrderSearch} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 
 jest.mock('react-router-dom', () => ({
@@ -13,10 +13,10 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock(
-    './Filters',
+    './SideItems',
     () =>
-        function Filters() {
-            return <div>Filters</div>;
+        function SideItems() {
+            return <div>SideItems</div>;
         }
 );
 jest.mock(
@@ -59,7 +59,6 @@ describe('LibraryItemsList', () => {
     const libId = 'libIdTest';
     const libQueryName = 'test';
     const libQueryFilter = 'TestFilter';
-    const columns = 'TestSearchableFields';
     const pagination = 20;
     const offset = 0;
     const itemsSortField = 'id';
@@ -70,8 +69,9 @@ describe('LibraryItemsList', () => {
             request: {
                 query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, [
                     {
-                        id: 'test',
-                        isLink: false
+                        id: 'testId',
+                        library: 'testLib',
+                        type: AttributeType.simple
                     }
                 ]),
                 variables: [
@@ -164,7 +164,7 @@ describe('LibraryItemsList', () => {
             );
         });
 
-        expect(comp.html()).toContain('Filters');
+        expect(comp.html()).toContain('SideItems');
         expect(comp.html()).toContain('MenuItemList');
         expect(comp.html()).toContain('DisplayTypeSelector');
     });

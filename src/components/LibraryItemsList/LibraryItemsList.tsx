@@ -16,11 +16,11 @@ import {
 import {checkTypeIsLink, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, NotificationType, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
-import Filters from './Filters';
 import reducer, {LibraryItemListInitialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
 import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
+import SideItems from './SideItems';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -212,9 +212,12 @@ function LibraryItemsList(): JSX.Element {
                     <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
                 )}
             </MenuWrapper>
-            <div style={{maxWidth: state.showFilters ? 'calc(100% - 23rem)' : '100%'}}>
-                <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
-                    <Filters stateItems={state} dispatchItems={dispatch} />
+            <div style={{maxWidth: state.sideItems.visible ? 'calc(100% - 23rem)' : '100%'}}>
+                <Wrapper
+                    showSide={state.sideItems.visible}
+                    className={state.sideItems.visible ? 'wrapper-open' : 'wrapper-close'}
+                >
+                    <SideItems />
                     <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
                 </Wrapper>
             </div>

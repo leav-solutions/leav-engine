@@ -1,9 +1,10 @@
-import {LeftOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
-import styled, {CSSObject} from 'styled-components';
+import styled from 'styled-components';
+import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
+import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
@@ -19,18 +20,6 @@ import './Filters.css';
 import FilterSeparator from './FilterSeparator';
 import {getConditionOptions, getOperatorOptions} from './FiltersOptions';
 import {getRequestFromFilter} from './getRequestFromFilter';
-
-interface WrapperFilterProps {
-    visible: 1 | 0;
-    style?: CSSObject;
-}
-
-const WrapperFilter = styled.div<WrapperFilterProps>`
-    display: ${({visible}) => (visible ? 'flex' : 'none')};
-    position: relative;
-    height: 100vh;
-    margin-right: 16px;
-`;
 
 const Side = styled.div`
     border-right: 1px solid #ebebeb;
@@ -84,14 +73,10 @@ const move = (
     return filterResult;
 };
 
-interface IFiltersProps {
-    stateItems: LibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-}
-
-function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
+function Filters(): JSX.Element {
     const {t} = useTranslation();
 
+    const {stateItems, dispatchItems} = useStateItem();
     const [activeLibrary] = useActiveLibrary();
 
     const [showAttr, setShowAttr] = useState(false);
@@ -240,8 +225,10 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
 
     const handleHide = () => {
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS,
-            showFilters: false
+            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
+            sideItems: {
+                visible: false
+            }
         });
     };
 
@@ -255,10 +242,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
         : t('filters.submit');
 
     return (
-        <WrapperFilter
-            visible={stateItems.showFilters ? 1 : 0}
-            className={stateItems.showFilters ? 'wrapped-filter-open' : 'wrapped-filter-close'}
-        >
+        <>
             <AddFilter
                 stateItems={stateItems}
                 dispatchItems={dispatchItems}
@@ -275,7 +259,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                         justifyContent: 'space-between'
                     }}
                 >
-                    <Button icon={<LeftOutlined />} onClick={handleHide} />
+                    <Button icon={<IconClosePanel />} onClick={handleHide} />
                     <SearchItems />
                 </div>
 
@@ -318,7 +302,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     />
                 </FilterList>
             </Side>
-        </WrapperFilter>
+        </>
     );
 }
 

@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {IconColumnChoice} from '../../../assets/icons/IconColumnChoice';
+import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import {
@@ -30,10 +31,17 @@ const Wrapper = styled.div`
 
 const SubGroup = styled.div`
     display: grid;
-    grid-template-columns: 10rem repeat(3, auto);
     grid-column-gap: 1rem;
     align-items: center;
     justify-content: end;
+`;
+
+const SubGroupFirst = styled(SubGroup)`
+    grid-template-columns: 12rem repeat(3, auto);
+`;
+
+const SubGroupLast = styled(SubGroup)`
+    grid-template-columns: 10rem repeat(3, auto);
 `;
 
 function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps): JSX.Element {
@@ -42,9 +50,14 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
     const [openChangeColumns, setOpenChangeColumns] = useState(false);
 
     const toggleShowFilter = () => {
+        const visible =
+            !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.filters ? true : false;
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS,
-            showFilters: !stateItems.showFilters
+            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
+            sideItems: {
+                visible,
+                type: TypeSideItem.filters
+            }
         });
     };
 
@@ -53,7 +66,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             <ChooseTableColumns openChangeColumns={openChangeColumns} setOpenChangeColumns={setOpenChangeColumns} />
 
             <Wrapper>
-                <SubGroup>
+                <SubGroupFirst>
                     <SelectView />
 
                     <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
@@ -61,9 +74,9 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
                     </Tooltip>
 
                     <MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />
-                </SubGroup>
+                </SubGroupFirst>
 
-                <SubGroup>
+                <SubGroupLast>
                     <div>
                         <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
                             {t('items_list.new')}
@@ -81,7 +94,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
                     <DisplayOptions />
 
                     <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()}></Button>
-                </SubGroup>
+                </SubGroupLast>
             </Wrapper>
         </>
     );

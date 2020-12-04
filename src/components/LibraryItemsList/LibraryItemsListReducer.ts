@@ -1,4 +1,13 @@
-import {DisplayListItemTypes, IAttribute, IItem, IItemsColumn, IQueryFilter, OrderSearch} from '../../_types/types';
+import {
+    DisplayListItemTypes,
+    IAttribute,
+    IItem,
+    IItemsColumn,
+    IQueryFilter,
+    IView,
+    OrderSearch,
+    TypeSideItem
+} from '../../_types/types';
 
 export enum LibraryItemListReducerActionTypes {
     SET_LIB_INFOS = 'SET_LIB_INFOS',
@@ -9,7 +18,7 @@ export enum LibraryItemListReducerActionTypes {
     SET_OFFSET = 'SET_OFFSET',
     SET_PAGINATION = 'SET_PAGINATION',
     SET_DISPLAY_TYPE = 'SET_DISPLAY_TYPE',
-    SET_SHOW_FILTERS = 'SET_SHOW_FILTER',
+    SET_SIDE_ITEMS = 'SET_SIDE_ITEMS',
     SET_SELECTION_MODE = 'SET_SELECTION_MODE',
     SET_ITEMS_SELECTED = 'SET_ITEMS_SELECTED',
     SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
@@ -17,7 +26,8 @@ export enum LibraryItemListReducerActionTypes {
     SET_COLUMNS = 'SET_COLUMNS',
     SET_ALL_SELECTED = 'SET_ALL_SELECTED',
     SET_ITEM_LOADING = 'SET_ITEM_LOADING',
-    SET_SEARCH_FULL_TEXT_ACTIVE = 'SET_SEARCH_FULL_TEXT_ACTIVE'
+    SET_SEARCH_FULL_TEXT_ACTIVE = 'SET_SEARCH_FULL_TEXT_ACTIVE',
+    SET_VIEW = 'SET_VIEW'
 }
 
 export interface LibraryItemListState {
@@ -29,7 +39,10 @@ export interface LibraryItemListState {
     offset: number;
     pagination: number;
     displayType: DisplayListItemTypes;
-    showFilters: boolean;
+    sideItems: {
+        visible: boolean;
+        type?: TypeSideItem;
+    };
     selectionMode: boolean;
     itemsSelected: {[x: string]: boolean};
     queryFilters: IQueryFilter[];
@@ -37,6 +50,9 @@ export interface LibraryItemListState {
     columns: IItemsColumn[];
     allSelected: boolean;
     searchFullTextActive: boolean;
+    view: {
+        current: IView | null;
+    };
 }
 
 export const LibraryItemListInitialState: LibraryItemListState = {
@@ -47,14 +63,19 @@ export const LibraryItemListInitialState: LibraryItemListState = {
     offset: 0,
     pagination: 20,
     displayType: DisplayListItemTypes.listSmall,
-    showFilters: false,
+    sideItems: {
+        visible: false
+    },
     selectionMode: false,
     itemsSelected: {},
     queryFilters: [],
     attributes: [],
     columns: [],
     allSelected: false,
-    searchFullTextActive: false
+    searchFullTextActive: false,
+    view: {
+        current: null
+    }
 };
 
 export type LibraryItemListReducerAction =
@@ -91,8 +112,11 @@ export type LibraryItemListReducerAction =
           displayType: DisplayListItemTypes;
       }
     | {
-          type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS;
-          showFilters: boolean;
+          type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS;
+          sideItems: {
+              visible: boolean;
+              type?: TypeSideItem;
+          };
       }
     | {
           type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE;
@@ -129,6 +153,12 @@ export type LibraryItemListReducerAction =
     | {
           type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE;
           searchFullTextActive: boolean;
+      }
+    | {
+          type: LibraryItemListReducerActionTypes.SET_VIEW;
+          view: {
+              current: IView | null;
+          };
       };
 
 const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
@@ -152,8 +182,8 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
             return {...state, pagination: action.pagination};
         case LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE:
             return {...state, displayType: action.displayType};
-        case LibraryItemListReducerActionTypes.SET_SHOW_FILTERS:
-            return {...state, showFilters: action.showFilters};
+        case LibraryItemListReducerActionTypes.SET_SIDE_ITEMS:
+            return {...state, sideItems: action.sideItems};
         case LibraryItemListReducerActionTypes.SET_SELECTION_MODE:
             return {...state, selectionMode: action.selectionMode};
         case LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED:
@@ -176,6 +206,8 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
             return {...state, itemsLoading: action.itemLoading};
         case LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE:
             return {...state, searchFullTextActive: action.searchFullTextActive};
+        case LibraryItemListReducerActionTypes.SET_VIEW:
+            return {...state, view: action.view};
         default:
             return state;
     }
