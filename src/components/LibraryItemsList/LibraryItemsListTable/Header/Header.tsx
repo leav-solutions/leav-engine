@@ -53,10 +53,6 @@ const Header = ({children, name, type}: HeaderPros) => {
                         {t('items_list.table.header-cell-menu.sort-descend')}
                     </Menu.Item>
                     <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item>{t('items_list.table.header-cell-menu.sort-advance')}</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item>{t('items_list.table.header-cell-menu.regroup')}</Menu.Item>
                 </Menu>
             }
         >

@@ -12,6 +12,12 @@ jest.mock('../MenuSelection', () => {
     };
 });
 
+jest.mock('../MenuItemActions', () => {
+    return function MenuItemActions() {
+        return <div>MenuItemActions</div>;
+    };
+});
+
 describe('MenuItemList', () => {
     const stateItems = LibraryItemListInitialState;
 
@@ -56,6 +62,6 @@ describe('MenuItemList', () => {
             );
         });
 
-        expect(comp.find(Button).at(4).prop('name')).toBe('show-change-column');
+        expect(comp.find('MenuItemActions')).toHaveLength(1);
     });
 });
