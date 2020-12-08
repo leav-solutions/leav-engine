@@ -48,7 +48,7 @@ describe('MenuItemList', () => {
             );
         });
 
-        expect(comp.find(Button).at(2).prop('name')).toBe('show-filter');
+        expect(comp.find(Button).at(3).prop('name')).toBe('show-filter');
     });
 
     test('should have change column button', async () => {

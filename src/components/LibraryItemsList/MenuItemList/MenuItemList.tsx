@@ -3,6 +3,8 @@ import {Button, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
+import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
 import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
@@ -36,7 +38,7 @@ const SubGroup = styled.div`
 `;
 
 const SubGroupFirst = styled(SubGroup)`
-    grid-template-columns: 12rem repeat(3, auto);
+    grid-template-columns: auto 12rem repeat(3, auto);
 `;
 
 const SubGroupLast = styled(SubGroup)`
@@ -58,9 +60,23 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
         });
     };
 
+    const handleHide = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
+            sideItems: {
+                visible: !stateItems.sideItems.visible,
+                type: stateItems.sideItems.type || TypeSideItem.filters
+            }
+        });
+    };
+
+    const panelActive = stateItems.sideItems.visible;
+
     return (
         <Wrapper>
             <SubGroupFirst>
+                <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
+
                 <SelectView />
 
                 <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>

@@ -1,37 +1,61 @@
-import {AppstoreFilled, MenuOutlined} from '@ant-design/icons';
 import React, {useState} from 'react';
-import {useStateItem} from '../../../Context/StateItemsContext';
-import {IView} from '../../../_types/types';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+import themingVar from '../../../themingVar';
+import {IView, ViewType} from '../../../_types/types';
+import View from '../View/View';
+
+const Wrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    border-right: ${themingVar['@divider-color']} 1px solid;
+    overflow-y: scroll;
+`;
+
+const Header = styled.h2`
+    width: 100%;
+    background-color: ${themingVar['@view-panel-background-title']};
+    display: grid;
+    place-items: center;
+    padding: 0.3rem;
+    border-bottom: 1px solid ${themingVar['@divider-color']};
+`;
+
+const SubHeader = styled.h3`
+    width: 100%;
+    border-top: ${themingVar['@item-active-bg']} 1px solid;
+    border-bottom: ${themingVar['@item-active-bg']} 1px solid;
+    padding: 0.3rem;
+    padding-left: 1rem;
+`;
+
+const Views = styled.div`
+    width: 100%;
+`;
 
 const defaultViews: IView[] = [
-    {value: 0, text: 'My view list 1', type: 'list', color: '#50F0C4'},
-    {value: 1, text: 'My view list 2', type: 'list', color: '#E02020'},
-    {value: 2, text: 'My view tile 3', type: 'tile', color: '#7EAC56'},
-    {value: 3, text: 'My view list 4', type: 'list', color: '#E4B34C'},
-    {value: 4, text: 'My view tile 5', type: 'tile'}
+    {value: 0, text: 'My view list 1', type: ViewType.list, color: '#50F0C4'},
+    {value: 1, text: 'My view list 2', type: ViewType.list, color: '#E02020'},
+    {value: 2, text: 'My view tile 3', type: ViewType.tile, color: '#7EAC56'},
+    {value: 3, text: 'My view list 4', type: ViewType.list, color: '#E4B34C'},
+    {value: 4, text: 'My view tile 5', type: ViewType.tile}
 ];
 
 function ViewPanel(): JSX.Element {
-    const {dispatchItems} = useStateItem();
-
+    const {t} = useTranslation();
     const [views] = useState(defaultViews);
 
-    const changeView = (view: IView) => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_VIEW,
-            view: {current: view}
-        });
-    };
-
     return (
-        <div>
-            {views.map(view => (
-                <div key={view.value} onClick={() => changeView(view)}>
-                    {view.type === 'list' ? <MenuOutlined /> : <AppstoreFilled />} {view.text}
-                </div>
-            ))}
-        </div>
+        <Wrapper>
+            <Header>{t('view.list')}</Header>
+            <SubHeader>{t('view.my-views')}</SubHeader>
+            <Views>
+                {views.map(view => (
+                    <View key={view.value} view={view} />
+                ))}
+            </Views>
+        </Wrapper>
     );
 }
 

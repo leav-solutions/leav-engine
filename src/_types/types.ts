@@ -295,6 +295,11 @@ export enum TypeSideItem {
 export interface IView {
     value: number;
     text: string;
-    type: string;
+    type: ViewType;
     color?: string;
+}
+
+export enum ViewType {
+    list = 'list',
+    tile = 'tile'
 }

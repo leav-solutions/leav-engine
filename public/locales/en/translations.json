@@ -194,5 +194,12 @@
         "base-message": "Welcome to the explorer",
         "active-lib": "You are currently on the library {{lib}}",
         "active-tree": "You are currently on the tree {{tree}}"
+    },
+    "view": {
+        "list": "List View",
+        "my-views":"My views",
+        "type-list": "View List",
+        "type-tile": "View Tile",
+        "delete": "Delete"
     }
 }

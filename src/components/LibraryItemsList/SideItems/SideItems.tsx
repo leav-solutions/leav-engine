@@ -14,7 +14,6 @@ const WrapperFilter = styled.div<WrapperFilterProps>`
     display: ${({visible}) => (visible ? 'flex' : 'none')};
     position: relative;
     height: 100vh;
-    margin-right: 16px;
     animation: ${({visible}) => (visible ? 'slide-in 250ms ease' : 'none')};
 
     @keyframes slide-in {

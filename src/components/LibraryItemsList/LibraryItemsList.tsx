@@ -29,16 +29,15 @@ interface IWrapperProps {
 
 const Wrapper = styled.div<IWrapperProps>`
     display: ${({showSide}) => (showSide ? 'grid' : 'inherit')};
-    grid-template-columns: 25rem auto;
+    grid-template-columns: 20rem auto;
     grid-template-rows: 100%;
     height: 100%;
-    padding: 1rem;
 `;
 
 const MenuWrapper = styled.div`
     border-bottom: 1px solid rgb(235, 237, 240);
     padding: 0 1rem;
-    height: 4rem;
+    height: 3rem;
 
     display: flex;
     align-content: center;

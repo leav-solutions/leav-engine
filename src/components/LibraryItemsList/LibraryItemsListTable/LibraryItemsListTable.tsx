@@ -18,6 +18,10 @@ import Header from './Header';
 import './LibraryItemsListTable.css';
 import LibraryItemsModal from './LibraryItemsModal';
 
+const Wrapper = styled.div`
+    padding: 0 1rem;
+`;
+
 const LoadingContainer = styled.div`
     height: 60vh;
     display: grid;
@@ -264,7 +268,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
     };
 
     return (
-        <>
+        <Wrapper>
             {stateItems.itemsLoading ? (
                 <LoadingContainer>
                     <Spin size="large" />
@@ -301,7 +305,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                 values={recordEdition.item}
                 updateValues={item => setRecordEdition(re => ({...re, item}))}
             />
-        </>
+        </Wrapper>
     );
 }
 

@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
@@ -23,7 +22,7 @@ import {getRequestFromFilter} from './getRequestFromFilter';
 
 const Side = styled.div`
     border-right: 1px solid #ebebeb;
-    padding-right: 1rem;
+    padding: 0 1rem;
     height: 100%;
     width: 100%;
 `;
@@ -223,15 +222,6 @@ function Filters(): JSX.Element {
         setFilters([]);
     }, [activeLibraryId, setFilters]);
 
-    const handleHide = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
-            sideItems: {
-                visible: false
-            }
-        });
-    };
-
     const canApplyFilter =
         stateItems.searchFullTextActive || !flatArray(filters).filter(f => f.type === FilterTypes.filter).length;
 
@@ -259,7 +249,6 @@ function Filters(): JSX.Element {
                         justifyContent: 'space-between'
                     }}
                 >
-                    <Button icon={<IconClosePanel />} onClick={handleHide} />
                     <SearchItems />
                 </div>
 
