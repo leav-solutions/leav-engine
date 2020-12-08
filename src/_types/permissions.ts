@@ -10,7 +10,8 @@ export enum PermissionTypes {
     LIBRARY = 'library',
     ATTRIBUTE = 'attribute',
     TREE = 'tree',
-    TREE_NODE = 'tree_node'
+    TREE_NODE = 'tree_node',
+    TREE_LIBRARY = 'tree_library'
 }
 
 export enum LibraryPermissionsActions {

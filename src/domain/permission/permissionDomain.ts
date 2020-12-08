@@ -25,6 +25,7 @@ import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
+import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
 import {ITreeNodePermissionDomain} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 import {
@@ -73,6 +74,7 @@ interface IDeps {
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
+    'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
     translator?: i18n;
     config?: IConfig;
@@ -89,6 +91,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
         'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.treeNode': treeNodePermissionDomain = null,
+        'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,
         'core.infra.permission': permissionRepo = null,
         config = null
     }: IDeps = deps;
@@ -194,7 +197,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
-            case PermissionTypes.TREE_NODE:
+            case PermissionTypes.TREE_NODE: {
                 const [treeId, libraryId] = applyTo.split('/');
 
                 perm = await treeNodePermissionDomain.getHeritedTreeNodePermission({
@@ -207,6 +210,19 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
+            }
+            case PermissionTypes.TREE_LIBRARY: {
+                const [treeId, libraryId] = applyTo.split('/');
+
+                perm = await treeLibraryPermissionDomain.getInheritedTreeLibraryPermission({
+                    action: action as TreeNodePermissionsActions,
+                    treeId,
+                    libraryId,
+                    userGroupId,
+                    ctx
+                });
+                break;
+            }
         }
 
         return perm;
@@ -305,6 +321,17 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
+            case PermissionTypes.TREE_LIBRARY:
+                const [treeId, libraryId] = applyTo.split('/');
+
+                perm = await treeLibraryPermissionDomain.getTreeLibraryPermission({
+                    action: action as TreeNodePermissionsActions,
+                    userId,
+                    treeId,
+                    libraryId,
+                    ctx
+                });
+                break;
         }
 
         return perm;
@@ -334,6 +361,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
                 break;
             case PermissionTypes.TREE:
                 perms = Object.values(TreePermissionsActions);
+            case PermissionTypes.TREE_LIBRARY:
             case PermissionTypes.TREE_NODE:
                 perms = Object.values(TreeNodePermissionsActions);
                 break;

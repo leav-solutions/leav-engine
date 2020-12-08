@@ -31,6 +31,7 @@ interface IGetDefaultGlobalPermissionParams {
     applyTo?: string;
     userId?: string;
     action?: PermissionsActions;
+    ctx: IQueryInfos;
 }
 
 export interface IGlobalPermissionHelper {
@@ -94,7 +95,7 @@ export default function({
                 ctx
             });
 
-            return perm !== null ? perm : getDefaultPermission();
+            return perm !== null ? perm : getDefaultPermission({action, applyTo, type, userId, ctx});
         },
         async getInheritedGlobalPermission(
             {type, applyTo, userGroupId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
