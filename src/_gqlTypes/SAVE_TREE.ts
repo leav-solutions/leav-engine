@@ -12,11 +12,22 @@ import {TreeInput, TreeBehavior, AttributeType, PermissionsRelation} from './glo
 // GraphQL mutation operation: SAVE_TREE
 // ====================================================
 
-export interface SAVE_TREE_saveTree_libraries_attributes {
+export interface SAVE_TREE_saveTree_libraries_attributes_StandardAttribute {
     id: string;
     label: SystemTranslation | null;
     type: AttributeType;
 }
+
+export interface SAVE_TREE_saveTree_libraries_attributes_TreeAttribute {
+    id: string;
+    label: SystemTranslation | null;
+    type: AttributeType;
+    linked_tree: string | null;
+}
+
+export type SAVE_TREE_saveTree_libraries_attributes =
+    | SAVE_TREE_saveTree_libraries_attributes_StandardAttribute
+    | SAVE_TREE_saveTree_libraries_attributes_TreeAttribute;
 
 export interface SAVE_TREE_saveTree_libraries {
     id: string;

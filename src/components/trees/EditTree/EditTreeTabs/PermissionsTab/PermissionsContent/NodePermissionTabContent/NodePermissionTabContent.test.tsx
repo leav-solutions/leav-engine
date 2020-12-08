@@ -15,6 +15,12 @@ jest.mock('../../../../../../permissions/DefineTreePermissionsView', () => {
     };
 });
 
+jest.mock('../../../../../../permissions/DefinePermByUserGroupView', () => {
+    return function DefinePermByUserGroupView() {
+        return <div>DefinePermByUserGroupView</div>;
+    };
+});
+
 jest.mock('../../../../../../../hooks/useLang');
 
 describe('NodePermissionTabContent', () => {

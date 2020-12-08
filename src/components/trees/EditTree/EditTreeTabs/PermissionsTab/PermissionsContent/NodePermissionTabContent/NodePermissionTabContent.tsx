@@ -1,4 +1,5 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
 import useLang from '../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../utils';
@@ -13,6 +14,7 @@ import {
     PermissionTypes,
     Treepermissions_confInput
 } from '../../../../../../../_gqlTypes/globalTypes';
+import DefinePermByUserGroupView from '../../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../../permissions/DefineTreePermissionsView';
 import PermissionsAttributesSelector from '../../../../../../permissions/PermissionsAttributesSelector';
 
@@ -30,6 +32,7 @@ function NodePermissionTabContent({
     onSubmitSettings
 }: INodePermissionTabContentProps): JSX.Element {
     const {lang} = useLang();
+    const {t} = useTranslation();
     const _handleSubmit = (conf: Treepermissions_confInput) => onSubmitSettings(library.id, conf);
 
     const attributes = library.attributes ? library.attributes.filter(a => a.type === AttributeType.tree) : [];
@@ -56,6 +59,23 @@ function NodePermissionTabContent({
               )
           }))
         : [];
+
+    permissionsPanes.unshift({
+        key: 'libPermissions',
+        menuItem: t('permissions.library_tab_name'),
+        render: () => (
+            <Tab.Pane key="libPermissions" className="grow flex-col height100">
+                {
+                    <DefinePermByUserGroupView
+                        type={PermissionTypes.tree_library}
+                        key="libPermissions"
+                        applyTo={`${tree.id}/${library.id}`}
+                        readOnly={readonly}
+                    />
+                }
+            </Tab.Pane>
+        )
+    });
 
     return (
         <>

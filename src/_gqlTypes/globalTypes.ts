@@ -63,6 +63,7 @@ export enum PermissionTypes {
     record = 'record',
     record_attribute = 'record_attribute',
     tree = 'tree',
+    tree_library = 'tree_library',
     tree_node = 'tree_node'
 }
 

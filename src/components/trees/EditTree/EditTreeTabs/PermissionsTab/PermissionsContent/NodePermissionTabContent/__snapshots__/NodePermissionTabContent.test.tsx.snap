@@ -31,6 +31,57 @@ initialize {
               },
               "children": Array [
                 Object {
+                  "data": "permissions.library_tab_name",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Object {
+                "attribs": Object {
+                  "class": "item",
+                },
+                "children": Array [
+                  Object {
+                    "data": "Mon Attribut",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            Object {
+              "attribs": Object {
+                "class": "item",
+              },
+              "children": Array [
+                Object {
                   "data": "Mon Attribut",
                   "next": null,
                   "parent": [Circular],
@@ -42,7 +93,32 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": null,
               "parent": [Circular],
-              "prev": null,
+              "prev": Object {
+                "attribs": Object {
+                  "class": "active item",
+                },
+                "children": Array [
+                  Object {
+                    "data": "permissions.library_tab_name",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
               "type": "tag",
               "x-attribsNamespace": Object {
                 "class": undefined,
@@ -63,7 +139,7 @@ initialize {
                 "attribs": Object {},
                 "children": Array [
                   Object {
-                    "data": "DefineTreePermissionsView",
+                    "data": "DefinePermByUserGroupView",
                     "next": null,
                     "parent": [Circular],
                     "prev": null,
@@ -112,7 +188,7 @@ initialize {
               "attribs": Object {},
               "children": Array [
                 Object {
-                  "data": "DefineTreePermissionsView",
+                  "data": "DefinePermByUserGroupView",
                   "next": null,
                   "parent": [Circular],
                   "prev": null,
@@ -144,6 +220,57 @@ initialize {
                 },
                 "children": Array [
                   Object {
+                    "data": "permissions.library_tab_name",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Object {
+                  "attribs": Object {
+                    "class": "item",
+                  },
+                  "children": Array [
+                    Object {
+                      "data": "Mon Attribut",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              Object {
+                "attribs": Object {
+                  "class": "item",
+                },
+                "children": Array [
+                  Object {
                     "data": "Mon Attribut",
                     "next": null,
                     "parent": [Circular],
@@ -155,7 +282,32 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": null,
                 "parent": [Circular],
-                "prev": null,
+                "prev": Object {
+                  "attribs": Object {
+                    "class": "active item",
+                  },
+                  "children": Array [
+                    Object {
+                      "data": "permissions.library_tab_name",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
                 "type": "tag",
                 "x-attribsNamespace": Object {
                   "class": undefined,
@@ -237,6 +389,57 @@ initialize {
                   },
                   "children": Array [
                     Object {
+                      "data": "permissions.library_tab_name",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Object {
+                    "attribs": Object {
+                      "class": "item",
+                    },
+                    "children": Array [
+                      Object {
+                        "data": "Mon Attribut",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                Object {
+                  "attribs": Object {
+                    "class": "item",
+                  },
+                  "children": Array [
+                    Object {
                       "data": "Mon Attribut",
                       "next": null,
                       "parent": [Circular],
@@ -248,7 +451,32 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": null,
                   "parent": [Circular],
-                  "prev": null,
+                  "prev": Object {
+                    "attribs": Object {
+                      "class": "active item",
+                    },
+                    "children": Array [
+                      Object {
+                        "data": "permissions.library_tab_name",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
                   "type": "tag",
                   "x-attribsNamespace": Object {
                     "class": undefined,
@@ -269,7 +497,7 @@ initialize {
                     "attribs": Object {},
                     "children": Array [
                       Object {
-                        "data": "DefineTreePermissionsView",
+                        "data": "DefinePermByUserGroupView",
                         "next": null,
                         "parent": [Circular],
                         "prev": null,
@@ -318,7 +546,7 @@ initialize {
                   "attribs": Object {},
                   "children": Array [
                     Object {
-                      "data": "DefineTreePermissionsView",
+                      "data": "DefinePermByUserGroupView",
                       "next": null,
                       "parent": [Circular],
                       "prev": null,
@@ -350,6 +578,57 @@ initialize {
                     },
                     "children": Array [
                       Object {
+                        "data": "permissions.library_tab_name",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Object {
+                      "attribs": Object {
+                        "class": "item",
+                      },
+                      "children": Array [
+                        Object {
+                          "data": "Mon Attribut",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": [Circular],
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  Object {
+                    "attribs": Object {
+                      "class": "item",
+                    },
+                    "children": Array [
+                      Object {
                         "data": "Mon Attribut",
                         "next": null,
                         "parent": [Circular],
@@ -361,7 +640,32 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": null,
                     "parent": [Circular],
-                    "prev": null,
+                    "prev": Object {
+                      "attribs": Object {
+                        "class": "active item",
+                      },
+                      "children": Array [
+                        Object {
+                          "data": "permissions.library_tab_name",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
                     "type": "tag",
                     "x-attribsNamespace": Object {
                       "class": undefined,
@@ -437,6 +741,57 @@ initialize {
             },
             "children": Array [
               Object {
+                "data": "permissions.library_tab_name",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "item",
+              },
+              "children": Array [
+                Object {
+                  "data": "Mon Attribut",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          Object {
+            "attribs": Object {
+              "class": "item",
+            },
+            "children": Array [
+              Object {
                 "data": "Mon Attribut",
                 "next": null,
                 "parent": [Circular],
@@ -448,7 +803,32 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": null,
             "parent": [Circular],
-            "prev": null,
+            "prev": Object {
+              "attribs": Object {
+                "class": "active item",
+              },
+              "children": Array [
+                Object {
+                  "data": "permissions.library_tab_name",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
             "type": "tag",
             "x-attribsNamespace": Object {
               "class": undefined,
@@ -469,7 +849,7 @@ initialize {
               "attribs": Object {},
               "children": Array [
                 Object {
-                  "data": "DefineTreePermissionsView",
+                  "data": "DefinePermByUserGroupView",
                   "next": null,
                   "parent": [Circular],
                   "prev": null,
@@ -518,7 +898,7 @@ initialize {
             "attribs": Object {},
             "children": Array [
               Object {
-                "data": "DefineTreePermissionsView",
+                "data": "DefinePermByUserGroupView",
                 "next": null,
                 "parent": [Circular],
                 "prev": null,
@@ -550,6 +930,57 @@ initialize {
               },
               "children": Array [
                 Object {
+                  "data": "permissions.library_tab_name",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Object {
+                "attribs": Object {
+                  "class": "item",
+                },
+                "children": Array [
+                  Object {
+                    "data": "Mon Attribut",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            Object {
+              "attribs": Object {
+                "class": "item",
+              },
+              "children": Array [
+                Object {
                   "data": "Mon Attribut",
                   "next": null,
                   "parent": [Circular],
@@ -561,7 +992,32 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": null,
               "parent": [Circular],
-              "prev": null,
+              "prev": Object {
+                "attribs": Object {
+                  "class": "active item",
+                },
+                "children": Array [
+                  Object {
+                    "data": "permissions.library_tab_name",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
               "type": "tag",
               "x-attribsNamespace": Object {
                 "class": undefined,
