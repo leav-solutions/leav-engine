@@ -82,6 +82,15 @@ export interface IGetTreeLibraryPermissionParams {
     treeId: string;
     libraryId: string;
     userId: string;
+    getDefaultPermission?: (params?: IGetDefaultTreeLibraryPermissionParams) => boolean | null;
+    ctx: IQueryInfos;
+}
+
+export interface IGetDefaultTreeLibraryPermissionParams {
+    type?: PermissionTypes;
+    applyTo?: string;
+    userId?: string;
+    action?: PermissionsActions;
     ctx: IQueryInfos;
 }
 
@@ -117,11 +126,20 @@ export interface IGetHeritedTreePermissionParams {
     ctx: IQueryInfos;
 }
 
+export interface IGetDefaultInheritedTreeLibraryPermissionParams {
+    type?: PermissionTypes;
+    applyTo?: string;
+    userId?: string;
+    action?: PermissionsActions;
+    ctx: IQueryInfos;
+}
+
 export interface IGetInheritedTreeLibraryPermissionParams {
     action: TreeNodePermissionsActions;
     treeId: string;
     libraryId: string;
     userGroupId: string;
+    getDefaultPermission?: (params?: IGetDefaultInheritedTreeLibraryPermissionParams) => boolean | null;
     ctx: IQueryInfos;
 }
 

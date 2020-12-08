@@ -22,6 +22,7 @@ export default function({
         treeId,
         libraryId,
         userId,
+        getDefaultPermission,
         ctx
     }: IGetTreeLibraryPermissionParams): Promise<boolean> => {
         return globalPermHelper.getGlobalPermission(
@@ -29,7 +30,8 @@ export default function({
                 type: PermissionTypes.TREE_LIBRARY,
                 action,
                 applyTo: `${treeId}/${libraryId}`,
-                userId
+                userId,
+                getDefaultPermission
             },
             ctx
         );
@@ -40,6 +42,7 @@ export default function({
         treeId,
         libraryId,
         userGroupId,
+        getDefaultPermission,
         ctx
     }: IGetInheritedTreeLibraryPermissionParams): Promise<boolean> => {
         return globalPermHelper.getInheritedGlobalPermission(
@@ -47,7 +50,8 @@ export default function({
                 type: PermissionTypes.TREE_LIBRARY,
                 action,
                 applyTo: `${treeId}/${libraryId}`,
-                userGroupId
+                userGroupId,
+                getDefaultPermission
             },
             ctx
         );

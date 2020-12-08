@@ -114,6 +114,26 @@ describe('TreeNodePermissions', () => {
                 id_value
             }
         }`);
+
+        // Save permission on library
+        await makeGraphQlCall(`mutation {
+            savePermission(
+                permission: {
+                    type: tree_library
+                    applyTo: "${elementsTreeId}/${elementsTreeLibId}"
+                    usersGroup: "${allUsersTreeElemId}"
+                    actions: [
+                        {name: edit_children, allowed: false},
+                    ]
+                }
+            ) {
+                type
+                actions {
+                    name
+                    allowed
+                }
+            }
+        }`);
     });
 
     describe('Element permissions', () => {
@@ -225,12 +245,12 @@ describe('TreeNodePermissions', () => {
             expect(resIsAllowedOnElement.data.data.onElement).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'edit_tree', allowed: true},
-                {name: 'edit_children', allowed: true}
+                {name: 'edit_children', allowed: false} // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.data.onChild).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'edit_tree', allowed: true},
-                {name: 'edit_children', allowed: true}
+                {name: 'edit_children', allowed: false} // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.errors).toBeUndefined();
 
@@ -262,7 +282,7 @@ describe('TreeNodePermissions', () => {
             expect(resGetHeritedPermission.data.data.heritedPermissions).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'edit_tree', allowed: true},
-                {name: 'edit_children', allowed: true}
+                {name: 'edit_children', allowed: false} // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.errors).toBeUndefined();
         });

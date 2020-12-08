@@ -11,6 +11,7 @@ import {mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
+import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
 import treeNodePermissionDomain from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 import {IGetTreeBasedPermissionParams} from './_types';
@@ -29,6 +30,14 @@ describe('treeNodePermissionDomain', () => {
 
         const mockTreeDomainNoPerm: Mockify<ITreeDomain> = {
             getTreeProperties: global.__mockPromise({...mockTree, permissions_conf: null})
+        };
+
+        const mockTreeLibPermissionDomain: Mockify<ITreeLibraryPermissionDomain> = {
+            getTreeLibraryPermission: global.__mockPromise(true)
+        };
+
+        const mockTreeLibPermissionDomainNoPerm: Mockify<ITreeLibraryPermissionDomain> = {
+            getTreeLibraryPermission: global.__mockPromise(null)
         };
 
         const treeWithPerms: ITree = {
@@ -113,6 +122,7 @@ describe('treeNodePermissionDomain', () => {
             const domain = treeNodePermissionDomain({
                 'core.domain.tree': mockTreeDomainNoPerm as ITreeDomain,
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
+                'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPerm as IDefaultPermissionHelper
             });
 
@@ -124,6 +134,7 @@ describe('treeNodePermissionDomain', () => {
                 ctx
             });
 
+            expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).not.toBeCalled();
             expect(perm).toBe(false);
         });
 
@@ -135,6 +146,7 @@ describe('treeNodePermissionDomain', () => {
             const domain = treeNodePermissionDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
+                'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -148,10 +160,11 @@ describe('treeNodePermissionDomain', () => {
                 ctx
             });
 
+            expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).not.toBeCalled();
             expect(perm).toBe(false);
         });
 
-        test('If nothing defined on element, should return a permission defined on parent', async () => {
+        test('If nothing defined on element, should return a permission defined on tree library', async () => {
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
                 getTreeBasedPermission: jest.fn().mockImplementation((params: IGetTreeBasedPermissionParams) => {
                     switch (params.treeValues.attr1[0].record.id) {
@@ -166,6 +179,40 @@ describe('treeNodePermissionDomain', () => {
             const domain = treeNodePermissionDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
+                'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
+                'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.infra.value': mockValueRepo as IValueRepo
+            });
+
+            const perm = await domain.getTreeNodePermission({
+                action: TreeNodePermissionsActions.ACCESS_TREE,
+                userId: ctx.userId,
+                node: treeNode,
+                treeId: 'test',
+                ctx
+            });
+
+            expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).toBeCalled();
+            expect(perm).toBe(true);
+        });
+
+        test('If nothing defined on element and library, should return a permission defined on parent', async () => {
+            const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
+                getTreeBasedPermission: jest.fn().mockImplementation((params: IGetTreeBasedPermissionParams) => {
+                    switch (params.treeValues.attr1[0].record.id) {
+                        case 'elementCategory':
+                            return Promise.resolve(null);
+                        case 'parentCategory':
+                            return Promise.resolve(false);
+                    }
+                })
+            };
+
+            const domain = treeNodePermissionDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
+                'core.domain.permission.treeLibrary': mockTreeLibPermissionDomainNoPerm as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -195,6 +242,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
+                'core.domain.permission.treeLibrary': mockTreeLibPermissionDomainNoPerm as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -208,6 +256,7 @@ describe('treeNodePermissionDomain', () => {
                 ctx
             });
 
+            expect(mockTreePermissionDomain.getTreePermission).toBeCalled();
             expect(perm).toBe(false);
         });
     });
