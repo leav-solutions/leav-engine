@@ -17,6 +17,7 @@ const PageWrapper = styled.div`
 
 const TopBarWrapper = styled.div`
     height: 3rem;
+    z-index: 1000;
 
     & > * {
         height: 3rem;

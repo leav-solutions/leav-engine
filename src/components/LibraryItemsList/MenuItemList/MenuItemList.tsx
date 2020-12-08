@@ -38,7 +38,7 @@ const SubGroup = styled.div`
 `;
 
 const SubGroupFirst = styled(SubGroup)`
-    grid-template-columns: auto 12rem repeat(3, auto);
+    grid-template-columns: repeat(5, auto);
 `;
 
 const SubGroupLast = styled(SubGroup)`

@@ -32,6 +32,7 @@ const Wrapper = styled.div<IWrapperProps>`
     grid-template-columns: 20rem auto;
     grid-template-rows: 100%;
     height: 100%;
+    position: relative;
 `;
 
 const MenuWrapper = styled.div`
@@ -205,11 +206,8 @@ function LibraryItemsList(): JSX.Element {
     return (
         <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
             <MenuWrapper>
-                {state.selectionMode ? (
-                    <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
-                ) : (
-                    <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
-                )}
+                <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
+                <MenuItemListSelected active={state.selectionMode} />
             </MenuWrapper>
             <div style={{maxWidth: state.sideItems.visible ? 'calc(100% - 23rem)' : '100%'}}>
                 <Wrapper
