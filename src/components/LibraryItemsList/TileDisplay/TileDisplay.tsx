@@ -1,6 +1,7 @@
 import {Card, Col, Row, Spin} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
+import themingVar from '../../../themingVar';
 import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
@@ -35,7 +36,7 @@ const Wrapper = styled(Card)`
 const Footer = styled.div`
     display: flex;
     justify-content: space-around;
-    border: 1px solid #f5f5f5;
+    border: 1px solid ${themingVar['@divider-color']};
     padding: 0.5rem;
 `;
 

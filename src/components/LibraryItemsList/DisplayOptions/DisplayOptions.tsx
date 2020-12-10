@@ -15,6 +15,10 @@ const ListBigIcon = styled(MenuOutlined)`
     transform: scale(1.3);
 `;
 
+const CustomButton = styled(Button)`
+    padding: 0.3rem;
+`;
+
 function DisplayOptions(): JSX.Element {
     const {t} = useTranslation();
 
@@ -78,10 +82,10 @@ function DisplayOptions(): JSX.Element {
                 </Menu>
             }
         >
-            <Button title={currentDisplayOption?.text}>
+            <CustomButton title={currentDisplayOption?.text}>
                 {currentDisplayOption?.icon}
                 <DownOutlined />
-            </Button>
+            </CustomButton>
         </Dropdown>
     );
 }

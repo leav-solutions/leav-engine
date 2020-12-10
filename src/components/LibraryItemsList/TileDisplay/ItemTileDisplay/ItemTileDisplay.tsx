@@ -2,6 +2,7 @@ import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant
 import {Button, Card} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
+import themingVar from '../../../../themingVar';
 import {getPreviewUrl} from '../../../../utils';
 import {IItem} from '../../../../_types/types';
 import {
@@ -20,7 +21,7 @@ interface IItemTileDisplayProps {
 
 const ImageWrapper = styled.div`
     position: relative;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid ${themingVar['@divider-color']};
 `;
 
 const ActionsWrapper = styled.div`

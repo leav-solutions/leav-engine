@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
+import themingVars from '../../../themingVar';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 interface IMenuItemListSelectedProps {
@@ -22,8 +23,8 @@ const Wrapper = styled.div<IWrapperProps>`
     top: 0;
 
     width: 100%;
-    background: #fff;
-    height: 3rem;
+    background: ${themingVars['@default-bg']};
+    height: 4rem;
     z-index: 11;
 
     animation: ${({active}) => (active ? 'moveToBottom 1s ease' : 'none')};

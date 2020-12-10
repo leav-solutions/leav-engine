@@ -4,6 +4,7 @@ import {Checkbox, Radio, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {getLibraryDetailExtendedQuery} from '../../../../queries/libraries/getLibraryDetailExtendQuery';
+import themingVar from '../../../../themingVar';
 import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../../../utils';
 import {IAccordionActive, IAttribute, IOriginAttributeData} from '../../../../_types/types';
 import {ListingAttributes} from '../../ListAttributes';
@@ -33,7 +34,7 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
-    border: 1px solid #f0f0f0;
+    border: 1px solid ${themingVar['@divider-color']};
     border-radius: 2px;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
     display: flex;

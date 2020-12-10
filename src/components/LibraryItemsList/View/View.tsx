@@ -1,8 +1,9 @@
-import {AppstoreFilled, EllipsisOutlined, MenuOutlined} from '@ant-design/icons';
+import {AppstoreFilled, EllipsisOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {IconViewList} from '../../../assets/icons/IconViewList';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVar from '../../../themingVar';
 import {IView, ViewType} from '../../../_types/types';
@@ -16,20 +17,20 @@ const Wrapper = styled.div<IWrapperProps>`
     position: relative;
     width: 100%;
     padding: 1rem;
-    background: ${({selected}) => (selected ? `${themingVar['@view-panel-background-active']} ` : 'none')};
+    background: ${({selected}) => (selected ? `${themingVar['@leav-view-panel-background-active']} ` : 'none')};
 
     &::before {
         content: '';
         position: absolute;
         padding: 5px;
         border-radius: 50%;
-        left: 15px;
-        top: 35px;
+        left: 18px;
+        top: 28px;
         background: ${({color}) => color ?? themingVar['@primary-color']};
     }
 
     & > div {
-        margin-left: 30px;
+        margin-left: 36px;
     }
 `;
 
@@ -38,14 +39,16 @@ interface ITypeProps {
 }
 
 const Type = styled.div<ITypeProps>`
-    border-radius: 0.5rem;
-    border: ${themingVar['@item-active-bg']} 1px solid;
-    padding: 0.3rem;
-    width: 40%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: ${({selected}) => (selected ? `${themingVar['@view-panel-label-background-active']} ` : 'none')};
+    border-radius: 8px;
+    padding: 0.3rem 1rem;
+    width: 50%;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 1rem;
+    place-items: center;
+    background-color: ${({selected}) =>
+        selected ? `${themingVar['@leav-view-panel-label-background-active']} ` : themingVar['@leav-secondary-bg']};
+    margin-top: 1rem;
 `;
 
 const Title = styled.div`
@@ -62,6 +65,7 @@ const Description = styled.div`
 
 const CustomButton = styled(Button)`
     background-color: ${themingVar['@default-bg']};
+    transform: scale(0.7);
     &:hover {
         background-color: ${themingVar['@default-bg']};
     }
@@ -104,7 +108,7 @@ function View({view}: IViewProps): JSX.Element {
                 <Type selected={selected}>
                     {view.type === ViewType.list ? (
                         <>
-                            <MenuOutlined /> {t('view.type-list')}
+                            <IconViewList /> {t('view.type-list')}
                         </>
                     ) : (
                         <>

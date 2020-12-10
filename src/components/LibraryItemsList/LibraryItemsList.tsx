@@ -38,7 +38,7 @@ const Wrapper = styled.div<IWrapperProps>`
 const MenuWrapper = styled.div`
     border-bottom: 1px solid rgb(235, 237, 240);
     padding: 0 1rem;
-    height: 3rem;
+    height: 4rem;
 
     display: flex;
     align-content: center;

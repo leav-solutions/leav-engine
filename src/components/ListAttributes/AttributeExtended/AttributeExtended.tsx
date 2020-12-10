@@ -3,7 +3,7 @@ import {Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {getAttributeWithEmbeddedFields} from '../../../queries/attributes/getAttributeWithEmbeddedFields';
-import ThemeVars from '../../../themingVar';
+import {default as ThemeVars, default as themingVar} from '../../../themingVar';
 import {attributeUpdateSelection, localizedLabel} from '../../../utils';
 import {AttributeFormat, IAttribute, IEmbeddedFields, IGroupEmbeddedFields} from '../../../_types/types';
 import ListItemAttribute from '../AttributeBasic';
@@ -34,7 +34,7 @@ const Container = ({children, isChild}) => {
 };
 
 const ContainerBasic = styled.div<ContainerProps>`
-    border: 1px solid #f0f0f0;
+    border: 1px solid ${themingVar['@divider-color']};
     border-radius: 2px;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
     display: flex;

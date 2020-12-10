@@ -2,7 +2,12 @@ import {SettingOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import ChooseTableColumns from '../LibraryItemsListTable/ChooseTableColumns';
+
+const CustomButton = styled(Button)`
+    padding: 0 0.5rem;
+`;
 
 function MenuItemActions(): JSX.Element {
     const {t} = useTranslation();
@@ -23,9 +28,9 @@ function MenuItemActions(): JSX.Element {
         <>
             <ChooseTableColumns openChangeColumns={openChangeColumns} setOpenChangeColumns={setOpenChangeColumns} />
             <Dropdown overlay={menu}>
-                <Button>
+                <CustomButton>
                     <SettingOutlined />
-                </Button>
+                </CustomButton>
             </Dropdown>
         </>
     );

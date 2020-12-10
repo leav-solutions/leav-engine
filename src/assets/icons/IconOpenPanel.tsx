@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import IconSvg from './svgIconClosePanel.svg';
+import IconSvg from '../svg/svgIconClosePanel.svg';
 
 const CustomImg = styled.img`
     transform: translate(0px, -1px) rotate(180deg);

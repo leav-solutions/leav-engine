@@ -32,13 +32,14 @@ const Wrapper = styled.div`
 
 const SubGroup = styled.div`
     display: grid;
-    grid-column-gap: 1rem;
+    grid-column-gap: 2rem;
     align-items: center;
     justify-content: end;
 `;
 
 const SubGroupFirst = styled(SubGroup)`
     grid-template-columns: repeat(5, auto);
+    column-gap: 2rem;
 `;
 
 const SubGroupLast = styled(SubGroup)`

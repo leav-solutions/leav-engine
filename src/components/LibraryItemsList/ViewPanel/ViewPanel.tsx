@@ -13,16 +13,17 @@ const Wrapper = styled.div`
     overflow-y: scroll;
 `;
 
-const Header = styled.h2`
+const Header = styled.div`
     width: 100%;
-    background-color: ${themingVar['@view-panel-background-title']};
+    background-color: ${themingVar['@leav-view-panel-background-title']};
     display: grid;
-    place-items: center;
-    padding: 0.3rem;
+    align-items: center;
+    padding: 0.3rem 0.3rem 0.3rem 1rem;
+    font-weight: 700;
     border-bottom: 1px solid ${themingVar['@divider-color']};
 `;
 
-const SubHeader = styled.h3`
+const SubHeader = styled.div`
     width: 100%;
     border-top: ${themingVar['@item-active-bg']} 1px solid;
     border-bottom: ${themingVar['@item-active-bg']} 1px solid;

@@ -5,6 +5,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook';
+import themingVar from '../../../themingVar';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
@@ -21,7 +22,7 @@ import {getConditionOptions, getOperatorOptions} from './FiltersOptions';
 import {getRequestFromFilter} from './getRequestFromFilter';
 
 const Side = styled.div`
-    border-right: 1px solid #ebebeb;
+    border-right: 1px solid ${themingVar['@divider-color']};
     padding: 0 1rem;
     height: 100%;
     width: 100%;

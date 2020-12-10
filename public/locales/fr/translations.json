@@ -195,7 +195,7 @@
         "active-tree": "Vous êtes sur l'arbre {{tree}}"
     },
     "view": {
-        "list": "List vues",
+        "list": "Liste des vues",
         "my-views":"Mes vues",
         "type-list": "Vue Liste",
         "type-tile": "Vue Tuile",

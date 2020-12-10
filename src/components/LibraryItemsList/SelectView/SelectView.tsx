@@ -8,6 +8,12 @@ import themingVar from '../../../themingVar';
 import {TypeSideItem} from '../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
+const DropdownButton = styled(Dropdown.Button)`
+    .ant-dropdown-trigger {
+        background-color: ${themingVar['@leav-secondary-bg']};
+    }
+`;
+
 interface InnerDropdown {
     color?: string;
     style?: CSSObject;
@@ -65,11 +71,11 @@ function SelectView(): JSX.Element {
     );
 
     return (
-        <Dropdown.Button overlay={menu}>
+        <DropdownButton overlay={menu}>
             <InnerDropdown onClick={toggleShowView} color={stateItems.view.current?.color}>
                 {stateItems.view.current?.text ?? t('select-view.default-view')}
             </InnerDropdown>
-        </Dropdown.Button>
+        </DropdownButton>
     );
 }
 
