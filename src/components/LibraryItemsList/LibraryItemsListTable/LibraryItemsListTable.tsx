@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, EditOutlined, HeartOutlined, SettingOutlined} from '@ant-design/icons';
 import {Checkbox, Dropdown, Menu, Spin, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
@@ -5,7 +8,7 @@ import {useTranslation} from 'react-i18next';
 import {Resizable} from 'react-resizable';
 import styled from 'styled-components';
 import {infosCol} from '../../../constants/constants';
-import {useLang} from '../../../hooks/LangHook';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
 import {AttributeFormat, AttributeType, IItem, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
 import {

@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LockOutlined, SendOutlined, UserOutlined} from '@ant-design/icons';
 import {Alert, Button, Card, Form, Input, Spin} from 'antd';
 import React, {useCallback, useState} from 'react';

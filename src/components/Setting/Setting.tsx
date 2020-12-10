@@ -1,9 +1,12 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 import {Card, Col, PageHeader, Row, Select, Switch} from 'antd';
 import React, {useState} from 'react';
 import {useThemeSwitcher} from 'react-css-theme-switcher';
 import {useTranslation} from 'react-i18next';
-import {useLang} from '../../hooks/LangHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import {AvailableLanguage} from '../../_types/types';
 
 function Setting(): JSX.Element {

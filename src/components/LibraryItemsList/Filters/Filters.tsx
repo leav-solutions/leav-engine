@@ -1,10 +1,13 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Dropdown, Menu, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import themingVar from '../../../themingVar';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';

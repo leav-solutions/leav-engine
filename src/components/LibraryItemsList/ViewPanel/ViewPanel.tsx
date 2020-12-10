@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 
 const Header = styled.div`
     width: 100%;
-    background-color: ${themingVar['@leav-view-panel-background-title']};
+    background-color: ${themingVar['@leav-secondary-bg']};
     display: grid;
     align-items: center;
     padding: 0.3rem 0.3rem 0.3rem 1rem;
@@ -29,6 +29,7 @@ const SubHeader = styled.div`
     border-bottom: ${themingVar['@item-active-bg']} 1px solid;
     padding: 0.3rem;
     padding-left: 1rem;
+    margin-top: 1rem;
 `;
 
 const Views = styled.div`

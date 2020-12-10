@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {Input, Tooltip} from 'antd';
@@ -5,8 +8,8 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook';
-import {useLang} from '../../../hooks/LangHook';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import {getLibrariesListQuery} from '../../../queries/libraries/getLibrariesListQuery';
 import {ISearchFullTextQuery, ISearchFullTextVar, searchFullText} from '../../../queries/searchFullText/searchFullText';
 import {IItem} from '../../../_types/types';

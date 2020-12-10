@@ -1,10 +1,13 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {useCallback} from 'react';
 import {
     getActiveLibrary,
     IActiveLibrary,
     IGetActiveLibrary
-} from '../queries/cache/activeLibrary/getActiveLibraryQuery';
+} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 
 export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibrary: IActiveLibrary) => void] => {
     const {data, client} = useQuery<IGetActiveLibrary>(getActiveLibrary);

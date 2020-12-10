@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
 import {Badge, message as antMessage} from 'antd';
 import React, {useEffect} from 'react';

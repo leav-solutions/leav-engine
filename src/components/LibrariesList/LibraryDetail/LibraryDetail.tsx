@@ -1,10 +1,13 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
 import {Button, Card, Col, Divider, Row} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
-import {useLang} from '../../../hooks/LangHook';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import {localizedLabel} from '../../../utils';
 import {ILabel} from '../../../_types/types';

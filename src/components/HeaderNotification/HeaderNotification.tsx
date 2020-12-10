@@ -1,7 +1,11 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useEffect, useState} from 'react';
 import {defaultNotificationsTime} from '../../constants/constants';
 import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
-import {INotification, NotificationChannel, NotificationPriority} from '../../_types/types';
+import {sortNotificationByPriority} from '../../utils';
+import {INotification, NotificationChannel} from '../../_types/types';
 import DisplayNotification from './DisplayNotification';
 
 function HeaderNotification(): JSX.Element {
@@ -15,73 +19,41 @@ function HeaderNotification(): JSX.Element {
     });
 
     useEffect(() => {
-        const {passiveNotifications} = notificationsStack.reduce(
+        const {passiveNotifications, triggerNotifications} = notificationsStack.reduce(
             (acc, notification) => {
                 switch (notification.channel) {
                     case NotificationChannel.trigger:
-                        setTriggerNotifications(notifications => [...notifications, notification]);
-                        return acc;
+                        return {...acc, triggerNotifications: [...acc.triggerNotifications, notification]};
                     case NotificationChannel.passive:
                     default:
                         return {...acc, passiveNotifications: [...acc.passiveNotifications, notification]};
                 }
             },
             {
-                passiveNotifications: [] as INotification[]
+                passiveNotifications: [] as INotification[],
+                triggerNotifications: [] as INotification[]
             }
         );
 
-        // if trigger notifications, remove it for notificationsStack
-        if (passiveNotifications.length !== notificationsStack.length) {
+        if (triggerNotifications.length) {
+            setTriggerNotifications(notifications => [...notifications, ...triggerNotifications]);
+
             updateNotificationsStack(passiveNotifications);
         }
 
         if (passiveNotifications.length) {
             // Sort notification by priority
-            const sortNotificationsStack = [...passiveNotifications].sort((a, b) => {
-                switch (a.priority) {
-                    case NotificationPriority.low:
-                        switch (b.priority) {
-                            case NotificationPriority.low:
-                                return 0;
-                            case NotificationPriority.medium:
-                                return 1;
-                            case NotificationPriority.high:
-                                return 1;
-                        }
-                        return 0;
-                    case NotificationPriority.medium:
-                        switch (b.priority) {
-                            case NotificationPriority.low:
-                                return -1;
-                            case NotificationPriority.medium:
-                                return 0;
-                            case NotificationPriority.high:
-                                return 1;
-                        }
-                        return 0;
-                    case NotificationPriority.high:
-                        switch (b.priority) {
-                            case NotificationPriority.low:
-                                return -1;
-                            case NotificationPriority.medium:
-                                return -1;
-                            case NotificationPriority.high:
-                                return 0;
-                        }
-                        return 0;
-                }
-                return 0;
-            });
+            const sortPassiveNotifications = [...passiveNotifications].sort(sortNotificationByPriority);
 
             // Take the first notification
-            const [notification, ...restNotifications] = sortNotificationsStack;
+            const [notification, ...restNotifications] = sortPassiveNotifications;
 
             if (notification && !activeTimeouts.notification) {
                 setMessage(notification);
 
                 const notificationTime = notification.time ?? defaultNotificationsTime;
 
+                // if a timeout to show base notification is active, clear it
                 if (activeTimeouts.base) {
                     setActiveTimeouts(timeouts => {
                         clearTimeout(timeouts.base);
@@ -93,33 +65,40 @@ function HeaderNotification(): JSX.Element {
                     });
                 }
 
-                // Reset notifications
+                // at the end of the time given for the notification, display base message
                 const notificationTimeout = setTimeout(() => {
                     if (!activeTimeouts.notification) {
+                        // wait 100 to display base notification to avoid
+                        // base message to appear between two notification
                         const baseTimeout = setTimeout(() => {
                             setMessage(baseNotification);
                         }, 100);
 
+                        // set baseTimeout in state
                         setActiveTimeouts(timeouts => ({
                             notification: timeouts.notification,
                             base: baseTimeout
                         }));
                     }
 
+                    // reset notification timeout in state
                     setActiveTimeouts(at => ({
                         notification: null,
                         base: at.base
                     }));
                 }, notificationTime);
 
+                // set the timeout for reset the notification in the state
                 setActiveTimeouts(timeouts => ({
                     notification: notificationTimeout,
                     base: timeouts.base
                 }));
 
+                // update notification stack with rest notifications
                 updateNotificationsStack(restNotifications);
             }
         } else if (!activeTimeouts.notification) {
+            // if no notification, display base notification
             setMessage(msg => {
                 if (baseNotification.content !== msg.content) {
                     return baseNotification;
@@ -127,7 +106,7 @@ function HeaderNotification(): JSX.Element {
                 return msg;
             });
         }
-    }, [setMessage, updateNotificationsStack, notificationsStack, baseNotification, setActiveTimeouts, activeTimeouts]);
+    }, [setMessage, notificationsStack, updateNotificationsStack, baseNotification, setActiveTimeouts, activeTimeouts]);
 
     const cancelNotification = () => {
         clearTimeout(activeTimeouts.notification);

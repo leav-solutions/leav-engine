@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
+import {panelSize} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {TypeSideItem} from '../../../_types/types';
 import Filters from '../Filters';
@@ -18,7 +19,7 @@ const WrapperFilter = styled.div<WrapperFilterProps>`
 
     @keyframes slide-in {
         from {
-            transform: translateX(-20rem);
+            transform: translateX(-${panelSize});
         }
         to {
             transform: translateX(0rem);

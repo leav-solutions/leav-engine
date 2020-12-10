@@ -1,6 +1,9 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {useCallback} from 'react';
-import {getLangAll, IGetLangAll} from '../queries/cache/lang/getLangQuery';
+import {getLangAll, IGetLangAll} from '../../queries/cache/lang/getLangQuery';
 
 export const useLang = (): [IGetLangAll, (langInfo: Partial<IGetLangAll>) => void] => {
     const {data, client} = useQuery<IGetLangAll>(getLangAll);

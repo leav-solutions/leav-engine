@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, MenuOutlined, PlusOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
 import React from 'react';
@@ -10,7 +13,7 @@ import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 const DropdownButton = styled(Dropdown.Button)`
     .ant-dropdown-trigger {
-        background-color: ${themingVar['@leav-secondary-bg']};
+        background-color: ${themingVar['@leav-secondary-action-bg']};
     }
 `;
 
@@ -40,7 +43,7 @@ function SelectView(): JSX.Element {
     const {stateItems, dispatchItems} = useStateItem();
 
     const toggleShowView = () => {
-        const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.view ? true : false;
+        const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.view;
 
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,

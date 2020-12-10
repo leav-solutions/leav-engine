@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
 import {Button, Tooltip} from 'antd';
 import React from 'react';
@@ -39,7 +42,7 @@ const SubGroup = styled.div`
 
 const SubGroupFirst = styled(SubGroup)`
     grid-template-columns: repeat(5, auto);
-    column-gap: 2rem;
+    column-gap: calc(2rem + 1px); ;
 `;
 
 const SubGroupLast = styled(SubGroup)`
@@ -50,8 +53,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
     const {t} = useTranslation();
 
     const toggleShowFilter = () => {
-        const visible =
-            !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.filters ? true : false;
+        const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.filters;
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
             sideItems: {

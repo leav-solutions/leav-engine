@@ -1,11 +1,15 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useQuery} from '@apollo/client';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
+import {panelSize} from '../../constants/constants';
 import {StateItemsContext} from '../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../hooks/ActiveLibHook';
-import {useLang} from '../../hooks/LangHook';
+import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
@@ -29,7 +33,7 @@ interface IWrapperProps {
 
 const Wrapper = styled.div<IWrapperProps>`
     display: ${({showSide}) => (showSide ? 'grid' : 'inherit')};
-    grid-template-columns: 20rem auto;
+    grid-template-columns: ${panelSize} auto;
     grid-template-rows: 100%;
     height: 100%;
     position: relative;
@@ -203,21 +207,23 @@ function LibraryItemsList(): JSX.Element {
         return <div>error</div>;
     }
 
+    console.log(state.sideItems.visible);
+
     return (
         <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
             <MenuWrapper>
                 <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
                 <MenuItemListSelected active={state.selectionMode} />
             </MenuWrapper>
-            <div style={{maxWidth: state.sideItems.visible ? 'calc(100% - 23rem)' : '100%'}}>
-                <Wrapper
-                    showSide={state.sideItems.visible}
-                    className={state.sideItems.visible ? 'wrapper-open' : 'wrapper-close'}
-                >
-                    <SideItems />
+            <Wrapper
+                showSide={state.sideItems.visible}
+                className={state.sideItems.visible ? 'wrapper-open' : 'wrapper-close'}
+            >
+                <SideItems />
+                <div style={{maxWidth: state.sideItems.visible ? `calc(100% + 2rem - ${panelSize})` : '100%'}}>
                     <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
-                </Wrapper>
-            </div>
+                </div>
+            </Wrapper>
         </StateItemsContext.Provider>
     );
 }

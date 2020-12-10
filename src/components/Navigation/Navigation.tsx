@@ -1,10 +1,13 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {StateNavigationContext} from '../../Context/StateNavigationContext';
-import {useActiveTree} from '../../hooks/ActiveTreeHook';
-import {useLang} from '../../hooks/LangHook';
+import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getTreeListQuery, IGetTreeListQuery, IGetTreeListQueryVar} from '../../queries/trees/getTreeListQuery';
 import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';

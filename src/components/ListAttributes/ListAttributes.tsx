@@ -1,8 +1,11 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input, List} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import {useLang} from '../../hooks/LangHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import themingVar from '../../themingVar.js';
 import {localizedLabel} from '../../utils';
 import {IAttribute, IAttributesChecked, IAttributeSelected, IOriginAttributeData, ITreeData} from '../../_types/types';
