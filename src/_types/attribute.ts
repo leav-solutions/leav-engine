@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
 import {IRecord} from './record';

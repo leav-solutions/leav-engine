@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
 import {join} from 'path';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
@@ -427,7 +430,6 @@ export default function({
                         library: r.library,
                         recordId: r.id,
                         attribute: e.attribute,
-                        valueId: undefined,
                         ctx
                     });
                 }

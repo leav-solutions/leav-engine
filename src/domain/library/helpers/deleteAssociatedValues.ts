@@ -7,16 +7,16 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
 }
 
-export interface IDeleteAssociateValuesHelper {
-    deleteAssociateValues: (attributes: string[], libraryId: string, ctx: IQueryInfos) => Promise<void>;
+export interface IDeleteAssociatedValuesHelper {
+    deleteAssociatedValues: (attributes: string[], libraryId: string, ctx: IQueryInfos) => Promise<void>;
 }
 
 export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null
-}: IDeps): IDeleteAssociateValuesHelper {
+}: IDeps): IDeleteAssociatedValuesHelper {
     return {
-        async deleteAssociateValues(attributes: string[], libraryId: string, ctx: IQueryInfos): Promise<void> {
+        async deleteAssociatedValues(attributes: string[], libraryId: string, ctx: IQueryInfos): Promise<void> {
             const records = await recordDomain.find({params: {library: libraryId}, ctx});
             for (const r of records.list) {
                 for (const a of attributes) {
@@ -24,7 +24,6 @@ export default function({
                         library: libraryId,
                         recordId: r.id,
                         attribute: a,
-                        valueId: undefined,
                         ctx
                     });
                 }

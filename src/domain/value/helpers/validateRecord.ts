@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';

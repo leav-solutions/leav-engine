@@ -1,5 +1,8 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 declare namespace NodeJS {
-    // tslint:disable-next-line:interface-name
+    /* eslint-disable @typescript-eslint/naming-convention */
     interface Global {
         __mockPromise(promRes?: any): any;
         __mockPromiseMultiple(promRes?: any[]): any;

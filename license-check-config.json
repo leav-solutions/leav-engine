@@ -1,0 +1,20 @@
+{
+    "license": "LICENSE_HEADER",
+    "licenseFormats": {
+        "ts|js|tsx|jsx": {
+            "eachLine": {
+                "prepend": "// "
+            }
+        }
+    },
+    "ignore":[
+        ".git",
+        ".*",
+        "config",
+        "scripts",
+        "*",
+        "**/.DS_Store",
+        "**/*.snap",
+        "**/filesForTest/*"
+    ]
+}

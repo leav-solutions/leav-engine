@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
@@ -27,7 +30,7 @@ import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
 import {EventType} from '../../_types/event';
 import * as Config from '_types/config';
-import {IDeleteAssociateValuesHelper} from './helpers/deleteAssociateValues';
+import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -47,7 +50,7 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.record'?: IRecordDomain;
-    'core.domain.library.helpers.deleteAssociateValues'?: IDeleteAssociateValuesHelper;
+    'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
 }
 
 export default function({
@@ -59,7 +62,7 @@ export default function({
     'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.record': recordDomain = null,
-    'core.domain.library.helpers.deleteAssociateValues': deleteAssociateValues = null,
+    'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
     translator: translator
 }: IDeps = {}): ILibraryDomain {
     return {
@@ -221,7 +224,7 @@ export default function({
             // delete associate values if attribute is delete
             const deletedAttrs = difference(difference(currentLibraryAttributes, defaultAttributes), libAttributes);
             if (deletedAttrs.length) {
-                await deleteAssociateValues.deleteAssociateValues(deletedAttrs, libData.id, ctx);
+                await deleteAssociatedValues.deleteAssociatedValues(deletedAttrs, libData.id, ctx);
             }
 
             // sending indexation event

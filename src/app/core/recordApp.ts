@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
@@ -25,7 +28,6 @@ export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.utils': utils = null,
-    'core.app.graphql': graphqlApp = null,
     'core.app.core.attribute': attributeApp = null,
     'core.app.core.indexationManager': indexationManagerApp = null
 }: IDeps = {}): ICoreRecordApp {

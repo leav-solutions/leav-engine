@@ -1,1 +1,1 @@
-export {default as deleteAssociateValues} from './deleteAssociateValues';
+export {default as deleteAssociatedValues} from './deleteAssociatedValues';

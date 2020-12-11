@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from 'infra/amqp/amqpService';
 import {IRecordDomain, IFindRecordParams} from 'domain/record/recordDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -12,7 +15,6 @@ import {v4 as uuidv4} from 'uuid';
 import {Operator} from '../../_types/record';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {IValueDomain} from 'domain/value/valueDomain';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -26,7 +28,6 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.value'?: IValueDomain;
 }
 
 export default function({
@@ -35,8 +36,7 @@ export default function({
     'core.infra.amqp.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library': libraryDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.value': valueDomain = null
+    'core.domain.attribute': attributeDomain = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
         const records = await recordDomain.find({
