@@ -13,4 +13,3 @@ export {default as plugins} from './pluginsApp';
 export {default as record} from './recordApp';
 export {default as tree} from './treeApp';
 export {default as value} from './valueApp';
-export {default as import} from './importApp';
