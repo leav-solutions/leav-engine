@@ -18,6 +18,12 @@ jest.mock('../../../../../../utils/utils', () => ({
 
 jest.mock('../../../../../../hooks/useLang');
 
+jest.mock('../../../../../views/ViewSelector', () => {
+    return function ViewSelector() {
+        return <div>ViewSelector</div>;
+    };
+});
+
 describe('InfosForm', () => {
     const library: Mockify<GET_LIBRARIES_libraries_list> = {
         id: 'test',

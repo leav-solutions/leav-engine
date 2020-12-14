@@ -13,6 +13,7 @@ import {GET_LIBRARIES_libraries_list} from '../../../../../../_gqlTypes/GET_LIBR
 import {LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
+import ViewSelector from '../../../../../views/ViewSelector';
 
 interface IInfosFormProps {
     library: GET_LIBRARIES_libraries_list | null;
@@ -22,7 +23,7 @@ interface IInfosFormProps {
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-type LibraryFormValues = Omit<GET_LIBRARIES_libraries_list, 'gqlNames'>;
+type LibraryFormValues = Omit<GET_LIBRARIES_libraries_list, 'gqlNames' | 'defaultView'> & {defaultView?: string | null};
 
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
@@ -33,7 +34,7 @@ const FormGroupWithMargin = styled(Form.Group)`
 const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfosFormProps): JSX.Element => {
     const {t} = useTranslation();
     const {availableLangs, defaultLang} = useLang();
-    const existingLib = library !== null;
+    const isExistingLib = library !== null;
 
     const defaultLibrary: LibraryFormValues = {
         id: '',
@@ -45,6 +46,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         behavior: LibraryBehavior.standard,
         attributes: [],
         permissions_conf: null,
+        defaultView: null,
         recordIdentityConf: {
             label: null,
             color: null,
@@ -52,7 +54,8 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         }
     };
 
-    const initialValues: LibraryFormValues = library === null ? defaultLibrary : library;
+    const initialValues: LibraryFormValues =
+        library === null ? defaultLibrary : {...library, defaultView: library?.defaultView?.id ?? null};
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
               key: a.id,
@@ -74,7 +77,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         .required()
         .matches(/^[a-z0-9_]+$/);
 
-    if (!existingLib) {
+    if (!isExistingLib) {
         // TODO: ID unicity validation is not debounced. As it's not trivial to implement, check future implementation
         // in formik (https://github.com/jaredpalmer/formik/pull/1597)
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
@@ -107,7 +110,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             const [field, subfield] = name.split('.');
 
             // On new attribute, automatically generate an ID based on label
-            if (!existingLib && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
+            if (!isExistingLib && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
                 setFieldValue('id', formatIDString(value));
             }
         };
@@ -119,7 +122,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             setFieldValue(name, value);
         };
 
-        const {id, label, behavior, recordIdentityConf} = values;
+        const {id, label, behavior, defaultView, recordIdentityConf} = values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_LIBRARIES_libraries_list>(fieldName, touched, serverValidationErrors || {}, inputErrors);
@@ -149,7 +152,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                 <FormFieldWrapper error={_getErrorByField('id')}>
                     <Form.Input
                         label={t('attributes.ID')}
-                        disabled={existingLib || readonly}
+                        disabled={isExistingLib || readonly}
                         name="id"
                         onChange={_handleChange}
                         onBlur={handleBlur}
@@ -159,7 +162,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                 <FormFieldWrapper error={_getErrorByField('behavior')}>
                     <Form.Select
                         label={t('libraries.behavior')}
-                        disabled={existingLib || readonly}
+                        disabled={isExistingLib || readonly}
                         name="behavior"
                         onChange={_handleChange}
                         onBlur={handleBlur}
@@ -167,6 +170,21 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         options={behaviorOptions}
                     />
                 </FormFieldWrapper>
+                {isExistingLib && (
+                    <FormFieldWrapper error={_getErrorByField('defaultView')}>
+                        <ViewSelector
+                            search
+                            selection
+                            label={t('libraries.default_view')}
+                            disabled={readonly}
+                            name="defaultView"
+                            value={defaultView ?? ''}
+                            library={library!.id}
+                            onChange={_handleChange}
+                            onBlur={handleBlur}
+                        />
+                    </FormFieldWrapper>
+                )}
                 <Form.Group grouped>
                     <label>{t('libraries.record_identity')}</label>
                     <FormFieldWrapper error={_getErrorByField('recordIdentityConf.label')}>

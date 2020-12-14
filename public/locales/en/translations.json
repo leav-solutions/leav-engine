@@ -124,7 +124,8 @@
         "select_tree_node": "Select an element",
         "behavior": "Behavior",
         "behavior_files": "Files",
-        "behavior_standard": "Standard"
+        "behavior_standard": "Standard",
+        "default_view": "Default view"
     },
     "permissions": {
         "title": "App Permissions",

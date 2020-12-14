@@ -27,7 +27,8 @@ describe('InfosTab', () => {
             id: 'products',
             label: {fr: 'Produits', en: 'Products'},
             behavior: 'standard',
-            recordIdentityConf: null
+            recordIdentityConf: null,
+            defaultView: null
         }
     };
 

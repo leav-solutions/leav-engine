@@ -34,6 +34,9 @@ export const getLibsQuery = gql`
                     color
                     preview
                 }
+                defaultView {
+                    id
+                }
                 gqlNames {
                     query
                     type

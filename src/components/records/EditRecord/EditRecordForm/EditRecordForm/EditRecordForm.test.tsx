@@ -142,6 +142,7 @@ const library: GET_LIBRARIES_libraries_list = {
     attributes: attributes as GET_LIBRARIES_libraries_list_attributes[],
     permissions_conf: null,
     recordIdentityConf: {label: null, color: null, preview: null},
+    defaultView: null,
     gqlNames: {
         query: 'produits',
         type: 'Produit',

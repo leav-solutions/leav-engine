@@ -41,7 +41,8 @@
         "permissions_relation_or": "OU",
         "behavior": "Comportement",
         "behavior_files": "Fichiers",
-        "behavior_standard": "Standard"
+        "behavior_standard": "Standard",
+        "default_view": "Vue par défault"
     },
     "attributes": {
         "title": "Attributs",
