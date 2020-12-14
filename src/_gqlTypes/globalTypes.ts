@@ -195,6 +195,7 @@ export interface LibraryInput {
     behavior?: LibraryBehavior | null;
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
+    defaultView?: string | null;
 }
 
 export interface PermissionActionInput {
