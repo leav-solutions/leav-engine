@@ -28,14 +28,11 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
-const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
-
-// TODO: add validation, handle lang, getfielderror on attribute
+// TODO: add validation, getfielderror on attribute
 /* tslint:disable-next-line:variable-name */
 const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfosFormProps): JSX.Element => {
     const {t} = useTranslation();
-    const availableLanguages = useLang().lang;
+    const {availableLangs, defaultLang} = useLang();
     const existingLib = library !== null;
 
     const defaultLibrary: LibraryFormValues = {
@@ -60,7 +57,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         ? initialValues.attributes.map(a => ({
               key: a.id,
               value: a.id,
-              text: localizedLabel(a.label, availableLanguages) || a.id
+              text: localizedLabel(a.label, availableLangs) || a.id
           }))
         : [];
     libAttributesOptions.unshift({key: '', value: '', text: ''});
@@ -85,7 +82,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
 
     const validationSchema: yup.ObjectSchema<Partial<LibraryFormValues>> = yup.object().shape({
         label: yup.object().shape({
-            [defaultLang || langs[0]]: yup.string().required()
+            [defaultLang || availableLangs[0]]: yup.string().required()
         }),
         id: idValidator,
         recordIdentityConf: yup.object().shape({
@@ -137,7 +134,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             <Form onSubmit={handleSubmit}>
                 <Form.Group grouped>
                     <label>{t('libraries.label')}</label>
-                    {langs.map(lang => (
+                    {availableLangs.map(lang => (
                         <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
                             <Form.Input
                                 label={`${lang} ${lang === defaultLang ? '*' : ''}`}
