@@ -12,5 +12,6 @@
     "setupFiles": [
         "<rootDir>/src/__tests__/setup.ts",
         "<rootDir>/src/__tests__/jestUtils.ts"
-    ]
+    ],
+    "testTimeout": 15000
 }
