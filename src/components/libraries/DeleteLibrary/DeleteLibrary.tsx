@@ -27,7 +27,7 @@ const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | n
     const _updateCache = (cache: DataProxy, {data: {deleteLibrary}}: any) => {
         const cacheData = cache.readQuery<GET_LIBRARIES, GET_LIBRARIESVariables>({
             query: getLibsQuery,
-            variables: {...addWildcardToFilters(filters), lang}
+            variables: {...addWildcardToFilters(filters)}
         });
 
         if (!cacheData) {
@@ -43,7 +43,7 @@ const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | n
 
         cache.writeQuery<GET_LIBRARIES, GET_LIBRARIESVariables>({
             query: getLibsQuery,
-            variables: {...addWildcardToFilters(filters), lang},
+            variables: {...addWildcardToFilters(filters)},
             data: {libraries: {...cacheData.libraries, totalCount: newCount, list: newList}}
         });
     };

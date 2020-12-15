@@ -11,9 +11,9 @@ import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchM
 import {isValueNull, versionObjToGraphql} from '../../../../../utils';
 import {CREATE_RECORD, CREATE_RECORDVariables} from '../../../../../_gqlTypes/CREATE_RECORD';
 import {
-    GET_LIBRARIES_libraries_list,
-    GET_LIBRARIES_libraries_list_attributes
-} from '../../../../../_gqlTypes/GET_LIBRARIES';
+    GET_LIB_BY_ID_libraries_list,
+    GET_LIB_BY_ID_libraries_list_attributes
+} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, TreeElementInput, ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
@@ -30,9 +30,9 @@ import Loading from '../../../../shared/Loading';
 import CreateRecordForm from '../CreateRecordForm';
 
 interface ICreateRecordFormContainerProps {
-    library: GET_LIBRARIES_libraries_list;
+    library: GET_LIB_BY_ID_libraries_list;
     recordId?: string;
-    attributes: GET_LIBRARIES_libraries_list_attributes[];
+    attributes: GET_LIB_BY_ID_libraries_list_attributes[];
     valueVersion?: {[treeName: string]: TreeElementInput};
     onIdentityUpdate?: (identity: RecordIdentity_whoAmI) => void;
     setSubmitFunc?: RecordEdition.SetSubmitFuncRef;
@@ -40,7 +40,7 @@ interface ICreateRecordFormContainerProps {
     onPostSave?: (record: RecordIdentity_whoAmI) => void;
 }
 
-const _extractValueToSave = (value: IGenericValue, attribute: GET_LIBRARIES_libraries_list_attributes) => {
+const _extractValueToSave = (value: IGenericValue, attribute: GET_LIB_BY_ID_libraries_list_attributes) => {
     let extractedValue;
 
     switch (attribute.type) {

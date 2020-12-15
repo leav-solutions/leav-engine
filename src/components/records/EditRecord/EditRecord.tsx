@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/react-hooks';
 import React from 'react';
-import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
-import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBRARIES';
+import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
+import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {RecordEdition} from '../../../_types/records';
@@ -31,7 +31,7 @@ function EditRecord({
     onPostSave,
     inModal = false
 }: IEditRecordProps): JSX.Element {
-    const {data, loading, error} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
+    const {data, loading, error} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
         variables: {id: library}
     });
 

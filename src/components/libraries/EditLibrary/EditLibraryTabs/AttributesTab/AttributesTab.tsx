@@ -5,20 +5,20 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
 import useLang from '../../../../../hooks/useLang';
-import {getLibsQuery} from '../../../../../queries/libraries/getLibrariesQuery';
+import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
 import {
     SaveLibAttributesMutation,
     saveLibAttributesMutation
 } from '../../../../../queries/libraries/saveLibAttributesMutation';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {GET_LIBRARIES_libraries_list} from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import AttributesList from '../../../../attributes/AttributesList';
 import AttributesSelectionModal from '../../../../attributes/AttributesSelectionModal';
 import EditAttribute from '../../../../attributes/EditAttribute';
 import UnlinkLibAttribute from '../../../UnlinkLibAttribute';
 
 interface IAttributesTabProps {
-    library: GET_LIBRARIES_libraries_list | null;
+    library: GET_LIB_BY_ID_libraries_list | null;
     readOnly: boolean;
 }
 
@@ -53,7 +53,7 @@ const AttributesTab = ({library, readOnly}: IAttributesTabProps): JSX.Element | 
                     const saveAttributes = async (attributesToSave: string[]) => {
                         return saveLibAttr({
                             variables: {libId: library.id, attributes: attributesToSave},
-                            refetchQueries: [{query: getLibsQuery, variables: {id: library.id, lang}}]
+                            refetchQueries: [{query: getLibByIdQuery, variables: {id: library.id}}]
                         });
                     };
 

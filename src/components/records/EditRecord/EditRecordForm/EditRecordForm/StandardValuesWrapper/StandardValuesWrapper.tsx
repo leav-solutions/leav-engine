@@ -7,14 +7,14 @@ import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
-import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list_attributes} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, ValueInput} from '../../../../../../_gqlTypes/globalTypes';
 import {IValue} from '../../../../../../_types/records';
 import EditRecordInput from './EditRecordInput';
 import reducer, {StandardValuesActionTypes} from './StandardValuesReducer';
 
 interface IStandardValuesWrapperProps {
-    attribute: GET_LIBRARIES_libraries_list_attributes;
+    attribute: GET_LIB_BY_ID_libraries_list_attributes;
     values: IValue | IValue[];
     readonly: boolean;
     onSubmit: (value: ValueInput) => void;

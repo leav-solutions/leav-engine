@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GET_LIBRARIES_libraries_list, GET_LIBRARIES_libraries_list_attributes} from '../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list, GET_LIB_BY_ID_libraries_list_attributes} from '../../_gqlTypes/GET_LIB_BY_ID';
 import {RecordIdentity_whoAmI} from '../../_gqlTypes/RecordIdentity';
 import {IGenericValue} from '../../_types/records';
 import {EditRecordClick, SelectionChanged} from './Navigator';
@@ -20,11 +20,11 @@ export interface IReducerState {
     multipleSelection: boolean;
     selection: RecordIdentity_whoAmI[];
     selectedRoot: string | null;
-    rootsList: GET_LIBRARIES_libraries_list[];
+    rootsList: GET_LIB_BY_ID_libraries_list[];
     selectedRootLabel: string | null;
     selectedRootQuery: string | null;
     selectedRootFilter: string | null;
-    selectedRootAttributes: GET_LIBRARIES_libraries_list_attributes[];
+    selectedRootAttributes: GET_LIB_BY_ID_libraries_list_attributes[];
     lang: string[];
     filters: IFilter[];
     showFilters: boolean;

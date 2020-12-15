@@ -6,7 +6,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
-import {GET_LIBRARIES_libraries_list} from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
@@ -21,7 +21,7 @@ jest.mock(
 );
 
 describe('PermissionsTab', () => {
-    const library: GET_LIBRARIES_libraries_list = {
+    const library: GET_LIB_BY_ID_libraries_list = {
         ...mockLibrary,
         label: {fr: 'Test 1', en: ''}
     };

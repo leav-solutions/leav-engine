@@ -7,9 +7,9 @@ import React from 'react';
 import EditLibraryTabs from '.';
 import useUserData from '../../../../hooks/useUserData';
 import {
-    GET_LIBRARIES_libraries_list,
-    GET_LIBRARIES_libraries_list_attributes
-} from '../../../../_gqlTypes/GET_LIBRARIES';
+    GET_LIB_BY_ID_libraries_list,
+    GET_LIB_BY_ID_libraries_list_attributes
+} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeFormat, AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {Mockify} from '../../../../_types/Mockify';
 
@@ -25,7 +25,7 @@ jest.mock('../../../../hooks/useUserData', () => ({
 describe('EditLibraryForm', () => {
     const mockHistory: Mockify<History> = {};
 
-    const attributes: Mockify<GET_LIBRARIES_libraries_list_attributes[]> = [
+    const attributes: Mockify<GET_LIB_BY_ID_libraries_list_attributes[]> = [
         {
             id: 'test_attr',
             type: AttributeType.simple,
@@ -41,11 +41,11 @@ describe('EditLibraryForm', () => {
         }
     ];
 
-    const library: Mockify<GET_LIBRARIES_libraries_list> = {
+    const library: Mockify<GET_LIB_BY_ID_libraries_list> = {
         id: 'test',
         label: {fr: 'Test', en: null},
         system: false,
-        attributes: attributes as GET_LIBRARIES_libraries_list_attributes[],
+        attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[],
         recordIdentityConf: {label: null, color: null, preview: null}
     };
 
@@ -65,7 +65,7 @@ describe('EditLibraryForm', () => {
     test('Render form for existing lib', async () => {
         const comp = shallow(
             <EditLibraryTabs
-                library={library as GET_LIBRARIES_libraries_list}
+                library={library as GET_LIB_BY_ID_libraries_list}
                 readOnly={false}
                 history={mockHistory as History}
             />
@@ -127,7 +127,7 @@ describe('EditLibraryForm', () => {
 
         const comp = shallow(
             <EditLibraryTabs
-                library={library as GET_LIBRARIES_libraries_list}
+                library={library as GET_LIB_BY_ID_libraries_list}
                 readOnly={false}
                 history={mockHistory as History}
             />

@@ -5,11 +5,11 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Input} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_LIBRARIES_libraries_list_attributes} from '../../../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list_attributes} from '../../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {IGenericValue, IValue} from '../../../../../../../_types/records';
 
 interface IEditRecordInputProps {
-    attribute: GET_LIBRARIES_libraries_list_attributes;
+    attribute: GET_LIB_BY_ID_libraries_list_attributes;
     value: IGenericValue;
     onSubmit: () => void;
     onDelete: () => void;

@@ -7,19 +7,19 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {
-    GET_LIBRARIES_libraries_list,
-    GET_LIBRARIES_libraries_list_attributes
-} from '../../../../../_gqlTypes/GET_LIBRARIES';
+    GET_LIB_BY_ID_libraries_list,
+    GET_LIB_BY_ID_libraries_list_attributes
+} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 
-// attributes: GET_LIBRARIES_libraries_list_attributes[];
+// attributes: GET_LIB_BY_ID_libraries_list_attributes[];
 // errors?: IEditRecordFormError;
 // onSave?: (values: RecordData) => void;
 // setSubmitFuncRef?: RecordEdition.SetSubmitFuncRef;
 // inModal?: boolean;
-// library: GET_LIBRARIES_libraries_list;
+// library: GET_LIB_BY_ID_libraries_list;
 // valueVersion?: {[treeName: string]: TreeElementInput};
 // onIdentityUpdate?: any;
 // initialRecordId?: string;
@@ -134,12 +134,12 @@ const attributes = [
     }
 ];
 
-const library: GET_LIBRARIES_libraries_list = {
+const library: GET_LIB_BY_ID_libraries_list = {
     id: 'produits',
     system: false,
     behavior: LibraryBehavior.standard,
     label: {fr: 'produits', en: 'products'},
-    attributes: attributes as GET_LIBRARIES_libraries_list_attributes[],
+    attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[],
     permissions_conf: null,
     recordIdentityConf: {label: null, color: null, preview: null},
     defaultView: null,
@@ -152,7 +152,7 @@ const library: GET_LIBRARIES_libraries_list = {
     }
 };
 
-const query = getRecordDataQuery(library, attributes as GET_LIBRARIES_libraries_list_attributes[]);
+const query = getRecordDataQuery(library, attributes as GET_LIB_BY_ID_libraries_list_attributes[]);
 const requestAndResult = {
     request: {
         query,
@@ -238,7 +238,7 @@ describe('EditRecordForm', () => {
                 <MockedLangContextProvider>
                     <MockedProvider mocks={mocks} addTypename={false}>
                         <EditRecordForm
-                            attributes={attributes as GET_LIBRARIES_libraries_list_attributes[]}
+                            attributes={attributes as GET_LIB_BY_ID_libraries_list_attributes[]}
                             library={library}
                             initialRecordId={'1234567'}
                         />

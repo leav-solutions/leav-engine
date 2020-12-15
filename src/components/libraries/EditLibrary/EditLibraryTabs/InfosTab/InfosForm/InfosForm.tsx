@@ -9,21 +9,21 @@ import styled from 'styled-components';
 import * as yup from 'yup';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError, localizedLabel} from '../../../../../../utils';
-import {GET_LIBRARIES_libraries_list} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import ViewSelector from '../../../../../views/ViewSelector';
 
 interface IInfosFormProps {
-    library: GET_LIBRARIES_libraries_list | null;
+    library: GET_LIB_BY_ID_libraries_list | null;
     onSubmit: (formData: any) => void;
     readonly: boolean;
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-type LibraryFormValues = Omit<GET_LIBRARIES_libraries_list, 'gqlNames' | 'defaultView'> & {defaultView?: string | null};
+type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'gqlNames' | 'defaultView'> & {defaultView?: string | null};
 
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
@@ -125,7 +125,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         const {id, label, behavior, defaultView, recordIdentityConf} = values;
 
         const _getErrorByField = (fieldName: string): string =>
-            getFieldError<GET_LIBRARIES_libraries_list>(fieldName, touched, serverValidationErrors || {}, inputErrors);
+            getFieldError<GET_LIB_BY_ID_libraries_list>(fieldName, touched, serverValidationErrors || {}, inputErrors);
 
         const behaviorOptions = Object.values(LibraryBehavior).map(b => ({
             key: b,

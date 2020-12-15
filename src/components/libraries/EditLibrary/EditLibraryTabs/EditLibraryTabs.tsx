@@ -6,7 +6,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
 import useUserData from '../../../../hooks/useUserData';
-import {GET_LIBRARIES_libraries_list} from '../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsActions} from '../../../../_gqlTypes/globalTypes';
 import AttributesTab from './AttributesTab';
 import FormsTab from './FormsTab';
@@ -15,7 +15,7 @@ import NavigatorTab from './NavigatorTab';
 import PermissionsTab from './PermissionsTab';
 
 interface IEditLibraryTabsProps {
-    library: GET_LIBRARIES_libraries_list | null;
+    library: GET_LIB_BY_ID_libraries_list | null;
     readOnly: boolean;
     history: History;
     location?: Location;
@@ -47,7 +47,7 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
             render: () => {
                 return (
                     <Tab.Pane key="permissions" className="grow flex-col height100">
-                        <PermissionsTab library={library as GET_LIBRARIES_libraries_list} readonly={readOnly} />
+                        <PermissionsTab library={library as GET_LIB_BY_ID_libraries_list} readonly={readOnly} />
                     </Tab.Pane>
                 );
             }
