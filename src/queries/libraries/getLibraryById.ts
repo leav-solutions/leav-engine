@@ -16,6 +16,10 @@ export const getLibByIdQuery = gql`
                 attributes {
                     ...AttributeDetails
                 }
+                fullTextAttributes {
+                    id
+                    label
+                }
                 permissions_conf {
                     permissionTreeAttributes {
                         id

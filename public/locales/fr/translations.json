@@ -42,7 +42,8 @@
         "behavior": "Comportement",
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
-        "default_view": "Vue par défault"
+        "default_view": "Vue par défault",
+        "fulltext_attributes": "Attributs de recherche fulltext"
     },
     "attributes": {
         "title": "Attributs",

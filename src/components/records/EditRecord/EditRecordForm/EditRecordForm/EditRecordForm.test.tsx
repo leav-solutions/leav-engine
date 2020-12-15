@@ -14,17 +14,6 @@ import {LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 
-// attributes: GET_LIB_BY_ID_libraries_list_attributes[];
-// errors?: IEditRecordFormError;
-// onSave?: (values: RecordData) => void;
-// setSubmitFuncRef?: RecordEdition.SetSubmitFuncRef;
-// inModal?: boolean;
-// library: GET_LIB_BY_ID_libraries_list;
-// valueVersion?: {[treeName: string]: TreeElementInput};
-// onIdentityUpdate?: any;
-// initialRecordId?: string;
-// setRecordIdentity?: (input: React.SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
-
 const lang = ['en', 'fr'];
 
 const attributes = [
@@ -143,6 +132,7 @@ const library: GET_LIB_BY_ID_libraries_list = {
     permissions_conf: null,
     recordIdentityConf: {label: null, color: null, preview: null},
     defaultView: null,
+    fullTextAttributes: [],
     gqlNames: {
         query: 'produits',
         type: 'Produit',

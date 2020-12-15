@@ -23,7 +23,10 @@ interface IInfosFormProps {
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'gqlNames' | 'defaultView'> & {defaultView?: string | null};
+type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'gqlNames' | 'fullTextAttributes' | 'defaultView'> & {
+    defaultView?: string | null;
+    fullTextAttributes: string[];
+};
 
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
@@ -47,6 +50,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         attributes: [],
         permissions_conf: null,
         defaultView: null,
+        fullTextAttributes: [],
         recordIdentityConf: {
             label: null,
             color: null,
@@ -55,7 +59,14 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
     };
 
     const initialValues: LibraryFormValues =
-        library === null ? defaultLibrary : {...library, defaultView: library?.defaultView?.id ?? null};
+        library === null
+            ? defaultLibrary
+            : {
+                  ...library,
+                  defaultView: library?.defaultView?.id ?? null,
+                  fullTextAttributes: library?.fullTextAttributes ? library.fullTextAttributes.map(a => a.id) : []
+              };
+
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
               key: a.id,
@@ -122,10 +133,10 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             setFieldValue(name, value);
         };
 
-        const {id, label, behavior, defaultView, recordIdentityConf} = values;
+        const {id, label, behavior, recordIdentityConf, defaultView, fullTextAttributes} = values;
 
         const _getErrorByField = (fieldName: string): string =>
-            getFieldError<GET_LIB_BY_ID_libraries_list>(fieldName, touched, serverValidationErrors || {}, inputErrors);
+            getFieldError<LibraryFormValues>(fieldName, touched, serverValidationErrors || {}, inputErrors);
 
         const behaviorOptions = Object.values(LibraryBehavior).map(b => ({
             key: b,
@@ -168,6 +179,19 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         onBlur={handleBlur}
                         value={behavior}
                         options={behaviorOptions}
+                    />
+                </FormFieldWrapper>
+                <FormFieldWrapper error={_getErrorByField('libraries.fulltext_attributes')}>
+                    <Form.Dropdown
+                        search
+                        selection
+                        multiple
+                        options={libAttributesOptions}
+                        name="fullTextAttributes"
+                        disabled={readonly}
+                        label={t('libraries.fulltext_attributes')}
+                        value={fullTextAttributes}
+                        onChange={_handleChange}
                     />
                 </FormFieldWrapper>
                 {isExistingLib && (

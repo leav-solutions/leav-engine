@@ -42,7 +42,8 @@
         "permissions_relation_or": "OR",
         "behavior": "Behavior",
         "behavior_files": "Files",
-        "behavior_standard": "Standard"
+        "behavior_standard": "Standard",
+        "fulltext_attributes": "Fulltext search attributes"
     },
     "attributes": {
         "title": "Attributes",

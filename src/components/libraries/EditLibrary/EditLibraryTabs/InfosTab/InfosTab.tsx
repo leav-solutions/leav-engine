@@ -66,6 +66,7 @@ function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
                     },
                     behavior: libData.behavior,
                     defaultView: libData.defaultView || null,
+                    fullTextAttributes: libData.fullTextAttributes,
                     recordIdentityConf:
                         libData.recordIdentityConf !== null
                             ? {

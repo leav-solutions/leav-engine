@@ -161,6 +161,11 @@ export type GET_LIB_BY_ID_libraries_list_attributes =
     | GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute
     | GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute;
 
+export interface GET_LIB_BY_ID_libraries_list_fullTextAttributes {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
     label: SystemTranslation | null;
@@ -205,6 +210,7 @@ export interface GET_LIB_BY_ID_libraries_list {
     label: SystemTranslation | null;
     behavior: LibraryBehavior;
     attributes: GET_LIB_BY_ID_libraries_list_attributes[] | null;
+    fullTextAttributes: GET_LIB_BY_ID_libraries_list_fullTextAttributes[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_permissions_conf | null;
     recordIdentityConf: GET_LIB_BY_ID_libraries_list_recordIdentityConf | null;
     defaultView: GET_LIB_BY_ID_libraries_list_defaultView | null;

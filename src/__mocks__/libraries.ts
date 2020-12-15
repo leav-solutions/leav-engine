@@ -16,6 +16,7 @@ export const mockLibrary = {
     permissions_conf: null,
     recordIdentityConf: null,
     defaultView: null,
+    fullTextAttributes: [],
     gqlNames: {
         query: 'products',
         type: 'Products',
