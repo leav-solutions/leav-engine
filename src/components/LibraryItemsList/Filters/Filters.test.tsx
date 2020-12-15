@@ -32,6 +32,12 @@ jest.mock(
         }
 );
 
+jest.mock('../SearchItems', () => {
+    return function SearchItems() {
+        return <div>SearchItems</div>;
+    };
+});
+
 describe('Filters', () => {
     const stateItems = LibraryItemListInitialState;
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();

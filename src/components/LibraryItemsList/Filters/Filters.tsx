@@ -1,13 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FilterFilled} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
-import styled, {CSSObject} from 'styled-components';
+import styled from 'styled-components';
+import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import themingVar from '../../../themingVar';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
@@ -15,7 +16,7 @@ import {
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../LibraryItemsListReducer';
-import SelectView from '../SelectView';
+import SearchItems from '../SearchItems';
 import AddFilter from './AddFilter';
 import FilterItem from './FilterItem';
 import './Filters.css';
@@ -23,21 +24,9 @@ import FilterSeparator from './FilterSeparator';
 import {getConditionOptions, getOperatorOptions} from './FiltersOptions';
 import {getRequestFromFilter} from './getRequestFromFilter';
 
-interface WrapperFilterProps {
-    visible: 1 | 0;
-    style?: CSSObject;
-}
-
-const WrapperFilter = styled.div<WrapperFilterProps>`
-    display: ${({visible}) => (visible ? 'flex' : 'none')};
-    position: relative;
-    height: 100vh;
-    margin-right: 16px;
-`;
-
 const Side = styled.div`
-    border-right: 1px solid #ebebeb;
-    padding-right: 1rem;
+    border-right: 1px solid ${themingVar['@divider-color']};
+    padding: 0 1rem;
     height: 100%;
     width: 100%;
 `;
@@ -87,14 +76,10 @@ const move = (
     return filterResult;
 };
 
-interface IFiltersProps {
-    stateItems: LibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-}
-
-function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
+function Filters(): JSX.Element {
     const {t} = useTranslation();
 
+    const {stateItems, dispatchItems} = useStateItem();
     const [activeLibrary] = useActiveLibrary();
 
     const [showAttr, setShowAttr] = useState(false);
@@ -241,13 +226,6 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
         setFilters([]);
     }, [activeLibraryId, setFilters]);
 
-    const handleHide = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS,
-            showFilters: false
-        });
-    };
-
     const canApplyFilter =
         stateItems.searchFullTextActive || !flatArray(filters).filter(f => f.type === FilterTypes.filter).length;
 
@@ -258,10 +236,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
         : t('filters.submit');
 
     return (
-        <WrapperFilter
-            visible={stateItems.showFilters ? 1 : 0}
-            className={stateItems.showFilters ? 'wrapped-filter-open' : 'wrapped-filter-close'}
-        >
+        <>
             <AddFilter
                 stateItems={stateItems}
                 dispatchItems={dispatchItems}
@@ -275,16 +250,10 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingLeft: '1rem'
+                        justifyContent: 'space-between'
                     }}
                 >
-                    <div>
-                        <Button icon={<FilterFilled />} onClick={handleHide} />
-                    </div>
-                    <div>
-                        <SelectView />
-                    </div>
+                    <SearchItems />
                 </div>
 
                 <FilterActions>
@@ -326,7 +295,7 @@ function Filters({stateItems, dispatchItems}: IFiltersProps): JSX.Element {
                     />
                 </FilterList>
             </Side>
-        </WrapperFilter>
+        </>
     );
 }
 

@@ -1,20 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, RedoOutlined} from '@ant-design/icons';
-import {Button, Select, Tooltip} from 'antd';
+import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
+import {Button, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {DisplayListItemTypes} from '../../../_types/types';
+import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
+import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
+import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
+import DisplayOptions from '../DisplayOptions';
 import {
     LibraryItemListReducerAction,
     LibraryItemListReducerActionTypes,
     LibraryItemListState
 } from '../LibraryItemsListReducer';
+import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
-import SearchItems from '../SearchItems';
 import SelectView from '../SelectView';
 
 interface IMenuItemListProps {
@@ -27,109 +30,77 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
 `;
 
 const SubGroup = styled.div`
     display: grid;
-    grid-template-columns: repeat(3, auto);
-    grid-column-gap: 1rem;
+    grid-column-gap: 2rem;
     align-items: center;
     justify-content: end;
+`;
+
+const SubGroupFirst = styled(SubGroup)`
+    grid-template-columns: repeat(5, auto);
+    column-gap: calc(2rem + 1px); ;
+`;
+
+const SubGroupLast = styled(SubGroup)`
+    grid-template-columns: 10rem repeat(3, auto);
 `;
 
 function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const displayOptions = [
-        {
-            key: 'list-small',
-            text: t('items_list.display.list-small'),
-            value: DisplayListItemTypes.listSmall,
-            icon: <MenuOutlined />
-        },
-        {
-            key: 'list-medium',
-            text: t('items_list.display.list-medium'),
-            value: DisplayListItemTypes.listMedium,
-            icon: <MenuOutlined />
-        },
-        {
-            key: 'list-big',
-            text: t('items_list.display.list-big'),
-            value: DisplayListItemTypes.listBig,
-            icon: <MenuOutlined />
-        },
-        {
-            key: 'tile',
-            text: t('items_list.display.tile'),
-            value: DisplayListItemTypes.tile,
-            icon: <AppstoreFilled />
-        }
-    ];
-
-    const changeDisplay = (value: string) => {
-        const newDisplay = value?.toString();
-
-        if (newDisplay) {
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE,
-                displayType: DisplayListItemTypes[newDisplay]
-            });
-        }
-    };
-
     const toggleShowFilter = () => {
+        const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.filters;
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SHOW_FILTERS,
-            showFilters: !stateItems.showFilters
+            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
+            sideItems: {
+                visible,
+                type: TypeSideItem.filters
+            }
         });
     };
 
+    const handleHide = () => {
+        dispatchItems({
+            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
+            sideItems: {
+                visible: !stateItems.sideItems.visible,
+                type: stateItems.sideItems.type || TypeSideItem.filters
+            }
+        });
+    };
+
+    const panelActive = stateItems.sideItems.visible;
+
     return (
         <Wrapper>
-            {!stateItems.showFilters && (
-                <>
-                    <div>
-                        <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
-                            <Button icon={<FilterOutlined />} name="show-filter" onClick={toggleShowFilter} />
-                        </Tooltip>
-                    </div>
-                </>
-            )}
+            <SubGroupFirst>
+                <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
 
-            <div>
-                <MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />
-            </div>
-
-            <div>
-                <SearchItems />
-            </div>
-
-            <div>
-                <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
-                    {t('items_list.new')}
-                </PrimaryBtn>
-            </div>
-
-            <SubGroup>
                 <SelectView />
 
-                <Select
-                    placeholder={t('items_list.display_type')}
-                    defaultValue={stateItems.displayType}
-                    onChange={value => changeDisplay(value)}
-                    bordered={true}
-                >
-                    {displayOptions.map(display => (
-                        <Select.Option key={display.key} value={display.value}>
-                            <span>{display.icon}</span>
-                            {display.text}
-                        </Select.Option>
-                    ))}
-                </Select>
+                <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
+                    <Button icon={<SearchOutlined />} name="show-filter" onClick={toggleShowFilter} />
+                </Tooltip>
+
+                <MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />
+            </SubGroupFirst>
+
+            <SubGroupLast>
+                <div>
+                    <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
+                        {t('items_list.new')}
+                    </PrimaryBtn>
+                </div>
+
+                <MenuItemActions />
+                <DisplayOptions />
 
                 <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()}></Button>
-            </SubGroup>
+            </SubGroupLast>
         </Wrapper>
     );
 }

@@ -15,9 +15,9 @@ jest.mock('../MenuSelection', () => {
     };
 });
 
-jest.mock('../SearchItems', () => {
-    return function SearchItems() {
-        return <div>SearchItems</div>;
+jest.mock('../MenuItemActions', () => {
+    return function MenuItemActions() {
+        return <div>MenuItemActions</div>;
     };
 });
 
@@ -26,39 +26,45 @@ describe('MenuItemList', () => {
 
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
+    test('should have SelectView', async () => {
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <MenuItemList stateItems={{...stateItems}} dispatchItems={dispatchItems} refetch={jest.fn()} />
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(comp.find('SelectView')).toHaveLength(1);
+    });
+
     test('should have button show filter', async () => {
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <MenuItemList
-                        stateItems={{...stateItems, showFilters: false}}
-                        dispatchItems={dispatchItems}
-                        refetch={jest.fn()}
-                    />
+                    <MenuItemList stateItems={{...stateItems}} dispatchItems={dispatchItems} refetch={jest.fn()} />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find(Button).first().prop('name')).toBe('show-filter');
+        expect(comp.find(Button).at(3).prop('name')).toBe('show-filter');
     });
 
-    test("shouldn't have button show filter", async () => {
+    test('should have change column button', async () => {
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <MenuItemList
-                        stateItems={{...stateItems, showFilters: false}}
-                        dispatchItems={dispatchItems}
-                        refetch={jest.fn()}
-                    />
+                    <MenuItemList stateItems={{...stateItems}} dispatchItems={dispatchItems} refetch={jest.fn()} />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find(Button).first().prop('name')).toBe('show-filter');
+        expect(comp.find('MenuItemActions')).toHaveLength(1);
     });
 });

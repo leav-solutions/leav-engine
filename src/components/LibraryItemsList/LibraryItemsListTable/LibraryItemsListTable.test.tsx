@@ -7,7 +7,6 @@ import {act} from 'react-dom/test-utils';
 import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
-import ChooseTableColumns from './ChooseTableColumns';
 import LibraryItemsListTable from './LibraryItemsListTable';
 import LibraryItemsModal from './LibraryItemsModal';
 
@@ -60,7 +59,6 @@ describe('LibraryItemsListTable', () => {
                 </MockedProviderWithFragments>
             );
         });
-        expect(comp.find(ChooseTableColumns)).toHaveLength(1);
         expect(comp.html()).toContain('<table');
         expect(comp.find(LibraryItemsModal)).toHaveLength(1);
     });

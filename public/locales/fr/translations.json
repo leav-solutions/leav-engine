@@ -193,5 +193,12 @@
         "base-message": "Bienvenue sur l'explorateur",
         "active-lib": "Vous êtes sur la bibliothèque {{lib}}",
         "active-tree": "Vous êtes sur l'arbre {{tree}}"
+    },
+    "view": {
+        "list": "Liste des vues",
+        "my-views":"Mes vues",
+        "type-list": "Vue Liste",
+        "type-tile": "Vue Tuile",
+        "delete": "Supprimer"
     }
 }

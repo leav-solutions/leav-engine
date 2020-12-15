@@ -1,30 +1,58 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckSquareTwoTone, DownOutlined} from '@ant-design/icons';
+import {CheckSquareTwoTone, DeleteOutlined, DownOutlined, LogoutOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {
-    LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
-} from '../LibraryItemsListReducer';
+import {useStateItem} from '../../../Context/StateItemsContext';
+import themingVars from '../../../themingVar';
+import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 interface IMenuItemListSelectedProps {
-    stateItems: LibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
+    active: boolean;
 }
 
-const Wrapper = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+interface IWrapperProps {
+    active: boolean;
+}
+
+const Wrapper = styled.div<IWrapperProps>`
+    display: ${({active}) => (active ? 'grid' : 'none')};
+    place-items: center;
+
+    position: absolute;
+    top: 0;
+
+    width: 100%;
+    background: ${themingVars['@default-bg']};
+    height: 4rem;
+    z-index: 11;
+
+    animation: ${({active}) => (active ? 'moveToBottom 1s ease' : 'none')};
+
+    & > div {
+        display: grid;
+        place-items: center;
+        grid-template-columns: repeat(4, auto);
+        column-gap: 1rem;
+    }
+
+    @keyframes moveToBottom {
+        from {
+            top: -100px;
+        }
+        to {
+            top: 0;
+        }
+    }
 `;
 
-function MenuItemListSelected({stateItems, dispatchItems}: IMenuItemListSelectedProps): JSX.Element {
+function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element {
     const {t} = useTranslation();
+
+    const {stateItems, dispatchItems} = useStateItem();
 
     const [countItemsSelected, setCountItemsSelected] = useState(0);
 
@@ -99,46 +127,54 @@ function MenuItemListSelected({stateItems, dispatchItems}: IMenuItemListSelected
     };
 
     return (
-        <Wrapper>
-            <Dropdown
-                overlay={
-                    <Menu>
-                        <Menu.Item onClick={selectVisible}>
-                            {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
-                        </Menu.Item>
-                        <Menu.Item onClick={selectAll}>
-                            {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
-                        </Menu.Item>
-                        <Menu.Item onClick={unselectAll}>{t('menu-selection.unselect-all')}</Menu.Item>
-                    </Menu>
-                }
-            >
-                <span>
-                    {stateItems.allSelected ? (
-                        <>
-                            <CheckSquareTwoTone /> {t('menu-selection.all-selected-enabled')}
-                        </>
-                    ) : (
-                        t('menu-selection.nb-selected', {nb: countItemsSelected})
-                    )}
-                    <DownOutlined style={{paddingLeft: 12}} />
-                </span>
-            </Dropdown>
-
-            <Dropdown
-                overlay={
-                    <Menu>
-                        <Menu.Item>some actions</Menu.Item>
-                    </Menu>
-                }
-            >
-                <span>
-                    {t('menu-selection.actions')} <DownOutlined />
-                </span>
-            </Dropdown>
-
+        <Wrapper active={active}>
             <div>
-                <Button onClick={disableModeSelection}>{t('menu-selection.quit')}</Button>
+                <Dropdown
+                    overlay={
+                        <Menu>
+                            <Menu.Item onClick={selectVisible}>
+                                {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
+                            </Menu.Item>
+                            <Menu.Item onClick={selectAll}>
+                                {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
+                            </Menu.Item>
+                            <Menu.Item onClick={unselectAll}>{t('menu-selection.unselect-all')}</Menu.Item>
+                        </Menu>
+                    }
+                >
+                    <Button>
+                        {stateItems.allSelected ? (
+                            <>
+                                <CheckSquareTwoTone /> {t('menu-selection.all-selected-enabled')}
+                            </>
+                        ) : (
+                            t('menu-selection.nb-selected', {nb: countItemsSelected})
+                        )}
+                        <DownOutlined style={{paddingLeft: 12}} />
+                    </Button>
+                </Dropdown>
+
+                <Dropdown
+                    overlay={
+                        <Menu>
+                            <Menu.Item>some actions</Menu.Item>
+                        </Menu>
+                    }
+                >
+                    <Button>
+                        {t('menu-selection.actions')} <DownOutlined />
+                    </Button>
+                </Dropdown>
+
+                <div>
+                    <Button icon={<DeleteOutlined />}>Delete</Button>
+                </div>
+
+                <div>
+                    <Button icon={<LogoutOutlined />} onClick={disableModeSelection}>
+                        {t('menu-selection.quit')}
+                    </Button>
+                </div>
             </div>
         </Wrapper>
     );

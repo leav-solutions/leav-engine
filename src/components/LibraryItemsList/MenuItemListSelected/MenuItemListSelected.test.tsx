@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
-import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
+import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import MenuItemListSelected from './MenuItemListSelected';
 
 describe('MenuItemListSelected', () => {
-    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
-
     test('should have quit mode selection button', async () => {
         const comp = mount(
-            <MenuItemListSelected stateItems={LibraryItemListInitialState} dispatchItems={dispatchItems} />
+            <MockStateItems>
+                <MenuItemListSelected active={true} />
+            </MockStateItems>
         );
 
-        expect(comp.find('button').text()).toContain('menu-selection.quit');
+        expect(comp.text()).toContain('menu-selection.quit');
     });
 });

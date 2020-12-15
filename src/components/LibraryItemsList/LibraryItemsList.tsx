@@ -6,6 +6,7 @@ import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
+import {panelSize} from '../../constants/constants';
 import {StateItemsContext} from '../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
@@ -19,11 +20,11 @@ import {
 import {checkTypeIsLink, localizedLabel} from '../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IItem, NotificationType, OrderSearch} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
-import Filters from './Filters';
 import reducer, {LibraryItemListInitialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
 import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
+import SideItems from './SideItems';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -32,16 +33,20 @@ interface IWrapperProps {
 
 const Wrapper = styled.div<IWrapperProps>`
     display: ${({showSide}) => (showSide ? 'grid' : 'inherit')};
-    grid-template-columns: 25rem auto;
+    grid-template-columns: ${panelSize} auto;
     grid-template-rows: 100%;
     height: 100%;
-    padding: 1rem;
+    position: relative;
 `;
 
 const MenuWrapper = styled.div`
     border-bottom: 1px solid rgb(235, 237, 240);
     padding: 0 1rem;
-    height: 3rem;
+    height: 4rem;
+
+    display: flex;
+    align-content: center;
+    justify-content: space-around;
 `;
 
 function LibraryItemsList(): JSX.Element {
@@ -202,18 +207,20 @@ function LibraryItemsList(): JSX.Element {
         return <div>error</div>;
     }
 
+    console.log(state.sideItems.visible);
+
     return (
         <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
-            <Wrapper showSide={state.showFilters} className={state.showFilters ? 'wrapper-open' : 'wrapper-close'}>
-                <Filters stateItems={state} dispatchItems={dispatch} />
-                <div style={{maxWidth: state.showFilters ? 'calc(100% - 23rem)' : '100%'}}>
-                    <MenuWrapper>
-                        {state.selectionMode ? (
-                            <MenuItemListSelected stateItems={state} dispatchItems={dispatch} />
-                        ) : (
-                            <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
-                        )}
-                    </MenuWrapper>
+            <MenuWrapper>
+                <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
+                <MenuItemListSelected active={state.selectionMode} />
+            </MenuWrapper>
+            <Wrapper
+                showSide={state.sideItems.visible}
+                className={state.sideItems.visible ? 'wrapper-open' : 'wrapper-close'}
+            >
+                <SideItems />
+                <div style={{maxWidth: state.sideItems.visible ? `calc(100% + 2rem - ${panelSize})` : '100%'}}>
                     <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
                 </div>
             </Wrapper>
