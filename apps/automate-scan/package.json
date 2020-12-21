@@ -1,0 +1,48 @@
+{
+    "name": "automate-scan",
+    "version": "1.0.0",
+    "description": "",
+    "main": "build/index.js",
+    "scripts": {
+        "start:watch": "ts-node-dev --respawn src/ ",
+        "start:dev": "ts-node-dev src/ ",
+        "start:watch:test": "NODE_ENV=test ts-node-dev --respawn src/",
+        "dev": "npm run start:watch",
+        "build": "tsc",
+        "test": "jest -c jest-unit-config.json",
+        "test:watch": "jest -c jest-unit-config.json --watch",
+        "test:integration": "NODE_ENV=test-integration jest -c jest-integration-config.json",
+        "lint": "tslint --fix -p .",
+        "prettier": "prettier --write 'src/**/*.ts'"
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/amqplib": "^0.5.13",
+        "@types/chokidar": "^2.1.3",
+        "@types/jest": "^24.9.1",
+        "@types/node": "^12.12.38",
+        "husky": "^3.1.0",
+        "jest": "^24.9.0",
+        "lint-staged": "^9.5.0",
+        "nodemon": "^1.19.4",
+        "prettier": "^1.19.1",
+        "ts-jest": "^24.3.0",
+        "ts-node": "^9.0.0",
+        "ts-node-dev": "^1.0.0",
+        "tslint": "^5.20.1",
+        "tslint-eslint-rules": "^5.4.0",
+        "typescript": "^3.8.3"
+    },
+    "dependencies": {
+        "@leav-engine/config-manager": "workspace:libs/config-manager",
+        "amqplib": "^0.5.5",
+        "app-root-path": "^3.0.0",
+        "chokidar": "^3.4.0",
+        "redis-typescript": "^0.1.2"
+    }
+}
