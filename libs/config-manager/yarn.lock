@@ -622,9 +622,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@leav-engine/config-manager@workspace:libs/config-manager":
+"@leav-engine/config-manager@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@leav-engine/config-manager@workspace:libs/config-manager"
+  resolution: "@leav-engine/config-manager@workspace:."
   dependencies:
     "@types/jest": ^25.2.2
     eslint: ^7.0.0
@@ -3492,14 +3492,6 @@ fsevents@^2.1.2:
   checksum: 20ef0e37fb3f9aebbec8a75b61f547051aa61e3a6c51bd2678e77a11d69d73885a76966aea77f09c40677c7dfa274a5e16741ec89859213c9f798d4a96f77521
   languageName: node
   linkType: hard
-
-"leav-monorepo@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "leav-monorepo@workspace:."
-  dependencies:
-    typescript: 4.1.3
-  languageName: unknown
-  linkType: soft
 
 "leven@npm:^3.1.0":
   version: 3.1.0

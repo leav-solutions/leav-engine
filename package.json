@@ -3,7 +3,7 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "shared/*"
+    "libs/*"
   ],
   "dependencies": {
     "typescript": "4.1.3"
