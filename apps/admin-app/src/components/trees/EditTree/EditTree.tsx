@@ -1,0 +1,51 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useQuery} from '@apollo/react-hooks';
+import {History, Location} from 'history';
+import React from 'react';
+import useUserData from '../../../hooks/useUserData';
+import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
+import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
+import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import Loading from '../../shared/Loading';
+import EditTreeTabs from './EditTreeTabs';
+
+interface IEditTreeProps {
+    match: any;
+    history: History;
+    location: Location;
+}
+
+const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
+    const treeId = match.params.id;
+    const userData = useUserData();
+
+    const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
+        variables: {id: treeId},
+        skip: !treeId
+    });
+
+    if (loading) {
+        return <Loading withDimmer />;
+    }
+
+    if (typeof error !== 'undefined') {
+        return <p>Error: {error.message}</p>;
+    }
+
+    if (treeId && !data?.trees?.list.length) {
+        return <div>Unknown tree</div>;
+    }
+
+    return (
+        <EditTreeTabs
+            history={history}
+            location={location}
+            tree={data?.trees?.list[0] ?? null}
+            readonly={!userData.permissions[PermissionsActions.app_edit_tree]}
+        />
+    );
+};
+
+export default EditTree;

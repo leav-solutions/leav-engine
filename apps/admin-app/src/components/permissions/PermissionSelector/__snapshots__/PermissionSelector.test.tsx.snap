@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PermissionSelector Snapshot testing 1`] = `
+.c0 {
+  background: #00FF00;
+}
+
+<div
+  className="c0"
+>
+  <div
+    className="ui fluid transparent input"
+    style={
+      Object {
+        "border": "none",
+      }
+    }
+  >
+    <input
+      disabled={false}
+      max="2"
+      min="0"
+      onChange={[Function]}
+      step="1"
+      type="range"
+      value={2}
+    />
+  </div>
+</div>
+`;

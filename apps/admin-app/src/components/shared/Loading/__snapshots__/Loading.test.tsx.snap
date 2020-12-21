@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Loading Snapshot test 1`] = `
+<div
+  className="ui active text centered inline loader"
+>
+  admin.loading
+</div>
+`;

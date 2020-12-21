@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.grow {
+  flex-grow: 1;
+}
+
+.no-grow {
+  flex-grow: 0;
+}
+.height100 {
+  height: 100%;
+}
+
+
+/************************************/
+/***** Override Semantic styles *****/
+/************************************/
+.ui.form .field.disabled > label {
+  opacity: 1;
+}

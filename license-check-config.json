@@ -11,10 +11,12 @@
         ".git",
         ".*",
         "config",
+        "public",
         "scripts",
         "*",
         "**/.DS_Store",
         "**/*.snap",
-        "**/filesForTest/*"
+        "**/filesForTest/*",
+        "**/*.css"
     ]
 }

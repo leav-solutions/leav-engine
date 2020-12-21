@@ -1,0 +1,267 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BreadcrumbSection Snapshot test 1`] = `
+initialize {
+  "0": Object {
+    "attribs": Object {
+      "class": "section",
+      "style": "position:relative(from, to) {
+    validateString(from, 'from');
+    validateString(to, 'to');
+
+    if (from === to)
+      return '';
+
+    // Trim leading forward slashes.
+    from = posix.resolve(from);
+    to = posix.resolve(to);
+
+    if (from === to)
+      return '';
+
+    const fromStart = 1;
+    const fromEnd = from.length;
+    const fromLen = fromEnd - fromStart;
+    const toStart = 1;
+    const toLen = to.length - toStart;
+
+    // Compare paths to find the longest common path from root
+    const length = (fromLen < toLen ? fromLen : toLen);
+    let lastCommonSep = -1;
+    let i = 0;
+    for (; i < length; i++) {
+      const fromCode = from.charCodeAt(fromStart + i);
+      if (fromCode !== to.charCodeAt(toStart + i))
+        break;
+      else if (fromCode === CHAR_FORWARD_SLASH)
+        lastCommonSep = i;
+    }
+    if (i === length) {
+      if (toLen > length) {
+        if (to.charCodeAt(toStart + i) === CHAR_FORWARD_SLASH) {
+          // We get here if \`from\` is the exact base path for \`to\`.
+          // For example: from='/foo/bar'; to='/foo/bar/baz'
+          return to.slice(toStart + i + 1);
+        }
+        if (i === 0) {
+          // We get here if \`from\` is the root
+          // For example: from='/'; to='/foo'
+          return to.slice(toStart + i);
+        }
+      } else if (fromLen > length) {
+        if (from.charCodeAt(fromStart + i) === CHAR_FORWARD_SLASH) {
+          // We get here if \`to\` is the exact base path for \`from\`.
+          // For example: from='/foo/bar/baz'; to='/foo/bar'
+          lastCommonSep = i;
+        } else if (i === 0) {
+          // We get here if \`to\` is the root.
+          // For example: from='/foo/bar'; to='/'
+          lastCommonSep = 0;
+        }
+      }
+    }
+
+    let out = '';
+    // Generate the relative path based on the path difference between \`to\`
+    // and \`from\`.
+    for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
+      if (i === fromEnd || from.charCodeAt(i) === CHAR_FORWARD_SLASH) {
+        out += out.length === 0 ? '..' : '/..';
+      }
+    }
+
+    // Lastly, append the rest of the destination (\`to\`) path that comes after
+    // the common path parts.
+    return \`\${out}\${to.slice(toStart + lastCommonSep)}\`;
+  }",
+    },
+    "children": Array [
+      Object {
+        "attribs": Object {
+          "class": "sc-kGXeez eSmRlv",
+        },
+        "children": Array [
+          Object {
+            "attribs": Object {
+              "class": "identity",
+            },
+            "children": Array [
+              Object {
+                "data": "TestTree",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Object {
+              "attribs": Object {
+                "class": "dropdown-icon",
+              },
+              "children": Array [
+                Object {
+                  "attribs": Object {
+                    "aria-hidden": "true",
+                    "class": "dropdown icon",
+                  },
+                  "children": Array [],
+                  "name": "i",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-hidden": undefined,
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          Object {
+            "attribs": Object {
+              "class": "dropdown-icon",
+            },
+            "children": Array [
+              Object {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "dropdown icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": Object {
+              "attribs": Object {
+                "class": "identity",
+              },
+              "children": Array [
+                Object {
+                  "data": "TestTree",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "class": undefined,
+        },
+      },
+    ],
+    "name": "div",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": null,
+    "parent": null,
+    "prev": null,
+    "root": Object {
+      "attribs": Object {},
+      "children": Array [
+        [Circular],
+      ],
+      "name": "root",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+      "x-attribsNamespace": Object {},
+      "x-attribsPrefix": Object {},
+    },
+    "type": "tag",
+    "x-attribsNamespace": Object {
+      "class": undefined,
+      "style": undefined,
+    },
+    "x-attribsPrefix": Object {
+      "class": undefined,
+      "style": undefined,
+    },
+  },
+  "_root": [Circular],
+  "length": 1,
+  "options": Object {
+    "decodeEntities": true,
+    "normalizeWhitespace": false,
+    "withDomLvl1": true,
+    "xml": false,
+  },
+}
+`;
