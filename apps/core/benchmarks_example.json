@@ -1,0 +1,9 @@
+{
+    "dataFile": "./data_example.json",
+    "actions": {
+        "attributes": {
+            "reps": 1000,
+            "query": "{ attributes { totalCount list { id label multiple_values system } } }"
+        }
+    }
+}

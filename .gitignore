@@ -10,3 +10,50 @@
 /.pnp.*
 
 node_modules
+
+# Application specific
+config/local.js
+
+# Node
+.npm
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production
+build
+
+# Misc
+.DS_Store
+logs
+*.log
+
+### MacOS ###
+*.DS_STORE
+
+### Linux ###
+*~
+
+### SublimeText ###
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-*
+.phpintel
+
+### Eclipse ###
+.project
+
+### webstorm ###
+.idea
+
+### Misc. ###
+*.dump
+*.tmp
+
+### Netbeans ###
+*nbproject
+
+### VSCode ###
+.vscode

@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LibraryRepo createLibrary Should insert a library and create a new collection 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`LibraryRepo createLibrary Should insert a library and create a new collection 2`] = `
+Object {
+  "@value1": "core_libraries",
+  "value0": Object {
+    "_key": "test_library",
+    "system": true,
+  },
+}
+`;
+
+exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 1`] = `
+"FOR e IN @@value0
+                         FILTER e._from == @value1
+                         REMOVE e IN @@value0"
+`;
+
+exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 2`] = `
+Object {
+  "@value0": "core_edge_libraries_attributes",
+  "value1": "core_libraries/test_lib",
+}
+`;
+
+exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 1`] = `
+"
+                        FOR attr IN @value0
+                            FOR l in @@value1
+                                FILTER
+                                    l._from == @value2
+                                    AND l._to == CONCAT('core_attributes/', attr)
+                                REMOVE l
+                                IN @@value1
+                                RETURN OLD
+                    "
+`;
+
+exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 2`] = `
+Object {
+  "@value1": "core_edge_libraries_attributes",
+  "value0": Array [
+    "other_attr",
+  ],
+  "value2": "core_libraries/users",
+}
+`;
+
+exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 3`] = `
+"
+                    FOR attr IN @value0
+                        LET attrToInsert = {
+                            _from: @value1,
+                            _to: CONCAT('core_attributes/', attr)
+                        }
+                        UPSERT {
+                            _from: @value1,
+                            _to: CONCAT('core_attributes/', attr)
+                        }
+                        INSERT attrToInsert
+                        UPDATE attrToInsert
+                        IN @@value2
+                        RETURN NEW
+                "
+`;
+
+exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 4`] = `
+Object {
+  "@value2": "core_edge_libraries_attributes",
+  "value0": Array [
+    "id",
+    "my_attr",
+  ],
+  "value1": "core_libraries/users",
+}
+`;
+
+exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 1`] = `
+"
+                    FOR attr IN @@value0
+                        FILTER attr._from == @value1
+                        UPDATE {
+                            _key: attr._key,
+                            full_text_search: POSITION(@value2, LAST(SPLIT(attr._to, '/')))
+                        }
+                        IN @@value0
+                "
+`;
+
+exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 2`] = `
+Object {
+  "@value0": "core_edge_libraries_attributes",
+  "value1": "core_libraries/users",
+  "value2": Array [
+    "id",
+  ],
+}
+`;
+
+exports[`LibraryRepo updateLibrary Should update library 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`LibraryRepo updateLibrary Should update library 2`] = `
+Object {
+  "@value1": "core_libraries",
+  "value0": Object {
+    "_key": "test_library",
+    "system": true,
+  },
+}
+`;

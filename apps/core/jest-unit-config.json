@@ -1,0 +1,14 @@
+{
+    "moduleFileExtensions": [
+        "ts",
+        "js"
+    ],
+    "transform": {
+        "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": ".spec.(ts)$",
+    "setupFiles": [
+        "<rootDir>/src/__tests__/setup.ts",
+        "<rootDir>/src/__tests__/jestUtils.ts"
+    ]
+}

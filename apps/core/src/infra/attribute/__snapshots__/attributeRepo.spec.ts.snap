@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributeRepo createAttribute Should create a new attribute 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`AttributeRepo createAttribute Should create a new attribute 2`] = `
+Object {
+  "@value1": "core_attributes",
+  "value0": Object {
+    "_key": "test_attribute",
+    "format": "text",
+    "label": Object {
+      "fr": "Test",
+    },
+    "multiple_values": false,
+    "system": true,
+    "type": "standard",
+  },
+}
+`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 1`] = `
+"
+                    FOR e IN @@value0
+                        FILTER e._to == @value1
+                        REMOVE e IN @@value0
+                    "
+`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 2`] = `
+Object {
+  "@value0": "core_edge_libraries_attributes",
+  "value1": "core_attributes/test_attribute",
+}
+`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 3`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 4`] = `
+Object {
+  "@value1": "core_attributes",
+  "value0": Object {
+    "_key": "test_attribute",
+  },
+}
+`;
+
+exports[`AttributeRepo getLibraryAttributes Should get library attributes through graph query 1`] = `
+"
+                FOR v
+                IN 1 OUTBOUND 'core_libraries/users'
+                core_edge_libraries_attributes
+                RETURN v
+            "
+`;
+
+exports[`AttributeRepo getLibraryFullTextAttributes Should get library full text attributes through graph query 1`] = `
+"LET fullTextAttrs = (
+                            FOR e IN @@value0
+                                FILTER e._from == @value1
+                                FILTER e.full_text_search == true
+                            RETURN LAST(SPLIT(e._to, '/'))
+                        )
+                        FOR a IN @@value2
+                            FILTER POSITION(fullTextAttrs, a._key)
+                        RETURN a
+                    "
+`;
+
+exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`AttributeRepo updateAttribute Should update an existing attribute 2`] = `
+Object {
+  "@value1": "core_attributes",
+  "value0": Object {
+    "_key": "test_attribute",
+    "format": "text",
+    "label": Object {
+      "fr": "Test",
+    },
+    "multiple_values": false,
+    "system": true,
+    "type": "standard",
+  },
+}
+`;

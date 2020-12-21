@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PermissionRepo GetPermissions Should return a permission 1`] = `
+"
+                FOR p IN @@value0
+                FILTER p.type == @value1
+                    AND p.applyTo == @value2
+                    AND p.usersGroup == @value3
+                    AND p.permissionTreeTarget == @value4
+                RETURN p
+            "
+`;
+
+exports[`PermissionRepo GetPermissions Should return a permission 2`] = `
+Object {
+  "@value0": "core_permissions",
+  "value1": "record",
+  "value2": "test_lib",
+  "value3": "users_groups/12345",
+  "value4": Object {
+    "id": "category/123",
+    "tree": "categories",
+  },
+}
+`;
+
+exports[`PermissionRepo SavePermission Should save permission 1`] = `
+"
+                    UPSERT @value0
+                    INSERT @value1
+                    UPDATE @value1
+                    IN @@value2
+                    RETURN NEW
+                "
+`;
+
+exports[`PermissionRepo SavePermission Should save permission 2`] = `
+Object {
+  "@value2": "core_permissions",
+  "value0": Object {
+    "applyTo": "test_lib",
+    "permissionTreeTarget": Object {
+      "id": "test_lib/123445",
+      "tree": "test_tree",
+    },
+    "type": "record",
+    "usersGroup": "users_groups/12345",
+  },
+  "value1": Object {
+    "actions": Object {
+      "access_record": true,
+      "delete_record": false,
+      "edit_record": false,
+    },
+    "applyTo": "test_lib",
+    "permissionTreeTarget": Object {
+      "id": "test_lib/123445",
+      "tree": "test_tree",
+    },
+    "type": "record",
+    "usersGroup": "users_groups/12345",
+  },
+}
+`;

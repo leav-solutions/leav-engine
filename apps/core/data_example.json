@@ -1,0 +1,344 @@
+{
+    "libraries": [
+        {
+            "id": "products",
+            "label": { "fr": "Products" },
+            "attributes": ["label", "category", "price", "advanced_date", "advanced_extended", "checkbox"],
+            "permissions_conf": {
+                "permissionTreeAttributes": ["category"],
+                "relation": "and"
+            }
+        },
+        {
+            "id": "categories",
+            "label": { "fr": "Catégories" },
+            "attributes": ["name"],
+            "recordIdentityConf": {
+                "label": "name"
+            }
+        },
+        {
+            "id": "ubs",
+            "label": { "fr": "UBs" },
+            "attributes": ["label", "eans", "price"],
+            "recordIdentityConf": {
+                "label": "label"
+            }
+        },
+        {
+            "id": "regions",
+            "label": { "fr": "Régions" },
+            "attributes": ["name"],
+            "recordIdentityConf": {
+                "label": "name"
+            }
+        }
+    ],
+    "attributes": [
+        {
+            "id": "label",
+            "type": "simple",
+            "format": "text",
+            "label": { "fr": "Libellé" },
+            "multiple_values": false
+        },
+        {
+            "id": "category",
+            "type": "tree",
+            "linked_tree": "categories",
+            "label": { "fr": "Catégorie" },
+            "multiple_values": true
+        },
+        {
+            "id": "name",
+            "type": "advanced",
+            "format": "text",
+            "label": { "fr": "Nom" },
+            "multiple_values": false
+        },
+        {
+            "id": "advanced_date",
+            "type": "advanced",
+            "format": "date",
+            "label": { "fr": "Avancé date" },
+            "multiple_values": false
+        },
+        {
+            "id": "checkbox",
+            "type": "simple",
+            "format": "boolean",
+            "label": { "fr": "Simple Booléen" }
+        },
+        {
+            "id": "advanced_extended",
+            "type": "advanced",
+            "format": "extended",
+            "label": { "fr": "Avancé étendu" },
+            "multiple_values": false,
+            "embedded_fields": [
+                {
+                    "id": "field_1",
+                    "format": "text",
+                    "label": {"fr": "Champ 1"}
+                },
+                {
+                    "id": "field_2",
+                    "format": "numeric",
+                    "label": {"fr": "Champ 2"}
+                },
+                {
+                    "id": "field_3",
+                    "format": "extended",
+                    "label": {"fr": "Champ 3 - étendu"},
+                    "embedded_fields": [
+                        {
+                            "id": "field_3_1",
+                            "format": "text",
+                            "label": {"fr": "Champ 3 - 1"}
+                        },
+                        {
+                            "id": "field_3_2",
+                            "format": "numeric",
+                            "label": {"fr": "Champ 3 - 2"}
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "eans",
+            "type": "advanced_link",
+            "linked_library": "products",
+            "label": { "fr": "EANs" },
+            "multiple_values": true
+        },
+        {
+            "id": "price",
+            "type": "advanced",
+            "format": "numeric",
+            "label": { "fr": "Prix" },
+            "multiple_values": false,
+            "versions_conf": {
+                "versionable": true,
+                "trees": ["regions"]
+            },
+            "actions_list": {
+                "deleteValue": [],
+                "getValue": [
+                  {
+                    "is_system": false,
+                    "id": "formatNumber",
+                    "params": [
+                      {
+                        "name": "decimals",
+                        "value": "2"
+                      },
+                      {
+                        "name": "thousandsSeparator",
+                        "value": " "
+                      },
+                      {
+                        "name": "decimalsSeparator",
+                        "value": ","
+                      },
+                      {
+                        "name": "prefix",
+                        "value": ""
+                      },
+                      {
+                        "name": "suffix",
+                        "value": "€"
+                      }
+                    ]
+                  }
+                ],
+                "saveValue": [
+                  {
+                    "is_system": true,
+                    "id": "validateFormat",
+                    "params": null
+                  }
+                ]
+              }
+        }
+    ],
+    "trees": [
+        {
+            "id": "categories",
+            "label": { "fr": "Catégories" },
+            "libraries": ["categories"],
+            "content": [
+                {
+                    "library": "categories",
+                    "recordKey": 4,
+                    "children": [
+                        {
+                            "library": "categories",
+                            "recordKey": 6,
+                            "children": [
+                                {
+                                    "library": "categories",
+                                    "recordKey": 7,
+                                    "children": [
+                                        {
+                                            "library": "categories",
+                                            "recordKey": 8,
+                                            "children": []
+                                        },
+                                        {
+                                            "library": "categories",
+                                            "recordKey": 9,
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "library": "categories",
+                    "recordKey": 5,
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "regions",
+            "label": { "fr": "Régions" },
+            "libraries": ["regions"],
+            "content": [
+                {
+                    "library": "regions",
+                    "recordKey": 1,
+                    "children": [
+                        {
+                            "library": "regions",
+                            "recordKey": 2,
+                            "children": [
+                                {
+                                    "library": "regions",
+                                    "recordKey": 3,
+                                    "children": [
+                                        {
+                                            "library": "regions",
+                                            "recordKey": 4,
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "records": {
+        "products": 50,
+        "ubs": 50,
+        "categories": [
+            {
+                "key": 4
+            },
+            {
+                "key": 5
+            },
+            {
+                "key": 6
+            },
+            {
+                "key": 7
+            },
+            {
+                "key": 8
+            },
+            {
+                "key": 9
+            }
+        ],
+        "regions": [
+            {
+                "key": 1
+            },
+            {
+                "key": 2
+            },
+            {
+                "key": 3
+            },
+            {
+                "key": 4
+            }
+        ]
+    },
+    "values": {
+        "products": {
+            "label": {
+                "generate": true
+            },
+            "category": {
+                "generate": true,
+                "values": ["categories/4", "categories/8", "categories/9"]
+            },
+            "price": {
+                "generate": true,
+                "values": [9.99, 10.99, 1337.42],
+                "versions": [{"regions": "regions/3"}, {"regions": "regions/4"}, {"regions": "regions/2"}]
+            }
+        },
+        "ubs": {
+            "eans": {
+                "generate": true
+            }
+        },
+        "categories": {
+            "name": [
+                {
+                    "recordKey": 4,
+                    "value": "PGC"
+                },
+                {
+                    "recordKey": 5,
+                    "value": "EPCS"
+                },
+                {
+                    "recordKey": 6,
+                    "value": "Boissons"
+                },
+                {
+                    "recordKey": 7,
+                    "value": "Alcool"
+                },
+                {
+                    "recordKey": 8,
+                    "value": "Bière"
+                },
+                {
+                    "recordKey": 9,
+                    "value": "Vin"
+                }
+            ]
+        },
+        "regions": {
+            "name": [
+                {
+                    "recordKey": 1,
+                    "value": "France"
+                },
+                {
+                    "recordKey": 2,
+                    "value": "AURA"
+                },
+                {
+                    "recordKey": 3,
+                    "value": "Isère"
+                },
+                {
+                    "recordKey": 4,
+                    "value": "Grenoble"
+                }
+            ]
+        }
+    }
+}

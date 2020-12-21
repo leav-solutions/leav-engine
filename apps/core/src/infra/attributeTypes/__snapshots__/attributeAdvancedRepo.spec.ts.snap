@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributeStandardRepo createValue Should create a new advanced value 1`] = `
+"
+                    INSERT @value0
+                    IN @@value1
+                    RETURN NEW"
+`;
+
+exports[`AttributeStandardRepo createValue Should create a new advanced value 2`] = `
+Object {
+  "@value1": "core_values",
+  "value0": Object {
+    "value": "test val",
+  },
+}
+`;
+
+exports[`AttributeStandardRepo createValue Should create a new advanced value 3`] = `
+"
+                    INSERT @value0
+                    IN @@value1
+                    RETURN NEW"
+`;
+
+exports[`AttributeStandardRepo createValue Should create a new advanced value 4`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": Object {
+    "_from": "test_lib/12345",
+    "_to": "core_values/987654",
+    "attribute": "test_attr",
+    "created_at": 400999999,
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
+    "modified_at": 400999999,
+  },
+}
+`;
+
+exports[`AttributeStandardRepo createValue Should save version on value 1`] = `
+"
+                    INSERT @value0
+                    IN @@value1
+                    RETURN NEW"
+`;
+
+exports[`AttributeStandardRepo createValue Should save version on value 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": Object {
+    "_from": "test_lib/12345",
+    "_to": "core_values/987654",
+    "attribute": "test_attr",
+    "created_at": 400999999,
+    "modified_at": 400999999,
+    "version": Object {
+      "my_tree": "test_lib/1",
+    },
+  },
+}
+`;
+
+exports[`AttributeStandardRepo filterQueryPart Should return advanced filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "MyLabel",
+  },
+  "query": "FILTER FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.value
+            ) == @value2",
+}
+`;
+
+exports[`AttributeStandardRepo getValues Should return all values if forced 1`] = `
+"
+                FOR value, edge
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                 
+                
+                RETURN {value, edge}
+            "
+`;
+
+exports[`AttributeStandardRepo getValues Should return values filtered by version 1`] = `
+"
+                FOR value, edge
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                 FILTER edge.version == @value3 
+                LIMIT 1
+                RETURN {value, edge}
+            "
+`;
+
+exports[`AttributeStandardRepo getValues Should return values for advanced attribute 1`] = `
+"
+                FOR value, edge
+                IN 1 OUTBOUND @value0
+                @@value1
+                FILTER edge.attribute == @value2
+                 
+                
+                RETURN {value, edge}
+            "
+`;
+
+exports[`AttributeStandardRepo getValues Should return values for advanced attribute 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": "test_lib/123456",
+  "value2": "test_attr",
+}
+`;
+
+exports[`AttributeStandardRepo sortQueryPart Should return advanced filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "ASC",
+  },
+  "query": "SORT FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.value
+            ) @value2",
+}
+`;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 1`] = `
+"
+                    UPDATE @value0
+                    WITH @value1
+                    IN @@value2
+                    RETURN NEW"
+`;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 2`] = `
+Object {
+  "@value2": "core_values",
+  "value0": Object {
+    "_key": "987654",
+  },
+  "value1": Object {
+    "value": "test val",
+  },
+}
+`;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 3`] = `
+"
+                    FOR e IN @@value0
+                    FILTER e._from == @value1 AND e._to == @value2
+                    UPDATE e
+                        WITH @value3
+                        IN @@value0
+                    RETURN NEW"
+`;
+
+exports[`AttributeStandardRepo updateValue Should update an advanced value 4`] = `
+Object {
+  "@value0": "core_edge_values_links",
+  "value1": "test_lib/12345",
+  "value2": "core_values/987654",
+  "value3": Object {
+    "_from": "test_lib/12345",
+    "_to": "core_values/987654",
+    "attribute": "test_attr",
+    "created_at": undefined,
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
+    "modified_at": 500999999,
+  },
+}
+`;

@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributeTreeRepo createValue Should create a new advanced link value 1`] = `
+"
+                    INSERT @value0
+                        IN @@value1
+                    RETURN NEW"
+`;
+
+exports[`AttributeTreeRepo createValue Should create a new advanced link value 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": Object {
+    "_from": "test_lib/12345",
+    "_to": "categories/123456",
+    "attribute": "test_tree_attr",
+    "created_at": 400999999,
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
+    "modified_at": 400999999,
+    "version": Object {
+      "my_tree": "test_lib/1",
+    },
+  },
+}
+`;
+
+exports[`AttributeTreeRepo filterQueryPart Should return tree filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "linked",
+    "value3": "MyLabel",
+  },
+  "query": "FILTER FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.@value2
+            ) == @value3",
+}
+`;
+
+exports[`AttributeTreeRepo getValueByID Should return value 1`] = `
+"
+                FOR linkedRecord, edge
+                    IN 1 OUTBOUND @value0
+                    @@value1
+                    FILTER edge._key == @value2
+                    FILTER edge.attribute == @value3
+                    LIMIT 1
+                    RETURN {linkedRecord, edge}
+            "
+`;
+
+exports[`AttributeTreeRepo getValueByID Should return value 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": "test_lib/987654",
+  "value2": "112233",
+  "value3": "test_tree_attr",
+}
+`;
+
+exports[`AttributeTreeRepo getValues Should return all values if forced 1`] = `
+"
+                FOR linkedRecord, edge
+                    IN 1 OUTBOUND @value0
+                    @@value1
+                    FILTER edge.attribute == @value2
+                 
+                
+                RETURN {linkedRecord, edge}
+            "
+`;
+
+exports[`AttributeTreeRepo getValues Should return linked tree element 1`] = `
+"
+                FOR linkedRecord, edge
+                    IN 1 OUTBOUND @value0
+                    @@value1
+                    FILTER edge.attribute == @value2
+                 
+                
+                RETURN {linkedRecord, edge}
+            "
+`;
+
+exports[`AttributeTreeRepo getValues Should return linked tree element 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": "test_lib/123456",
+  "value2": "test_tree_attr",
+}
+`;
+
+exports[`AttributeTreeRepo getValues Should return linked tree element filtered by version 1`] = `
+"
+                FOR linkedRecord, edge
+                    IN 1 OUTBOUND @value0
+                    @@value1
+                    FILTER edge.attribute == @value2
+                 FILTER edge.version == @value3 
+                LIMIT 1
+                RETURN {linkedRecord, edge}
+            "
+`;
+
+exports[`AttributeTreeRepo sortQueryPart Should return tree filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "label",
+    "value2": "linked",
+    "value3": "ASC",
+  },
+  "query": "SORT FIRST(
+                FOR v, e IN 1 OUTBOUND r._id
+                @@value0
+                FILTER e.attribute == @value1 RETURN v.@value2
+            ) @value3",
+}
+`;
+
+exports[`AttributeTreeRepo updateValue Should update a advanced link value 1`] = `
+"
+                    UPDATE @value0
+                        WITH @value1
+                        IN @@value2
+                    RETURN NEW"
+`;
+
+exports[`AttributeTreeRepo updateValue Should update a advanced link value 2`] = `
+Object {
+  "@value2": "core_edge_values_links",
+  "value0": Object {
+    "_key": "987654",
+  },
+  "value1": Object {
+    "_from": "test_lib/12345",
+    "_to": "categories/123456",
+    "attribute": "test_tree_attr",
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
+    "modified_at": 400999999,
+    "version": Object {
+      "my_tree": "test_lib/1",
+    },
+  },
+}
+`;

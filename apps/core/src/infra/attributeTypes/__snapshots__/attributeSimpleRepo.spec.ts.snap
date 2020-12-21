@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AttributeIndexRepo clearAllValues Should delete field of given attribute 1`] = `undefined`;
+
+exports[`AttributeIndexRepo clearAllValues Should delete field of given attribute 2`] = `undefined`;
+
+exports[`AttributeIndexRepo createValue Should create a new index value 1`] = `
+"
+                UPDATE @value0
+                WITH @value1
+                IN @@value2
+                OPTIONS { keepNull: false }
+                RETURN NEW"
+`;
+
+exports[`AttributeIndexRepo createValue Should create a new index value 2`] = `
+Object {
+  "@value2": "test_lib",
+  "value0": Object {
+    "_key": "12345",
+  },
+  "value1": Object {
+    "test_attr": "test val",
+  },
+}
+`;
+
+exports[`AttributeIndexRepo deleteValue Should delete a value 1`] = `
+"
+                UPDATE @value0
+                WITH @value1
+                IN @@value2
+                OPTIONS { keepNull: false }
+                RETURN NEW"
+`;
+
+exports[`AttributeIndexRepo deleteValue Should delete a value 2`] = `
+Object {
+  "@value2": "test_lib",
+  "value0": Object {
+    "_key": "12345",
+  },
+  "value1": Object {
+    "test_attr": null,
+  },
+}
+`;
+
+exports[`AttributeIndexRepo filterQueryPart Should return simple filter 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "value0": "_key",
+    "value1": "123456",
+  },
+  "query": "FILTER r.@value0 == @value1",
+}
+`;
+
+exports[`AttributeIndexRepo getValues Should return values for index attribute 1`] = `
+"
+                FOR r IN @@value0
+                    FILTER r._key == @value1
+                    RETURN r.@value2
+            "
+`;
+
+exports[`AttributeIndexRepo getValues Should return values for index attribute 2`] = `
+Object {
+  "@value0": "test_lib",
+  "value1": "123456",
+  "value2": "test_attr",
+}
+`;
+
+exports[`AttributeIndexRepo sortQueryPart Should return simple sort 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "value0": "_key",
+    "value1": "ASC",
+  },
+  "query": "SORT r.@value0 @value1",
+}
+`;
