@@ -87,9 +87,7 @@ describe('SelectTreeNodeModal', () => {
         });
 
         act(() => {
-            comp.find('[data-test-id="select_tree_node_close_btn"]')
-                .first()
-                .simulate('click');
+            comp.find('[data-test-id="select_tree_node_close_btn"]').first().simulate('click');
         });
         await wait(0);
 

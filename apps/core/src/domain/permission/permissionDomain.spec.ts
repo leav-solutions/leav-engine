@@ -34,7 +34,7 @@ describe('PermissionDomain', () => {
     beforeEach(() => jest.clearAllMocks());
 
     describe('savePermission', () => {
-        test('Should save a new permission', async function() {
+        test('Should save a new permission', async function () {
             const permData = {
                 type: PermissionTypes.RECORD,
                 userGroup: 'users/12345',

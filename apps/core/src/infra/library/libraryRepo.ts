@@ -90,7 +90,7 @@ interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attribute': attributeRepo = null

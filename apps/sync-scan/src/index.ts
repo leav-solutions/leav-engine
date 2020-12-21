@@ -7,7 +7,7 @@ import {FilesystemContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
 import {RMQConn} from './_types/rmq';
 
-(async function() {
+(async function () {
     try {
         const cfg: Config = await getConfig();
 

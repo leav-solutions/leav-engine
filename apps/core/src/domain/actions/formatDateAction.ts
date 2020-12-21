@@ -9,7 +9,7 @@ import {
     IActionsListFunction
 } from '../../_types/actionsList';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'formatDate',
         name: 'Format Date',

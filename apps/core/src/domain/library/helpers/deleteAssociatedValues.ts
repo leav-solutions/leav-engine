@@ -11,7 +11,7 @@ export interface IDeleteAssociatedValuesHelper {
     deleteAssociatedValues: (attributes: string[], libraryId: string, ctx: IQueryInfos) => Promise<void>;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null
 }: IDeps): IDeleteAssociatedValuesHelper {

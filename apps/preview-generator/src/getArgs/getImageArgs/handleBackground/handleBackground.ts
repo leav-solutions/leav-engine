@@ -4,12 +4,12 @@ export const handleBackground = (args: string[], background: boolean | string, o
     if (typeof background === 'string') {
         return {
             command: 'convert',
-            args: [output, '-background', background, '-flatten', output],
+            args: [output, '-background', background, '-flatten', output]
         };
     } else if (background === true) {
         return {
             command: 'composite',
-            args: ['-compose', 'Dst_Over', '-tile', 'pattern:checkerboard', output, output],
+            args: ['-compose', 'Dst_Over', '-tile', 'pattern:checkerboard', output, output]
         };
     }
     return null;

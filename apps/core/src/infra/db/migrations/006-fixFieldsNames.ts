@@ -9,7 +9,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
 }
 
-export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
+export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
         async run(ctx) {
             const res = await dbService.execute({

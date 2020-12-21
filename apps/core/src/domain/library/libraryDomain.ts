@@ -53,7 +53,7 @@ interface IDeps {
     'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,

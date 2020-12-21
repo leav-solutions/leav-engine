@@ -11,7 +11,7 @@ import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 import {initAmqp} from './infra/amqp';
 
-(async function() {
+(async function () {
     let conf: Config.IConfig;
 
     try {

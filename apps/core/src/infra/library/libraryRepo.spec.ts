@@ -13,7 +13,7 @@ describe('LibraryRepo', () => {
         queryId: '123456'
     };
     describe('getLibrary', () => {
-        test('Should return all libs if no filter', async function() {
+        test('Should return all libs if no filter', async function () {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockDbUtils: Mockify<IDbUtils> = {
                 findCoreEntity: global.__mockPromise([
@@ -56,7 +56,7 @@ describe('LibraryRepo', () => {
             id: 'test_library',
             system: true
         };
-        test('Should insert a library and create a new collection', async function() {
+        test('Should insert a library and create a new collection', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([docLibData]),
@@ -91,7 +91,7 @@ describe('LibraryRepo', () => {
     describe('updateLibrary', () => {
         const docLibData = {_key: 'test_library', system: true};
         const libData = {id: 'test_library', system: true};
-        test('Should update library', async function() {
+        test('Should update library', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([docLibData])
@@ -131,7 +131,7 @@ describe('LibraryRepo', () => {
             system: false
         };
 
-        test('Should delete a library and return deleted library', async function() {
+        test('Should delete a library and return deleted library', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({
                     list: [
@@ -177,7 +177,7 @@ describe('LibraryRepo', () => {
     });
 
     describe('saveLibraryAttributes', () => {
-        test('Should link attributes to a library and return linked attributes', async function() {
+        test('Should link attributes to a library and return linked attributes', async function () {
             const mockQueryRes = [
                 {
                     _key: '222400216',
@@ -256,7 +256,7 @@ describe('LibraryRepo', () => {
     });
 
     describe('saveLibraryFullTextAttributes', () => {
-        test('Should set full text attributes of a library and return full text attributes', async function() {
+        test('Should set full text attributes of a library and return full text attributes', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: jest.fn()

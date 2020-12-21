@@ -7,8 +7,8 @@ module.exports = {
             name: 'default',
             url: `${apiUrl}/graphql`,
             headers: {
-                authorization: token,
-            },
-        },
-    },
+                authorization: token
+            }
+        }
+    }
 };

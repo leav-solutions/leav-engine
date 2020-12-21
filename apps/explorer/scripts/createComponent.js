@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const {
-    program: prog
-} = require('commander');
+const {program: prog} = require('commander');
 
 const _getFuncCompContent = name =>
     `import React from 'react';

@@ -21,7 +21,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.app.graphql': graphqlApp = null,

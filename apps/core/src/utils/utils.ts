@@ -53,7 +53,7 @@ export interface IUtils {
     dateToTimestamp(d: Date): number;
 }
 
-export default function(): IUtils {
+export default function (): IUtils {
     return {
         libNameToQueryName(name: string): string {
             return flow([camelCase, trimEnd])(name);

@@ -24,7 +24,7 @@ interface IDeps {
     'core.app.core.indexationManager'?: IIndexationManagerApp;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.utils': utils = null,

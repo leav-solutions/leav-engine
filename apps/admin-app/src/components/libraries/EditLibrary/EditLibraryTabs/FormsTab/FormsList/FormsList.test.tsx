@@ -52,9 +52,7 @@ describe('FormsList', () => {
     });
 
     test('Calls onRowClick', async () => {
-        comp.find('[data-test-id="form-list-row"]')
-            .first()
-            .simulate('click');
+        comp.find('[data-test-id="form-list-row"]').first().simulate('click');
 
         expect(onRowClick).toBeCalled();
     });

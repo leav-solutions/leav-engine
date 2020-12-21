@@ -12,13 +12,13 @@ module.exports = {
         consume: {
             queue: process.env.AMQP_QUEUE_IN || 'files_preview_request',
             exchange: process.env.AMQP_EXCHANGE_IN || 'leav_core',
-            routingKey: process.env.AMQP_ROUTING_KEY_IN || 'files.previewRequest',
+            routingKey: process.env.AMQP_ROUTING_KEY_IN || 'files.previewRequest'
         },
         publish: {
             queue: process.env.AMQP_QUEUE_OUT || 'files_preview_response',
             exchange: process.env.AMQP_EXCHANGE_OUT || 'leav_core',
-            routingKey: process.env.AMQP_ROUTING_KEY_OUT || 'files.previewResponse',
-        },
+            routingKey: process.env.AMQP_ROUTING_KEY_OUT || 'files.previewResponse'
+        }
     },
-    verbose: process.env.VERBOSE || false,
+    verbose: process.env.VERBOSE || false
 };

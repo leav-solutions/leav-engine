@@ -1,5 +1,5 @@
 import {loadConfig} from '@leav-engine/config-manager';
-import {Channel,Connection,Options} from 'amqplib';
+import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
 import * as rootPath from 'app-root-path';
 import * as Crypto from 'crypto';
@@ -22,11 +22,7 @@ export const startWatch = async () => {
 
     // We take the rootKey from the config file
     // or we create a hash of the rootPath if no rootKey
-    const rootKey =
-        config.rootKey ||
-        Crypto.createHash('md5')
-            .update(config.rootPath)
-            .digest('hex');
+    const rootKey = config.rootKey || Crypto.createHash('md5').update(config.rootPath).digest('hex');
 
     createClient(config.redis.host, config.redis.port);
 

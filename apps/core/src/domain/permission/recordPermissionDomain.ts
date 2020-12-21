@@ -47,7 +47,7 @@ interface IDeps {
     'core.infra.value'?: IValueRepo;
 }
 
-export default function(deps: IDeps = {}): IRecordPermissionDomain {
+export default function (deps: IDeps = {}): IRecordPermissionDomain {
     const {
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.infra.library': libraryRepo = null,

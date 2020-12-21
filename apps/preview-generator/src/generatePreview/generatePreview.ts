@@ -4,7 +4,7 @@ import {handleVersion} from './handleVersion/handleVersion';
 export const generatePreview = async (
     msgContent: IMessageConsume,
     type: string,
-    config: IConfig,
+    config: IConfig
 ): Promise<IResult[]> => {
     const {input, versions} = msgContent;
 

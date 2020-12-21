@@ -16,7 +16,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({'core.domain.actionsList': actionsListDomain = null, translator = null}): ICoreActionListApp {
+export default function ({'core.domain.actionsList': actionsListDomain = null, translator = null}): ICoreActionListApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

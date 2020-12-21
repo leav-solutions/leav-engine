@@ -31,17 +31,7 @@ describe('EditPermissionsView', () => {
         );
 
         expect(comp.find('PermissionSelector')).toHaveLength(2);
-        expect(
-            comp
-                .find('PermissionSelector')
-                .first()
-                .prop('forbiddenColor')
-        ).toBe('#FF0000');
-        expect(
-            comp
-                .find('PermissionSelector')
-                .first()
-                .prop('allowedColor')
-        ).toBe('#99cc00');
+        expect(comp.find('PermissionSelector').first().prop('forbiddenColor')).toBe('#FF0000');
+        expect(comp.find('PermissionSelector').first().prop('allowedColor')).toBe('#99cc00');
     });
 });

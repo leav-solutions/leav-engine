@@ -9,7 +9,7 @@ import {
     IActionsListFunction
 } from '../../_types/actionsList';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     const _toString = (num, d) =>
         num.toLocaleString('en', {
             minimumFractionDigits: d,

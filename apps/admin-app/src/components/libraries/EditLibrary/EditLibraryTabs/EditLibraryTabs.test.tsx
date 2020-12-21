@@ -71,12 +71,7 @@ describe('EditLibraryForm', () => {
             />
         );
 
-        expect(
-            comp
-                .find('Header')
-                .shallow()
-                .text()
-        ).toBe('Test');
+        expect(comp.find('Header').shallow().text()).toBe('Test');
 
         // Check forms pane is present
         const panes = comp.find('Tab').prop('panes');
@@ -89,12 +84,7 @@ describe('EditLibraryForm', () => {
     test('Render form for new lib', async () => {
         const comp = shallow(<EditLibraryTabs library={null} readOnly={false} history={mockHistory as History} />);
 
-        expect(
-            comp
-                .find('Header')
-                .shallow()
-                .text()
-        ).toBe('libraries.new');
+        expect(comp.find('Header').shallow().text()).toBe('libraries.new');
     });
 
     test('Should open the tab in anchor', async () => {

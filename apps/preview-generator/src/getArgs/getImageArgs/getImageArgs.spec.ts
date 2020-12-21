@@ -11,7 +11,7 @@ describe('getImageArgs', () => {
         const name = 'medium';
 
         const version: IVersion = {
-            sizes: [{output, size, name}],
+            sizes: [{output, size, name}]
         };
 
         (getJpgArgs as jest.FunctionLike) = jest.fn(() => ({before: [], after: []}));
@@ -28,7 +28,7 @@ describe('getImageArgs', () => {
         const size = 800;
 
         const version: IVersion = {
-            sizes: [{output, size, name}],
+            sizes: [{output, size, name}]
         };
 
         (getJpgArgs as jest.FunctionLike) = jest.fn(() => ({before: [], after: []}));

@@ -7,7 +7,7 @@ const routingKey = 'routingKey';
 
 describe('test assertExchange', () => {
     const channel: Mockify<Channel> = {
-        assertExchange: jest.fn(),
+        assertExchange: jest.fn()
     };
     test('assert exchange', async () => {
         await assertExchange(channel as Channel, 'direct', exchange);
@@ -18,7 +18,7 @@ describe('test assertExchange', () => {
 
 describe('test assertQueue', () => {
     const channel: Mockify<Channel> = {
-        assertQueue: jest.fn(),
+        assertQueue: jest.fn()
     };
     test('assert queue', async () => {
         await assertQueue(channel as Channel, queue);
@@ -29,7 +29,7 @@ describe('test assertQueue', () => {
 
 describe('test bindQueue', () => {
     const channel: Mockify<Channel> = {
-        bindQueue: jest.fn(),
+        bindQueue: jest.fn()
     };
     test('bind queue', async () => {
         await bindQueue(channel as Channel, queue, exchange, routingKey);
@@ -42,7 +42,7 @@ describe('test initAmqp', () => {
     const channel: Mockify<Channel> = {
         assertExchange: jest.fn(),
         assertQueue: jest.fn(),
-        bindQueue: jest.fn(),
+        bindQueue: jest.fn()
     };
     test('call other functions', async () => {
         (assertExchange as jest.FunctionLike) = jest.fn();

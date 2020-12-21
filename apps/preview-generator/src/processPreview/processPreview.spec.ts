@@ -12,20 +12,20 @@ describe('processPreview', () => {
                 sizes: [
                     {
                         size: 800,
-                        output: 'test.png',
-                    },
-                ],
-            },
-        ],
+                        output: 'test.png'
+                    }
+                ]
+            }
+        ]
     };
 
     const msg = {
-        content: Buffer.from(JSON.stringify(content)),
+        content: Buffer.from(JSON.stringify(content))
     };
 
     const config = {
         inputRootPath: '/app',
-        outputRootPath: '/app',
+        outputRootPath: '/app'
     };
 
     test('process preview', async () => {

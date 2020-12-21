@@ -13,8 +13,8 @@ export const checkInput = async (input: string, inputRootPath: string) => {
         throw new ErrorPreview({
             error: 301,
             params: {
-                errorId,
-            },
+                errorId
+            }
         });
     }
 
@@ -24,14 +24,14 @@ export const checkInput = async (input: string, inputRootPath: string) => {
         throw new ErrorPreview({
             error: 303,
             params: {
-                errorId,
-            },
+                errorId
+            }
         });
     }
 
     if (!stats.isFile()) {
         throw new ErrorPreview({
-            error: 302,
+            error: 302
         });
     }
 };

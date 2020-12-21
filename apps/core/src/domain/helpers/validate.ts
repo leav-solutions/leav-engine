@@ -15,7 +15,7 @@ export interface IValidateHelper {
     validateRecord(library: string, record: string, ctx: IQueryInfos): Promise<void>;
 }
 
-export default function({
+export default function ({
     'core.infra.library': libraryRepo = null,
     'core.infra.record': recordRepo = null
 }: IDeps): IValidateHelper {

@@ -14,6 +14,6 @@ const _getClient = (config: any): Client => {
     });
 };
 
-export default function(deps: IDeps = {}): Client {
+export default function (deps: IDeps = {}): Client {
     return _getClient(deps.config);
 }

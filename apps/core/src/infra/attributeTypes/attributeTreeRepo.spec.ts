@@ -76,7 +76,7 @@ describe('AttributeTreeRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced link value', async function() {
+        test('Should create a new advanced link value', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -129,7 +129,7 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('updateValue', () => {
-        test('Should update a advanced link value', async function() {
+        test('Should update a advanced link value', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -169,7 +169,7 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function() {
+        test('Should delete a value', async function () {
             const deletedEdgeData = {
                 _id: 'core_edge_values_links/222435651',
                 _rev: '_WSywvyC--_',
@@ -211,7 +211,7 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('getValueByID', () => {
-        test('Should return value', async function() {
+        test('Should return value', async function () {
             const traversalRes = [
                 {
                     linkedRecord: {
@@ -286,7 +286,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test("Should return null if value doesn't exists", async function() {
+        test("Should return null if value doesn't exists", async function () {
             const traversalRes = [];
 
             const mockDbServ = {
@@ -356,7 +356,7 @@ describe('AttributeTreeRepo', () => {
             }
         ];
 
-        test('Should return linked tree element', async function() {
+        test('Should return linked tree element', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -428,7 +428,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test('Should return linked tree element filtered by version', async function() {
+        test('Should return linked tree element filtered by version', async function () {
             const traversalResWithVers = [
                 {
                     linkedRecord: {
@@ -493,7 +493,7 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
-        test('Should return only first linked tree element if not multiple values', async function() {
+        test('Should return only first linked tree element if not multiple values', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([traversalRes[0]])
@@ -544,7 +544,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test('Should return all values if forced', async function() {
+        test('Should return all values if forced', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)

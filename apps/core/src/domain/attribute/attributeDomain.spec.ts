@@ -40,7 +40,7 @@ describe('attributeDomain', () => {
     });
 
     describe('getAttributes', () => {
-        test('Should return a list of attributes', async function() {
+        test('Should return a list of attributes', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
             };
@@ -55,7 +55,7 @@ describe('attributeDomain', () => {
             expect(attr.list.length).toBe(2);
         });
 
-        test('Should add default sort', async function() {
+        test('Should add default sort', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
             };
@@ -115,7 +115,7 @@ describe('attributeDomain', () => {
             expect(libAttrs).toEqual(attrs);
         });
 
-        test('Should throw if unknown library', async function() {
+        test('Should throw if unknown library', async function () {
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([])
             };
@@ -157,7 +157,7 @@ describe('attributeDomain', () => {
             expect(libAttrs).toEqual(attrs);
         });
 
-        test('Should throw if unknown library', async function() {
+        test('Should throw if unknown library', async function () {
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([])
             };
@@ -169,7 +169,7 @@ describe('attributeDomain', () => {
     });
 
     describe('getAttributeProperties', () => {
-        test('Should return a list of attributes', async function() {
+        test('Should return a list of attributes', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}], totalCount: 0})
             };
@@ -188,7 +188,7 @@ describe('attributeDomain', () => {
             expect(attr).toMatchObject({id: 'test'});
         });
 
-        test('Should throw if unknown attribute', async function() {
+        test('Should throw if unknown attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0})
             };
@@ -237,7 +237,7 @@ describe('attributeDomain', () => {
             })
         };
 
-        test('Should save a new attribute', async function() {
+        test('Should save a new attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0}),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
@@ -282,7 +282,7 @@ describe('attributeDomain', () => {
             });
         });
 
-        test('Should throw a validation error if the attribute:id is forbidden', async function() {
+        test('Should throw a validation error if the attribute:id is forbidden', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0}),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
@@ -324,7 +324,7 @@ describe('attributeDomain', () => {
             ).rejects.toThrow(ValidationError);
         });
 
-        test('Should update an attribute', async function() {
+        test('Should update an attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -362,7 +362,7 @@ describe('attributeDomain', () => {
             expect(updatedLib).toMatchObject({id: 'test', system: false});
         });
 
-        test('Should read data from DB for fields not specified in save', async function() {
+        test('Should read data from DB for fields not specified in save', async function () {
             const attrData = {...mockAttrAdvVersionable};
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
@@ -489,7 +489,7 @@ describe('attributeDomain', () => {
             });
         });
 
-        test('Should throw if actions list type is invalid', async function() {
+        test('Should throw if actions list type is invalid', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -521,7 +521,7 @@ describe('attributeDomain', () => {
             await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if invalid ID', async function() {
+        test('Should throw if invalid ID', async function () {
             const mockUtilsInvalidID: Mockify<IUtils> = {
                 isIdValid: jest.fn().mockReturnValue(false)
             };
@@ -552,7 +552,7 @@ describe('attributeDomain', () => {
             await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if system action list is missing', async function() {
+        test('Should throw if system action list is missing', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -580,7 +580,7 @@ describe('attributeDomain', () => {
             await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if forbidden action', async function() {
+        test('Should throw if forbidden action', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -607,7 +607,7 @@ describe('attributeDomain', () => {
             await expect(attrDomain.saveAttribute({attrData: attrToSave, ctx})).rejects.toThrow(PermissionError);
         });
 
-        test('Should throw if multiple values on simple or simple link attribute', async function() {
+        test('Should throw if multiple values on simple or simple link attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                 createAttribute: jest.fn(),
@@ -642,7 +642,7 @@ describe('attributeDomain', () => {
             );
         });
 
-        test('Should throw if using invalid tree on versions conf', async function() {
+        test('Should throw if using invalid tree on versions conf', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: jest.fn().mockImplementation(filters => {
                     const list = filters.type === AttributeTypes.TREE ? [mockAttrTree] : [];
@@ -801,7 +801,7 @@ describe('attributeDomain', () => {
     describe('deleteAttribute', () => {
         const attrData = {id: 'test_attribute', system: false, label: {fr: 'Test'}, format: 'text', type: 'index'};
 
-        test('Should delete an attribute and return deleted attribute', async function() {
+        test('Should delete an attribute and return deleted attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise(attrData)};
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
@@ -818,7 +818,7 @@ describe('attributeDomain', () => {
             );
         });
 
-        test('Should throw if unknown attribute', async function() {
+        test('Should throw if unknown attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
             const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise([]);
@@ -826,7 +826,7 @@ describe('attributeDomain', () => {
             await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow();
         });
 
-        test('Should throw if system attribute', async function() {
+        test('Should throw if system attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
             const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise({list: [{system: true}], totalCount: 1});
@@ -834,7 +834,7 @@ describe('attributeDomain', () => {
             await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow();
         });
 
-        test('Should throw if forbidden action', async function() {
+        test('Should throw if forbidden action', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,

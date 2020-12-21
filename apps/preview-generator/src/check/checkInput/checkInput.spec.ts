@@ -14,8 +14,8 @@ describe('checkInput', () => {
     (access as jest.FunctionLike) = jest.fn((...args) => args[1]());
     (lstat as jest.FunctionLike) = jest.fn((...args) =>
         args[1](null, {
-            isFile,
-        }),
+            isFile
+        })
     );
 
     test('should check file exist', async () => {

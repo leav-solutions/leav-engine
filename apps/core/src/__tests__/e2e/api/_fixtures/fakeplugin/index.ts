@@ -8,7 +8,7 @@ import {PermissionTypes} from '../../../../../_types/permissions';
 interface IDeps {
     translator?: i18n;
 }
-export default function({translator = null}: IDeps): IPluginInitModule {
+export default function ({translator = null}: IDeps): IPluginInitModule {
     return {
         async init(extensionPoints) {
             await extensionPoints.registerTranslations(__dirname + '/locales');

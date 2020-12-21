@@ -16,7 +16,7 @@ export const getImageArgs = async (
     size: number,
     name: string,
     version: IVersion,
-    first = false,
+    first = false
 ): Promise<IExec[]> => {
     let command = 'convert';
 
@@ -26,12 +26,12 @@ export const getImageArgs = async (
         input, // input path
         '-resize', // use resize option
         `${size}x${size}>`, // resize value
-        `png:${output}`, // output path
+        `png:${output}` // output path
     ];
 
     if (first) {
         const [errorIdentify, colorspace] = await new Promise(r =>
-            execFile('identify', ['-format', '%r', input], {}, (error, response) => r([error, response])),
+            execFile('identify', ['-format', '%r', input], {}, (error, response) => r([error, response]))
         );
 
         if (errorIdentify) {
@@ -45,8 +45,8 @@ export const getImageArgs = async (
                     size,
                     output,
                     name,
-                    errorId,
-                },
+                    errorId
+                }
             });
         }
 
@@ -56,7 +56,7 @@ export const getImageArgs = async (
                 '-profile', // use profile option
                 join(config.ICCPath, 'EuroscaleCoated.icc'), // profile value
                 '-profile', // use profile option
-                join(config.ICCPath, 'srgb.icm'), // profile value
+                join(config.ICCPath, 'srgb.icm') // profile value
             ];
 
             args.splice(-1, 0, ...profileArgs);
@@ -86,7 +86,7 @@ export const getImageArgs = async (
                 2,
                 0,
                 '+profile', // remove profile
-                '*', // remove all profile
+                '*' // remove all profile
             );
             break;
         case 'tif':
@@ -103,9 +103,9 @@ export const getImageArgs = async (
     return [
         {
             command,
-            args,
+            args
         },
-        backgroundsArgs,
+        backgroundsArgs
     ];
 };
 

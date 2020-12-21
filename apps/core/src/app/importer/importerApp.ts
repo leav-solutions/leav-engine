@@ -28,7 +28,7 @@ interface IDeps {
     'core.infra.db.dbUtils'?: IDbUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,

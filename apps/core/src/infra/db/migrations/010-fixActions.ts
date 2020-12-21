@@ -17,7 +17,7 @@ interface IDeps {
     'core.infra.library'?: ILibraryRepo;
 }
 
-export default function({
+export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,
@@ -27,7 +27,7 @@ export default function({
         async run(ctx) {
             const existingAttribute = await attributeDomain.getAttributes({});
 
-            const modifyAndRecordAttribute = async function(attribute) {
+            const modifyAndRecordAttribute = async function (attribute) {
                 if (!attribute || !attribute.id) {
                     return;
                 }

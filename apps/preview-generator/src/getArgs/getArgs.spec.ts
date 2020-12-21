@@ -22,9 +22,9 @@ describe('getArgs', () => {
                 {
                     size,
                     output,
-                    name,
-                },
-            ],
+                    name
+                }
+            ]
         };
 
         await getArgs(type, input, output, size, name, version, useProfile);
@@ -48,9 +48,9 @@ describe('getArgs', () => {
                 {
                     size,
                     output,
-                    name,
-                },
-            ],
+                    name
+                }
+            ]
         };
 
         await getArgs(type, input, output, size, name, version, useProfile);
@@ -74,9 +74,9 @@ describe('getArgs', () => {
                 {
                     size,
                     output,
-                    name,
-                },
-            ],
+                    name
+                }
+            ]
         };
 
         await expect(getArgs(type, input, output, size, name, version, useProfile)).rejects.toStrictEqual(
@@ -85,9 +85,9 @@ describe('getArgs', () => {
                 params: {
                     output,
                     size,
-                    name,
-                },
-            }),
+                    name
+                }
+            })
         );
     });
 });

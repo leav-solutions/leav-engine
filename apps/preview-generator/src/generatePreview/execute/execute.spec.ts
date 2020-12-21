@@ -10,7 +10,7 @@ describe('execute', () => {
     const size = {
         output,
         size: 800,
-        name,
+        name
     };
 
     const params: Mockify<IExecute> = {
@@ -18,15 +18,15 @@ describe('execute', () => {
         version: {
             background,
             density,
-            sizes: [size],
-        },
+            sizes: [size]
+        }
     };
     test('should throw', () => {
         const commands = [
             {
                 command: 'test',
-                args: [],
-            },
+                args: []
+            }
         ];
         (getArgs as jest.FunctionLike) = jest.fn(() => commands);
         (console.error as jest.FunctionLike) = jest.fn();
@@ -39,8 +39,8 @@ describe('execute', () => {
                     output,
                     density,
                     name,
-                    background,
-                }),
+                    background
+                })
             );
         });
     });

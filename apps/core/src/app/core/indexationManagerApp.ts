@@ -13,7 +13,7 @@ interface IDeps {
     'core.domain.indexationManager'?: IIndexationManagerDomain;
 }
 
-export default function({'core.domain.indexationManager': indexationManager}: IDeps): IIndexationManagerApp {
+export default function ({'core.domain.indexationManager': indexationManager}: IDeps): IIndexationManagerApp {
     return {
         init: () => indexationManager.init(),
         indexDatabase: (ctx: IQueryInfos, libraryId: string, records?: string[]) =>

@@ -22,11 +22,11 @@ describe('handleCheck', () => {
                     {
                         size,
                         output,
-                        name,
-                    },
-                ],
-            },
-        ],
+                        name
+                    }
+                ]
+            }
+        ]
     };
 
     test('should call checkInput with input absolute path', async () => {

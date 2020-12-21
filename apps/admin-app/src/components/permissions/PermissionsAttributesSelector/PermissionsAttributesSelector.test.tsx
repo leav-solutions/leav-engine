@@ -85,12 +85,7 @@ describe('PermissionsAttributesSelector', () => {
             />
         );
 
-        expect(
-            comp
-                .find('[name="relation"]')
-                .first()
-                .prop('disabled')
-        ).toBe(true);
+        expect(comp.find('[name="relation"]').first().prop('disabled')).toBe(true);
         expect(comp.find('[name="permissionTreeAttributes"]').prop('disabled')).toBe(true);
     });
 

@@ -13,7 +13,7 @@ const _getDbConnection = (config: any): Database => {
     });
 };
 
-export default function(deps: IDeps = {}): Database {
+export default function (deps: IDeps = {}): Database {
     const db = _getDbConnection(deps.config);
 
     db.useDatabase(deps.config.db.name);

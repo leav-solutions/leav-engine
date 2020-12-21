@@ -11,7 +11,7 @@ interface IDeps {
     'core.domain.filesManager'?: IFilesManagerDomain;
 }
 
-export default function({'core.domain.filesManager': filesManager}: IDeps): IFilesManagerApp {
+export default function ({'core.domain.filesManager': filesManager}: IDeps): IFilesManagerApp {
     return {
         init: () => filesManager.init()
     };

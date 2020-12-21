@@ -47,10 +47,7 @@ describe('StandardValuesList', () => {
     test('When editing a value, calls value update on blur', async () => {
         const comp = mount(<StandardValuesList values={['value 1', 'value 2']} onValuesUpdate={onValuesUpdate} />);
 
-        const input = comp
-            .find('[data-test-id="values-list-value"] Input')
-            .find('input')
-            .at(1);
+        const input = comp.find('[data-test-id="values-list-value"] Input').find('input').at(1);
 
         act(() => {
             input.simulate('change', {target: {value: 'new value'}});
@@ -67,10 +64,7 @@ describe('StandardValuesList', () => {
     test('When editing a value, calls value update on "enter""', async () => {
         const comp = mount(<StandardValuesList values={['value 1', 'value 2']} onValuesUpdate={onValuesUpdate} />);
 
-        const input = comp
-            .find('[data-test-id="values-list-value"] Input')
-            .find('input')
-            .at(1);
+        const input = comp.find('[data-test-id="values-list-value"] Input').find('input').at(1);
 
         await act(async () => {
             input.simulate('change', {target: {value: 'new value'}});

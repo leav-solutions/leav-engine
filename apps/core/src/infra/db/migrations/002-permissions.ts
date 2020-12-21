@@ -11,7 +11,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
 }
 
-export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
+export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
         async run(ctx) {
             if (!(await dbService.collectionExists('core_permissions'))) {

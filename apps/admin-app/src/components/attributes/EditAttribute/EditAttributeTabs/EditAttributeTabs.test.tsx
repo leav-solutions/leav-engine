@@ -21,23 +21,13 @@ describe('EditAttributeTabs', () => {
         test('Display header with attribute label', async () => {
             const comp = shallow(<EditAttributeTabs attribute={mockAttribute} />);
 
-            expect(
-                comp
-                    .find('Header')
-                    .shallow()
-                    .text()
-            ).toBe('Mon Attribut');
+            expect(comp.find('Header').shallow().text()).toBe('Mon Attribut');
         });
 
         test('Display header for new attribute', async () => {
             const comp = shallow(<EditAttributeTabs />);
 
-            expect(
-                comp
-                    .find('Header')
-                    .shallow()
-                    .text()
-            ).toBe('attributes.new');
+            expect(comp.find('Header').shallow().text()).toBe('attributes.new');
         });
     });
 

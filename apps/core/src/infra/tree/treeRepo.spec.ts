@@ -26,7 +26,7 @@ describe('TreeRepo', () => {
         queryId: '132456'
     };
     describe('createTree', () => {
-        test('Should create a tree', async function() {
+        test('Should create a tree', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([docTreeData]),
@@ -66,7 +66,7 @@ describe('TreeRepo', () => {
     });
 
     describe('updateTree', () => {
-        test('Should update a tree', async function() {
+        test('Should update a tree', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([docTreeData])

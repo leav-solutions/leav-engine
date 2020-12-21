@@ -17,7 +17,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqp': amqpConn = null,
     'core.utils.logger': logger = null

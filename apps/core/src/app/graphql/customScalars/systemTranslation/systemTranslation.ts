@@ -12,7 +12,7 @@ interface IDeps {
     config: IConfig;
 }
 
-export default function({config}: IDeps): GraphQLScalarType {
+export default function ({config}: IDeps): GraphQLScalarType {
     const _validateValue = (val: unknown) => {
         // We accept a key-value object, keys being an available language and value being a string.
         // The default language has to be present

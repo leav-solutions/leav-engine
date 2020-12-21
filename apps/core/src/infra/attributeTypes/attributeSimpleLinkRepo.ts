@@ -15,7 +15,7 @@ interface IDeps {
     'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null

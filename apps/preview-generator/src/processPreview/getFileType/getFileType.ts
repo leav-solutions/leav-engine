@@ -3,14 +3,12 @@ import {extname} from 'path';
 import * as extensions from './MIMEByExtension.json';
 
 export const getFileType = (file: string): string => {
-    const extension = extname(file)
-        .toLowerCase()
-        .replace('.', '');
+    const extension = extname(file).toLowerCase().replace('.', '');
 
     if (!extensions[extension]) {
         throw new ErrorPreview({
             error: 301,
-            params: null,
+            params: null
         });
     }
 

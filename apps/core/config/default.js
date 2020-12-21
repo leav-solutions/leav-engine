@@ -32,7 +32,7 @@ module.exports = {
             hostname: process.env.AMQP_HOST,
             username: process.env.AMQP_USERNAME,
             password: process.env.AMQP_PASSWORD,
-            port: process.env.AMQP_PORT || '5672',
+            port: process.env.AMQP_PORT || '5672'
         },
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
         type: process.env.AMQP_TYPE || 'direct'
@@ -41,7 +41,7 @@ module.exports = {
         queues: {
             events: process.env.FM_EVENTS_QUEUE || 'files_events',
             previewRequest: process.env.FM_PREVIEW_REQUEST_QUEUE || 'files_preview_request',
-            previewResponse: process.env.FM_PREVIEW_RESPONSE_QUEUE ||'files_preview_response'
+            previewResponse: process.env.FM_PREVIEW_RESPONSE_QUEUE || 'files_preview_response'
         },
         routingKeys: {
             events: 'files.event',

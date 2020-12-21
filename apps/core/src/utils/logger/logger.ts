@@ -6,7 +6,7 @@ import * as logger from 'winston';
 interface IDeps {
     config?: any;
 }
-export default function({config = null}: IDeps = {}): logger.Winston {
+export default function ({config = null}: IDeps = {}): logger.Winston {
     if (typeof config.logs !== 'undefined') {
         const transports = config.logs.transport.map(transport => {
             if (transport === 'console') {

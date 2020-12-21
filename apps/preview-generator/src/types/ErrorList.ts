@@ -28,7 +28,7 @@ export enum ErrorList {
     // multiPage
     'error when create the folder for multi page' = 601,
     'error when getting the number page of pdf' = 602,
-    'error when generating multi page' = 603,
+    'error when generating multi page' = 603
 }
 
 export enum ErrorCodeType {
@@ -37,5 +37,5 @@ export enum ErrorCodeType {
     'input error' = 300,
     'output error' = 400,
     'generate preview error' = 500,
-    'multiPage error' = 600,
+    'multiPage error' = 600
 }

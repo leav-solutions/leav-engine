@@ -27,7 +27,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,

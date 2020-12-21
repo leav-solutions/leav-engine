@@ -11,7 +11,7 @@ export const checkOutput = async (output: string, size: number, name: string, co
     const pathExist = await new Promise(r =>
         access(dirOutput, e => {
             r(!e);
-        }),
+        })
     );
     if (!pathExist) {
         const pathList = dirOutput.split('/');
@@ -27,16 +27,14 @@ export const checkOutput = async (output: string, size: number, name: string, co
                     output,
                     size,
                     name,
-                    errorId,
-                },
+                    errorId
+                }
             });
         }
     }
 
     // checkOutput
-    const extOutput = extname(output)
-        .toLowerCase()
-        .replace('.', '');
+    const extOutput = extname(output).toLowerCase().replace('.', '');
 
     if (extOutput !== 'png') {
         throw new ErrorPreview({
@@ -44,8 +42,8 @@ export const checkOutput = async (output: string, size: number, name: string, co
             params: {
                 output,
                 size,
-                name,
-            },
+                name
+            }
         });
     }
 };
@@ -61,7 +59,7 @@ export const createDirectoryRecursively = async (pathList: string[], output: str
             const errDirCreated: NodeJS.ErrnoException = await new Promise(r =>
                 mkdir(allPath, e => {
                     r(e);
-                }),
+                })
             );
 
             // ignore error -17: folder already exists

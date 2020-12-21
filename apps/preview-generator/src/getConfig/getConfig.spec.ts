@@ -16,8 +16,8 @@ describe('test getConfig', () => {
                 password: 'test',
                 queue: 'test',
                 exchange: 'test',
-                routingKey: 'test',
-            },
+                routingKey: 'test'
+            }
         };
 
         const mockLoadConfig = jest.fn(() => config);

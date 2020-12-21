@@ -25,7 +25,7 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
 }
 
-export default function({
+export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,

@@ -19,7 +19,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.library': libraryDomain = null,
     'core.utils': utils = null
 }: IDeps): ITreeDataValidationHelper {

@@ -19,7 +19,7 @@ describe('checkClippingPathJpg', () => {
 
         expect(args).toEqual({
             before: [],
-            after: [],
+            after: []
         });
     });
 });

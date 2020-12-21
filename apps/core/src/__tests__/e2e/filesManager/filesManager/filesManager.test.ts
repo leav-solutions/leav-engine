@@ -11,9 +11,7 @@ jest.setTimeout(30000);
 
 const library = 'files';
 
-const rand = Math.random()
-    .toString()
-    .substring(2);
+const rand = Math.random().toString().substring(2);
 
 const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(e => false));
 

@@ -15,7 +15,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.infra.db.dbService': dbService = null,
     'core.domain.library': libraryDomain = null

@@ -28,7 +28,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function(deps: IDeps = {}): ICoreAttributeApp {
+export default function (deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,

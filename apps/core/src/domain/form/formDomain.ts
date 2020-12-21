@@ -42,7 +42,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function(deps: IDeps = {}): IFormDomain {
+export default function (deps: IDeps = {}): IFormDomain {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.permission': permissionDomain = null,

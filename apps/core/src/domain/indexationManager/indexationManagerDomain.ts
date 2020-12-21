@@ -30,7 +30,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.amqp.amqpService': amqpService = null,

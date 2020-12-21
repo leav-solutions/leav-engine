@@ -10,13 +10,13 @@ export const getVideoArgs = (input: string, output: string, size: number): IExec
         'thumbnail,scale=' + size + ':-1', // -1 allow to keep the ratio from the source
         '-frames:v',
         '1',
-        output,
+        output
     ];
 
     return [
         {
             command,
-            args,
-        },
+            args
+        }
     ];
 };

@@ -15,7 +15,7 @@ interface IDeps {
     'core.infra.amqp.amqpService'?: IAmqpService;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqp.amqpService': amqpService = null
 }: IDeps): IEventsManagerDomain {

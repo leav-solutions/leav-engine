@@ -21,15 +21,15 @@ export const startBench = async (jsonFile: string, dest: string, config: IConfig
                         sizes: [
                             {
                                 size: 400,
-                                output,
-                            },
-                        ],
-                    },
-                ],
-            }),
+                                output
+                            }
+                        ]
+                    }
+                ]
+            })
         );
         const msg: Mockify<ConsumeMessage> = {
-            content,
+            content
         };
 
         await processPreview(msg as ConsumeMessage, config);

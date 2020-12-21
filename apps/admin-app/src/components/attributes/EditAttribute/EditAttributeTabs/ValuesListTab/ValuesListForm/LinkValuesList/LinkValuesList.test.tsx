@@ -150,9 +150,7 @@ describe('LinkValuesList', () => {
         );
 
         act(() => {
-            comp.find('[data-test-id="values-list-value"]')
-                .first()
-                .simulate('click');
+            comp.find('[data-test-id="values-list-value"]').first().simulate('click');
         });
 
         const editRecordComp = comp.find('EditRecordModal');

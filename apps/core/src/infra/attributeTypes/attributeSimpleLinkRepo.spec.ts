@@ -30,7 +30,7 @@ describe('AttributeIndexRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a simple link value', async function() {
+        test('Should create a simple link value', async function () {
             const updatedValueData = {
                 value: 123456
             };
@@ -107,7 +107,7 @@ describe('AttributeIndexRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for simple link attribute', async function() {
+        test('Should return values for simple link attribute', async function () {
             const queryRes = [
                 {
                     _key: '987654',

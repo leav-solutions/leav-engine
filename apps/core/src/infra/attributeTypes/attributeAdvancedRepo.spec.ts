@@ -30,7 +30,7 @@ describe('AttributeStandardRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced value', async function() {
+        test('Should create a new advanced value', async function () {
             const createdValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -94,7 +94,7 @@ describe('AttributeStandardRepo', () => {
             expect(createdVal).toMatchObject(newValueData);
         });
 
-        test('Should save version on value', async function() {
+        test('Should save version on value', async function () {
             const createdValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -171,7 +171,7 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('updateValue', () => {
-        test('Should update an advanced value', async function() {
+        test('Should update an advanced value', async function () {
             const savedValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -233,7 +233,7 @@ describe('AttributeStandardRepo', () => {
             expect(savedVal).toMatchObject(valueData);
         });
 
-        test('Should update value version', async function() {
+        test('Should update value version', async function () {
             const savedValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -305,7 +305,7 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function() {
+        test('Should delete a value', async function () {
             const deletedValueData = {
                 _id: 'core_values/123456789',
                 _rev: '_WSywvyC--_',
@@ -375,7 +375,7 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('getValueByID', () => {
-        test('Should return value', async function() {
+        test('Should return value', async function () {
             const lookupValueRes = [
                 {
                     _key: 987654,
@@ -429,7 +429,7 @@ describe('AttributeStandardRepo', () => {
             });
         });
 
-        test("Should return null if value doesn't exists", async function() {
+        test("Should return null if value doesn't exists", async function () {
             const mockDbCollec = {
                 lookupByKeys: global.__mockPromise([])
             };
@@ -493,7 +493,7 @@ describe('AttributeStandardRepo', () => {
             }
         ];
 
-        test('Should return values for advanced attribute', async function() {
+        test('Should return values for advanced attribute', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -527,7 +527,7 @@ describe('AttributeStandardRepo', () => {
             });
         });
 
-        test('Should return only first value if not multiple values', async function() {
+        test('Should return only first value if not multiple values', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([traversalRes[0]])
@@ -561,7 +561,7 @@ describe('AttributeStandardRepo', () => {
             });
         });
 
-        test('Should return values filtered by version', async function() {
+        test('Should return values filtered by version', async function () {
             const traversalResWithVers = [
                 {
                     value: {
@@ -608,7 +608,7 @@ describe('AttributeStandardRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
-        test('Should return all values if forced', async function() {
+        test('Should return all values if forced', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)

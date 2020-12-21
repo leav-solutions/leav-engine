@@ -1,3 +1,3 @@
-import { getConfig } from "./config";
+import {getConfig} from './config';
 
 console.log(getConfig());

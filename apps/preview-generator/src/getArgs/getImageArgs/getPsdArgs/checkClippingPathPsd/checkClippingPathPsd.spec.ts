@@ -12,7 +12,7 @@ describe('checkClippingPathPsd', () => {
             'identify',
             expect.arrayContaining([input]),
             expect.anything(),
-            expect.anything(),
+            expect.anything()
         );
     });
 });

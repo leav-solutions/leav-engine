@@ -13,15 +13,15 @@ export const getPsdArgs = async (input: string): Promise<IArgs> => {
                 'transparent', // set the image transparent
                 '-clip', // select the clipping path
                 '-alpha',
-                'opaque', // set the inside of the image opaque
-            ],
+                'opaque' // set the inside of the image opaque
+            ]
         };
     } else {
         return {
             before: [
-                '-flatten', // flatten all layers
+                '-flatten' // flatten all layers
             ],
-            after: [],
+            after: []
         };
     }
 };

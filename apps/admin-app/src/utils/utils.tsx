@@ -58,11 +58,7 @@ export const addWildcardToFilters = (filters, keysToProcess = ['label', 'id']) =
     }, {});
 };
 
-export const getRandomColor = (): string =>
-    '#' +
-    Math.random()
-        .toString(16)
-        .substr(-6);
+export const getRandomColor = (): string => '#' + Math.random().toString(16).substr(-6);
 /**
  *
  * @param str

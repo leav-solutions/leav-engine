@@ -5,6 +5,6 @@ export const getSvgCommand = (input: string, output: string, size: number) => {
 
     return {
         command,
-        args,
+        args
     };
 };

@@ -16,7 +16,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.infra.db.dbService': dbService = null,
     'core.domain.library': libraryDomain = null
@@ -30,7 +30,7 @@ export default function({
 
             const existingLibraries = await libraryDomain.getLibraries({ctx});
 
-            const modifyAndRecordAttribute = async function(attribute: IAttribute) {
+            const modifyAndRecordAttribute = async function (attribute: IAttribute) {
                 if (!attribute || !attribute.id) {
                     return;
                 }
@@ -58,7 +58,7 @@ export default function({
                 });
             };
 
-            const modifyRecordsLibraries = async function(library: ILibrary) {
+            const modifyRecordsLibraries = async function (library: ILibrary) {
                 if (!library || !library.id) {
                     return;
                 }

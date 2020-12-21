@@ -47,7 +47,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.app.importer': importerApp = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.app.graphql': graphqlApp = null,

@@ -6,7 +6,7 @@ describe('checkOutput', () => {
     const size = 800;
     const name = 'big';
     const config: Mockify<IConfig> = {
-        outputRootPath: '/data/',
+        outputRootPath: '/data/'
     };
 
     test('should throw an error', async () => {

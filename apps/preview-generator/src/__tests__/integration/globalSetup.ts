@@ -12,7 +12,7 @@ export async function setup() {
             protocol: conf.amqp.protocol,
             hostname: conf.amqp.hostname,
             username: conf.amqp.username,
-            password: conf.amqp.password,
+            password: conf.amqp.password
         };
 
         const channel: Channel = await getChannel(amqpConfig);

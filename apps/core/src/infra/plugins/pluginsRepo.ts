@@ -8,7 +8,7 @@ export interface IPluginsRepo {
     getRegisteredPlugins(): IRegisteredPlugin[];
 }
 
-export default function(): IPluginsRepo {
+export default function (): IPluginsRepo {
     const _registeredPlugins: IRegisteredPlugin[] = [];
     return {
         registerPlugin(path: string, plugin: IPluginInfos): IRegisteredPlugin {

@@ -14,8 +14,8 @@ describe('getDocumentArgs', () => {
     (getImageArgs as jest.FunctionLike) = jest.fn(() => [
         {
             command: 'convert',
-            args: [`${output}.pdf[0]`, 'png:' + output],
-        },
+            args: [`${output}.pdf[0]`, 'png:' + output]
+        }
     ]);
     (getConfig as jest.FunctionLike) = jest.fn(() => mockconf);
 
@@ -29,9 +29,9 @@ describe('getDocumentArgs', () => {
             {
                 size,
                 output,
-                name,
-            },
-        ],
+                name
+            }
+        ]
     };
 
     (async () => handleDocument({input, output, size, name, version, rootPaths, results: []}))();
@@ -43,7 +43,7 @@ describe('getDocumentArgs', () => {
             'unoconv',
             expect.arrayContaining([input, `${output}.pdf`]),
             expect.anything(),
-            expect.anything(),
+            expect.anything()
         );
     });
 
@@ -52,7 +52,7 @@ describe('getDocumentArgs', () => {
             'convert',
             expect.arrayContaining([`${output}.pdf[0]`, 'png:' + output]),
             expect.anything(),
-            expect.anything(),
+            expect.anything()
         );
     });
 });

@@ -67,7 +67,7 @@ interface IDeps {
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.db.dbUtils': dbUtils = null,

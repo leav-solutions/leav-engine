@@ -27,7 +27,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.depsManager': depsManager = null,
     'core.utils': utils = null,
     config = null

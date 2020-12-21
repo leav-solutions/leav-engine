@@ -24,22 +24,22 @@ describe('generatePreview', () => {
                     {
                         size: 200,
                         output: 'test.200.jpg',
-                        name: 'small',
+                        name: 'small'
                     },
                     {
                         size: 800,
                         output: 'test.800.jpg',
-                        name: 'big',
+                        name: 'big'
                     },
 
                     {
                         size: 100,
                         output: 'test.100.jpg',
-                        name: 'very_small',
-                    },
-                ],
-            },
-        ],
+                        name: 'very_small'
+                    }
+                ]
+            }
+        ]
     };
     test('result generatePreview', async () => {
         const type = 'image';

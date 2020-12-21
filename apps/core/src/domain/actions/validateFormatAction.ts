@@ -16,7 +16,7 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
 }
 
-export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
+export default function ({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
     return {
         id: 'validateFormat',
         name: 'Validate Format',
@@ -50,10 +50,7 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
                         schema = Joi.number().allow('', null);
                         break;
                     case AttributeFormats.DATE:
-                        schema = Joi.date()
-                            .allow('', null)
-                            .timestamp('unix')
-                            .raw();
+                        schema = Joi.date().allow('', null).timestamp('unix').raw();
                         break;
                     case AttributeFormats.BOOLEAN:
                         schema = Joi.boolean();

@@ -10,7 +10,7 @@ interface IDeps {
     'core.app.benchmark'?: IBenchmarkApp;
 }
 
-export default function({
+export default function ({
     'core.app.importer': importerApp = null,
     'core.app.benchmark': benchmarkApp = null
 }: IDeps = {}) {

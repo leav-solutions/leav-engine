@@ -46,7 +46,7 @@ const _parseLiteralAny = ast => {
     }
 };
 
-export default function(
+export default function (
     {
         'core.app.graphql': graphqlApp = null,
         'core.app.graphql.customScalars.systemTranslation': SystemTranslation = null,

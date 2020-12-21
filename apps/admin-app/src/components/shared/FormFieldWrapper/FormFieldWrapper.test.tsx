@@ -23,11 +23,6 @@ describe('FormFieldWrapper', () => {
     test('Display error if any', async () => {
         const comp = shallow(<FormFieldWrapper error="ERROR MESSAGE">{testInput}</FormFieldWrapper>);
         expect(comp.find('FormInput').prop('error')).toBe(true);
-        expect(
-            comp
-                .find('Label')
-                .shallow()
-                .text()
-        ).toBe('ERROR MESSAGE');
+        expect(comp.find('Label').shallow().text()).toBe('ERROR MESSAGE');
     });
 });

@@ -1,7 +1,7 @@
 import {getConfig} from './getConfig/getConfig';
 import {startConsume} from './amqp/startConsume';
 
-(async function() {
+(async function () {
     try {
         const config = await getConfig();
         await startConsume(config);

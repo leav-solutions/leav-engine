@@ -12,7 +12,7 @@ export interface IPermissionsByActionsHelper {
     getPermissionsByActions: (params: IGetPermissionsByActionsParams) => Promise<{[name: string]: boolean | null}>;
 }
 
-export default function({'core.infra.permission': permissionRepo = null}: IDeps): IPermissionsByActionsHelper {
+export default function ({'core.infra.permission': permissionRepo = null}: IDeps): IPermissionsByActionsHelper {
     return {
         async getPermissionsByActions({
             type,

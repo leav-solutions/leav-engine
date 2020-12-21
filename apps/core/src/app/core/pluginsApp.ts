@@ -14,7 +14,7 @@ interface IDeps {
     'core.domain.plugins': IPluginsDomain;
 }
 
-export default function({'core.domain.plugins': pluginsDomain}: IDeps): ICorePluginsApp {
+export default function ({'core.domain.plugins': pluginsDomain}: IDeps): ICorePluginsApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

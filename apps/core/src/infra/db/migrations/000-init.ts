@@ -16,7 +16,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.attribute': attributeRepo = null,

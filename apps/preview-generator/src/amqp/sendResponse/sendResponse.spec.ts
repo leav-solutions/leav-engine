@@ -4,13 +4,13 @@ import {sendResponse} from './sendResponse';
 
 describe('test sendResponse', () => {
     const channel: Mockify<Channel> = {
-        publish: jest.fn(),
+        publish: jest.fn()
     };
 
     const response: IResponse = {
         context: 'context',
         input: 'myInput',
-        results: [],
+        results: []
     };
 
     const exchange = 'exchange';

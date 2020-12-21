@@ -14,12 +14,7 @@ describe('EditFormTabs', () => {
     test('Display form edition for existing form', async () => {
         const comp = shallow(<EditFormTabs library="test_lib" form={mockForm} />);
 
-        expect(
-            comp
-                .find('Header')
-                .shallow()
-                .text()
-        ).toBe('Test Form');
+        expect(comp.find('Header').shallow().text()).toBe('Test Form');
 
         // Check number of panes
         const panes = comp.find('Tab').prop('panes');
@@ -30,12 +25,7 @@ describe('EditFormTabs', () => {
     test('Display form edition for new form', async () => {
         const comp = shallow(<EditFormTabs library="test_lib" form={null} />);
 
-        expect(
-            comp
-                .find('Header')
-                .shallow()
-                .text()
-        ).toBe('forms.new');
+        expect(comp.find('Header').shallow().text()).toBe('forms.new');
 
         // Check number of panes
         const panes = comp.find('Tab').prop('panes');

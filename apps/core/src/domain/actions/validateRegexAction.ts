@@ -15,7 +15,7 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
 }
 
-export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
+export default function ({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
     return {
         id: 'validateRegex',
         name: 'Validate Regex',

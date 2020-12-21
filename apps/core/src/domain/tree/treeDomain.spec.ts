@@ -166,7 +166,7 @@ describe('treeDomain', () => {
     });
 
     describe('deleteTree', () => {
-        test('Should delete a tree and return deleted tree', async function() {
+        test('Should delete a tree and return deleted tree', async function () {
             const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
@@ -186,7 +186,7 @@ describe('treeDomain', () => {
             expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.DELETE_TREE);
         });
 
-        test('Should throw if unknown tree', async function() {
+        test('Should throw if unknown tree', async function () {
             const treeRepo: Mockify<ITreeRepo> = {
                 deleteTree: global.__mockPromise(mockTree)
             };
@@ -200,7 +200,7 @@ describe('treeDomain', () => {
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if system tree', async function() {
+        test('Should throw if system tree', async function () {
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
@@ -216,7 +216,7 @@ describe('treeDomain', () => {
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if action forbidden', async function() {
+        test('Should throw if action forbidden', async function () {
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {

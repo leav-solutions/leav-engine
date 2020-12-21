@@ -35,7 +35,7 @@ interface IDeps {
     'core.infra.value'?: IValueRepo;
 }
 
-export default function(deps: IDeps = {}): ITreeNodePermissionDomain {
+export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
     const {
         'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,

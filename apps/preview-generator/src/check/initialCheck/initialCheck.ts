@@ -10,8 +10,8 @@ export const initialCheck = async (config: IConfig): Promise<void> => {
         throw new ErrorPreview({
             error: 101,
             params: {
-                errorId: handleError(e),
-            },
+                errorId: handleError(e)
+            }
         });
     }
 
@@ -21,8 +21,8 @@ export const initialCheck = async (config: IConfig): Promise<void> => {
         throw new ErrorPreview({
             error: 102,
             params: {
-                errorId: handleError(e),
-            },
+                errorId: handleError(e)
+            }
         });
     }
 };

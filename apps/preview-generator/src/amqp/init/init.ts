@@ -3,7 +3,7 @@ import {Channel} from 'amqplib';
 export const initAmqp = async (
     channel: Channel,
     type: string,
-    {exchange, queue, routingKey}: {exchange: string; queue: string; routingKey: string},
+    {exchange, queue, routingKey}: {exchange: string; queue: string; routingKey: string}
 ) => {
     await assertExchange(channel, type, exchange);
     await assertQueue(channel, queue);

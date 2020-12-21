@@ -9,7 +9,7 @@ export const startConsume = async (config: IConfig) => {
         protocol: config.amqp.protocol,
         hostname: config.amqp.hostname,
         username: config.amqp.username,
-        password: config.amqp.password,
+        password: config.amqp.password
     };
 
     const channel = await getChannel(amqpConfig);

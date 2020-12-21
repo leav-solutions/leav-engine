@@ -21,25 +21,13 @@ describe('InfosForm', () => {
             <InfosForm library="test_lib" onSubmit={onSubmit} form={{...mockFormFull}} readonly={false} />
         );
 
-        expect(
-            comp
-                .find('Formik')
-                .shallow()
-                .find('[name="id"]')
-                .prop('disabled')
-        ).toBe(true);
+        expect(comp.find('Formik').shallow().find('[name="id"]').prop('disabled')).toBe(true);
     });
 
     test('Render form for new form', async () => {
         const comp = shallow(<InfosForm library="test_lib" onSubmit={onSubmit} form={null} readonly={false} />);
 
-        expect(
-            comp
-                .find('Formik')
-                .shallow()
-                .find('[name="id"]')
-                .prop('disabled')
-        ).toBe(false);
+        expect(comp.find('Formik').shallow().find('[name="id"]').prop('disabled')).toBe(false);
     });
 
     test('Autofill ID with label on new form', async () => {

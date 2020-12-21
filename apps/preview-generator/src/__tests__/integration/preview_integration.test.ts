@@ -23,27 +23,27 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
 
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
@@ -66,26 +66,26 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
@@ -108,26 +108,26 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
@@ -150,27 +150,27 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
 
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
@@ -193,27 +193,27 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
 
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
@@ -237,26 +237,26 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
 
@@ -285,26 +285,26 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
             expect(fs.existsSync(path.join(config.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
@@ -333,26 +333,26 @@ describe('test preview generation', () => {
                         {
                             size: 800,
                             output,
-                            name: 'big',
-                        },
-                    ],
-                },
-            ],
+                            name: 'big'
+                        }
+                    ]
+                }
+            ]
         };
 
         await consumeResponse(config, (msg, channel) => {
             channel.ack(msg);
             const {
-                responses: [responses],
+                responses: [responses]
             } = JSON.parse(msg.content.toString());
 
             expect(responses).toEqual(
                 expect.objectContaining({
                     error: 0,
                     params: expect.objectContaining({
-                        size: msgSend.versions[0].sizes[0].size,
-                    }),
-                }),
+                        size: msgSend.versions[0].sizes[0].size
+                    })
+                })
             );
             expect(fs.existsSync(path.join(config.outputRootPath, output))).toBeTruthy();
             expect(fs.existsSync(path.join(config.outputRootPath, multiPage, '01.pdf'))).toBeTruthy();
@@ -373,7 +373,7 @@ const sendTestMessage = async (config: IConfig, msg: IMessageConsume) => {
         protocol: config.amqp.protocol,
         hostname: config.amqp.hostname,
         username: config.amqp.username,
-        password: config.amqp.password,
+        password: config.amqp.password
     };
 
     const channel: Channel = await getChannel(amqpConfig);
@@ -387,7 +387,7 @@ const consumeResponse = async (config: IConfig, consume: (msg: ConsumeMessage, c
         protocol: config.amqp.protocol,
         hostname: config.amqp.hostname,
         username: config.amqp.username,
-        password: config.amqp.password,
+        password: config.amqp.password
     };
 
     const channel: Channel = await getChannel(amqpConfig);

@@ -5,7 +5,7 @@ import {GraphQLScalarType, ValueNode} from 'graphql';
 import {IKeyValue} from '_types/shared';
 import parseLiteral from '../helpers/parseLiteral';
 
-export default function(): GraphQLScalarType {
+export default function (): GraphQLScalarType {
     return new GraphQLScalarType({
         name: 'Any',
         description: 'Can be anything',

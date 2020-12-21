@@ -101,7 +101,7 @@ interface IDeps {
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
 }
 
-export default function({'core.infra.attributeTypes': attributeTypesRepo = null}: IDeps = {}): IValueRepo {
+export default function ({'core.infra.attributeTypes': attributeTypesRepo = null}: IDeps = {}): IValueRepo {
     return {
         createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

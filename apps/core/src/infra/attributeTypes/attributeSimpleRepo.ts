@@ -15,7 +15,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
 }
 
-export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IAttributeTypeRepo {
+export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
         recordId: string,

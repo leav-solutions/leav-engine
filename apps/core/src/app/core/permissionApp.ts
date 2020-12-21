@@ -28,7 +28,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.permission': permissionDomain = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps = {}): ICorePermissionApp {

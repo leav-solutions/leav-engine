@@ -8,15 +8,15 @@ describe('initialCheck', () => {
 
     const config: Mockify<IConfig> = {
         inputRootPath: '/data',
-        outputRootPath: '/data',
+        outputRootPath: '/data'
     };
 
     test('check inputRootPath should throw', async () => {
         (console.error as jest.FunctionLike) = jest.fn();
         await expect(initialCheck(config as IConfig)).rejects.toStrictEqual(
             new ErrorPreview({
-                error: 101,
-            }),
+                error: 101
+            })
         );
     });
 

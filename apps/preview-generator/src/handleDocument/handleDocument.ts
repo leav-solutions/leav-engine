@@ -19,9 +19,7 @@ interface IHandleDocument {
 
 // convert document in tmp pdf, convert the pdf in png and delete the pdf
 export const handleDocument = async ({input, output, size, name, version, rootPaths, results}: IHandleDocument) => {
-    const ext = extname(input)
-        .toLowerCase()
-        .replace('.', '');
+    const ext = extname(input).toLowerCase().replace('.', '');
 
     let pdfFile = input;
     if (ext !== 'pdf') {
@@ -48,8 +46,8 @@ export const handleDocument = async ({input, output, size, name, version, rootPa
                         size,
                         output,
                         name,
-                        errorId,
-                    },
+                        errorId
+                    }
                 });
             }
         }
@@ -69,7 +67,7 @@ const _createDocumentTmpFile = async (input: string, output: string, size: numbe
     const error = await new Promise(r =>
         execFile(command, args, {}, e => {
             r(e);
-        }),
+        })
     );
 
     if (error) {
@@ -81,8 +79,8 @@ const _createDocumentTmpFile = async (input: string, output: string, size: numbe
                 output,
                 size,
                 name,
-                errorId,
-            },
+                errorId
+            }
         });
     }
 

@@ -34,7 +34,7 @@ export interface IAttributeForRepo extends IAttribute {
     multiple_values: boolean;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.value': valueRepo = null,
