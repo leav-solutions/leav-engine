@@ -1,0 +1,26 @@
+const rootPath = require('app-root-path');
+
+module.exports = {
+    graphql: {
+        uri: 'http://core.leav.localhost/graphql',
+        token:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwibG9naW4iOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTU4NDUyNjc5MSwiZXhwIjo0NzA4NzI5MTkxfQ.RtTiK_mYUBKUenCKApHddfsrW-NgAsLGXWjwdDmLCMM',
+        treeId: 'files_tree'
+    },
+    filesystem: {
+        absolutePath: rootPath.path + '/src/__tests__/_fixtures'
+    },
+    rmq: {
+        connOpt: {
+            protocol: 'amqp',
+            hostname: 'rabbitmq.leav.localhost',
+            username: 'guest',
+            password: 'guest'
+        },
+        queue: 'files_events_test_sync_scan',
+        exchange: 'leav_core_test_sync_scan',
+        routingKey: 'files.event',
+        rootKey: 'files1',
+        type: 'direct'
+    }
+};

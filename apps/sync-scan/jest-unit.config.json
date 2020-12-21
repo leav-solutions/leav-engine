@@ -1,0 +1,11 @@
+{
+    "moduleFileExtensions": [
+        "ts",
+        "js"
+    ],
+    "transform": {
+        "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": "src\/__tests__\/unit\/.*(.test.ts)$",
+    "roots":  ["<rootDir>/src/__tests__/unit"]
+}
