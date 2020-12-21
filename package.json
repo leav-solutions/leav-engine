@@ -1,0 +1,11 @@
+{
+  "name": "leav-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "shared/*"
+  ],
+  "dependencies": {
+    "typescript": "4.1.3"
+  }
+}
