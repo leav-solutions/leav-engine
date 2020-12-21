@@ -1,0 +1,187 @@
+[
+    {
+        "input": "./psd/3.psd",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 1600,
+                        "output": "./generate/gateaux.png",
+                        "name": "psd_BIG"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pdf/test.pdf",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 400,
+                        "output": "./generate/pdf.png",
+                        "name": "pdf_SMALL"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./png/120106427143_1.png",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/cookie.png",
+                        "name": "png_MEDIUM"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./docx/test.docx",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 1400,
+                        "output": "./generate/docx.png",
+                        "name": "docx_BIG"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./jpg/jpg-with-clippping-path.jpg",
+        "context": "dsfsdfdsfomhsdofhm4444",
+        "versions": [
+            {
+                "background": true,
+                "sizes": [
+                    {
+                        "size": 400,
+                        "output": "./generate/jpg.400.png",
+                        "name": "jpg_MEDIUM"
+                    },
+                    {
+                        "size": 800,
+                        "output": "./generate/jpg.800.png",
+                        "name": "jpg_BIG"
+                    },
+                    {
+                        "size": 200,
+                        "output": "./generate/jpg.200.png",
+                        "name": "jpg_SMALL"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./mp4/test.mp4",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/mp4.png",
+                        "name": "mp4_MEDIUM"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./tiff/test.TIF",
+        "versions": [
+            {
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/tiff.png",
+                        "name": "tiff_MEDIUM"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pdf/carrefour2.pdf",
+        "versions": [
+            {
+                "multiPage": "./generate/carrefour2/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/carrefour2.png",
+                        "name": "pdf_multiPage_MEDIUM"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pdf/carrefour1.pdf",
+        "versions": [
+            {
+                "multiPage": "./generate/carrefour1/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/carrefour1.png",
+                        "name": "pdf_multiPage_MEDIUM"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pptx/meteor.pptx",
+        "versions": [
+            {
+                "multiPage": "./generate/meteor/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/pptx.png",
+                        "name": "pptx_MEDIUM"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./pdf/carrefour3.pdf",
+        "versions": [
+            {
+                "multiPage": "./generate/carrefour3/",
+                "sizes": [
+                    {
+                        "size": 600,
+                        "output": "./generate/ca`rrefour3.png",
+                        "name": "pdf_multiPage_MEDIUM"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "input": "./docx/test.docx",
+        "versions": [
+            {
+                "multiPage": "./generate/docx/",
+                "sizes": [
+                    {
+                        "size": 1400,
+                        "output": "./generate/docx.png",
+                        "name": ""
+                    }
+                ]
+            }
+        ]
+    }
+]

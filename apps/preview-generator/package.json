@@ -1,0 +1,43 @@
+{
+    "name": "preview-generator",
+    "version": "1.0.0",
+    "description": "",
+    "main": "build/index.js",
+    "scripts": {
+        "start:watch": "ts-node-dev --respawn src/",
+        "start:dev": "ts-node src/",
+        "build": "tsc",
+        "test:watch": "jest -c jest-unit-config.json --watch",
+        "test": "jest -c jest-unit-config.json",
+        "test:integration": "jest -c jest-integration-config.json",
+        "lint": "tslint --fix -p .",
+        "prettier": "prettier --write 'src/**/*.ts'",
+        "precommit": "lint-staged && npm test"
+    },
+    "author": "",
+    "license": "LGPL3",
+    "devDependencies": {
+        "@types/jest": "^24.0.23",
+        "@types/node": "^12.11.5",
+        "husky": "^3.0.9",
+        "jest": "^24.9.0",
+        "lint-staged": "^9.4.3",
+        "nodemon": "^1.19.4",
+        "onchange": "^6.1.0",
+        "prettier": "^1.18.2",
+        "ts-jest": "^24.1.0",
+        "ts-node": "^9.0.0",
+        "ts-node-dev": "^1.0.0",
+        "tslint": "^5.20.0",
+        "tslint-eslint-rules": "^5.4.0",
+        "typescript": "^3.6.4"
+    },
+    "dependencies": {
+        "@leav-engine/config-manager": "workspace:libs/config-manager",
+        "@types/amqplib": "^0.5.13",
+        "@types/uuid": "^3.4.6",
+        "amqplib": "^0.5.5",
+        "app-root-path": "^3.0.0",
+        "uuid": "^3.3.3"
+    }
+}

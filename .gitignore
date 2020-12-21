@@ -50,6 +50,9 @@ logs
 
 ### Misc. ###
 *.dump
+*.xls*
+*.doc*
+*.odt*
 *.tmp
 
 ### Netbeans ###
@@ -60,3 +63,6 @@ logs
 
 ### Apollo auth token ###
 apollo.token.js
+
+# ignore imageMagick tmp files
+magick-*

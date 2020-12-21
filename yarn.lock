@@ -2184,6 +2184,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@blakeembrey/deque@npm:^1.0.3":
+  version: 1.0.5
+  resolution: "@blakeembrey/deque@npm:1.0.5"
+  checksum: 7addfc577f621efd5c34978d4adb3b063862b368b82b4e1e05f964c938b12b725051cec3f0c01b07755a10ec5b07fede2ee3505266c0796c9a037701e2ddf246
+  languageName: node
+  linkType: hard
+
 "@cnakazawa/watch@npm:^1.0.3":
   version: 1.0.4
   resolution: "@cnakazawa/watch@npm:1.0.4"
@@ -4656,7 +4663,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^24.9.1":
+"@types/jest@npm:^24.0.23, @types/jest@npm:^24.9.1":
   version: 24.9.1
   resolution: "@types/jest@npm:24.9.1"
   dependencies:
@@ -4828,7 +4835,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^12.12.38, @types/node@npm:^12.12.54, @types/node@npm:^12.12.6":
+"@types/node@npm:^12.11.5, @types/node@npm:^12.12.38, @types/node@npm:^12.12.54, @types/node@npm:^12.12.6":
   version: 12.19.9
   resolution: "@types/node@npm:12.19.9"
   checksum: c1a9b8c3ae53bff0a0c312b6f1e50ee139619eb32887829e4405131cc77e92c2c25e9fec82212a4c03c4eb0b50dde0537db44ae6dd4fa46cb11c824965832d3d
@@ -5201,6 +5208,13 @@ __metadata:
   version: 8.0.0
   resolution: "@types/uuid@npm:8.0.0"
   checksum: a1d953039620278f03198b2ad7574ba884d73338756fe1ce2628f44518140f1e1fc3ee676251713e212b9a5d2cbd5bd081e67afa439c8988619540076b627a86
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^3.4.6":
+  version: 3.4.9
+  resolution: "@types/uuid@npm:3.4.9"
+  checksum: bc70640658b90c6ed88636f6b181e9cb74d7b13f27d924ac3c52ac73eaeb2e693653ab66a0d7d18e8b1c4022cd369c9cae28694fd586bce8b3b15dd68bea98ad
   languageName: node
   linkType: hard
 
@@ -7485,7 +7499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arrify@npm:^2.0.1":
+"arrify@npm:^2.0.0, arrify@npm:^2.0.1":
   version: 2.0.1
   resolution: "arrify@npm:2.0.1"
   checksum: 2a19726815590d829e07998aefa2c352bd9061e58bf4391ffffa227129995841a710bef2d8b4c9408a6b0679d96c96bd23764bdbcc29bb21666c976816093972
@@ -9005,7 +9019,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:*, chokidar@npm:^3.3.0, chokidar@npm:^3.4.0, chokidar@npm:^3.4.1":
+"chokidar@npm:*, chokidar@npm:^3.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.4.0, chokidar@npm:^3.4.1":
   version: 3.4.3
   resolution: "chokidar@npm:3.4.3"
   dependencies:
@@ -10160,7 +10174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2":
+"cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.2":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
@@ -15105,7 +15119,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"husky@npm:^3.1.0":
+"husky@npm:^3.0.9, husky@npm:^3.1.0":
   version: 3.1.0
   resolution: "husky@npm:3.1.0"
   dependencies:
@@ -18185,7 +18199,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^9.5.0":
+"lint-staged@npm:^9.4.3, lint-staged@npm:^9.5.0":
   version: 9.5.0
   resolution: "lint-staged@npm:9.5.0"
   dependencies:
@@ -19257,7 +19271,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.1.1, minimist@npm:^1.1.3, minimist@npm:^1.2.0, minimist@npm:^1.2.5, minimist@npm:~1.2.0":
+"minimist@npm:^1.1.1, minimist@npm:^1.1.3, minimist@npm:^1.2.0, minimist@npm:^1.2.3, minimist@npm:^1.2.5, minimist@npm:~1.2.0":
   version: 1.2.5
   resolution: "minimist@npm:1.2.5"
   checksum: b77b8590147a4e217ff34266236bc39de23b52e6e33054076991ff674c7397a1380a7bde11111916f16f003a94aaa7e4f3d92595a32189644ff607fabc65a5b6
@@ -20192,6 +20206,24 @@ fsevents@~2.1.2:
   bin:
     onchange: cli.js
   checksum: a5197f773f798391551c1bc54424c1c85a39cad1d92320daca5b16c041393fac7b4c8731dc6ba6afbb069d42b13e0cf9b2ce79bf636d1fc55472c69e27abbf53
+  languageName: node
+  linkType: hard
+
+"onchange@npm:^6.1.0":
+  version: 6.1.1
+  resolution: "onchange@npm:6.1.1"
+  dependencies:
+    "@blakeembrey/deque": ^1.0.3
+    arrify: ^2.0.0
+    chokidar: ^3.0.0
+    cross-spawn: ^7.0.1
+    ignore: ^5.1.4
+    minimist: ^1.2.3
+    supports-color: ^7.0.0
+    tree-kill: ^1.2.2
+  bin:
+    onchange: cli.js
+  checksum: a42ce55707d6d68a1a58f3aa5d9a6c7aae2584e80e648be5044baf7fd73dc574974766bdf2bd2e4127da4c28d9e3ca2a0f8fda419b0fd4395a83bb0d9a8c8f0c
   languageName: node
   linkType: hard
 
@@ -21966,7 +21998,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"prettier@npm:1.19.1, prettier@npm:^1.19.1":
+"prettier@npm:1.19.1, prettier@npm:^1.18.2, prettier@npm:^1.19.1":
   version: 1.19.1
   resolution: "prettier@npm:1.19.1"
   bin:
@@ -22053,6 +22085,33 @@ fsevents@~2.1.2:
   checksum: efb9d4987ec2ba55a6b59c8eab4933ba5cd3c9311b9360f7ec491f1aad643ec8b533c8209170433de93bbc71e66b46f2a7035b991a1826141b128b73949b5577
   languageName: node
   linkType: hard
+
+"preview-generator@workspace:apps/preview-generator":
+  version: 0.0.0-use.local
+  resolution: "preview-generator@workspace:apps/preview-generator"
+  dependencies:
+    "@leav-engine/config-manager": "workspace:libs/config-manager"
+    "@types/amqplib": ^0.5.13
+    "@types/jest": ^24.0.23
+    "@types/node": ^12.11.5
+    "@types/uuid": ^3.4.6
+    amqplib: ^0.5.5
+    app-root-path: ^3.0.0
+    husky: ^3.0.9
+    jest: ^24.9.0
+    lint-staged: ^9.4.3
+    nodemon: ^1.19.4
+    onchange: ^6.1.0
+    prettier: ^1.18.2
+    ts-jest: ^24.1.0
+    ts-node: ^9.0.0
+    ts-node-dev: ^1.0.0
+    tslint: ^5.20.0
+    tslint-eslint-rules: ^5.4.0
+    typescript: ^3.6.4
+    uuid: ^3.3.3
+  languageName: unknown
+  linkType: soft
 
 "process-nextick-args@npm:^2.0.0, process-nextick-args@npm:~2.0.0":
   version: 2.0.1
@@ -26652,7 +26711,7 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^24.0.0, ts-jest@npm:^24.3.0":
+"ts-jest@npm:^24.0.0, ts-jest@npm:^24.1.0, ts-jest@npm:^24.3.0":
   version: 24.3.0
   resolution: "ts-jest@npm:24.3.0"
   dependencies:
@@ -26864,7 +26923,7 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
-"tslint@npm:^5.20.1":
+"tslint@npm:^5.20.0, tslint@npm:^5.20.1":
   version: 5.20.1
   resolution: "tslint@npm:5.20.1"
   dependencies:
@@ -27093,7 +27152,7 @@ typescript@4.1.3:
   languageName: node
   linkType: hard
 
-"typescript@^3.7.2, typescript@^3.8.3, typescript@^3.9.7":
+"typescript@^3.6.4, typescript@^3.7.2, typescript@^3.8.3, typescript@^3.9.7":
   version: 3.9.7
   resolution: "typescript@npm:3.9.7"
   bin:
@@ -27123,7 +27182,7 @@ typescript@4.1.3:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^3.7.2#builtin<compat/typescript>, typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.7#builtin<compat/typescript>":
+"typescript@patch:typescript@^3.6.4#builtin<compat/typescript>, typescript@patch:typescript@^3.7.2#builtin<compat/typescript>, typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.7#builtin<compat/typescript>":
   version: 3.9.7
   resolution: "typescript@patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=cc6730"
   bin:
@@ -27572,7 +27631,7 @@ typescript@4.1.3:
   languageName: node
   linkType: hard
 
-"uuid@npm:^3.1.0, uuid@npm:^3.3.2, uuid@npm:^3.4.0":
+"uuid@npm:^3.1.0, uuid@npm:^3.3.2, uuid@npm:^3.3.3, uuid@npm:^3.4.0":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
   bin:
