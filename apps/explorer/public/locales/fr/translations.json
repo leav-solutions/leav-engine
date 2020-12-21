@@ -1,0 +1,204 @@
+{
+    "login": {
+        "header": "Authentification",
+        "email": "Adresse e-mail",
+        "password": "Mot de passe",
+        "submit": "Envoyer",
+        "apologize_header": "Nous sommes désolés,",
+        "apologize": "nous ne pouvons vous authentifier :",
+        "loading": {
+            "header": "Juste un instant,",
+            "text": "Nous sommes en train de vous authentifier..."
+        },
+        "error": {
+            "bad_credentials": "Paramètres d'authentification incorrects.",
+            "no_server_response": "Le serveur ne répond pas.",
+            "session_expired": "Votre session a expiré."
+        }
+    },
+    "home": {
+        "title": "Accueil"
+    },
+    "settings": {
+        "header": "Paramètres",
+        "choose-lang": "Choix de langue",
+        "choose-theme": "Choix du thème",
+        "current-theme": "Le thème actuel est {{theme}}",
+        "name-theme-dark": "sombre",
+        "name-theme-light": "éclairé"
+    },
+    "menu": {
+        "app_name": "Explorer",
+        "shortcuts": "Raccourcis",
+        "events": "Évènements",
+        "user_menu": {
+            "profil": "Profile",
+            "tasks": "Tâches",
+            "shortcuts": "Raccourcis",
+            "events": "Évènements",
+            "admin": "Admin",
+            "leav_engine": "LEAV-Engine 4.1",
+            "logout": "Déconnexion"
+        }
+    },
+    "sidebar": {
+        "close": "Fermer",
+        "lib_list": "Bibliothèques",
+        "setting": "Paramètres",
+        "shortcuts": "Raccourcis",
+        "libraries": "Bibliothèques",
+        "trees": "Arbres",
+        "navigation": "Navigation",
+        "recent": "Récent"
+    },
+    "lib_list": {
+        "header": "Bibliothèques"
+    },
+    "lib_detail": {
+        "id": "Identifiant",
+        "lib_info": "Informations",
+        "elements": "éléments",
+        "search_saves": "Vos recherches sauvegardés",
+        "search_all": "Tout",
+        "add_filter": "Ajouter un Filtre",
+        "last_views": "Derniers vues",
+        "new": "Nouveau"
+    },
+    "loading": "Chargement",
+    "items_list": {
+        "all_sheets": "Toutes les vues",
+        "filters": "Filtres",
+        "sorts": "Trier",
+        "groups": "Groupes",
+        "columns": "Colonnes",
+        "new": "Nouveau",
+        "display_type": "Affichage",
+        "header_table": "Éléments de {{libName}}",
+        "show-filter-panel": "Montrer les filtres",
+        "table": {
+            "preview": "Vignette",
+            "selected": "Sélectionner",
+            "id": "Identifiant",
+            "actions": "Actions",
+            "infos": "Informations",
+            "label": "Libellé",
+            "ad_label": "Libellé Pub",
+            "ean": "EAN",
+            "category": "Catégorie",
+            "op_code": "Code Opération",
+            "header-cell-menu": {
+                "sort-ascend": "Tri Croissant",
+                "sort-descend": "Tri Décroissant",
+                "cancel-sort": "Annuler Tri",
+                "sort-advance": "Tri Avancé",
+                "regroup": "Regrouper",
+                "choose-columns": "Choix Colonnes"
+            }
+        },
+        "display": {
+            "list-small": "Liste (petit)",
+            "list-medium": "Liste (Moyen)",
+            "list-big": "Liste (Grand)",
+            "tile": "Mosaïque"
+        }
+    },
+    "items-list-row": {
+        "nb-elements": "{{nb1}} à {{nb2}} / {{nbItems}} résultats",
+        "switch-to-selection-mode": "Passer au mode séléction",
+        "edit": "Éditer le record"
+    },
+    "items-menu-dropdown": {
+        "select-all": "Tout sélectionner ({{nb}})",
+        "select-visible": "Sélectionner page ({{nb}})",
+        "items-display": "Nombre d'éléments par page"
+    },
+    "filters": {
+        "filters": "Filtre",
+        "contains": "Contient",
+        "not-contains": "Ne contient pas",
+        "equal": "Est égal",
+        "not-equal": "N'est pas égal",
+        "begin-with": "Commence par",
+        "end-with": "Fini Par",
+        "is-empty": "Est Vide",
+        "is-not-empty": "N'est pas vide",
+        "greater-than": "Plus grand que",
+        "less-than": "Plus petit que",
+        "exist": "Valeur existante",
+        "search-in": "Chercher dans...",
+        "where": "Ou",
+        "label": "Libellé",
+        "value": "Valeur",
+        "apply": "Appliquer",
+        "and": "Et",
+        "or": "Ou",
+        "modal-header": "Attributs",
+        "filters-options": "Options de Filtres",
+        "add-filters": "Ajouter des filtres",
+        "remove-filters": "Supprimer les filtres",
+        "add-separator": "Ajouter une requête",
+        "search-active": "Impossible d'appliquer les filtres tant que la recherche est active",
+        "no-filters": "Pas de filtres à appliquer",
+        "submit": "Appliquer les filtres"
+    },
+    "filter-item": {
+        "no-operator": "Si"
+    },
+    "attributes-list": {
+        "add": "Ajoute les filtres",
+        "cancel": "Annuler",
+        "search": "Recherche...",
+        "items-selected": {
+            "library": "Bibliothèque"
+        }
+    },
+    "menu-selection": {
+        "nb-selected": "{{nb}} éléments sélectionné(s)",
+        "quit": "Quitter le mode sélection",
+        "actions": "Actions",
+        "all-selected-enabled": "Tout sélectionné actif",
+        "all-selected-disabled": "Tout sélectionné inactif",
+        "unselect-all": "Tout désélectionner"
+    },
+    "table-columns-selection": {
+        "header": "Colonnes disponibles",
+        "cancel": "Annuler",
+        "submit": "Mettre à jour les colonnes"
+    },
+    "change-attribute": {
+        "submit": "Changer",
+        "cancel": "Annuler"
+    },
+    "select-view": {
+        "add-view-tile": "Ajouter vue mosaïque",
+        "add-view-list": "Ajouter vue liste",
+        "default-view": "Vue par défault..."
+    },
+    "search": {
+        "placeholder": "Rechercher dans la bibliothèque",
+        "explain-cancel": "Annuler la recherche"
+    },
+    "navigation": {
+        "list": {
+            "info": {
+                "tree": "Détail de l'Arbre",
+                "library": "Détail de la bibliothèque",
+                "id": "Identifiant",
+                "label": "Label",
+                "no-label": "Pas de label"
+            }
+        }
+    },
+    "notification": {
+        "base-message": "Bienvenue sur l'explorateur",
+        "active-lib": "Vous êtes sur la bibliothèque {{lib}}",
+        "active-tree": "Vous êtes sur l'arbre {{tree}}"
+    },
+    "view": {
+        "list": "Liste des vues",
+        "my-views":"Mes vues",
+        "type-list": "Vue Liste",
+        "type-tile": "Vue Tuile",
+        "delete": "Supprimer"
+    }
+}

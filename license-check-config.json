@@ -17,6 +17,8 @@
         "**/.DS_Store",
         "**/*.snap",
         "**/filesForTest/*",
-        "**/*.css"
+        "**/*.css",
+        "**/*.less"
+
     ]
 }

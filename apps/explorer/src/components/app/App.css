@@ -1,0 +1,21 @@
+.height100 {
+  height: 100%;
+}
+
+.page-content {
+  height: calc(100% - 3.5rem);
+  /* All page less the size of the top navbar */
+}
+
+.nav-link-active span {
+  background: gray !important;
+}
+
+.wrapper-page {
+  padding: 1rem 1rem 0 1rem;
+  height: 100%;
+}
+
+.pusher {
+  height: 100%;
+}
