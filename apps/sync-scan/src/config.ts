@@ -1,4 +1,4 @@
-import {loadConfig} from '@leav-engine/config-manager';
+import {loadConfig} from '@leav/config-manager';
 import * as rootPath from 'app-root-path';
 import * as Joi from 'joi';
 import {Config} from '_types/config';
@@ -59,7 +59,7 @@ const checkConfig = (conf: Config) => {
 export const getConfig = async (): Promise<Config> => {
     const definedEnv: string = appEnv || '';
 
-    const conf = await loadConfig<Config>(rootPath.path + '/config', definedEnv);
+    const conf = await loadConfig<Config>(rootPath.path + '/apps/sync-scan/config', definedEnv);
 
     checkConfig(conf);
 

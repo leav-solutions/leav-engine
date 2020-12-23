@@ -10,5 +10,10 @@
     "setupFiles": [
         "<rootDir>/src/__tests__/setup.ts",
         "<rootDir>/src/__tests__/jestUtils.ts"
-    ]
+    ],
+    "globals": {
+        "ts-jest": {
+            "isolatedModules": true
+        }
+    }
 }

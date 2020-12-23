@@ -1,15 +1,15 @@
-import walk from 'walk';
-import fs from 'fs';
-import fetch from 'node-fetch';
-import gql from 'graphql-tag';
-import {ApolloClient, ApolloQueryResult} from 'apollo-client';
-import {createHttpLink} from 'apollo-link-http';
-import {ApolloLink, DocumentNode} from 'apollo-link';
 import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
-import {FullTreeContent} from './_types/queries';
-import {FilesystemContent, FileContent} from './_types/filesystem';
-import * as Config from './_types/config';
+import {ApolloClient, ApolloQueryResult} from 'apollo-client';
+import {ApolloLink, DocumentNode} from 'apollo-link';
+import {createHttpLink} from 'apollo-link-http';
+import fs from 'fs';
+import gql from 'graphql-tag';
+import fetch from 'node-fetch';
+import walk from 'walk';
 import * as utils from './utils';
+import * as Config from './_types/config';
+import {FileContent, FilesystemContent} from './_types/filesystem';
+import {FullTreeContent} from './_types/queries';
 
 export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
 export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);
@@ -52,7 +52,7 @@ export const filesystem = ({absolutePath}: Config.Filesystem): Promise<Filesyste
     });
 
 export const database = async ({uri, token, treeId}: Config.GraphQL): Promise<FullTreeContent> => {
-    const httpLink: ApolloLink = createHttpLink({uri, fetch});
+    const httpLink: ApolloLink = createHttpLink({uri, fetch: fetch as any});
 
     const authLink: ApolloLink = new ApolloLink((operation, forward) => {
         operation.setContext({

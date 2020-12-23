@@ -2,12 +2,12 @@
 
 exports[`AppPermissions Snapshot test 1`] = `
 initialize {
-  "0": Object {
+  "0": Node {
     "attribs": Object {
       "class": "ui header no-grow",
     },
     "children": Array [
-      Object {
+      Node {
         "data": "permissions.title",
         "next": null,
         "parent": [Circular],
@@ -17,22 +17,22 @@ initialize {
     ],
     "name": "div",
     "namespace": "http://www.w3.org/1999/xhtml",
-    "next": Object {
+    "next": Node {
       "attribs": Object {
         "class": "sc-bdVaJa goaYMK",
       },
       "children": Array [
-        Object {
+        Node {
           "attribs": Object {
             "class": "sc-bwzfXH jVOsap",
           },
           "children": Array [
-            Object {
+            Node {
               "attribs": Object {
                 "class": "ui active text centered inline loader",
               },
               "children": Array [
-                Object {
+                Node {
                   "data": "admin.loading",
                   "next": null,
                   "parent": [Circular],
@@ -71,23 +71,18 @@ initialize {
       "name": "div",
       "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
-      "parent": null,
-      "prev": [Circular],
-      "root": Object {
-        "attribs": Object {},
+      "parent": Node {
         "children": Array [
           [Circular],
           [Circular],
         ],
         "name": "root",
-        "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": null,
         "prev": null,
         "type": "root",
-        "x-attribsNamespace": Object {},
-        "x-attribsPrefix": Object {},
       },
+      "prev": [Circular],
       "type": "tag",
       "x-attribsNamespace": Object {
         "class": undefined,
@@ -96,28 +91,25 @@ initialize {
         "class": undefined,
       },
     },
-    "parent": null,
-    "prev": null,
-    "root": Object {
-      "attribs": Object {},
+    "parent": Node {
       "children": Array [
         [Circular],
-        Object {
+        Node {
           "attribs": Object {
             "class": "sc-bdVaJa goaYMK",
           },
           "children": Array [
-            Object {
+            Node {
               "attribs": Object {
                 "class": "sc-bwzfXH jVOsap",
               },
               "children": Array [
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "ui active text centered inline loader",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "admin.loading",
                       "next": null,
                       "parent": [Circular],
@@ -156,9 +148,8 @@ initialize {
           "name": "div",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": null,
-          "parent": null,
+          "parent": [Circular],
           "prev": [Circular],
-          "root": [Circular],
           "type": "tag",
           "x-attribsNamespace": Object {
             "class": undefined,
@@ -169,14 +160,12 @@ initialize {
         },
       ],
       "name": "root",
-      "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": null,
       "prev": null,
       "type": "root",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
     },
+    "prev": null,
     "type": "tag",
     "x-attribsNamespace": Object {
       "class": undefined,
@@ -185,22 +174,22 @@ initialize {
       "class": undefined,
     },
   },
-  "1": Object {
+  "1": Node {
     "attribs": Object {
       "class": "sc-bdVaJa goaYMK",
     },
     "children": Array [
-      Object {
+      Node {
         "attribs": Object {
           "class": "sc-bwzfXH jVOsap",
         },
         "children": Array [
-          Object {
+          Node {
             "attribs": Object {
               "class": "ui active text centered inline loader",
             },
             "children": Array [
-              Object {
+              Node {
                 "data": "admin.loading",
                 "next": null,
                 "parent": [Circular],
@@ -239,57 +228,14 @@ initialize {
     "name": "div",
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
-    "parent": null,
-    "prev": Object {
-      "attribs": Object {
-        "class": "ui header no-grow",
-      },
+    "parent": Node {
       "children": Array [
-        Object {
-          "data": "permissions.title",
-          "next": null,
-          "parent": [Circular],
-          "prev": null,
-          "type": "text",
-        },
-      ],
-      "name": "div",
-      "namespace": "http://www.w3.org/1999/xhtml",
-      "next": [Circular],
-      "parent": null,
-      "prev": null,
-      "root": Object {
-        "attribs": Object {},
-        "children": Array [
-          [Circular],
-          [Circular],
-        ],
-        "name": "root",
-        "namespace": "http://www.w3.org/1999/xhtml",
-        "next": null,
-        "parent": null,
-        "prev": null,
-        "type": "root",
-        "x-attribsNamespace": Object {},
-        "x-attribsPrefix": Object {},
-      },
-      "type": "tag",
-      "x-attribsNamespace": Object {
-        "class": undefined,
-      },
-      "x-attribsPrefix": Object {
-        "class": undefined,
-      },
-    },
-    "root": Object {
-      "attribs": Object {},
-      "children": Array [
-        Object {
+        Node {
           "attribs": Object {
             "class": "ui header no-grow",
           },
           "children": Array [
-            Object {
+            Node {
               "data": "permissions.title",
               "next": null,
               "parent": [Circular],
@@ -300,9 +246,8 @@ initialize {
           "name": "div",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": [Circular],
-          "parent": null,
+          "parent": [Circular],
           "prev": null,
-          "root": [Circular],
           "type": "tag",
           "x-attribsNamespace": Object {
             "class": undefined,
@@ -314,13 +259,46 @@ initialize {
         [Circular],
       ],
       "name": "root",
-      "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": null,
       "prev": null,
       "type": "root",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
+    },
+    "prev": Node {
+      "attribs": Object {
+        "class": "ui header no-grow",
+      },
+      "children": Array [
+        Node {
+          "data": "permissions.title",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": Node {
+        "children": Array [
+          [Circular],
+          [Circular],
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": null,
+      "type": "tag",
+      "x-attribsNamespace": Object {
+        "class": undefined,
+      },
+      "x-attribsPrefix": Object {
+        "class": undefined,
+      },
     },
     "type": "tag",
     "x-attribsNamespace": Object {
@@ -334,8 +312,6 @@ initialize {
   "length": 2,
   "options": Object {
     "decodeEntities": true,
-    "normalizeWhitespace": false,
-    "withDomLvl1": true,
     "xml": false,
   },
 }

@@ -1,3 +1,5 @@
 import {getConfig} from './config';
 
-console.log(getConfig());
+(async () => {
+    console.log(await getConfig());
+})();

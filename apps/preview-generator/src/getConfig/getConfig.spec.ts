@@ -1,4 +1,4 @@
-import {loadConfig} from '@casolutions/config-manager';
+import {loadConfig} from '@leav/config-manager';
 import {getConfig} from './getConfig';
 
 describe('test getConfig', () => {

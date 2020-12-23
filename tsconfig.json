@@ -1,34 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
+    "target": "es2017",
+    "module": "CommonJS",
+    "lib": ["es6", "dom", "esnext"],
     "rootDir": "./",
     /* /!\ Paths are relative to the src folder of each app. Each app must set its baseUrl to src */
     "paths": {
-      "@leav-engine/*": ["../../../libs/*/src"]
+      "@leav/*": ["../../../libs/*/src"]
     },
     "strict": true,
     "noImplicitAny": false,
+    "strictNullChecks": false,
+    "alwaysStrict": true,
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react",
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noImplicitThis": true,
-    "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
     "downlevelIteration": true,
-    "noFallthroughCasesInSwitch": true
-
+    "noFallthroughCasesInSwitch": false,
+    "sourceMap": true,
+    "declaration": true,
+    "outDir": "dist"
   },
   "exclude": [
-      "node_modules"
+      "node_modules",
+      "./.eslintrc.js"
   ]
 }

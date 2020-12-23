@@ -4,8 +4,6 @@ exports[`Container Snapshot test 1`] = `
 initialize {
   "options": Object {
     "decodeEntities": true,
-    "normalizeWhitespace": false,
-    "withDomLvl1": true,
     "xml": false,
   },
 }

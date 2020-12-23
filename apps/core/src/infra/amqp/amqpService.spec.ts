@@ -21,11 +21,13 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     prefetch: jest.fn()
 };
 
-describe('amqp', () => {
-    (amqp.connect as jest.FunctionLike) = jest.fn().mockReturnValue({
+jest.mock('amqplib', () => ({
+    connect: jest.fn().mockReturnValue({
         createChannel: jest.fn().mockReturnValue(mockAmqpChannel)
-    });
+    })
+}));
 
+describe('amqp', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });

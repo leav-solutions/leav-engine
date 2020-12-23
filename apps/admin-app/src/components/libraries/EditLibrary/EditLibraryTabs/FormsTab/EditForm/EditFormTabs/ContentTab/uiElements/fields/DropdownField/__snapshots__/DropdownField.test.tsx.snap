@@ -2,12 +2,12 @@
 
 exports[`DropdownField Snapshot test 1`] = `
 initialize {
-  "0": Object {
+  "0": Node {
     "attribs": Object {},
     "children": Array [],
     "name": "label",
     "namespace": "http://www.w3.org/1999/xhtml",
-    "next": Object {
+    "next": Node {
       "attribs": Object {
         "aria-expanded": "false",
         "class": "ui dropdown",
@@ -15,7 +15,7 @@ initialize {
         "tabindex": "0",
       },
       "children": Array [
-        Object {
+        Node {
           "attribs": Object {
             "aria-atomic": "true",
             "aria-live": "polite",
@@ -25,7 +25,7 @@ initialize {
           "children": Array [],
           "name": "div",
           "namespace": "http://www.w3.org/1999/xhtml",
-          "next": Object {
+          "next": Node {
             "attribs": Object {
               "aria-hidden": "true",
               "class": "dropdown icon",
@@ -33,7 +33,7 @@ initialize {
             "children": Array [],
             "name": "i",
             "namespace": "http://www.w3.org/1999/xhtml",
-            "next": Object {
+            "next": Node {
               "attribs": Object {
                 "class": "menu transition",
               },
@@ -79,7 +79,7 @@ initialize {
             "role": undefined,
           },
         },
-        Object {
+        Node {
           "attribs": Object {
             "aria-hidden": "true",
             "class": "dropdown icon",
@@ -87,7 +87,7 @@ initialize {
           "children": Array [],
           "name": "i",
           "namespace": "http://www.w3.org/1999/xhtml",
-          "next": Object {
+          "next": Node {
             "attribs": Object {
               "class": "menu transition",
             },
@@ -106,7 +106,7 @@ initialize {
             },
           },
           "parent": [Circular],
-          "prev": Object {
+          "prev": Node {
             "attribs": Object {
               "aria-atomic": "true",
               "aria-live": "polite",
@@ -143,7 +143,7 @@ initialize {
             "class": undefined,
           },
         },
-        Object {
+        Node {
           "attribs": Object {
             "class": "menu transition",
           },
@@ -152,7 +152,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": null,
           "parent": [Circular],
-          "prev": Object {
+          "prev": Node {
             "attribs": Object {
               "aria-hidden": "true",
               "class": "dropdown icon",
@@ -162,7 +162,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": [Circular],
             "parent": [Circular],
-            "prev": Object {
+            "prev": Node {
               "attribs": Object {
                 "aria-atomic": "true",
                 "aria-live": "polite",
@@ -211,23 +211,18 @@ initialize {
       "name": "div",
       "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
-      "parent": null,
-      "prev": [Circular],
-      "root": Object {
-        "attribs": Object {},
+      "parent": Node {
         "children": Array [
           [Circular],
           [Circular],
         ],
         "name": "root",
-        "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": null,
         "prev": null,
         "type": "root",
-        "x-attribsNamespace": Object {},
-        "x-attribsPrefix": Object {},
       },
+      "prev": [Circular],
       "type": "tag",
       "x-attribsNamespace": Object {
         "aria-expanded": undefined,
@@ -242,13 +237,10 @@ initialize {
         "tabindex": undefined,
       },
     },
-    "parent": null,
-    "prev": null,
-    "root": Object {
-      "attribs": Object {},
+    "parent": Node {
       "children": Array [
         [Circular],
-        Object {
+        Node {
           "attribs": Object {
             "aria-expanded": "false",
             "class": "ui dropdown",
@@ -256,7 +248,7 @@ initialize {
             "tabindex": "0",
           },
           "children": Array [
-            Object {
+            Node {
               "attribs": Object {
                 "aria-atomic": "true",
                 "aria-live": "polite",
@@ -266,7 +258,7 @@ initialize {
               "children": Array [],
               "name": "div",
               "namespace": "http://www.w3.org/1999/xhtml",
-              "next": Object {
+              "next": Node {
                 "attribs": Object {
                   "aria-hidden": "true",
                   "class": "dropdown icon",
@@ -274,7 +266,7 @@ initialize {
                 "children": Array [],
                 "name": "i",
                 "namespace": "http://www.w3.org/1999/xhtml",
-                "next": Object {
+                "next": Node {
                   "attribs": Object {
                     "class": "menu transition",
                   },
@@ -320,7 +312,7 @@ initialize {
                 "role": undefined,
               },
             },
-            Object {
+            Node {
               "attribs": Object {
                 "aria-hidden": "true",
                 "class": "dropdown icon",
@@ -328,7 +320,7 @@ initialize {
               "children": Array [],
               "name": "i",
               "namespace": "http://www.w3.org/1999/xhtml",
-              "next": Object {
+              "next": Node {
                 "attribs": Object {
                   "class": "menu transition",
                 },
@@ -347,7 +339,7 @@ initialize {
                 },
               },
               "parent": [Circular],
-              "prev": Object {
+              "prev": Node {
                 "attribs": Object {
                   "aria-atomic": "true",
                   "aria-live": "polite",
@@ -384,7 +376,7 @@ initialize {
                 "class": undefined,
               },
             },
-            Object {
+            Node {
               "attribs": Object {
                 "class": "menu transition",
               },
@@ -393,7 +385,7 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": null,
               "parent": [Circular],
-              "prev": Object {
+              "prev": Node {
                 "attribs": Object {
                   "aria-hidden": "true",
                   "class": "dropdown icon",
@@ -403,7 +395,7 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
-                "prev": Object {
+                "prev": Node {
                   "attribs": Object {
                     "aria-atomic": "true",
                     "aria-live": "polite",
@@ -452,9 +444,8 @@ initialize {
           "name": "div",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": null,
-          "parent": null,
+          "parent": [Circular],
           "prev": [Circular],
-          "root": [Circular],
           "type": "tag",
           "x-attribsNamespace": Object {
             "aria-expanded": undefined,
@@ -471,19 +462,17 @@ initialize {
         },
       ],
       "name": "root",
-      "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": null,
       "prev": null,
       "type": "root",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
     },
+    "prev": null,
     "type": "tag",
     "x-attribsNamespace": Object {},
     "x-attribsPrefix": Object {},
   },
-  "1": Object {
+  "1": Node {
     "attribs": Object {
       "aria-expanded": "false",
       "class": "ui dropdown",
@@ -491,7 +480,7 @@ initialize {
       "tabindex": "0",
     },
     "children": Array [
-      Object {
+      Node {
         "attribs": Object {
           "aria-atomic": "true",
           "aria-live": "polite",
@@ -501,7 +490,7 @@ initialize {
         "children": Array [],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
-        "next": Object {
+        "next": Node {
           "attribs": Object {
             "aria-hidden": "true",
             "class": "dropdown icon",
@@ -509,7 +498,7 @@ initialize {
           "children": Array [],
           "name": "i",
           "namespace": "http://www.w3.org/1999/xhtml",
-          "next": Object {
+          "next": Node {
             "attribs": Object {
               "class": "menu transition",
             },
@@ -555,7 +544,7 @@ initialize {
           "role": undefined,
         },
       },
-      Object {
+      Node {
         "attribs": Object {
           "aria-hidden": "true",
           "class": "dropdown icon",
@@ -563,7 +552,7 @@ initialize {
         "children": Array [],
         "name": "i",
         "namespace": "http://www.w3.org/1999/xhtml",
-        "next": Object {
+        "next": Node {
           "attribs": Object {
             "class": "menu transition",
           },
@@ -582,7 +571,7 @@ initialize {
           },
         },
         "parent": [Circular],
-        "prev": Object {
+        "prev": Node {
           "attribs": Object {
             "aria-atomic": "true",
             "aria-live": "polite",
@@ -619,7 +608,7 @@ initialize {
           "class": undefined,
         },
       },
-      Object {
+      Node {
         "attribs": Object {
           "class": "menu transition",
         },
@@ -628,7 +617,7 @@ initialize {
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": [Circular],
-        "prev": Object {
+        "prev": Node {
           "attribs": Object {
             "aria-hidden": "true",
             "class": "dropdown icon",
@@ -638,7 +627,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": [Circular],
           "parent": [Circular],
-          "prev": Object {
+          "prev": Node {
             "attribs": Object {
               "aria-atomic": "true",
               "aria-live": "polite",
@@ -687,46 +676,16 @@ initialize {
     "name": "div",
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
-    "parent": null,
-    "prev": Object {
-      "attribs": Object {},
-      "children": Array [],
-      "name": "label",
-      "namespace": "http://www.w3.org/1999/xhtml",
-      "next": [Circular],
-      "parent": null,
-      "prev": null,
-      "root": Object {
-        "attribs": Object {},
-        "children": Array [
-          [Circular],
-          [Circular],
-        ],
-        "name": "root",
-        "namespace": "http://www.w3.org/1999/xhtml",
-        "next": null,
-        "parent": null,
-        "prev": null,
-        "type": "root",
-        "x-attribsNamespace": Object {},
-        "x-attribsPrefix": Object {},
-      },
-      "type": "tag",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
-    },
-    "root": Object {
-      "attribs": Object {},
+    "parent": Node {
       "children": Array [
-        Object {
+        Node {
           "attribs": Object {},
           "children": Array [],
           "name": "label",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": [Circular],
-          "parent": null,
+          "parent": [Circular],
           "prev": null,
-          "root": [Circular],
           "type": "tag",
           "x-attribsNamespace": Object {},
           "x-attribsPrefix": Object {},
@@ -734,11 +693,30 @@ initialize {
         [Circular],
       ],
       "name": "root",
-      "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": null,
       "prev": null,
       "type": "root",
+    },
+    "prev": Node {
+      "attribs": Object {},
+      "children": Array [],
+      "name": "label",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": Node {
+        "children": Array [
+          [Circular],
+          [Circular],
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": null,
+      "type": "tag",
       "x-attribsNamespace": Object {},
       "x-attribsPrefix": Object {},
     },
@@ -760,8 +738,6 @@ initialize {
   "length": 2,
   "options": Object {
     "decodeEntities": true,
-    "normalizeWhitespace": false,
-    "withDomLvl1": true,
     "xml": false,
   },
 }

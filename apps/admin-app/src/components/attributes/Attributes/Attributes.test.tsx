@@ -12,6 +12,12 @@ import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvi
 // import {Mockify} from '../../../_types//Mockify';
 import Attributes from './Attributes';
 
+jest.mock('../AttributesList', () => {
+    return function AttributesList() {
+        return <div>AttributesList</div>;
+    };
+});
+
 describe('Attributes', () => {
     test('Snapshot test', async () => {
         const mockHistory: Mockify<History> = {};

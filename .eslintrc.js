@@ -1,7 +1,9 @@
+require('@rushstack/eslint-patch/modern-module-resolution');
+
 module.exports = {
     env: {browser: true, node: true, es6: true},
     parser: '@typescript-eslint/parser',
-    parserOptions: {project: 'tsconfig.json', sourceType: 'module'},
+    parserOptions: {tsconfigRootDir: __dirname},
     plugins: ['@typescript-eslint', 'eslint-plugin-jsdoc', 'eslint-plugin-react'],
     settings: {react: {version: 'latest'}},
     rules: {
@@ -89,10 +91,12 @@ module.exports = {
         'no-multiple-empty-lines': 'error',
         'no-new-func': 'error',
         'no-new-wrappers': 'error',
-        'no-redeclare': 'error',
+        'no-redeclare': 'off',
+        '@typescript-eslint/no-redeclare': ['error'],
         'no-return-await': 'error',
         'no-sequences': 'error',
-        'no-shadow': ['error', {hoist: 'all'}],
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': ['error'],
         'no-sparse-arrays': 'error',
         'no-template-curly-in-string': 'error',
         'no-throw-literal': 'error',

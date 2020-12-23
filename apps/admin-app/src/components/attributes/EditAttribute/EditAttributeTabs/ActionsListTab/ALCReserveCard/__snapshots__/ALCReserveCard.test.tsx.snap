@@ -2,30 +2,30 @@
 
 exports[`ALCReserveCard Snapshot test 1`] = `
 initialize {
-  "0": Object {
+  "0": Node {
     "attribs": Object {},
     "children": Array [
-      Object {
+      Node {
         "attribs": Object {
           "style": "padding-bottom:5px",
         },
         "children": Array [
-          Object {
+          Node {
             "attribs": Object {
               "class": "ui fluid card",
             },
             "children": Array [
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "content",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "header",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "action",
                         "next": null,
                         "parent": [Circular],
@@ -35,12 +35,12 @@ initialize {
                     ],
                     "name": "div",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "description",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "action",
                           "next": null,
                           "parent": [Circular],
@@ -50,13 +50,13 @@ initialize {
                       ],
                       "name": "div",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "ui circular icon button",
                           "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "aria-hidden": "true",
                               "class": "add icon",
@@ -80,19 +80,19 @@ initialize {
                         ],
                         "name": "button",
                         "namespace": "http://www.w3.org/1999/xhtml",
-                        "next": Object {
+                        "next": Node {
                           "attribs": Object {
                             "style": "text-align:right",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "class": "meta",
                               },
                               "children": Array [
-                                Object {
+                                Node {
                                   "data": "attributes.display_types",
-                                  "next": Object {
+                                  "next": Node {
                                     "attribs": Object {
                                       "aria-hidden": "true",
                                       "class": "triangle right icon",
@@ -117,7 +117,7 @@ initialize {
                                   "prev": null,
                                   "type": "text",
                                 },
-                                Object {
+                                Node {
                                   "attribs": Object {
                                     "aria-hidden": "true",
                                     "class": "triangle right icon",
@@ -127,7 +127,7 @@ initialize {
                                   "namespace": "http://www.w3.org/1999/xhtml",
                                   "next": null,
                                   "parent": [Circular],
-                                  "prev": Object {
+                                  "prev": Node {
                                     "data": "attributes.display_types",
                                     "next": [Circular],
                                     "parent": [Circular],
@@ -204,12 +204,12 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "description",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "action",
                         "next": null,
                         "parent": [Circular],
@@ -219,13 +219,13 @@ initialize {
                     ],
                     "name": "div",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "ui circular icon button",
                         "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "aria-hidden": "true",
                             "class": "add icon",
@@ -249,19 +249,19 @@ initialize {
                       ],
                       "name": "button",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "style": "text-align:right",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "meta",
                             },
                             "children": Array [
-                              Object {
+                              Node {
                                 "data": "attributes.display_types",
-                                "next": Object {
+                                "next": Node {
                                   "attribs": Object {
                                     "aria-hidden": "true",
                                     "class": "triangle right icon",
@@ -286,7 +286,7 @@ initialize {
                                 "prev": null,
                                 "type": "text",
                               },
-                              Object {
+                              Node {
                                 "attribs": Object {
                                   "aria-hidden": "true",
                                   "class": "triangle right icon",
@@ -296,7 +296,7 @@ initialize {
                                 "namespace": "http://www.w3.org/1999/xhtml",
                                 "next": null,
                                 "parent": [Circular],
-                                "prev": Object {
+                                "prev": Node {
                                   "data": "attributes.display_types",
                                   "next": [Circular],
                                   "parent": [Circular],
@@ -354,12 +354,12 @@ initialize {
                       },
                     },
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "header",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "action",
                           "next": null,
                           "parent": [Circular],
@@ -388,13 +388,13 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "ui circular icon button",
                       "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "aria-hidden": "true",
                           "class": "add icon",
@@ -418,19 +418,19 @@ initialize {
                     ],
                     "name": "button",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "style": "text-align:right",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "meta",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "data": "attributes.display_types",
-                              "next": Object {
+                              "next": Node {
                                 "attribs": Object {
                                   "aria-hidden": "true",
                                   "class": "triangle right icon",
@@ -455,7 +455,7 @@ initialize {
                               "prev": null,
                               "type": "text",
                             },
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "aria-hidden": "true",
                                 "class": "triangle right icon",
@@ -465,7 +465,7 @@ initialize {
                               "namespace": "http://www.w3.org/1999/xhtml",
                               "next": null,
                               "parent": [Circular],
-                              "prev": Object {
+                              "prev": Node {
                                 "data": "attributes.display_types",
                                 "next": [Circular],
                                 "parent": [Circular],
@@ -511,12 +511,12 @@ initialize {
                       },
                     },
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "description",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "action",
                           "next": null,
                           "parent": [Circular],
@@ -528,12 +528,12 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "header",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "action",
                             "next": null,
                             "parent": [Circular],
@@ -572,19 +572,19 @@ initialize {
                       "style": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "style": "text-align:right",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "meta",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "attributes.display_types",
-                            "next": Object {
+                            "next": Node {
                               "attribs": Object {
                                 "aria-hidden": "true",
                                 "class": "triangle right icon",
@@ -609,7 +609,7 @@ initialize {
                             "prev": null,
                             "type": "text",
                           },
-                          Object {
+                          Node {
                             "attribs": Object {
                               "aria-hidden": "true",
                               "class": "triangle right icon",
@@ -619,7 +619,7 @@ initialize {
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
-                            "prev": Object {
+                            "prev": Node {
                               "data": "attributes.display_types",
                               "next": [Circular],
                               "parent": [Circular],
@@ -655,13 +655,13 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": null,
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "ui circular icon button",
                         "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "aria-hidden": "true",
                             "class": "add icon",
@@ -687,12 +687,12 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "description",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "action",
                             "next": null,
                             "parent": [Circular],
@@ -704,12 +704,12 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": [Circular],
                         "parent": [Circular],
-                        "prev": Object {
+                        "prev": Node {
                           "attribs": Object {
                             "class": "header",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "data": "action",
                               "next": null,
                               "parent": [Circular],
@@ -802,22 +802,17 @@ initialize {
     "name": "div",
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
-    "parent": null,
-    "prev": null,
-    "root": Object {
-      "attribs": Object {},
+    "parent": Node {
       "children": Array [
         [Circular],
       ],
       "name": "root",
-      "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": null,
       "prev": null,
       "type": "root",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
     },
+    "prev": null,
     "type": "tag",
     "x-attribsNamespace": Object {},
     "x-attribsPrefix": Object {},
@@ -826,8 +821,6 @@ initialize {
   "length": 1,
   "options": Object {
     "decodeEntities": true,
-    "normalizeWhitespace": false,
-    "withDomLvl1": true,
     "xml": false,
   },
 }

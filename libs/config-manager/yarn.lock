@@ -622,9 +622,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@leav-engine/config-manager@workspace:.":
+"@leav/config-manager@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@leav-engine/config-manager@workspace:."
+  resolution: "@leav/config-manager@workspace:."
   dependencies:
     "@types/jest": ^25.2.2
     eslint: ^7.0.0

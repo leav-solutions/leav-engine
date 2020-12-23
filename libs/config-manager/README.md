@@ -33,7 +33,7 @@ None of these files are mandatory. If file is not present, the module will just 
 ## Usage
 
 ```javascript
-import { loadConfig } from "@leav-engine/config-manager";
+import { loadConfig } from "@leav/config-manager";
 
 const conf = await loadConfig(
   "/absolute/path/to/config/folder",

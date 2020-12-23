@@ -7,7 +7,7 @@
         "start": "ts-node src/index.ts",
         "start:dev": "NODE_ENV=development ts-node src/index.ts",
         "test:e2e": "NODE_ENV=test jest -c jest-e2e.config.json",
-        "test:unit": "NODE_ENV=test jest -c jest-unit.config.json",
+        "test": "NODE_ENV=test jest -c jest-unit.config.json",
         "build": "tsc"
     },
     "author": "",
@@ -26,7 +26,7 @@
         "typescript": "^3.8.3"
     },
     "dependencies": {
-        "@leav-engine/config-manager": "workspace:libs/config-manager",
+        "@leav/config-manager": "workspace:libs/config-manager",
         "amqplib": "^0.5.5",
         "apollo-cache-inmemory": "^1.6.5",
         "apollo-client": "^2.6.8",

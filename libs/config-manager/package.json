@@ -1,12 +1,13 @@
 {
-  "name": "@leav-engine/config-manager",
+  "name": "@leav/config-manager",
   "version": "1.0.0",
   "description": "Module to load project configuration, allowing config overrides based on environment",
   "scripts": {
     "test": "jest -c jest-config.json",
     "prepublishOnly": "npm run build",
-    "build": "tsc"
+    "build": "tsc --build"
   },
+  "main": "dist/index",
   "keywords": [
     "config",
     "configuration",

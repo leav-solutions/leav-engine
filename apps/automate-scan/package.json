@@ -4,8 +4,8 @@
     "description": "",
     "main": "build/index.js",
     "scripts": {
-        "start:watch": "ts-node-dev --respawn src/ ",
-        "start:dev": "ts-node-dev src/ ",
+        "start:watch": "ts-node-dev --respawn ./src",
+        "start:dev": "ts-node-dev/register ./src ",
         "start:watch:test": "NODE_ENV=test ts-node-dev --respawn src/",
         "dev": "npm run start:watch",
         "build": "tsc",
@@ -39,10 +39,11 @@
         "typescript": "^3.8.3"
     },
     "dependencies": {
-        "@leav-engine/config-manager": "workspace:libs/config-manager",
+        "@leav/config-manager": "workspace:libs/config-manager",
         "amqplib": "^0.5.5",
         "app-root-path": "^3.0.0",
         "chokidar": "^3.4.0",
-        "redis-typescript": "^0.1.2"
+        "redis-typescript": "^0.1.2",
+        "uuid": "8.3.2"
     }
 }

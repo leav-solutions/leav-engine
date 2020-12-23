@@ -1,4 +1,4 @@
-import {loadConfig} from '@leav-engine/config-manager';
+import {loadConfig} from '@leav/config-manager';
 import * as rootPath from 'app-root-path';
 import {env} from '../env';
 import {IConfig} from '../types/types';
@@ -8,7 +8,7 @@ let config: IConfig;
 
 export const getConfig = async (): Promise<IConfig> => {
     if (!initialized) {
-        config = await loadConfig<IConfig>(rootPath.path + '/config', env);
+        config = await loadConfig<IConfig>(rootPath.path + '/apps/preview-generator/config', env);
 
         initialized = true;
         return config;

@@ -33,7 +33,7 @@
         "typescript": "^3.6.4"
     },
     "dependencies": {
-        "@leav-engine/config-manager": "workspace:libs/config-manager",
+        "@leav/config-manager": "workspace:libs/config-manager",
         "@types/amqplib": "^0.5.13",
         "@types/uuid": "^3.4.6",
         "amqplib": "^0.5.5",

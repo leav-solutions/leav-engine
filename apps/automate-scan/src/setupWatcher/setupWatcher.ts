@@ -1,4 +1,4 @@
-import {loadConfig} from '@leav-engine/config-manager';
+import {loadConfig} from '@leav/config-manager';
 import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
 import * as rootPath from 'app-root-path';
@@ -9,7 +9,8 @@ import {createClient} from '../redis/redis';
 import {IConfig} from '../types';
 import {start} from '../watch/watch';
 
-export const getConfig = async (): Promise<IConfig> => loadConfig<IConfig>(rootPath.path + '/config', env);
+export const getConfig = async (): Promise<IConfig> =>
+    loadConfig<IConfig>(rootPath.path + '/apps/automate-scan/config', env);
 
 export const startWatch = async () => {
     const config = await getConfig();

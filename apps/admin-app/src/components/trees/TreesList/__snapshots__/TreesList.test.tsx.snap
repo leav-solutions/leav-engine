@@ -2,27 +2,27 @@
 
 exports[`TreesList Snapshot test 1`] = `
 initialize {
-  "0": Object {
+  "0": Node {
     "attribs": Object {
       "class": "ui selectable striped table",
     },
     "children": Array [
-      Object {
+      Node {
         "attribs": Object {
           "class": "",
         },
         "children": Array [
-          Object {
+          Node {
             "attribs": Object {
               "class": "",
             },
             "children": Array [
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "eight wide",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "data": "trees.label",
                     "next": null,
                     "parent": [Circular],
@@ -32,12 +32,12 @@ initialize {
                 ],
                 "name": "th",
                 "namespace": "http://www.w3.org/1999/xhtml",
-                "next": Object {
+                "next": Node {
                   "attribs": Object {
                     "class": "six wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.ID",
                       "next": null,
                       "parent": [Circular],
@@ -47,12 +47,12 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.isSystem",
                         "next": null,
                         "parent": [Circular],
@@ -62,7 +62,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
@@ -110,12 +110,12 @@ initialize {
                   "class": undefined,
                 },
               },
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "six wide",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "data": "trees.ID",
                     "next": null,
                     "parent": [Circular],
@@ -125,12 +125,12 @@ initialize {
                 ],
                 "name": "th",
                 "namespace": "http://www.w3.org/1999/xhtml",
-                "next": Object {
+                "next": Node {
                   "attribs": Object {
                     "class": "one wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.isSystem",
                       "next": null,
                       "parent": [Circular],
@@ -140,7 +140,7 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
@@ -169,12 +169,12 @@ initialize {
                   },
                 },
                 "parent": [Circular],
-                "prev": Object {
+                "prev": Node {
                   "attribs": Object {
                     "class": "eight wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.label",
                       "next": null,
                       "parent": [Circular],
@@ -203,12 +203,12 @@ initialize {
                   "class": undefined,
                 },
               },
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "one wide",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "data": "trees.isSystem",
                     "next": null,
                     "parent": [Circular],
@@ -218,7 +218,7 @@ initialize {
                 ],
                 "name": "th",
                 "namespace": "http://www.w3.org/1999/xhtml",
-                "next": Object {
+                "next": Node {
                   "attribs": Object {
                     "class": "one wide",
                   },
@@ -237,12 +237,12 @@ initialize {
                   },
                 },
                 "parent": [Circular],
-                "prev": Object {
+                "prev": Node {
                   "attribs": Object {
                     "class": "six wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.ID",
                       "next": null,
                       "parent": [Circular],
@@ -254,12 +254,12 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "eight wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.label",
                         "next": null,
                         "parent": [Circular],
@@ -296,7 +296,7 @@ initialize {
                   "class": undefined,
                 },
               },
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "one wide",
                 },
@@ -305,12 +305,12 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": null,
                 "parent": [Circular],
-                "prev": Object {
+                "prev": Node {
                   "attribs": Object {
                     "class": "one wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.isSystem",
                       "next": null,
                       "parent": [Circular],
@@ -322,12 +322,12 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "six wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.ID",
                         "next": null,
                         "parent": [Circular],
@@ -339,12 +339,12 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "eight wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.label",
                           "next": null,
                           "parent": [Circular],
@@ -392,22 +392,22 @@ initialize {
             ],
             "name": "tr",
             "namespace": "http://www.w3.org/1999/xhtml",
-            "next": Object {
+            "next": Node {
               "attribs": Object {
                 "class": "filters",
               },
               "children": Array [
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui small fluid input",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "name": "label",
                             "placeholder": "trees.label...",
@@ -451,17 +451,17 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "id",
                               "placeholder": "trees.ID...",
@@ -505,17 +505,17 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui indeterminate fitted checkbox",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -526,7 +526,7 @@ initialize {
                               "children": Array [],
                               "name": "input",
                               "namespace": "http://www.w3.org/1999/xhtml",
-                              "next": Object {
+                              "next": Node {
                                 "attribs": Object {},
                                 "children": Array [],
                                 "name": "label",
@@ -556,14 +556,14 @@ initialize {
                                 "type": undefined,
                               },
                             },
-                            Object {
+                            Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
                               "namespace": "http://www.w3.org/1999/xhtml",
                               "next": null,
                               "parent": [Circular],
-                              "prev": Object {
+                              "prev": Node {
                                 "attribs": Object {
                                   "class": "hidden",
                                   "name": "system",
@@ -614,7 +614,7 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "",
                         },
@@ -662,17 +662,17 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui small fluid input",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "name": "id",
                             "placeholder": "trees.ID...",
@@ -716,17 +716,17 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui indeterminate fitted checkbox",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -737,7 +737,7 @@ initialize {
                             "children": Array [],
                             "name": "input",
                             "namespace": "http://www.w3.org/1999/xhtml",
-                            "next": Object {
+                            "next": Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
@@ -767,14 +767,14 @@ initialize {
                               "type": undefined,
                             },
                           },
-                          Object {
+                          Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
-                            "prev": Object {
+                            "prev": Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -825,7 +825,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
@@ -854,17 +854,17 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "label",
                               "placeholder": "trees.label...",
@@ -927,17 +927,17 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui indeterminate fitted checkbox",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "hidden",
                             "name": "system",
@@ -948,7 +948,7 @@ initialize {
                           "children": Array [],
                           "name": "input",
                           "namespace": "http://www.w3.org/1999/xhtml",
-                          "next": Object {
+                          "next": Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
@@ -978,14 +978,14 @@ initialize {
                             "type": undefined,
                           },
                         },
-                        Object {
+                        Node {
                           "attribs": Object {},
                           "children": Array [],
                           "name": "label",
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": null,
                           "parent": [Circular],
-                          "prev": Object {
+                          "prev": Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -1036,7 +1036,7 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
@@ -1055,17 +1055,17 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "id",
                               "placeholder": "trees.ID...",
@@ -1111,17 +1111,17 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "label",
                                 "placeholder": "trees.label...",
@@ -1192,7 +1192,7 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
@@ -1201,17 +1201,17 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": null,
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui indeterminate fitted checkbox",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -1222,7 +1222,7 @@ initialize {
                             "children": Array [],
                             "name": "input",
                             "namespace": "http://www.w3.org/1999/xhtml",
-                            "next": Object {
+                            "next": Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
@@ -1252,14 +1252,14 @@ initialize {
                               "type": undefined,
                             },
                           },
-                          Object {
+                          Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
-                            "prev": Object {
+                            "prev": Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -1312,17 +1312,17 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "id",
                                 "placeholder": "trees.ID...",
@@ -1368,17 +1368,17 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "ui small fluid input",
                             },
                             "children": Array [
-                              Object {
+                              Node {
                                 "attribs": Object {
                                   "name": "label",
                                   "placeholder": "trees.label...",
@@ -1481,22 +1481,22 @@ initialize {
               "class": undefined,
             },
           },
-          Object {
+          Node {
             "attribs": Object {
               "class": "filters",
             },
             "children": Array [
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "ui small fluid input",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "name": "label",
                           "placeholder": "trees.label...",
@@ -1540,17 +1540,17 @@ initialize {
                 ],
                 "name": "th",
                 "namespace": "http://www.w3.org/1999/xhtml",
-                "next": Object {
+                "next": Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui small fluid input",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "name": "id",
                             "placeholder": "trees.ID...",
@@ -1594,17 +1594,17 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui indeterminate fitted checkbox",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -1615,7 +1615,7 @@ initialize {
                             "children": Array [],
                             "name": "input",
                             "namespace": "http://www.w3.org/1999/xhtml",
-                            "next": Object {
+                            "next": Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
@@ -1645,14 +1645,14 @@ initialize {
                               "type": undefined,
                             },
                           },
-                          Object {
+                          Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
-                            "prev": Object {
+                            "prev": Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -1703,7 +1703,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
@@ -1751,17 +1751,17 @@ initialize {
                   "class": undefined,
                 },
               },
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "ui small fluid input",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "name": "id",
                           "placeholder": "trees.ID...",
@@ -1805,17 +1805,17 @@ initialize {
                 ],
                 "name": "th",
                 "namespace": "http://www.w3.org/1999/xhtml",
-                "next": Object {
+                "next": Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui indeterminate fitted checkbox",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "hidden",
                             "name": "system",
@@ -1826,7 +1826,7 @@ initialize {
                           "children": Array [],
                           "name": "input",
                           "namespace": "http://www.w3.org/1999/xhtml",
-                          "next": Object {
+                          "next": Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
@@ -1856,14 +1856,14 @@ initialize {
                             "type": undefined,
                           },
                         },
-                        Object {
+                        Node {
                           "attribs": Object {},
                           "children": Array [],
                           "name": "label",
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": null,
                           "parent": [Circular],
-                          "prev": Object {
+                          "prev": Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -1914,7 +1914,7 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
@@ -1943,17 +1943,17 @@ initialize {
                   },
                 },
                 "parent": [Circular],
-                "prev": Object {
+                "prev": Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui small fluid input",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "name": "label",
                             "placeholder": "trees.label...",
@@ -2016,17 +2016,17 @@ initialize {
                   "class": undefined,
                 },
               },
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "ui indeterminate fitted checkbox",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "hidden",
                           "name": "system",
@@ -2037,7 +2037,7 @@ initialize {
                         "children": Array [],
                         "name": "input",
                         "namespace": "http://www.w3.org/1999/xhtml",
-                        "next": Object {
+                        "next": Node {
                           "attribs": Object {},
                           "children": Array [],
                           "name": "label",
@@ -2067,14 +2067,14 @@ initialize {
                           "type": undefined,
                         },
                       },
-                      Object {
+                      Node {
                         "attribs": Object {},
                         "children": Array [],
                         "name": "label",
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": null,
                         "parent": [Circular],
-                        "prev": Object {
+                        "prev": Node {
                           "attribs": Object {
                             "class": "hidden",
                             "name": "system",
@@ -2125,7 +2125,7 @@ initialize {
                 ],
                 "name": "th",
                 "namespace": "http://www.w3.org/1999/xhtml",
-                "next": Object {
+                "next": Node {
                   "attribs": Object {
                     "class": "",
                   },
@@ -2144,17 +2144,17 @@ initialize {
                   },
                 },
                 "parent": [Circular],
-                "prev": Object {
+                "prev": Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui small fluid input",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "name": "id",
                             "placeholder": "trees.ID...",
@@ -2200,17 +2200,17 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "label",
                               "placeholder": "trees.label...",
@@ -2281,7 +2281,7 @@ initialize {
                   "class": undefined,
                 },
               },
-              Object {
+              Node {
                 "attribs": Object {
                   "class": "",
                 },
@@ -2290,17 +2290,17 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": null,
                 "parent": [Circular],
-                "prev": Object {
+                "prev": Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui indeterminate fitted checkbox",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "hidden",
                             "name": "system",
@@ -2311,7 +2311,7 @@ initialize {
                           "children": Array [],
                           "name": "input",
                           "namespace": "http://www.w3.org/1999/xhtml",
-                          "next": Object {
+                          "next": Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
@@ -2341,14 +2341,14 @@ initialize {
                             "type": undefined,
                           },
                         },
-                        Object {
+                        Node {
                           "attribs": Object {},
                           "children": Array [],
                           "name": "label",
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": null,
                           "parent": [Circular],
-                          "prev": Object {
+                          "prev": Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -2401,17 +2401,17 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "id",
                               "placeholder": "trees.ID...",
@@ -2457,17 +2457,17 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "label",
                                 "placeholder": "trees.label...",
@@ -2551,17 +2551,17 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": null,
             "parent": [Circular],
-            "prev": Object {
+            "prev": Node {
               "attribs": Object {
                 "class": "",
               },
               "children": Array [
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "eight wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.label",
                       "next": null,
                       "parent": [Circular],
@@ -2571,12 +2571,12 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "six wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.ID",
                         "next": null,
                         "parent": [Circular],
@@ -2586,12 +2586,12 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.isSystem",
                           "next": null,
                           "parent": [Circular],
@@ -2601,7 +2601,7 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "one wide",
                         },
@@ -2649,12 +2649,12 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "six wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.ID",
                       "next": null,
                       "parent": [Circular],
@@ -2664,12 +2664,12 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.isSystem",
                         "next": null,
                         "parent": [Circular],
@@ -2679,7 +2679,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
@@ -2708,12 +2708,12 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "eight wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.label",
                         "next": null,
                         "parent": [Circular],
@@ -2742,12 +2742,12 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "one wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.isSystem",
                       "next": null,
                       "parent": [Circular],
@@ -2757,7 +2757,7 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
@@ -2776,12 +2776,12 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "six wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.ID",
                         "next": null,
                         "parent": [Circular],
@@ -2793,12 +2793,12 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "eight wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.label",
                           "next": null,
                           "parent": [Circular],
@@ -2835,7 +2835,7 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "one wide",
                   },
@@ -2844,12 +2844,12 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": null,
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.isSystem",
                         "next": null,
                         "parent": [Circular],
@@ -2861,12 +2861,12 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "six wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.ID",
                           "next": null,
                           "parent": [Circular],
@@ -2878,12 +2878,12 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "eight wide",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "trees.label",
                             "next": null,
                             "parent": [Circular],
@@ -2953,7 +2953,7 @@ initialize {
         ],
         "name": "thead",
         "namespace": "http://www.w3.org/1999/xhtml",
-        "next": Object {
+        "next": Node {
           "attribs": Object {
             "class": "",
           },
@@ -2981,7 +2981,7 @@ initialize {
           "class": undefined,
         },
       },
-      Object {
+      Node {
         "attribs": Object {
           "class": "",
         },
@@ -2990,22 +2990,22 @@ initialize {
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": [Circular],
-        "prev": Object {
+        "prev": Node {
           "attribs": Object {
             "class": "",
           },
           "children": Array [
-            Object {
+            Node {
               "attribs": Object {
                 "class": "",
               },
               "children": Array [
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "eight wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.label",
                       "next": null,
                       "parent": [Circular],
@@ -3015,12 +3015,12 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "six wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.ID",
                         "next": null,
                         "parent": [Circular],
@@ -3030,12 +3030,12 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.isSystem",
                           "next": null,
                           "parent": [Circular],
@@ -3045,7 +3045,7 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "one wide",
                         },
@@ -3093,12 +3093,12 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "six wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.ID",
                       "next": null,
                       "parent": [Circular],
@@ -3108,12 +3108,12 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.isSystem",
                         "next": null,
                         "parent": [Circular],
@@ -3123,7 +3123,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
@@ -3152,12 +3152,12 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "eight wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.label",
                         "next": null,
                         "parent": [Circular],
@@ -3186,12 +3186,12 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "one wide",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "data": "trees.isSystem",
                       "next": null,
                       "parent": [Circular],
@@ -3201,7 +3201,7 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
@@ -3220,12 +3220,12 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "six wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.ID",
                         "next": null,
                         "parent": [Circular],
@@ -3237,12 +3237,12 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "eight wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.label",
                           "next": null,
                           "parent": [Circular],
@@ -3279,7 +3279,7 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "one wide",
                   },
@@ -3288,12 +3288,12 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": null,
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.isSystem",
                         "next": null,
                         "parent": [Circular],
@@ -3305,12 +3305,12 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "six wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.ID",
                           "next": null,
                           "parent": [Circular],
@@ -3322,12 +3322,12 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "eight wide",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "trees.label",
                             "next": null,
                             "parent": [Circular],
@@ -3375,22 +3375,22 @@ initialize {
               ],
               "name": "tr",
               "namespace": "http://www.w3.org/1999/xhtml",
-              "next": Object {
+              "next": Node {
                 "attribs": Object {
                   "class": "filters",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "label",
                               "placeholder": "trees.label...",
@@ -3434,17 +3434,17 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "id",
                                 "placeholder": "trees.ID...",
@@ -3488,17 +3488,17 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "ui indeterminate fitted checkbox",
                             },
                             "children": Array [
-                              Object {
+                              Node {
                                 "attribs": Object {
                                   "class": "hidden",
                                   "name": "system",
@@ -3509,7 +3509,7 @@ initialize {
                                 "children": Array [],
                                 "name": "input",
                                 "namespace": "http://www.w3.org/1999/xhtml",
-                                "next": Object {
+                                "next": Node {
                                   "attribs": Object {},
                                   "children": Array [],
                                   "name": "label",
@@ -3539,14 +3539,14 @@ initialize {
                                   "type": undefined,
                                 },
                               },
-                              Object {
+                              Node {
                                 "attribs": Object {},
                                 "children": Array [],
                                 "name": "label",
                                 "namespace": "http://www.w3.org/1999/xhtml",
                                 "next": null,
                                 "parent": [Circular],
-                                "prev": Object {
+                                "prev": Node {
                                   "attribs": Object {
                                     "class": "hidden",
                                     "name": "system",
@@ -3597,7 +3597,7 @@ initialize {
                         ],
                         "name": "th",
                         "namespace": "http://www.w3.org/1999/xhtml",
-                        "next": Object {
+                        "next": Node {
                           "attribs": Object {
                             "class": "",
                           },
@@ -3645,17 +3645,17 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "id",
                               "placeholder": "trees.ID...",
@@ -3699,17 +3699,17 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui indeterminate fitted checkbox",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -3720,7 +3720,7 @@ initialize {
                               "children": Array [],
                               "name": "input",
                               "namespace": "http://www.w3.org/1999/xhtml",
-                              "next": Object {
+                              "next": Node {
                                 "attribs": Object {},
                                 "children": Array [],
                                 "name": "label",
@@ -3750,14 +3750,14 @@ initialize {
                                 "type": undefined,
                               },
                             },
-                            Object {
+                            Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
                               "namespace": "http://www.w3.org/1999/xhtml",
                               "next": null,
                               "parent": [Circular],
-                              "prev": Object {
+                              "prev": Node {
                                 "attribs": Object {
                                   "class": "hidden",
                                   "name": "system",
@@ -3808,7 +3808,7 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "",
                         },
@@ -3837,17 +3837,17 @@ initialize {
                       },
                     },
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "label",
                                 "placeholder": "trees.label...",
@@ -3910,17 +3910,17 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui indeterminate fitted checkbox",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -3931,7 +3931,7 @@ initialize {
                             "children": Array [],
                             "name": "input",
                             "namespace": "http://www.w3.org/1999/xhtml",
-                            "next": Object {
+                            "next": Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
@@ -3961,14 +3961,14 @@ initialize {
                               "type": undefined,
                             },
                           },
-                          Object {
+                          Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
-                            "prev": Object {
+                            "prev": Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -4019,7 +4019,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
@@ -4038,17 +4038,17 @@ initialize {
                       },
                     },
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "id",
                                 "placeholder": "trees.ID...",
@@ -4094,17 +4094,17 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "ui small fluid input",
                             },
                             "children": Array [
-                              Object {
+                              Node {
                                 "attribs": Object {
                                   "name": "label",
                                   "placeholder": "trees.label...",
@@ -4175,7 +4175,7 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "",
                     },
@@ -4184,17 +4184,17 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": null,
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui indeterminate fitted checkbox",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -4205,7 +4205,7 @@ initialize {
                               "children": Array [],
                               "name": "input",
                               "namespace": "http://www.w3.org/1999/xhtml",
-                              "next": Object {
+                              "next": Node {
                                 "attribs": Object {},
                                 "children": Array [],
                                 "name": "label",
@@ -4235,14 +4235,14 @@ initialize {
                                 "type": undefined,
                               },
                             },
-                            Object {
+                            Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
                               "namespace": "http://www.w3.org/1999/xhtml",
                               "next": null,
                               "parent": [Circular],
-                              "prev": Object {
+                              "prev": Node {
                                 "attribs": Object {
                                   "class": "hidden",
                                   "name": "system",
@@ -4295,17 +4295,17 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "ui small fluid input",
                             },
                             "children": Array [
-                              Object {
+                              Node {
                                 "attribs": Object {
                                   "name": "id",
                                   "placeholder": "trees.ID...",
@@ -4351,17 +4351,17 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": [Circular],
                         "parent": [Circular],
-                        "prev": Object {
+                        "prev": Node {
                           "attribs": Object {
                             "class": "",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "class": "ui small fluid input",
                               },
                               "children": Array [
-                                Object {
+                                Node {
                                   "attribs": Object {
                                     "name": "label",
                                     "placeholder": "trees.label...",
@@ -4464,22 +4464,22 @@ initialize {
                 "class": undefined,
               },
             },
-            Object {
+            Node {
               "attribs": Object {
                 "class": "filters",
               },
               "children": Array [
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui small fluid input",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "name": "label",
                             "placeholder": "trees.label...",
@@ -4523,17 +4523,17 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "id",
                               "placeholder": "trees.ID...",
@@ -4577,17 +4577,17 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui indeterminate fitted checkbox",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -4598,7 +4598,7 @@ initialize {
                               "children": Array [],
                               "name": "input",
                               "namespace": "http://www.w3.org/1999/xhtml",
-                              "next": Object {
+                              "next": Node {
                                 "attribs": Object {},
                                 "children": Array [],
                                 "name": "label",
@@ -4628,14 +4628,14 @@ initialize {
                                 "type": undefined,
                               },
                             },
-                            Object {
+                            Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
                               "namespace": "http://www.w3.org/1999/xhtml",
                               "next": null,
                               "parent": [Circular],
-                              "prev": Object {
+                              "prev": Node {
                                 "attribs": Object {
                                   "class": "hidden",
                                   "name": "system",
@@ -4686,7 +4686,7 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "",
                         },
@@ -4734,17 +4734,17 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui small fluid input",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "name": "id",
                             "placeholder": "trees.ID...",
@@ -4788,17 +4788,17 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui indeterminate fitted checkbox",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -4809,7 +4809,7 @@ initialize {
                             "children": Array [],
                             "name": "input",
                             "namespace": "http://www.w3.org/1999/xhtml",
-                            "next": Object {
+                            "next": Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
@@ -4839,14 +4839,14 @@ initialize {
                               "type": undefined,
                             },
                           },
-                          Object {
+                          Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
-                            "prev": Object {
+                            "prev": Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -4897,7 +4897,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "",
                       },
@@ -4926,17 +4926,17 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "label",
                               "placeholder": "trees.label...",
@@ -4999,17 +4999,17 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
                   "children": Array [
-                    Object {
+                    Node {
                       "attribs": Object {
                         "class": "ui indeterminate fitted checkbox",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "hidden",
                             "name": "system",
@@ -5020,7 +5020,7 @@ initialize {
                           "children": Array [],
                           "name": "input",
                           "namespace": "http://www.w3.org/1999/xhtml",
-                          "next": Object {
+                          "next": Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
@@ -5050,14 +5050,14 @@ initialize {
                             "type": undefined,
                           },
                         },
-                        Object {
+                        Node {
                           "attribs": Object {},
                           "children": Array [],
                           "name": "label",
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": null,
                           "parent": [Circular],
-                          "prev": Object {
+                          "prev": Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -5108,7 +5108,7 @@ initialize {
                   ],
                   "name": "th",
                   "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Object {
+                  "next": Node {
                     "attribs": Object {
                       "class": "",
                     },
@@ -5127,17 +5127,17 @@ initialize {
                     },
                   },
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui small fluid input",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "name": "id",
                               "placeholder": "trees.ID...",
@@ -5183,17 +5183,17 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "label",
                                 "placeholder": "trees.label...",
@@ -5264,7 +5264,7 @@ initialize {
                     "class": undefined,
                   },
                 },
-                Object {
+                Node {
                   "attribs": Object {
                     "class": "",
                   },
@@ -5273,17 +5273,17 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": null,
                   "parent": [Circular],
-                  "prev": Object {
+                  "prev": Node {
                     "attribs": Object {
                       "class": "",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "attribs": Object {
                           "class": "ui indeterminate fitted checkbox",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "hidden",
                               "name": "system",
@@ -5294,7 +5294,7 @@ initialize {
                             "children": Array [],
                             "name": "input",
                             "namespace": "http://www.w3.org/1999/xhtml",
-                            "next": Object {
+                            "next": Node {
                               "attribs": Object {},
                               "children": Array [],
                               "name": "label",
@@ -5324,14 +5324,14 @@ initialize {
                               "type": undefined,
                             },
                           },
-                          Object {
+                          Node {
                             "attribs": Object {},
                             "children": Array [],
                             "name": "label",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
-                            "prev": Object {
+                            "prev": Node {
                               "attribs": Object {
                                 "class": "hidden",
                                 "name": "system",
@@ -5384,17 +5384,17 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "attribs": Object {
                             "class": "ui small fluid input",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "attribs": Object {
                                 "name": "id",
                                 "placeholder": "trees.ID...",
@@ -5440,17 +5440,17 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "attribs": Object {
                               "class": "ui small fluid input",
                             },
                             "children": Array [
-                              Object {
+                              Node {
                                 "attribs": Object {
                                   "name": "label",
                                   "placeholder": "trees.label...",
@@ -5534,17 +5534,17 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": null,
               "parent": [Circular],
-              "prev": Object {
+              "prev": Node {
                 "attribs": Object {
                   "class": "",
                 },
                 "children": Array [
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "eight wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.label",
                         "next": null,
                         "parent": [Circular],
@@ -5554,12 +5554,12 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "six wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.ID",
                           "next": null,
                           "parent": [Circular],
@@ -5569,12 +5569,12 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "one wide",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "trees.isSystem",
                             "next": null,
                             "parent": [Circular],
@@ -5584,7 +5584,7 @@ initialize {
                         ],
                         "name": "th",
                         "namespace": "http://www.w3.org/1999/xhtml",
-                        "next": Object {
+                        "next": Node {
                           "attribs": Object {
                             "class": "one wide",
                           },
@@ -5632,12 +5632,12 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "six wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.ID",
                         "next": null,
                         "parent": [Circular],
@@ -5647,12 +5647,12 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.isSystem",
                           "next": null,
                           "parent": [Circular],
@@ -5662,7 +5662,7 @@ initialize {
                       ],
                       "name": "th",
                       "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": Object {
+                      "next": Node {
                         "attribs": Object {
                           "class": "one wide",
                         },
@@ -5691,12 +5691,12 @@ initialize {
                       },
                     },
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "eight wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.label",
                           "next": null,
                           "parent": [Circular],
@@ -5725,12 +5725,12 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
                     "children": Array [
-                      Object {
+                      Node {
                         "data": "trees.isSystem",
                         "next": null,
                         "parent": [Circular],
@@ -5740,7 +5740,7 @@ initialize {
                     ],
                     "name": "th",
                     "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Object {
+                    "next": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
@@ -5759,12 +5759,12 @@ initialize {
                       },
                     },
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "six wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.ID",
                           "next": null,
                           "parent": [Circular],
@@ -5776,12 +5776,12 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "eight wide",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "trees.label",
                             "next": null,
                             "parent": [Circular],
@@ -5818,7 +5818,7 @@ initialize {
                       "class": undefined,
                     },
                   },
-                  Object {
+                  Node {
                     "attribs": Object {
                       "class": "one wide",
                     },
@@ -5827,12 +5827,12 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": null,
                     "parent": [Circular],
-                    "prev": Object {
+                    "prev": Node {
                       "attribs": Object {
                         "class": "one wide",
                       },
                       "children": Array [
-                        Object {
+                        Node {
                           "data": "trees.isSystem",
                           "next": null,
                           "parent": [Circular],
@@ -5844,12 +5844,12 @@ initialize {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": Object {
+                      "prev": Node {
                         "attribs": Object {
                           "class": "six wide",
                         },
                         "children": Array [
-                          Object {
+                          Node {
                             "data": "trees.ID",
                             "next": null,
                             "parent": [Circular],
@@ -5861,12 +5861,12 @@ initialize {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": [Circular],
                         "parent": [Circular],
-                        "prev": Object {
+                        "prev": Node {
                           "attribs": Object {
                             "class": "eight wide",
                           },
                           "children": Array [
-                            Object {
+                            Node {
                               "data": "trees.label",
                               "next": null,
                               "parent": [Circular],
@@ -5959,22 +5959,17 @@ initialize {
     "name": "table",
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
-    "parent": null,
-    "prev": null,
-    "root": Object {
-      "attribs": Object {},
+    "parent": Node {
       "children": Array [
         [Circular],
       ],
       "name": "root",
-      "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": null,
       "prev": null,
       "type": "root",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
     },
+    "prev": null,
     "type": "tag",
     "x-attribsNamespace": Object {
       "class": undefined,
@@ -5987,8 +5982,6 @@ initialize {
   "length": 1,
   "options": Object {
     "decodeEntities": true,
-    "normalizeWhitespace": false,
-    "withDomLvl1": true,
     "xml": false,
   },
 }

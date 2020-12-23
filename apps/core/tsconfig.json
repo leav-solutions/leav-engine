@@ -1,6 +1,9 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "baseUrl": "src"
+        "types": ["node"],
+        "baseUrl": "src",
+        "outDir": "dist",
+        "isolatedModules": false,
     }
 }

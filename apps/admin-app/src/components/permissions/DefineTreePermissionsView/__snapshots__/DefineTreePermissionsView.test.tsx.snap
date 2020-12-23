@@ -2,22 +2,22 @@
 
 exports[`DefineTreePermissionsView Snapshot test 1`] = `
 initialize {
-  "0": Object {
+  "0": Node {
     "attribs": Object {
       "class": "sc-bdVaJa goaYMK",
     },
     "children": Array [
-      Object {
+      Node {
         "attribs": Object {
           "class": "sc-bwzfXH cIPmQg",
         },
         "children": Array [
-          Object {
+          Node {
             "attribs": Object {
               "class": "ui active text centered inline loader",
             },
             "children": Array [
-              Object {
+              Node {
                 "data": "admin.loading",
                 "next": null,
                 "parent": [Circular],
@@ -56,22 +56,17 @@ initialize {
     "name": "div",
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
-    "parent": null,
-    "prev": null,
-    "root": Object {
-      "attribs": Object {},
+    "parent": Node {
       "children": Array [
         [Circular],
       ],
       "name": "root",
-      "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": null,
       "prev": null,
       "type": "root",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
     },
+    "prev": null,
     "type": "tag",
     "x-attribsNamespace": Object {
       "class": undefined,
@@ -84,8 +79,6 @@ initialize {
   "length": 1,
   "options": Object {
     "decodeEntities": true,
-    "normalizeWhitespace": false,
-    "withDomLvl1": true,
     "xml": false,
   },
 }

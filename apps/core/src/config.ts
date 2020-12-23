@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Joi from '@hapi/joi';
-import {loadConfig} from '@leav-engine/config-manager';
+import {loadConfig} from '@leav/config-manager';
 import * as rootPath from 'app-root-path';
 import {IConfig} from '_types/config';
 import {env as appEnv} from './env';
@@ -101,7 +101,7 @@ export const validateConfig = (conf: IConfig) => {
  */
 export const getConfig = async (folder?: string): Promise<any> => {
     const definedEnv: string = appEnv;
-    const confRootFolder = folder ?? rootPath.path;
+    const confRootFolder = folder ?? rootPath.path + '/apps/core';
     const conf = await loadConfig<any>(confRootFolder + '/config', definedEnv);
 
     return conf;
