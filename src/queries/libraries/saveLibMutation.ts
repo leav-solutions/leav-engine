@@ -27,7 +27,9 @@ export const saveLibQuery = gql`
                 permissionTreeAttributes {
                     id
                     ... on TreeAttribute {
-                        linked_tree
+                        linked_tree {
+                            id
+                        }
                     }
                     label(lang: $lang)
                 }

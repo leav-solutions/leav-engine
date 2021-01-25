@@ -17,10 +17,14 @@ export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_perm
     label: SystemTranslation | null;
 }
 
+export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
-    linked_tree: string | null;
+    linked_tree: GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
 export type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes =

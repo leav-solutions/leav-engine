@@ -18,7 +18,9 @@ export const saveAttributeQuery = gql`
                 permissionTreeAttributes {
                     id
                     ... on TreeAttribute {
-                        linked_tree
+                        linked_tree {
+                            id
+                        }
                     }
                     label
                 }
@@ -37,10 +39,14 @@ export const saveAttributeQuery = gql`
             }
             ...AttributeValuesListDetails
             ... on LinkAttribute {
-                linked_library
+                linked_library {
+                    id
+                }
             }
             ... on TreeAttribute {
-                linked_tree
+                linked_tree {
+                    id
+                }
             }
         }
     }

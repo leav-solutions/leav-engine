@@ -203,13 +203,13 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 <>
                     <SelectRecordModal
                         open={isOpenSelectRecordModal}
-                        library={attribute.linked_library}
+                        library={attribute.linked_library.id}
                         onSelect={_onRecordAdded}
                         onClose={_handleCloseSelectRecordModal}
                     />
                     {attribute.linked_library && (
                         <EditRecordModal
-                            library={attribute.linked_library}
+                            library={attribute.linked_library.id}
                             open={isOpenAddRecordModal}
                             onClose={_handleCloseAddRecordModal}
                         />
@@ -221,7 +221,7 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 <SelectTreeNodeModal
                     open={isOpenSelectTreeNodeModal}
                     onClose={_handleCloseSelectTreeNodeModal}
-                    tree={attribute.linked_tree}
+                    tree={attribute.linked_tree.id}
                     onSelect={_onTreeNodeSelected}
                 />
             )}

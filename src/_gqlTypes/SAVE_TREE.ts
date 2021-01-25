@@ -18,11 +18,15 @@ export interface SAVE_TREE_saveTree_libraries_attributes_StandardAttribute {
     type: AttributeType;
 }
 
+export interface SAVE_TREE_saveTree_libraries_attributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface SAVE_TREE_saveTree_libraries_attributes_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
     type: AttributeType;
-    linked_tree: string | null;
+    linked_tree: SAVE_TREE_saveTree_libraries_attributes_TreeAttribute_linked_tree | null;
 }
 
 export type SAVE_TREE_saveTree_libraries_attributes =

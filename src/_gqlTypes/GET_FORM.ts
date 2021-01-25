@@ -46,10 +46,14 @@ export interface GET_FORM_forms_list_dependencyAttributes_StandardAttribute {
     label: SystemTranslation | null;
 }
 
+export interface GET_FORM_forms_list_dependencyAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface GET_FORM_forms_list_dependencyAttributes_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
-    linked_tree: string | null;
+    linked_tree: GET_FORM_forms_list_dependencyAttributes_TreeAttribute_linked_tree | null;
 }
 
 export type GET_FORM_forms_list_dependencyAttributes =

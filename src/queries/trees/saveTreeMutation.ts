@@ -22,7 +22,9 @@ export const saveTreeQuery = gql`
                     label
                     type
                     ... on TreeAttribute {
-                        linked_tree
+                        linked_tree {
+                            id
+                        }
                     }
                 }
             }

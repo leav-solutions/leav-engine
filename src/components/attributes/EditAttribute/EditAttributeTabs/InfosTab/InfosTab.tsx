@@ -77,8 +77,8 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                 },
                 type: dataToSave.type,
                 format: dataToSave.format,
-                linked_tree: (dataToSave as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree,
-                linked_library: (dataToSave as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library,
+                linked_tree: (dataToSave as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree?.id,
+                linked_library: (dataToSave as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library?.id,
                 multiple_values: dataToSave.multiple_values,
                 versions_conf: {
                     versionable: dataToSave.versions_conf ? dataToSave.versions_conf.versionable : false,
@@ -87,6 +87,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                 }
             }
         };
+        console.log(variables);
         await saveAttribute({
             variables
         });

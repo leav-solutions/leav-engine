@@ -9,6 +9,7 @@
 import {
     LibraryInput,
     AvailableLanguage,
+    LibraryBehavior,
     AttributeType,
     AttributeFormat,
     PermissionsRelation,
@@ -31,10 +32,14 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_permissio
     label: SystemTranslation | null;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
-    linked_tree: string | null;
+    linked_tree: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
 export type SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes =
@@ -76,10 +81,14 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_c
     label: SystemTranslation | null;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
-    linked_tree: string | null;
+    linked_tree: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
 export type SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes =
@@ -97,6 +106,10 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf
     trees: string[] | null;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_linked_library {
+    id: string;
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute {
     id: string;
     type: AttributeType;
@@ -107,7 +120,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute {
     metadata_fields: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf | null;
-    linked_library: string | null;
+    linked_library: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_linked_library | null;
 }
 
 export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_metadata_fields {
@@ -122,10 +135,14 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_c
     label: SystemTranslation | null;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
-    linked_tree: string | null;
+    linked_tree: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
 export type SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes =
@@ -143,6 +160,10 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf
     trees: string[] | null;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute {
     id: string;
     type: AttributeType;
@@ -153,7 +174,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute {
     metadata_fields: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_conf | null;
     versions_conf: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf | null;
-    linked_tree: string | null;
+    linked_tree: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_linked_tree | null;
 }
 
 export type SAVE_LIBRARY_saveLibrary_attributes =
@@ -161,9 +182,29 @@ export type SAVE_LIBRARY_saveLibrary_attributes =
     | SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute
     | SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute;
 
-export interface SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes {
+export interface SAVE_LIBRARY_saveLibrary_fullTextAttributes {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes_StandardAttribute {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
     id: string;
 }
+
+export interface SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes_TreeAttribute {
+    id: string;
+    linked_tree: SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
+    label: SystemTranslation | null;
+}
+
+export type SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes =
+    | SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes_StandardAttribute
+    | SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes_TreeAttribute;
 
 export interface SAVE_LIBRARY_saveLibrary_permissions_conf {
     permissionTreeAttributes: SAVE_LIBRARY_saveLibrary_permissions_conf_permissionTreeAttributes[];
@@ -176,21 +217,28 @@ export interface SAVE_LIBRARY_saveLibrary_recordIdentityConf {
     preview: string | null;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_defaultView {
+    id: string;
+}
+
 export interface SAVE_LIBRARY_saveLibrary_gqlNames {
     query: string;
     type: string;
     list: string;
-    searchableFields: string;
     filter: string;
+    searchableFields: string;
 }
 
 export interface SAVE_LIBRARY_saveLibrary {
     id: string;
     system: boolean | null;
     label: SystemTranslation | null;
+    behavior: LibraryBehavior;
     attributes: SAVE_LIBRARY_saveLibrary_attributes[] | null;
+    fullTextAttributes: SAVE_LIBRARY_saveLibrary_fullTextAttributes[] | null;
     permissions_conf: SAVE_LIBRARY_saveLibrary_permissions_conf | null;
     recordIdentityConf: SAVE_LIBRARY_saveLibrary_recordIdentityConf | null;
+    defaultView: SAVE_LIBRARY_saveLibrary_defaultView | null;
     gqlNames: SAVE_LIBRARY_saveLibrary_gqlNames;
 }
 

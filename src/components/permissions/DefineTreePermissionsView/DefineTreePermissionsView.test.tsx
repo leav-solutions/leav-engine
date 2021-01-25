@@ -13,7 +13,7 @@ describe('DefineTreePermissionsView', () => {
     test('Snapshot test', async () => {
         const mockTree = {
             id: 'test_tree_attr',
-            linked_tree: 'test_tree',
+            linked_tree: {id: 'test_tree'},
             label: {fr: 'Test'}
         };
 
