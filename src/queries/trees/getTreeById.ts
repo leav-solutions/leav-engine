@@ -28,12 +28,17 @@ export const getTreeByIdQuery = gql`
                     }
                 }
                 libraries {
-                    id
-                    label
-                    attributes {
+                    library {
                         id
                         label
-                        type
+                        attributes {
+                            id
+                            label
+                            type
+                        }
+                    }
+                    settings {
+                        allowMultiplePositions
                     }
                 }
             }

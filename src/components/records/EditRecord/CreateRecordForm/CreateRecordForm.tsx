@@ -167,7 +167,7 @@ const CreateRecordForm = ({
         return (
             <Form onSubmit={handleSubmit}>
                 {Object.keys(attributes).map(attrId => (
-                    <FormFieldWrapper key={attrId} error={(errors[attrId] && errors[attrId].message) || ''}>
+                    <FormFieldWrapper key={attrId} error={errors[attrId]?.message ?? ''}>
                         {_renderValueField(
                             attributes[attrId],
                             values[attrId],

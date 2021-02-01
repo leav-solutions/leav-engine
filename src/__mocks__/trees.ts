@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {pick} from '../utils';
+import pick from 'lodash/pick';
 import {GET_TREE_BY_ID_trees_list} from '../_gqlTypes/GET_TREE_BY_ID';
 import {PermissionsRelation, TreeBehavior} from '../_gqlTypes/globalTypes';
 import {mockAttrTree} from './attributes';
@@ -10,8 +10,14 @@ export const mockTree: GET_TREE_BY_ID_trees_list = {
     id: 'test_tree',
     system: false,
     libraries: [
-        {id: 'test_lib', label: {fr: 'Test Lib'}, attributes: [{...mockAttrTree}]},
-        {id: 'test_lib2', label: {fr: 'Test Lib 2'}, attributes: [{...mockAttrTree}]}
+        {
+            library: {id: 'test_lib', label: {fr: 'Test Lib'}, attributes: [{...mockAttrTree}]},
+            settings: {allowMultiplePositions: false}
+        },
+        {
+            library: {id: 'test_lib2', label: {fr: 'Test Lib 2'}, attributes: [{...mockAttrTree}]},
+            settings: {allowMultiplePositions: false}
+        }
     ],
     behavior: TreeBehavior.standard,
     label: {

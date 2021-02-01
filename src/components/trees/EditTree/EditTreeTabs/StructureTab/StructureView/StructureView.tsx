@@ -173,14 +173,14 @@ const StructureView = ({
                             <Dropdown.Header icon="plus square outline" content={t('trees.add_element')} />
                             {treeSettings.libraries.map(lib => (
                                 <Dropdown.Item
-                                    key={`add_record_btn_item_${lib.id}`}
-                                    text={localizedLabel(lib.label, availableLanguages)}
-                                    onClick={_handleOpenAddElementModal(rowInfo.node, lib.id)}
+                                    key={`add_record_btn_item_${lib.library.id}`}
+                                    text={localizedLabel(lib.library.label, availableLanguages)}
+                                    onClick={_handleOpenAddElementModal(rowInfo.node, lib.library.id)}
                                     label={
                                         <LibIconLabel
                                             circular
-                                            bgcolor={stringToColor(lib.id)}
-                                            content={lib.id[0].toUpperCase()}
+                                            bgcolor={stringToColor(lib.library.id)}
+                                            content={lib.library.id[0].toUpperCase()}
                                         />
                                     }
                                 />

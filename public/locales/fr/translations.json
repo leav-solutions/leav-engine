@@ -125,7 +125,9 @@
         "select_tree_node": "Sélectionner un élément",
         "behavior": "Comportement",
         "behavior_files": "Fichiers",
-        "behavior_standard": "Standard"
+        "behavior_standard": "Standard",
+        "allow_multiple_positions": "Autoriser l'ajout multiple",
+        "add_library": "Ajouter une bibliothèque"
     },
     "permissions": {
         "title": "Permissions application",

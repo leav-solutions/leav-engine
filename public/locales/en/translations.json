@@ -126,7 +126,9 @@
         "behavior": "Behavior",
         "behavior_files": "Files",
         "behavior_standard": "Standard",
-        "default_view": "Default view"
+        "default_view": "Default view",
+        "allow_multiple_positions": "Allow multiple positions",
+        "add_library": "Add library"
     },
     "permissions": {
         "title": "App Permissions",

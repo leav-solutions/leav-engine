@@ -33,7 +33,7 @@ describe('NodePermissionTabContent', () => {
         const comp = render(
             <NodePermissionTabContent
                 tree={{...mockTreeWithPermConf}}
-                library={{...mockTreeWithPermConf.libraries[0]}}
+                treeLibraries={{...mockTreeWithPermConf.libraries[0]}}
                 onSubmitSettings={onSubmit}
                 readonly={false}
             />

@@ -8,6 +8,8 @@ import {getTreesQuery} from '../../../../../queries/trees/getTreesQuery';
 import {saveTreeQuery} from '../../../../../queries/trees/saveTreeMutation';
 import {clearCacheQueriesFromRegexp} from '../../../../../utils';
 import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
+import {GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
+import {TreeInput} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_TREE, SAVE_TREEVariables} from '../../../../../_gqlTypes/SAVE_TREE';
 import TreeInfosForm from './InfosForm';
 
@@ -42,13 +44,13 @@ function TreeInfosTab({tree, history, readonly}: ITreeInfosTabProps): JSX.Elemen
 
     const [getTreeById, {data: dataTreeById}] = useLazyQuery<GET_TREES, GET_TREESVariables>(getTreesQuery);
 
-    const _handleSubmit = async treeData => {
+    const _handleSubmit = async (treeData: TreeInput) => {
         await saveTree({
             variables: {
                 treeData: {
                     id: treeData.id,
                     label: treeData.label,
-                    libraries: treeData.libraries
+                    libraries: treeData.libraries?.filter(l => l.library) ?? null
                 }
             },
             refetchQueries: ['GET_TREES']
@@ -65,7 +67,7 @@ function TreeInfosTab({tree, history, readonly}: ITreeInfosTabProps): JSX.Elemen
 
     return (
         <TreeInfosForm
-            tree={tree}
+            tree={tree as GET_TREE_BY_ID_trees_list}
             readonly={readonly}
             onSubmit={_handleSubmit}
             onCheckIdExists={_handleCheckIdExists}

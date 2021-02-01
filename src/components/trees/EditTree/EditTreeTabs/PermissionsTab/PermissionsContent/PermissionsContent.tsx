@@ -42,14 +42,14 @@ function PermissionsContent({tree, readonly, onSubmitSettings}: IPermissionsCont
 
     panes = [
         ...panes,
-        ...tree.libraries.map(lib => ({
-            key: lib.id,
-            menuItem: localizedLabel(lib.label, lang),
+        ...tree.libraries.map(treeLib => ({
+            key: treeLib.library.id,
+            menuItem: localizedLabel(treeLib.library.label, lang),
             render: () => (
-                <Tab.Pane key={lib.id} className="grow flex-col height100">
+                <Tab.Pane key={treeLib.library.id} className="grow flex-col height100">
                     <NodePermissionTabContent
                         tree={tree}
-                        library={lib}
+                        treeLibraries={treeLib}
                         onSubmitSettings={onSubmitSettings}
                         readonly={readonly}
                     />

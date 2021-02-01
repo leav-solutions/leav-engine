@@ -42,7 +42,19 @@ describe('BreadcrumbNavigator', () => {
                                     },
                                     behavior: TreeBehavior.standard,
                                     libraries: [
-                                        {id: 'category', label: {fr: 'My Lib'}, attributes: [], __typename: 'Library'}
+                                        {
+                                            __typename: 'TreeLibrary',
+                                            library: {
+                                                id: 'test_lib',
+                                                label: {fr: 'My Lib'},
+                                                attributes: [],
+                                                __typename: 'Library'
+                                            },
+                                            settings: {
+                                                __typename: 'TreeLibrarySettings',
+                                                allowMultiplePositions: true
+                                            }
+                                        }
                                     ],
                                     permissions_conf: null
                                 }
