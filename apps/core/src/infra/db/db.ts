@@ -2,18 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
+import {IConfig} from '_types/config';
 
 interface IDeps {
-    config?: any;
+    config?: IConfig;
 }
 
-const _getDbConnection = (config: any): Database => {
+const _getDbConnection = (config: IConfig): Database => {
     return new Database({
         url: config.db.url
     });
 };
 
-export default function (deps: IDeps = {}): Database {
+export default function (deps: IDeps): Database {
     const db = _getDbConnection(deps.config);
 
     db.useDatabase(deps.config.db.name);
@@ -21,7 +22,7 @@ export default function (deps: IDeps = {}): Database {
     return db;
 }
 
-export const initDb = async (config: any) => {
+export const initDb = async (config: IConfig) => {
     const db = _getDbConnection(config);
 
     const databases = await db.listDatabases();

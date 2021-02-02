@@ -3,15 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
 import {IAmqpConn} from '_types/amqp';
+import {IConfig} from '_types/config';
 
 interface IDeps {
-    config?: any;
+    config?: IConfig;
 }
 
-export async function initAmqp(deps: IDeps = {}): Promise<IAmqpConn> {
-    const connection = await amqp.connect(deps.config.amqp.connOpt);
+export async function initAmqp({config}: IDeps): Promise<IAmqpConn> {
+    const connection = await amqp.connect(config.amqp.connOpt);
     const channel = await connection.createConfirmChannel();
-    await channel.assertExchange(deps.config.amqp.exchange, deps.config.amqp.type);
+    await channel.assertExchange(config.amqp.exchange, config.amqp.type);
 
     return {connection, channel};
 }

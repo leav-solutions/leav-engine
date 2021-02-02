@@ -13,7 +13,7 @@ import {initPlugins} from '../../../pluginsLoader';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
-    const pluginsFolder = path.resolve(appRoot + '/src/plugins/');
+    const pluginsFolder = path.resolve(appRoot + '/apps/core/src/plugins/');
     const fakePluginSrc = `${__dirname}/_fixtures/fakeplugin`;
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);

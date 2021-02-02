@@ -8,7 +8,7 @@ const path = require('path');
 
 module.exports = async function () {
     // Remove fake plugin
-    const pluginsFolder = path.resolve(appRoot + '/src/plugins/');
+    const pluginsFolder = path.resolve(appRoot + '/apps/core/src/plugins/');
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
 
     fs.unlinkSync(fakePluginDest);
