@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
 import {ApolloClient, ApolloQueryResult} from 'apollo-client';
 import {ApolloLink, DocumentNode} from 'apollo-link';

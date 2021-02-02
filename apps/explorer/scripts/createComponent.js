@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 const fs = require('fs');
 const {program: prog} = require('commander');

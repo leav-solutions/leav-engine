@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
     inputRootPath: process.env.INPUT_ROOT_PATH,
     outputRootPath: process.env.OUTPUT_ROOT_PATH,

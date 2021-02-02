@@ -13,12 +13,15 @@
         "config",
         "public",
         "scripts",
+        ".yarn",
+        "**/yarn.lock",
         "*",
         "**/.DS_Store",
         "**/*.snap",
         "**/filesForTest/*",
         "**/*.css",
-        "**/*.less"
+        "**/*.less",
+        "**/README.md"
 
     ]
 }

@@ -10,7 +10,10 @@
   "scripts": {
     "test": "CI=true yarn workspaces foreach -p run test",
     "lint": "eslint --ext=ts,tsx --fix apps/ libs/",
-    "tscheck": "yarn workspaces foreach -p run tscheck"
+    "tscheck": "yarn workspaces foreach -p run tscheck",
+    "license:check": "license-check-and-add check -f license-check-config.json",
+    "license:add": "license-check-and-add add -f license-check-config.json",
+    "license:remove": "license-check-and-add remove -f license-check-config.json"
   },
   "dependencies": {
     "@rushstack/eslint-patch": "1.0.6",
@@ -23,6 +26,7 @@
     "@typescript-eslint/parser": "4.11.0",
     "eslint-plugin-jsdoc": "30.7.9",
     "eslint-plugin-react": "7.21.5",
+    "license-check-and-add": "3.0.5",
     "typescript-eslint": "0.0.1-alpha.0"
   }
 }
