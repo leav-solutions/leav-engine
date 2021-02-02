@@ -1,7 +1,7 @@
-import {FullTreeContent, Record} from '../../../_types/queries';
+import {FullTreeContent, IRecord} from '../../../_types/queries';
 
 export default (inodes: number[]): FullTreeContent => {
-    database.forEach((e: Record, i: number) => (e.record.inode = inodes[i]));
+    database.forEach((e: IRecord, i: number) => (e.record.inode = inodes[i]));
     return database;
 };
 

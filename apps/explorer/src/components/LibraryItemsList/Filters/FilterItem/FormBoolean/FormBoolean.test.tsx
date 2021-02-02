@@ -25,6 +25,7 @@ beforeEach(() => {
 describe('FormBoolean', () => {
     test('should checkbox', async () => {
         const mockFilter: IFilter = {
+            id: 'test_filter',
             type: FilterTypes.filter,
             key: 0,
             condition: ConditionFilter.contains,

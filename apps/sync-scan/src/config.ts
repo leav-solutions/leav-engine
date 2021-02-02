@@ -1,10 +1,10 @@
 import {loadConfig} from '@leav/config-manager';
 import * as rootPath from 'app-root-path';
 import * as Joi from 'joi';
-import {Config} from '_types/config';
+import {IConfig} from '_types/config';
 import {env as appEnv} from './env';
 
-const checkConfig = (conf: Config) => {
+const checkConfig = (conf: IConfig) => {
     const configSchema: Joi.ObjectSchema = Joi.object().keys({
         graphql: Joi.object()
             .keys({
@@ -39,7 +39,7 @@ const checkConfig = (conf: Config) => {
         env: Joi.string().required()
     });
 
-    const isValid: Joi.ValidationResult<Config> = configSchema.validate(conf);
+    const isValid: Joi.ValidationResult<IConfig> = configSchema.validate(conf);
 
     if (isValid.error) {
         const errorMsg: string = isValid.error.details.map(e => e.message).join(', ');
@@ -56,10 +56,10 @@ const checkConfig = (conf: Config) => {
  *
  * @return {Promise} Full config
  */
-export const getConfig = async (): Promise<Config> => {
+export const getConfig = async (): Promise<IConfig> => {
     const definedEnv: string = appEnv || '';
 
-    const conf = await loadConfig<Config>(rootPath.path + '/apps/sync-scan/config', definedEnv);
+    const conf = await loadConfig<IConfig>(rootPath.path + '/apps/sync-scan/config', definedEnv);
 
     checkConfig(conf);
 

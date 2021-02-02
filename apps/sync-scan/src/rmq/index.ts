@@ -1,9 +1,13 @@
 import * as amqp from 'amqplib';
 import * as Config from '../_types/config';
 import {EventTypes} from '../_types/events';
-import {RMQConn, RMQMsg} from '../_types/rmq';
+import {IRMQConn, IRMQMsg} from '../_types/rmq';
 
-export const send = ({exchange, routingKey}: Config.RMQ, msg: string, channel: amqp.ConfirmChannel): Promise<void> =>
+export const send = (
+    {exchange, routingKey}: Config.IConfigAmqp,
+    msg: string,
+    channel: amqp.ConfirmChannel
+): Promise<void> =>
     new Promise(async (resolve, reject) => {
         await channel.checkExchange(exchange);
 
@@ -27,7 +31,7 @@ export const generateMsg = (
     rootKey: string,
     hash?: string
 ): string => {
-    const msg: RMQMsg = {
+    const msg: IRMQMsg = {
         event,
         time: Math.round(Date.now() / 1000),
         pathAfter,
@@ -41,7 +45,7 @@ export const generateMsg = (
     return JSON.stringify(msg);
 };
 
-export const init = async ({connOpt, exchange, type}: Config.RMQ): Promise<RMQConn> => {
+export const init = async ({connOpt, exchange, type}: Config.IConfigAmqp): Promise<IRMQConn> => {
     const connection: amqp.Connection = await amqp.connect(connOpt);
     const channel: amqp.ConfirmChannel = await connection.createConfirmChannel();
 

@@ -10,6 +10,7 @@ import FormText from './FormText';
 describe('FormText', () => {
     test('Should have a TextArea', async () => {
         const mockFilter: IFilter = {
+            id: 'test_filter',
             type: FilterTypes.filter,
             key: 0,
             condition: ConditionFilter.contains,

@@ -1,22 +1,22 @@
 import {Options} from 'amqplib';
 
-export interface Config {
-    graphql: GraphQL;
-    filesystem: Filesystem;
-    rmq: RMQ;
+export interface IConfig {
+    graphql: IConfigGraphql;
+    filesystem: IConfigFilesystem;
+    rmq: IConfigAmqp;
 }
 
-export interface GraphQL {
+export interface IConfigGraphql {
     uri: string;
     token: string;
     treeId: string;
 }
 
-export interface Filesystem {
+export interface IConfigFilesystem {
     absolutePath: string;
 }
 
-export interface RMQ {
+export interface IConfigAmqp {
     connOpt: Options.Connect;
     queue: string;
     exchange: string;

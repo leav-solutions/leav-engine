@@ -11,6 +11,7 @@ describe('FilterSeparator', () => {
         const comp = mount(
             <FilterSeparator
                 separator={{
+                    id: 'test_separator',
                     type: FilterTypes.separator,
                     key: 0,
                     active: true
@@ -22,7 +23,6 @@ describe('FilterSeparator', () => {
                 updateFilters={jest.fn()}
             />
         );
-
-        expect(comp.find('Select')).toHaveLength(2);
+        expect(comp.find('Select')).toHaveLength(1);
     });
 });

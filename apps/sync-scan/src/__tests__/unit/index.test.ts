@@ -1,20 +1,19 @@
-import fs from 'fs';
 import automate from '../../automate';
 import {getConfig} from '../../config';
 import * as rmq from '../../rmq';
-import * as scan from '../../scan';
-import {Config} from '../../_types/config';
-import {RMQConn} from '../../_types/rmq';
 import * as events from '../../rmq/events';
-import {filesystem, database} from './scan';
+import * as scan from '../../scan';
+import {IConfig} from '../../_types/config';
+import {IRMQConn} from '../../_types/rmq';
+import {database, filesystem} from './scan';
 
 jest.mock('../../rmq/events', () => ({
     create: jest.fn(),
     move: jest.fn()
 }));
 
-let cfg: Config;
-let rmqConn: RMQConn;
+let cfg: IConfig;
+let rmqConn: IRMQConn;
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);

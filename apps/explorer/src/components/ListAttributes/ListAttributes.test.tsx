@@ -6,7 +6,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import {getLang} from '../../queries/cache/lang/getLangQuery';
-import {AttributeType, IAttributesChecked} from '../../_types/types';
+import {AttributeType, IAttributesChecked, IAttributeSelected} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import Attribute from './Attribute';
 import ListAttributes from './ListAttributes';
@@ -41,11 +41,18 @@ describe('ListAttributes', () => {
         const mockAttributesChecked: IAttributesChecked[] = [
             {
                 id: 'test',
+                label: 'Test',
+                type: AttributeType.simple,
                 library: 'test_library',
                 depth: 0,
                 checked: false
             }
         ];
+
+        const mockAttributeSelected: IAttributeSelected = {
+            id: 'test',
+            library: 'test_lib'
+        };
 
         let comp: any;
 
@@ -54,7 +61,7 @@ describe('ListAttributes', () => {
                 <MockedProviderWithFragments mocks={mocks}>
                     <ListAttributes
                         attributes={[mockAttribute]}
-                        attributeSelected={'test'}
+                        attributeSelected={mockAttributeSelected}
                         changeSelected={jest.fn()}
                         useCheckbox={false}
                         attributesChecked={mockAttributesChecked}

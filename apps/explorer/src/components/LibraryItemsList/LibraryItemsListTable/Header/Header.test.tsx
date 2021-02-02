@@ -5,7 +5,6 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {AttributeType} from '../../../../_types/types';
-import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import Header from './Header';
 
 describe('Header', () => {
@@ -16,13 +15,7 @@ describe('Header', () => {
 
         await act(async () => {
             comp = mount(
-                <Header
-                    stateItems={LibraryItemListInitialState}
-                    dispatchItems={jest.fn()}
-                    name={'name'}
-                    type={AttributeType.simple}
-                    setOpenChangeColumns={jest.fn()}
-                >
+                <Header name={'name'} type={AttributeType.simple}>
                     {value}
                 </Header>
             );

@@ -207,8 +207,6 @@ function LibraryItemsList(): JSX.Element {
         return <div>error</div>;
     }
 
-    console.log(state.sideItems.visible);
-
     return (
         <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
             <MenuWrapper>

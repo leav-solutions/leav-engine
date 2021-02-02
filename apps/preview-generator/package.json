@@ -12,7 +12,9 @@
         "test:integration": "jest -c jest-integration-config.json",
         "lint": "tslint --fix -p .",
         "prettier": "prettier --write 'src/**/*.ts'",
-        "precommit": "lint-staged && npm test"
+        "precommit": "lint-staged && npm test",
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p ."
     },
     "author": "",
     "license": "LGPL3",

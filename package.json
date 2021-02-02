@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "CI=true yarn workspaces foreach -p run test",
-    "lint": "eslint --ext=ts,tsx --fix apps/ libs/"
+    "lint": "eslint --ext=ts,tsx --fix apps/ libs/",
+    "tscheck": "yarn workspaces foreach -p run tscheck"
   },
   "dependencies": {
     "@rushstack/eslint-patch": "1.0.6",

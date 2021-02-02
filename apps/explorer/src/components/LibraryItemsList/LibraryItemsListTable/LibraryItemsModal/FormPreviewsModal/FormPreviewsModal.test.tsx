@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
-import {IItem} from '../../../../../../_types/types';
+import {IItem} from '_types/types';
 import FormPreviewsModal from './FormPreviewsModal';
 
 beforeEach(() => {

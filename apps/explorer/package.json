@@ -44,7 +44,9 @@
         "create_comp": "scripts/createComponent.js",
         "license:check": "license-check-and-add check -f license-check-config.json",
         "license:add": "license-check-and-add add -f license-check-config.json",
-        "license:remove": "license-check-and-add remove -f license-check-config.json"
+        "license:remove": "license-check-and-add remove -f license-check-config.json",
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p ."
     },
     "eslintConfig": {
         "extends": "react-app"

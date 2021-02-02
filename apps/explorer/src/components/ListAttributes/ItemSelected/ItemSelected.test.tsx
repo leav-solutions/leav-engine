@@ -30,6 +30,7 @@ describe('ItemSelected', () => {
                     attributeChecked={mockAttributeChecked}
                     removeAttributeChecked={jest.fn()}
                     stateListAttribute={ListAttributeInitialState}
+                    handleProps={{}}
                 />
             );
         });

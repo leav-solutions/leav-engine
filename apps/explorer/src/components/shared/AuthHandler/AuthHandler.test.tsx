@@ -25,7 +25,6 @@ const storageGen = () => {
         },
         length: 1,
         setItem: (key: any, value: any) => {
-            key = key;
             store[key] = value;
         },
         removeItem: (key: any) => {

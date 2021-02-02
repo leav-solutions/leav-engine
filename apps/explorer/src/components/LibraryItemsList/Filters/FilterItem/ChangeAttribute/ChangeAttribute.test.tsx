@@ -15,6 +15,7 @@ describe('ChangeAttribute', () => {
     const stateItems = LibraryItemListInitialState;
 
     const filterMock: IFilter = {
+        id: 'test_filter',
         type: FilterTypes.filter,
         key: 0,
         operator: false,

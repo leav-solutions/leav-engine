@@ -3,15 +3,15 @@ import automate from '../../automate';
 import {getConfig} from '../../config';
 import * as rmq from '../../rmq';
 import * as scan from '../../scan';
-import {Config} from '../../_types/config';
+import {IConfig} from '../../_types/config';
 import {FilesystemContent} from '../../_types/filesystem';
 import {FullTreeContent} from '../../_types/queries';
-import {RMQConn} from '../../_types/rmq';
+import {IRMQConn} from '../../_types/rmq';
 import test4Db from './database/test4';
 import test5Db from './database/test5';
 
-let cfg: Config;
-let rmqConn: RMQConn;
+let cfg: IConfig;
+let rmqConn: IRMQConn;
 let inodes: number[];
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {

@@ -1,5 +1,5 @@
 declare namespace NodeJS {
-    // tslint:disable-next-line:interface-name
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     interface Global {
         __mockPromise(promRes?: any): any;
         __mockPromiseMultiple(promRes?: any[]): any;

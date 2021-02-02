@@ -5,7 +5,9 @@
   "scripts": {
     "test": "jest -c jest-config.json",
     "prepublishOnly": "npm run build",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p ."
   },
   "main": "dist/index",
   "keywords": [

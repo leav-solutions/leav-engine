@@ -5,7 +5,6 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {MemoryRouter} from 'react-router-dom';
-import {getLibrariesListQuery} from '../../../queries/libraries/getLibrariesListQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import LibrariesList from '../../LibrariesList';
 import RouteNotFound from '../RouteNotFound';
@@ -49,30 +48,6 @@ jest.mock(
 );
 
 describe('Routes', () => {
-    const mock = [
-        {
-            request: {
-                query: getLibrariesListQuery
-            },
-            result: {
-                data: {
-                    libraries: {
-                        list: {
-                            id: 'test',
-                            label: 'testName',
-                            gqlNames: {
-                                query: 'testQueryName',
-                                __typename: 'gqlNames'
-                            },
-                            __typename: 'libraries'
-                        },
-                        __typename: 'list'
-                    }
-                }
-            }
-        }
-    ];
-
     test('404 call notFound', async () => {
         let comp: any;
         await act(async () => {

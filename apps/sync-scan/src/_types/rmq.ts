@@ -1,12 +1,12 @@
 import * as amqp from 'amqplib';
 import {EventTypes} from './events';
 
-export interface RMQConn {
+export interface IRMQConn {
     connection: amqp.Connection;
     channel: amqp.ConfirmChannel;
 }
 
-export interface RMQMsg {
+export interface IRMQMsg {
     event: EventTypes;
     time: number;
     pathAfter: string;

@@ -18,7 +18,7 @@ export class ErrorPreview extends Error {
     public error: ErrorList;
     public params: IErrorPreviewParams;
 
-    constructor(err: IErrorPreviewMessage) {
+    public constructor(err: IErrorPreviewMessage) {
         super();
 
         this.error = err.error;

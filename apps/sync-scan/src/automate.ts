@@ -1,6 +1,6 @@
 import * as amqp from 'amqplib';
 import * as events from './rmq/events';
-import {FileContent, FilesystemContent} from './_types/filesystem';
+import {FilesystemContent, IFileContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
 
 enum Attr {
@@ -30,7 +30,7 @@ const _extractChildrenDbElems = (database: FullTreeContent, dbEl: FullTreeConten
     return dbEl;
 };
 
-const _getEventTypeAndDbElIdx = (fc: FileContent, dbEl: FullTreeContent) => {
+const _getEventTypeAndDbElIdx = (fc: IFileContent, dbEl: FullTreeContent) => {
     let match = Attr.NOTHING;
     const dbElIdx = [];
 
@@ -75,7 +75,7 @@ const _trtFile = async (
     match: Attr,
     dbElIdx: number[],
     dbEl: FullTreeContent,
-    fc: FileContent,
+    fc: IFileContent,
     channel: amqp.ConfirmChannel
 ): Promise<void> => {
     switch (match) {
@@ -149,6 +149,7 @@ export default async (
 ): Promise<void> => {
     let dbEl: FullTreeContent;
 
+    // eslint-disable-next-line prefer-const
     dbEl = _extractChildrenDbElems(dbScan, dbEl);
 
     await _process(fsScan, dbEl, 0, channel);

@@ -14,6 +14,7 @@ describe('FilterItem', () => {
     const stateItems = LibraryItemListInitialState;
 
     const mockFilter: IFilter = {
+        id: 'test_filter',
         type: FilterTypes.filter,
         key: 1,
         operator: false,

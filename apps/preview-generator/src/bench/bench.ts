@@ -1,10 +1,10 @@
-import {jpgFiles, psdFiles, pngFiles} from './getFiles';
 import {getConfig} from '../getConfig/getConfig';
+import {jpgFiles, pngFiles, psdFiles} from './getFiles';
 
-const configPath = process.argv[2] || './config/config.json';
+(async () => {
+    const config = await getConfig();
 
-const config = getConfig(configPath);
-
-jpgFiles(config);
-psdFiles(config);
-pngFiles(config);
+    jpgFiles(config);
+    psdFiles(config);
+    pngFiles(config);
+})();

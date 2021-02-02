@@ -1,12 +1,12 @@
-export type FullTreeContent = Record[];
+export type FullTreeContent = IRecord[];
 
-export interface Record {
+export interface IRecord {
     order: number;
-    record: RecordAttr;
+    record: IRecordAttr;
     children?: FullTreeContent;
 }
 
-export interface RecordAttr {
+export interface IRecordAttr {
     id: string;
     active: boolean;
     created_at: number;
@@ -18,26 +18,26 @@ export interface RecordAttr {
     modified_at: number;
     modified_by: number;
     previews_status: {
-        small: PreviewStatus;
-        medium: PreviewStatus;
-        big: PreviewStatus;
-        pages: PreviewStatus;
+        small: IPreviewStatus;
+        medium: IPreviewStatus;
+        big: IPreviewStatus;
+        pages: IPreviewStatus;
     };
-    previews: Previews;
+    previews: IPreviews;
     root_key: string;
     library: string;
     hash?: string;
     trt?: boolean;
 }
 
-export interface Previews {
+export interface IPreviews {
     small: string;
     medium: string;
     big: string;
     pages: string;
 }
 
-export interface PreviewStatus {
+export interface IPreviewStatus {
     status: number;
     message: string;
 }

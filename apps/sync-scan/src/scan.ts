@@ -8,13 +8,13 @@ import fetch from 'node-fetch';
 import walk from 'walk';
 import * as utils from './utils';
 import * as Config from './_types/config';
-import {FileContent, FilesystemContent} from './_types/filesystem';
+import {FilesystemContent, IFileContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
 
 export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
 export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);
 
-export const filesystem = ({absolutePath}: Config.Filesystem): Promise<FilesystemContent> =>
+export const filesystem = ({absolutePath}: Config.IConfigFilesystem): Promise<FilesystemContent> =>
     new Promise((resolve, reject) => {
         let data = [];
 
@@ -36,7 +36,7 @@ export const filesystem = ({absolutePath}: Config.Filesystem): Promise<Filesyste
             next();
         });
 
-        walker.on('file', async (root: string, file: FileContent, next: any) => {
+        walker.on('file', async (root: string, file: IFileContent, next: any) => {
             file.hash = await utils.createHashFromFile(root + '/' + file.name);
             file.path = getFilePath(root, absolutePath);
             file.level = getFileLevel(file.path);
@@ -51,7 +51,7 @@ export const filesystem = ({absolutePath}: Config.Filesystem): Promise<Filesyste
         });
     });
 
-export const database = async ({uri, token, treeId}: Config.GraphQL): Promise<FullTreeContent> => {
+export const database = async ({uri, token, treeId}: Config.IConfigGraphql): Promise<FullTreeContent> => {
     const httpLink: ApolloLink = createHttpLink({uri, fetch: fetch as any});
 
     const authLink: ApolloLink = new ApolloLink((operation, forward) => {

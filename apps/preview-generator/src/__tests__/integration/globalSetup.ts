@@ -1,7 +1,7 @@
+import {startConsume} from 'amqp/startConsume';
 import {Channel, Options} from 'amqplib';
 import {getConfig} from '../../getConfig/getConfig';
 import {getChannel} from './../../amqp/getChannel/getChannel';
-import {start} from './../../start';
 
 export async function setup() {
     try {
@@ -20,7 +20,7 @@ export async function setup() {
         await channel.assertQueue(conf.amqp.consume.queue, {durable: true});
         await new Promise(res => setImmediate(res));
 
-        await start();
+        await startConsume(conf);
     } catch (e) {
         console.error(e);
     }

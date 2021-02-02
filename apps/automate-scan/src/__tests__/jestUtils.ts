@@ -1,5 +1,8 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 declare namespace NodeJS {
-    // tslint:disable-next-line:interface-name
+    /* eslint-disable @typescript-eslint/naming-convention */
     interface Global {
         __mockPromise(promRes?: any): any;
         __mockPromiseMultiple(promRes?: any[]): any;
@@ -18,6 +21,4 @@ global.__mockPromiseMultiple = promResults => {
 
 // Used to mock any interface, turning all function properties to an optionnal mock
 // Mockified object must be then passed to a function with a type assertion
-type Mockify<T> = {
-    [P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P];
-};
+type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};

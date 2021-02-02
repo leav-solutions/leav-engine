@@ -13,7 +13,9 @@
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test:integration": "NODE_ENV=test-integration jest -c jest-integration-config.json",
         "lint": "tslint --fix -p .",
-        "prettier": "prettier --write 'src/**/*.ts'"
+        "prettier": "prettier --write 'src/**/*.ts'",
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p ."
     },
     "repository": {
         "type": "git",

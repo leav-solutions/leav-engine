@@ -1,6 +1,6 @@
-export type FilesystemContent = FileContent[];
+export type FilesystemContent = IFileContent[];
 
-export interface FileContent {
+export interface IFileContent {
     dev: number;
     mode: number;
     nlink: number;
