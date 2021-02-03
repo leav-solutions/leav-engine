@@ -42,9 +42,6 @@
         "eject": "react-scripts eject",
         "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes=**/*.test.* src/_gqlTypes && prettier --write src/_gqlTypes/*",
         "create_comp": "scripts/createComponent.js",
-        "license:check": "license-check-and-add check -f license-check-config.json",
-        "license:add": "license-check-and-add add -f license-check-config.json",
-        "license:remove": "license-check-and-add remove -f license-check-config.json",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p ."
     },
@@ -79,7 +76,6 @@
         "gulp-debug": "^4.0.0",
         "gulp-less": "^4.0.1",
         "gulp-postcss": "^8.0.0",
-        "husky": "^4.2.5",
         "jest-styled-components": "^7.0.3",
         "less-plugin-npm-import": "^2.1.0",
         "license-check-and-add": "^3.0.4",

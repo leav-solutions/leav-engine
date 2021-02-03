@@ -51,10 +51,7 @@
     "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes=**/*.test.* src/_gqlTypes --passthroughCustomScalars && prettier --write src/_gqlTypes/*",
     "create_comp": "scripts/createComponent.js",
     "tscheck": "tsc --noEmit -p .",
-    "tscheck:watch": "tsc -w --noEmit -p .",
-    "license:check": "license-check-and-add check -f license-check-config.json",
-    "license:add": "license-check-and-add add -f license-check-config.json",
-    "license:remove": "license-check-and-add remove -f license-check-config.json"
+    "tscheck:watch": "tsc -w --noEmit -p ."
   },
   "devDependencies": {
     "@apollo/react-testing": "3.0.0",

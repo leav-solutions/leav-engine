@@ -12,7 +12,6 @@
         "test:integration": "jest -c jest-integration-config.json",
         "lint": "tslint --fix -p .",
         "prettier": "prettier --write 'src/**/*.ts'",
-        "precommit": "lint-staged && npm test",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p ."
     },
@@ -21,7 +20,6 @@
     "devDependencies": {
         "@types/jest": "^24.0.23",
         "@types/node": "^12.11.5",
-        "husky": "^3.0.9",
         "jest": "^24.9.0",
         "lint-staged": "^9.4.3",
         "nodemon": "^1.19.4",
