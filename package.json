@@ -13,7 +13,8 @@
     "tscheck": "yarn workspaces foreach -p run tscheck",
     "license:check": "license-check-and-add check -f license-check-config.json",
     "license:add": "license-check-and-add add -f license-check-config.json",
-    "license:remove": "license-check-and-add remove -f license-check-config.json"
+    "license:remove": "license-check-and-add remove -f license-check-config.json",
+    "postinstall": "husky install"
   },
   "dependencies": {
     "@rushstack/eslint-patch": "1.0.6",
@@ -26,7 +27,16 @@
     "@typescript-eslint/parser": "4.11.0",
     "eslint-plugin-jsdoc": "30.7.9",
     "eslint-plugin-react": "7.21.5",
+    "husky": "5.0.8",
     "license-check-and-add": "3.0.5",
+    "lint-staged": "10.5.3",
     "typescript-eslint": "0.0.1-alpha.0"
+  },
+  "lint-staged": {
+    "*.{ts, js, tsx, jsx}": [
+      "prettier --write",
+      "eslint --fix",
+      "license-check-and-add add -f license-check-config.json"
+    ]
   }
 }
