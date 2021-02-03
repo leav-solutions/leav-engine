@@ -6,6 +6,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
 import * as yup from 'yup';
+import {Override} from '_types/Override';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {
@@ -84,9 +85,11 @@ function InfosForm({
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
     }
 
-    const validationSchema: yup.ObjectSchema<Partial<GET_ATTRIBUTES_attributes_list>> = yup.object().shape({
+    const validationSchema: yup.ObjectSchema<
+        Partial<Override<GET_ATTRIBUTES_attributes_list, {type: string; format?: string}>>
+    > = yup.object().shape({
         label: yup.object().shape({
-            fr: yup.string().required()
+            [defaultLang]: yup.string().required()
         }),
         id: idValidator,
         type: yup.string().required(),
@@ -108,7 +111,7 @@ function InfosForm({
             const [field, subfield] = name.split('.');
 
             // On new attribute, automatically generate an ID based on label
-            if (isNewAttribute && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
+            if (isNewAttribute && field === 'label' && subfield === defaultLang) {
                 setFieldValue('id', formatIDString(value));
             }
         };

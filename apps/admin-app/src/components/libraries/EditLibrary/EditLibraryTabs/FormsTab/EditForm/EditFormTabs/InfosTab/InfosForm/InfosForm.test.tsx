@@ -8,6 +8,8 @@ import {create} from 'react-test-renderer';
 import InfosForm from '.';
 import {mockFormFull} from '../../../../../../../../../__mocks__/forms';
 
+jest.mock('hooks/useLang');
+
 jest.mock('../../../../../../../../attributes/AttributeSelector', () => {
     return function AttributeSelector() {
         return <div>AttributeSelector</div>;

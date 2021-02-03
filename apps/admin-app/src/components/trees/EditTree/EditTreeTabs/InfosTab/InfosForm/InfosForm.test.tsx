@@ -15,7 +15,7 @@ jest.mock('../../../../../../utils', () => ({
     getFieldError: jest.fn().mockReturnValue(''),
     getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr'])
 }));
-jest.mock('../../../../../../hooks/useLang', () => jest.fn().mockReturnValue(['fr']));
+jest.mock('../../../../../../hooks/useLang');
 
 describe('TreeInfosForm', () => {
     const mockTree: GET_TREES_trees_list = {

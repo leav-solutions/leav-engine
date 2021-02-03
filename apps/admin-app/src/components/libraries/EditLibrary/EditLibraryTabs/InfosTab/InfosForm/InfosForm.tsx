@@ -28,14 +28,11 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
-const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
-
 // TODO: add validation, handle lang, getfielderror on attribute
 /* tslint:disable-next-line:variable-name */
 const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfosFormProps): JSX.Element => {
     const {t} = useTranslation();
-    const availableLanguages = useLang().lang;
+    const {defaultLang, availableLangs, lang} = useLang();
     const existingLib = library !== null;
 
     const defaultLibrary: LibraryFormValues = {
@@ -60,7 +57,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         ? initialValues.attributes.map(a => ({
               key: a.id,
               value: a.id,
-              text: localizedLabel(a.label, availableLanguages) || a.id
+              text: localizedLabel(a.label, lang) || a.id
           }))
         : [];
     libAttributesOptions.unshift({key: '', value: '', text: ''});
@@ -85,7 +82,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
 
     const validationSchema: yup.ObjectSchema<Partial<LibraryFormValues>> = yup.object().shape({
         label: yup.object().shape({
-            [defaultLang || langs[0]]: yup.string().required()
+            [defaultLang || lang[0]]: yup.string().required()
         }),
         id: idValidator,
         recordIdentityConf: yup.object().shape({
@@ -110,7 +107,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             const [field, subfield] = name.split('.');
 
             // On new attribute, automatically generate an ID based on label
-            if (!existingLib && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
+            if (!existingLib && field === 'label' && subfield === defaultLang) {
                 setFieldValue('id', formatIDString(value));
             }
         };
@@ -137,13 +134,13 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             <Form onSubmit={handleSubmit}>
                 <Form.Group grouped>
                     <label>{t('libraries.label')}</label>
-                    {langs.map(lang => (
-                        <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
+                    {availableLangs.map(availableLang => (
+                        <FormFieldWrapper key={availableLang} error={_getErrorByField(`label.${availableLang}`)}>
                             <Form.Input
-                                label={`${lang} ${lang === defaultLang ? '*' : ''}`}
-                                name={'label.' + lang}
+                                label={`${availableLang} ${availableLang === defaultLang ? '*' : ''}`}
+                                name={'label.' + availableLang}
                                 disabled={readonly}
-                                value={label?.[lang] ?? ''}
+                                value={label?.[availableLang] ?? ''}
                                 onChange={_handleLabelChange}
                             />
                         </FormFieldWrapper>

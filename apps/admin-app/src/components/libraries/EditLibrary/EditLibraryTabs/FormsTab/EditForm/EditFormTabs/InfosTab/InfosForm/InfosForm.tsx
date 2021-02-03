@@ -6,6 +6,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
+import useLang from '../../../../../../../../../hooks/useLang';
 import {arrayPick, formatIDString, getFieldError, omit, pick} from '../../../../../../../../../utils';
 import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
 import {AttributeType, FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
@@ -28,10 +29,8 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
-const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
-
 function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.Element {
+    const {defaultLang, availableLangs} = useLang();
     const {t} = useTranslation();
     const existingForm = form !== null;
 
@@ -74,7 +73,7 @@ function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.El
             const [field, subfield] = name.split('.');
 
             // On new attribute, automatically generate an ID based on label
-            if (!existingForm && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
+            if (!existingForm && field === 'label' && subfield === defaultLang) {
                 setFieldValue('id', formatIDString(value));
             }
         };
@@ -95,7 +94,7 @@ function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.El
             <Form onSubmit={handleSubmit}>
                 <Form.Group grouped>
                     <label>{t('libraries.label')}</label>
-                    {langs.map(lang => (
+                    {availableLangs.map(lang => (
                         <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
                             <Form.Input
                                 label={`${lang} ${lang === defaultLang ? '*' : ''}`}

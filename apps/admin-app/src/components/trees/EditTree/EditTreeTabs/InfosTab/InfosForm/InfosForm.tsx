@@ -52,9 +52,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
 
     const existingTree = tree !== null;
 
-    const langs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
-    const defaultLang = process.env.REACT_APP_DEFAULT_LANG;
-    const {lang: userLang} = useLang();
+    const {lang: userLang, defaultLang, availableLangs} = useLang();
 
     const _handleSubmit = values => {
         onSubmit(values);
@@ -76,7 +74,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
 
     const validationSchema: yup.ObjectSchema<Partial<TreeInfos>> = yup.object().shape({
         label: yup.object().shape({
-            [defaultLang || langs[0]]: yup.string().required()
+            [defaultLang || availableLangs[0]]: yup.string().required()
         }),
         id: idValidator,
         libraries: yup.array(yup.string()).min(1)
@@ -103,7 +101,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
             const [field, subfield] = name.split('.');
 
             // On new attribute, automatically generate an ID based on label
-            if (!existingTree && field === 'label' && subfield === process.env.REACT_APP_DEFAULT_LANG) {
+            if (!existingTree && field === 'label' && subfield === defaultLang) {
                 setFieldValue('id', formatIDString(value));
             }
         };
@@ -124,7 +122,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
             <Form onSubmit={handleSubmit}>
                 <Form.Group grouped>
                     <label>{t('trees.label')}</label>
-                    {langs.map(lang => (
+                    {availableLangs.map(lang => (
                         <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
                             <Form.Input
                                 label={`${lang} ${lang === defaultLang ? '*' : ''}`}
