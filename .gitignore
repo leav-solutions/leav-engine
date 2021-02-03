@@ -66,3 +66,6 @@ apollo.token.js
 
 # ignore imageMagick tmp files
 magick-*
+
+# eslint cache
+*.eslintcache
