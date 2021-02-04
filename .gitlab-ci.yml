@@ -1,79 +1,102 @@
+image: node:14-alpine
+
 stages:
+    - prepare
     - test
-    - deploy
+    # - deploy
 
-include:
-  - project: 'infra/shared_ci'
-    file: '/omnipublish-v6.yml'
+# include:
+#   - project: 'infra/shared_ci'
+#     file: '/omnipublish-v6.yml'
 
-# Environment variables are defined in GitLab CI/CD settings at projet level:
-# NEXUS_URL is the private registry URL
-# NEXUS_AUTH is the base64 encoded credentials on Nexus registry.
-tslint:
-    stage: test
-    image: node:14-alpine
-    before_script:
-        - npm config set _auth $NEXUS_AUTH
-        - npm install
+.common-cache-settings: &common-cache-settings
+    key:
+        files:
+            - yarn.lock
+    untracked: true
+    paths:
+        - .yarn
+        - node_modules/
+        - 'apps/*/node_modules/'
+        - 'libs/*/node_modules/'
+
+# This will apply to all jobs except installDeps, which its own cache settings
+cache:
+    <<: *common-cache-settings
+    policy: pull
+
+installDeps:
+    stage: prepare
     script:
-        - npm run lint:test
+        - yarn install
+    cache:
+        <<: *common-cache-settings
+        policy: pull-push
+
+.before-script-common: &before-script-common
+    before_script:
+        - yarn install
+
+lint:
+    stage: test
+    <<: *before-script-common
+    script:
+        - yarn lint
+
 tscheck:
     stage: test
-    image: node:14-alpine
-    before_script:
-        - npm config set _auth $NEXUS_AUTH
-        - npm install
+    <<: *before-script-common
     script:
-        - npm run tscheck
+        - yarn tscheck
+
 unitTests:
     stage: test
-    image: node:14-alpine
-    before_script:
-        - npm config set _auth $NEXUS_AUTH
-        - npm install
-    script:
-        - npm run test
-
-e2eApi:
-    stage: test
-    image: node:14-alpine
-    services:
-        - arangodb:3.7
-        - rabbitmq:3-management-alpine
+    <<: *before-script-common
     variables:
-        NODE_ENV: test
-        ARANGO_NO_AUTH: 1
-        ARANGO_URL: 'http://root:@arangodb:8529'
-        AUTH_KEY: 123456789
-        AMQP_HOST: rabbitmq
-        AMQP_USERNAME: guest
-        AMQP_PASSWORD: guest
-    before_script:
-        - npm config set _auth $NEXUS_AUTH
-        - npm install
+        SKIP_PREFLIGHT_CHECK: 'true'
     script:
-        - npm run test:e2e:api
+        - yarn test
 
-e2eIndexationManager:
-    stage: test
-    image: node:14-alpine
-    services:
-        - arangodb:3.7
-        - rabbitmq:3-management-alpine
-        - name: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
-          alias: elasticsearch
-          command: [ "bin/elasticsearch", "-Expack.security.enabled=false", "-Ediscovery.type=single-node" ]
-    variables:
-        NODE_ENV: test
-        ARANGO_NO_AUTH: 1
-        ARANGO_URL: 'http://root:@arangodb:8529'
-        AUTH_KEY: 123456789
-        AMQP_HOST: rabbitmq
-        AMQP_USERNAME: guest
-        AMQP_PASSWORD: guest
-        ES_JAVA_OPTS: -Xms512m -Xmx512m # For ElasticSearch
-    before_script:
-        - npm config set _auth $NEXUS_AUTH
-        - npm install
-    script:
-        - npm run test:e2e:indexationManager
+# e2eApi:
+#     stage: test
+#     image: node:14-alpine
+#     services:
+#         - arangodb:3.7
+#         - rabbitmq:3-management-alpine
+#     variables:
+#         NODE_ENV: test
+#         ARANGO_NO_AUTH: 1
+#         ARANGO_URL: 'http://root:@arangodb:8529'
+#         AUTH_KEY: 123456789
+#         AMQP_HOST: rabbitmq
+#         AMQP_USERNAME: guest
+#         AMQP_PASSWORD: guest
+#     before_script:
+#         - npm config set _auth $NEXUS_AUTH
+#         - npm install
+#     script:
+#         - npm run test:e2e:api
+
+# e2eIndexationManager:
+#     stage: test
+#     image: node:14-alpine
+#     services:
+#         - arangodb:3.7
+#         - rabbitmq:3-management-alpine
+#         - name: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+#           alias: elasticsearch
+#           command: [ "bin/elasticsearch", "-Expack.security.enabled=false", "-Ediscovery.type=single-node" ]
+#     variables:
+#         NODE_ENV: test
+#         ARANGO_NO_AUTH: 1
+#         ARANGO_URL: 'http://root:@arangodb:8529'
+#         AUTH_KEY: 123456789
+#         AMQP_HOST: rabbitmq
+#         AMQP_USERNAME: guest
+#         AMQP_PASSWORD: guest
+#         ES_JAVA_OPTS: -Xms512m -Xmx512m # For ElasticSearch
+#     before_script:
+#         - npm config set _auth $NEXUS_AUTH
+#         - npm install
+#     script:
+#         - npm run test:e2e:indexationManager

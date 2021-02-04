@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ConfirmChannel, Connection} from 'amqplib';
 import automate from '../../automate';
 import {getConfig} from '../../config';
-import * as rmq from '../../rmq';
 import * as events from '../../rmq/events';
 import * as scan from '../../scan';
 import {IConfig} from '../../_types/config';
@@ -24,8 +24,19 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 
 beforeAll(async () => {
     try {
+        const mockChannel = {
+            publish: jest.fn()
+        };
+
+        const mockConnection = {
+            close: jest.fn()
+        };
+
         cfg = await getConfig();
-        rmqConn = await rmq.init(cfg.rmq);
+        rmqConn = {
+            channel: (mockChannel as unknown) as ConfirmChannel,
+            connection: (mockConnection as unknown) as Connection
+        };
     } catch (e) {
         console.error(e);
     }
