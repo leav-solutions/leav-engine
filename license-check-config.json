@@ -15,6 +15,7 @@
         "scripts",
         ".yarn",
         ".husky",
+        "**/.eslintcache",
         "**/yarn.lock",
         "*",
         "**/.DS_Store",
