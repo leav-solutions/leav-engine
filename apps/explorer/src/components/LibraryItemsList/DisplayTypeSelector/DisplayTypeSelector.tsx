@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {DisplayListItemTypes} from '../../../_types/types';
-import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
+import {ILibraryItemListState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import LibraryItemsListTable from '../LibraryItemsListTable';
 import TileDisplay from '../TileDisplay';
 
 interface IDisplayTypeSelectorProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 

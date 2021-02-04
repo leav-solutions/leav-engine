@@ -33,7 +33,7 @@ export enum LibraryItemListReducerActionTypes {
     SET_VIEW = 'SET_VIEW'
 }
 
-export interface LibraryItemListState {
+export interface ILibraryItemListState {
     itemsSortField: string;
     itemsSortOrder: OrderSearch;
     items?: IItem[];
@@ -58,7 +58,7 @@ export interface LibraryItemListState {
     };
 }
 
-export const LibraryItemListInitialState: LibraryItemListState = {
+export const LibraryItemListInitialState: ILibraryItemListState = {
     itemsSortField: '',
     itemsSortOrder: OrderSearch.asc,
     itemsTotalCount: 0,
@@ -164,7 +164,7 @@ export type LibraryItemListReducerAction =
           };
       };
 
-const reducer = (state: LibraryItemListState, action: LibraryItemListReducerAction): LibraryItemListState => {
+const reducer = (state: ILibraryItemListState, action: LibraryItemListReducerAction): ILibraryItemListState => {
     switch (action.type) {
         case LibraryItemListReducerActionTypes.SET_LIB_INFOS:
             return {
@@ -200,7 +200,7 @@ const reducer = (state: LibraryItemListState, action: LibraryItemListReducerActi
         case LibraryItemListReducerActionTypes.CANCEL_SEARCH:
             return {...state, itemsSortField: action.itemsSortField, itemsSortOrder: OrderSearch.asc};
         case LibraryItemListReducerActionTypes.SET_ALL_SELECTED:
-            let finalState = {...state, allSelected: action.allSelected};
+            const finalState = {...state, allSelected: action.allSelected};
             if (action.allSelected) {
                 finalState.itemsSelected = {};
             }

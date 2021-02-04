@@ -13,7 +13,7 @@ function placeholder() {
 }
 
 jest.mock('react-dnd', () => ({
-    useDrag: ({}) => {
+    useDrag: () => {
         const isDragging = false;
         const drag = () => {
             return true;

@@ -113,7 +113,7 @@ describe('utils', () => {
 
     describe('getRandomColor', () => {
         test('Generate random hexadecimal color', async () => {
-            expect(getRandomColor()).toMatch(/^\#[0-9A-Fa-f]{6}$/);
+            expect(getRandomColor()).toMatch(/^#[0-9A-Fa-f]{6}$/);
         });
     });
     describe('stringToColor', () => {
@@ -133,13 +133,13 @@ describe('utils', () => {
         });
         test('gets hex if specified', () => {
             const res = stringToColor(str, 'hex');
-            expect(res).toMatch(/^\#[0-9A-Fa-f]{6}$/);
+            expect(res).toMatch(/^#[0-9A-Fa-f]{6}$/);
         });
     });
 
     describe('getInvertColor', () => {
         test('Return opposite color', async () => {
-            expect(getInvertColor('#000000')).toMatch(/^\#[0-9A-Fa-f]{6}$/);
+            expect(getInvertColor('#000000')).toMatch(/^#[0-9A-Fa-f]{6}$/);
             expect(getInvertColor('#000000')).toBe('#FFFFFF');
             expect(getInvertColor('#701518')).toBe('#FFFFFF');
             expect(getInvertColor('#252525')).toBe('#FFFFFF');

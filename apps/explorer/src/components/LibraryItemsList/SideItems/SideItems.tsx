@@ -9,12 +9,12 @@ import {TypeSideItem} from '../../../_types/types';
 import Filters from '../Filters';
 import ViewPanel from '../ViewPanel';
 
-interface WrapperFilterProps {
+interface IWrapperFilterProps {
     visible: boolean;
     style?: CSSObject;
 }
 
-const WrapperFilter = styled.div<WrapperFilterProps>`
+const WrapperFilter = styled.div<IWrapperFilterProps>`
     display: ${({visible}) => (visible ? 'flex' : 'none')};
     position: relative;
     height: 100vh;

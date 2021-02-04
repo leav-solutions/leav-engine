@@ -36,7 +36,7 @@ export interface IItem {
     };
 }
 
-export interface RecordIdentity_whoAmI extends IItem {}
+export type RecordIdentity_whoAmI = IItem;
 
 export enum PreviewAttributes {
     small = 'small',
@@ -247,10 +247,10 @@ export interface IAttributeSelected {
 export interface ITree {
     id: string;
     label: ILabel;
-    libraries: {
+    libraries: Array<{
         id: string;
         label: ILabel;
-    }[];
+    }>;
 }
 
 export interface INavigationPath {

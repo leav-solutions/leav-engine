@@ -45,7 +45,7 @@ describe('NavigationView', () => {
         await act(async () => {
             comp = mount(
                 <MockStateNavigation>
-                    <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                    <MockedProviderWithFragments mocks={mocks} addTypename>
                         <NavigationView />
                     </MockedProviderWithFragments>
                 </MockStateNavigation>

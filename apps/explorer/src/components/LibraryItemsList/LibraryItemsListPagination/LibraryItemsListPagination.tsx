@@ -5,13 +5,13 @@ import {Pagination} from 'antd';
 import React from 'react';
 import {paginationOptions} from '../../../utils';
 import {
+    ILibraryItemListState,
     LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
+    LibraryItemListReducerActionTypes
 } from '../LibraryItemsListReducer';
 
 interface ILibraryItemsListPaginationProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
@@ -29,7 +29,7 @@ function LibraryItemsListPagination({stateItems, dispatchItems}: ILibraryItemsLi
             total={stateItems.itemsTotalCount}
             defaultPageSize={stateItems.pagination}
             onShowSizeChange={setPagination}
-            showSizeChanger={true}
+            showSizeChanger
             pageSizeOptions={paginationOptions.map(option => option.toString())}
             onChange={(page, pageSize) =>
                 dispatchItems({

@@ -11,32 +11,32 @@ import {localizedLabel} from '../../utils';
 import {IAttribute, IAttributesChecked, IAttributeSelected, IOriginAttributeData, ITreeData} from '../../_types/types';
 import Attribute from './Attribute';
 import {
+    IListAttributeState,
     ListAttributeInitialState,
     ListAttributeReducer,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from './ListAttributesReducer';
 import ListItemsSelected from './ListItemsSelected';
 import {CustomForm} from './StyledComponents';
 
-interface WrapperProps {
+interface IWrapperProps {
     style?: CSSObject;
     attributesChecked: boolean;
 }
 
-const Wrapper = styled.div<WrapperProps>`
+const Wrapper = styled.div<IWrapperProps>`
     display: Grid;
     grid-template-columns: repeat(${props => (props.attributesChecked ? 2 : 1)}, 1fr);
     grid-column-gap: 0.3rem;
 `;
 
-interface ListingAttributeWrapperProps {
+interface IListingAttributeWrapperProps {
     style?: CSSObject;
     attributesChecked: boolean;
 }
 
-const ListingAttributeWrapper = styled.div<ListingAttributeWrapperProps>`
+const ListingAttributeWrapper = styled.div<IListingAttributeWrapperProps>`
     ${props => props.attributesChecked && `border-right: 1px solid ${themingVar['@primary-color']};`}
     padding: 0.3rem 1rem 0 1rem;
     overflow-y: scroll;
@@ -77,7 +77,7 @@ function ListAttributes({
     const [{lang}] = useLang();
 
     const handleSearchChange = (search: string) => {
-        let attributesFilter = attrs.filter(
+        const attributesFilter = attrs.filter(
             att =>
                 localizedLabel(att.label, lang).toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
                 att.id.indexOf(search) !== -1
@@ -100,12 +100,12 @@ function ListAttributes({
 
     useEffect(() => {
         if (state.attributesChecked && state.attributesChecked.length && setAttributesChecked) {
-            setAttributesChecked(attrs => {
-                if (attrs !== state.attributesChecked) {
+            setAttributesChecked(checkedAttributes => {
+                if (checkedAttributes !== state.attributesChecked) {
                     return state.attributesChecked.filter(attributeChecked => attributeChecked.checked);
                 }
 
-                return attrs;
+                return checkedAttributes;
             });
         }
     }, [state.attributesChecked, setAttributesChecked, state.newAttributes]);
@@ -124,8 +124,8 @@ function ListAttributes({
     }, [attributesChecked]);
 
     useEffect(() => {
-        setAttributes(attributes => {
-            if (attributes !== attrs) {
+        setAttributes(attribs => {
+            if (attribs !== attrs) {
                 dispatch({
                     type: ListAttributeReducerActionTypes.SET_ATTRS_CHECKED,
                     attributesChecked: attributesChecked ?? []
@@ -133,7 +133,7 @@ function ListAttributes({
                 return attrs.filter(att => !att.originAttributeData?.id);
             }
 
-            return attributes;
+            return attribs;
         });
     }, [setAttributes, attrs, attributesChecked, dispatch]);
 
@@ -152,7 +152,7 @@ function ListAttributes({
                         label: attributes[0].label,
                         type: attributes[0].type,
                         depth: 0,
-                        checked: checked
+                        checked
                     }
                 ];
 
@@ -198,7 +198,7 @@ function ListAttributes({
 
 interface IListingAttributesProps {
     attributes: IAttribute[];
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     depth?: number;
     originAttributeData?: IOriginAttributeData;

@@ -19,7 +19,7 @@ function HeaderNotification(): JSX.Element {
     });
 
     useEffect(() => {
-        const {passiveNotifications, triggerNotifications} = notificationsStack.reduce(
+        const {passiveNotifications, triggerNotifications: triggerNotifs} = notificationsStack.reduce(
             (acc, notification) => {
                 switch (notification.channel) {
                     case NotificationChannel.trigger:
@@ -35,8 +35,8 @@ function HeaderNotification(): JSX.Element {
             }
         );
 
-        if (triggerNotifications.length) {
-            setTriggerNotifications(notifications => [...notifications, ...triggerNotifications]);
+        if (triggerNotifs.length) {
+            setTriggerNotifications(notifications => [...notifications, ...triggerNotifs]);
 
             updateNotificationsStack(passiveNotifications);
         }

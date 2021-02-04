@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 
 export interface IActiveTree {
     id: string;
-    libraries: {id: string}[];
+    libraries: Array<{id: string}>;
     label: string;
 }
 

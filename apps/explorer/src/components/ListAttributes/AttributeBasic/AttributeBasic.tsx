@@ -7,15 +7,15 @@ import React from 'react';
 import {attributeUpdateSelection, localizedLabel} from '../../../utils';
 import {IAttribute, IEmbeddedFields, ITreeData} from '../../../_types/types';
 import {
+    IListAttributeState,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from '../ListAttributesReducer';
 import {SmallText, TextAttribute, WrapperAttribute} from '../StyledComponents';
 
 interface IAttributeBasicProps {
     attribute: IAttribute;
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     embeddedField?: IEmbeddedFields;
     extendedPath?: string;

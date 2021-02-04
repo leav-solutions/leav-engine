@@ -7,12 +7,12 @@ import styled from 'styled-components';
 import themingVar from '../../../themingVar';
 import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
-import {LibraryItemListReducerAction, LibraryItemListState} from '../LibraryItemsListReducer';
+import {ILibraryItemListState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import LibraryItemsModal from '../LibraryItemsListTable/LibraryItemsModal';
 import ItemTileDisplay from './ItemTileDisplay';
 
 interface IItemsTitleDisplayProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 

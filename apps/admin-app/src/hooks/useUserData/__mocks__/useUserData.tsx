@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 
-export default () => {
+const mockUseUserData = () => {
     return {
         id: 1,
         name: 'Test',
@@ -16,3 +16,5 @@ export default () => {
             }, {})
     };
 };
+
+export default mockUseUserData;

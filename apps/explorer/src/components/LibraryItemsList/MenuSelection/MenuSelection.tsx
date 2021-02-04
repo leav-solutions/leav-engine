@@ -6,13 +6,13 @@ import {Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {
+    ILibraryItemListState,
     LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
+    LibraryItemListReducerActionTypes
 } from '../LibraryItemsListReducer';
 
 interface IMenuSelectionProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 

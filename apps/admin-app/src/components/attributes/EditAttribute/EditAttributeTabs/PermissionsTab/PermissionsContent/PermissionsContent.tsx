@@ -12,12 +12,7 @@ import {
     GET_ATTRIBUTES_attributes_list_TreeAttribute
 } from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../../../../_gqlTypes/GET_LIBRARIES';
-import {
-    PermissionsActions,
-    PermissionsRelation,
-    PermissionTypes,
-    Treepermissions_confInput
-} from '../../../../../../_gqlTypes/globalTypes';
+import {PermissionsRelation, PermissionTypes, Treepermissions_confInput} from '../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
@@ -35,13 +30,6 @@ const AccordionWithMargin = styled(Accordion)`
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
-
-const actions = [
-    PermissionsActions.access_attribute,
-    PermissionsActions.create_value,
-    PermissionsActions.edit_value,
-    PermissionsActions.delete_value
-];
 
 function PermissionsContent({
     attribute,

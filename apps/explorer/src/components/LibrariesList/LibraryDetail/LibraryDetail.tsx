@@ -22,12 +22,12 @@ interface IDetails {
     id: string;
     system: boolean;
     label: ILabel;
-    attributes: {
+    attributes: Array<{
         id: string;
         type: string;
         format: string;
         label: ILabel;
-    }[];
+    }>;
     totalCount: number;
 }
 

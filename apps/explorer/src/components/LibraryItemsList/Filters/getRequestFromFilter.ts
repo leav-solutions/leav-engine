@@ -5,7 +5,7 @@ import {FilterTypes, IFilter, IFilterSeparator, IQueryFilter, OperatorFilter} fr
 import {AttributeFormat} from './../../../_types/types';
 
 export const getRequestFromFilter = (
-    filters: (IFilter | IFilterSeparator)[],
+    filters: Array<IFilter | IFilterSeparator>,
     filterOperator: OperatorFilter,
     separatorOperator: OperatorFilter
 ): IQueryFilter[] => {
@@ -19,7 +19,7 @@ export const getRequestFromFilter = (
         request.push({operator: OperatorFilter.openParent});
     }
 
-    for (let filter of filters) {
+    for (const filter of filters) {
         if (filter.type === FilterTypes.filter && filter.active && filter.value) {
             if (filter.operator) {
                 request.push({operator: filterOperator});

@@ -4,7 +4,7 @@ module.exports = {
     env: {browser: true, node: true, es6: true},
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
-    plugins: ['@typescript-eslint', 'eslint-plugin-jsdoc', 'eslint-plugin-react'],
+    plugins: ['@typescript-eslint', 'eslint-plugin-jsdoc', 'react-app'],
     settings: {react: {version: 'latest'}},
     rules: {
         '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -47,7 +47,7 @@ module.exports = {
         '@typescript-eslint/no-parameter-properties': 'off',
         '@typescript-eslint/no-this-alias': 'error',
         '@typescript-eslint/no-use-before-define': 'off',
-        '@typescript-eslint/no-var-requires': 'error',
+        '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/prefer-for-of': 'error',
         '@typescript-eslint/prefer-function-type': 'error',
         '@typescript-eslint/prefer-namespace-keyword': 'error',
@@ -124,11 +124,6 @@ module.exports = {
             {singleValue: false, objectsInArrays: false, arraysInArrays: false}
         ],
         'brace-style': ['error', '1tbs'],
-        'react/jsx-boolean-value': ['error', 'never'],
-        'react/jsx-key': 'error',
-        'react/jsx-no-bind': ['error', {allowArrowFunctions: true}],
-        'react/no-string-refs': 'error',
-        'react/self-closing-comp': 'error',
         'object-curly-spacing': ['error', 'never'],
         'func-call-spacing': ['error', 'never']
     }

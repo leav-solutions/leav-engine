@@ -18,7 +18,7 @@ interface ITreeInfosTabProps {
 }
 
 function TreeInfosTab({tree, history, readonly}: ITreeInfosTabProps): JSX.Element {
-    const [saveTree, {error: errorSave}] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery, {
+    const [saveTree] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery, {
         update: async (cache, {data: treeData}) => {
             if (!treeData) {
                 return;

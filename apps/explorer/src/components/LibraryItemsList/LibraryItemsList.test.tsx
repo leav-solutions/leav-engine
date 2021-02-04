@@ -161,7 +161,7 @@ describe('LibraryItemsList', () => {
 
         await act(async () => {
             comp = shallow(
-                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <LibraryItemsList />
                 </MockedProviderWithFragments>
             );

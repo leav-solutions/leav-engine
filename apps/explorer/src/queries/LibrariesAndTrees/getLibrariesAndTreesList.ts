@@ -24,10 +24,10 @@ export interface IGetLibrariesAndTreesListQuery {
             {
                 id: string;
                 label: ILabel;
-                libraries: {
+                libraries: Array<{
                     id: string;
                     label: ILabel;
-                }[];
+                }>;
             }
         ];
     };

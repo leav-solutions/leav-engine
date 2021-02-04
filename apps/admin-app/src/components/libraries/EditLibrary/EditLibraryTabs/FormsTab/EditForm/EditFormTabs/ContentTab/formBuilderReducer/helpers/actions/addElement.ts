@@ -14,7 +14,7 @@ import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';
 import sortByOrder from '../sortByOrder';
 
-export default (state: IFormBuilderState, action: IFormBuilderActionAddElement) => {
+export default function addElement(state: IFormBuilderState, action: IFormBuilderActionAddElement) {
     const _updateOrder = (origId: string) => (el: IFormElement) => {
         const newEl = {...el};
 
@@ -70,4 +70,4 @@ export default (state: IFormBuilderState, action: IFormBuilderActionAddElement) 
         elements: newElementsByDeps,
         activeElements: newActiveFields
     };
-};
+}

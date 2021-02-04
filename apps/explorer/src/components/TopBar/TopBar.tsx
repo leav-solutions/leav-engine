@@ -26,10 +26,10 @@ const Wrapper = styled.div`
     color: white;
     background: transparent linear-gradient(85deg, #0f2027 0%, #203a43 52%, #2c5364 100%) 0% 0% no-repeat padding-box;
 `;
-interface MenuItemProps {
+interface IMenuItemProps {
     isActive?: boolean;
 }
-const MenuItem = styled.div<MenuItemProps>`
+const MenuItem = styled.div<IMenuItemProps>`
     display: flex;
     justify-content: space-around;
     align-items: center;

@@ -41,7 +41,7 @@ describe('LibraryCard', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
-                    <LibraryCard lib={lib as ILibrary} active={true} />
+                    <LibraryCard lib={lib as ILibrary} active />
                 </MockedProviderWithFragments>
             );
         });

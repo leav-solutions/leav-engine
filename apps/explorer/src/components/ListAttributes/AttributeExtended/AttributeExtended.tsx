@@ -11,9 +11,9 @@ import {attributeUpdateSelection, localizedLabel} from '../../../utils';
 import {AttributeFormat, IAttribute, IEmbeddedFields, IGroupEmbeddedFields} from '../../../_types/types';
 import ListItemAttribute from '../AttributeBasic';
 import {
+    IListAttributeState,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from '../ListAttributesReducer';
 import {DeployButton, DeployContent, SmallText, StyledDeployContent, TextAttribute} from '../StyledComponents';
 
@@ -24,7 +24,7 @@ const Wrapper = styled.div`
     align-items: center;
 `;
 
-interface ContainerProps {
+interface IContainerProps {
     children?: React.ReactNode;
     isChild?: boolean;
 }
@@ -36,7 +36,7 @@ const Container = ({children, isChild}) => {
     return <ContainerBasic>{children}</ContainerBasic>;
 };
 
-const ContainerBasic = styled.div<ContainerProps>`
+const ContainerBasic = styled.div<IContainerProps>`
     border: 1px solid ${themingVar['@divider-color']};
     border-radius: 2px;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
@@ -91,7 +91,7 @@ const ContainerWithBefore = styled(ContainerBasic)`
 
 interface IAttributeExtendedProps {
     attribute: IAttribute;
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     previousDepth: number;
 }
@@ -181,7 +181,7 @@ function AttributeExtended({
         <>
             <EmbeddedFieldItem
                 attribute={attribute}
-                isExpendable={true}
+                isExpendable
                 onClick={toggleExpand}
                 active={isAccordionActive}
                 loading={loading && called}
@@ -209,7 +209,7 @@ function AttributeExtended({
 }
 
 interface IEmbeddedFieldItemProps {
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     attribute: IAttribute;
     isExpendable: boolean;
@@ -238,7 +238,7 @@ const EmbeddedFieldItem = ({
 
     const handleClick = () => {
         const newAttributesChecked = attributeUpdateSelection({
-            attribute: attribute,
+            attribute,
             attributesChecked: stateListAttribute.attributesChecked,
             useCheckbox: !!stateListAttribute.useCheckbox,
             depth: 0,
@@ -256,12 +256,7 @@ const EmbeddedFieldItem = ({
             {isExpendable ? (
                 <Wrapper>
                     <Container isChild={!!depth}>
-                        <DeployButton
-                            active={active}
-                            called={true}
-                            loading={loading}
-                            changeCurrentAccordion={onClick}
-                        />
+                        <DeployButton active={active} called loading={loading} changeCurrentAccordion={onClick} />
                         <TextAttribute>
                             {stateListAttribute.lang && localizedLabel(label, stateListAttribute.lang) ? (
                                 <span>
@@ -293,7 +288,7 @@ const EmbeddedFieldItem = ({
 interface IDisplayGroupEmbeddedFields {
     groupEmbeddedFields: IGroupEmbeddedFields;
     setDepth: React.Dispatch<React.SetStateAction<number>>;
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     attribute: IAttribute;
 }
@@ -306,7 +301,7 @@ const ExploreEmbeddedFields = ({
     attribute
 }: IDisplayGroupEmbeddedFields) => {
     const exploreEmbeddedFields = (
-        groupEmbeddedFields: IGroupEmbeddedFields | IEmbeddedFields[] | IEmbeddedFields,
+        embeddedFields: IGroupEmbeddedFields | IEmbeddedFields[] | IEmbeddedFields,
         depth: number = 0,
         path: string = ''
     ) => {
@@ -410,17 +405,17 @@ const ExploreEmbeddedFields = ({
             }
         };
 
-        if (Array.isArray(groupEmbeddedFields)) {
-            return groupEmbeddedFields.map(element => hasEmbeddedFields(element));
+        if (Array.isArray(embeddedFields)) {
+            return embeddedFields.map(element => hasEmbeddedFields(element));
         } else {
-            return Object.keys(groupEmbeddedFields)?.map(field => {
-                const current = groupEmbeddedFields[field]?.embedded_fields;
+            return Object.keys(embeddedFields)?.map(field => {
+                const current = embeddedFields[field]?.embedded_fields;
 
                 return (
                     <div key={field}>
                         {current
                             ? exploreEmbeddedFields(current, depth + 1, `${field}`)
-                            : groupEmbeddedFields[field].map((element: IEmbeddedFields) => hasEmbeddedFields(element))}
+                            : embeddedFields[field].map((element: IEmbeddedFields) => hasEmbeddedFields(element))}
                     </div>
                 );
             });

@@ -3,8 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IFormBuilderActionOpenSettings, IFormBuilderState} from '../../formBuilderReducer';
 
-export default (state: IFormBuilderState, action: IFormBuilderActionOpenSettings) => ({
-    ...state,
-    openSettings: true,
-    elementInSettings: action.element
-});
+export default function openSettings(state: IFormBuilderState, action: IFormBuilderActionOpenSettings) {
+    return {
+        ...state,
+        openSettings: true,
+        elementInSettings: action.element
+    };
+}

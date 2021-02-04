@@ -12,9 +12,9 @@ import {attributeUpdateSelection, checkTypeIsLink, localizedLabel} from '../../.
 import {IAccordionActive, IAttribute, IOriginAttributeData} from '../../../../_types/types';
 import {ListingAttributes} from '../../ListAttributes';
 import {
+    IListAttributeState,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from '../../ListAttributesReducer';
 import {DeployButton, DeployContent, SmallText, StyledDeployContent, TextAttribute} from '../../StyledComponents';
 
@@ -22,7 +22,7 @@ interface IAttributeLinkedLibraryProps {
     attribute: IAttribute;
     currentAccordion?: IAccordionActive;
     changeCurrentAccordion: () => void;
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     depth: number;
     isChecked: boolean;
@@ -110,7 +110,7 @@ function AttributeLinkedLibrary({
             attribute,
             attributesChecked: stateListAttribute.attributesChecked,
             useCheckbox: !!stateListAttribute.useCheckbox,
-            depth: depth,
+            depth,
             originAttributeData
         });
 

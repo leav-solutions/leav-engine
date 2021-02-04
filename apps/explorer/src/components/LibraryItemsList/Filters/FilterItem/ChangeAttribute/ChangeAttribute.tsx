@@ -15,11 +15,11 @@ import {
     IFilterSeparator
 } from '../../../../../_types/types';
 import ListAttributes from '../../../../ListAttributes';
-import {LibraryItemListState} from '../../../LibraryItemsListReducer';
+import {ILibraryItemListState} from '../../../LibraryItemsListReducer';
 
 interface IChangeAttributeProps {
-    stateItems: LibraryItemListState;
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
+    stateItems: ILibraryItemListState;
+    setFilters: React.Dispatch<React.SetStateAction<Array<Array<IFilter | IFilterSeparator>>>>;
     filter: IFilter;
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -60,19 +60,18 @@ function ChangeAttribute({
             filters.map(filterGroup =>
                 filterGroup.reduce((acc, f) => {
                     if (f.type === FilterTypes.filter && f.key === filter.key) {
-                        return [
-                            ...acc,
-                            {
-                                ...f,
-                                attributeId: attSelected.id,
-                                format: newAtt?.format,
-                                condition: ConditionFilter[defaultConditionOperator]
-                            } as IFilter
-                        ];
+                        const newFilter: IFilter = {
+                            ...f,
+                            attributeId: attSelected.id,
+                            format: newAtt?.format,
+                            condition: ConditionFilter[defaultConditionOperator]
+                        };
+
+                        return [...acc, newFilter];
                     }
 
                     return [...acc, f];
-                }, [] as (IFilter | IFilterSeparator)[])
+                }, [] as Array<IFilter | IFilterSeparator>)
             )
         );
         setShowModal(false);

@@ -8,7 +8,7 @@ import {checkTypeIsLink} from '../../../../utils';
 import {AttributeFormat, AttributeType, IItemsColumn, PreviewSize} from '../../../../_types/types';
 import CellRecordCard from './CellRecordCard';
 
-interface CellProps {
+interface ICellProps {
     value: any;
     column?: IItemsColumn;
     size: PreviewSize;
@@ -17,7 +17,7 @@ interface CellProps {
     lang?: string[];
 }
 
-const Cell = ({value, column, size, format, isMultiple, lang}: CellProps) => {
+const Cell = ({value, column, size, format, isMultiple, lang}: ICellProps) => {
     if (value !== undefined && value !== null) {
         // handle infos column
         if (!column) {

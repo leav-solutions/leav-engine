@@ -4,16 +4,16 @@
 import React from 'react';
 import {IAttribute, IOriginAttributeData} from '../../../_types/types';
 import {
+    IListAttributeState,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from '../ListAttributesReducer';
 import AttributeLinkedLibrary from './AttributeLinkedLibrary';
 import AttributeLinkedTree from './AttributeLinkedTree';
 
 interface IAttributeLink {
     attribute: IAttribute;
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     depth: number;
     type: 'tree' | 'library';

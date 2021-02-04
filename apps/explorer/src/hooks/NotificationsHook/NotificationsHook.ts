@@ -12,13 +12,13 @@ import {
 } from '../../queries/cache/notifications/getNotificationsStackQuery';
 import {IBaseNotification, INotification, NotificationType} from '../../_types/types';
 
-type IUseNotificationsStackReturn = {
+interface IUseNotificationsStackReturn {
     notificationsStack: INotification[];
     updateNotificationsStack: (notificationsStack: INotification[]) => void;
     addNotification: (notification: INotification) => void;
     baseNotification: IBaseNotification;
     updateBaseNotification: (baseNotification: IBaseNotification) => void;
-};
+}
 
 export const useNotifications = (): IUseNotificationsStackReturn => {
     const {t} = useTranslation();

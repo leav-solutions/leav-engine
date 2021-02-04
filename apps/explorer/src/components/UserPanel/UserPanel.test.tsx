@@ -10,7 +10,7 @@ describe('UserPanel', () => {
     test('should be a sidebar', async () => {
         const comp = mount(
             <BrowserRouter>
-                <UserPanel userPanelVisible={true} hideUserPanel={jest.fn()} />
+                <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
             </BrowserRouter>
         );
 

@@ -9,9 +9,9 @@ import {reorder} from '../../../utils';
 import {IAttributesChecked} from '../../../_types/types';
 import ItemSelected from '../ItemSelected';
 import {
+    IListAttributeState,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from '../ListAttributesReducer';
 
 const WrapperItemSelected = styled.div`
@@ -42,7 +42,7 @@ const CustomCard = styled.div`
 `;
 
 interface IListItemsSelectedProps {
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
 }
 
@@ -91,13 +91,16 @@ function ListItemsSelected({stateListAttribute, dispatchListAttribute}: IListIte
                                             index={index}
                                             draggableId={`${item.id}_${item.library}_${item.extendedData?.path}`}
                                         >
-                                            {provided => (
-                                                <CustomCard ref={provided.innerRef} {...provided.draggableProps}>
+                                            {dragProvided => (
+                                                <CustomCard
+                                                    ref={dragProvided.innerRef}
+                                                    {...dragProvided.draggableProps}
+                                                >
                                                     <ItemSelected
                                                         attributeChecked={item}
                                                         removeAttributeChecked={removeAttributeChecked}
                                                         stateListAttribute={stateListAttribute}
-                                                        handleProps={provided.dragHandleProps}
+                                                        handleProps={dragProvided.dragHandleProps}
                                                     />
                                                 </CustomCard>
                                             )}

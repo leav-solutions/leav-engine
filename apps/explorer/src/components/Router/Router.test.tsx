@@ -4,12 +4,9 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {BrowserRouter} from 'react-router-dom';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import SideBarMenu from '../SideBarMenu';
 import Router from './Router';
-import Routes from './Routes';
 
 jest.mock(
     '../SideBarMenu',
@@ -74,13 +71,13 @@ describe('Router', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <Router />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find(BrowserRouter)).toHaveLength(1);
+        expect(comp.find('BrowserRouter')).toHaveLength(1);
     });
 
     test('should call Sidebar', async () => {
@@ -88,13 +85,13 @@ describe('Router', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <Router />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find(SideBarMenu)).toHaveLength(1);
+        expect(comp.find('SideBarMenu')).toHaveLength(1);
     });
 
     test('should call Route', async () => {
@@ -102,12 +99,12 @@ describe('Router', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <Router />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.find(Routes)).toHaveLength(1);
+        expect(comp.find('Routes')).toHaveLength(1);
     });
 });

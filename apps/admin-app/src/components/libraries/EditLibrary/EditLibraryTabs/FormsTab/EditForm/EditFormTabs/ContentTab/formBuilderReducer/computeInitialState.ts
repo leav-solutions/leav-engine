@@ -15,7 +15,7 @@ import {
 import getKeyFromDepValue from './helpers/getKeyFromDepValue';
 import sortByOrder from './helpers/sortByOrder';
 
-export default (library: string, form: GET_FORM_forms_list): IFormBuilderState => {
+export default function computeInitialState(library: string, form: GET_FORM_forms_list): IFormBuilderState {
     // Transform received flat list of fields to nested fields by dependencies
     const fieldsByDeps: ElementsByDependencyAttribute = form.elements.reduce(
         (acc, cur) => {
@@ -91,4 +91,4 @@ export default (library: string, form: GET_FORM_forms_list): IFormBuilderState =
         elements: fieldsByDeps,
         activeElements: activeFields
     };
-};
+}

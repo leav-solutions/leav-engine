@@ -8,7 +8,6 @@ import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import LibraryItemsListTable from './LibraryItemsListTable';
-import LibraryItemsModal from './LibraryItemsModal';
 
 jest.mock(
     './ChooseTableColumns',
@@ -60,6 +59,6 @@ describe('LibraryItemsListTable', () => {
             );
         });
         expect(comp.html()).toContain('<table');
-        expect(comp.find(LibraryItemsModal)).toHaveLength(1);
+        expect(comp.find('LibraryItemsModal')).toHaveLength(1);
     });
 });

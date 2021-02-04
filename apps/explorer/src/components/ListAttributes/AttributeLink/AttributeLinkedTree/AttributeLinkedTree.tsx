@@ -11,9 +11,9 @@ import {attributeUpdateSelection, checkTypeIsLink, flatArray, localizedLabel} fr
 import {IAccordionActive, IAttribute, IOriginAttributeData} from '../../../../_types/types';
 import {ListingAttributes} from '../../ListAttributes';
 import {
+    IListAttributeState,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from '../../ListAttributesReducer';
 import {DeployButton, DeployContent, SmallText, StyledDeployContent, TextAttribute} from '../../StyledComponents';
 
@@ -56,7 +56,7 @@ interface IAttributeLinkedTreeProps {
     attribute: IAttribute;
     currentAccordion?: IAccordionActive;
     changeCurrentAccordion: () => void;
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     depth: number;
     isChecked: boolean;

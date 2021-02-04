@@ -106,10 +106,10 @@ const findPathInTree = (
     }, [] as IRecordAndChildren[][]);
 
     if (children.length) {
-        for (let child of children) {
-            const parent = findPathInTree(pathPart, child);
-            if (parent) {
-                return parent;
+        for (const child of children) {
+            const childParent = findPathInTree(pathPart, child);
+            if (childParent) {
+                return childParent;
             }
         }
     }

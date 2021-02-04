@@ -12,9 +12,9 @@ import themingVar from '../../../themingVar';
 import {flatArray, getUniqueId, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
+    ILibraryItemListState,
     LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
+    LibraryItemListReducerActionTypes
 } from '../LibraryItemsListReducer';
 import SearchItems from '../SearchItems';
 import AddFilter from './AddFilter';
@@ -60,11 +60,11 @@ const move = (
     // change key value
     const sourceCloneOrdered = sourceClone.reduce((acc, filter, index) => {
         return [...acc, {...filter, key: index}];
-    }, [] as (IFilterElements | IFilterSeparator)[]);
+    }, [] as Array<IFilterElements | IFilterSeparator>);
 
     const destCloneOrdered = destClone.reduce((acc, filter, index) => {
         return [...acc, {...filter, key: index}];
-    }, [] as (IFilterElements | IFilterSeparator)[]);
+    }, [] as Array<IFilterElements | IFilterSeparator>);
 
     const result = list;
     result[sourceIndex] = sourceCloneOrdered;
@@ -87,7 +87,7 @@ function Filters(): JSX.Element {
     const [separatorOperator, setSeparatorOperator] = useState<OperatorFilter>(OperatorFilter.or);
     const [filterOperator, setFilterOperator] = useState<OperatorFilter>(OperatorFilter.and);
 
-    const [filters, setFilters] = useState<(IFilter | IFilterSeparator)[][]>([[]]);
+    const [filters, setFilters] = useState<Array<Array<IFilter | IFilterSeparator>>>([[]]);
 
     const resetFilters = () =>
         dispatchItems({
@@ -97,8 +97,8 @@ function Filters(): JSX.Element {
 
     const updateFilters = () => {
         setFilters(filtersGroups => {
-            return filtersGroups.map((filters, indexOne) => {
-                let newFilters = filters.sort((a, b) => a.key - b.key);
+            return filtersGroups.map((filtersGroup, indexOne) => {
+                let newFilters = filtersGroup.sort((a, b) => a.key - b.key);
 
                 let noOperator = true;
 
@@ -117,11 +117,11 @@ function Filters(): JSX.Element {
                     } else if (filter.type === FilterTypes.separator) {
                         noOperator = true;
 
-                        let conditionBefore = (filters.filter(
+                        let conditionBefore = (filtersGroup.filter(
                             f => f.type === FilterTypes.filter && f.key < filter.key
                         ) as IFilter[]).some(f => f.active);
 
-                        let conditionAfter = (filters.filter(
+                        let conditionAfter = (filtersGroup.filter(
                             f => f.type === FilterTypes.filter && f.key > filter.key
                         ) as IFilter[]).some(f => f.active);
 
@@ -300,9 +300,9 @@ function Filters(): JSX.Element {
 }
 
 interface IFilterElements {
-    filters: (IFilter | IFilterSeparator)[][];
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
-    stateItems: LibraryItemListState;
+    filters: Array<Array<IFilter | IFilterSeparator>>;
+    setFilters: React.Dispatch<React.SetStateAction<Array<Array<IFilter | IFilterSeparator>>>>;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     resetFilters: () => void;
     updateFilters: () => void;
@@ -336,8 +336,8 @@ const FilterElements = ({
             return;
         }
 
-        const sourceGroupIndex = parseInt(source.droppableId.split('-').pop() ?? '0');
-        const destinationGroupIndex = parseInt(destination.droppableId.split('-').pop() ?? '0');
+        const sourceGroupIndex = Number(source.droppableId.split('-').pop() ?? '0');
+        const destinationGroupIndex = Number(destination.droppableId.split('-').pop() ?? '0');
 
         if (source.droppableId === destination.droppableId) {
             const newFiltersGroup = reorder(filters[destinationGroupIndex], source.index, destination.index);
@@ -345,7 +345,7 @@ const FilterElements = ({
             // switch key
             const newFiltersGroupOrdered = newFiltersGroup.reduce((acc, filter, index) => {
                 return [...acc, {...filter, key: index}];
-            }, [] as (IFilterElements | IFilterSeparator)[]);
+            }, [] as Array<IFilterElements | IFilterSeparator>);
 
             const newFilters = filters.reduce((acc, filtersGroup, index) => {
                 if (index === destinationGroupIndex) {
@@ -353,7 +353,7 @@ const FilterElements = ({
                 }
 
                 return [...acc, filtersGroup];
-            }, [] as (IFilter | IFilterSeparator)[][]);
+            }, [] as Array<Array<IFilter | IFilterSeparator>>);
 
             setFilters(newFilters);
         } else {
@@ -367,12 +367,12 @@ const FilterElements = ({
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            {filters.map((filtersGroup, index) => (
-                <Droppable key={index} droppableId={`droppableId-${index}`}>
+            {filters.map((filtersGroup, i) => (
+                <Droppable key={i} droppableId={`droppableId-${i}`}>
                     {providedDroppable => (
                         <div ref={providedDroppable.innerRef}>
-                            {filtersGroup.map((filter, index) => (
-                                <Draggable key={filter.id} draggableId={filter.id} index={index}>
+                            {filtersGroup.map((filter, j) => (
+                                <Draggable key={filter.id} draggableId={filter.id} index={j}>
                                     {provided =>
                                         filter.type === FilterTypes.filter ? (
                                             <div ref={provided.innerRef} {...provided.draggableProps}>

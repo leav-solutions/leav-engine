@@ -36,7 +36,7 @@ describe('ChangeAttribute', () => {
                         stateItems={stateItems}
                         setFilters={jest.fn()}
                         filter={filterMock}
-                        showModal={true}
+                        showModal
                         setShowModal={jest.fn()}
                     />
                 </MockedProviderWithFragments>

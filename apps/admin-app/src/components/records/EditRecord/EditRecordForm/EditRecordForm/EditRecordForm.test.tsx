@@ -14,17 +14,6 @@ import {LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 
-// attributes: GET_LIBRARIES_libraries_list_attributes[];
-// errors?: IEditRecordFormError;
-// onSave?: (values: RecordData) => void;
-// setSubmitFuncRef?: RecordEdition.SetSubmitFuncRef;
-// inModal?: boolean;
-// library: GET_LIBRARIES_libraries_list;
-// valueVersion?: {[treeName: string]: TreeElementInput};
-// onIdentityUpdate?: any;
-// initialRecordId?: string;
-// setRecordIdentity?: (input: React.SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
-
 const lang = ['en', 'fr'];
 
 const attributes = [
@@ -231,9 +220,8 @@ const mocks = [requestAndResult];
 
 describe('EditRecordForm', () => {
     test('Renders without error', async () => {
-        let wrapper;
         await act(async () => {
-            wrapper = render(
+            render(
                 <MockedLangContextProvider>
                     <MockedProvider mocks={mocks} addTypename={false}>
                         <EditRecordForm

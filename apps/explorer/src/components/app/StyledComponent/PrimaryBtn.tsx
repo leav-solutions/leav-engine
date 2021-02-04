@@ -7,9 +7,9 @@ import React from 'react';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
 
-interface PrimaryBtnComp extends Omit<ButtonProps, 'type'> {}
+type PrimaryBtnCompProps = Omit<ButtonProps, 'type'>;
 
-const PrimaryBtnComp = (props: PrimaryBtnComp) => (
+const PrimaryBtnComp = (props: PrimaryBtnCompProps) => (
     <Button type="primary" {...props}>
         {props.children}
     </Button>

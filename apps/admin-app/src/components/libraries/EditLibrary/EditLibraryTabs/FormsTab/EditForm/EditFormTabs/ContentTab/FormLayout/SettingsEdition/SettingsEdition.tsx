@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Header, Icon, Input} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -21,7 +21,7 @@ function SettingsEdition({state, dispatch}: IFormBuilderStateAndDispatch): JSX.E
     const {elementInSettings} = state;
     const {t} = useTranslation();
 
-    const _closeSettings = () => dispatch({type: FormBuilderActionTypes.CLOSE_SETTINGS});
+    const _closeSettings = useCallback(() => dispatch({type: FormBuilderActionTypes.CLOSE_SETTINGS}), [dispatch]);
 
     useEffect(() => {
         const _handleEsc = event => {

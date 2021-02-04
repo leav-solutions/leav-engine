@@ -6,7 +6,7 @@ import {IFormElement} from '../../../_types';
 import {defaultContainerId, IFormBuilderActionSaveSettings, IFormBuilderState} from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 
-export default (state: IFormBuilderState, action: IFormBuilderActionSaveSettings) => {
+export default function saveSettings(state: IFormBuilderState, action: IFormBuilderActionSaveSettings) {
     const elementToUpdate = action.element ?? state.elementInSettings;
 
     if (!elementToUpdate) {
@@ -42,4 +42,4 @@ export default (state: IFormBuilderState, action: IFormBuilderActionSaveSettings
     };
 
     return {...state, elementInSettings: newElement, elements: newFields, activeElements: newActiveFields};
-};
+}

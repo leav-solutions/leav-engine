@@ -10,10 +10,10 @@ export interface IGetTreeListQuery {
             {
                 id: string;
                 label: ILabel;
-                libraries: {
+                libraries: Array<{
                     id: string;
                     label: ILabel;
-                }[];
+                }>;
             }
         ];
     };

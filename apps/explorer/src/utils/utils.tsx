@@ -111,16 +111,16 @@ export const stringToColor = (str = '', format = 'hsl', saturation = 30, luminos
 };
 
 export function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
 }
 
-export const getPreviewSizes = (): Array<PreviewAttributes> => {
-    return Object.keys(PreviewAttributes).filter(previewAttribute => !(parseInt(previewAttribute) + 1)) as any;
+export const getPreviewSizes = (): PreviewAttributes[] => {
+    return Object.keys(PreviewAttributes).filter(previewAttribute => !(Number(previewAttribute) + 1)) as any;
 };
 
 export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[] | string[]): string => {
@@ -326,7 +326,6 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
-            return 0;
         case NotificationPriority.medium:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -336,7 +335,6 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
-            return 0;
         case NotificationPriority.high:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -346,7 +344,5 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 0;
             }
-            return 0;
     }
-    return 0;
 };

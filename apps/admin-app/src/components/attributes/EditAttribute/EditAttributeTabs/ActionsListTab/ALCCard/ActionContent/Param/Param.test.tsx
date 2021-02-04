@@ -24,7 +24,7 @@ const paramsMock = [
 
 describe('Param', () => {
     test('Snapshot test', async () => {
-        const comp = render(
+        render(
             <Param param={paramsMock[0]} changeParam={placeholder} index={0} actionId={0} setBlockCard={jest.fn()} />
         );
         expect(true).toBe(true);

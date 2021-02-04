@@ -28,7 +28,7 @@ describe('AttributeList', () => {
                         stateItems={LibraryItemListInitialState}
                         dispatchItems={jest.fn()}
                         setFilters={jest.fn()}
-                        showAttr={true}
+                        showAttr
                         setShowAttr={jest.fn()}
                         updateFilters={jest.fn()}
                     />

@@ -16,13 +16,13 @@ import ListItemAttribute from '../AttributeBasic';
 import AttributeExtended from '../AttributeExtended';
 import AttributeLink from '../AttributeLink';
 import {
+    IListAttributeState,
     ListAttributeReducerAction,
-    ListAttributeReducerActionTypes,
-    ListAttributeState
+    ListAttributeReducerActionTypes
 } from '../ListAttributesReducer';
 
 interface IAttributeProps {
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     dispatchListAttribute: React.Dispatch<ListAttributeReducerAction>;
     attribute: IAttribute;
     depth: number;
@@ -97,11 +97,11 @@ function Attribute({
 
     const handleClick = () => {
         const newAttributesChecked: IAttributesChecked[] = attributeUpdateSelection({
-            attribute: attribute,
+            attribute,
             attributesChecked: stateListAttribute.attributesChecked,
             useCheckbox: !!stateListAttribute.useCheckbox,
-            depth: depth,
-            originAttributeData: originAttributeData,
+            depth,
+            originAttributeData,
             treeData
         });
 

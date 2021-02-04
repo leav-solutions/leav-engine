@@ -9,11 +9,11 @@ import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../.
 
 interface IFilterSeparatorProps {
     separator: IFilterSeparator;
-    operatorOptions: {
+    operatorOptions: Array<{
         text: string;
         value: OperatorFilter;
-    }[];
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
+    }>;
+    setFilters: React.Dispatch<React.SetStateAction<Array<Array<IFilter | IFilterSeparator>>>>;
     separatorOperator: OperatorFilter;
     setSeparatorOperator: React.Dispatch<React.SetStateAction<OperatorFilter>>;
     updateFilters: () => void;
@@ -40,7 +40,7 @@ function FilterSeparator({
 }: IFilterSeparatorProps): JSX.Element {
     const deleteSeparator = () => {
         setFilters(filters => {
-            let restFilter = filters.map(filterGroup =>
+            const restFilter = filters.map(filterGroup =>
                 filterGroup.filter(filter => filter.type !== FilterTypes.separator)
             );
 

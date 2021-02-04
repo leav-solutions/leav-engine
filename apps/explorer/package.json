@@ -45,9 +45,6 @@
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p ."
     },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
     "browserslist": [],
     "devDependencies": {
         "@apollo/link-error": "^2.0.0-beta.3",

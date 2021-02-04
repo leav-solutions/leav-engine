@@ -47,7 +47,7 @@ describe('TreeList', () => {
 
         await act(async () => {
             comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename={true}>
+                <MockedProviderWithFragments mocks={mocks} addTypename>
                     <TreeList />
                 </MockedProviderWithFragments>
             );

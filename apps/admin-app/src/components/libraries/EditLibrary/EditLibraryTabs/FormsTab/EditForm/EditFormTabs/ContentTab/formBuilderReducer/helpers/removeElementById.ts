@@ -22,7 +22,7 @@ const _cleanContainerChildren = (
     return fields;
 };
 
-export default (
+const removeElementById = (
     state: IFormBuilderState,
     elemId: string,
     depAttribute: string,
@@ -55,3 +55,5 @@ export default (
 
     return {...state, elements: newElemsByDeps, activeElements: newActiveElems};
 };
+
+export default removeElementById;

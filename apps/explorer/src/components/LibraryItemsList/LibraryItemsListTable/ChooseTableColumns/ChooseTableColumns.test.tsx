@@ -47,7 +47,7 @@ describe('ChooseTableColumns', () => {
                             dispatchItems: jest.fn()
                         }}
                     >
-                        <ChooseTableColumns openChangeColumns={true} setOpenChangeColumns={jest.fn()} />
+                        <ChooseTableColumns openChangeColumns setOpenChangeColumns={jest.fn()} />
                     </StateItemsContext.Provider>
                 </MockedProviderWithFragments>
             );

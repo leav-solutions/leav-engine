@@ -12,7 +12,10 @@ import {
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';
 
-export default (state: IFormBuilderState, action: IFormBuilderActionChangeActiveDependency) => {
+export default function changeActiveDependency(
+    state: IFormBuilderState,
+    action: IFormBuilderActionChangeActiveDependency
+) {
     const {attribute = '', value = {}, ancestors = []} = action.activeDependency ?? {};
 
     // Retrieve active fields.
@@ -61,4 +64,4 @@ export default (state: IFormBuilderState, action: IFormBuilderActionChangeActive
         activeElements: activeFields,
         activeDependency: action.activeDependency ? {...action.activeDependency} : null
     };
-};
+}

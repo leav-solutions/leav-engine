@@ -82,10 +82,10 @@ function View({view}: IViewProps): JSX.Element {
     const {t} = useTranslation();
     const {stateItems, dispatchItems} = useStateItem();
 
-    const changeView = (view: IView) => {
+    const changeView = (newView: IView) => {
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_VIEW,
-            view: {current: view}
+            view: {current: newView}
         });
     };
 

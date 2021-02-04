@@ -6,8 +6,6 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {MemoryRouter} from 'react-router-dom';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import LibrariesList from '../../LibrariesList';
-import RouteNotFound from '../RouteNotFound';
 import Routes from './Routes';
 
 jest.mock(
@@ -60,7 +58,7 @@ describe('Routes', () => {
             );
         });
 
-        expect(comp.find(RouteNotFound)).toHaveLength(1);
+        expect(comp.find('RouteNotFound')).toHaveLength(1);
     });
 
     test('default url call LibrariesList', async () => {
@@ -75,6 +73,6 @@ describe('Routes', () => {
             );
         });
 
-        expect(comp.find(LibrariesList)).toHaveLength(1);
+        expect(comp.find('LibrariesList')).toHaveLength(1);
     });
 });

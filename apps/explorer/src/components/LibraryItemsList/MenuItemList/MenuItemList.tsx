@@ -12,16 +12,16 @@ import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import {
+    ILibraryItemListState,
     LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
+    LibraryItemListReducerActionTypes
 } from '../LibraryItemsListReducer';
 import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
 import SelectView from '../SelectView';
 
 interface IMenuItemListProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     refetch: any;
 }
@@ -99,7 +99,7 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
                 <MenuItemActions />
                 <DisplayOptions />
 
-                <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()}></Button>
+                <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
             </SubGroupLast>
         </Wrapper>
     );

@@ -7,7 +7,6 @@ import {act} from 'react-dom/test-utils';
 import {IRecordAndChildren} from '../../../queries/trees/getTreeContentQuery';
 import {INavigationPath} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import CellNavigation from '../../CellNavigation';
 import ColumnFromPath from './ColumnFromPath';
 
 jest.mock(
@@ -83,12 +82,7 @@ describe('ColumnFromPath', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <ColumnFromPath
-                        treeElements={mockTreeElements}
-                        pathPart={mockPathPart}
-                        depth={0}
-                        showLoading={true}
-                    />
+                    <ColumnFromPath treeElements={mockTreeElements} pathPart={mockPathPart} depth={0} showLoading />
                 </MockedProviderWithFragments>
             );
         });
@@ -112,6 +106,6 @@ describe('ColumnFromPath', () => {
             );
         });
 
-        expect(comp.find(CellNavigation)).toHaveLength(2);
+        expect(comp.find('CellNavigation')).toHaveLength(2);
     });
 });

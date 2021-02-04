@@ -5524,6 +5524,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/eslint-plugin@npm:2.x, @typescript-eslint/eslint-plugin@npm:^2.10.0":
+  version: 2.34.0
+  resolution: "@typescript-eslint/eslint-plugin@npm:2.34.0"
+  dependencies:
+    "@typescript-eslint/experimental-utils": 2.34.0
+    functional-red-black-tree: ^1.0.1
+    regexpp: ^3.0.0
+    tsutils: ^3.17.1
+  peerDependencies:
+    "@typescript-eslint/parser": ^2.0.0
+    eslint: ^5.0.0 || ^6.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 8d800f4726487df5ce4d573e62effa250f168658759e32a976eae355cc3130d82e3a918542df273fec428b608d9d50e65ad02d596ba0c24de7fbb4ddb7897dee
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/eslint-plugin@npm:4.11.0":
   version: 4.11.0
   resolution: "@typescript-eslint/eslint-plugin@npm:4.11.0"
@@ -5542,24 +5560,6 @@ __metadata:
     typescript:
       optional: true
   checksum: a6c8cec983e86e0e849407fcf513e012ed23923b0a4bee1de013a8c2960cc1d146acdde256e40702887d476ec17ef6ea56d63076a0b02d748cd7a6ec62c70ae8
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/eslint-plugin@npm:^2.10.0":
-  version: 2.34.0
-  resolution: "@typescript-eslint/eslint-plugin@npm:2.34.0"
-  dependencies:
-    "@typescript-eslint/experimental-utils": 2.34.0
-    functional-red-black-tree: ^1.0.1
-    regexpp: ^3.0.0
-    tsutils: ^3.17.1
-  peerDependencies:
-    "@typescript-eslint/parser": ^2.0.0
-    eslint: ^5.0.0 || ^6.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 8d800f4726487df5ce4d573e62effa250f168658759e32a976eae355cc3130d82e3a918542df273fec428b608d9d50e65ad02d596ba0c24de7fbb4ddb7897dee
   languageName: node
   linkType: hard
 
@@ -5646,6 +5646,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/parser@npm:2.x, @typescript-eslint/parser@npm:^2.10.0":
+  version: 2.34.0
+  resolution: "@typescript-eslint/parser@npm:2.34.0"
+  dependencies:
+    "@types/eslint-visitor-keys": ^1.0.0
+    "@typescript-eslint/experimental-utils": 2.34.0
+    "@typescript-eslint/typescript-estree": 2.34.0
+    eslint-visitor-keys: ^1.1.0
+  peerDependencies:
+    eslint: ^5.0.0 || ^6.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: a3fe33d422d5cfe97e36c983253d33d2f5907657f9bb61a129c58656441acf9e90ec525a5273239cc876bc43e031056b2796924f3e64e8ca1295674fb30a2eec
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/parser@npm:4.11.0":
   version: 4.11.0
   resolution: "@typescript-eslint/parser@npm:4.11.0"
@@ -5660,23 +5677,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 596b01f9f5f47265f2f6cb2e06cbd1d38ba5c4416d22a793fdb2122580a7e02e9b12286cd89cbd31e0166a08b55ee066f2ba7b1af4fd82be9df73f6044a7fdc8
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/parser@npm:^2.10.0":
-  version: 2.34.0
-  resolution: "@typescript-eslint/parser@npm:2.34.0"
-  dependencies:
-    "@types/eslint-visitor-keys": ^1.0.0
-    "@typescript-eslint/experimental-utils": 2.34.0
-    "@typescript-eslint/typescript-estree": 2.34.0
-    eslint-visitor-keys: ^1.1.0
-  peerDependencies:
-    eslint: ^5.0.0 || ^6.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: a3fe33d422d5cfe97e36c983253d33d2f5907657f9bb61a129c58656441acf9e90ec525a5273239cc876bc43e031056b2796924f3e64e8ca1295674fb30a2eec
   languageName: node
   linkType: hard
 
@@ -6460,6 +6460,7 @@ __metadata:
     commander: 2.19.0
     enzyme: 3.10.0
     enzyme-adapter-react-16: 1.10.0
+    eslint-config-react-app: 6.0.0
     eslint-plugin-jsdoc: 30.7.9
     eslint-plugin-react: 7.21.5
     fomantic-ui-css: 2.8.6
@@ -8142,7 +8143,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-eslint@npm:10.1.0, babel-eslint@npm:^10.1.0":
+"babel-eslint@npm:10.1.0, babel-eslint@npm:10.x, babel-eslint@npm:^10.1.0":
   version: 10.1.0
   resolution: "babel-eslint@npm:10.1.0"
   dependencies:
@@ -10424,7 +10425,7 @@ __metadata:
     hapi-auth-jwt2: 8.6.0
     i18next: ^19.0.3
     i18next-fs-backend: ^1.0.7
-    jest: 26.6.3
+    jest: 25
     jsonwebtoken: ^8.2.2
     license-check-and-add: ^3.0.4
     lint-staged: ^7.1.3
@@ -10435,7 +10436,7 @@ __metadata:
     npm-run-all: ^4.1.3
     onchange: ^4.0.0
     prettier: ^1.19.1
-    ts-jest: 24
+    ts-jest: 25
     ts-node: ^6.2.0
     typescript: ^3.7.2
     uuid: ^7.0.3
@@ -12360,26 +12361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-react-app@npm:^5.2.1":
-  version: 5.2.1
-  resolution: "eslint-config-react-app@npm:5.2.1"
-  dependencies:
-    confusing-browser-globals: ^1.0.9
-  peerDependencies:
-    "@typescript-eslint/eslint-plugin": 2.x
-    "@typescript-eslint/parser": 2.x
-    babel-eslint: 10.x
-    eslint: 6.x
-    eslint-plugin-flowtype: 3.x || 4.x
-    eslint-plugin-import: 2.x
-    eslint-plugin-jsx-a11y: 6.x
-    eslint-plugin-react: 7.x
-    eslint-plugin-react-hooks: 1.x || 2.x
-  checksum: bb6028338a4c233568c2f9249fce0e464edbe68079bee63fedbd9c9398d534bf6e6c19d312021916198ec75e9bdce1ddb1e5a11f191ea9887a610b782b8741b9
-  languageName: node
-  linkType: hard
-
-"eslint-config-react-app@npm:^6.0.0":
+"eslint-config-react-app@npm:6.0.0, eslint-config-react-app@npm:^6.0.0":
   version: 6.0.0
   resolution: "eslint-config-react-app@npm:6.0.0"
   dependencies:
@@ -12402,6 +12384,25 @@ __metadata:
     eslint-plugin-testing-library:
       optional: true
   checksum: ab983e9a3101ee266f3b6b7118e76f7200ff0bab1a44ff84a03f300a90857b039c8a5b632d467f09540c13919565ac969ddef3dc13f903e5960fe46070a9da51
+  languageName: node
+  linkType: hard
+
+"eslint-config-react-app@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "eslint-config-react-app@npm:5.2.1"
+  dependencies:
+    confusing-browser-globals: ^1.0.9
+  peerDependencies:
+    "@typescript-eslint/eslint-plugin": 2.x
+    "@typescript-eslint/parser": 2.x
+    babel-eslint: 10.x
+    eslint: 6.x
+    eslint-plugin-flowtype: 3.x || 4.x
+    eslint-plugin-import: 2.x
+    eslint-plugin-jsx-a11y: 6.x
+    eslint-plugin-react: 7.x
+    eslint-plugin-react-hooks: 1.x || 2.x
+  checksum: bb6028338a4c233568c2f9249fce0e464edbe68079bee63fedbd9c9398d534bf6e6c19d312021916198ec75e9bdce1ddb1e5a11f191ea9887a610b782b8741b9
   languageName: node
   linkType: hard
 
@@ -12441,6 +12442,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-flowtype@npm:3.x || 4.x":
+  version: 4.7.0
+  resolution: "eslint-plugin-flowtype@npm:4.7.0"
+  dependencies:
+    lodash: ^4.17.15
+  peerDependencies:
+    eslint: ">=6.1.0"
+  checksum: 2a1e799bcf92a620de1cc4fe143e1a10de4c1d18728a2082e8ca8632b238437d4119b6a395008aebf01dca563ffe9352acf1d8e483f68135f6ad055490fa26a9
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-flowtype@npm:4.6.0":
   version: 4.6.0
   resolution: "eslint-plugin-flowtype@npm:4.6.0"
@@ -12452,7 +12464,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-flowtype@npm:^5.2.0":
+"eslint-plugin-flowtype@npm:5.2.0, eslint-plugin-flowtype@npm:^5.2.0":
   version: 5.2.0
   resolution: "eslint-plugin-flowtype@npm:5.2.0"
   dependencies:
@@ -12486,7 +12498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:^2.22.1":
+"eslint-plugin-import@npm:2.22.1, eslint-plugin-import@npm:2.x, eslint-plugin-import@npm:^2.22.1":
   version: 2.22.1
   resolution: "eslint-plugin-import@npm:2.22.1"
   dependencies:
@@ -12556,7 +12568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsx-a11y@npm:^6.3.1":
+"eslint-plugin-jsx-a11y@npm:6.4.1, eslint-plugin-jsx-a11y@npm:6.x, eslint-plugin-jsx-a11y@npm:^6.3.1":
   version: 6.4.1
   resolution: "eslint-plugin-jsx-a11y@npm:6.4.1"
   dependencies:
@@ -12577,21 +12589,49 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-react-app@npm:6.2.2":
+  version: 6.2.2
+  resolution: "eslint-plugin-react-app@npm:6.2.2"
+  dependencies:
+    "@typescript-eslint/eslint-plugin": 2.x
+    "@typescript-eslint/parser": 2.x
+    babel-eslint: 10.x
+    eslint-config-react-app: ^5.2.1
+    eslint-plugin-flowtype: 3.x || 4.x
+    eslint-plugin-import: 2.x
+    eslint-plugin-jsx-a11y: 6.x
+    eslint-plugin-react: 7.x
+    eslint-plugin-react-hooks: 1.x || 2.x
+  peerDependencies:
+    eslint: 6.x
+  checksum: d60602e79e00cb41cb26a11fc671cd676bed89db3e8d1dc42804673a5a254554576388c37549a5f2255293ddae34b792e3d8c61671cd10469ba79e8881f189a5
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-react-hooks@npm:1.x || 2.x":
+  version: 2.5.1
+  resolution: "eslint-plugin-react-hooks@npm:2.5.1"
+  peerDependencies:
+    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
+  checksum: ce13554b76160a1bb9859590dbf0b632e988bc5a9697a1b686f746810ec47fa8227cb95780c14d1266bf817a8062b4e32b57883ef466aac67884991c71a5b101
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-react-hooks@npm:4.2.0, eslint-plugin-react-hooks@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "eslint-plugin-react-hooks@npm:4.2.0"
+  peerDependencies:
+    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+  checksum: 5378d16b5a56431a7a77b56d61464dbbfa343e8607da87b851a6caee44b96e08847147321f5f38de30d20668418691d859f69d9c5262dfb5308856382252096c
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react-hooks@npm:^1.6.1":
   version: 1.7.0
   resolution: "eslint-plugin-react-hooks@npm:1.7.0"
   peerDependencies:
     eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
   checksum: 99dc3276cd8f20428e0ec4d9b15433ce22b87ef9f1c82279369a98b7c663f9092ff63f63683a948f207ab75cceedd808cac2ca870011b733a89b0fc753eb0f91
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-react-hooks@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "eslint-plugin-react-hooks@npm:4.2.0"
-  peerDependencies:
-    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
-  checksum: 5378d16b5a56431a7a77b56d61464dbbfa343e8607da87b851a6caee44b96e08847147321f5f38de30d20668418691d859f69d9c5262dfb5308856382252096c
   languageName: node
   linkType: hard
 
@@ -12638,7 +12678,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.21.5":
+"eslint-plugin-react@npm:7.x, eslint-plugin-react@npm:^7.21.5":
   version: 7.22.0
   resolution: "eslint-plugin-react@npm:7.22.0"
   dependencies:
@@ -13223,6 +13263,7 @@ __metadata:
     "@apollo/react-hoc": ^3.1.5
     "@apollo/react-testing": ^3.1.4
     "@craco/craco": ^5.6.4
+    "@rushstack/eslint-patch": 1.0.6
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.5.0
     "@testing-library/user-event": ^7.2.1
@@ -13249,6 +13290,9 @@ __metadata:
     craco-less: ^1.17.0
     enzyme: ^3.11.0
     enzyme-adapter-react-16: ^1.15.3
+    eslint-config-react-app: 6.0.0
+    eslint-plugin-jsdoc: 30.7.9
+    eslint-plugin-react: 7.21.5
     graphql: 15.0.0
     graphql-tag: ^2.11.0
     gulp: ^4.0.2
@@ -15620,7 +15664,7 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"husky@npm:next":
+"husky@npm:5.0.8":
   version: 5.0.8
   resolution: "husky@npm:5.0.8"
   bin:
@@ -18292,6 +18336,19 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
+"jest@npm:25, jest@npm:^25.2.4":
+  version: 25.5.4
+  resolution: "jest@npm:25.5.4"
+  dependencies:
+    "@jest/core": ^25.5.4
+    import-local: ^3.0.2
+    jest-cli: ^25.5.4
+  bin:
+    jest: bin/jest.js
+  checksum: aa4a0c3d6999036892d2c652afb87c4e8329a9303999fe595a91efaf674c2d0ff6eceed373042f82094fdd837264b01771c5a69dc0ee96533cc178860eac8991
+  languageName: node
+  linkType: hard
+
 "jest@npm:26.6.0":
   version: 26.6.0
   resolution: "jest@npm:26.6.0"
@@ -18305,7 +18362,7 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"jest@npm:26.6.3, jest@npm:^26.0.1":
+"jest@npm:^26.0.1":
   version: 26.6.3
   resolution: "jest@npm:26.6.3"
   dependencies:
@@ -18315,19 +18372,6 @@ fsevents@2.1.2:
   bin:
     jest: bin/jest.js
   checksum: 4ffcfefa2b30999a71c205e1aacf2b3d7af10f36c17ba1baf45677684116ad5aa6a5bb162ad2dd418f9ea99d18f24b70d8c83fb317b765a3acac361a50e9db9f
-  languageName: node
-  linkType: hard
-
-"jest@npm:^25.2.4":
-  version: 25.5.4
-  resolution: "jest@npm:25.5.4"
-  dependencies:
-    "@jest/core": ^25.5.4
-    import-local: ^3.0.2
-    jest-cli: ^25.5.4
-  bin:
-    jest: bin/jest.js
-  checksum: aa4a0c3d6999036892d2c652afb87c4e8329a9303999fe595a91efaf674c2d0ff6eceed373042f82094fdd837264b01771c5a69dc0ee96533cc178860eac8991
   languageName: node
   linkType: hard
 
@@ -18943,10 +18987,16 @@ fsevents@2.1.2:
     "@rushstack/eslint-patch": 1.0.6
     "@typescript-eslint/eslint-plugin": 4.11.0
     "@typescript-eslint/parser": 4.11.0
+    babel-eslint: 10.1.0
     eslint: 7.16.0
+    eslint-plugin-flowtype: 5.2.0
+    eslint-plugin-import: 2.22.1
     eslint-plugin-jsdoc: 30.7.9
+    eslint-plugin-jsx-a11y: 6.4.1
     eslint-plugin-react: 7.21.5
-    husky: next
+    eslint-plugin-react-app: 6.2.2
+    eslint-plugin-react-hooks: 4.2.0
+    husky: 5.0.8
     license-check-and-add: 3.0.5
     lint-staged: 10.5.3
     prettier: 2.2.1
@@ -27787,29 +27837,7 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:24, ts-jest@npm:^24.1.0, ts-jest@npm:^24.3.0":
-  version: 24.3.0
-  resolution: "ts-jest@npm:24.3.0"
-  dependencies:
-    bs-logger: 0.x
-    buffer-from: 1.x
-    fast-json-stable-stringify: 2.x
-    json5: 2.x
-    lodash.memoize: 4.x
-    make-error: 1.x
-    mkdirp: 0.x
-    resolve: 1.x
-    semver: ^5.5
-    yargs-parser: 10.x
-  peerDependencies:
-    jest: ">=24 <25"
-  bin:
-    ts-jest: cli.js
-  checksum: 657ced9ab8336c0bf3c2168c891a261d1ecb9812855c23bc3784216b50b34a4c8468c76452bdf6242e955d734f362a755f71aef126ebe89be8e1124390743790
-  languageName: node
-  linkType: hard
-
-"ts-jest@npm:^25.3.0":
+"ts-jest@npm:25, ts-jest@npm:^25.3.0":
   version: 25.5.1
   resolution: "ts-jest@npm:25.5.1"
   dependencies:
@@ -27829,6 +27857,28 @@ resolve@1.18.1:
   bin:
     ts-jest: cli.js
   checksum: 438de5a3649597e76d218e025faaecc385ee17e468019324e3833e9f3880ccca2677f43c80dafbfa296490b64ee2a5cb8260d403cdcafff471494e0969dd5c5e
+  languageName: node
+  linkType: hard
+
+"ts-jest@npm:^24.1.0, ts-jest@npm:^24.3.0":
+  version: 24.3.0
+  resolution: "ts-jest@npm:24.3.0"
+  dependencies:
+    bs-logger: 0.x
+    buffer-from: 1.x
+    fast-json-stable-stringify: 2.x
+    json5: 2.x
+    lodash.memoize: 4.x
+    make-error: 1.x
+    mkdirp: 0.x
+    resolve: 1.x
+    semver: ^5.5
+    yargs-parser: 10.x
+  peerDependencies:
+    jest: ">=24 <25"
+  bin:
+    ts-jest: cli.js
+  checksum: 657ced9ab8336c0bf3c2168c891a261d1ecb9812855c23bc3784216b50b34a4c8468c76452bdf6242e955d734f362a755f71aef126ebe89be8e1124390743790
   languageName: node
   linkType: hard
 

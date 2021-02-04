@@ -10,13 +10,13 @@ import {getSortFieldByAttributeType} from '../../../../utils';
 import {AttributeType, OrderSearch} from '../../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 
-interface HeaderPros {
+interface IHeaderPros {
     children: React.ReactNode;
     name: string;
     type: AttributeType;
 }
 
-const Header = ({children, name, type}: HeaderPros) => {
+const Header = ({children, name, type}: IHeaderPros) => {
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useContext(StateItemsContext);

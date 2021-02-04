@@ -12,7 +12,7 @@ import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';
 import sortByOrder from '../sortByOrder';
 
-export default (state: IFormBuilderState, action: IFormBuilderActionMoveElement) => {
+export default function moveElement(state: IFormBuilderState, action: IFormBuilderActionMoveElement) {
     let newFieldsByDeps = cloneDeep(state.elements);
     let newActiveFields = cloneDeep(state.activeElements);
 
@@ -114,4 +114,4 @@ export default (state: IFormBuilderState, action: IFormBuilderActionMoveElement)
     }
 
     return {...state, elements: newFieldsByDeps, activeElements: newActiveFields};
-};
+}

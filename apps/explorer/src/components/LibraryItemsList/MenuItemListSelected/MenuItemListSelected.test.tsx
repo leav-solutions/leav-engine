@@ -10,7 +10,7 @@ describe('MenuItemListSelected', () => {
     test('should have quit mode selection button', async () => {
         const comp = mount(
             <MockStateItems>
-                <MenuItemListSelected active={true} />
+                <MenuItemListSelected active />
             </MockStateItems>
         );
 

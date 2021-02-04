@@ -16,7 +16,7 @@ const FormPreviewsModal = ({values, updateValues}: IFormPreviewsModal) => {
 
     const defaultPreview: any = {};
 
-    for (let att of previewAttributes) {
+    for (const att of previewAttributes) {
         defaultPreview[att] = '';
     }
 
@@ -55,14 +55,16 @@ const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPrevie
     const att: 'small' | 'medium' | 'big' | 'pages' = previewAttribute as any;
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const preview: IPreview = values.preview
+            ? {...values.preview, [previewAttribute]: e.target.value}
+            : {
+                  ...(defaultPreview as IPreview),
+                  [previewAttribute]: e.target.value
+              };
+
         updateValues({
             ...values,
-            preview: values.preview
-                ? ({...values.preview, [previewAttribute]: e.target.value} as IPreview)
-                : ({
-                      ...(defaultPreview as IPreview),
-                      [previewAttribute]: e.target.value
-                  } as IPreview)
+            preview
         });
     };
 

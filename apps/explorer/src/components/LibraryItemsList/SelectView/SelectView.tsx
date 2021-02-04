@@ -17,12 +17,12 @@ const DropdownButton = styled(Dropdown.Button)`
     }
 `;
 
-interface InnerDropdown {
+interface IInnerDropdown {
     color?: string;
     style?: CSSObject;
 }
 
-const InnerDropdown = styled.span<InnerDropdown>`
+const InnerDropdown = styled.span<IInnerDropdown>`
     transform: translate(5px);
     position: relative;
 

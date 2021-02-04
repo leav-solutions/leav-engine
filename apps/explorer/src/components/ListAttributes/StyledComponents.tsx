@@ -52,12 +52,12 @@ export const LinkedWrapperAttribute = styled(BasicWrapperAttribute)`
     }
 `;
 
-interface WrapperAttributeProps {
+interface IWrapperAttributeProps {
     children: React.ReactNode;
     isChild: boolean;
 }
 
-export const WrapperAttribute = ({children, isChild}: WrapperAttributeProps) => {
+export const WrapperAttribute = ({children, isChild}: IWrapperAttributeProps) => {
     if (isChild) {
         return <LinkedWrapperAttribute>{children}</LinkedWrapperAttribute>;
     }
@@ -112,14 +112,14 @@ export const RowAttribute = styled.div`
     }
 `;
 
-interface DeployButtonProps {
+interface IDeployButtonProps {
     active: boolean | undefined;
     called: boolean;
     loading: boolean;
     changeCurrentAccordion: () => void;
 }
 
-export const DeployButton = ({active, changeCurrentAccordion}: DeployButtonProps) => {
+export const DeployButton = ({active, changeCurrentAccordion}: IDeployButtonProps) => {
     const [animProps, set] = useSpring(() => ({transform: 'rotateX(0deg)'}));
 
     const onClick = () => {
@@ -137,12 +137,12 @@ export const DeployButton = ({active, changeCurrentAccordion}: DeployButtonProps
     );
 };
 
-interface DeployContentProps {
+interface IDeployContentProps {
     children: React.ReactNode;
     active: boolean;
 }
 
-export const DeployContent = ({children, active}: DeployContentProps) => {
+export const DeployContent = ({children, active}: IDeployContentProps) => {
     return <div style={{display: active ? 'block' : 'none'}}>{children}</div>;
 };
 

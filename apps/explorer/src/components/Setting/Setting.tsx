@@ -50,11 +50,11 @@ function Setting(): JSX.Element {
             <PageHeader title={t('settings.header')} />
             <Row gutter={[8, 8]}>
                 <Col span={4}>
-                    <Card title={t('settings.choose-lang')} hoverable={true}>
+                    <Card title={t('settings.choose-lang')} hoverable>
                         <Select defaultValue={lang[0]} onChange={value => changeLang(value.toString())}>
-                            {langOption.map(lang => (
-                                <Select.Option key={lang.key} value={lang.value}>
-                                    {lang.text}
+                            {langOption.map(langOpt => (
+                                <Select.Option key={langOpt.key} value={langOpt.value}>
+                                    {langOpt.text}
                                 </Select.Option>
                             ))}
                         </Select>
@@ -62,7 +62,7 @@ function Setting(): JSX.Element {
                 </Col>
 
                 <Col span={4}>
-                    <Card title={t('settings.choose-theme')} hoverable={true}>
+                    <Card title={t('settings.choose-theme')} hoverable>
                         <Row gutter={8}>
                             <Col>{t('settings.current-theme', {theme: themeName})}</Col>
                             <Col>

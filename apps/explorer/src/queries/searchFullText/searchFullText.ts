@@ -8,7 +8,7 @@ import {getRecordsFields} from '../records/getRecordsFromLibraryQuery';
 export interface ISearchFullTextQuery {
     [x: string]: {
         totalCount: number;
-        list: {
+        list: Array<{
             [x: string]: any;
             whoAmI: {
                 id: string;
@@ -24,7 +24,7 @@ export interface ISearchFullTextQuery {
                     label: ILabel;
                 };
             };
-        }[];
+        }>;
     };
 }
 

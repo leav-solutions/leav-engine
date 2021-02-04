@@ -74,7 +74,7 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
 
         const newColumns: IItemsColumn[] = attributesChecked.reduce((acc, attributeChecked) => {
             if (attributeChecked.checked) {
-                const attribute = allAttributes.find(
+                const attr = allAttributes.find(
                     attribute => attribute.id === attributeChecked.id && attribute.library === attributeChecked.library
                 );
 
@@ -84,7 +84,7 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                         id: attributeChecked.id,
                         library: attributeChecked.library,
                         type: attributeChecked.type,
-                        originAttributeData: attribute?.originAttributeData,
+                        originAttributeData: attr?.originAttributeData,
                         extendedData: attributeChecked.extendedData,
                         treeData: attributeChecked.treeData
                     }

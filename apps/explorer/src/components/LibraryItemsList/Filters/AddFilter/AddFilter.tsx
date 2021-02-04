@@ -16,15 +16,15 @@ import {
 } from '../../../../_types/types';
 import ListAttributes from '../../../ListAttributes';
 import {
+    ILibraryItemListState,
     LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
+    LibraryItemListReducerActionTypes
 } from '../../LibraryItemsListReducer';
 
 interface IAttributeListProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
+    setFilters: React.Dispatch<React.SetStateAction<Array<Array<IFilter | IFilterSeparator>>>>;
     showAttr: boolean;
     setShowAttr: React.Dispatch<React.SetStateAction<boolean>>;
     updateFilters: () => void;
@@ -94,7 +94,7 @@ function AddFilter({
                 }
 
                 const attribute = stateItems.attributes.find(
-                    attribute => attribute.id === attributeChecked.id && attribute.library === attributeChecked.library
+                    a => a.id === attributeChecked.id && a.library === attributeChecked.library
                 );
 
                 // take the first operator for the format of the attribute
@@ -124,7 +124,7 @@ function AddFilter({
                 };
             });
 
-            return [...filters, newFilters] as (IFilter | IFilterSeparator)[][];
+            return [...filters, newFilters] as Array<Array<IFilter | IFilterSeparator>>;
         });
         setShowAttr(false);
         setAttributesChecked([]);

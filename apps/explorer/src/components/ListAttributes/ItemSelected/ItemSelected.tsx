@@ -8,13 +8,13 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedLabel} from '../../../utils';
 import {IAttributesChecked} from '../../../_types/types';
-import {ListAttributeState} from '../ListAttributesReducer';
+import {IListAttributeState} from '../ListAttributesReducer';
 import {SmallText, TextAttribute} from '../StyledComponents';
 
-interface ItemSelectedProps {
+interface IItemSelectedProps {
     attributeChecked: IAttributesChecked;
     removeAttributeChecked: (attributeChecked: IAttributesChecked) => void;
-    stateListAttribute: ListAttributeState;
+    stateListAttribute: IListAttributeState;
     handleProps: any;
 }
 
@@ -58,7 +58,7 @@ const ItemSelected = ({
     removeAttributeChecked,
     stateListAttribute,
     handleProps
-}: ItemSelectedProps) => {
+}: IItemSelectedProps) => {
     const {t} = useTranslation();
     return (
         <>

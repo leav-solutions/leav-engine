@@ -12,9 +12,9 @@ import {useLang} from '../../../hooks/LangHook/LangHook';
 import {displayTypeToPreviewSize, getItemKeyFromColumn, localizedLabel, paginationOptions} from '../../../utils';
 import {AttributeFormat, AttributeType, IItem, IItemsColumn, IRecordEdition, ITableHeader} from '../../../_types/types';
 import {
+    ILibraryItemListState,
     LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
+    LibraryItemListReducerActionTypes
 } from '../LibraryItemsListReducer';
 import Cell from './Cell';
 import Header from './Header';
@@ -32,7 +32,7 @@ const LoadingContainer = styled.div`
 `;
 
 interface ILibraryItemsListTableProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
 }
 
@@ -65,6 +65,12 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
         if (stateItems.attributes.length && !stateItems.columns.length) {
             // initialize columns in state
+            const infosColumnItem: IItemsColumn = {
+                id: infosCol,
+                library: stateItems.attributes[0].library,
+                type: AttributeType.simple
+            };
+
             const initialTableColumns: IItemsColumn[] = stateItems.attributes.reduce(
                 (acc, attribute, index) =>
                     index < initialColumnsLimit
@@ -77,13 +83,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
                               }
                           ]
                         : acc,
-                [
-                    {
-                        id: infosCol,
-                        library: stateItems.attributes[0].library,
-                        type: AttributeType.simple
-                    } as IItemsColumn
-                ]
+                [infosColumnItem]
             );
 
             dispatchItems({
@@ -118,7 +118,7 @@ function LibraryItemsListTable({stateItems, dispatchItems}: ILibraryItemsListTab
 
             setTableColumn(columns => {
                 const actionsColumn = {
-                    title: <span></span>,
+                    title: <span />,
                     type: AttributeType.simple,
                     library: '',
                     dataIndex: 'actions',

@@ -12,7 +12,7 @@ import {
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import removeElementById from '../removeElementById';
 
-export default (state: IFormBuilderState, action: IFormBuilderActionRemoveTab): IFormBuilderState => {
+export default function removeTab(state: IFormBuilderState, action: IFormBuilderActionRemoveTab): IFormBuilderState {
     const depAttributeKey = state.activeDependency ? state.activeDependency.attribute : defaultDepAttribute;
     const depValueKey = state.activeDependency ? getKeyFromDepValue(state.activeDependency.value) : defaultDepValue;
     const containerId = action.parentElement.containerId ?? defaultContainerId;
@@ -43,4 +43,4 @@ export default (state: IFormBuilderState, action: IFormBuilderActionRemoveTab): 
     }
 
     return tmpState;
-};
+}

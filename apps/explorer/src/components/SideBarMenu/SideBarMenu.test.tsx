@@ -88,7 +88,7 @@ describe('SideBarMenu', () => {
             comp = mount(
                 <MockedProvider mocks={mocks} cache={mockCache}>
                     <BrowserRouter>
-                        <SideBarMenu visible={true} hide={jest.fn()} />
+                        <SideBarMenu visible hide={jest.fn()} />
                     </BrowserRouter>
                 </MockedProvider>
             );
@@ -104,7 +104,7 @@ describe('SideBarMenu', () => {
             comp = mount(
                 <MockedProvider mocks={mocks} cache={mockCache}>
                     <BrowserRouter>
-                        <SideBarMenu visible={true} hide={jest.fn()} />
+                        <SideBarMenu visible hide={jest.fn()} />
                     </BrowserRouter>
                 </MockedProvider>
             );

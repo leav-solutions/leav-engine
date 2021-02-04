@@ -15,7 +15,7 @@ import {
     IFilterSeparator,
     OperatorFilter
 } from '../../../../_types/types';
-import {LibraryItemListState} from '../../LibraryItemsListReducer';
+import {ILibraryItemListState} from '../../LibraryItemsListReducer';
 import ChangeAttribute from './ChangeAttribute';
 import FormBoolean from './FormBoolean';
 import FormText from './FormText';
@@ -61,12 +61,12 @@ const GridRow = styled.div`
     align-items: center;
 `;
 
-interface GridColumnProps {
+interface IGridColumnProps {
     flex?: number;
     style?: CSSObject;
 }
 
-const GridColumn = styled.div<GridColumnProps>`
+const GridColumn = styled.div<IGridColumnProps>`
     flex: ${({flex}) => flex ?? 1};
     display: flex;
     flex-flow: row nowrap;
@@ -82,12 +82,12 @@ const GridColumn = styled.div<GridColumnProps>`
     }
 `;
 
-interface CurrentAttributeProps {
+interface ICurrentAttributeProps {
     style?: CSSObject;
     disabled: boolean;
 }
 
-const CurrentAttribute = styled.span<CurrentAttributeProps>`
+const CurrentAttribute = styled.span<ICurrentAttributeProps>`
     cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
     background: ${props => (props.disabled ? 'hsla(0, 0%, 0%, 0.1)' : 'none')};
     padding: 0.5rem;
@@ -112,17 +112,17 @@ const CustomDivider = styled(Divider)`
 `;
 
 interface IFilterItemProps {
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     filter: IFilter;
-    setFilters: React.Dispatch<React.SetStateAction<(IFilter | IFilterSeparator)[][]>>;
-    conditionOptions: {
+    setFilters: React.Dispatch<React.SetStateAction<Array<Array<IFilter | IFilterSeparator>>>>;
+    conditionOptions: Array<{
         text: string;
         value: ConditionFilter;
-    }[];
-    operatorOptions: {
+    }>;
+    operatorOptions: Array<{
         text: string;
         value: OperatorFilter;
-    }[];
+    }>;
     resetFilters: () => void;
     updateFilters: () => void;
     filterOperator: OperatorFilter;
@@ -156,7 +156,7 @@ function FilterItem({
                 const restFilters = filterGroup.filter(f => f.key !== filter.key);
                 const currentFilter = filterGroup.find(f => f.key === filter.key);
 
-                let newNewFilters: (IFilter | IFilterSeparator)[] = [];
+                let newNewFilters: Array<IFilter | IFilterSeparator> = [];
                 if (currentFilter && currentFilter.type === FilterTypes.filter) {
                     const newFilters = currentFilter
                         ? [...restFilters, {...currentFilter, active: !currentFilter.active}].sort(
@@ -193,7 +193,7 @@ function FilterItem({
                 const activeFilters = (filterGroup as IFilter[]).filter(f => f.type === FilterTypes.filter && f.active);
 
                 if (activeFilters.length && activeFilters[0].operator) {
-                    const separators = filterGroup.filter(filter => filter.type === FilterTypes.separator);
+                    const separators = filterGroup.filter(f => f.type === FilterTypes.separator);
 
                     newFilters = newFilters.map(f => {
                         const lastFilterIsSeparatorCondition = separators.some(
@@ -242,7 +242,7 @@ function FilterItem({
                         return [...acc, {...filter, condition: newCondition}];
                     }
                     return [...acc, f];
-                }, [] as (IFilter | IFilterSeparator)[])
+                }, [] as Array<IFilter | IFilterSeparator>)
             )
         );
     };

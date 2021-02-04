@@ -67,13 +67,13 @@ function LibraryItemsList(): JSX.Element {
 
     useEffect(() => {
         if (!loading && data) {
-            const libId = data?.libraries?.list[0]?.id;
+            const libraryId = data?.libraries?.list[0]?.id;
             const libLabel = data?.libraries?.list[0]?.label;
             const {query, type, filter, searchableFields} = data?.libraries?.list[0]?.gqlNames;
             const libName = localizedLabel(libLabel, lang);
 
             updateActiveLibrary({
-                id: libId,
+                id: libraryId,
                 name: libName,
                 filter,
                 gql: {
@@ -105,7 +105,7 @@ function LibraryItemsList(): JSX.Element {
                             isMultiple: attribute.multiple_values,
                             linkedLibrary: attribute.linked_library,
                             linkedTree: attribute.linked_tree,
-                            library: libId
+                            library: libraryId
                         };
 
                         return [...acc, newAttribute];

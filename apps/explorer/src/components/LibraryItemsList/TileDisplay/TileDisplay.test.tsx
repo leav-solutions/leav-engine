@@ -5,9 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
-import ItemTileDisplay from './ItemTileDisplay';
 import TileDisplay from './TileDisplay';
 
 jest.mock(
@@ -52,7 +50,7 @@ describe('TileDisplay', () => {
             </MockedProviderWithFragments>
         );
 
-        expect(comp.find(ItemTileDisplay)).toHaveLength(1);
-        expect(comp.find(LibraryItemsListPagination)).toHaveLength(1);
+        expect(comp.find('ItemTileDisplay')).toHaveLength(1);
+        expect(comp.find('LibraryItemsListPagination')).toHaveLength(1);
     });
 });

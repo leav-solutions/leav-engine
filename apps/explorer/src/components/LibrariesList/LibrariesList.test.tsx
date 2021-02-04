@@ -8,8 +8,6 @@ import wait from 'waait';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import LibrariesList from './LibrariesList';
-import LibraryCard from './LibraryCard';
-import LibraryDetail from './LibraryDetail';
 
 jest.mock('react-router-dom', () => ({
     useParams: jest.fn(() => ({})),
@@ -85,7 +83,7 @@ describe('LibrariesList', () => {
             comp.update();
         });
 
-        expect(comp.find(LibraryCard)).toHaveLength(1);
+        expect(comp.find('LibraryCard')).toHaveLength(1);
     });
 
     test("shouldn't call LibraryDetail", async () => {
@@ -104,6 +102,6 @@ describe('LibrariesList', () => {
             comp.update();
         });
 
-        expect(comp.find(LibraryDetail)).toHaveLength(0);
+        expect(comp.find('LibraryDetail')).toHaveLength(0);
     });
 });

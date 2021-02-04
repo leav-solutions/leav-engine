@@ -30,7 +30,7 @@ describe('AttributeLinkedTree', () => {
                     stateListAttribute={{...ListAttributeInitialState, lang: ['fr']}}
                     dispatchListAttribute={jest.fn()}
                     depth={0}
-                    isChecked={true}
+                    isChecked
                 />
             );
         });

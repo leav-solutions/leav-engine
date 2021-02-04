@@ -12,7 +12,7 @@ export enum ListAttributeReducerActionTypes {
     RESET = 'RESET'
 }
 
-export interface ListAttributeState {
+export interface IListAttributeState {
     lang: any;
     accordionsActive: IAccordionActive[];
     newAttributes: IAttribute[];
@@ -22,7 +22,7 @@ export interface ListAttributeState {
     changeSelected?: (attId: IAttributeSelected) => void;
 }
 
-export const ListAttributeInitialState: ListAttributeState = {
+export const ListAttributeInitialState: IListAttributeState = {
     attributesChecked: [],
     lang: null,
     accordionsActive: [],
@@ -55,9 +55,9 @@ export type ListAttributeReducerAction =
       };
 
 export const ListAttributeReducer = (
-    state: ListAttributeState,
+    state: IListAttributeState,
     action: ListAttributeReducerAction
-): ListAttributeState => {
+): IListAttributeState => {
     switch (action.type) {
         case ListAttributeReducerActionTypes.SET_ATTRIBUTE_SELECTED:
             return {...state, attributeSelected: action.attributeSelected};

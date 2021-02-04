@@ -31,7 +31,7 @@ describe('RecordPreview', () => {
     test('Show initial with random color if no color', async () => {
         const comp = mount(<RecordPreview color={null} image={null} label="TestLabel" />);
 
-        expect(comp.find('GeneratedPreview')).toHaveStyleRule('background-color', /^\#[0-9A-Fa-f]{6}$/);
+        expect(comp.find('GeneratedPreview')).toHaveStyleRule('background-color', /^#[0-9A-Fa-f]{6}$/);
     });
 
     test('Show uppercase initial', async () => {

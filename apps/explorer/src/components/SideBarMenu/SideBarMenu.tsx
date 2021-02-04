@@ -50,11 +50,11 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
         }
 
         if (routes.library.list === location.pathname) {
-            setSelectedKey([`list-library`]);
+            setSelectedKey(['list-library']);
         }
 
         if (routes.navigation.listTree === location.pathname) {
-            setSelectedKey([`navigation`]);
+            setSelectedKey(['navigation']);
         }
     }, [location, setSelectedKey, activeLib, activeTree]);
 

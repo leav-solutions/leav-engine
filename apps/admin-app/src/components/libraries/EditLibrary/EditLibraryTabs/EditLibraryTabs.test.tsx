@@ -18,7 +18,7 @@ jest.mock('../../../../hooks/useUserData', () => ({
     default: jest.fn(() => ({
         id: 1,
         name: 'Test',
-        permissions: {['app_access_forms']: true}
+        permissions: {'app_access_forms': true}
     }))
 }));
 
@@ -112,7 +112,7 @@ describe('EditLibraryForm', () => {
         (useUserData as jest.Mock).mockImplementation(() => ({
             id: 1,
             name: 'Test',
-            permissions: {['app_access_forms']: false}
+            permissions: {'app_access_forms': false}
         }));
 
         const comp = shallow(

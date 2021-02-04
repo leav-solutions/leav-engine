@@ -57,7 +57,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
             label: recordLabel
         };
 
-        let newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
+        const newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
 
         dispatchNavigation(setPath(newPath));
 
@@ -97,8 +97,8 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
                 </>
             ) : (
                 <>
-                    <div></div>
-                    <div></div>
+                    <div />
+                    <div />
                 </>
             )}
         </Cell>

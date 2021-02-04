@@ -9,15 +9,15 @@ import themingVar from '../../../../themingVar';
 import {getPreviewUrl} from '../../../../utils';
 import {IItem} from '../../../../_types/types';
 import {
+    ILibraryItemListState,
     LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes,
-    LibraryItemListState
+    LibraryItemListReducerActionTypes
 } from '../../LibraryItemsListReducer';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 
 interface IItemTileDisplayProps {
     item: IItem;
-    stateItems: LibraryItemListState;
+    stateItems: ILibraryItemListState;
     dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
     showRecordEdition: (item: IItem) => void;
 }
@@ -166,7 +166,7 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
                     <RecordPreview
                         label={item.label || item.id}
                         image={item.preview?.medium ? getPreviewUrl(item.preview.medium) : ''}
-                        tile={true}
+                        tile
                     />
                 </ImageWrapper>
             }
