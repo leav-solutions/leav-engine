@@ -1,0 +1,31 @@
+{
+  "name": "@leav/app-root-path",
+  "version": "1.0.0",
+  "description": "Module to get app root path",
+  "scripts": {
+    "test": "jest -c jest-config.json",
+    "prepublishOnly": "npm run build",
+    "build": "tsc --build",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p ."
+  },
+  "main": "dist/index",
+  "keywords": [
+    "config",
+    "configuration",
+    "settings"
+  ],
+  "author": "",
+  "license": "LGPL3",
+  "devDependencies": {
+    "@types/jest": "^25.2.2",
+    "eslint": "^7.0.0",
+    "jest": "25",
+    "prettier": "^2.0.5",
+    "ts-jest": "25",
+    "typescript": "4.1.3"
+  },
+  "dependencies": {
+    "app-root-path": "3.0.0"
+  }
+}
