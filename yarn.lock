@@ -13263,7 +13263,6 @@ __metadata:
     "@apollo/react-hoc": ^3.1.5
     "@apollo/react-testing": ^3.1.4
     "@craco/craco": ^5.6.4
-    "@rushstack/eslint-patch": 1.0.6
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.5.0
     "@testing-library/user-event": ^7.2.1
@@ -13290,9 +13289,6 @@ __metadata:
     craco-less: ^1.17.0
     enzyme: ^3.11.0
     enzyme-adapter-react-16: ^1.15.3
-    eslint-config-react-app: 6.0.0
-    eslint-plugin-jsdoc: 30.7.9
-    eslint-plugin-react: 7.21.5
     graphql: 15.0.0
     graphql-tag: ^2.11.0
     gulp: ^4.0.2
