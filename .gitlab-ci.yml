@@ -1,4 +1,20 @@
-image: node:14-alpine
+##### Common settings #####
+.common-cache-settings: &common-cache-settings
+    key: ${CI_COMMIT_REF_SLUG}
+    untracked: true
+    paths:
+        - .yarn
+        - node_modules/
+        - 'apps/*/node_modules/'
+        - 'libs/*/node_modules/'
+
+.node-image: &node-image node:14-alpine
+
+.before-script-common: &before-script-common
+    before_script:
+        - yarn install
+############################
+image: *node-image
 
 stages:
     - prepare
@@ -8,17 +24,6 @@ stages:
 # include:
 #   - project: 'infra/shared_ci'
 #     file: '/omnipublish-v6.yml'
-
-.common-cache-settings: &common-cache-settings
-    key:
-        files:
-            - yarn.lock
-    untracked: true
-    paths:
-        - .yarn
-        - node_modules/
-        - 'apps/*/node_modules/'
-        - 'libs/*/node_modules/'
 
 # This will apply to all jobs except installDeps, which its own cache settings
 cache:
@@ -32,10 +37,6 @@ installDeps:
     cache:
         <<: *common-cache-settings
         policy: pull-push
-
-.before-script-common: &before-script-common
-    before_script:
-        - yarn install
 
 lint:
     stage: test
@@ -57,25 +58,23 @@ unitTests:
     script:
         - yarn test
 
-# e2eApi:
-#     stage: test
-#     image: node:14-alpine
-#     services:
-#         - arangodb:3.7
-#         - rabbitmq:3-management-alpine
-#     variables:
-#         NODE_ENV: test
-#         ARANGO_NO_AUTH: 1
-#         ARANGO_URL: 'http://root:@arangodb:8529'
-#         AUTH_KEY: 123456789
-#         AMQP_HOST: rabbitmq
-#         AMQP_USERNAME: guest
-#         AMQP_PASSWORD: guest
-#     before_script:
-#         - npm config set _auth $NEXUS_AUTH
-#         - npm install
-#     script:
-#         - npm run test:e2e:api
+e2eApi:
+    stage: test
+    services:
+        - arangodb:3.7
+        - rabbitmq:3-management-alpine
+    variables:
+        NODE_ENV: test
+        ARANGO_NO_AUTH: 1
+        ARANGO_URL: 'http://root:@arangodb:8529'
+        AUTH_KEY: 123456789
+        AMQP_HOST: rabbitmq
+        AMQP_USERNAME: guest
+        AMQP_PASSWORD: guest
+    <<: *before-script-common
+    script:
+        - cd apps/core/
+        - yarn run test:e2e:api
 
 # e2eIndexationManager:
 #     stage: test
