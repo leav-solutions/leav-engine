@@ -28,6 +28,7 @@
         "typescript": "^3.8.3"
     },
     "dependencies": {
+        "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
         "amqplib": "^0.5.5",
         "apollo-cache-inmemory": "^1.6.5",

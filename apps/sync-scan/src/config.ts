@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
-import * as rootPath from 'app-root-path';
 import * as Joi from 'joi';
 import {IConfig} from '_types/config';
 import {env as appEnv} from './env';
@@ -62,7 +62,7 @@ const checkConfig = (conf: IConfig) => {
 export const getConfig = async (): Promise<IConfig> => {
     const definedEnv: string = appEnv || '';
 
-    const conf = await loadConfig<IConfig>(rootPath.path + '/apps/sync-scan/config', definedEnv);
+    const conf = await loadConfig<IConfig>(appRootPath() + '/config', definedEnv);
 
     checkConfig(conf);
 

@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
-import * as rootPath from 'app-root-path';
 import * as Crypto from 'crypto';
 import * as fs from 'fs';
 import {env} from '../env';
@@ -12,8 +12,7 @@ import {createClient} from '../redis/redis';
 import {IConfig} from '../types';
 import {start} from '../watch/watch';
 
-export const getConfig = async (): Promise<IConfig> =>
-    loadConfig<IConfig>(rootPath.path + '/apps/automate-scan/config', env);
+export const getConfig = async (): Promise<IConfig> => loadConfig<IConfig>(appRootPath() + '/config', env);
 
 export const startWatch = async () => {
     const config = await getConfig();
@@ -26,7 +25,11 @@ export const startWatch = async () => {
 
     // We take the rootKey from the config file
     // or we create a hash of the rootPath if no rootKey
-    const rootKey = config.rootKey || Crypto.createHash('md5').update(config.rootPath).digest('hex');
+    const rootKey =
+        config.rootKey ||
+        Crypto.createHash('md5')
+            .update(config.rootPath)
+            .digest('hex');
 
     createClient(config.redis.host, config.redis.port);
 

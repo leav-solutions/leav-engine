@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Joi from '@hapi/joi';
+import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
-import * as rootPath from 'app-root-path';
 import {IConfig} from '_types/config';
 import {env as appEnv} from './env';
 
@@ -27,12 +27,16 @@ export const validateConfig = (conf: IConfig) => {
             tokenExpiration: Joi.string().required()
         }),
         lang: Joi.object().keys({
-            available: Joi.array().items(Joi.string()).required(),
+            available: Joi.array()
+                .items(Joi.string())
+                .required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
             level: Joi.string().required(),
-            transport: Joi.array().items(Joi.string()).required(),
+            transport: Joi.array()
+                .items(Joi.string())
+                .required(),
             destinationFile: Joi.string()
         }),
         permissions: Joi.object().keys({
@@ -79,7 +83,9 @@ export const validateConfig = (conf: IConfig) => {
         }),
         debug: Joi.boolean(),
         env: Joi.string(),
-        plugins: Joi.object().keys().unknown()
+        plugins: Joi.object()
+            .keys()
+            .unknown()
     });
 
     const isValid = configSchema.validate(conf);
@@ -101,7 +107,7 @@ export const validateConfig = (conf: IConfig) => {
  */
 export const getConfig = async (folder?: string): Promise<any> => {
     const definedEnv: string = appEnv;
-    const confRootFolder = folder ?? rootPath.path + '/apps/core';
+    const confRootFolder = folder ?? appRootPath();
     const conf = await loadConfig<any>(confRootFolder + '/config', definedEnv);
 
     return conf;

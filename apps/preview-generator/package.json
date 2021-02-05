@@ -33,6 +33,7 @@
         "typescript": "^3.6.4"
     },
     "dependencies": {
+        "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
         "@types/amqplib": "^0.5.13",
         "@types/uuid": "^3.4.6",

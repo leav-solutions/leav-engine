@@ -64,6 +64,7 @@
     "@hapi/hapi": "^18.4.1",
     "@hapi/inert": "^5.2.2",
     "@hapi/joi": "^17.1.1",
+    "@leav/app-root-path": "workspace:libs/app-root-path",
     "@leav/config-manager": "workspace:libs/config-manager",
     "amqplib": "^0.5.5",
     "apollo-server": "^2.7.0",
