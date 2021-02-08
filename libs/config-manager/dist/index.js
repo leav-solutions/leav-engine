@@ -1,41 +1,30 @@
-'use strict';
-const __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) {
-k2 = k;
-}
-    Object.defineProperty(o, k2, {enumerable: true, get() {
- return m[k];
-}});
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
-    if (k2 === undefined) {
-k2 = k;
-}
+    if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-const __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, 'default', {enumerable: true, value: v});
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
 }) : function(o, v) {
-    o.default = v;
+    o["default"] = v;
 });
-const __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) {
-return mod;
-}
-    const result = {};
-    if (mod != null) {
-for (const k in mod) {
-if (k !== 'default' && Object.prototype.hasOwnProperty.call(mod, k)) {
-__createBinding(result, mod, k);
-}
-}
-}
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
-Object.defineProperty(exports, '__esModule', {value: true});
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadConfig = void 0;
-const fs = __importStar(require('fs'));
-const path = __importStar(require('path'));
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 /**
  * Load config file for given env
  *
@@ -69,11 +58,12 @@ const _mergeDeep = function (target, ...sources) {
         for (const key in source) {
             if (_isObject(source[key])) {
                 if (!target[key]) {
-                    Object.assign(target, {[key]: {}});
+                    Object.assign(target, { [key]: {} });
                 }
                 _mergeDeep(target[key], source[key]);
-            } else {
-                Object.assign(target, {[key]: source[key]});
+            }
+            else {
+                Object.assign(target, { [key]: source[key] });
             }
         }
     }

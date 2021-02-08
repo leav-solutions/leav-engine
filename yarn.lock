@@ -3327,15 +3327,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@leav/app-root-path@workspace:libs/app-root-path":
+  version: 0.0.0-use.local
+  resolution: "@leav/app-root-path@workspace:libs/app-root-path"
+  dependencies:
+    "@types/jest": ^25.2.2
+    app-root-path: 3.0.0
+    eslint: ^7.0.0
+    jest: 25
+    prettier: ^2.0.5
+    ts-jest: 25
+    typescript: 4.1.3
+  languageName: unknown
+  linkType: soft
+
 "@leav/config-manager@workspace:libs/config-manager":
   version: 0.0.0-use.local
   resolution: "@leav/config-manager@workspace:libs/config-manager"
   dependencies:
     "@types/jest": ^25.2.2
     eslint: ^7.0.0
-    jest: ^26.0.1
+    jest: 25
     prettier: ^2.0.5
-    ts-jest: ^26.0.0
+    ts-jest: 25
     typescript: 4.1.3
   languageName: unknown
   linkType: soft
@@ -4839,7 +4853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:26.x":
+"@types/jest@npm:*":
   version: 26.0.20
   resolution: "@types/jest@npm:26.0.20"
   dependencies:
@@ -7520,7 +7534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-root-path@npm:^3.0.0":
+"app-root-path@npm:3.0.0, app-root-path@npm:^3.0.0":
   version: 3.0.0
   resolution: "app-root-path@npm:3.0.0"
   checksum: c4799a164ff9d3887654bcdaf32d1c84fddb326ba42ada30fbd26d8339a83f36dd490760a09c22fee86528a754f9f4997628cc962b8b33b4e2e7329c6333c74f
@@ -8038,6 +8052,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "automate-scan@workspace:apps/automate-scan"
   dependencies:
+    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@types/amqplib": ^0.5.13
     "@types/chokidar": ^2.1.3
@@ -10391,6 +10406,7 @@ __metadata:
     "@hapi/hapi": ^18.4.1
     "@hapi/inert": ^5.2.2
     "@hapi/joi": ^17.1.1
+    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@types/amqplib": ^0.5.13
     "@types/debug": 0.0.30
@@ -10426,6 +10442,7 @@ __metadata:
     i18next: ^19.0.3
     i18next-fs-backend: ^1.0.7
     jest: 25
+    jest-cli: 24
     jsonwebtoken: ^8.2.2
     license-check-and-add: ^3.0.4
     lint-staged: ^7.1.3
@@ -17009,7 +17026,7 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"jest-cli@npm:^24.9.0":
+"jest-cli@npm:24, jest-cli@npm:^24.9.0":
   version: 24.9.0
   resolution: "jest-cli@npm:24.9.0"
   dependencies:
@@ -17056,7 +17073,7 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"jest-cli@npm:^26.6.0, jest-cli@npm:^26.6.3":
+"jest-cli@npm:^26.6.0":
   version: 26.6.3
   resolution: "jest-cli@npm:26.6.3"
   dependencies:
@@ -18145,7 +18162,7 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"jest-util@npm:^26.1.0, jest-util@npm:^26.6.0, jest-util@npm:^26.6.2":
+"jest-util@npm:^26.6.0, jest-util@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-util@npm:26.6.2"
   dependencies:
@@ -18355,19 +18372,6 @@ fsevents@2.1.2:
   bin:
     jest: bin/jest.js
   checksum: 5db020fa88bc87ff4c8373be02605a3a42256b59151b30b22955dfa92142516150abf0e969fe8847bdf2bf0fbb338a1c93954b808fc8d7b0933f4bb15f1e0500
-  languageName: node
-  linkType: hard
-
-"jest@npm:^26.0.1":
-  version: 26.6.3
-  resolution: "jest@npm:26.6.3"
-  dependencies:
-    "@jest/core": ^26.6.3
-    import-local: ^3.0.2
-    jest-cli: ^26.6.3
-  bin:
-    jest: bin/jest.js
-  checksum: 4ffcfefa2b30999a71c205e1aacf2b3d7af10f36c17ba1baf45677684116ad5aa6a5bb162ad2dd418f9ea99d18f24b70d8c83fb317b765a3acac361a50e9db9f
   languageName: node
   linkType: hard
 
@@ -19662,7 +19666,7 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.20, lodash@npm:4.x, lodash@npm:>=3.5 <5, lodash@npm:^4.17.11, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.5, lodash@npm:^4.6.1, lodash@npm:~4.17.10":
+"lodash@npm:4.17.20, lodash@npm:>=3.5 <5, lodash@npm:^4.17.11, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.5, lodash@npm:^4.6.1, lodash@npm:~4.17.10":
   version: 4.17.20
   resolution: "lodash@npm:4.17.20"
   checksum: c62101d2500c383b5f174a7e9e6fe8098149ddd6e9ccfa85f36d4789446195f5c4afd3cfba433026bcaf3da271256566b04a2bf2618e5a39f6e67f8c12030cb6
@@ -20396,7 +20400,7 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:1.0.4, mkdirp@npm:1.x, mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
+"mkdirp@npm:1.0.4, mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
   version: 1.0.4
   resolution: "mkdirp@npm:1.0.4"
   bin:
@@ -23122,6 +23126,7 @@ fsevents@2.1.2:
   version: 0.0.0-use.local
   resolution: "preview-generator@workspace:apps/preview-generator"
   dependencies:
+    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@types/amqplib": ^0.5.13
     "@types/jest": ^24.0.23
@@ -25942,7 +25947,7 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
-"semver@npm:7.x, semver@npm:^7.2.1, semver@npm:^7.3.2, semver@npm:^7.3.4":
+"semver@npm:^7.2.1, semver@npm:^7.3.2, semver@npm:^7.3.4":
   version: 7.3.4
   resolution: "semver@npm:7.3.4"
   dependencies:
@@ -27267,6 +27272,7 @@ resolve@1.18.1:
   version: 0.0.0-use.local
   resolution: "sync-scan@workspace:apps/sync-scan"
   dependencies:
+    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@types/amqplib": ^0.5.13
     "@types/jest": ^25.1.4
@@ -27875,30 +27881,6 @@ resolve@1.18.1:
   bin:
     ts-jest: cli.js
   checksum: 657ced9ab8336c0bf3c2168c891a261d1ecb9812855c23bc3784216b50b34a4c8468c76452bdf6242e955d734f362a755f71aef126ebe89be8e1124390743790
-  languageName: node
-  linkType: hard
-
-"ts-jest@npm:^26.0.0":
-  version: 26.5.0
-  resolution: "ts-jest@npm:26.5.0"
-  dependencies:
-    "@types/jest": 26.x
-    bs-logger: 0.x
-    buffer-from: 1.x
-    fast-json-stable-stringify: 2.x
-    jest-util: ^26.1.0
-    json5: 2.x
-    lodash: 4.x
-    make-error: 1.x
-    mkdirp: 1.x
-    semver: 7.x
-    yargs-parser: 20.x
-  peerDependencies:
-    jest: ">=26 <27"
-    typescript: ">=3.8 <5.0"
-  bin:
-    ts-jest: cli.js
-  checksum: 5932ba26136feb4edac746609198fcebf2dcf865dcfbf64f54b7cc97aea61529d52660de8d0d500b1c9b5e3e5a29540458c195f8a4190f2edb67846a1423d922
   languageName: node
   linkType: hard
 
@@ -30207,13 +30189,6 @@ typescript@4.1.3:
     camelcase: ^5.0.0
     decamelize: ^1.2.0
   checksum: 33871721679053cc38165afc6356c06c3e820459589b5db78f315886105070eb90cbb583cd6515fa4231937d60c80262ca2b7c486d5942576802446318a39597
-  languageName: node
-  linkType: hard
-
-"yargs-parser@npm:20.x":
-  version: 20.2.4
-  resolution: "yargs-parser@npm:20.2.4"
-  checksum: 00dd0f23b608aa16962f1b73ac6c461ae6c97e8e85ad24b0c9adfeb5ef20a93a484ba858a6a3200f487478427db27d555d7772463d793d6c27b1b8b614cf3d7e
   languageName: node
   linkType: hard
 

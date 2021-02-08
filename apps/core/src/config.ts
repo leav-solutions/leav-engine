@@ -108,7 +108,8 @@ export const validateConfig = (conf: IConfig) => {
 export const getConfig = async (folder?: string): Promise<any> => {
     const definedEnv: string = appEnv;
     const confRootFolder = folder ?? appRootPath();
-    const conf = await loadConfig<any>(confRootFolder + '/config', definedEnv);
+    const confFolder = confRootFolder + '/config';
 
+    const conf = await loadConfig<any>(confFolder, definedEnv);
     return conf;
 };

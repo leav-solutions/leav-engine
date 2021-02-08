@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import appRoot from 'app-root-path';
+import {appRootPath} from '@leav/app-root-path';
 import {Database} from 'arangojs';
 import {promises as fs} from 'fs';
 import path from 'path';
@@ -13,7 +13,7 @@ import {initPlugins} from '../../../pluginsLoader';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
-    const pluginsFolder = path.resolve(appRoot + '/apps/core/src/plugins/');
+    const pluginsFolder = path.resolve(appRootPath + '/src/plugins/');
     const fakePluginSrc = `${__dirname}/_fixtures/fakeplugin`;
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);

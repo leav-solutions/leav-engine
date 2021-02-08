@@ -17,7 +17,6 @@
 image: *node-image
 
 stages:
-    - prepare
     - test
     # - deploy
 
@@ -29,14 +28,6 @@ stages:
 cache:
     <<: *common-cache-settings
     policy: pull
-
-installDeps:
-    stage: prepare
-    script:
-        - yarn install
-    cache:
-        <<: *common-cache-settings
-        policy: pull-push
 
 lint:
     stage: test
@@ -70,7 +61,8 @@ e2eApi:
         AUTH_KEY: 123456789
         AMQP_HOST: rabbitmq
         AMQP_USERNAME: guest
-        AMQP_PASSWORD: guest
+        AMQP_PWD: guest
+        APP_ROOT_PATH: .
     <<: *before-script-common
     script:
         - cd apps/core/
