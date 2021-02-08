@@ -1,15 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import Mock from '@elastic/elasticsearch-mock';
+import {IConfig} from '_types/config';
 import Client from './elasticsearch';
 import elasticsearchService from './elasticsearchService';
-import Mock from '@elastic/elasticsearch-mock';
-import {getConfig} from '../../config';
 
 describe('ElasticsearchService', () => {
+    const conf: Mockify<IConfig> = {
+        elasticsearch: {
+            url: 'http://fake.url'
+        }
+    };
     test('Should run multimatch_search', async () => {
         const mock = new Mock();
-        const conf = await getConfig();
 
         const client = Client({
             config: {
@@ -35,7 +39,6 @@ describe('ElasticsearchService', () => {
     });
 
     test('indiceGetMapping', async () => {
-        const conf = await getConfig();
         const mock = new Mock();
 
         const client = Client({
@@ -62,7 +65,6 @@ describe('ElasticsearchService', () => {
     });
 
     test('indiceExists', async () => {
-        const conf = await getConfig();
         const mock = new Mock();
 
         const client = Client({
@@ -89,7 +91,6 @@ describe('ElasticsearchService', () => {
     });
 
     test('index', async () => {
-        const conf = await getConfig();
         const mock = new Mock();
 
         const client = Client({
@@ -115,7 +116,6 @@ describe('ElasticsearchService', () => {
     });
 
     test('update', async () => {
-        const conf = await getConfig();
         const mock = new Mock();
 
         const client = Client({
@@ -141,7 +141,6 @@ describe('ElasticsearchService', () => {
     });
 
     test('delete', async () => {
-        const conf = await getConfig();
         const mock = new Mock();
 
         const client = Client({
@@ -167,7 +166,6 @@ describe('ElasticsearchService', () => {
     });
 
     test('indiceDelete', async () => {
-        const conf = await getConfig();
         const mock = new Mock();
 
         const client = Client({
@@ -193,7 +191,6 @@ describe('ElasticsearchService', () => {
     });
 
     test('deleteDocument', async () => {
-        const conf = await getConfig();
         const mock = new Mock();
 
         const client = Client({

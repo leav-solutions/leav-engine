@@ -22,7 +22,6 @@ describe('appRootPath', () => {
     });
 
     test('Determine path from app location', async () => {
-        // process.env.APP_ROOT_PATH = undefined;
         expect(appRootPath()).toBe('path/from/deps');
     });
 

@@ -6,9 +6,8 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
-import * as Config from '_types/config';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {getConfig} from '../../config';
 import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
 import indexationManager from './indexationManagerDomain';
 
@@ -28,19 +27,41 @@ const ctx: IQueryInfos = {
 };
 
 describe('Indexation Manager', () => {
-    test('Init message listening', async () => {
-        const conf = await getConfig();
+    const conf: Mockify<IConfig> = {
+        indexationManager: {
+            queues: {
+                events: 'events_queue'
+            }
+        },
+        amqp: {
+            exchange: 'test_exchange',
+            connOpt: {
+                protocol: 'amqp',
+                hostname: 'localhost',
+                username: 'user',
+                password: 'user',
+                port: 1234
+            },
+            type: 'direct'
+        },
+        eventsManager: {
+            routingKeys: {
+                events: 'test_routing_key'
+            }
+        }
+    };
 
+    test('Init message listening', async () => {
         const amqpServ = amqpService({
             'core.infra.amqp': {
                 connection: null,
                 channel: mockAmqpChannel as amqp.ConfirmChannel
             },
-            config: conf as Config.IConfig
+            config: conf as IConfig
         });
 
         const indexation = indexationManager({
-            config: conf as Config.IConfig,
+            config: conf as IConfig,
             'core.infra.amqp.amqpService': amqpServ as IAmqpService
         });
 
@@ -50,8 +71,6 @@ describe('Indexation Manager', () => {
     });
 
     test('index database', async () => {
-        const conf = await getConfig();
-
         const mockElasticsearchService: Mockify<IElasticsearchService> = {
             index: jest.fn()
         };
@@ -81,7 +100,7 @@ describe('Indexation Manager', () => {
         };
 
         const indexation = indexationManager({
-            config: conf as Config.IConfig,
+            config: conf as IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
             'core.domain.library': mockLibraryDomain as ILibraryDomain,
