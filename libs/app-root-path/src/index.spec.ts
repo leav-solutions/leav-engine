@@ -18,15 +18,15 @@ describe('appRootPath', () => {
 
     test('Return path from env variable', async () => {
         process.env.APP_ROOT_PATH = 'path/from/variable';
-        expect(appRootPath()).toBe('path/from/variable');
+        expect(appRootPath()).toMatch(new RegExp(/path\/from\/variable$/));
     });
 
     test('Determine path from app location', async () => {
-        expect(appRootPath()).toBe('path/from/deps');
+        expect(appRootPath()).toMatch(new RegExp(/path\/from\/deps$/));
     });
 
     test('Remove trailing slashes', async () => {
         process.env.APP_ROOT_PATH = 'path/from/variable/';
-        expect(appRootPath()).toBe('path/from/variable');
+        expect(appRootPath()).toMatch(new RegExp(/path\/from\/variable$/));
     });
 });

@@ -18,16 +18,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appRootPath = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const rootPath = __importStar(require("app-root-path"));
+const path_1 = __importDefault(require("path"));
 const appRootPath = () => {
     var _a;
-    const path = (_a = process.env.APP_ROOT_PATH) !== null && _a !== void 0 ? _a : rootPath.path;
-    return path[path.length - 1] === '/' ? path.substr(0, path.length - 1) : path;
+    return path_1.default.resolve((_a = process.env.APP_ROOT_PATH) !== null && _a !== void 0 ? _a : rootPath.path);
 };
 exports.appRootPath = appRootPath;
 //# sourceMappingURL=index.js.map
