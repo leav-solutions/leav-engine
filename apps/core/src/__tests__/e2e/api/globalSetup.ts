@@ -13,7 +13,7 @@ import {initPlugins} from '../../../pluginsLoader';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
-    const pluginsFolder = path.resolve(appRootPath + '/src/plugins/');
+    const pluginsFolder = path.resolve(appRootPath() + '/src/plugins/');
     const fakePluginSrc = `${__dirname}/_fixtures/fakeplugin`;
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);
@@ -22,6 +22,11 @@ const _setupFakePlugin = async () => {
         await fs.symlink(relativePath, fakePluginDest);
     } catch (e) {
         // It's ok, already exists
+        if (e.code === 'EEXIST') {
+            return;
+        }
+
+        console.error(e);
     }
 };
 

@@ -2,10 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICorePluginsApp} from 'app/core/pluginsApp';
-import {AwilixContainer} from 'awilix';
+import {asValue, AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import {IExtensionPoints} from '_types/extensionPoints';
 import {IAppModule} from '_types/shared';
+import {getConfig} from './config';
 
 export const initPlugins = async (folder: string, depsManager: AwilixContainer) => {
     const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];
@@ -42,6 +43,17 @@ export const initPlugins = async (folder: string, depsManager: AwilixContainer) 
 
         const importedPlugin = await import(folder + '/' + pluginName);
         const defaultExport = importedPlugin.default;
+
+        // Load plugin config
+        const pluginConf = await getConfig(`${folder}/${pluginName}`);
+        const newConf = {
+            ...depsManager.cradle.config,
+            plugins: {
+                ...depsManager.cradle.config.plugins,
+                [pluginName]: pluginConf
+            }
+        };
+        depsManager.register('config', asValue(newConf));
 
         // Default export must be a function that takes deps as the only parameter
         if (typeof defaultExport === 'function') {

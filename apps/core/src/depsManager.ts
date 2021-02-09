@@ -21,11 +21,11 @@ const _registerModules = async (
 ): Promise<AwilixContainer> => {
     // We only consider index files so that we explicity declare what we want to make available
     // in dependency injector. This allows to have some helper files kept private inside a module.
-    const coreModulesList: ModuleDescriptor[] = listModules(glob, {
+    const modulesList: ModuleDescriptor[] = listModules(glob, {
         cwd: folder
     });
 
-    for (const mod of coreModulesList) {
+    for (const mod of modulesList) {
         const relativePath = mod.path.split(folder + '/').join('');
 
         // Import module
@@ -88,10 +88,7 @@ export async function init(additionalModulesToRegister?: {
 
     await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
 
-    const pluginConf = await getConfig(pluginsFolder + '/omnipublish');
-    pluginsContainer.register('config', asValue({...coreConf, plugins: {omnipublish: pluginConf}}));
-
-    // Register this at the very end because we don't plugins to access the deps manager
+    // Register this at the very end because we don't want plugins to access the deps manager
     coreContainer.register('core.depsManager', asValue(coreContainer));
 
     return {coreContainer, pluginsContainer};
