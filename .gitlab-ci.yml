@@ -61,7 +61,7 @@ unitTests:
     variables:
         SKIP_PREFLIGHT_CHECK: 'true'
     script:
-        - yarn test
+        - yarn test --all
 
 e2eApi:
     stage: test

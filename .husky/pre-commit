@@ -11,4 +11,4 @@ echo "\n Checking staged files..."
 yarn lint-staged
 
 echo "\n Running tests..."
-node scripts/testChangedProjects.js --staged
+yarn run test --staged

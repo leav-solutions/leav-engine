@@ -9,32 +9,40 @@ const packagesFolders = ['apps', 'libs'];
 (async () => {
     const rootPath = `${__dirname}/../`;
     const isStagedFiles = process.argv[2] === '--staged';
+    const isAllProjects = process.argv[2] === '--all';
     try {
-        // Get changed files
-        let gitCmd = 'git diff --diff-filter=ACMR --name-only';
-        if (isStagedFiles) {
-            gitCmd += ' --staged';
-        }
-
-        const {stdout, stderr} = await exec(gitCmd);
-
-        if (stderr) {
-            throw new Error(stderr);
-        }
-
-        // Extract project name from each changed files
         const changedPackages = new Set();
-        for (const filepath of stdout.split('\n')) {
-            if (!filepath || !filepath.match(`^(${packagesFolders.join('|')})`)) {
-                continue;
+
+        if (!isAllProjects) {
+            // Get changed files
+            let gitCmd = 'git diff --diff-filter=ACMR --name-only';
+            if (isStagedFiles) {
+                gitCmd += ' --staged';
             }
 
-            const [rootFolder, projectFolder] = filepath.split('/');
+            const {stdout, stderr} = await exec(gitCmd);
 
-            const packageJson = require(`${rootPath}/${rootFolder}/${projectFolder}/package.json`);
-            const packageName = packageJson.name;
+            if (stderr) {
+                throw new Error(stderr);
+            }
 
-            changedPackages.add(packageName);
+            // Extract project name from each changed files
+            for (const filepath of stdout.split('\n')) {
+                if (!filepath || !filepath.match(`^(${packagesFolders.join('|')})`)) {
+                    continue;
+                }
+
+                const [rootFolder, projectFolder] = filepath.split('/');
+
+                const packageJson = require(`${rootPath}/${rootFolder}/${projectFolder}/package.json`);
+                const packageName = packageJson.name;
+
+                changedPackages.add(packageName);
+            }
+        }
+
+        if (!changedPackages.size && !isAllProjects) {
+            process.exit(0);
         }
 
         const includeCmd = [];
@@ -44,9 +52,13 @@ const packagesFolders = ['apps', 'libs'];
         }
 
         // Run tests
-        const testRunProcess = spawn('yarn', ['workspaces', 'foreach', '-v', ...includeCmd, 'run', 'test'], {
-            stdio: 'inherit'
-        });
+        const testRunProcess = spawn(
+            'yarn',
+            ['workspaces', 'foreach', '-v', ...includeCmd, '--exclude', 'leav-monorepo', 'run', 'test'],
+            {
+                stdio: 'inherit'
+            }
+        );
 
         testRunProcess.on('exit', code => {
             process.exit(code);
