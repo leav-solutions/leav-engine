@@ -7,7 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {isLinkAttribute, isValueNull, localizedLabel} from '../../../../utils';
-import {GET_LIBRARIES_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {IGenericValue, ILinkValue, ITreeLinkValue, IValue, RecordData, RecordEdition} from '../../../../_types/records';
@@ -15,7 +15,7 @@ import FormFieldWrapper from '../../../shared/FormFieldWrapper';
 import LinksField from '../../FormFields/LinksField';
 
 interface ICreateRecordFormProps {
-    attributes: {[attributeId: string]: GET_LIBRARIES_libraries_list_attributes};
+    attributes: {[attributeId: string]: GET_LIB_BY_ID_libraries_list_attributes};
     errors?: IEditRecordFormError;
     onSave: (values: RecordData) => void;
     setSubmitFuncRef?: RecordEdition.SetSubmitFuncRef;
@@ -54,7 +54,7 @@ const CreateRecordForm = ({
 }: ICreateRecordFormProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
-    const _isAttributeReadOnly = (attribute: GET_LIBRARIES_libraries_list_attributes): boolean => {
+    const _isAttributeReadOnly = (attribute: GET_LIB_BY_ID_libraries_list_attributes): boolean => {
         return attribute.system;
     };
 
@@ -105,7 +105,7 @@ const CreateRecordForm = ({
         };
 
         const _renderValueField = (
-            attr: GET_LIBRARIES_libraries_list_attributes,
+            attr: GET_LIB_BY_ID_libraries_list_attributes,
             fieldValues: IGenericValue[],
             readonly: boolean
         ) => {
@@ -167,7 +167,7 @@ const CreateRecordForm = ({
         return (
             <Form onSubmit={handleSubmit}>
                 {Object.keys(attributes).map(attrId => (
-                    <FormFieldWrapper key={attrId} error={(errors[attrId] && errors[attrId].message) || ''}>
+                    <FormFieldWrapper key={attrId} error={errors[attrId]?.message ?? ''}>
                         {_renderValueField(
                             attributes[attrId],
                             values[attrId],

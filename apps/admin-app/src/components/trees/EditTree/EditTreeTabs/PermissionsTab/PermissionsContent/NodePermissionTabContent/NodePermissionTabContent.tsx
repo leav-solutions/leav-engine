@@ -23,23 +23,26 @@ import PermissionsAttributesSelector from '../../../../../../permissions/Permiss
 
 interface INodePermissionTabContentProps {
     tree: GET_TREE_BY_ID_trees_list;
-    library: GET_TREE_BY_ID_trees_list_libraries;
+    treeLibraries: GET_TREE_BY_ID_trees_list_libraries;
     onSubmitSettings: (library: string, conf: Treepermissions_confInput) => void;
     readonly: boolean;
 }
 
 function NodePermissionTabContent({
     readonly,
-    library,
+    treeLibraries,
     tree,
     onSubmitSettings
 }: INodePermissionTabContentProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
-    const _handleSubmit = (conf: Treepermissions_confInput) => onSubmitSettings(library.id, conf);
+    const _handleSubmit = (conf: Treepermissions_confInput) => onSubmitSettings(treeLibraries.library.id, conf);
 
-    const attributes = library.attributes ? library.attributes.filter(a => a.type === AttributeType.tree) : [];
-    const treePermsConf = tree.permissions_conf?.filter(p => p.libraryId === library.id)?.[0]?.permissionsConf ?? null;
+    const attributes = treeLibraries.library.attributes
+        ? treeLibraries.library.attributes.filter(a => a.type === AttributeType.tree)
+        : [];
+    const treePermsConf =
+        tree.permissions_conf?.filter(p => p.libraryId === treeLibraries.library.id)?.[0]?.permissionsConf ?? null;
 
     const permissionsPanes = treePermsConf?.permissionTreeAttributes
         ? treePermsConf?.permissionTreeAttributes.map(a => ({
@@ -54,7 +57,7 @@ function NodePermissionTabContent({
                                   a as GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
                               }
                               permissionType={PermissionTypes.tree_node}
-                              applyTo={`${tree.id}/${library.id}`}
+                              applyTo={`${tree.id}/${treeLibraries.library.id}`}
                               readOnly={readonly}
                           />
                       }
@@ -72,7 +75,7 @@ function NodePermissionTabContent({
                     <DefinePermByUserGroupView
                         type={PermissionTypes.tree_library}
                         key="libPermissions"
-                        applyTo={`${tree.id}/${library.id}`}
+                        applyTo={`${tree.id}/${treeLibraries.library.id}`}
                         readOnly={readonly}
                     />
                 }

@@ -15,12 +15,23 @@ export const saveLibQuery = gql`
             id
             system
             label
+            behavior
             attributes {
                 ...AttributeDetails
+            }
+            fullTextAttributes {
+                id
+                label
             }
             permissions_conf {
                 permissionTreeAttributes {
                     id
+                    ... on TreeAttribute {
+                        linked_tree {
+                            id
+                        }
+                    }
+                    label(lang: $lang)
                 }
                 relation
             }
@@ -29,12 +40,15 @@ export const saveLibQuery = gql`
                 color
                 preview
             }
+            defaultView {
+                id
+            }
             gqlNames {
                 query
                 type
                 list
-                searchableFields
                 filter
+                searchableFields
             }
         }
     }

@@ -4,7 +4,7 @@
 import {render} from 'enzyme';
 import React from 'react';
 import {act, create} from 'react-test-renderer';
-import {GET_LIBRARIES_libraries_list} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {Mockify} from '../../../../../../_types/Mockify';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
 import InfosForm from './InfosForm';
@@ -18,8 +18,14 @@ jest.mock('../../../../../../utils/utils', () => ({
 
 jest.mock('../../../../../../hooks/useLang');
 
+jest.mock('../../../../../views/ViewSelector', () => {
+    return function ViewSelector() {
+        return <div>ViewSelector</div>;
+    };
+});
+
 describe('InfosForm', () => {
-    const library: Mockify<GET_LIBRARIES_libraries_list> = {
+    const library: Mockify<GET_LIB_BY_ID_libraries_list> = {
         id: 'test',
         label: {fr: 'Test', en: null},
         system: false,
@@ -32,7 +38,7 @@ describe('InfosForm', () => {
         const comp = render(
             <InfosForm
                 onSubmit={onSubmit}
-                library={library as GET_LIBRARIES_libraries_list}
+                library={library as GET_LIB_BY_ID_libraries_list}
                 readonly={false}
                 onCheckIdExists={onCheckIdExists}
             />

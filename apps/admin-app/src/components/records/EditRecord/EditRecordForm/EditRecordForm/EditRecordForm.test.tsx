@@ -7,9 +7,9 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {
-    GET_LIBRARIES_libraries_list,
-    GET_LIBRARIES_libraries_list_attributes
-} from '../../../../../_gqlTypes/GET_LIBRARIES';
+    GET_LIB_BY_ID_libraries_list,
+    GET_LIB_BY_ID_libraries_list_attributes
+} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
@@ -123,14 +123,16 @@ const attributes = [
     }
 ];
 
-const library: GET_LIBRARIES_libraries_list = {
+const library: GET_LIB_BY_ID_libraries_list = {
     id: 'produits',
     system: false,
     behavior: LibraryBehavior.standard,
     label: {fr: 'produits', en: 'products'},
-    attributes: attributes as GET_LIBRARIES_libraries_list_attributes[],
+    attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[],
     permissions_conf: null,
     recordIdentityConf: {label: null, color: null, preview: null},
+    defaultView: null,
+    fullTextAttributes: [],
     gqlNames: {
         query: 'produits',
         type: 'Produit',
@@ -140,7 +142,7 @@ const library: GET_LIBRARIES_libraries_list = {
     }
 };
 
-const query = getRecordDataQuery(library, attributes as GET_LIBRARIES_libraries_list_attributes[]);
+const query = getRecordDataQuery(library, attributes as GET_LIB_BY_ID_libraries_list_attributes[]);
 const requestAndResult = {
     request: {
         query,
@@ -225,7 +227,7 @@ describe('EditRecordForm', () => {
                 <MockedLangContextProvider>
                     <MockedProvider mocks={mocks} addTypename={false}>
                         <EditRecordForm
-                            attributes={attributes as GET_LIBRARIES_libraries_list_attributes[]}
+                            attributes={attributes as GET_LIB_BY_ID_libraries_list_attributes[]}
                             library={library}
                             initialRecordId={'1234567'}
                         />

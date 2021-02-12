@@ -25,7 +25,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
     const userData = useUserData();
     const [filters, setFilters] = useState<any>({});
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
-        variables: {...addWildcardToFilters(filters), lang}
+        variables: {...addWildcardToFilters(filters)}
     });
 
     const _onFiltersUpdate = (filterElem: any) => {

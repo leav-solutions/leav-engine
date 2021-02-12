@@ -5,19 +5,19 @@ import {useLazyQuery, useMutation} from '@apollo/react-hooks';
 import {History} from 'history';
 import React from 'react';
 import useLang from '../../../../../hooks/useLang';
-import {getLibsQuery} from '../../../../../queries/libraries/getLibrariesQuery';
+import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {clearCacheQueriesFromRegexp} from '../../../../../utils';
 import {
-    GET_LIBRARIES,
-    GET_LIBRARIESVariables,
-    GET_LIBRARIES_libraries_list
-} from '../../../../../_gqlTypes/GET_LIBRARIES';
+    GET_LIB_BY_ID,
+    GET_LIB_BY_IDVariables,
+    GET_LIB_BY_ID_libraries_list
+} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {IFormError} from '../../../../../_types/errors';
 import InfosForm from './InfosForm';
 
 interface IInfosTabProps {
-    library: GET_LIBRARIES_libraries_list | null;
+    library: GET_LIB_BY_ID_libraries_list | null;
     readonly: boolean;
     history: History;
 }
@@ -40,14 +40,14 @@ function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
             };
 
             cache.writeQuery({
-                query: getLibsQuery,
+                query: getLibByIdQuery,
                 data: {libraries: newlibraries},
                 variables: {id: savedLibraryData.id, lang}
             });
         }
     });
 
-    const [getLibById, {data: dataLibById}] = useLazyQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery);
+    const [getLibById, {data: dataLibById}] = useLazyQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery);
 
     const _handleCheckIdExists = async val => {
         await getLibById({variables: {id: val}});
@@ -65,6 +65,8 @@ function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
                         en: libData.label.en
                     },
                     behavior: libData.behavior,
+                    defaultView: libData.defaultView || null,
+                    fullTextAttributes: libData.fullTextAttributes,
                     recordIdentityConf:
                         libData.recordIdentityConf !== null
                             ? {

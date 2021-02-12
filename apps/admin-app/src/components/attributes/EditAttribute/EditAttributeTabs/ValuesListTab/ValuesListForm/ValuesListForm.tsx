@@ -131,7 +131,8 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
                         values={(state.conf.values as ILinkValuesList[]) || []}
                         onValuesUpdate={_handleValuesChange}
                         linkedLibrary={
-                            (attribute as GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute).linked_library || ''
+                            (attribute as GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute).linked_library
+                                ?.id || ''
                         }
                     />
                 );
@@ -141,7 +142,8 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
                         values={(state.conf.values as ITreeValuesList[]) || []}
                         onValuesUpdate={_handleValuesChange}
                         linkedTree={
-                            (attribute as GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute).linked_tree || ''
+                            (attribute as GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute).linked_tree?.id ||
+                            ''
                         }
                     />
                 );

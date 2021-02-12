@@ -60,7 +60,7 @@ export const mockAttrAdvLink: GET_ATTRIBUTES_attributes_list_LinkAttribute = {
     ...base,
     id: 'adv_link_attribute',
     type: AttributeType.advanced_link,
-    linked_library: 'test_lib'
+    linked_library: {id: 'test_lib'}
 };
 export const mockAttrAdvLinkMultiVal: GET_ATTRIBUTES_attributes_list_LinkAttribute = {
     ...mockAttrAdvLink,
@@ -99,7 +99,7 @@ export const mockAttrTree: GET_ATTRIBUTES_attributes_list_TreeAttribute = {
     ...base,
     id: 'tree_attribute',
     type: AttributeType.tree,
-    linked_tree: 'test_tree'
+    linked_tree: {id: 'test_tree'}
 };
 export const mockAttrTreeMultival: GET_ATTRIBUTES_attributes_list_TreeAttribute = {
     ...mockAttrTree,

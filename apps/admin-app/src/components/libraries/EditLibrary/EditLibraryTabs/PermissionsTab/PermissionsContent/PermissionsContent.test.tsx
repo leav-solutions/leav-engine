@@ -4,7 +4,7 @@
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {GET_LIBRARIES_libraries_list} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrTree} from '../../../../../../__mocks__/attributes';
 import {mockLibrary} from '../../../../../../__mocks__/libraries';
@@ -25,7 +25,7 @@ jest.mock('../../../../../permissions/DefineTreePermissionsView', () => {
 });
 
 describe('PermissionsContent', () => {
-    const library: GET_LIBRARIES_libraries_list = {
+    const library: GET_LIB_BY_ID_libraries_list = {
         ...mockLibrary,
         label: {fr: 'Test 1', en: null},
         permissions_conf: {

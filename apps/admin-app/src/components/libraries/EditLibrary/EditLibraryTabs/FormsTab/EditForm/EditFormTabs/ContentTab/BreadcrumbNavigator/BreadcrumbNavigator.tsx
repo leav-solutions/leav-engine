@@ -15,7 +15,7 @@ function BreadcrumbNavigator({state, dispatch}: IFormBuilderStateAndDispatch): J
     const selectedDepAttribute = state.form.dependencyAttributes?.find(
         a => a.id === state.activeDependency?.attribute
     ) as GET_FORM_forms_list_dependencyAttributes_TreeAttribute;
-    const linkedTree = selectedDepAttribute.linked_tree;
+    const linkedTree = selectedDepAttribute.linked_tree?.id;
 
     // Get tree attribute props
     const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {

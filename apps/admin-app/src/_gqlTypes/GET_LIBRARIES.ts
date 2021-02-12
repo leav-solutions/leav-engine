@@ -6,186 +6,11 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {
-    AvailableLanguage,
-    LibraryBehavior,
-    AttributeType,
-    AttributeFormat,
-    PermissionsRelation,
-    ValueVersionMode
-} from './globalTypes';
+import {LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES
 // ====================================================
-
-export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_metadata_fields {
-    id: string;
-    label: SystemTranslation | null;
-    type: AttributeType;
-    format: AttributeFormat | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
-    id: string;
-    label: SystemTranslation | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
-    id: string;
-    label: SystemTranslation | null;
-    linked_tree: string | null;
-}
-
-export type GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
-    | GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
-
-export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes[];
-    relation: PermissionsRelation;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute_versions_conf {
-    versionable: boolean;
-    mode: ValueVersionMode | null;
-    trees: string[] | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_StandardAttribute {
-    id: string;
-    type: AttributeType;
-    format: AttributeFormat | null;
-    system: boolean;
-    label: SystemTranslation | null;
-    multiple_values: boolean;
-    metadata_fields: GET_LIBRARIES_libraries_list_attributes_StandardAttribute_metadata_fields[] | null;
-    permissions_conf: GET_LIBRARIES_libraries_list_attributes_StandardAttribute_permissions_conf | null;
-    versions_conf: GET_LIBRARIES_libraries_list_attributes_StandardAttribute_versions_conf | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_metadata_fields {
-    id: string;
-    label: SystemTranslation | null;
-    type: AttributeType;
-    format: AttributeFormat | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
-    id: string;
-    label: SystemTranslation | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
-    id: string;
-    label: SystemTranslation | null;
-    linked_tree: string | null;
-}
-
-export type GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
-    | GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
-
-export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes[];
-    relation: PermissionsRelation;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute_versions_conf {
-    versionable: boolean;
-    mode: ValueVersionMode | null;
-    trees: string[] | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_LinkAttribute {
-    id: string;
-    type: AttributeType;
-    format: AttributeFormat | null;
-    system: boolean;
-    label: SystemTranslation | null;
-    multiple_values: boolean;
-    metadata_fields: GET_LIBRARIES_libraries_list_attributes_LinkAttribute_metadata_fields[] | null;
-    permissions_conf: GET_LIBRARIES_libraries_list_attributes_LinkAttribute_permissions_conf | null;
-    versions_conf: GET_LIBRARIES_libraries_list_attributes_LinkAttribute_versions_conf | null;
-    linked_library: string | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_metadata_fields {
-    id: string;
-    label: SystemTranslation | null;
-    type: AttributeType;
-    format: AttributeFormat | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
-    id: string;
-    label: SystemTranslation | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
-    id: string;
-    label: SystemTranslation | null;
-    linked_tree: string | null;
-}
-
-export type GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
-    | GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
-
-export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes[];
-    relation: PermissionsRelation;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute_versions_conf {
-    versionable: boolean;
-    mode: ValueVersionMode | null;
-    trees: string[] | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_attributes_TreeAttribute {
-    id: string;
-    type: AttributeType;
-    format: AttributeFormat | null;
-    system: boolean;
-    label: SystemTranslation | null;
-    multiple_values: boolean;
-    metadata_fields: GET_LIBRARIES_libraries_list_attributes_TreeAttribute_metadata_fields[] | null;
-    permissions_conf: GET_LIBRARIES_libraries_list_attributes_TreeAttribute_permissions_conf | null;
-    versions_conf: GET_LIBRARIES_libraries_list_attributes_TreeAttribute_versions_conf | null;
-    linked_tree: string | null;
-}
-
-export type GET_LIBRARIES_libraries_list_attributes =
-    | GET_LIBRARIES_libraries_list_attributes_StandardAttribute
-    | GET_LIBRARIES_libraries_list_attributes_LinkAttribute
-    | GET_LIBRARIES_libraries_list_attributes_TreeAttribute;
-
-export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_StandardAttribute {
-    id: string;
-    label: SystemTranslation | null;
-}
-
-export interface GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute {
-    id: string;
-    linked_tree: string | null;
-    label: SystemTranslation | null;
-}
-
-export type GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes =
-    | GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_StandardAttribute
-    | GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute;
-
-export interface GET_LIBRARIES_libraries_list_permissions_conf {
-    permissionTreeAttributes: GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes[];
-    relation: PermissionsRelation;
-}
-
-export interface GET_LIBRARIES_libraries_list_recordIdentityConf {
-    label: string | null;
-    color: string | null;
-    preview: string | null;
-}
 
 export interface GET_LIBRARIES_libraries_list_gqlNames {
     query: string;
@@ -200,9 +25,6 @@ export interface GET_LIBRARIES_libraries_list {
     system: boolean | null;
     label: SystemTranslation | null;
     behavior: LibraryBehavior;
-    attributes: GET_LIBRARIES_libraries_list_attributes[] | null;
-    permissions_conf: GET_LIBRARIES_libraries_list_permissions_conf | null;
-    recordIdentityConf: GET_LIBRARIES_libraries_list_recordIdentityConf | null;
     gqlNames: GET_LIBRARIES_libraries_list_gqlNames;
 }
 
@@ -219,5 +41,4 @@ export interface GET_LIBRARIESVariables {
     id?: string | null;
     label?: string | null;
     system?: boolean | null;
-    lang?: AvailableLanguage[] | null;
 }

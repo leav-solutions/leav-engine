@@ -8,7 +8,7 @@ import {Button, Dropdown, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../hooks/useLang';
 import {isLinkAttribute, isLinkValue, isTreeAttribute, isTreeValue, localizedLabel} from '../../../../utils';
-import {GET_LIBRARIES_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import {FormLinksAllowedValues, ILinkValue, ITreeLinkValue} from '../../../../_types/records';
@@ -19,7 +19,7 @@ import LinksFieldElement from './LinksFieldElement';
 import LinksFieldTreeElement from './LinksFieldTreeElement';
 
 interface IEditRecordFormLinksProps {
-    attribute: GET_LIBRARIES_libraries_list_attributes;
+    attribute: GET_LIB_BY_ID_libraries_list_attributes;
     values: FormLinksAllowedValues[];
     onChange: (value: ILinkValue | ITreeLinkValue, index: number) => void;
     readonly?: boolean;
@@ -203,13 +203,13 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 <>
                     <SelectRecordModal
                         open={isOpenSelectRecordModal}
-                        library={attribute.linked_library}
+                        library={attribute.linked_library.id}
                         onSelect={_onRecordAdded}
                         onClose={_handleCloseSelectRecordModal}
                     />
                     {attribute.linked_library && (
                         <EditRecordModal
-                            library={attribute.linked_library}
+                            library={attribute.linked_library.id}
                             open={isOpenAddRecordModal}
                             onClose={_handleCloseAddRecordModal}
                         />
@@ -221,7 +221,7 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 <SelectTreeNodeModal
                     open={isOpenSelectTreeNodeModal}
                     onClose={_handleCloseSelectTreeNodeModal}
-                    tree={attribute.linked_tree}
+                    tree={attribute.linked_tree.id}
                     onSelect={_onTreeNodeSelected}
                 />
             )}

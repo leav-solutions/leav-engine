@@ -8,9 +8,9 @@ import styled from 'styled-components';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {
-    GET_LIBRARIES_libraries_list,
-    GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
-} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+    GET_LIB_BY_ID_libraries_list,
+    GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
+} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {
     AttributeType,
     PermissionsRelation,
@@ -21,7 +21,7 @@ import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUs
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
 interface IPermissionsContentProps {
-    library: GET_LIBRARIES_libraries_list;
+    library: GET_LIB_BY_ID_libraries_list;
     onSubmitSettings: (conf: Treepermissions_confInput) => void;
     readonly: boolean;
 }
@@ -79,12 +79,12 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
         menuItem: localizedLabel(a.label, availableLanguages),
         render: () => (
             <Tab.Pane key={a.id} className="grow flex-col height100">
-                {(a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
+                {(a as GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
                     .linked_tree ? (
                     <DefineTreePermissionsView
                         key={a.id}
                         treeAttribute={
-                            a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
+                            a as GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
                         }
                         permissionType={PermissionTypes.record}
                         applyTo={library.id}

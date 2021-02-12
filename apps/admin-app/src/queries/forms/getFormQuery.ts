@@ -20,7 +20,9 @@ export const getFormQuery = gql`
                     id
                     label
                     ... on TreeAttribute {
-                        linked_tree
+                        linked_tree {
+                            id
+                        }
                     }
                 }
             }

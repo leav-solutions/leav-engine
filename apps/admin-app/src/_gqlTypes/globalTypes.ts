@@ -195,6 +195,7 @@ export interface LibraryInput {
     behavior?: LibraryBehavior | null;
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
+    defaultView?: string | null;
 }
 
 export interface PermissionActionInput {
@@ -248,10 +249,19 @@ export interface TreeElementInput {
 
 export interface TreeInput {
     id: string;
-    libraries?: string[] | null;
+    libraries?: TreeLibraryInput[] | null;
     behavior?: TreeBehavior | null;
     label?: SystemTranslation | null;
     permissions_conf?: TreeNodePermissionsConfInput[] | null;
+}
+
+export interface TreeLibraryInput {
+    library: string;
+    settings: TreeLibrarySettingsInput;
+}
+
+export interface TreeLibrarySettingsInput {
+    allowMultiplePositions: boolean;
 }
 
 export interface TreeNodePermissionsConfInput {

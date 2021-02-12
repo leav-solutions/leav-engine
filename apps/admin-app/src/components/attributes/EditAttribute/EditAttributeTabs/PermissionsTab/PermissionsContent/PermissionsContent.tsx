@@ -11,7 +11,7 @@ import {
     GET_ATTRIBUTES_attributes_list,
     GET_ATTRIBUTES_attributes_list_TreeAttribute
 } from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation, PermissionTypes, Treepermissions_confInput} from '../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
@@ -74,7 +74,7 @@ function PermissionsContent({
             menuItem: localizedLabel(a.label, lang),
             render: () => (
                 <Tab.Pane key={a.id} className="grow flex-col height100">
-                    {(a as GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
+                    {((a as unknown) as GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
                         .linked_tree ? (
                         <DefineTreePermissionsView
                             key={a.id}

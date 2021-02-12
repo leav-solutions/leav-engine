@@ -17,10 +17,14 @@ export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_perm
     label: SystemTranslation | null;
 }
 
+export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
-    linked_tree: string | null;
+    linked_tree: GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
 export type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes =
@@ -37,16 +41,25 @@ export interface GET_TREE_BY_ID_trees_list_permissions_conf {
     permissionsConf: GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf;
 }
 
-export interface GET_TREE_BY_ID_trees_list_libraries_attributes {
+export interface GET_TREE_BY_ID_trees_list_libraries_library_attributes {
     id: string;
     label: SystemTranslation | null;
     type: AttributeType;
 }
 
-export interface GET_TREE_BY_ID_trees_list_libraries {
+export interface GET_TREE_BY_ID_trees_list_libraries_library {
     id: string;
     label: SystemTranslation | null;
-    attributes: GET_TREE_BY_ID_trees_list_libraries_attributes[] | null;
+    attributes: GET_TREE_BY_ID_trees_list_libraries_library_attributes[] | null;
+}
+
+export interface GET_TREE_BY_ID_trees_list_libraries_settings {
+    allowMultiplePositions: boolean;
+}
+
+export interface GET_TREE_BY_ID_trees_list_libraries {
+    library: GET_TREE_BY_ID_trees_list_libraries_library;
+    settings: GET_TREE_BY_ID_trees_list_libraries_settings;
 }
 
 export interface GET_TREE_BY_ID_trees_list {

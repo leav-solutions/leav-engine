@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Formik, FormikProps} from 'formik';
+import omit from 'lodash/omit';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
@@ -9,25 +10,28 @@ import styled from 'styled-components';
 import * as yup from 'yup';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
-import {GET_TREES_trees_list} from '../../../../../../_gqlTypes/GET_TREES';
-import {TreeBehavior} from '../../../../../../_gqlTypes/globalTypes';
+import {
+    GET_TREE_BY_ID_trees_list,
+    GET_TREE_BY_ID_trees_list_libraries_settings
+} from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
+import {TreeBehavior, TreeInput, TreeLibraryInput} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import {Override} from '../../../../../../_types/Override';
-import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
+import TreeLibraries from './TreeLibraries';
 
 interface ITreeInfosFormProps {
-    tree: GET_TREES_trees_list | null;
-    onSubmit: (formData: GET_TREES_trees_list) => void;
+    tree: GET_TREE_BY_ID_trees_list | null;
+    onSubmit: (formData: TreeInput) => void;
     readonly: boolean;
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
 type TreeInfos = Override<
-    GET_TREES_trees_list,
+    GET_TREE_BY_ID_trees_list,
     {
-        libraries: string[];
+        libraries: TreeLibraryInput[];
     }
 >;
 
@@ -45,10 +49,20 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
         },
         behavior: TreeBehavior.standard,
         system: false,
+        permissions_conf: null,
         libraries: []
     };
 
-    const initialValues: TreeInfos = tree === null ? defaultTree : {...tree, libraries: tree.libraries.map(l => l.id)};
+    const initialValues: TreeInfos =
+        tree === null
+            ? defaultTree
+            : {
+                  ...tree,
+                  libraries: tree.libraries.map(treeLib => ({
+                      library: treeLib.library.id,
+                      settings: omit(treeLib.settings, ['__typename']) as GET_TREE_BY_ID_trees_list_libraries_settings
+                  }))
+              };
 
     const existingTree = tree !== null;
 
@@ -77,7 +91,12 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
             [defaultLang || availableLangs[0]]: yup.string().required()
         }),
         id: idValidator,
-        libraries: yup.array(yup.string()).min(1)
+        libraries: yup.array(
+            yup.object().shape({
+                library: yup.string(),
+                settings: yup.object()
+            })
+        )
     });
 
     const behaviorOptions = Object.values(TreeBehavior).map(b => ({
@@ -117,6 +136,10 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<TreeInfos>(fieldName, touched, serverValidationErrors || {}, inputErrors);
+
+        const _handleLibrariesChange = (librariesSettings: TreeLibraryInput[]) => {
+            setFieldValue('libraries', librariesSettings);
+        };
 
         return (
             <Form onSubmit={handleSubmit}>
@@ -158,18 +181,10 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
                     />
                 </FormFieldWrapper>
                 <FormFieldWrapper error={_getErrorByField('libraries')}>
-                    <LibrariesSelector
-                        disabled={system || readonly}
-                        lang={userLang}
-                        fluid
-                        selection
-                        multiple
-                        label={t('trees.libraries')}
-                        placeholder={t('trees.libraries')}
-                        width="4"
-                        name="libraries"
-                        onChange={_handleChange}
-                        value={libraries}
+                    <TreeLibraries
+                        libraries={libraries}
+                        onChange={_handleLibrariesChange}
+                        readonly={system || readonly}
                     />
                 </FormFieldWrapper>
                 {!readonly && (

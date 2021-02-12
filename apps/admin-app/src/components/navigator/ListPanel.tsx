@@ -19,10 +19,8 @@ export default function ListPanel({state, dispatch}: IListProps) {
     ) : (
         <ListLoader
             selectedRootQuery={state.selectedRootQuery}
-            selectedRootFilter={state.selectedRootFilter}
             filters={state.filters}
             dispatch={dispatch}
-            lang={state.lang}
             offset={typeof state.offset === 'number' ? state.offset : null}
             limit={state.selectedOffset}
         />
@@ -141,10 +139,10 @@ function List({state, dispatch}: IListProps) {
     );
 }
 
-function ListLoader({selectedRootQuery, selectedRootFilter, filters, dispatch, lang, offset, limit}) {
+function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
     const {t} = useTranslation();
     const LISTQUERY = gqlUnchecked`
-        query($filters:[${selectedRootFilter}], $pagination: RecordsPagination){
+        query($filters:[RecordFilterInput], $pagination: RecordsPagination){
             ${selectedRootQuery} (filters:$filters, pagination:$pagination){
                 totalCount
                 list {

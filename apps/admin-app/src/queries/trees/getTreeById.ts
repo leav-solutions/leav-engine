@@ -19,19 +19,26 @@ export const getTreeByIdQuery = gql`
                             id
                             label
                             ... on TreeAttribute {
-                                linked_tree
+                                linked_tree {
+                                    id
+                                }
                             }
                         }
                         relation
                     }
                 }
                 libraries {
-                    id
-                    label
-                    attributes {
+                    library {
                         id
                         label
-                        type
+                        attributes {
+                            id
+                            label
+                            type
+                        }
+                    }
+                    settings {
+                        allowMultiplePositions
                     }
                 }
             }

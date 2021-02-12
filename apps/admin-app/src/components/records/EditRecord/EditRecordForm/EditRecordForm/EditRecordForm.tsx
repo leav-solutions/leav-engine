@@ -13,9 +13,9 @@ import {isLinkValue, isTreeValue} from '../../../../../utils/utils';
 import {DELETE_VALUE, DELETE_VALUEVariables} from '../../../../../_gqlTypes/DELETE_VALUE';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {
-    GET_LIBRARIES_libraries_list,
-    GET_LIBRARIES_libraries_list_attributes
-} from '../../../../../_gqlTypes/GET_LIBRARIES';
+    GET_LIB_BY_ID_libraries_list,
+    GET_LIB_BY_ID_libraries_list_attributes
+} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {TreeElementInput, ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {SAVE_VALUE, SAVE_VALUEVariables} from '../../../../../_gqlTypes/SAVE_VALUE';
@@ -26,10 +26,10 @@ import LinksField from '../../../FormFields/LinksField';
 import StandardValuesWrapper from './StandardValuesWrapper';
 
 interface IEditRecordFormProps {
-    attributes: GET_LIBRARIES_libraries_list_attributes[];
+    attributes: GET_LIB_BY_ID_libraries_list_attributes[];
     errors?: IEditRecordFormError;
     inModal?: boolean;
-    library: GET_LIBRARIES_libraries_list;
+    library: GET_LIB_BY_ID_libraries_list;
     valueVersion?: {[treeName: string]: TreeElementInput};
     onIdentityUpdate?: any;
     initialRecordId?: string;
@@ -128,7 +128,7 @@ const EditRecordForm = ({
         });
     };
 
-    const _getInput = (attribute: GET_LIBRARIES_libraries_list_attributes) => {
+    const _getInput = (attribute: GET_LIB_BY_ID_libraries_list_attributes) => {
         const values = recordData[attribute.id];
 
         if (isLinkAttribute(attribute as GET_ATTRIBUTES_attributes_list, false)) {

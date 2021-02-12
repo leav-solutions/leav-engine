@@ -22,7 +22,9 @@ export const attributeDetailsFragment = gql`
                 id
                 label(lang: $lang)
                 ... on TreeAttribute {
-                    linked_tree
+                    linked_tree {
+                        id
+                    }
                 }
             }
             relation
@@ -33,10 +35,14 @@ export const attributeDetailsFragment = gql`
             trees
         }
         ... on LinkAttribute {
-            linked_library
+            linked_library {
+                id
+            }
         }
         ... on TreeAttribute {
-            linked_tree
+            linked_tree {
+                id
+            }
         }
     }
 `;

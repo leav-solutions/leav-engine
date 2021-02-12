@@ -215,7 +215,7 @@ function InfosForm({
                             width="4"
                             name="linked_library"
                             onChange={_handleChange}
-                            value={(values as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library || ''}
+                            value={(values as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library?.id || ''}
                         />
                     </FormFieldWrapper>
                 )}
@@ -230,7 +230,7 @@ function InfosForm({
                             label={t('attributes.linked_tree')}
                             placeholder={t('attributes.linked_tree')}
                             name="linked_tree"
-                            value={(values as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree || ''}
+                            value={(values as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree?.id || ''}
                             onChange={_handleChange}
                         />
                     </FormFieldWrapper>

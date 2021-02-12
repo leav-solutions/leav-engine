@@ -17,8 +17,13 @@ export const getTreesQuery = gql`
                 system
                 behavior
                 libraries {
-                    id
-                    label
+                    library {
+                        id
+                        label
+                    }
+                    settings {
+                        allowMultiplePositions
+                    }
                 }
             }
         }

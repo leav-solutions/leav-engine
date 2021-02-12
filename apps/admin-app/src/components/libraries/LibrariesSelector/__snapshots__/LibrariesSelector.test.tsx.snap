@@ -11,6 +11,7 @@ initialize {
         "attribs": Object {
           "aria-expanded": "false",
           "class": "ui search dropdown",
+          "lang": "fr",
           "role": "combobox",
         },
         "children": Array [
@@ -528,11 +529,13 @@ initialize {
         "x-attribsNamespace": Object {
           "aria-expanded": undefined,
           "class": undefined,
+          "lang": undefined,
           "role": undefined,
         },
         "x-attribsPrefix": Object {
           "aria-expanded": undefined,
           "class": undefined,
+          "lang": undefined,
           "role": undefined,
         },
       },

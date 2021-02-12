@@ -33,7 +33,21 @@ describe('TreesSelector', () => {
                                         fr: 'TestTree'
                                     },
                                     behavior: TreeBehavior.standard,
-                                    libraries: [{id: 'test_lib', label: {fr: 'My Lib'}, __typename: 'Library'}]
+                                    libraries: [
+                                        {
+                                            __typename: 'TreeLibrary',
+                                            library: {
+                                                id: 'test_lib',
+                                                label: {fr: 'My Lib'},
+                                                attributes: [],
+                                                __typename: 'Library'
+                                            },
+                                            settings: {
+                                                __typename: 'TreeLibrarySettings',
+                                                allowMultiplePositions: true
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
                         }

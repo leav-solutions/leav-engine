@@ -5,12 +5,12 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
 import {AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
-import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 
 interface IUnlinkLibAttributeProps {
     attribute?: AttributeDetails;
-    library: GET_LIBRARIES_libraries_list | null;
+    library: GET_LIB_BY_ID_libraries_list | null;
     onUnlink: (attributesList: string[]) => void;
 }
 

@@ -27,7 +27,9 @@ describe('InfosTab', () => {
             id: 'products',
             label: {fr: 'Produits', en: 'Products'},
             behavior: 'standard',
-            recordIdentityConf: null
+            recordIdentityConf: null,
+            defaultView: null,
+            fullTextAttributes: []
         }
     };
 
@@ -62,6 +64,7 @@ describe('InfosTab', () => {
                 }
             }
         ];
+
         const comp = mount(
             <MockedProviderWithFragments mocks={mocks} addTypename>
                 <InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />

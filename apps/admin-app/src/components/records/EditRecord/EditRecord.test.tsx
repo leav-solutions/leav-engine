@@ -5,7 +5,7 @@ import {wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
+import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import {mockLibrary} from '../../../__mocks__/libraries';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import EditRecord from './EditRecord';
@@ -23,7 +23,7 @@ describe('EditRecord', () => {
         const mocks = [
             {
                 request: {
-                    query: getLibsQuery,
+                    query: getLibByIdQuery,
                     variables: {id: 'products'}
                 },
                 result: {
@@ -68,7 +68,7 @@ describe('EditRecord', () => {
         const mocks = [
             {
                 request: {
-                    query: getLibsQuery,
+                    query: getLibByIdQuery,
                     variables: {id: 'products'}
                 },
                 error: new Error('Boom!')
@@ -96,7 +96,7 @@ describe('EditRecord', () => {
         const mocks = [
             {
                 request: {
-                    query: getLibsQuery,
+                    query: getLibByIdQuery,
                     variables: {id: 'products'}
                 },
                 result: {

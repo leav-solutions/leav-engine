@@ -12,9 +12,18 @@ import {AvailableLanguage, TreeBehavior} from './globalTypes';
 // GraphQL query operation: GET_TREES
 // ====================================================
 
-export interface GET_TREES_trees_list_libraries {
+export interface GET_TREES_trees_list_libraries_library {
     id: string;
     label: SystemTranslation | null;
+}
+
+export interface GET_TREES_trees_list_libraries_settings {
+    allowMultiplePositions: boolean;
+}
+
+export interface GET_TREES_trees_list_libraries {
+    library: GET_TREES_trees_list_libraries_library;
+    settings: GET_TREES_trees_list_libraries_settings;
 }
 
 export interface GET_TREES_trees_list {

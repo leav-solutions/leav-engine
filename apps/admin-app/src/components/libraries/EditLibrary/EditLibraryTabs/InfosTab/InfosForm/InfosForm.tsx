@@ -9,31 +9,35 @@ import styled from 'styled-components';
 import * as yup from 'yup';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError, localizedLabel} from '../../../../../../utils';
-import {GET_LIBRARIES_libraries_list} from '../../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
+import ViewSelector from '../../../../../views/ViewSelector';
 
 interface IInfosFormProps {
-    library: GET_LIBRARIES_libraries_list | null;
+    library: GET_LIB_BY_ID_libraries_list | null;
     onSubmit: (formData: any) => void;
     readonly: boolean;
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-type LibraryFormValues = Omit<GET_LIBRARIES_libraries_list, 'gqlNames'>;
+type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'gqlNames' | 'fullTextAttributes' | 'defaultView'> & {
+    defaultView?: string | null;
+    fullTextAttributes: string[];
+};
 
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-// TODO: add validation, handle lang, getfielderror on attribute
+// TODO: add validation, getfielderror on attribute
 /* tslint:disable-next-line:variable-name */
 const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfosFormProps): JSX.Element => {
     const {t} = useTranslation();
     const {defaultLang, availableLangs, lang} = useLang();
-    const existingLib = library !== null;
+    const isExistingLib = library !== null;
 
     const defaultLibrary: LibraryFormValues = {
         id: '',
@@ -45,6 +49,8 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         behavior: LibraryBehavior.standard,
         attributes: [],
         permissions_conf: null,
+        defaultView: null,
+        fullTextAttributes: [],
         recordIdentityConf: {
             label: null,
             color: null,
@@ -52,7 +58,15 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         }
     };
 
-    const initialValues: LibraryFormValues = library === null ? defaultLibrary : library;
+    const initialValues: LibraryFormValues =
+        library === null
+            ? defaultLibrary
+            : {
+                  ...library,
+                  defaultView: library?.defaultView?.id ?? null,
+                  fullTextAttributes: library?.fullTextAttributes ? library.fullTextAttributes.map(a => a.id) : []
+              };
+
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
               key: a.id,
@@ -74,7 +88,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         .required()
         .matches(/^[a-z0-9_]+$/);
 
-    if (!existingLib) {
+    if (!isExistingLib) {
         // TODO: ID unicity validation is not debounced. As it's not trivial to implement, check future implementation
         // in formik (https://github.com/jaredpalmer/formik/pull/1597)
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
@@ -107,7 +121,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             const [field, subfield] = name.split('.');
 
             // On new attribute, automatically generate an ID based on label
-            if (!existingLib && field === 'label' && subfield === defaultLang) {
+            if (!isExistingLib && field === 'label' && subfield === defaultLang) {
                 setFieldValue('id', formatIDString(value));
             }
         };
@@ -119,10 +133,10 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             setFieldValue(name, value);
         };
 
-        const {id, label, behavior, recordIdentityConf} = values;
+        const {id, label, behavior, recordIdentityConf, defaultView, fullTextAttributes} = values;
 
         const _getErrorByField = (fieldName: string): string =>
-            getFieldError<GET_LIBRARIES_libraries_list>(fieldName, touched, serverValidationErrors || {}, inputErrors);
+            getFieldError<LibraryFormValues>(fieldName, touched, serverValidationErrors || {}, inputErrors);
 
         const behaviorOptions = Object.values(LibraryBehavior).map(b => ({
             key: b,
@@ -149,7 +163,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                 <FormFieldWrapper error={_getErrorByField('id')}>
                     <Form.Input
                         label={t('attributes.ID')}
-                        disabled={existingLib || readonly}
+                        disabled={isExistingLib || readonly}
                         name="id"
                         onChange={_handleChange}
                         onBlur={handleBlur}
@@ -159,7 +173,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                 <FormFieldWrapper error={_getErrorByField('behavior')}>
                     <Form.Select
                         label={t('libraries.behavior')}
-                        disabled={existingLib || readonly}
+                        disabled={isExistingLib || readonly}
                         name="behavior"
                         onChange={_handleChange}
                         onBlur={handleBlur}
@@ -167,6 +181,34 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         options={behaviorOptions}
                     />
                 </FormFieldWrapper>
+                <FormFieldWrapper error={_getErrorByField('libraries.fulltext_attributes')}>
+                    <Form.Dropdown
+                        search
+                        selection
+                        multiple
+                        options={libAttributesOptions}
+                        name="fullTextAttributes"
+                        disabled={readonly}
+                        label={t('libraries.fulltext_attributes')}
+                        value={fullTextAttributes}
+                        onChange={_handleChange}
+                    />
+                </FormFieldWrapper>
+                {isExistingLib && (
+                    <FormFieldWrapper error={_getErrorByField('defaultView')}>
+                        <ViewSelector
+                            search
+                            selection
+                            label={t('libraries.default_view')}
+                            disabled={readonly}
+                            name="defaultView"
+                            value={defaultView ?? ''}
+                            library={library!.id}
+                            onChange={_handleChange}
+                            onBlur={handleBlur}
+                        />
+                    </FormFieldWrapper>
+                )}
                 <Form.Group grouped>
                     <label>{t('libraries.record_identity')}</label>
                     <FormFieldWrapper error={_getErrorByField('recordIdentityConf.label')}>

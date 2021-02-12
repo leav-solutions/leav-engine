@@ -15,10 +15,14 @@ export const getAttributeValuesListQuery = gql`
                 format
                 ...AttributeValuesListDetails
                 ... on LinkAttribute {
-                    linked_library
+                    linked_library {
+                        id
+                    }
                 }
                 ... on TreeAttribute {
-                    linked_tree
+                    linked_tree {
+                        id
+                    }
                 }
             }
         }

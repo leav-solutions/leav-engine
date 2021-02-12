@@ -56,13 +56,17 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values
     linkValues: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues[] | null;
 }
 
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_linked_library {
+    id: string;
+}
+
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute {
     id: string;
     label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list | null;
-    linked_library: string | null;
+    linked_library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_linked_library | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_library {
@@ -128,13 +132,17 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
     treeValues: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues[] | null;
 }
 
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_linked_tree {
+    id: string;
+}
+
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute {
     id: string;
     label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list | null;
-    linked_tree: string | null;
+    linked_tree: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_linked_tree | null;
 }
 
 export type GET_ATTRIBUTES_VALUES_LIST_attributes_list =

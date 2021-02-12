@@ -105,7 +105,7 @@ export const formElem4: IFormElement = {
 export const formData: GET_FORM_forms_list = {
     id: 'edition_form',
     system: false,
-    dependencyAttributes: [{id: 'category', label: {fr: 'Category'}, linked_tree: 'categories'}],
+    dependencyAttributes: [{id: 'category', label: {fr: 'Category'}, linked_tree: {id: 'categories'}}],
     label: {
         en: 'OK!',
         fr: 'Formulaire édition'
@@ -196,7 +196,12 @@ export const formDataWithTypename = {
         }
     ],
     dependencyAttributes: [
-        {id: 'category', label: {fr: 'Catégorie'}, linked_tree: 'categories', __typename: 'TreeAttribute'}
+        {
+            id: 'category',
+            label: {fr: 'Catégorie'},
+            linked_tree: {id: 'categories', __typename: 'Tree'},
+            __typename: 'TreeAttribute'
+        }
     ],
     __typename: 'Form'
 };

@@ -4,14 +4,14 @@
 import React from 'react';
 import {NodeData, TreeNode} from 'react-sortable-tree';
 import {getTreeNodeKey} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';
 
 interface IDefineTreePermissionsViewProps {
-    treeAttribute: GET_LIBRARIES_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute;
+    treeAttribute: GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute;
     permissionType: PermissionTypes;
     applyTo: string;
     readOnly?: boolean;
@@ -43,7 +43,7 @@ const DefineTreePermissionsView = ({
     const cols = [
         <DefinePermissionsViewLoadTree
             key="perm_tree"
-            treeId={tree.linked_tree}
+            treeId={tree.linked_tree.id}
             onClick={_selectTreeNode}
             selectedNode={selectedTreeNode}
         />
@@ -66,7 +66,7 @@ const DefineTreePermissionsView = ({
                         applyTo,
                         usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
                         permissionTreeTarget: {
-                            tree: tree.linked_tree,
+                            tree: tree.linked_tree.id,
                             id: selectedTreeNode.node.id !== 'root' ? selectedTreeNode.node.id : null,
                             library:
                                 selectedTreeNode.node.library.id !== 'root' ? selectedTreeNode.node.library.id : null

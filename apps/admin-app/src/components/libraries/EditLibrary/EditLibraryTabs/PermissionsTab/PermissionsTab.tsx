@@ -4,13 +4,13 @@
 import {useMutation} from '@apollo/react-hooks';
 import React from 'react';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
-import {GET_LIBRARIES_libraries_list} from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_LIBRARY, SAVE_LIBRARYVariables} from '../../../../../_gqlTypes/SAVE_LIBRARY';
 import PermissionsContent from './PermissionsContent';
 
 interface IPermissionsTabProps {
-    library: GET_LIBRARIES_libraries_list;
+    library: GET_LIB_BY_ID_libraries_list;
     readonly: boolean;
 }
 
