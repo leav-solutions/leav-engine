@@ -2,6 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 export SKIP_PREFLIGHT_CHECK=true
+export CI=true
 
 echo "Checking types..."
 yarn run tscheck
@@ -10,4 +11,4 @@ echo "\n Checking staged files..."
 yarn lint-staged
 
 echo "\n Running tests..."
-yarn run test
+node scripts/testChangedProjects.js --staged
