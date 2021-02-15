@@ -1,26 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant-design/icons';
-import {Button, Card} from 'antd';
-import React, {useEffect, useState} from 'react';
-import styled, {CSSObject} from 'styled-components';
+import {CheckOutlined,EditOutlined,EllipsisOutlined,HeartOutlined} from '@ant-design/icons';
+import {Button,Card} from 'antd';
+import React,{useEffect,useState} from 'react';
+import styled,{CSSObject} from 'styled-components';
+import {getFileUrl} from 'utils';
+import {useStateItem} from '../../../../Context/StateItemsContext';
 import themingVar from '../../../../themingVar';
-import {getPreviewUrl} from '../../../../utils';
 import {IItem} from '../../../../_types/types';
-import {
-    ILibraryItemListState,
-    LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes
-} from '../../LibraryItemsListReducer';
+import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
-
-interface IItemTileDisplayProps {
-    item: IItem;
-    stateItems: ILibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-    showRecordEdition: (item: IItem) => void;
-}
 
 const ImageWrapper = styled.div`
     position: relative;
@@ -106,10 +96,24 @@ const Actions = styled.div`
 
     padding: 2rem 5rem;
     border-radius: 0.25rem 0.25rem 0 0;
+
+    button {
+        color: #fff;
+
+        &:hover {
+            color: #fff;
+        }
+    }
 `;
 
-function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
-    const [isSelected, setIsSelect] = useState<boolean>(!!stateItems.itemsSelected[item.id]);
+interface IItemTileDisplayProps {
+    item: IItem;
+    showRecordEdition: (item: IItem) => void;
+}
+
+function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
+    const {stateItems, dispatchItems} = useStateItem();
+    const [isSelected, setIsSelect] = useState<boolean>(!!stateItems.itemsSelected[item.whoAmI.id]);
 
     const handleClick = () => {
         if (stateItems.selectionMode) {
@@ -117,7 +121,7 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
 
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-                itemsSelected: {...stateItems.itemsSelected, [item.id]: !isSelected}
+                itemsSelected: {...stateItems.itemsSelected, [item.whoAmI.id]: !isSelected}
             });
         }
     };
@@ -130,12 +134,12 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
 
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {...stateItems.itemsSelected, [item.id]: true}
+            itemsSelected: {...stateItems.itemsSelected, [item.whoAmI.id]: true}
         });
     };
 
     useEffect(() => {
-        setIsSelect(stateItems.itemsSelected[item.id]);
+        setIsSelect(stateItems.itemsSelected[item.whoAmI.id]);
     }, [stateItems.itemsSelected, item]);
 
     return (
@@ -164,14 +168,14 @@ function ItemTileDisplay({item, stateItems, dispatchItems, showRecordEdition}: I
                         )}
                     </ActionsWrapper>
                     <RecordPreview
-                        label={item.label || item.id}
-                        image={item.preview?.medium ? getPreviewUrl(item.preview.medium) : ''}
-                        tile
+                        label={item.whoAmI.label || item.whoAmI.id}
+                        image={item.whoAmI.preview?.medium ? getFileUrl(item.whoAmI.preview.medium) : ''}
+                        tile={true}
                     />
                 </ImageWrapper>
             }
         >
-            <Card.Meta title={item.label || item.id} description={item.library?.id} />
+            <Card.Meta title={item.whoAmI.label || item.whoAmI.id} description={item.whoAmI.library?.id} />
         </Card>
     );
 }

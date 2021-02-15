@@ -2,29 +2,32 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {IItemsColumn, ILabel} from '../../_types/types';
+import {IField, ILabel} from '../../_types/types';
 import {getRecordsFields} from '../records/getRecordsFromLibraryQuery';
+
+export interface ISearchFullTextResult {
+    [x: string]: any;
+    whoAmI: {
+        id: string;
+        label: ILabel;
+        color?: string;
+        preview?: {
+            small: string;
+            medium: string;
+            big: string;
+            pages: string;
+        };
+        library: {
+            id: string;
+            label: ILabel;
+        };
+    };
+}
 
 export interface ISearchFullTextQuery {
     [x: string]: {
         totalCount: number;
-        list: Array<{
-            [x: string]: any;
-            whoAmI: {
-                id: string;
-                label: ILabel;
-                color?: string;
-                preview?: {
-                    small: string;
-                    medium: string;
-                    big: string;
-                };
-                library: {
-                    id: string;
-                    label: ILabel;
-                };
-            };
-        }>;
+        list: ISearchFullTextResult[];
     };
 }
 
@@ -34,7 +37,7 @@ export interface ISearchFullTextVar {
     size: number;
 }
 
-const getFields = (libType?: string, fields?: IItemsColumn[]) => {
+const getFields = (libType?: string, fields?: IField[]) => {
     if (!libType || !fields || !fields.length) {
         return '';
     }
@@ -46,7 +49,7 @@ const getFields = (libType?: string, fields?: IItemsColumn[]) => {
     `;
 };
 
-export const searchFullText = (libId?: string, libType?: string, fields?: IItemsColumn[]) => {
+export const searchFullText = (libId?: string, libType?: string, fields?: IField[]) => {
     return gql`
         query USE_SEARCH_FULL_TEXT($search: String!, $from: Int!, $size: Int!) {
             ${libId}(pagination: { limit: $size, offset: $from }, searchQuery: $search) {

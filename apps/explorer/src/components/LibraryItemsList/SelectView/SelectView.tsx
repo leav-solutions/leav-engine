@@ -1,14 +1,27 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AppstoreFilled, MenuOutlined, PlusOutlined} from '@ant-design/icons';
-import {Dropdown, Menu} from 'antd';
-import React from 'react';
+import {MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
+import {useMutation, useQuery} from '@apollo/client';
+import {Dropdown, Menu, Spin} from 'antd';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
+import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../../hooks/LangHook/LangHook';
+import addViewMutation, {
+    IAddViewMutation,
+    IAddViewMutationVariables,
+    IAddViewMutationVariablesFilter,
+    IAddViewMutationVariablesView
+} from '../../../queries/views/addViewMutation';
+import {getViewsListQuery, IGetViewListQuery, IGetViewListVariables} from '../../../queries/views/getViewsListQuery';
 import themingVar from '../../../themingVar';
-import {TypeSideItem} from '../../../_types/types';
+import {limitTextSize, localizedLabel} from '../../../utils';
+import {IView, TypeSideItem, ViewType} from '../../../_types/types';
+import AddView from '../AddView';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 const DropdownButton = styled(Dropdown.Button)`
@@ -17,12 +30,12 @@ const DropdownButton = styled(Dropdown.Button)`
     }
 `;
 
-interface IInnerDropdown {
+interface IInnerDropdownProps {
     color?: string;
     style?: CSSObject;
 }
 
-const InnerDropdown = styled.span<IInnerDropdown>`
+const InnerDropdown = styled.span<IInnerDropdownProps>`
     transform: translate(5px);
     position: relative;
 
@@ -37,12 +50,34 @@ const InnerDropdown = styled.span<IInnerDropdown>`
     }
 `;
 
+interface IModalProps {
+    visible: boolean;
+    id?: string;
+}
+
 function SelectView(): JSX.Element {
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useStateItem();
 
-    const toggleShowView = () => {
+    const [modalNewProps, setModalNewProps] = useState<Omit<IModalProps, 'id'>>({
+        visible: false
+    });
+
+    const [activeLibrary] = useActiveLibrary();
+    const [{lang}] = useLang();
+
+    const {data, loading, error} = useQuery<IGetViewListQuery, IGetViewListVariables>(getViewsListQuery, {
+        variables: {
+            libraryId: activeLibrary?.id || ''
+        }
+    });
+
+    const currentView = data?.views.list.find(view => view.id === stateItems.view.current?.id);
+
+    const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation);
+
+    const _toggleShowView = () => {
         const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.view;
 
         dispatchItems({
@@ -54,31 +89,135 @@ function SelectView(): JSX.Element {
         });
     };
 
+    const _saveView = async () => {
+        if (stateItems.view.current && stateItems.view.current.id !== defaultView.id) {
+            if (currentView && activeLibrary) {
+                // Fields
+                let viewFields: string[] = [];
+                if (currentView.type === ViewType.list) {
+                    viewFields = stateItems.fields.map(field => {
+                        const settingsField = field.key;
+                        return settingsField;
+                    });
+                }
+
+                const viewFilters = stateItems.queryFilters.reduce((acc, queryFilter) => {
+                    return [...acc, queryFilter];
+                }, [] as IAddViewMutationVariablesFilter[]);
+
+                const viewSort = {
+                    field: stateItems.itemsSort.field,
+                    order: stateItems.itemsSort.order
+                };
+
+                const newView: IAddViewMutationVariablesView = {
+                    id: currentView.id,
+                    library: activeLibrary.id,
+                    shared: currentView.shared,
+                    type: currentView.type,
+                    label: currentView.label,
+                    description: currentView.description,
+                    color: currentView.color ?? themingVar['@primary-color'],
+                    filters: viewFilters,
+                    sort: viewSort,
+                    settings: [
+                        {
+                            name: viewSettingsField,
+                            value: viewFields
+                        }
+                    ]
+                };
+
+                try {
+                    // save view in backend
+                    await addView({variables: {view: newView}});
+                } catch (e) {
+                    console.error(e);
+                }
+
+                // update current view
+                const newCurrentView: IView = {
+                    id: currentView.id,
+                    label: localizedLabel(newView.label, lang),
+                    description: localizedLabel(newView.description, lang),
+                    type: newView.type,
+                    color: newView.color,
+                    shared: newView.shared,
+                    fields: newView.settings?.find(setting => setting.name === viewSettingsField)?.value ?? [],
+                    filters: stateItems.queryFilters,
+                    sort: viewSort
+                };
+
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_VIEW,
+                    view: {
+                        current: newCurrentView
+                    }
+                });
+
+                // refetch views
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_RELOAD_VIEW,
+                    reload: true
+                });
+            }
+        }
+    };
+
+    const _handleAddView = () => {
+        setModalNewProps({
+            visible: true
+        });
+    };
+
+    const _closeModal = () => {
+        setModalNewProps(props => ({
+            ...props,
+            visible: false
+        }));
+    };
+
+    if (error) {
+        return <>error</>;
+    }
+
+    if (loading) {
+        return (
+            <div>
+                <Spin />
+            </div>
+        );
+    }
+
     const menu = (
         <Menu>
-            <Menu.Item>
+            <Menu.Item
+                icon={<SaveFilled />}
+                onClick={_saveView}
+                disabled={stateItems.view.current?.id === defaultView.id}
+            >
+                {t('select-view.save')}
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item onClick={_handleAddView}>
                 <span>
                     <PlusOutlined />
                     <MenuOutlined />
-                </span>
-                {t('select-view.add-view-list')}
-            </Menu.Item>
-            <Menu.Item>
-                <span>
-                    <PlusOutlined />
-                    <AppstoreFilled />
-                </span>
-                {t('select-view.add-view-tile')}
+                </span>{' '}
+                {t('select-view.add-view')}
             </Menu.Item>
         </Menu>
     );
 
     return (
-        <DropdownButton overlay={menu}>
-            <InnerDropdown onClick={toggleShowView} color={stateItems.view.current?.color}>
-                {stateItems.view.current?.text ?? t('select-view.default-view')}
-            </InnerDropdown>
-        </DropdownButton>
+        <>
+            <AddView visible={modalNewProps.visible} onClose={_closeModal} activeLibrary={activeLibrary} />
+            <DropdownButton overlay={menu} data-testid="dropdown-view-options">
+                <InnerDropdown onClick={_toggleShowView} color={stateItems.view.current?.color}>
+                    {limitTextSize(stateItems.view.current?.label ?? t('select-view.default-view'), 'medium')}
+                </InnerDropdown>
+            </DropdownButton>
+        </>
     );
 }
 

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AppstoreFilled, DownOutlined, MenuOutlined} from '@ant-design/icons';
+import {DownOutlined, MenuOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {DisplayListItemTypes} from '../../../_types/types';
+import {DisplaySize} from '../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 const ListSmallIcon = styled(MenuOutlined)`
@@ -29,33 +29,27 @@ function DisplayOptions(): JSX.Element {
         {
             key: 'list-small',
             text: t('items_list.display.list-small'),
-            value: DisplayListItemTypes.listSmall,
+            value: DisplaySize.small,
             icon: <ListSmallIcon />
         },
         {
             key: 'list-medium',
             text: t('items_list.display.list-medium'),
-            value: DisplayListItemTypes.listMedium,
+            value: DisplaySize.medium,
             icon: <MenuOutlined />
         },
         {
             key: 'list-big',
             text: t('items_list.display.list-big'),
-            value: DisplayListItemTypes.listBig,
+            value: DisplaySize.big,
             icon: <ListBigIcon />
-        },
-        {
-            key: 'tile',
-            text: t('items_list.display.tile'),
-            value: DisplayListItemTypes.tile,
-            icon: <AppstoreFilled />
         }
     ];
 
     const {stateItems, dispatchItems} = useStateItem();
 
     const [currentDisplayOption, setCurrentDisplayOption] = useState(
-        displayOptions.find(displayOption => displayOption.value === stateItems.displayType)
+        displayOptions.find(displayOption => displayOption.value === stateItems.displaySize)
     );
 
     const changeDisplay = (value: string) => {
@@ -64,7 +58,7 @@ function DisplayOptions(): JSX.Element {
         if (newDisplay) {
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE,
-                displayType: DisplayListItemTypes[newDisplay]
+                displayType: DisplaySize[newDisplay]
             });
         }
 

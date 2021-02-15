@@ -15,8 +15,8 @@ const getEmbeddedFields = (depth = 0) => {
 
 export const getAttributeWithEmbeddedFields = (depth: number) => {
     return gql`
-        query GET_ATTRIBUTE_WITH_EMBEDDED_FIELDS($libId: ID!) {
-            attributes(filters: {id: $libId}) {
+        query GET_ATTRIBUTE_WITH_EMBEDDED_FIELDS($attributeId: ID!) {
+            attributes(filters: {id: $attributeId}) {
                 list {
                     id
                     format

@@ -2,20 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
+import {ILibraryItemListState} from 'components/LibraryItemsList/LibraryItemsListReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useActiveLibrary} from '../../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {allowedTypeOperator} from '../../../../../utils';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeFormat,
     ConditionFilter,
     FilterTypes,
-    IAttribute,
-    IAttributeSelected,
     IFilter,
-    IFilterSeparator
+    IFilterSeparator,
+    ISelectedAttribute
 } from '../../../../../_types/types';
-import ListAttributes from '../../../../ListAttributes';
-import {ILibraryItemListState} from '../../../LibraryItemsListReducer';
+import AttributesSelectionList from '../../../../AttributesSelectionList';
 
 interface IChangeAttributeProps {
     stateItems: ILibraryItemListState;
@@ -34,22 +35,37 @@ function ChangeAttribute({
 }: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
 
+    const [activeLibrary] = useActiveLibrary();
+
     const currentAttribute = stateItems.attributes.find(att => att.id);
 
-    const [attSelected, setAttSelected] = useState<IAttributeSelected>({
-        id: filter.attributeId,
-        library: currentAttribute?.library ?? ''
-    });
+    const originSelectedAttribute: ISelectedAttribute = {
+        id: filter.attribute.id,
+        library: currentAttribute?.library ?? '',
+        path: filter.attribute.id,
+        label: filter.attribute.label,
+        parentAttributeData: filter.originAttributeData,
+        type: filter.attribute.type,
+        multiple_values: filter.attribute.multiple_values
+    };
 
-    const [, setNewAttributes] = useState<IAttribute[]>([]);
+    const [attSelected, setAttSelected] = useState<ISelectedAttribute[]>([originSelectedAttribute]);
 
     const handleCancel = () => {
         setShowModal(false);
-        setAttSelected({id: filter.attributeId, library: filter.attributeId});
+        setAttSelected([originSelectedAttribute]);
     };
 
     const changeAttribute = () => {
-        const newAtt = stateItems.attributes.find(a => a.id === attSelected.id && a.library === attSelected.library);
+        const selection = attSelected[0];
+        const attribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
+            ...selection,
+            label: selection.label ?? null,
+            format: selection.format ?? null,
+            embedded_fields: selection.embeddedFieldData ? [selection.embeddedFieldData] : null
+        };
+
+        const newAtt = stateItems.attributes.find(a => a.id === attribute.id && a.library === selection.library);
 
         // take the first operator for the format of the attribute
         const defaultConditionOperator =
@@ -60,14 +76,13 @@ function ChangeAttribute({
             filters.map(filterGroup =>
                 filterGroup.reduce((acc, f) => {
                     if (f.type === FilterTypes.filter && f.key === filter.key) {
-                        const newFilter: IFilter = {
+                        const filterToAdd: IFilter = {
                             ...f,
-                            attributeId: attSelected.id,
+                            attribute,
                             format: newAtt?.format,
                             condition: ConditionFilter[defaultConditionOperator]
                         };
-
-                        return [...acc, newFilter];
+                        return [...acc, filterToAdd];
                     }
 
                     return [...acc, f];
@@ -91,11 +106,11 @@ function ChangeAttribute({
                 </Button>
             ]}
         >
-            <ListAttributes
-                attributes={stateItems.attributes}
-                attributeSelected={attSelected}
-                changeSelected={newAttSelected => setAttSelected(newAttSelected)}
-                setNewAttributes={setNewAttributes}
+            <AttributesSelectionList
+                library={activeLibrary?.id ?? ''}
+                selectedAttributes={attSelected}
+                onSelectionChange={setAttSelected}
+                multiple={false}
             />
         </Modal>
     );

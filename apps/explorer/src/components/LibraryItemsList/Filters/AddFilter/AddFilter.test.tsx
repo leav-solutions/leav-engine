@@ -10,10 +10,10 @@ import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import AddFilter from './AddFilter';
 
 jest.mock(
-    '../../../ListAttributes',
+    '../../../AttributesSelectionList',
     () =>
-        function ListAttributes() {
-            return <div>ListAttributes</div>;
+        function AttributesSelectionList() {
+            return <div>AttributesSelectionList</div>;
         }
 );
 
@@ -39,6 +39,6 @@ describe('AttributeList', () => {
             comp.update();
         });
 
-        expect(comp.find('ListAttributes')).toHaveLength(1);
+        expect(comp.find('AttributesSelectionList')).toHaveLength(1);
     });
 });

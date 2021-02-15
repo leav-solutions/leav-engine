@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloClient, ApolloLink, ApolloProvider, gql, HttpLink, InMemoryCache} from '@apollo/client';
+import {ApolloClient, ApolloLink, ApolloProvider, gql, InMemoryCache} from '@apollo/client';
+import {createUploadLink} from 'apollo-upload-client';
 import {onError} from '@apollo/link-error';
 import {default as React} from 'react';
 import './App.css';
@@ -50,7 +51,7 @@ console.error(`[Network error]: ${networkError}`);
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
             _handleApolloError,
-            new HttpLink({
+            createUploadLink({
                 uri: process.env.REACT_APP_API_URL,
                 headers: {
                     Authorization: token

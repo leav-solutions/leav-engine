@@ -30,8 +30,10 @@ describe('TreeList', () => {
                                 label: {fr: 'labelTree', en: 'labelTree'},
                                 libraries: [
                                     {
-                                        id: 'idLib',
-                                        label: {fr: 'labelLib', en: 'labelLib'}
+                                        library: {
+                                            id: 'idLib',
+                                            label: {fr: 'labelLib', en: 'labelLib'}
+                                        }
                                     }
                                 ]
                             }

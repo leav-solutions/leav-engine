@@ -4,17 +4,12 @@
 import {Card, Col, Row, Spin} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
+import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVar from '../../../themingVar';
 import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
-import {ILibraryItemListState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import LibraryItemsModal from '../LibraryItemsListTable/LibraryItemsModal';
 import ItemTileDisplay from './ItemTileDisplay';
-
-interface IItemsTitleDisplayProps {
-    stateItems: ILibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-}
 
 const LoadingWrapper = styled.div`
     height: 30rem;
@@ -43,7 +38,8 @@ const Footer = styled.div`
     padding: 0.5rem;
 `;
 
-function TileDisplay({stateItems, dispatchItems}: IItemsTitleDisplayProps): JSX.Element {
+function TileDisplay(): JSX.Element {
+    const {stateItems} = useStateItem();
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
         show: false
     });
@@ -70,13 +66,8 @@ function TileDisplay({stateItems, dispatchItems}: IItemsTitleDisplayProps): JSX.
                 ) : (
                     <Row gutter={[24, 24]}>
                         {stateItems.items?.map(item => (
-                            <Col key={item.id} span={4}>
-                                <ItemTileDisplay
-                                    item={item}
-                                    stateItems={stateItems}
-                                    dispatchItems={dispatchItems}
-                                    showRecordEdition={showRecordEdition}
-                                />
+                            <Col key={item.whoAmI.id} span={4}>
+                                <ItemTileDisplay item={item} showRecordEdition={showRecordEdition} />
                             </Col>
                         ))}
                     </Row>
@@ -84,7 +75,7 @@ function TileDisplay({stateItems, dispatchItems}: IItemsTitleDisplayProps): JSX.
             </Wrapper>
 
             <Footer>
-                <LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />
+                <LibraryItemsListPagination />
             </Footer>
 
             <LibraryItemsModal

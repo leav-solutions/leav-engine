@@ -1,9 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+
+import {
+    ILibraryDetailExtendedAttributeParentLinkedLibrary,
+    ILibraryDetailExtendedAttributeParentLinkedTree
+} from '../queries/libraries/getLibraryDetailExtendQuery';
+import {IGetViewListSort} from '../queries/views/getViewsListQuery';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export interface ILabel {
-    fr: string;
-    en: string;
     [x: string]: string;
 }
 
@@ -17,6 +26,11 @@ export interface ILibrary {
     };
 }
 
+export enum LinkedType {
+    library = 'library',
+    tree = 'tree'
+}
+
 export type IPreview = {
     small: string;
     medium: string;
@@ -24,8 +38,7 @@ export type IPreview = {
     pages: string;
 } | null;
 
-export interface IItem {
-    [x: string]: any;
+export interface IItemWhoAmI {
     id: string;
     label?: string;
     preview?: IPreview;
@@ -36,7 +49,26 @@ export interface IItem {
     };
 }
 
-export type RecordIdentity_whoAmI = IItem;
+export interface IItemBase {
+    fields: {[x: string]: any};
+    whoAmI: IItemWhoAmI;
+    index: number;
+}
+
+export type IItem = IItemBase;
+
+export interface IRecordIdentityWhoAmI {
+    [x: string]: any;
+    id: string;
+    label?: string;
+    preview?: IPreview;
+    color?: string;
+    library?: {
+        id: string;
+        label: ILabel;
+    };
+    index?: number;
+}
 
 export enum PreviewAttributes {
     small = 'small',
@@ -70,12 +102,12 @@ export interface IFilter extends IFilterSeparatorCommon {
     type: FilterTypes.filter;
     operator?: boolean;
     condition: ConditionFilter;
-    value: string;
-    attributeId: string;
+    value: string | boolean | number;
+    attribute: GET_ATTRIBUTES_BY_LIB_attributes_list;
     active: boolean;
     format?: AttributeFormat;
-    originAttributeData?: IOriginAttributeData;
-    extendedData?: IExtendedData;
+    originAttributeData?: IParentAttributeData;
+    extendedData?: IEmbeddedFieldData;
     treeData?: ITreeData;
     valueSize?: number | 'auto';
 }
@@ -132,11 +164,10 @@ export enum OrderSearch {
     asc = 'asc'
 }
 
-export enum DisplayListItemTypes {
-    listSmall = 'listSmall',
-    listMedium = 'listMedium',
-    listBig = 'listBig',
-    tile = 'tile'
+export enum DisplaySize {
+    small = 'listSmall',
+    medium = 'listMedium',
+    big = 'listBig'
 }
 
 export interface IAttribute {
@@ -144,51 +175,48 @@ export interface IAttribute {
     library: string;
     type: AttributeType;
     format?: AttributeFormat;
-    label: ILabel | string;
+    label: SystemTranslation | null;
     isLink: boolean;
     isMultiple: boolean;
-    linkedLibrary?: string;
-    linkedTree?: string;
-    originAttributeData?: IOriginAttributeData;
+    linkedLibrary?: ILibraryDetailExtendedAttributeParentLinkedLibrary;
+    linkedTree?: ILibraryDetailExtendedAttributeParentLinkedTree;
+    parentAttributeData?: IParentAttributeData;
 }
 
 export type ExtendFormat = string | {[key: string]: ExtendFormat[]};
 
-export interface IExtendedData {
+export interface IEmbeddedFieldData {
     path: string;
     format: AttributeFormat;
 }
 
-export interface IItemsColumn {
+export interface IFieldBase {
     id: string;
     library: string;
-    type: AttributeType;
-    originAttributeData?: IOriginAttributeData;
-    extendedData?: IExtendedData;
+    label: string;
+    key: string;
+    format?: AttributeFormat;
+    embeddedData?: IEmbeddedFieldData;
+    multipleValues?: boolean;
+}
+
+export interface IFieldTypeBasic extends IFieldBase {
+    type: AttributeType.simple | AttributeType.advanced;
+    parentAttributeData?: IParentAttributeData;
+}
+
+export interface IFieldTypeLink extends IFieldBase {
+    type: AttributeType.simple_link | AttributeType.advanced_link;
+    parentAttributeData?: IParentAttributeData;
+}
+
+export interface IFieldTypeTree extends IFieldBase {
+    type: AttributeType.tree;
+    parentAttributeData?: IParentAttributeData;
     treeData?: ITreeData;
 }
 
-export interface ITableHeaderOld {
-    name: string;
-    display: string;
-    type: AttributeType;
-}
-
-export interface ITableHeader {
-    title: string | any;
-    type: AttributeType;
-    library: string;
-    dataIndex: string;
-    key: string;
-    width?: number;
-    onHeaderCell?: (
-        column: any
-    ) => {
-        width: number;
-        onResize: any;
-    };
-    render: (text: string) => JSX.Element;
-}
+export type IField = IFieldTypeBasic | IFieldTypeLink | IFieldTypeTree;
 
 export interface IRecordEdition {
     show: boolean;
@@ -201,25 +229,26 @@ export interface IAccordionActive {
     depth: number;
 }
 
-export interface IAttributesChecked {
+export interface ISelectedAttribute {
     id: string;
     library: string;
-    label: string | ILabel;
+    path: string;
+    label: SystemTranslation | null;
     type: AttributeType;
-    depth: number;
-    checked: boolean;
-    originAttributeData?: IOriginAttributeData;
-    extendedData?: IExtendedData;
+    format?: AttributeFormat | null;
+    multiple_values: boolean;
+    parentAttributeData?: IParentAttributeData;
+    embeddedFieldData?: IEmbeddedFields;
     treeData?: ITreeData;
 }
 
-export interface IOriginAttributeData {
+export interface IParentAttributeData {
     id: string;
     type: AttributeType;
 }
 
 export interface ITreeData {
-    attributeTreeId: string;
+    treeAttributeId: string;
     libraryTypeName: string;
 }
 
@@ -239,8 +268,8 @@ export interface IGroupEmbeddedFields {
 export interface IAttributeSelected {
     id: string;
     library: string;
-    originAttributeData?: IOriginAttributeData;
-    extendedData?: IExtendedData;
+    originAttributeData?: IParentAttributeData;
+    extendedData?: IEmbeddedFieldData;
     treeData?: ITreeData;
 }
 
@@ -296,13 +325,24 @@ export enum TypeSideItem {
 }
 
 export interface IView {
-    value: number;
-    text: string;
+    id: string;
+    label: string;
     type: ViewType;
     color?: string;
+    shared: boolean;
+    description?: string;
+    fields?: string[];
+    filters?: IQueryFilter[];
+    sort: IGetViewListSort;
 }
 
 export enum ViewType {
     list = 'list',
-    tile = 'tile'
+    cards = 'cards',
+    timeline = 'timeline'
+}
+
+export interface ILinkedElement {
+    id: string;
+    linkedType: LinkedType;
 }

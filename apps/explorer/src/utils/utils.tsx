@@ -2,22 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {i18n} from 'i18next';
-import {infosCol} from '../constants/constants';
+import {isString, pick} from 'lodash';
+import {attributeExtendedKey, infosCol} from '../constants/constants';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeFormat,
     AttributeType,
     AvailableLanguage,
     ConditionFilter,
-    DisplayListItemTypes,
+    DisplaySize,
     ExtendFormat,
+    FilterTypes,
     IAttribute,
-    IAttributesChecked,
-    IExtendedData,
-    IItemsColumn,
+    IEmbeddedFields,
+    IFilter,
+    IFilterSeparator,
     INotification,
-    IOriginAttributeData,
-    ITreeData,
+    IQueryFilter,
+    ISelectedAttribute,
     NotificationPriority,
+    OperatorFilter,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -26,9 +30,9 @@ export function getRecordIdentityCacheKey(libId: string, recordId: string): stri
     return `recordIdentity/${libId}/${recordId}`;
 }
 
-export function getPreviewUrl(preview: string) {
+export function getFileUrl(filepath: string) {
     const url = process.env.REACT_APP_CORE_URL;
-    return url + preview;
+    return url + filepath;
 }
 
 export const getInvertColor = (color: string): string => {
@@ -174,13 +178,13 @@ export const checkTypeIsLink = (type: AttributeType) => {
     }
 };
 
-export const displayTypeToPreviewSize = (displayType: DisplayListItemTypes) => {
+export const displayTypeToPreviewSize = (displayType: DisplaySize) => {
     switch (displayType) {
-        case DisplayListItemTypes.listSmall:
+        case DisplaySize.small:
             return PreviewSize.small;
-        case DisplayListItemTypes.listMedium:
+        case DisplaySize.medium:
             return PreviewSize.medium;
-        case DisplayListItemTypes.listBig:
+        case DisplaySize.big:
             return PreviewSize.big;
         default:
             return PreviewSize.small;
@@ -209,94 +213,20 @@ export const getExtendedFormat = (itemContent: any): ExtendFormat[] => {
     );
 };
 
-interface IAttributeUpdateSelectionParams {
-    attribute: IAttribute;
-    attributesChecked: IAttributesChecked[];
-    useCheckbox: boolean;
-    depth: number;
-    originAttributeData?: IOriginAttributeData;
-    extendedData?: IExtendedData;
-    treeData?: ITreeData;
-}
-
-export const attributeUpdateSelection = ({
-    attribute,
-    attributesChecked,
-    useCheckbox,
-    depth,
-    originAttributeData,
-    extendedData,
-    treeData
-}: IAttributeUpdateSelectionParams): IAttributesChecked[] => {
-    if (useCheckbox) {
-        let newAttributesChecked: IAttributesChecked[];
-
-        const checkCurrentAttribute = (attributeChecked: IAttributesChecked) =>
-            attributeChecked.id === attribute.id && attributeChecked.library === attribute.library;
-
-        const hasCurrentAttribute = attributesChecked.some(attributeChecked =>
-            extendedData?.path
-                ? checkCurrentAttribute(attributeChecked) && attributeChecked.extendedData?.path === extendedData?.path
-                : checkCurrentAttribute(attributeChecked)
-        );
-
-        if (hasCurrentAttribute) {
-            newAttributesChecked = attributesChecked.reduce((acc, attributeChecked) => {
-                if (checkCurrentAttribute(attributeChecked)) {
-                    const newChecked = attributeChecked?.checked ? false : true;
-                    if (extendedData?.path) {
-                        if (attributeChecked.extendedData?.path === extendedData?.path) {
-                            return [...acc, {...attributeChecked, checked: newChecked, extendedData}];
-                        } else {
-                            return [...acc, attributeChecked];
-                        }
-                    } else {
-                        return [...acc, {...attributeChecked, checked: newChecked}];
-                    }
-                }
-                return [...acc, attributeChecked];
-            }, [] as IAttributesChecked[]);
-        } else {
-            newAttributesChecked = [
-                ...attributesChecked,
-                {
-                    id: attribute.id,
-                    library: attribute.library ?? originAttributeData?.id,
-                    label: attribute.label,
-                    type: attribute.type,
-                    checked: true,
-                    originAttributeData,
-                    extendedData,
-                    treeData,
-                    depth: extendedData?.path?.match(/,/g)?.length || 0
-                }
-            ];
-        }
-
-        return newAttributesChecked;
-    } else {
-        const newAttributesChecked: IAttributesChecked[] = [
-            ...attributesChecked.filter(ac => ac.id !== attribute.id),
-            {
-                id: attribute.id,
-                library: attribute.library,
-                label: attribute.label,
-                type: attribute.type,
-                depth,
-                checked: true,
-                extendedData,
-                treeData
-            }
-        ];
-
-        return newAttributesChecked;
-    }
-};
-
 export const paginationOptions = [5, 10, 20, 50, 100];
 
-export const getItemKeyFromColumn = (column: IItemsColumn) => {
-    return `${column.library}_${column.id}`;
+interface ICustomAttribute extends IAttribute {
+    path: string;
+    embeddedFieldData?: IEmbeddedFields;
+}
+
+export const getFieldsKeyFromAttribute = (attribute: ISelectedAttribute | ICustomAttribute) => {
+    if (attribute.parentAttributeData) {
+        return `${attribute.library}.${attribute.parentAttributeData.id}.${attribute.id}`;
+    } else if (attribute?.embeddedFieldData) {
+        return `${attributeExtendedKey}.${attribute.library}.${attribute.path}`;
+    }
+    return `${attribute.library}.${attribute.id}`;
 };
 
 export const reorder = (list: any[], startIndex: number, endIndex: number) => {
@@ -326,6 +256,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
+        // eslint-disable-next-line no-fallthrough
         case NotificationPriority.medium:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -335,6 +266,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
+        // eslint-disable-next-line no-fallthrough
         case NotificationPriority.high:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -346,3 +278,161 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
             }
     }
 };
+
+export const queryFiltersToFilters = (
+    queryFilters: IQueryFilter[],
+    attributes: IAttribute[]
+): [Array<Array<IFilter | IFilterSeparator>>, OperatorFilter] => {
+    let groupFilters: Array<Array<IFilter | IFilterSeparator>> = [];
+    let currentGroupFilter: Array<IFilter | IFilterSeparator> = [];
+    let countFilter = 0;
+    let currentIsSeparator = [false, false]; // separator use two level bracket
+    let currentUseOperator = false;
+
+    let filterOperatorValue: OperatorFilter | undefined;
+
+    for (const queryFilter of queryFilters) {
+        const attribute = attributes.find(attr => attr.id === queryFilter.field);
+
+        if (queryFilter.operator) {
+            switch (queryFilter.operator) {
+                case OperatorFilter.and:
+                case OperatorFilter.or:
+                    if (currentIsSeparator[1]) {
+                        const separator: IFilterSeparator = {
+                            type: FilterTypes.separator,
+                            active: true,
+                            id: getUniqueId(),
+                            key: countFilter++
+                        };
+
+                        // filterOperatorValue is the opposite on the separator
+                        filterOperatorValue =
+                            queryFilter.operator === OperatorFilter.and ? OperatorFilter.or : OperatorFilter.and;
+
+                        currentGroupFilter = [...currentGroupFilter, separator];
+                    } else {
+                        // set operatorValue
+                        if (!filterOperatorValue) {
+                            filterOperatorValue = queryFilter.operator;
+                        }
+
+                        currentUseOperator = true;
+                    }
+                    break;
+
+                case OperatorFilter.openParent:
+                    if (currentGroupFilter) {
+                        groupFilters = [...groupFilters, currentGroupFilter];
+                        currentGroupFilter = [];
+                    }
+
+                    currentIsSeparator = [false, false];
+
+                    break;
+
+                case OperatorFilter.closeParent:
+                    if (currentGroupFilter.length) {
+                        // add current group of filters in the result
+                        groupFilters = [...groupFilters, currentGroupFilter];
+                        // reset current group of filters
+                        currentGroupFilter = [];
+                    }
+
+                    currentIsSeparator = currentIsSeparator[0] ? [true, true] : [true, false];
+
+                    break;
+            }
+        } else if (attribute) {
+            if (currentGroupFilter.length) {
+                const previousFilter = [...currentGroupFilter].pop();
+
+                if (
+                    previousFilter &&
+                    previousFilter.type === FilterTypes.filter &&
+                    previousFilter.attribute.id === queryFilter.field
+                ) {
+                    previousFilter.value += `\n${queryFilter.value}`; // append new value to previous value
+                    currentGroupFilter.splice(-1, 1, previousFilter); // replace in array
+
+                    continue;
+                }
+            }
+
+            if (queryFilter.condition && queryFilter.field) {
+                currentIsSeparator = [false, false]; // if field in current group filter, it's can't be a separator
+
+                const previousFilter = groupFilters.flat(2).pop(); // take the previous filter in a clone of the previous group
+                // if there are already filter in the group or the previous filter was of the type filter, use an operator
+                const operator =
+                    currentUseOperator ||
+                    !!currentGroupFilter.length ||
+                    (previousFilter && previousFilter.type === FilterTypes.filter);
+
+                const filterAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
+                    ...attribute,
+                    multiple_values: false,
+                    embedded_fields: null,
+                    format: attribute.format ?? null
+                };
+
+                // create new filter
+                const newFilter: IFilter = {
+                    key: countFilter,
+                    id: getUniqueId(),
+                    type: FilterTypes.filter,
+                    format: attribute.format,
+                    condition: queryFilter.condition,
+                    operator,
+                    value: queryFilter.value,
+                    attribute: filterAttribute,
+                    active: true
+                };
+
+                currentGroupFilter = [...currentGroupFilter, newFilter];
+                currentUseOperator = false;
+
+                countFilter++;
+            }
+        }
+    }
+
+    return [groupFilters, filterOperatorValue ?? OperatorFilter.and];
+};
+
+type TextSizeLimit = 'small' | 'medium' | 'big' | number;
+
+export const limitTextSize = (text: string, size: TextSizeLimit) => {
+    let numberSize: number;
+    if (isString(size)) {
+        switch (size) {
+            case 'small':
+                numberSize = 8;
+                break;
+            case 'medium':
+                numberSize = 16;
+                break;
+            case 'big':
+                numberSize = 32;
+                break;
+        }
+    } else {
+        numberSize = size;
+    }
+
+    if (text.length > numberSize) {
+        return text.slice(0, numberSize) + '...';
+    } else {
+        return text;
+    }
+};
+export const isAttributeSelected = (path: string, selectedAttributes: ISelectedAttribute[]): boolean =>
+    selectedAttributes.findIndex(selectedAttribute => selectedAttribute.path === path) !== -1;
+
+export const attributeToSelectedAttribute = (
+    attribute: GET_ATTRIBUTES_BY_LIB_attributes_list,
+    otherProps: Pick<ISelectedAttribute, 'path' | 'library' | 'parentAttributeData' | 'embeddedFieldData'>
+): ISelectedAttribute => ({
+    ...pick(attribute, ['id', 'label', 'format', 'type', 'multiple_values']),
+    ...otherProps
+});

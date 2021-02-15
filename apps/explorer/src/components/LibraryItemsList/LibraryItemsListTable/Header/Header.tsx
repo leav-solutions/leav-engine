@@ -1,23 +1,122 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DownOutlined} from '@ant-design/icons';
+import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+import {infosCol} from '../../../../constants/constants';
 import {StateItemsContext} from '../../../../Context/StateItemsContext';
+import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
 import {AttributeType, OrderSearch} from '../../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 
-interface IHeaderPros {
+interface IWrapperProps {
+    isHover: boolean;
+    isInfoColumn: boolean;
+}
+
+const Wrapper = styled.div<IWrapperProps>`
+    border-left: solid 3px ${({isHover}) => (isHover ? themingVar['@primary-color'] : 'transparent')};
+    border-right: solid 3px ${({isHover}) => (isHover ? themingVar['@primary-color'] : 'transparent')};
+    height: 100%;
+
+    ${({isHover}) =>
+        isHover &&
+        `
+        box-shadow: 0px 3px 6px #00000029;
+
+        .wrapper-arrow {
+            background: ${themingVar['@default-bg']};
+            box-shadow: 0px 3px 6px #00000029;
+            border: 1px solid ${themingVar['@leav-secondary-divider-color']};
+        }
+    `}
+
+    ${({isInfoColumn}) =>
+        isInfoColumn &&
+        `
+        margin-left: calc(2rem);
+        border-left: 1px solid ${themingVar['@divider-color']};
+    `}
+
+    &:hover {
+        padding: 0 0.3rem;
+        border-left: ${themingVar['@primary-color']} 3px solid;
+        border-right: ${themingVar['@primary-color']} 3px solid;
+        box-shadow: 0px 3px 6px #00000029;
+        transition: 500ms ease;
+
+        .wrapper-arrow {
+            transition: 500ms ease;
+            background: ${themingVar['@default-bg']};
+            box-shadow: 0px 3px 6px #00000029;
+            border: 1px solid ${themingVar['@leav-secondary-divider-color']};
+        }
+    }
+
+    & > div {
+        display: grid;
+        place-items: center;
+    }
+`;
+
+const DropdownContent = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 0.3rem;
+
+    word-break: 'keep-all';
+    user-select: 'none';
+`;
+
+interface IWrapperArrowProps {
+    filterDirection?: OrderSearch;
+    filterActive: boolean;
+}
+
+const WrapperArrow = styled.div<IWrapperArrowProps>`
+    border-radius: 50%;
+    border: 1px solid transparent;
+    height: 2rem;
+    width: 2rem;
+    display: grid;
+    grid-template-rows: 8px 8px;
+    place-items: center;
+    align-content: center;
+    margin: 0 8px;
+
+    & > * {
+        transform: scale(0.7);
+    }
+
+    & > span:first-child {
+        opacity: ${({filterDirection, filterActive}) =>
+            !filterActive || filterDirection === OrderSearch.asc ? 1 : 0.5};
+    }
+
+    & > span:last-child {
+        opacity: ${({filterDirection, filterActive}) =>
+            !filterActive || filterDirection === OrderSearch.desc ? 1 : 0.5};
+    }
+`;
+
+WrapperArrow.displayName = 'WrapperArrow';
+
+interface IHeaderProps {
     children: React.ReactNode;
+    id: string;
     name: string;
     type: AttributeType;
 }
 
-const Header = ({children, name, type}: IHeaderPros) => {
+const Header = ({id, children, name, type}: IHeaderProps) => {
     const {t} = useTranslation();
+
+    const [isHover, setIsHover] = useState<boolean>(false);
 
     const {stateItems, dispatchItems} = useContext(StateItemsContext);
 
@@ -25,9 +124,12 @@ const Header = ({children, name, type}: IHeaderPros) => {
         const newSortField = getSortFieldByAttributeType(attId, attType);
 
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SEARCH_INFOS,
-            itemsSortField: newSortField,
-            itemsSortOrder: order
+            type: LibraryItemListReducerActionTypes.SET_SORT,
+            itemsSort: {
+                field: newSortField,
+                order,
+                active: true
+            }
         });
     };
 
@@ -41,28 +143,47 @@ const Header = ({children, name, type}: IHeaderPros) => {
 
     const cancelSort = () => {
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.CANCEL_SEARCH,
-            itemsSortField: stateItems.attributes[0]?.id || ''
+            type: LibraryItemListReducerActionTypes.CANCEL_SORT
         });
     };
+
     return (
-        <Dropdown
-            overlay={
-                <Menu>
-                    <Menu.Item onClick={() => handleAsc(name, type)}>
-                        {t('items_list.table.header-cell-menu.sort-ascend')}
-                    </Menu.Item>
-                    <Menu.Item onClick={() => handleDesc(name, type)}>
-                        {t('items_list.table.header-cell-menu.sort-descend')}
-                    </Menu.Item>
-                    <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
-                </Menu>
-            }
-        >
-            <span style={{wordBreak: 'keep-all', userSelect: 'none'}}>
-                {children} <DownOutlined />
-            </span>
-        </Dropdown>
+        <Wrapper isHover={isHover} isInfoColumn={infosCol === id}>
+            <div>
+                <Dropdown
+                    placement="bottomCenter"
+                    overlay={
+                        <Menu
+                            style={{transform: 'translateY(-8px)'}} // move overlay to avoid trigger css transition
+                            onMouseEnter={() => setIsHover(true)}
+                            onMouseLeave={() => setIsHover(false)}
+                        >
+                            <Menu.Item onClick={() => handleAsc(id, type)}>
+                                {t('items_list.table.header-cell-menu.sort-ascend')}
+                            </Menu.Item>
+                            <Menu.Item onClick={() => handleDesc(id, type)}>
+                                {t('items_list.table.header-cell-menu.sort-descend')}
+                            </Menu.Item>
+                            <Menu.Item onClick={cancelSort}>
+                                {t('items_list.table.header-cell-menu.cancel-sort')}
+                            </Menu.Item>
+                        </Menu>
+                    }
+                >
+                    <DropdownContent>
+                        {children}
+                        <WrapperArrow
+                            className="wrapper-arrow"
+                            filterDirection={stateItems.itemsSort.order}
+                            filterActive={!!stateItems.itemsSort.active}
+                        >
+                            <CaretUpOutlined />
+                            <CaretDownOutlined />
+                        </WrapperArrow>
+                    </DropdownContent>
+                </Dropdown>
+            </div>
+        </Wrapper>
     );
 };
 

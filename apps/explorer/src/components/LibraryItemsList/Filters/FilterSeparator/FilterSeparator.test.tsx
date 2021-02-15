@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {FilterTypes, OperatorFilter} from '../../../../_types/types';
 import FilterSeparator from './FilterSeparator';
 
 describe('FilterSeparator', () => {
-    test('have a Dropdown', async () => {
-        const comp = mount(
+    test('have a the operator selector', async () => {
+        render(
             <FilterSeparator
                 separator={{
                     id: 'test_separator',
@@ -23,6 +23,9 @@ describe('FilterSeparator', () => {
                 updateFilters={jest.fn()}
             />
         );
-        expect(comp.find('Select')).toHaveLength(1);
+
+        const operatorSelectorElement = screen.getByTestId('operator-selector');
+
+        expect(operatorSelectorElement).toBeInTheDocument();
     });
 });

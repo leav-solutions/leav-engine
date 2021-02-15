@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {useCallback} from 'react';
+import {useCallback, useMemo} from 'react';
 import {getLangAll, IGetLangAll} from '../../queries/cache/lang/getLangQuery';
 
 export const useLang = (): [IGetLangAll, (langInfo: Partial<IGetLangAll>) => void] => {
     const {data, client} = useQuery<IGetLangAll>(getLangAll);
 
-    const lang = data?.lang || [];
-    const availableLangs = data?.availableLangs || [];
+    const lang = useMemo(() => data?.lang || [], [data]);
+    const availableLangs = useMemo(() => data?.availableLangs || [], [data]);
     const defaultLang = data?.defaultLang || '';
 
     const updateLang = useCallback(

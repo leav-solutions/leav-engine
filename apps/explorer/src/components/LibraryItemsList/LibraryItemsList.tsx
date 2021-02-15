@@ -2,25 +2,44 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useQuery} from '@apollo/client';
+import {isString} from 'lodash';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
-import {panelSize} from '../../constants/constants';
+import {attributeExtendedKey, defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {StateItemsContext} from '../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
-import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
+import {
+    getLibraryDetailExtendedQuery,
+    IGetLibraryDetailExtendedQuery,
+    IGetLibraryDetailExtendedVariables
+} from '../../queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
 import {checkTypeIsLink, localizedLabel} from '../../utils';
-import {AttributeFormat, AttributeType, IAttribute, IItem, NotificationType, OrderSearch} from '../../_types/types';
+import {
+    AttributeFormat,
+    AttributeType,
+    IAttribute,
+    IField,
+    IItem,
+    IParentAttributeData,
+    IView,
+    NotificationType,
+    ViewType
+} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
-import reducer, {LibraryItemListInitialState, LibraryItemListReducerActionTypes} from './LibraryItemsListReducer';
+import reducer, {
+    applySort,
+    LibraryItemListInitialState,
+    LibraryItemListReducerActionTypes
+} from './LibraryItemsListReducer';
 import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
@@ -33,7 +52,7 @@ interface IWrapperProps {
 
 const Wrapper = styled.div<IWrapperProps>`
     display: ${({showSide}) => (showSide ? 'grid' : 'inherit')};
-    grid-template-columns: ${panelSize} auto;
+    grid-template-columns: ${panelSize} calc(100% - ${panelSize});
     grid-template-rows: 100%;
     height: 100%;
     position: relative;
@@ -53,27 +72,33 @@ function LibraryItemsList(): JSX.Element {
     const {t} = useTranslation();
     const {libId} = useParams<{libId: string}>();
 
-    const [state, dispatch] = useReducer(reducer, LibraryItemListInitialState);
+    const [stateItems, dispatchItems] = useReducer(reducer, LibraryItemListInitialState);
 
     const [{lang}] = useLang();
     const {updateBaseNotification} = useNotifications();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
 
-    const {loading, data, error} = useQuery(getLibraryDetailExtendedQuery, {
-        variables: {
-            libId
+    const {loading, data, error} = useQuery<IGetLibraryDetailExtendedQuery, IGetLibraryDetailExtendedVariables>(
+        getLibraryDetailExtendedQuery,
+        {
+            variables: {
+                libId
+            }
         }
-    });
+    );
 
     useEffect(() => {
         if (!loading && data) {
-            const libraryId = data?.libraries?.list[0]?.id;
-            const libLabel = data?.libraries?.list[0]?.label;
-            const {query, type, filter, searchableFields} = data?.libraries?.list[0]?.gqlNames;
+            const currentLibrary = data.libraries?.list[0];
+
+            const currentLibId = currentLibrary?.id;
+            const libLabel = currentLibrary?.label;
+            const {query, type, filter, searchableFields} = currentLibrary?.gqlNames;
             const libName = localizedLabel(libLabel, lang);
 
+            // Active Library
             updateActiveLibrary({
-                id: libraryId,
+                id: currentLibId,
                 name: libName,
                 filter,
                 gql: {
@@ -83,11 +108,39 @@ function LibraryItemsList(): JSX.Element {
                 }
             });
 
+            // Base Notification
             updateBaseNotification({
                 content: t('notification.active-lib', {lib: libName}),
                 type: NotificationType.basic
             });
 
+            // Current View
+            let view: IView | undefined;
+            if (currentLibrary.defaultView) {
+                view = {
+                    id: currentLibrary.defaultView.id,
+                    label: localizedLabel(currentLibrary.defaultView.label, lang),
+                    description: currentLibrary.defaultView.description,
+                    type: currentLibrary.defaultView.type,
+                    color: currentLibrary.defaultView.color,
+                    shared: currentLibrary.defaultView.shared,
+                    fields:
+                        currentLibrary.defaultView.settings?.find(setting => setting.name === viewSettingsField)
+                            ?.value ?? [],
+                    filters: currentLibrary.defaultView.filters ?? [],
+                    sort: currentLibrary.defaultView.sort ?? defaultSort
+                };
+            } else {
+                // use defaultView and translate label
+                view = {...defaultView, label: t(defaultView.label)};
+            }
+
+            dispatchItems({
+                type: LibraryItemListReducerActionTypes.SET_VIEW,
+                view: {current: view}
+            });
+
+            // Attributes
             const attributes: IAttribute[] = data?.libraries?.list[0]?.attributes.reduce(
                 (acc: IAttribute[], attribute) => {
                     if (
@@ -96,82 +149,215 @@ function LibraryItemsList(): JSX.Element {
                         attribute.type &&
                         Object.values(AttributeType).includes(attribute.type)
                     ) {
-                        const newAttribute: IAttribute = {
-                            id: attribute.id,
-                            type: attribute.type,
-                            format: attribute.format,
-                            label: attribute.label,
-                            isLink: checkTypeIsLink(attribute.type),
-                            isMultiple: attribute.multiple_values,
-                            linkedLibrary: attribute.linked_library,
-                            linkedTree: attribute.linked_tree,
-                            library: libraryId
-                        };
+                        const newAttributes: IAttribute[] = [
+                            {
+                                id: attribute.id,
+                                type: attribute.type,
+                                format: attribute.format,
+                                label: attribute.label,
+                                isLink: checkTypeIsLink(attribute.type),
+                                isMultiple: attribute.multiple_values,
+                                linkedLibrary: attribute.linked_library,
+                                linkedTree: attribute.linked_tree,
+                                library: currentLibId
+                            }
+                        ];
 
-                        return [...acc, newAttribute];
+                        // case attribute is a linked attribute
+                        if (
+                            (attribute.type === AttributeType.simple_link ||
+                                attribute.type === AttributeType.advanced_link) &&
+                            attribute.linked_library
+                        ) {
+                            const linkedLibraryId = attribute.linked_library.id;
+                            const newLinkedAttributes: IAttribute[] = attribute.linked_library.attributes.map(
+                                linkedAttribute => ({
+                                    id: linkedAttribute.id,
+                                    type: linkedAttribute.type,
+                                    format: linkedAttribute.format,
+                                    label: linkedAttribute.label,
+                                    isLink: checkTypeIsLink(linkedAttribute.type),
+                                    isMultiple: linkedAttribute.multiple_values,
+                                    library: linkedLibraryId
+                                })
+                            );
+
+                            newAttributes.push(...newLinkedAttributes);
+                        }
+
+                        if (attribute.type === AttributeType.tree && attribute.linked_tree) {
+                            const newLinkedAttributes: IAttribute[] = attribute.linked_tree.libraries
+                                .map(linkedTreeLibrary => {
+                                    const linkedLibraryId = linkedTreeLibrary.library.id;
+                                    return linkedTreeLibrary.library.attributes.map(linkedAttribute => ({
+                                        id: linkedAttribute.id,
+                                        type: linkedAttribute.type,
+                                        format: linkedAttribute.format,
+                                        label: linkedAttribute.label,
+                                        isLink: checkTypeIsLink(linkedAttribute.type),
+                                        isMultiple: linkedAttribute.multiple_values,
+                                        library: linkedLibraryId
+                                    }));
+                                })
+                                .flat();
+
+                            newAttributes.push(...newLinkedAttributes);
+                        }
+
+                        return [...acc, ...newAttributes];
                     }
+
                     return acc;
                 },
                 []
             );
 
-            dispatch({
+            // force the first sort by id
+            dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_LIB_INFOS,
-                itemsSortField: 'id', // force the first sort by id
-                itemsSortOrder: OrderSearch.asc,
+                itemsSort: {
+                    ...view.sort,
+                    active: false
+                },
                 attributes
             });
-
-            dispatch({
-                type: LibraryItemListReducerActionTypes.SET_COLUMNS,
-                columns: []
-            });
         }
-    }, [dispatch, updateActiveLibrary, updateBaseNotification, t, loading, data, libId, activeLibrary, lang]);
+    }, [dispatchItems, updateActiveLibrary, updateBaseNotification, t, loading, data, libId, activeLibrary, lang]);
 
+    useEffect(() => {
+        if (stateItems.view.reload && stateItems.view.current) {
+            if (stateItems.view.current.type === ViewType.list) {
+                // Get initials Fields
+                const fields = stateItems.view.current.fields?.reduce((acc, fieldKey) => {
+                    let parentAttributeData: IParentAttributeData | undefined;
+
+                    const splitKey = fieldKey.split('.');
+
+                    const attribute = stateItems.attributes.find(stateAttr => {
+                        // splitKey only contain the  attributeId
+                        if (splitKey.length === 1) {
+                            return stateAttr.id === fieldKey;
+                        } else if (splitKey.length === 2) {
+                            // splitKey contain libraryId and attributeId
+                            const libraryId = splitKey[0];
+                            const attributeId = splitKey[1];
+
+                            return stateAttr.library === libraryId && stateAttr.id === attributeId;
+                        } else {
+                            // extended attribute
+                            if (splitKey[0] === attributeExtendedKey) {
+                                const libraryId = splitKey[1];
+                                const attributeId = splitKey[2];
+
+                                return stateAttr.library === libraryId && stateAttr.id === attributeId;
+                            }
+                            // linked attribute
+                            const libraryId = splitKey[0];
+                            const attributeId = splitKey[2];
+
+                            return stateAttr.library === libraryId && stateAttr.id === attributeId;
+                        }
+                    });
+
+                    // get originAttribute
+                    if (splitKey.length === 3 && splitKey[0] !== attributeExtendedKey) {
+                        const parentAttributeId = splitKey[1];
+                        const parentAttribute = stateItems.attributes.find(
+                            stateAttr => parentAttributeId === stateAttr.id && activeLibrary?.id === stateAttr.library
+                        );
+
+                        if (parentAttribute) {
+                            parentAttributeData = {
+                                id: parentAttribute.id,
+                                type: parentAttribute.type
+                            };
+                        }
+                    }
+
+                    if (!attribute) {
+                        return acc;
+                    }
+
+                    const label = isString(attribute.label) ? attribute.label : localizedLabel(attribute.label, lang);
+
+                    const field: IField = {
+                        key: fieldKey,
+                        id: attribute.id,
+                        library: attribute.library,
+                        label,
+                        format: attribute.format,
+                        type: attribute.type,
+                        parentAttributeData
+                    };
+
+                    return [...acc, field];
+                }, [] as IField[]);
+
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_FIELDS,
+                    fields: fields ?? []
+                });
+            }
+
+            // update Filters
+            if (stateItems.view.current.filters) {
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
+                    queryFilters: stateItems.view.current.filters
+                });
+            } else {
+                // reset filters
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
+                    queryFilters: []
+                });
+            }
+
+            // update sort
+            const field = stateItems.view.current.sort?.field ?? defaultSort.field;
+            const order = stateItems.view.current.sort?.order ?? defaultSort.order;
+            dispatchItems(applySort(field, order));
+        }
+    }, [stateItems.view, stateItems.attributes, lang, activeLibrary]);
+
+    // Get data
     const [
         getRecords,
         {called: calledItem, loading: loadingItem, data: dataItem, error: errorItem, refetch}
     ] = useLazyQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
-        activeLibrary?.filter && activeLibrary.gql.query && activeLibrary.gql.searchableFields
-            ? getRecordsFromLibraryQuery(
-                  activeLibrary.gql.query || '',
-                  activeLibrary.filter,
-                  state.columns.filter(col => state.attributes.find(att => att.id === col.id))
-              )
-            : getLibraryDetailExtendedQuery,
+        getRecordsFromLibraryQuery(activeLibrary?.gql.query, stateItems.fields),
         {
             variables: {
-                limit: state.pagination,
-                offset: state.offset,
-                filters: state.queryFilters,
-                sortField: state.itemsSortField,
-                sortOrder: state.itemsSortOrder
+                limit: stateItems.pagination,
+                offset: stateItems.offset,
+                filters: stateItems.queryFilters,
+                sortField: stateItems.itemsSort.field,
+                sortOrder: stateItems.itemsSort.order
             }
         }
     );
 
     useEffect(() => {
-        if (!state.searchFullTextActive) {
+        if (!stateItems.searchFullTextActive) {
             if (!loadingItem && calledItem && dataItem && activeLibrary?.filter) {
                 const libQuery = activeLibrary.gql.query;
 
                 const itemsFromQuery = dataItem ? dataItem[activeLibrary.gql.query || ''].list : [];
 
-                const items = manageItems({items: itemsFromQuery, lang, columns: state.columns});
+                const items: IItem[] = manageItems({items: itemsFromQuery, lang, fields: stateItems.fields});
 
-                dispatch({
+                dispatchItems({
                     type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
-                    items: (items as unknown) as IItem[],
+                    items,
                     totalCount: dataItem[libQuery]?.totalCount
                 });
 
-                dispatch({
+                dispatchItems({
                     type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
                     itemLoading: false
                 });
             } else {
-                dispatch({
+                dispatchItems({
                     type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
                     itemLoading: true
                 });
@@ -184,22 +370,23 @@ function LibraryItemsList(): JSX.Element {
         lang,
         libId,
         activeLibrary,
-        state.attributes,
-        state.columns,
-        state.searchFullTextActive
+        stateItems.attributes,
+        stateItems.fields,
+        stateItems.searchFullTextActive
     ]);
 
     useEffect(() => {
-        if (!state.searchFullTextActive) {
+        if (!stateItems.searchFullTextActive && activeLibrary?.gql.query) {
             getRecords();
         }
     }, [
-        state.offset,
-        state.pagination,
-        state.queryFilters,
-        state.itemsSortField,
-        state.itemsSortOrder,
-        state.searchFullTextActive,
+        stateItems.offset,
+        stateItems.pagination,
+        stateItems.queryFilters,
+        stateItems.itemsSort,
+        stateItems.searchFullTextActive,
+        stateItems.view.reload,
+        activeLibrary,
         getRecords
     ]);
 
@@ -208,19 +395,18 @@ function LibraryItemsList(): JSX.Element {
     }
 
     return (
-        <StateItemsContext.Provider value={{stateItems: state, dispatchItems: dispatch}}>
+        <StateItemsContext.Provider value={{stateItems, dispatchItems}}>
             <MenuWrapper>
-                <MenuItemList stateItems={state} dispatchItems={dispatch} refetch={refetch} />
-                <MenuItemListSelected active={state.selectionMode} />
+                <MenuItemList refetch={refetch} />
+                <MenuItemListSelected active={stateItems.selectionMode} />
             </MenuWrapper>
+
             <Wrapper
-                showSide={state.sideItems.visible}
-                className={state.sideItems.visible ? 'wrapper-open' : 'wrapper-close'}
+                showSide={stateItems.sideItems.visible}
+                className={stateItems.sideItems.visible ? 'wrapper-open' : 'wrapper-close'}
             >
                 <SideItems />
-                <div style={{maxWidth: state.sideItems.visible ? `calc(100% + 2rem - ${panelSize})` : '100%'}}>
-                    <DisplayTypeSelector stateItems={state} dispatchItems={dispatch} />
-                </div>
+                <DisplayTypeSelector />
             </Wrapper>
         </StateItemsContext.Provider>
     );

@@ -24,13 +24,13 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
     const handleSubmit = () => {
         saveValueBatch({
             variables: {
-                library: values?.library?.id,
-                recordId: values?.id,
+                library: values?.whoAmI?.library?.id,
+                recordId: values?.whoAmI.id,
                 version: null,
                 values: [
                     {
                         attribute: 'label',
-                        value: values?.label
+                        value: values?.whoAmI.label
                     }
                 ]
             }
@@ -39,6 +39,13 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
 
     const triggerSubmit = () => {
         formRef.current?.submit();
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (values) {
+            const whoAmI = {...values.whoAmI, label: e.target.value};
+            updateValues({...values, whoAmI});
+        }
     };
 
     return (
@@ -60,14 +67,10 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
                 <>
                     <Form ref={formRef} onFinish={handleSubmit}>
                         <Form.Item label="ID" name="ID">
-                            <Input disabled type="text" value={values?.id} />
+                            <Input disabled type="text" value={values?.whoAmI.id} />
                         </Form.Item>
                         <Form.Item label="Label">
-                            <Input
-                                type="text"
-                                value={values?.label || ''}
-                                onChange={e => updateValues({...values, label: e.target.value})}
-                            />
+                            <Input type="text" value={values?.whoAmI.label || ''} onChange={handleChange} />
                         </Form.Item>
                         <h2>Preview</h2>
                         <FormPreviewsModal values={values} updateValues={updateValues} />

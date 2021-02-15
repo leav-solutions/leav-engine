@@ -11,8 +11,12 @@ import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {getLibrariesListQuery} from '../../../queries/libraries/getLibrariesListQuery';
-import {ISearchFullTextQuery, ISearchFullTextVar, searchFullText} from '../../../queries/searchFullText/searchFullText';
-import {IItem} from '../../../_types/types';
+import {
+    ISearchFullTextQuery,
+    ISearchFullTextResult,
+    ISearchFullTextVar,
+    searchFullText
+} from '../../../queries/searchFullText/searchFullText';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import {manageItems} from '../manageItems';
 
@@ -39,7 +43,7 @@ function SearchItems(): JSX.Element {
 
     const [triggerSearch, {data, called, loading, error}] = useLazyQuery<ISearchFullTextQuery, ISearchFullTextVar>(
         activeLib?.id
-            ? searchFullText(activeLib?.id, activeLib?.gql?.type || '', stateItems.columns)
+            ? searchFullText(activeLib?.id, activeLib?.gql?.type || '', stateItems.fields)
             : getLibrariesListQuery,
         {
             variables: {
@@ -74,7 +78,7 @@ function SearchItems(): JSX.Element {
     }, [
         setUpdateSearch,
         triggerSearch,
-        stateItems.columns,
+        stateItems.fields,
         stateItems.searchFullTextActive,
         stateItems.pagination,
         stateItems.offset
@@ -83,14 +87,14 @@ function SearchItems(): JSX.Element {
     useEffect(() => {
         if (called && !loading && data && updateSearch && activeLib) {
             const totalCount = data[activeLib.id]?.totalCount;
-            const itemsFromQuery = data[activeLib.id].list;
+            const itemsFromQuery: ISearchFullTextResult[] = data[activeLib.id].list;
 
-            const items = manageItems({items: itemsFromQuery, lang, columns: stateItems.columns});
+            const items = manageItems({items: itemsFromQuery, lang, fields: stateItems.fields});
 
             dispatchItems({
                 type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
                 totalCount,
-                items: (items as unknown) as IItem[]
+                items
             });
 
             setUpdateSearch(false);
@@ -100,7 +104,7 @@ function SearchItems(): JSX.Element {
                 itemLoading: false
             });
         }
-    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.columns, activeLib]);
+    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.fields, activeLib]);
 
     if (error) {
         console.error(error);

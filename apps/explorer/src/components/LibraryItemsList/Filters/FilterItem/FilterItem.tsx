@@ -17,8 +17,10 @@ import {
 } from '../../../../_types/types';
 import {ILibraryItemListState} from '../../LibraryItemsListReducer';
 import ChangeAttribute from './ChangeAttribute';
-import FormBoolean from './FormBoolean';
-import FormText from './FormText';
+import BooleanFilter from './FilterInput/BooleanFilter';
+import DateFilter from './FilterInput/DateFilter';
+import NumericFilter from './FilterInput/NumericFilter';
+import TextFilter from './FilterInput/TextFilter';
 
 const CustomCard = styled(Card)`
     &:hover .handle {
@@ -26,7 +28,7 @@ const CustomCard = styled(Card)`
     }
 `;
 const Handle = styled.div`
-    margin: 3rem 5px;
+    margin: 0 5px;
     opacity: 0;
 
     display: flex;
@@ -111,6 +113,10 @@ const CustomDivider = styled(Divider)`
     }
 `;
 
+const InputWrapper = styled.div`
+    width: 100%;
+`;
+
 interface IFilterItemProps {
     stateItems: ILibraryItemListState;
     filter: IFilter;
@@ -145,6 +151,8 @@ function FilterItem({
     const {t} = useTranslation();
 
     const [showModal, setShowModal] = useState(false);
+
+    const isBooleanFilter = filter.format === AttributeFormat.boolean;
 
     const conditionOptionsByType = conditionOptions.filter(
         conditionOption => filter.format && allowedTypeOperator[filter.format]?.includes(conditionOption.value)
@@ -188,7 +196,7 @@ function FilterItem({
 
     const deleteFilterItem = () => {
         setFilters(filters => {
-            return filters.map(filterGroup => {
+            const newFilterGroup = filters.map(filterGroup => {
                 let newFilters = filterGroup.filter(f => f.key !== filter.key);
                 const activeFilters = (filterGroup as IFilter[]).filter(f => f.type === FilterTypes.filter && f.active);
 
@@ -215,6 +223,8 @@ function FilterItem({
 
                 return newFilters;
             });
+
+            return newFilterGroup;
         });
 
         updateFilters();
@@ -293,28 +303,37 @@ function FilterItem({
 
                             <GridColumn flex={5}>
                                 <CurrentAttribute onClick={() => setShowModal(true)} disabled={!filter.active}>
-                                    {filter.attributeId}
+                                    {filter.attribute.id}
                                 </CurrentAttribute>
 
-                                <Select
-                                    value={filter.condition}
-                                    onChange={(e: ConditionFilter) => changeCondition(e)}
-                                    disabled={!filter.active}
-                                    bordered={false}
-                                >
-                                    {conditionOptionsByType.map(condition => (
-                                        <Select.Option key={condition.value} value={condition.value}>
-                                            {condition.text}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
+                                {!isBooleanFilter && (
+                                    <Select
+                                        value={filter.condition}
+                                        onChange={(e: ConditionFilter) => changeCondition(e)}
+                                        disabled={!filter.active}
+                                        bordered={false}
+                                    >
+                                        {conditionOptionsByType.map(condition => (
+                                            <Select.Option key={condition.value} value={condition.value}>
+                                                {condition.text}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                )}
+                                {isBooleanFilter && (
+                                    <BooleanFilter filter={filter} updateFilterValue={updateFilterValue} />
+                                )}
                             </GridColumn>
 
                             <Button icon={<CloseOutlined />} size="small" onClick={deleteFilterItem} />
                         </GridRow>
-                        <GridRow>
-                            <SwitchFormFormat filter={filter} updateFilterValue={updateFilterValue} />
-                        </GridRow>
+                        {!isBooleanFilter && (
+                            <GridRow>
+                                <InputWrapper>
+                                    <InputByFormat filter={filter} updateFilterValue={updateFilterValue} />
+                                </InputWrapper>
+                            </GridRow>
+                        )}
                     </Grid>
                 </div>
             </CustomCard>
@@ -327,13 +346,17 @@ interface ISwitchFormType {
     updateFilterValue: (newValue: any) => void;
 }
 
-const SwitchFormFormat = (props: ISwitchFormType) => {
+const InputByFormat = (props: ISwitchFormType) => {
     switch (props.filter.format) {
         case AttributeFormat.boolean:
-            return <FormBoolean {...props} />;
+            return <BooleanFilter {...props} />;
+        case AttributeFormat.date:
+            return <DateFilter {...props} />;
+        case AttributeFormat.numeric:
+            return <NumericFilter {...props} />;
         case AttributeFormat.text:
         default:
-            return <FormText {...props} />;
+            return <TextFilter {...props} />;
     }
 };
 

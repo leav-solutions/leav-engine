@@ -1,0 +1,241 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActionsMenu Snapshot test 1`] = `
+initialize {
+  "0": Node {
+    "attribs": Object {
+      "class": "ant-btn ant-dropdown-trigger",
+      "type": "button",
+    },
+    "children": Array [
+      Node {
+        "attribs": Object {},
+        "children": Array [
+          Node {
+            "data": "menu-selection.actions ",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "text",
+          },
+        ],
+        "name": "span",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Node {
+          "attribs": Object {
+            "aria-label": "down",
+            "class": "anticon anticon-down",
+            "role": "img",
+          },
+          "children": Array [
+            Node {
+              "attribs": Object {
+                "aria-hidden": "true",
+                "data-icon": "down",
+                "fill": "currentColor",
+                "focusable": "false",
+                "height": "1em",
+                "viewBox": "64 64 896 896",
+                "width": "1em",
+              },
+              "children": Array [
+                Node {
+                  "attribs": Object {
+                    "d": "M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z",
+                  },
+                  "children": Array [],
+                  "name": "path",
+                  "namespace": "http://www.w3.org/2000/svg",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "d": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "d": undefined,
+                  },
+                },
+              ],
+              "name": "svg",
+              "namespace": "http://www.w3.org/2000/svg",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "data-icon": undefined,
+                "fill": undefined,
+                "focusable": undefined,
+                "height": undefined,
+                "viewBox": undefined,
+                "width": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "data-icon": undefined,
+                "fill": undefined,
+                "focusable": undefined,
+                "height": undefined,
+                "viewBox": undefined,
+                "width": undefined,
+              },
+            },
+          ],
+          "name": "span",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-label": undefined,
+            "class": undefined,
+            "role": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-label": undefined,
+            "class": undefined,
+            "role": undefined,
+          },
+        },
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": Object {},
+        "x-attribsPrefix": Object {},
+      },
+      Node {
+        "attribs": Object {
+          "aria-label": "down",
+          "class": "anticon anticon-down",
+          "role": "img",
+        },
+        "children": Array [
+          Node {
+            "attribs": Object {
+              "aria-hidden": "true",
+              "data-icon": "down",
+              "fill": "currentColor",
+              "focusable": "false",
+              "height": "1em",
+              "viewBox": "64 64 896 896",
+              "width": "1em",
+            },
+            "children": Array [
+              Node {
+                "attribs": Object {
+                  "d": "M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z",
+                },
+                "children": Array [],
+                "name": "path",
+                "namespace": "http://www.w3.org/2000/svg",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "d": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "d": undefined,
+                },
+              },
+            ],
+            "name": "svg",
+            "namespace": "http://www.w3.org/2000/svg",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-hidden": undefined,
+              "data-icon": undefined,
+              "fill": undefined,
+              "focusable": undefined,
+              "height": undefined,
+              "viewBox": undefined,
+              "width": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-hidden": undefined,
+              "data-icon": undefined,
+              "fill": undefined,
+              "focusable": undefined,
+              "height": undefined,
+              "viewBox": undefined,
+              "width": undefined,
+            },
+          },
+        ],
+        "name": "span",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": [Circular],
+        "prev": Node {
+          "attribs": Object {},
+          "children": Array [
+            Node {
+              "data": "menu-selection.actions ",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "span",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {},
+          "x-attribsPrefix": Object {},
+        },
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "aria-label": undefined,
+          "class": undefined,
+          "role": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "aria-label": undefined,
+          "class": undefined,
+          "role": undefined,
+        },
+      },
+    ],
+    "name": "button",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": null,
+    "parent": Node {
+      "children": Array [
+        [Circular],
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "prev": null,
+    "type": "tag",
+    "x-attribsNamespace": Object {
+      "class": undefined,
+      "type": undefined,
+    },
+    "x-attribsPrefix": Object {
+      "class": undefined,
+      "type": undefined,
+    },
+  },
+  "_root": [Circular],
+  "length": 1,
+  "options": Object {
+    "decodeEntities": true,
+    "xml": false,
+  },
+}
+`;

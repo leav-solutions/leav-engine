@@ -2,24 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {DisplayListItemTypes} from '../../../_types/types';
-import {ILibraryItemListState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
-import LibraryItemsListTable from '../LibraryItemsListTable';
+import {useStateItem} from '../../../Context/StateItemsContext';
+import {ViewType} from '../../../_types/types';
+import Table from '../LibraryItemsListTable';
 import TileDisplay from '../TileDisplay';
 
-interface IDisplayTypeSelectorProps {
-    stateItems: ILibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-}
+function DisplayTypeSelector(): JSX.Element {
+    const {
+        stateItems: {view}
+    } = useStateItem();
 
-function DisplayTypeSelector({stateItems, dispatchItems}: IDisplayTypeSelectorProps): JSX.Element {
-    switch (stateItems.displayType) {
-        case DisplayListItemTypes.tile:
-            return <TileDisplay stateItems={stateItems} dispatchItems={dispatchItems} />;
-        case DisplayListItemTypes.listSmall:
-        case DisplayListItemTypes.listMedium:
-        case DisplayListItemTypes.listBig:
-            return <LibraryItemsListTable stateItems={stateItems} dispatchItems={dispatchItems} />;
+    switch (view.current?.type) {
+        case ViewType.list:
+            return <Table />;
+        case ViewType.timeline:
+            return <div>Not supported yet</div>;
+        case ViewType.cards:
+        default:
+            return <TileDisplay />;
     }
 }
 

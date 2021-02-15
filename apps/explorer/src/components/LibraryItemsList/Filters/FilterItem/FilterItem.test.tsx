@@ -6,6 +6,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {AttributeFormat, ConditionFilter, FilterTypes, IFilter, OperatorFilter} from '../../../../_types/types';
+import {mockAttributeStandard} from '../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import FilterItem from './FilterItem';
@@ -14,13 +15,13 @@ describe('FilterItem', () => {
     const stateItems = LibraryItemListInitialState;
 
     const mockFilter: IFilter = {
-        id: 'test_filter',
+        id: mockAttributeStandard.id,
         type: FilterTypes.filter,
         key: 1,
         operator: false,
         condition: ConditionFilter.contains,
         value: '',
-        attributeId: 'test',
+        attribute: mockAttributeStandard,
         active: true,
         format: AttributeFormat.text
     };

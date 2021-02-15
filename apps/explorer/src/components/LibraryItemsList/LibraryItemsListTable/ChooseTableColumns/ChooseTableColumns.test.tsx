@@ -12,10 +12,10 @@ import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 
 jest.mock(
-    '../../../ListAttributes',
+    '../../../AttributesSelectionList',
     () =>
-        function ListAttributes() {
-            return <div>ListAttributes</div>;
+        function AttributesSelectionList() {
+            return <div>AttributesSelectionList</div>;
         }
 );
 
@@ -57,6 +57,6 @@ describe('ChooseTableColumns', () => {
             comp.update();
         });
 
-        expect(comp.find('ListAttributes')).toHaveLength(1);
+        expect(comp.find('AttributesSelectionList')).toHaveLength(1);
     });
 });

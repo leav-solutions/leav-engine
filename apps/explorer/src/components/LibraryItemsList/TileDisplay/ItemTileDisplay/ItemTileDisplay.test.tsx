@@ -5,30 +5,25 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {IItem} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
+import {MockStateItems} from '../../../../__mocks__/stateItems/mockStateItems';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 import ItemTileDisplay from './ItemTileDisplay';
 
 describe('ItemTileDisplay', () => {
     const itemMock: IItem = {
-        id: 'test'
+        fields: {},
+        whoAmI: {
+            id: 'test'
+        },
+        index: 0
     };
 
-    const stateItems = LibraryItemListInitialState;
-
     test('should call RecordPreview', async () => {
-        const stateMock = {
-            ...stateItems,
-            items: [itemMock]
-        };
         const comp = mount(
             <MockedProviderWithFragments>
-                <ItemTileDisplay
-                    item={itemMock}
-                    stateItems={stateMock}
-                    dispatchItems={jest.fn()}
-                    showRecordEdition={jest.fn()}
-                />
+                <MockStateItems>
+                    <ItemTileDisplay item={itemMock} showRecordEdition={jest.fn()} />
+                </MockStateItems>
             </MockedProviderWithFragments>
         );
 

@@ -13,6 +13,7 @@ export interface IGetRecordsFromLibraryQueryElement {
             small: string;
             medium: string;
             big: string;
+            pages: string;
         };
         library: {
             id: string;
@@ -32,6 +33,6 @@ export interface IGetRecordsFromLibraryQueryVariables {
     limit: number;
     offset: number;
     filters: IQueryFilter[];
-    sortField: string;
+    sortField?: string;
     sortOrder: OrderSearch;
 }

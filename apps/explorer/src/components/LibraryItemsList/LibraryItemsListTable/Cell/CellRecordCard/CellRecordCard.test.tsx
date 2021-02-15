@@ -4,11 +4,11 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {PreviewSize, RecordIdentity_whoAmI} from '../../../../../_types/types';
+import {IRecordIdentityWhoAmI, PreviewSize} from '../../../../../_types/types';
 import CellRecordCard from './CellRecordCard';
 
 describe('CellRecordCard', () => {
-    const mockRecord: RecordIdentity_whoAmI = {
+    const mockRecord: IRecordIdentityWhoAmI = {
         id: 'id'
     };
     test('should contain RecordCard', async () => {

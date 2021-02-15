@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
+import {mockAttributeStandard} from '__mocks__/common/attribute';
 import {ConditionFilter, FilterTypes, IFilter} from '../../../../../_types/types';
 import FormBoolean from './FormBoolean';
 
@@ -30,7 +31,7 @@ describe('FormBoolean', () => {
             key: 0,
             condition: ConditionFilter.contains,
             value: 'test',
-            attributeId: 'test',
+            attribute: mockAttributeStandard,
             active: true
         };
         const comp = mount(<FormBoolean filter={mockFilter} updateFilterValue={jest.fn()} />);

@@ -20,13 +20,18 @@ export const getRequestFromFilter = (
     }
 
     for (const filter of filters) {
-        if (filter.type === FilterTypes.filter && filter.active && filter.value) {
+        if (
+            filter.type === FilterTypes.filter &&
+            filter.active &&
+            typeof filter.value !== 'undefined' &&
+            filter.value !== null
+        ) {
             if (filter.operator) {
                 request.push({operator: filterOperator});
             }
             request.push({operator: OperatorFilter.openParent});
 
-            const requestValue = handleValueRequest(filter);
+            const requestValue = _handleValueRequest(filter);
             request = [...request, ...requestValue];
 
             request.push({operator: OperatorFilter.closeParent});
@@ -58,47 +63,47 @@ export const getRequestFromFilter = (
     return request;
 };
 
-const handleValueRequest = (filter: IFilter) => {
+const _handleValueRequest = (filter: IFilter) => {
     const result: IQueryFilter[] = [];
     let firstValue = true;
 
     switch (filter.format) {
-        case AttributeFormat.text: {
-            filter.value.split('\n').forEach(filterValue => {
-                if (filterValue) {
-                    if (!firstValue) {
-                        result.push({operator: OperatorFilter.or});
-                    }
+        case AttributeFormat.text:
+            String(filter.value)
+                .split('\n')
+                .forEach(filterValue => {
+                    if (filterValue) {
+                        if (!firstValue) {
+                            result.push({operator: OperatorFilter.or});
+                        }
 
-                    result.push({
-                        field: getValueFromFilter(filter),
-                        value: filterValue,
-                        condition: filter.condition
-                    });
-                    firstValue = false;
-                }
-            });
+                        result.push({
+                            field: _getFieldFromFilter(filter),
+                            value: filterValue,
+                            condition: filter.condition
+                        });
+                        firstValue = false;
+                    }
+                });
             break;
-        }
-        case AttributeFormat.boolean: {
+        default: {
             result.push({
-                field: filter.attributeId,
-                value: filter.value,
+                field: _getFieldFromFilter(filter),
+                value: String(filter.value),
                 condition: filter.condition
             });
-            break;
         }
     }
 
     return result;
 };
 
-const getValueFromFilter = (filter: IFilter) => {
+const _getFieldFromFilter = (filter: IFilter) => {
     if (filter.originAttributeData) {
-        return `${filter.originAttributeData.id}.${filter.attributeId}`;
+        return `${filter.originAttributeData.id}.${filter.attribute.id}`;
     }
     if (filter.extendedData) {
         return `${filter.extendedData.path}`;
     }
-    return `${filter.attributeId}`;
+    return `${filter.attribute.id}`;
 };

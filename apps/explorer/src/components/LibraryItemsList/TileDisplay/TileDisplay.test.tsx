@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
+import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import TileDisplay from './TileDisplay';
 
 jest.mock(
@@ -33,20 +33,22 @@ jest.mock(
 );
 
 describe('TileDisplay', () => {
-    const stateItems = LibraryItemListInitialState;
-
-    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
     test('Check render', async () => {
         const itemsMock: IItem[] = [
             {
-                id: 'test'
+                fields: {},
+                whoAmI: {
+                    id: 'test'
+                },
+                index: 0
             }
         ];
 
-        const stateMock = {...stateItems, items: itemsMock, itemsLoading: false};
         const comp = mount(
             <MockedProviderWithFragments>
-                <TileDisplay stateItems={stateMock} dispatchItems={dispatchItems} />
+                <MockStateItems stateItems={{items: itemsMock}}>
+                    <TileDisplay />
+                </MockStateItems>
             </MockedProviderWithFragments>
         );
 

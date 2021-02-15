@@ -1,4 +1,10 @@
 {
+    "global": {
+        "cancel": "Cancel",
+        "close": "Fermer",
+        "processing": "Processing",
+        "done": "Terminé"
+    },
     "login": {
         "header": "Authentification",
         "email": "Email address",
@@ -93,6 +99,16 @@
                 "sort-advance": "Sort Advance",
                 "regroup": "regroup",
                 "choose-columns": "Choose Columns"
+            },
+            "actions-tooltips": {
+                "informations": "Informations",
+                "expand": "Expand",
+                "remove": "Remove",
+                "more": "More",
+                "favorite": "Favorite"
+            },
+            "pagination": {
+                "per-page": "{{pagination}} / page"
             }
         },
         "display": {
@@ -173,7 +189,8 @@
     "select-view": {
         "add-view-tile": "Add view tile",
         "add-view-list": "Add view list",
-        "default-view": "Default view..."
+        "default-view": "Default view...",
+        "save": "Save view"
     },
     "search": {
         "placeholder": "Search in library",
@@ -198,8 +215,52 @@
     "view": {
         "list": "List View",
         "my-views":"My views",
+        "shared-views": "Shared",
         "type-list": "View List",
+        "type-cards": "View Tile",
+        "type-timeline": "View Timeline",
+        "default": "Default view",
+        "rename": "Rename",
+        "add-view": {
+            "new-view": "New view",
+            "edit-view": "Edit view",
+            "view-name": "View name",
+            "view-description": "View description",
+            "view-type": "View Type",
+            "view-shared": "View Shared",
+            "view-color": "View Color"
+        },
         "type-tile": "View Tile",
         "delete": "Delete"
+    },
+    "export": {
+        "title": "Export",
+        "start": "Start export",
+        "attributes_selection": "Attributes selection",
+        "export_generation": "Export generation",
+        "export_done": "Export done",
+        "download_file": "Download file"
+    },
+    "import": {
+        "title": "Data import",
+        "file_selection": "Select XLSX file",
+        "file_selection_instruction": "Click or drag file to this area to upload",
+        "start": "Start import",
+        "in_progress": "Import in progress",
+        "data_overview": "Data Overview",
+        "file_configuration": "Configuration",
+        "import_done": "Import done",
+        "import_success": "Successfully imported",
+        "import_failure": "Import failed",
+        "empty_file": "Empty file",
+        "mapping": "Mapping",
+        "key": "Select reference attribute"
+    },
+    "error": {
+        "error_occured": "An error occured"
+    },
+    "language": {
+        "fr": "French",
+        "en": "English"
     }
 }

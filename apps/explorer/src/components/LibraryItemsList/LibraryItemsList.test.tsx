@@ -70,11 +70,13 @@ describe('LibraryItemsList', () => {
     const mocks = [
         {
             request: {
-                query: getRecordsFromLibraryQuery(libQueryName, libQueryFilter, [
+                query: getRecordsFromLibraryQuery(libQueryName, [
                     {
                         id: 'testId',
+                        label: 'Test',
                         library: 'testLib',
-                        type: AttributeType.simple
+                        type: AttributeType.simple,
+                        key: 'testId_testLib'
                     }
                 ]),
                 variables: [

@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVars from '../../../themingVar';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
+import ActionsMenu from './ActionsMenu';
 
 interface IMenuItemListSelectedProps {
     active: boolean;
@@ -87,7 +88,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
 
         if (stateItems.items) {
             for (const item of stateItems.items) {
-                newItemSelected[item.id] = true;
+                newItemSelected[item.whoAmI.id] = true;
             }
         }
 
@@ -154,17 +155,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     </Button>
                 </Dropdown>
 
-                <Dropdown
-                    overlay={
-                        <Menu>
-                            <Menu.Item>some actions</Menu.Item>
-                        </Menu>
-                    }
-                >
-                    <Button>
-                        {t('menu-selection.actions')} <DownOutlined />
-                    </Button>
-                </Dropdown>
+                <ActionsMenu />
 
                 <div>
                     <Button icon={<DeleteOutlined />}>Delete</Button>

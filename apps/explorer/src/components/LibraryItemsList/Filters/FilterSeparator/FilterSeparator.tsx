@@ -59,7 +59,12 @@ function FilterSeparator({
         <div style={{padding: '0.5rem 0'}}>
             <Wrapper>
                 <div>
-                    <Select disabled={!separator.active} value={separatorOperator} onChange={e => changeOperator(e)}>
+                    <Select
+                        disabled={!separator.active}
+                        value={separatorOperator}
+                        onChange={e => changeOperator(e)}
+                        data-testid="operator-selector"
+                    >
                         {operatorOptions.map(operator => (
                             <Select.Option key={operator.value} value={operator.value}>
                                 {operator.text}

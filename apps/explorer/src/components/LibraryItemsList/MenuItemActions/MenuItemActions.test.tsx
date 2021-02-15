@@ -6,6 +6,14 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MenuItemActions from './MenuItemActions';
 
+jest.mock(
+    '../LibraryItemsListTable/ChooseTableColumns',
+    () =>
+        function ChooseTableColumns() {
+            return <div>ChooseTableColumns</div>;
+        }
+);
+
 describe('MenuItemActions', () => {
     test('should get a button', async () => {
         let comp: any;

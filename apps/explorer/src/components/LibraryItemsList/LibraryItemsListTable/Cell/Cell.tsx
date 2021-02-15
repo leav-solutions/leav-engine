@@ -1,88 +1,63 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
-import objectPath from 'object-path';
 import React from 'react';
-import {checkTypeIsLink} from '../../../../utils';
-import {AttributeFormat, AttributeType, IItemsColumn, PreviewSize} from '../../../../_types/types';
+import styled from 'styled-components';
+import {infosCol} from '../../../../constants/constants';
+import {useStateItem} from '../../../../Context/StateItemsContext';
+import {useLang} from '../../../../hooks/LangHook/LangHook';
+import {displayTypeToPreviewSize} from '../../../../utils';
+import {AttributeFormat, AttributeType, PreviewSize} from '../../../../_types/types';
+import CellInfos from './CellInfos';
 import CellRecordCard from './CellRecordCard';
 
+const SimpleCell = styled.div`
+    padding: 5px;
+`;
+
 interface ICellProps {
-    value: any;
-    column?: IItemsColumn;
-    size: PreviewSize;
-    format?: AttributeFormat;
-    isMultiple?: boolean;
-    lang?: string[];
+    columnName: string;
+    data: {
+        id: string;
+        value: any;
+        type: AttributeType;
+        format?: AttributeFormat;
+    };
+    index: string;
 }
 
-const Cell = ({value, column, size, format, isMultiple, lang}: ICellProps) => {
-    if (value !== undefined && value !== null) {
-        // handle infos column
-        if (!column) {
-            return <CellRecordCard record={value} size={size} lang={lang} />;
-        }
+const Cell = ({columnName, data, index}: ICellProps) => {
+    const {value, type, id} = data;
 
-        switch (format) {
-            case AttributeFormat.extended:
-                if (column.extendedData) {
-                    let parseValue = {};
+    const {
+        stateItems: {displaySize: displayType}
+    } = useStateItem();
 
-                    try {
-                        parseValue = JSON.parse(value);
-                    } catch {
-                        return 'error';
-                    }
+    const [{lang}] = useLang();
 
-                    // Remove the attribute name from the path and change it to array
-                    const extendedPathArr = column.extendedData.path.split('.');
-                    extendedPathArr.shift();
+    const previewSize: PreviewSize = displayTypeToPreviewSize(displayType);
 
-                    return (
-                        <Cell
-                            value={objectPath.get(parseValue, extendedPathArr)}
-                            column={column}
-                            size={size}
-                            format={column.extendedData.format}
-                            isMultiple={isMultiple}
-                        />
-                    );
-                }
-                return;
-            case AttributeFormat.boolean:
-                return value ? <CheckOutlined /> : <CloseOutlined />;
-            case AttributeFormat.numeric:
-            case AttributeFormat.text:
-            default:
-                if (isMultiple) {
-                    return value?.map(val => (
-                        <Cell
-                            value={val}
-                            column={column}
-                            size={size}
-                            format={format}
-                            isMultiple={!!Array.isArray(val)}
-                        />
-                    ));
-                } else if (checkTypeIsLink(column.type)) {
-                    return <CellRecordCard record={{...value.whoAmI}} size={size} lang={lang} />;
-                } else if (column.type === AttributeType.tree) {
-                    return (
-                        <CellRecordCard
-                            key={value?.record?.whoAmI?.id}
-                            record={value?.record?.whoAmI}
-                            size={size}
-                            lang={lang}
-                        />
-                    );
-                }
-
-                return value;
-        }
+    if (!value) {
+        return <></>;
     }
 
-    return <span>{value}</span>;
+    switch (type) {
+        case AttributeType.simple:
+        case AttributeType.advanced:
+            return <SimpleCell>{value}</SimpleCell>;
+        case AttributeType.simple_link:
+        case AttributeType.advanced_link:
+            return <CellRecordCard record={{...value.whoAmI}} size={previewSize} lang={lang} />;
+        case AttributeType.tree:
+            return <CellRecordCard record={{...value.whoAmI}} size={previewSize} lang={lang} />;
+        default:
+            //selection and infos column has no type
+            if (columnName === infosCol) {
+                return <CellInfos record={value} size={previewSize} lang={lang} index={index} id={id} />;
+            }
+
+            return <></>;
+    }
 };
 
 export default Cell;

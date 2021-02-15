@@ -13,7 +13,7 @@ describe('LibraryItemsListPagination', () => {
     const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
 
     test('should have pagination', async () => {
-        const comp = mount(<LibraryItemsListPagination stateItems={stateItems} dispatchItems={dispatchItems} />);
+        const comp = mount(<LibraryItemsListPagination />);
 
         expect(comp.find(Pagination)).toHaveLength(1);
     });

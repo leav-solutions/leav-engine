@@ -52,8 +52,10 @@ export const getLibrariesAndTreesListQuery = gql`
                 id
                 label
                 libraries {
-                    id
-                    label
+                    library {
+                        id
+                        label
+                    }
                 }
             }
         }

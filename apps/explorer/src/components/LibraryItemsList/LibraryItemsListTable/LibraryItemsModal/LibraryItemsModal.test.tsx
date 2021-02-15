@@ -12,8 +12,13 @@ import LibraryItemsModal from './LibraryItemsModal';
 describe('LibraryItemsModal', () => {
     test('should have modal', async () => {
         const items: IItem = {
-            id: 'test',
-            label: 'label-test'
+            fields: {},
+            whoAmI: {
+                id: 'testId',
+                library: {id: 'testLibId', label: {fr: 'testLibLabelFr', en: 'testLibLabelEn'}},
+                label: 'label-test'
+            },
+            index: 0
         };
 
         let comp: any;

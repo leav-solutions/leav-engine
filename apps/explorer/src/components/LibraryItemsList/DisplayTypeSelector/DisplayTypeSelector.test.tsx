@@ -3,8 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
-import {DisplayListItemTypes} from '../../../_types/types';
-import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import TileDisplay from '../TileDisplay';
 import DisplayTypeSelector from './DisplayTypeSelector';
 
@@ -25,13 +23,8 @@ jest.mock(
 );
 
 describe('DisplayTypeSelector', () => {
-    const stateItems = LibraryItemListInitialState;
-
-    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
-
     test('Should call ItemsTitleDisplay', async () => {
-        const mockState = {...stateItems, displayType: DisplayListItemTypes.tile};
-        const comp = mount(<DisplayTypeSelector stateItems={mockState} dispatchItems={dispatchItems} />);
+        const comp = mount(<DisplayTypeSelector />);
 
         expect(comp.find(TileDisplay)).toHaveLength(1);
     });

@@ -1,4 +1,10 @@
 {
+    "global": {
+        "cancel": "Annuler",
+        "close": "Fermer",
+        "processing": "Traitement en cours",
+        "done": "Terminé"
+    },
     "login": {
         "header": "Authentification",
         "email": "Adresse e-mail",
@@ -93,6 +99,16 @@
                 "sort-advance": "Tri Avancé",
                 "regroup": "Regrouper",
                 "choose-columns": "Choix Colonnes"
+            },
+            "actions-tooltips": {
+                "informations": "Informations",
+                "expand": "Agrandir",
+                "remove": "Supprimer",
+                "more": "Plus",
+                "favorite": "Favori"
+            },
+            "pagination": {
+                "per-page": "{{pagination}} / page"
             }
         },
         "display": {
@@ -170,9 +186,9 @@
         "cancel": "Annuler"
     },
     "select-view": {
-        "add-view-tile": "Ajouter vue mosaïque",
-        "add-view-list": "Ajouter vue liste",
-        "default-view": "Vue par défault..."
+        "add-view": "Ajouter vue",
+        "default-view": "Vue par défaut...",
+        "save": "Sauvegarder la vue"
     },
     "search": {
         "placeholder": "Rechercher dans la bibliothèque",
@@ -197,8 +213,52 @@
     "view": {
         "list": "Liste des vues",
         "my-views":"Mes vues",
+        "shared-views": "Partagées",
         "type-list": "Vue Liste",
-        "type-tile": "Vue Tuile",
-        "delete": "Supprimer"
+        "type-cards": "Vue Mosaïque",
+        "type-timeline": "Vue Timeline",
+        "default": "Vue par défaut",
+        "delete": "Supprimer",
+        "rename": "Renommer",
+        "add-view": {
+            "new-view": "Nouvelle vue",
+            "edit-view": "Edition de vue",
+            "view-name": "Nom de la vue",
+            "view-description": "Description de la vue",
+            "view-type": "Type le la vue",
+            "view-shared": "Vue partagée",
+            "view-color": "Couleur de la vue"
+        },
+        "type-tile": "Vue Tuile"
+    },
+    "export": {
+        "title": "Exporter",
+        "start": "Lancer l'export",
+        "attributes_selection": "Sélection des attributs",
+        "export_generation": "Génération de l'export",
+        "export_done": "Export terminé",
+        "download_file": "Télécharger le fichier"
+    },
+    "import": {
+        "title": "Importer des données",
+        "file_selection": "Sélection du fichier XLSX",
+        "file_selection_instruction": "Cliquez ou déposez votre fichier afin de l'importer",
+        "start": "Lancer l'import",
+        "in_progress": "Import en cours",
+        "data_overview": "Aperçu des données",
+        "file_configuration": "Configuration",
+        "import_done": "Import terminé",
+        "import_success": "Import terminé avec succés",
+        "import_failure": "Erreur lors de l'import des données",
+        "empty_file": "Le fichier ne contient pas de données",
+        "mapping": "Sélection des attributs",
+        "key": "Sélection de l'attribut référence"
+    },
+    "error": {
+        "error_occured": "Une erreur est survenue"
+    },
+    "language": {
+        "fr": "Français",
+        "en": "Anglais"
     }
 }

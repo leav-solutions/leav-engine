@@ -1,13 +1,21 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button} from 'antd';
+import {render, screen, waitForElement} from '@testing-library/react';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
+import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import MenuItemList from './MenuItemList';
+
+jest.mock(
+    '../SelectView',
+    () =>
+        function SelectView() {
+            return <div>SelectView</div>;
+        }
+);
 
 jest.mock('../MenuSelection', () => {
     return function MenuSelection() {
@@ -21,37 +29,41 @@ jest.mock('../MenuItemActions', () => {
     };
 });
 
+jest.mock('../../../hooks/ActiveLibHook/ActiveLibHook', () => ({useActiveLibrary: () => [{id: 'test'}, jest.fn()]}));
+
 describe('MenuItemList', () => {
-    const stateItems = LibraryItemListInitialState;
-
-    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
-
     test('should have SelectView', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
-                    <MenuItemList stateItems={{...stateItems}} dispatchItems={dispatchItems} refetch={jest.fn()} />
+                    <MockStateItems>
+                        <MenuItemList refetch={jest.fn()} />
+                    </MockStateItems>
                 </MockedProviderWithFragments>
             );
-        });
 
-        expect(comp.find('SelectView')).toHaveLength(1);
+            await waitForElement(() => screen.getByText('SelectView'));
+
+            const selectViewMockContent = screen.getByText('SelectView');
+
+            expect(selectViewMockContent).toBeInTheDocument();
+        });
     });
 
     test('should have button show filter', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
-                    <MenuItemList stateItems={{...stateItems}} dispatchItems={dispatchItems} refetch={jest.fn()} />
+                    <MockStateItems>
+                        <MenuItemList refetch={jest.fn()} />
+                    </MockStateItems>
                 </MockedProviderWithFragments>
             );
-        });
 
-        expect(comp.find(Button).at(3).prop('name')).toBe('show-filter');
+            const showFilterButtonElement = await screen.findByRole('show-filter');
+
+            expect(showFilterButtonElement).toBeInTheDocument();
+        });
     });
 
     test('should have change column button', async () => {
@@ -60,7 +72,9 @@ describe('MenuItemList', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <MenuItemList stateItems={{...stateItems}} dispatchItems={dispatchItems} refetch={jest.fn()} />
+                    <MockStateItems>
+                        <MenuItemList refetch={jest.fn()} />
+                    </MockStateItems>
                 </MockedProviderWithFragments>
             );
         });

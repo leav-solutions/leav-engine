@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache} from '@apollo/client';
 import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
+import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {BrowserRouter} from 'react-router-dom';
-import wait from 'waait';
 import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import {
     getLibrariesAndTreesListQuery,
@@ -16,9 +15,7 @@ import {
 import SideBarMenu from './SideBarMenu';
 
 describe('SideBarMenu', () => {
-    const mockCache = new InMemoryCache();
-
-    mockCache.writeQuery({
+    const mockQuery = {
         query: getActiveLibrary,
         data: {
             activeLib: {
@@ -32,7 +29,10 @@ describe('SideBarMenu', () => {
                 }
             }
         }
-    });
+    };
+
+    const mockCache = new InMemoryCache();
+    mockCache.writeQuery(mockQuery);
 
     const queryMocks: IGetLibrariesAndTreesListQuery = {
         trees: {
@@ -82,10 +82,8 @@ describe('SideBarMenu', () => {
     ];
 
     test('should show activeLib content', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProvider mocks={mocks} cache={mockCache}>
                     <BrowserRouter>
                         <SideBarMenu visible hide={jest.fn()} />
@@ -94,29 +92,30 @@ describe('SideBarMenu', () => {
             );
         });
 
-        expect(comp.text()).toContain('testLibName');
+        await waitForElement(() => screen.getByText('testLibName'));
+
+        const LibraryNameElement = screen.getByText('testLibName');
+        expect(LibraryNameElement).toBeInTheDocument();
     });
 
     test('should have sub-menu for libraries and trees', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProvider mocks={mocks} cache={mockCache}>
                     <BrowserRouter>
                         <SideBarMenu visible hide={jest.fn()} />
                     </BrowserRouter>
                 </MockedProvider>
             );
-
-            await wait();
-
-            comp.update();
         });
+        const recentElement = screen.getByText('sidebar.recent');
+        const shortcutsElement = screen.getByText('sidebar.shortcuts');
+        const librariesElement = screen.getByText('sidebar.libraries');
+        const treesElement = screen.getByText('sidebar.trees');
 
-        expect(comp.text()).toContain('sidebar.recent');
-        expect(comp.text()).toContain('sidebar.shortcuts');
-        expect(comp.text()).toContain('sidebar.libraries');
-        expect(comp.text()).toContain('sidebar.trees');
+        expect(recentElement).toBeInTheDocument();
+        expect(shortcutsElement).toBeInTheDocument();
+        expect(librariesElement).toBeInTheDocument();
+        expect(treesElement).toBeInTheDocument();
     });
 });

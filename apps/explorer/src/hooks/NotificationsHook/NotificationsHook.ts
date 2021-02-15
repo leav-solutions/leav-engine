@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {useCallback} from 'react';
+import {useCallback, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {getBaseNotification, IGetBaseNotification} from '../../queries/cache/notifications/getBaseNotificationQuery';
 import {IGetNotification} from '../../queries/cache/notifications/getNotificationsQuery';
@@ -30,7 +30,7 @@ export const useNotifications = (): IUseNotificationsStackReturn => {
         type: NotificationType.basic
     };
 
-    const notificationsStack = dataStack?.notificationsStack || [];
+    const notificationsStack = useMemo(() => dataStack?.notificationsStack || [], [dataStack]);
     const baseNotification = dataBase?.baseNotification || defaultBaseNotification;
 
     const updateNotificationsStack = useCallback(

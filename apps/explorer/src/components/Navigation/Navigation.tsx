@@ -9,9 +9,10 @@ import {StateNavigationContext} from '../../Context/StateNavigationContext';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
-import {getTreeListQuery, IGetTreeListQuery, IGetTreeListQueryVar} from '../../queries/trees/getTreeListQuery';
+import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
 import {NavigationReducer, NavigationReducerInitialState} from '../../Reducer/NavigationReducer';
 import {localizedLabel} from '../../utils';
+import {GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables} from '../../_gqlTypes/GET_TREE_LIST_QUERY';
 import {NotificationType} from '../../_types/types';
 import NavigationView from '../NavigationView';
 
@@ -29,19 +30,19 @@ function Navigation(): JSX.Element {
     const [, updateActiveTree] = useActiveTree();
     const {updateBaseNotification} = useNotifications();
 
-    const {data, loading} = useQuery<IGetTreeListQuery, IGetTreeListQueryVar>(getTreeListQuery, {
+    const {data, loading} = useQuery<GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables>(getTreeListQuery, {
         variables: {treeId}
     });
 
     useEffect(() => {
-        const currentTree = data?.trees.list[0];
+        const currentTree = data?.trees?.list[0];
         if (!loading && currentTree) {
             const treeName = localizedLabel(currentTree.label, lang);
             // set Active Tree Data
             updateActiveTree({
                 id: currentTree.id,
                 label: treeName,
-                libraries: currentTree.libraries.map(lib => ({id: lib.id}))
+                libraries: currentTree.libraries.map(lib => ({id: lib.library.id}))
             });
 
             updateBaseNotification({

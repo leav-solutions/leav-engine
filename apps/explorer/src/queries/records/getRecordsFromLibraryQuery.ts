@@ -2,22 +2,36 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {AttributeType, IItemsColumn} from '../../_types/types';
-import {infosCol} from './../../constants/constants';
+import {AttributeType, IField} from '../../_types/types';
 
-export const getRecordsFields = (columns: IItemsColumn[]) => {
-    const fields = columns.map(col => {
-        if (col.id === infosCol) {
-            return null;
-        }
-
-        if (col.originAttributeData?.id) {
-            // is attribute from a linked library or tree
-
-            if (col.id === col.originAttributeData?.id) {
-                // case when the attribute linked is checked, return WhoAmI
-                return `${col.id} {
+const handleType = (field: IField): string => {
+    switch (field.type) {
+        case AttributeType.simple:
+        case AttributeType.advanced:
+            return field.id;
+        case AttributeType.simple_link:
+        case AttributeType.advanced_link:
+            return `${field.id} {
+                id
+                whoAmI {
                     id
+                    label
+                    color
+                    library {
+                        id
+                        label
+                    }
+                    preview {
+                        small
+                        medium
+                        big
+                        pages
+                    }
+                }
+            }`;
+        case AttributeType.tree:
+            return `${field.id} {
+                record {
                     whoAmI {
                         id
                         label
@@ -29,49 +43,72 @@ export const getRecordsFields = (columns: IItemsColumn[]) => {
                         preview {
                             small
                             medium
-                            big 
+                            big
                             pages
                         }
                     }
-                }`;
-            }
-            if (col.treeData) {
-                return `
-                    ${col.originAttributeData?.id} {
-                        record {
-                           ... on ${col.treeData?.libraryTypeName} {
-                                ${handleType(col)}
-                           }
-                        }
-                    }
-                `;
-            } else if (col.type) {
-                return `
-                    ${col.originAttributeData?.id} {
-                        ${handleType(col)}
-                    }
-                `;
-            }
-            return `
-                ${col.originAttributeData?.id} {
-                    ${col.id}
                 }
-            `;
-        }
-        return handleType(col);
-    });
-
-    return fields;
+            }`;
+    }
 };
 
-export const getRecordsFromLibraryQuery = (libraryName: string, filterName: string, columns: IItemsColumn[]) => {
-    const libQueryName = libraryName.toUpperCase();
+// manage linked elements and extended attributes
+export const getRecordsFields = (fields: IField[] = []) => {
+    if (!fields.length) {
+        return 'id';
+    }
+
+    const queryField = fields.map(field => {
+        if (field.parentAttributeData) {
+            const parentAttributeId = field.parentAttributeData.id;
+
+            switch (field.parentAttributeData.type) {
+                case AttributeType.simple:
+                case AttributeType.advanced:
+                    return handleType(field);
+                case AttributeType.simple_link:
+                case AttributeType.advanced_link:
+                    return `${parentAttributeId} {
+                        ${handleType(field)}
+                    }`;
+                case AttributeType.tree:
+                    return `${parentAttributeId} {
+                        record {
+                            ${handleType(field)}
+                        }
+                    }`;
+            }
+        } else if (field.embeddedData) {
+            const path = [...field.embeddedData.path.split('.')].shift();
+            return path;
+        }
+
+        return handleType(field);
+    });
+
+    return queryField;
+};
+
+export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField[]) => {
+    const libQueryName = libraryName?.toUpperCase();
+
+    if (!libQueryName?.length) {
+        return gql`
+            query nothing {
+                libraries {
+                    list {
+                        id
+                    }
+                }
+            }
+        `;
+    }
 
     return gql`
         query ${'GET_RECORDS_FROM_' + libQueryName} (
             $limit: Int!
             $offset: Int
-            $filters: [${filterName}]
+            $filters: [RecordFilterInput]
             $sortField: String
             $sortOrder: SortOrder!
         ) {
@@ -82,7 +119,7 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
             ) {
                 totalCount
                 list {
-                    ${getRecordsFields(columns)}
+                    ${getRecordsFields(fields)}
                     whoAmI {
                         id
                         label
@@ -101,53 +138,4 @@ export const getRecordsFromLibraryQuery = (libraryName: string, filterName: stri
             }
         }
     `;
-};
-
-const handleType = (col: IItemsColumn) => {
-    switch (col.type) {
-        case AttributeType.tree:
-            return `${col.id} {
-                record {
-                    whoAmI {
-                        id
-                        label
-                        color
-                        library {
-                            id
-                            label
-                        }
-                        preview {
-                            small
-                            medium
-                            big 
-                            pages
-                        }
-                    }   
-                }
-            }`;
-        case AttributeType.simple_link:
-        case AttributeType.advanced_link:
-            return `${col.id} {
-                id
-                whoAmI {
-                    id
-                    label
-                    color
-                    library {
-                        id
-                        label
-                    }
-                    preview {
-                        small
-                        medium
-                        big 
-                        pages
-                    }
-                }
-            }`;
-        case AttributeType.simple:
-        case AttributeType.advanced:
-        default:
-            return col.id;
-    }
 };

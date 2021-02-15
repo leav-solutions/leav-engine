@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {CSSObject} from 'styled-components';
-import {PreviewSize, RecordIdentity_whoAmI} from '../../../../../_types/types';
+import {IRecordIdentityWhoAmI, PreviewSize} from '../../../../../_types/types';
 import RecordCard from '../../../../shared/RecordCard';
 
 interface ICellRecordCardProps {
-    record: RecordIdentity_whoAmI;
+    record: IRecordIdentityWhoAmI;
     size: PreviewSize;
     style?: CSSObject;
     lang?: string[];

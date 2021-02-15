@@ -1,0 +1,6 @@
+<!--
+Copyright LEAV Solutions 2017
+This file is released under LGPL V3
+License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="10.71" height="10.558" viewBox="0 0 10.71 10.558"><defs><style>.a{fill:none;stroke:#44444f;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px;}</style></defs><g transform="translate(-913.656 -372.691)"><g transform="translate(914.067 373.752)"><g transform="translate(0 9.193) rotate(-90)"><path class="a" d="M0,0" transform="translate(0 0)"/><path class="a" d="M0,0,5.613,5.72" transform="translate(0.757 0.649)"/><g transform="translate(9.193 9.192) rotate(-180)"><path class="a" d="M0,0,2.823,2.823" transform="translate(0 0)"/></g></g></g><g transform="translate(914.763 373.752)"><g transform="translate(0 8.437) rotate(-90)"><path class="a" d="M0,5.72,5.613,0" transform="translate(0 2.823)"/><g transform="translate(8.436 2.823) rotate(-180)"><path class="a" d="M0,2.823,2.823,0" transform="translate(0 0)"/></g></g></g></g></svg>

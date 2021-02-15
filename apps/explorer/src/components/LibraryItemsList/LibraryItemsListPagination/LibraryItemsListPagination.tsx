@@ -3,19 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Pagination} from 'antd';
 import React from 'react';
+import {useStateItem} from '../../../Context/StateItemsContext';
 import {paginationOptions} from '../../../utils';
-import {
-    ILibraryItemListState,
-    LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes
-} from '../LibraryItemsListReducer';
+import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
-interface ILibraryItemsListPaginationProps {
-    stateItems: ILibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-}
+function LibraryItemsListPagination(): JSX.Element {
+    const {stateItems, dispatchItems} = useStateItem();
 
-function LibraryItemsListPagination({stateItems, dispatchItems}: ILibraryItemsListPaginationProps): JSX.Element {
     const setPagination = (current: number, size: number) => {
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_PAGINATION,

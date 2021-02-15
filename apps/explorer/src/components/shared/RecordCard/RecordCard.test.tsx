@@ -5,13 +5,13 @@ import {mount} from 'enzyme';
 import 'jest-styled-components';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {PreviewSize, RecordIdentity_whoAmI} from '../../../_types/types';
+import {IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 import RecordCard from './RecordCard';
 
 describe('RecordCard', () => {
-    const mockRecord: RecordIdentity_whoAmI = {
+    const mockRecord: IRecordIdentityWhoAmI = {
         id: '12345',
         library: {
             id: 'test_lib',

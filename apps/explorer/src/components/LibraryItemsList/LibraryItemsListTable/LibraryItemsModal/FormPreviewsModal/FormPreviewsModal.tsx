@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Form, Input} from 'antd';
 import React from 'react';
-import {getPreviewSizes, getPreviewUrl} from '../../../../../utils';
+import {getFileUrl, getPreviewSizes} from '../../../../../utils';
 import {IItem, IPreview, PreviewAttributes} from '../../../../../_types/types';
 
 interface IFormPreviewsModal {
@@ -23,8 +23,8 @@ const FormPreviewsModal = ({values, updateValues}: IFormPreviewsModal) => {
     return (
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <div>
-                {values.preview?.big ? (
-                    <img src={getPreviewUrl(values.preview.big)} alt="preview" style={{width: '20rem'}} />
+                {values.whoAmI.preview?.big ? (
+                    <img src={getFileUrl(values.whoAmI.preview.big)} alt="preview" style={{width: '20rem'}} />
                 ) : (
                     <div>No Preview</div>
                 )}
@@ -54,9 +54,11 @@ interface IFormPreviewModal {
 const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPreview}: IFormPreviewModal) => {
     const att: 'small' | 'medium' | 'big' | 'pages' = previewAttribute as any;
 
+    const preview = values.whoAmI.preview;
+
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const preview: IPreview = values.preview
-            ? {...values.preview, [previewAttribute]: e.target.value}
+        const newPreview = preview
+            ? {...preview, [previewAttribute]: e.target.value}
             : {
                   ...(defaultPreview as IPreview),
                   [previewAttribute]: e.target.value
@@ -64,13 +66,16 @@ const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPrevie
 
         updateValues({
             ...values,
-            preview
+            whoAmI: {
+                ...values.whoAmI,
+                preview: newPreview
+            }
         });
     };
 
     return (
         <Form.Item label={previewAttribute}>
-            <Input disabled value={(values.preview && values.preview[att]) ?? ''} onChange={onChange} />
+            <Input disabled value={(preview && preview[att]) ?? ''} onChange={onChange} />
         </Form.Item>
     );
 };

@@ -14,12 +14,17 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('LibraryCard', () => {
-    const lib = {
+    const lib: ILibrary = {
         label: {
             en: 'label',
             fr: 'label'
         },
-        id: 'id'
+        id: 'id',
+        gqlNames: {
+            filter: 'IdFilter',
+            query: 'Ids',
+            searchableFields: 'IdSearchableFields'
+        }
     };
 
     const mocks = [

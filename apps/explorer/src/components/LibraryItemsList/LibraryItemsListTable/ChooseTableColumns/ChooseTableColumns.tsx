@@ -5,8 +5,11 @@ import {Button, Modal} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useStateItem} from '../../../../Context/StateItemsContext';
-import {IAttribute, IAttributesChecked, IItemsColumn} from '../../../../_types/types';
-import ListAttributes from '../../../ListAttributes';
+import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../../../hooks/LangHook/LangHook';
+import {getFieldsKeyFromAttribute, localizedLabel} from '../../../../utils';
+import {AttributeFormat, AttributeType, IAttribute, IField, ISelectedAttribute} from '../../../../_types/types';
+import AttributesSelectionList from '../../../AttributesSelectionList';
 import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 
 interface IChooseTableColumnsProps {
@@ -19,51 +22,60 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
 
     const {stateItems, dispatchItems} = useStateItem();
 
-    const [attributesChecked, setAttributesChecked] = useState<IAttributesChecked[]>(
-        stateItems.columns.map(col => {
+    const [activeLibrary] = useActiveLibrary();
+    const [{lang}] = useLang();
+
+    const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>(
+        stateItems.fields.map(col => {
             const currentAttribute = stateItems.attributes.find(
                 attribute => attribute.id === col.id && attribute.library === col.library
             );
 
             return {
                 id: col.id,
+                path: col.id,
                 library: col.library,
-                label: currentAttribute?.label ?? '',
+                label: currentAttribute?.label ?? null,
                 type: col.type,
-                depth: 0,
-                checked: true
+                multiple_values: !!col.multipleValues
             };
         })
     );
 
     useEffect(() => {
-        setAttributesChecked(
-            stateItems.columns.map(col => {
+        setSelectedAttributes(
+            stateItems.fields.map(col => {
                 const currentAttribute = stateItems.attributes.find(
                     attribute => attribute.id === col.id && attribute.library === col.library
                 );
 
                 return {
                     id: col.id,
+                    path: col.id,
                     library: col.library,
-                    label: currentAttribute?.label ?? '',
+                    label: currentAttribute?.label ?? null,
                     type: col.type,
-                    depth: 0,
-                    checked: true
+                    multiple_values: !!col.multipleValues
                 };
             })
         );
-    }, [stateItems.attributes, stateItems.columns, setAttributesChecked]);
-
-    const [newAttributes, setNewAttributes] = useState<IAttribute[]>([]);
+    }, [stateItems.attributes, stateItems.fields, setSelectedAttributes]);
 
     const handleSubmit = () => {
-        const noDuplicateNewAttribute = newAttributes.filter(
-            newAttribute =>
-                !stateItems.attributes.some(
-                    attribute => attribute.id === newAttribute.id && attribute.library === newAttribute.library
-                )
-        );
+        const noDuplicateNewAttribute: IAttribute[] = selectedAttributes
+            .filter(
+                selectedAttribute =>
+                    !stateItems.attributes.some(
+                        attribute =>
+                            attribute.id === selectedAttribute.id && attribute.library === selectedAttribute.library
+                    )
+            )
+            .map(a => ({
+                ...a,
+                isLink: a.type === AttributeType.tree,
+                isMultiple: a.multiple_values,
+                format: a.format ?? undefined
+            }));
 
         const allAttributes = [...stateItems.attributes, ...noDuplicateNewAttribute];
 
@@ -72,30 +84,43 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
             attributes: allAttributes
         });
 
-        const newColumns: IItemsColumn[] = attributesChecked.reduce((acc, attributeChecked) => {
-            if (attributeChecked.checked) {
-                const attr = allAttributes.find(
-                    attribute => attribute.id === attributeChecked.id && attribute.library === attributeChecked.library
-                );
+        const newFields: IField[] = selectedAttributes.reduce((acc, selectedAttribute) => {
+            const attribute = allAttributes.find(
+                currentAttr =>
+                    currentAttr.id === selectedAttribute.id && currentAttr.library === selectedAttribute.library
+            );
 
-                return [
-                    ...acc,
-                    {
-                        id: attributeChecked.id,
-                        library: attributeChecked.library,
-                        type: attributeChecked.type,
-                        originAttributeData: attr?.originAttributeData,
-                        extendedData: attributeChecked.extendedData,
-                        treeData: attributeChecked.treeData
-                    }
-                ];
+            if (!attribute) {
+                return acc;
             }
-            return acc;
-        }, [] as IItemsColumn[]);
+
+            const key = getFieldsKeyFromAttribute(selectedAttribute);
+
+            const label = typeof attribute.label === 'string' ? attribute.label : localizedLabel(attribute.label, lang);
+
+            const embeddedData = selectedAttribute.embeddedFieldData && {
+                format: selectedAttribute.embeddedFieldData?.format ?? AttributeFormat.text,
+                path: selectedAttribute.path
+            };
+
+            const field: IField = {
+                id: selectedAttribute.id,
+                library: selectedAttribute.library,
+                label,
+                key,
+                type: selectedAttribute.type,
+                format: attribute.format,
+                parentAttributeData: selectedAttribute?.parentAttributeData,
+                treeData: selectedAttribute.treeData,
+                embeddedData
+            };
+
+            return [...acc, field];
+        }, [] as IField[]);
 
         dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_COLUMNS,
-            columns: newColumns
+            type: LibraryItemListReducerActionTypes.SET_FIELDS,
+            fields: newFields
         });
 
         setOpenChangeColumns(false);
@@ -128,12 +153,10 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 </Button>
             ]}
         >
-            <ListAttributes
-                attributes={stateItems.attributes}
-                useCheckbox
-                attributesChecked={attributesChecked}
-                setAttributesChecked={setAttributesChecked}
-                setNewAttributes={setNewAttributes}
+            <AttributesSelectionList
+                library={activeLibrary?.id ?? ''}
+                selectedAttributes={selectedAttributes}
+                onSelectionChange={setSelectedAttributes}
             />
         </Modal>
     );

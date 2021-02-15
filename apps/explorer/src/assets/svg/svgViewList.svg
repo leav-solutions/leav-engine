@@ -3,4 +3,18 @@ Copyright LEAV Solutions 2017
 This file is released under LGPL V3
 License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 -->
-<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><defs><style>.a{opacity:0.861;}.b{fill:#c6e2ff;}.b,.c{stroke:#171725;stroke-width:0.7px;}.c,.e{fill:none;}.d{stroke:none;}</style></defs><g class="a" transform="translate(9.021 9.021) rotate(180)"><g transform="translate(-0.829 -0.829)"><g class="b" transform="translate(-0.15 -0.15)"><rect class="d" width="10" height="10" rx="2"/><rect class="e" x="0.35" y="0.35" width="9.3" height="9.3" rx="1.65"/></g><path class="c" d="M10201.054,2850.63v9.026" transform="translate(-10194.484 -2850.252)"/><path class="c" d="M0,0V9.184" transform="translate(9.306 7.461) rotate(90)"/><path class="c" d="M0,0V8.815" transform="translate(9.306 5.868) rotate(90)"/><path class="c" d="M0,0V8.815" transform="translate(9.306 4.275) rotate(90)"/><path class="c" d="M0,0V9.037" transform="translate(9.306 2.682) rotate(90)"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">
+	<g id="Groupe_6979" data-name="Groupe 6979" transform="translate(9.021 9.021) rotate(180)" opacity="0.861">
+		<g id="Groupe_6728" data-name="Groupe 6728" transform="translate(-0.829 -0.829)">
+			<g id="Rectangle_2972" data-name="Rectangle 2972" transform="translate(-0.15 -0.15)" fill="none" stroke="#171725" stroke-width="0.7">
+				<rect width="10" height="10" rx="2" stroke="none" />
+				<rect x="0.35" y="0.35" width="9.3" height="9.3" rx="1.65" fill="none" />
+			</g>
+			<path id="Tracé_6332" data-name="Tracé 6332" d="M10201.054,2850.63v9.026" transform="translate(-10194.484 -2850.252)" fill="none" stroke="#171725" stroke-width="0.7" />
+			<path id="Tracé_6343" data-name="Tracé 6343" d="M0,0V9.184" transform="translate(9.306 7.461) rotate(90)" fill="none" stroke="#171725" stroke-width="0.7" />
+			<path id="Tracé_6344" data-name="Tracé 6344" d="M0,0V8.815" transform="translate(9.306 5.868) rotate(90)" fill="none" stroke="#171725" stroke-width="0.7" />
+			<path id="Tracé_6345" data-name="Tracé 6345" d="M0,0V8.815" transform="translate(9.306 4.275) rotate(90)" fill="none" stroke="#171725" stroke-width="0.7" />
+			<path id="Tracé_6346" data-name="Tracé 6346" d="M0,0V9.037" transform="translate(9.306 2.682) rotate(90)" fill="none" stroke="#171725" stroke-width="0.7" />
+		</g>
+	</g>
+</svg>

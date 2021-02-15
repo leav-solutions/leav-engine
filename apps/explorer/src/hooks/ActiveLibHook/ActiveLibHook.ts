@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {useCallback} from 'react';
+import {useCallback, useMemo} from 'react';
 import {
     getActiveLibrary,
     IActiveLibrary,
@@ -12,7 +12,7 @@ import {
 export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibrary: IActiveLibrary) => void] => {
     const {data, client} = useQuery<IGetActiveLibrary>(getActiveLibrary);
 
-    const activeLibrary: IActiveLibrary | undefined = data?.activeLib;
+    const activeLibrary: IActiveLibrary | undefined = useMemo(() => data?.activeLib, [data]);
 
     const updateActiveLibrary = useCallback(
         (newActiveLibrary: IActiveLibrary) => {

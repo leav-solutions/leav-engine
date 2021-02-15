@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getPreviewUrl, localizedLabel} from '../../../utils/utils';
-import {IPreview, PreviewSize, RecordIdentity_whoAmI} from '../../../_types/types';
+import {getFileUrl, localizedLabel} from '../../../utils/utils';
+import {IPreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 
 interface IRecordCardProps {
-    record: RecordIdentity_whoAmI;
+    record: IRecordIdentityWhoAmI;
     size: PreviewSize;
     style?: CSSObject;
     lang?: string[];
@@ -51,7 +51,7 @@ const LibLabel = styled.div`
 
 const getPreviewBySize = (preview?: IPreview, size?: PreviewSize) => {
     const previewBySize = preview && (size ? preview[size] ?? preview.small : preview.small);
-    return previewBySize ? getPreviewUrl(previewBySize) : '';
+    return previewBySize ? getFileUrl(previewBySize) : '';
 };
 
 const RecordCard = ({record, size, style, lang}: IRecordCardProps): JSX.Element => {

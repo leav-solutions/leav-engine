@@ -17,7 +17,7 @@ interface IWrapperFilterProps {
 const WrapperFilter = styled.div<IWrapperFilterProps>`
     display: ${({visible}) => (visible ? 'flex' : 'none')};
     position: relative;
-    height: 100vh;
+    height: calc(100vh - 7rem);
     animation: ${({visible}) => (visible ? 'slide-in 250ms ease' : 'none')};
 
     @keyframes slide-in {

@@ -6,6 +6,12 @@ import React from 'react';
 import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import MenuItemListSelected from './MenuItemListSelected';
 
+jest.mock('./ActionsMenu', () => {
+    return function ActionsMenu() {
+        return <div>ActionsMenu</div>;
+    };
+});
+
 describe('MenuItemListSelected', () => {
     test('should have quit mode selection button', async () => {
         const comp = mount(

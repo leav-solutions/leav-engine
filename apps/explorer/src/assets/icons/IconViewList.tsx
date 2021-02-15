@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import IconSvg from '../svg/svgViewList.svg';
 
 const CustomImg = styled.img`
-    transform: translate(0px, -1px);
+    transform: translate(0px, -1px) scale(1.5);
 `;
 
 export const IconViewList = () => {

@@ -45,7 +45,7 @@ function MenuSelection({stateItems, dispatchItems}: IMenuSelectionProps): JSX.El
 
         if (stateItems.items) {
             for (const item of stateItems.items) {
-                newItemSelected[item.id] = true;
+                newItemSelected[item.whoAmI.id] = true;
             }
         }
 

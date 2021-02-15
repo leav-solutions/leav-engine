@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import themingVar from '../../../themingVar';
-import {flatArray, getUniqueId, reorder} from '../../../utils';
+import {flatArray, getUniqueId, queryFiltersToFilters, reorder} from '../../../utils';
 import {FilterTypes, IFilter, IFilterSeparator, OperatorFilter} from '../../../_types/types';
 import {
     ILibraryItemListState,
@@ -87,7 +87,8 @@ function Filters(): JSX.Element {
     const [separatorOperator, setSeparatorOperator] = useState<OperatorFilter>(OperatorFilter.or);
     const [filterOperator, setFilterOperator] = useState<OperatorFilter>(OperatorFilter.and);
 
-    const [filters, setFilters] = useState<Array<Array<IFilter | IFilterSeparator>>>([[]]);
+    const [filters, setFilters] = useState<Array<Array<IFilter | IFilterSeparator>>>([]);
+    const [currentView, setCurrentView] = useState<string>();
 
     const resetFilters = () =>
         dispatchItems({
@@ -152,7 +153,8 @@ function Filters(): JSX.Element {
                 // if last element of the group was a filter, set operator true
                 if (newFilters && filtersGroups[indexOne - 1] && filtersGroups[indexOne - 1].length) {
                     const previousIsFilter = filtersGroups[indexOne - 1][0].type === FilterTypes.filter;
-                    const currentIsFilter = filtersGroups[indexOne][0].type === FilterTypes.filter;
+                    const currentIsFilter =
+                        filtersGroups[indexOne][0] && filtersGroups[indexOne][0].type === FilterTypes.filter;
                     const lastElement = newFilters[0];
 
                     if (previousIsFilter && currentIsFilter && lastElement.type === FilterTypes.filter) {
@@ -225,6 +227,19 @@ function Filters(): JSX.Element {
     useEffect(() => {
         setFilters([]);
     }, [activeLibraryId, setFilters]);
+
+    // get filters and filterOperator from view filters when current view change
+    useEffect(() => {
+        if (currentView !== stateItems.view.current?.id && stateItems.view.current?.filters) {
+            const [filtersFromView, operatorValue] = queryFiltersToFilters(
+                stateItems.view.current?.filters,
+                stateItems.attributes
+            );
+            setFilters(filtersFromView);
+            setFilterOperator(operatorValue);
+            setCurrentView(stateItems.view.current.id);
+        }
+    }, [stateItems.view, currentView, setCurrentView, stateItems.attributes]);
 
     const canApplyFilter =
         stateItems.searchFullTextActive || !flatArray(filters).filter(f => f.type === FilterTypes.filter).length;

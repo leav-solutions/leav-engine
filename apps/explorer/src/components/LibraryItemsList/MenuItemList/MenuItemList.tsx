@@ -8,22 +8,18 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
+import {useStateItem} from '../../../Context/StateItemsContext';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
-import {
-    ILibraryItemListState,
-    LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes
-} from '../LibraryItemsListReducer';
+import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
 import SelectView from '../SelectView';
 
 interface IMenuItemListProps {
-    stateItems: ILibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-    refetch: any;
+    refetch?: () => void;
 }
 
 const Wrapper = styled.div`
@@ -49,8 +45,10 @@ const SubGroupLast = styled(SubGroup)`
     grid-template-columns: 10rem repeat(3, auto);
 `;
 
-function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps): JSX.Element {
+function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
+    const [activeLibrary] = useActiveLibrary();
+    const {stateItems, dispatchItems} = useStateItem();
 
     const toggleShowFilter = () => {
         const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.filters;
@@ -80,10 +78,10 @@ function MenuItemList({stateItems, dispatchItems, refetch}: IMenuItemListProps):
             <SubGroupFirst>
                 <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
 
-                <SelectView />
+                {activeLibrary?.id && <SelectView />}
 
                 <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
-                    <Button icon={<SearchOutlined />} name="show-filter" onClick={toggleShowFilter} />
+                    <Button icon={<SearchOutlined />} role="show-filter" onClick={toggleShowFilter} />
                 </Tooltip>
 
                 <MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />

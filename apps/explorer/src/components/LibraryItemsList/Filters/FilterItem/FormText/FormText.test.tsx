@@ -2,24 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input} from 'antd';
-import {mount} from 'enzyme';
+import {shallow} from 'enzyme';
 import React from 'react';
-import {ConditionFilter, FilterTypes, IFilter} from '../../../../../_types/types';
-import FormText from './FormText';
+import {ConditionFilter, FilterTypes, IFilter} from '_types/types';
+import {mockAttributeStandard} from '__mocks__/common/attribute';
+import TextFilter from '../FilterInput/TextFilter';
 
 describe('FormText', () => {
     test('Should have a TextArea', async () => {
         const mockFilter: IFilter = {
-            id: 'test_filter',
+            id: 'test',
             type: FilterTypes.filter,
             key: 0,
             condition: ConditionFilter.contains,
             value: 'test',
-            attributeId: 'test',
+            attribute: mockAttributeStandard,
             active: true
         };
 
-        const comp = mount(<FormText filter={mockFilter} updateFilterValue={jest.fn()} />);
+        const comp = shallow(<TextFilter filter={mockFilter} updateFilterValue={jest.fn()} />);
 
         expect(comp.find(Input.TextArea)).toHaveLength(1);
     });

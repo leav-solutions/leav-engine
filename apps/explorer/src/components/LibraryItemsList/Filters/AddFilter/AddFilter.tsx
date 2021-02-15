@@ -2,19 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
+import moment from 'moment';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {allowedTypeOperator, flatArray, getUniqueId} from '../../../../utils';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeFormat,
     ConditionFilter,
     FilterTypes,
-    IAttribute,
-    IAttributesChecked,
     IFilter,
-    IFilterSeparator
+    IFilterSeparator,
+    ISelectedAttribute
 } from '../../../../_types/types';
-import ListAttributes from '../../../ListAttributes';
+import AttributesSelectionList from '../../../AttributesSelectionList';
 import {
     ILibraryItemListState,
     LibraryItemListReducerAction,
@@ -30,6 +32,19 @@ interface IAttributeListProps {
     updateFilters: () => void;
 }
 
+const _getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
+    switch (format) {
+        case AttributeFormat.boolean:
+            return true;
+        case AttributeFormat.date:
+            return moment().utcOffset(0).startOf('day').unix();
+        case AttributeFormat.numeric:
+            return 0;
+        default:
+            return '';
+    }
+};
+
 function AddFilter({
     stateItems,
     dispatchItems,
@@ -40,19 +55,12 @@ function AddFilter({
 }: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [attributesChecked, setAttributesChecked] = useState<IAttributesChecked[]>([]);
+    const [activeLibrary] = useActiveLibrary();
 
-    const [newAttributes, setNewAttributes] = useState<IAttribute[]>([]);
+    const [attributesChecked, setAttributesChecked] = useState<ISelectedAttribute[]>([]);
 
     const addFilters = () => {
-        const noDuplicateNewAttribute = newAttributes.filter(
-            newAttribute =>
-                !stateItems.attributes.some(
-                    attribute => attribute.id === newAttribute.id && attribute.library === newAttribute.library
-                )
-        );
-
-        const allAttributes = [...stateItems.attributes, ...noDuplicateNewAttribute];
+        const allAttributes = [...stateItems.attributes];
 
         dispatchItems({
             type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
@@ -65,8 +73,15 @@ function AddFilter({
             );
 
             const newFilters: IFilter[] = attributesChecked.map((attributeChecked, index) => {
-                if (attributeChecked?.extendedData) {
-                    const format = attributeChecked.extendedData.format;
+                const attribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
+                    ...attributeChecked,
+                    label: attributeChecked.label ?? null,
+                    format: attributeChecked.format ?? null,
+                    embedded_fields: attributeChecked.embeddedFieldData ? [attributeChecked.embeddedFieldData] : null,
+                    linked_tree: null
+                };
+                if (attributeChecked.embeddedFieldData) {
+                    const format = attributeChecked.embeddedFieldData.format;
                     const defaultConditionOptions =
                         (format && allowedTypeOperator[AttributeFormat[format]][0]) || ConditionFilter.equal;
 
@@ -74,32 +89,26 @@ function AddFilter({
                         separator => separator.key === filters.length + index - 1
                     );
 
-                    const attributeId = attributeChecked.extendedData.path.split('.').pop() ?? '';
-
                     const newFilter: IFilter = {
                         type: FilterTypes.filter,
                         key: filters.length + index,
                         id: getUniqueId(),
                         operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
                         condition: defaultConditionOptions,
-                        value: '',
-                        attributeId,
+                        value: _getDefaultFilterValueByFormat(format),
+                        attribute,
                         active: true,
                         format,
-                        originAttributeData: attributeChecked.originAttributeData,
+                        originAttributeData: attributeChecked.parentAttributeData,
                         treeData: attributeChecked.treeData,
-                        extendedData: attributeChecked.extendedData
+                        extendedData: {...attributeChecked.embeddedFieldData, path: attributeChecked.path}
                     };
                     return newFilter;
                 }
 
-                const attribute = stateItems.attributes.find(
-                    a => a.id === attributeChecked.id && a.library === attributeChecked.library
-                );
-
                 // take the first operator for the format of the attribute
                 const defaultConditionOptions =
-                    (attribute?.format && allowedTypeOperator[AttributeFormat[attribute?.format]][0]) ||
+                    (attributeChecked?.format && allowedTypeOperator[AttributeFormat[attributeChecked?.format]][0]) ||
                     ConditionFilter.equal;
 
                 // if the new filter is after a separator, don't set operator
@@ -108,24 +117,27 @@ function AddFilter({
                     separator => separator.key === filters.length + index - 1
                 );
 
+                const attributeFormat = attributeChecked?.format ?? AttributeFormat.text;
+
                 return {
                     type: FilterTypes.filter,
                     key: filters.length + index,
                     id: getUniqueId(),
                     operator: filters.length && !lastFilterIsSeparatorCondition ? true : false,
                     condition: defaultConditionOptions,
-                    value: '',
-                    attributeId: attributeChecked.id,
+                    value: _getDefaultFilterValueByFormat(attributeFormat),
+                    attribute,
                     active: true,
-                    format: attribute?.format ?? AttributeFormat.text,
-                    originAttributeData: attributeChecked.originAttributeData,
+                    format: attributeFormat,
+                    originAttributeData: attributeChecked.parentAttributeData,
                     treeData: attributeChecked.treeData,
-                    extendedData: attributeChecked.extendedData
+                    extendedData: {...attributeChecked.embeddedFieldData, path: attributeChecked.path}
                 };
             });
 
             return [...filters, newFilters] as Array<Array<IFilter | IFilterSeparator>>;
         });
+
         setShowAttr(false);
         setAttributesChecked([]);
         updateFilters();
@@ -151,13 +163,12 @@ function AddFilter({
                     {t('attributes-list.add')}
                 </Button>
             ]}
+            destroyOnClose
         >
-            <ListAttributes
-                attributes={stateItems.attributes}
-                useCheckbox
-                attributesChecked={attributesChecked}
-                setAttributesChecked={setAttributesChecked}
-                setNewAttributes={setNewAttributes}
+            <AttributesSelectionList
+                library={activeLibrary?.id ?? ''}
+                selectedAttributes={attributesChecked}
+                onSelectionChange={setAttributesChecked}
             />
         </Modal>
     );

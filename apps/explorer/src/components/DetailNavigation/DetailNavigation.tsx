@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import themingVar from '../../themingVar';
-import {getPreviewUrl} from '../../utils';
+import {getFileUrl} from '../../utils';
 import RecordPreview from '../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 
 const Detail = styled.div`
@@ -78,7 +78,7 @@ const DetailNavigation = (): JSX.Element => {
                 <RecordPreview
                     label={recordData.label ? label : recordData.id}
                     color={recordData.color}
-                    image={img && getPreviewUrl(img)}
+                    image={img && getFileUrl(img)}
                     tile
                     style={{maxHeight: '20rem', maxWidth: '100%', height: 'auto'}}
                 />

@@ -9,7 +9,7 @@ import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
 import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducer';
 import themingVar from '../../themingVar';
-import {INavigationPath, PreviewSize, RecordIdentity_whoAmI} from '../../_types/types';
+import {INavigationPath, IRecordIdentityWhoAmI, PreviewSize} from '../../_types/types';
 import RecordCard from '../shared/RecordCard';
 
 interface ICellProps {
@@ -68,7 +68,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
         }
     };
 
-    const record: RecordIdentity_whoAmI = {
+    const record: IRecordIdentityWhoAmI = {
         ...treeElement.record.whoAmI,
         label: recordLabel ?? ''
     };

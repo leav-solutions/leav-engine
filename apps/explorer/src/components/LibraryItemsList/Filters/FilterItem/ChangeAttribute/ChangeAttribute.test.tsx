@@ -6,22 +6,28 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import {AttributeFormat, ConditionFilter, FilterTypes, IFilter} from '../../../../../_types/types';
+import {mockAttributeStandard} from '../../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
-import ListAttributes from '../../../../ListAttributes';
 import {LibraryItemListInitialState} from '../../../LibraryItemsListReducer';
 import ChangeAttribute from './ChangeAttribute';
+
+jest.mock('../../../../AttributesSelectionList', () => {
+    return function AttributesSelectionList() {
+        return <div>AttributesSelectionList</div>;
+    };
+});
 
 describe('ChangeAttribute', () => {
     const stateItems = LibraryItemListInitialState;
 
-    const filterMock: IFilter = {
-        id: 'test_filter',
+    const mockFilter: IFilter = {
+        id: mockAttributeStandard.id,
         type: FilterTypes.filter,
-        key: 0,
+        key: 1,
         operator: false,
         condition: ConditionFilter.contains,
         value: '',
-        attributeId: 'id',
+        attribute: mockAttributeStandard,
         active: true,
         format: AttributeFormat.text
     };
@@ -35,8 +41,8 @@ describe('ChangeAttribute', () => {
                     <ChangeAttribute
                         stateItems={stateItems}
                         setFilters={jest.fn()}
-                        filter={filterMock}
-                        showModal
+                        filter={mockFilter}
+                        showModal={true}
                         setShowModal={jest.fn()}
                     />
                 </MockedProviderWithFragments>
@@ -47,6 +53,6 @@ describe('ChangeAttribute', () => {
             comp.update();
         });
 
-        expect(comp.find(ListAttributes)).toHaveLength(1);
+        expect(comp.find('AttributesSelectionList')).toHaveLength(1);
     });
 });

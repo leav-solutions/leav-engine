@@ -4,7 +4,7 @@
 import {Form, Input} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import {IFilter} from '../../../../../_types/types';
+import {IFilter} from '_types/types';
 
 const TextAreaWrapper = styled.div`
     margin: 1rem 0 0 0;
@@ -14,12 +14,12 @@ const CustomForm = styled(Form)`
     width: 100%;
 `;
 
-interface IFromTextProps {
+interface IFormTextProps {
     filter: IFilter;
     updateFilterValue: (newValue: any, valueSize?: number | 'auto') => void;
 }
 
-const FormText = ({filter, updateFilterValue}: IFromTextProps) => {
+const FormText = ({filter, updateFilterValue}: IFormTextProps) => {
     let valueChange = false;
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newValue = (event.target.value ?? '').toString();
@@ -39,10 +39,11 @@ const FormText = ({filter, updateFilterValue}: IFromTextProps) => {
             <TextAreaWrapper>
                 <Input.TextArea
                     disabled={!filter.active}
-                    value={filter.value}
+                    value={String(filter.value)}
                     onChange={e => handleChange(e)}
                     onResize={handleResize}
                     style={{height: filter.valueSize}}
+                    rows={1}
                 />
             </TextAreaWrapper>
         </CustomForm>
