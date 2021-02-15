@@ -39,7 +39,8 @@
     "typescript-eslint": "0.0.1-alpha.0"
   },
   "resolutions": {
-    "apollo-server-core/graphql-upload": "^11.0.0"
+    "fs-capacitor": "6.2.0",
+    "graphql-upload": "11.0.0"
   },
   "lint-staged": {
     "*.{ts, js, tsx, jsx}": [
