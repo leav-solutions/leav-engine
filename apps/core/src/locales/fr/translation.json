@@ -48,7 +48,8 @@
         "UNKNOWN_TREE": "Arbre inconnu",
         "UNKNOWN_TREES": "Arbres inconnus : {{trees}}",
         "UNKNOWN_VALUE": "Valeur inconnue",
-        "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}"
+        "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}",
+        "UNKNOWN_VIEW": "Vue inconnue"
     },
     "actions": {
         "names" : {

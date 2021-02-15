@@ -191,7 +191,7 @@ export default function ({
                 );
 
                 // Retrieve appropriate value among all values
-                values = options.forceGetAllValues ? allValues : findValue(trees, allValues);
+                values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
 
             return values;

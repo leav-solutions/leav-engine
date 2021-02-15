@@ -1,22 +1,24 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
 import {join} from 'path';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {IRecordRepo} from 'infra/record/recordRepo';
+import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
+import {EventType} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {EventType} from '../../_types/event';
 import {
     Condition,
     IRecord,
@@ -29,8 +31,6 @@ import {
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import * as Config from '_types/config';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -320,10 +320,11 @@ export default function ({
         value: string,
         ctx: IQueryInfos
     ): Promise<Array<{attribute: string; records: IRecord[]}>> => {
+        const filters: IAttributeFilterOptions = {type: [AttributeTypes.SIMPLE_LINK], linked_library: library};
         // get all attributes linked to the library param
         const attributes = await attributeDomain.getAttributes({
             params: {
-                filters: {type: [AttributeTypes.SIMPLE_LINK], linked_library: library}
+                filters
             },
             ctx
         });
@@ -493,7 +494,10 @@ export default function ({
                     let value: any = f.value;
                     const lastAttr = attributes[attributes.length - 1];
 
-                    if (value && lastAttr.format === AttributeFormats.NUMERIC) {
+                    if (
+                        (value && lastAttr.format === AttributeFormats.NUMERIC) ||
+                        lastAttr.format === AttributeFormats.DATE
+                    ) {
                         value = Number(f.value);
                     } else if (value && lastAttr.format === AttributeFormats.BOOLEAN) {
                         value = f.value === 'true';
@@ -581,16 +585,17 @@ export default function ({
                 preview: (await getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null
             };
         },
-        async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[]> {
+        async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[] | null> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             const values = await _extractRecordValue(record, attrProps, library, options, ctx);
+
             const forceArray = options?.forceArray ?? false;
 
             const formattedValues = await Promise.all(
                 values.map(v => _formatRecordValue(attrProps, v, record, library, ctx))
             );
 
-            return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0];
+            return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0] || null;
         },
         async deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
             const savedVal = await valueDomain.saveValue({

@@ -68,5 +68,9 @@ module.exports = {
         },
         prefetch: 1
     },
-    debug: process.env.DEBUG || false
+    debug: process.env.DEBUG || false,
+    defaultUserId: '1', // Used for DB migration and any other action that is not bound to a real user
+    export: {
+        directory: process.env.EXPORT_DIR || '/exports'
+    }
 };

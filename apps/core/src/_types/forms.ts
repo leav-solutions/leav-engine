@@ -2,14 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IKeyValue} from './shared';
-import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
 
-export interface IForm {
-    id: string;
+export interface IForm extends ICoreEntity {
     library: string;
     system?: boolean;
-    label?: ISystemTranslation;
     dependencyAttributes?: string[];
     elements?: IFormDependentElements[];
 }

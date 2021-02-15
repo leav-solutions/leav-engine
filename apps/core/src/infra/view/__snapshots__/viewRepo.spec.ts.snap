@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`viewRepo createView Should create a new view 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`viewRepo createView Should create a new view 2`] = `
+Object {
+  "@value1": "core_views",
+  "value0": Object {
+    "_key": "test_view",
+    "color": "#123456",
+    "created_at": 1234567890,
+    "created_by": "1",
+    "description": Object {
+      "fr": "My test view",
+    },
+    "filters": Array [
+      Object {
+        "field": "id",
+        "value": "fake_id_filter",
+      },
+    ],
+    "id": "test_view",
+    "label": Object {
+      "fr": "My view",
+    },
+    "library": "test_lib",
+    "modified_at": 1234567890,
+    "settings": Object {
+      "columns": Array [
+        "id",
+        "label",
+      ],
+    },
+    "shared": true,
+    "sort": Object {
+      "field": "id",
+      "order": "asc",
+    },
+    "type": "list",
+  },
+}
+`;
+
+exports[`viewRepo deleteView Should delete view 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`viewRepo deleteView Should delete view 2`] = `
+Object {
+  "@value1": "core_views",
+  "value0": Object {
+    "_key": "test_view",
+  },
+}
+`;
+
+exports[`viewRepo updateView Should update an existing view 1`] = `
+"
+                    UPDATE @value0 IN @@value1
+                    OPTIONS {mergeObjects: false}
+                    RETURN NEW"
+`;
+
+exports[`viewRepo updateView Should update an existing view 2`] = `
+Object {
+  "@value1": "core_views",
+  "value0": Object {
+    "_key": "test_view",
+    "color": "#123456",
+    "created_at": 1234567890,
+    "created_by": "1",
+    "description": Object {
+      "fr": "My test view",
+    },
+    "filters": Array [
+      Object {
+        "field": "id",
+        "value": "fake_id_filter",
+      },
+    ],
+    "id": "test_view",
+    "label": Object {
+      "fr": "My view",
+    },
+    "library": "test_lib",
+    "modified_at": 1234567890,
+    "settings": Object {
+      "columns": Array [
+        "id",
+        "label",
+      ],
+    },
+    "shared": true,
+    "sort": Object {
+      "field": "id",
+      "order": "asc",
+    },
+    "type": "list",
+  },
+}
+`;

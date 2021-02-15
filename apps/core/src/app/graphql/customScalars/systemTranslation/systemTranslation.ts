@@ -20,7 +20,7 @@ export default function ({config}: IDeps): GraphQLScalarType {
             config.lang.available.reduce((acc, lng) => {
                 return {
                     ...acc,
-                    [lng]: lng === config.lang.default ? Joi.string().required() : Joi.string().optional()
+                    [lng]: lng === config.lang.default ? Joi.string().required() : Joi.string().optional().allow('')
                 };
             }, {})
         );

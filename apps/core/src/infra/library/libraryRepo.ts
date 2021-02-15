@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {difference} from 'lodash';
+import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {IAttribute} from '../../_types/attribute';
+import {IAttributeFilterOptions} from '../../_types/attribute';
 import {ILibrary} from '../../_types/library';
 import {IList} from '../../_types/list';
-import {IAttributeRepo, ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
+import {IAttributeRepo} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IQueryInfos} from '_types/queryInfos';
 
 export const LIB_COLLECTION_NAME = 'core_libraries';
 export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';
@@ -143,9 +143,10 @@ export default function ({
             return dbUtils.cleanup(res.pop());
         },
         async deleteLibrary({id, ctx}): Promise<ILibrary> {
+            const filters: IAttributeFilterOptions = {linked_library: id};
             // Delete attributes linked to this library
             const linkedAttributes = await attributeRepo.getAttributes({
-                params: {filters: {linked_library: id}},
+                params: {filters},
                 ctx
             });
 
@@ -249,8 +250,8 @@ export default function ({
             const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
             const res = await dbService.execute({
-                query: aql`FOR e IN ${libAttributesCollec} 
-                        FILTER e._to == ${'core_attributes/' + attributeId} 
+                query: aql`FOR e IN ${libAttributesCollec}
+                        FILTER e._to == ${'core_attributes/' + attributeId}
                     RETURN LAST(SPLIT(e._from, ${LIB_COLLECTION_NAME + '/'}))`,
                 ctx
             });

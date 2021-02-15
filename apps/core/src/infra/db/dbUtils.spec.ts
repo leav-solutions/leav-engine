@@ -7,6 +7,8 @@ import {resolve} from 'dns';
 import {readdirSync} from 'fs';
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import {Winston} from 'winston';
+import {IAttributeFilterOptions} from '_types/attribute';
+import {IConfig} from '_types/config';
 import {ITree} from '_types/tree';
 import {SortOrder} from '../../_types/list';
 import {ATTRIB_COLLECTION_NAME} from '../attributeTypes/attributeTypesRepo';
@@ -16,7 +18,7 @@ import dbUtils, {IDbUtils} from './dbUtils';
 import loadMigrationFile from './helpers/loadMigrationFile';
 
 describe('dbUtils', () => {
-    const mockConf = {lang: {available: ['fr', 'en']}};
+    const mockConf: Partial<IConfig> = {lang: {available: ['fr', 'en'], default: 'fr'}, defaultUserId: '1'};
     const ctx = {
         userId: '0',
         queryId: '123456'
@@ -87,7 +89,7 @@ describe('dbUtils', () => {
             };
             testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
-                config: mockConf
+                config: mockConf as IConfig
             });
             testDbUtils.cleanup = jest.fn().mockReturnValue({
                 id: 'categories',
@@ -168,7 +170,7 @@ describe('dbUtils', () => {
             };
             const testDbUtilsLimit = dbUtils({
                 'core.infra.db.dbService': mockDbServLimit,
-                config: mockConf
+                config: mockConf as IConfig
             });
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
@@ -200,7 +202,7 @@ describe('dbUtils', () => {
             };
             const testDbUtilsLimit = dbUtils({
                 'core.infra.db.dbService': mockDbServLimit,
-                config: mockConf
+                config: mockConf as IConfig
             });
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
@@ -235,7 +237,7 @@ describe('dbUtils', () => {
             };
             const testDbUtilsLimit = dbUtils({
                 'core.infra.db.dbService': mockDbServLimit,
-                config: mockConf
+                config: mockConf as IConfig
             });
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
@@ -254,7 +256,7 @@ describe('dbUtils', () => {
             mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
-                config: mockConf
+                config: mockConf as IConfig
             });
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn();
@@ -285,7 +287,7 @@ describe('dbUtils', () => {
             };
             testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServCustom,
-                config: mockConf
+                config: mockConf as IConfig
             });
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn().mockReturnValue({
@@ -293,9 +295,10 @@ describe('dbUtils', () => {
             });
 
             const customFilter = jest.fn(() => aql`CUSTOM FILTER`);
+            const filters: IAttributeFilterOptions = {libraries: ['test']};
             await testDbUtils.findCoreEntity({
                 collectionName: ATTRIB_COLLECTION_NAME,
-                filters: {libraries: ['test']},
+                filters,
                 customFilterConditions: {libraries: customFilter},
                 ctx
             });
@@ -395,7 +398,8 @@ describe('dbUtils', () => {
             const testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
                 'core.utils.logger': mockLogger as Winston,
-                'core.infra.plugins': mockPluginsRepo as IPluginsRepo
+                'core.infra.plugins': mockPluginsRepo as IPluginsRepo,
+                config: mockConf as IConfig
             });
 
             await testDbUtils.migrate(mockDepsManager as AwilixContainer);

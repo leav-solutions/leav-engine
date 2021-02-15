@@ -14,7 +14,7 @@ import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribu
 import {AppPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import attributeDomain, {IAttributeDomain} from './attributeDomain';
+import attributeDomain from './attributeDomain';
 
 describe('attributeDomain', () => {
     const ctx: IQueryInfos = {

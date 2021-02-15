@@ -1,7 +1,4 @@
 #!/bin/sh
-# Copyright LEAV Solutions 2017
-# This file is released under LGPL V3
-# License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 if [ -z "$husky_skip_init" ]; then
   debug () {
     [ "$HUSKY_DEBUG" = "1" ] && echo "husky (debug) - $1"

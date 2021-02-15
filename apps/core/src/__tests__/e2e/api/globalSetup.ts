@@ -10,6 +10,7 @@ import {init as initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {initAmqp} from '../../../infra/amqp';
 import {initPlugins} from '../../../pluginsLoader';
+import {IConfig} from '../../../_types/config';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
@@ -28,6 +29,21 @@ const _setupFakePlugin = async () => {
 
         console.error(e);
     }
+};
+
+export const init = async (conf: IConfig): Promise<any> => {
+    // Init i18next
+    const translator = await i18nextInit(conf);
+
+    // Init AMQP
+    const amqpConn = await initAmqp({config: conf});
+
+    const {coreContainer, pluginsContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
+    const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+
+    await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
+
+    return {coreContainer, dbUtils};
 };
 
 export async function setup() {
@@ -50,16 +66,7 @@ export async function setup() {
 
         await db.createDatabase(conf.db.name);
 
-        // Init i18next
-        const translator = await i18nextInit(conf);
-
-        // Init AMQP
-        const amqpConn = await initAmqp({config: conf});
-
-        const {coreContainer, pluginsContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
-        const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
-
-        await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
+        const {coreContainer, dbUtils} = await init(conf);
 
         await dbUtils.migrate(coreContainer);
 

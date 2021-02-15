@@ -106,6 +106,49 @@ export default function ({
                         list: [Record!]!
                     }
 
+
+                    enum RecordFilterOperator {
+                        AND
+                        OR
+                        OPEN_BRACKET
+                        CLOSE_BRACKET
+                    }
+
+                    enum RecordFilterCondition {
+                        EQUAL
+                        NOT_EQUAL
+                        BEGIN_WITH
+                        END_WITH
+                        CONTAINS
+                        NOT_CONTAINS
+                        GREATER_THAN
+                        LESS_THAN
+                    }
+
+                    type RecordFilter {
+                        field: String,
+                        value: String
+                        condition: RecordFilterCondition,
+                        operator: RecordFilterOperator
+                    }
+
+                    input RecordFilterInput {
+                        field: String,
+                        value: String
+                        condition: RecordFilterCondition,
+                        operator: RecordFilterOperator
+                    }
+
+                    type RecordSort {
+                        field: String,
+                        order: SortOrder!
+                    }
+
+                    input RecordSortInput {
+                        field: String,
+                        order: SortOrder!
+                    }
+
                     extend type Mutation {
                         createRecord(library: ID): Record!
                         deleteRecord(library: ID, id: ID): Record!

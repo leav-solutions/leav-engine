@@ -1,0 +1,70 @@
+{
+  "elements": [
+    {
+      "library": "test_import",
+      "matches": [],
+      "data": [
+        {
+          "attribute": "simple",
+          "values": [
+            {
+              "value": "one"
+            }
+          ],
+          "action": "add"
+        },
+        {
+          "attribute": "simple_link",
+          "values": [
+            {
+              "value": [
+                {
+                  "attribute": "login",
+                  "value": "admin"
+                }
+              ]
+            }
+          ],
+          "action": "add"
+        },
+        {
+          "attribute": "advanced_link",
+          "values": [
+            {
+              "value": "1"
+            }
+          ],
+          "action": "replace"
+        }
+      ],
+      "links": []
+    },
+    {
+      "library": "users_groups",
+      "matches": [], 
+      "data": [
+        {
+          "attribute": "simple",
+          "values": [
+            {
+              "value": "test"
+            }
+          ],
+          "action": "add"
+        }
+      ],
+      "links": []
+    }
+  ],
+  "trees": [
+    {
+      "library": "users_groups",
+      "treeId": "users_groups",
+      "matches": [{
+        "attribute": "simple",
+        "value": "test"
+      }],
+      "action": "update"
+    }
+  ]
+}

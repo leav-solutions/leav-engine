@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from 'infra/amqp/amqpService';
-import {IRecordDomain, IFindRecordParams} from 'domain/record/recordDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import * as Config from '_types/config';
-import {IEvent, EventType, IRecordPayload, ILibraryPayload, IValuePayload} from '../../_types/event';
 import * as Joi from '@hapi/joi';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
+import {IAmqpService} from 'infra/amqp/amqpService';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {isEqual, pick} from 'lodash';
+import {v4 as uuidv4} from 'uuid';
+import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
-import {v4 as uuidv4} from 'uuid';
+import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
+import {EventType, IEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {Operator} from '../../_types/record';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -121,11 +121,14 @@ export default function ({
     };
 
     const _indexLinkedLibraries = async (libraryId: string, ctx: IQueryInfos, recordId?: string): Promise<void> => {
+        const linkedTreeFilters: IAttributeFilterOptions = {linked_tree: libraryId};
+        const linkedLibFilters: IAttributeFilterOptions = {linked_library: libraryId};
+
         // get all attributes with the new library as linked library / linked_tree
         const attributes = (
             await attributeDomain.getAttributes({
                 params: {
-                    filters: {linked_library: libraryId}
+                    filters: linkedLibFilters
                 },
                 ctx
             })
@@ -133,7 +136,7 @@ export default function ({
             (
                 await attributeDomain.getAttributes({
                     params: {
-                        filters: {linked_tree: libraryId}
+                        filters: linkedTreeFilters
                     },
                     ctx
                 })

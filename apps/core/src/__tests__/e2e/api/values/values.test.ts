@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall} from '../e2eUtils';
+import {gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
 
 describe('Values', () => {
     const testLibName = 'values_library_test';
@@ -118,13 +118,7 @@ describe('Values', () => {
         }`);
 
         // create tree
-        await makeGraphQlCall(`mutation {
-            saveTree(
-                tree: {id: "${treeName}", label: {fr: "Test tree"}, libraries: ["${treeLibName}"]}
-            ) {
-                id
-            }
-        }`);
+        await gqlSaveTree(treeName, 'Test tree', [treeLibName]);
 
         // Create tree attribute linking to tree
         await makeGraphQlCall(`mutation {

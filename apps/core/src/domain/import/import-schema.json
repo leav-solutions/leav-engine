@@ -1,0 +1,183 @@
+{
+  "$id": "https://configuration.cacom.com/categories.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LEAV CORE IMPORT",
+  "definitions": {
+    "match": {
+      "description": "Attribute/value pair used to find an element",
+      "type": "object",
+      "properties": {
+        "attribute": {
+          "type": "string",
+          "description": "Attribute key"
+        },
+        "value": {
+          "type": "string",
+          "description": "Attribute value to search"
+        }
+      },
+      "required": [
+        "attribute",
+        "value"
+      ]
+    },
+    "matches": {
+      "description": "List of matches to find an element",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/match"
+      }
+    },
+    "value": {
+      "description": "Single value object to process, either textual value or list of matches to find an element",
+      "type": "object",
+      "properties": {
+        "value": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/matches"
+            }
+          ]
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "data": {
+      "description": "Data object to process",
+      "type": "object",
+      "properties": {
+        "attribute": {
+          "type": "string",
+          "description": "Attribute key"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "add",
+            "replace"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/value"
+          }
+        }
+      },
+      "required": [
+        "attribute",
+        "values",
+        "action"
+      ]
+    },
+    "element": {
+      "description": "Object representing the elemnt to process",
+      "type": "object",
+      "properties": {
+        "library": {
+          "type": "string",
+          "description": "Library key"
+        },
+        "matches": {
+          "$ref": "#/definitions/matches"
+        },
+        "data": {
+          "type": "array",
+          "description": "List of simple/advanced attributes data to process",
+          "items": {
+            "$ref": "#/definitions/data"
+          }
+        },
+        "links": {
+          "type": "array",
+          "description": "List of simple/advanced links attributes data to process",
+          "items": {
+            "$ref": "#/definitions/data"
+          }
+        }
+      },
+      "required": [
+        "library",
+        "matches",
+        "data",
+        "links"
+      ]
+    },
+    "tree": {
+      "description": "Tree element to process",
+      "type": "object",
+      "properties": {
+        "library": {
+          "type": "string",
+          "description": "Library key"
+        },
+        "treeId": {
+          "type": "string",
+          "description": "Tree key"
+        },
+        "matches": {
+          "$ref": "#/definitions/matches"
+        },
+        "parent": {
+          "type": "object",
+          "properties": {
+            "library": {
+              "type": "string",
+              "description": "Library key"
+            },
+            "matches": {
+              "$ref": "#/definitions/matches"
+            }
+          },
+          "required": [
+            "library",
+            "matches"
+          ]
+        },
+        "order": {
+          "description": "Order of the element within its parent",
+          "type": "integer"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "update",
+            "remove"
+          ]
+        }
+      },
+      "required": [
+        "library",
+        "treeId",
+        "matches",
+        "action"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "elements": {
+      "description": "List of elements to process",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/element"
+      }
+    },
+    "trees": {
+      "description": "List of tree elements to process",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/tree"
+      }
+    }
+  },
+  "required": [
+    "elements",
+    "trees"
+  ]
+}

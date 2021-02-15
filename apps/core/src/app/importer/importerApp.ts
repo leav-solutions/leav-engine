@@ -10,7 +10,6 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {promises as fs} from 'fs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {now} from 'moment';
-import {isArray} from 'util';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 
@@ -104,7 +103,7 @@ export default function ({
 
         const recordsMapping = {};
         for (const libName of Object.keys(records)) {
-            if (isArray(records[libName])) {
+            if (Array.isArray(records[libName])) {
                 for (const record of records[libName]) {
                     await _insertRecord(libName, record.key);
                 }
@@ -156,7 +155,7 @@ export default function ({
         for (const libName of Object.keys(values)) {
             for (const attrName of Object.keys(values[libName])) {
                 const valSettings = values[libName][attrName];
-                if (isArray(valSettings)) {
+                if (Array.isArray(valSettings)) {
                     for (const val of valSettings) {
                         await _insertValue({
                             library: libName,

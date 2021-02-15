@@ -7,10 +7,12 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLScalarType} from 'graphql';
 import {isNumber} from 'util';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ITreePermissionsConf} from '_types/permissions';
-import {ITree, ITreeElement, TreeBehavior} from '../../_types/tree';
-import {IGraphqlApp} from '../graphql/graphqlApp';
-import {ICoreApp} from './coreApp';
+import {IList} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
+import {ITree, ITreeElement, TreeBehavior} from '../../../_types/tree';
+import {IGraphqlApp} from '../../graphql/graphqlApp';
+import {ICoreApp} from '../coreApp';
+import {ISaveTreeMutationArgs, ITreeLibraryForGraphQL, ITreePermissionsConfForGraphQL, ITreesQueryArgs} from './_types';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -27,7 +29,6 @@ interface IDeps {
 export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.app.graphql': graphqlApp = null,
     'core.app.core': coreApp = null,
     'core.domain.library': libraryDomain = null
 }: IDeps = {}): ITreeAttributeApp {
@@ -70,11 +71,19 @@ export default function ({
                         ${Object.values(TreeBehavior).join(' ')}
                     }
 
-                    # Application TRee
+                    type TreeLibrarySettings {
+                        allowMultiplePositions: Boolean!
+                    }
+
+                    type TreeLibrary {
+                        library: Library!,
+                        settings: TreeLibrarySettings!
+                    }
+
                     type Tree {
                         id: ID!,
                         system: Boolean!,
-                        libraries: [Library!]!,
+                        libraries: [TreeLibrary!]!,
                         behavior: TreeBehavior!,
                         label(lang: [AvailableLanguage!]): SystemTranslation
                         permissions_conf: [TreeNodePermissionsConf!]
@@ -85,9 +94,18 @@ export default function ({
                         permissionsConf: Treepermissions_conf!
                     }
 
+                    input TreeLibrarySettingsInput {
+                        allowMultiplePositions: Boolean!
+                    }
+
+                    input TreeLibraryInput {
+                        library: ID!,
+                        settings: TreeLibrarySettingsInput!
+                    }
+
                     input TreeInput {
                         id: ID!
-                        libraries: [String!],
+                        libraries: [TreeLibraryInput!],
                         behavior: TreeBehavior,
                         label: SystemTranslation
                         permissions_conf: [TreeNodePermissionsConfInput!]
@@ -179,7 +197,11 @@ export default function ({
                 `,
                 resolvers: {
                     Query: {
-                        async trees(parent, {filters, pagination, sort}, ctx) {
+                        async trees(
+                            _,
+                            {filters, pagination, sort}: ITreesQueryArgs,
+                            ctx: IQueryInfos
+                        ): Promise<IList<ITree>> {
                             return treeDomain.getTrees({params: {filters, withCount: true, pagination, sort}, ctx});
                         },
                         async treeContent(_, {treeId, startAt}: {treeId: string; startAt: ITreeElement}, ctx) {
@@ -193,20 +215,15 @@ export default function ({
                         }
                     },
                     Mutation: {
-                        async saveTree(
-                            _,
-                            {
-                                tree
-                            }: {
-                                tree: Omit<ITree, 'permissions_conf'> & {
-                                    permissions_conf: [{libraryId: string; permissionsConf: ITreePermissionsConf}];
-                                };
-                            },
-                            ctx
-                        ): Promise<ITree> {
+                        async saveTree(_, {tree}: ISaveTreeMutationArgs, ctx: IQueryInfos): Promise<ITree> {
                             // Convert permissions conf
                             const treeToSave: ITree = {
                                 ...tree,
+                                libraries: tree.libraries
+                                    ? tree.libraries.reduce((acc, cur) => {
+                                          return {...acc, [cur.library]: cur.settings};
+                                      }, {})
+                                    : [],
                                 permissions_conf: tree.permissions_conf
                                     ? tree.permissions_conf.reduce(
                                           (acc, cur) => ({
@@ -256,9 +273,9 @@ export default function ({
                         label: async (treeData, args) => {
                             return coreApp.filterSysTranslationField(treeData.label, args.lang || []);
                         },
-                        libraries: async (treeData, args, ctx) => {
+                        libraries: async (treeData: ITree, _, ctx: IQueryInfos): Promise<ITreeLibraryForGraphQL[]> => {
                             return Promise.all(
-                                treeData.libraries.map(async libId => {
+                                Object.keys(treeData.libraries).map(async libId => {
                                     const lib = await libraryDomain.getLibraries({
                                         params: {
                                             filters: {id: libId},
@@ -266,13 +283,11 @@ export default function ({
                                         },
                                         ctx
                                     });
-                                    return lib.list[0];
+                                    return {library: lib.list[0], settings: treeData.libraries[libId]};
                                 })
                             );
                         },
-                        permissions_conf: (
-                            treeData: ITree
-                        ): Array<{libraryId: string; permissionsConf: ITreePermissionsConf}> | null => {
+                        permissions_conf: (treeData: ITree): ITreePermissionsConfForGraphQL[] | null => {
                             return treeData.permissions_conf
                                 ? Object.keys(treeData.permissions_conf).map(libId => ({
                                       libraryId: libId,

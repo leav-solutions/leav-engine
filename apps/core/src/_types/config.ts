@@ -18,6 +18,8 @@ export interface IConfig {
     eventsManager: IEventsManager;
     debug?: boolean;
     env?: string;
+    defaultUserId: string;
+    export: IExport;
     plugins: IKeyValue<IKeyValue<any>>;
 }
 
@@ -92,4 +94,8 @@ export interface IIndexationManager {
         events: string;
     };
     prefetch?: number;
+}
+
+export interface IExport {
+    directory: string;
 }

@@ -10,8 +10,8 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {LibraryBehavior} from '../../_types/library';
 import {AppPermissionsActions} from '../../_types/permissions';
-import {ITree, TreeBehavior} from '../../_types/tree';
-import {mockFilesTree} from '../../__tests__/mocks/tree';
+import {ITree} from '../../_types/tree';
+import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
@@ -22,13 +22,6 @@ describe('treeDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'treeDomainTest'
-    };
-    const mockTree = {
-        id: 'test',
-        system: false,
-        libraries: ['lib1', 'lib2'],
-        label: {fr: 'Test'},
-        behavior: TreeBehavior.STANDARD
     };
 
     const mockAppPermDomain: Mockify<IAppPermissionDomain> = {

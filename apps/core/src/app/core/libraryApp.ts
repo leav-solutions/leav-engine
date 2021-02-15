@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {IViewDomain} from 'domain/view/viewDomain';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -26,6 +27,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.view'?: IViewDomain;
     'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
@@ -36,6 +38,7 @@ export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
+    'core.domain.view': viewDomain = null,
     'core.app.core.attribute': coreAttributeApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.utils': utils = null,
@@ -80,7 +83,8 @@ export default function ({
                         fullTextAttributes: [Attribute!],
                         permissions_conf: Treepermissions_conf,
                         recordIdentityConf: RecordIdentityConf,
-                        gqlNames: LibraryGraphqlNames!
+                        gqlNames: LibraryGraphqlNames!,
+                        defaultView: View,
                     }
 
                     input LibraryInput {
@@ -90,7 +94,8 @@ export default function ({
                         fullTextAttributes: [ID!],
                         behavior: LibraryBehavior,
                         permissions_conf: Treepermissions_confInput,
-                        recordIdentityConf: RecordIdentityConfInput
+                        recordIdentityConf: RecordIdentityConfInput,
+                        defaultView: ID
                     }
 
                     input LibrariesFiltersInput {
@@ -188,6 +193,9 @@ export default function ({
                                 searchableFields: _getLibGqlSearchableFieldsType(libTypeName),
                                 filter: _getLibGqlFilterType(libTypeName)
                             };
+                        },
+                        defaultView: (library, _, ctx) => {
+                            return library.defaultView ? viewDomain.getViewById(library.defaultView, ctx) : null;
                         }
                     }
                 }
@@ -222,40 +230,10 @@ export default function ({
                         list: [${libTypeName}!]!
                     }
 
-                    enum ${libTypeName}Operator {
-                        AND
-                        OR
-                        OPEN_BRACKET
-                        CLOSE_BRACKET
-                    }
-
-                    enum ${libTypeName}Condition {
-                        EQUAL
-                        NOT_EQUAL
-                        BEGIN_WITH
-                        END_WITH
-                        CONTAINS
-                        NOT_CONTAINS
-                        GREATER_THAN
-                        LESS_THAN
-                    }
-
-                    input ${_getLibGqlFilterType(libTypeName)} {
-                        field: String,
-                        value: String
-                        condition: ${libTypeName}Condition,
-                        operator: ${libTypeName}Operator
-                    }
-
-                    input ${_getLibGqlSortType(libTypeName)} {
-                        field: String,
-                        order: SortOrder!
-                    }
-
                     extend type Query {
                         ${libQueryName}(
-                            filters: [${_getLibGqlFilterType(libTypeName)}],
-                            sort: ${_getLibGqlSortType(libTypeName)}
+                            filters: [RecordFilterInput],
+                            sort: RecordSortInput
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
                             retrieveInactive: Boolean,

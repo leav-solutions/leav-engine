@@ -3,23 +3,24 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as hapi from '@hapi/hapi';
 import inert from '@hapi/inert';
-import {ApolloServer} from 'apollo-server-hapi';
+import {ApolloServer} from '@wzrdtales/apollo-server-hapi';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {execute, GraphQLFormattedError} from 'graphql';
 import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 import {i18n} from 'i18next';
 import {IUtils} from 'utils/utils';
-import * as winston from 'winston';
-import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
-import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
+import * as winston from 'winston';
+import {IConfig} from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 export interface IServer {
     init(): Promise<void>;
 }
 
 interface IDeps {
-    config?: any;
+    config?: IConfig;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.auth'?: IAuthApp;
     'core.utils.logger'?: winston.Winston;
@@ -84,6 +85,7 @@ export default function ({
     return {
         async init(): Promise<void> {
             const server: hapi.Server = new hapi.Server({
+                debug: {log: ['*'], request: ['*']},
                 host: config.server.host,
                 port: config.server.port,
                 routes: {
@@ -179,9 +181,11 @@ export default function ({
                     },
                     subscriptions: false
                 });
+
                 await apolloServ.applyMiddleware({app: server, cors: true, path: '/graphql'});
 
                 await server.start();
+
                 logger.info(`Server running at: ${server.info.uri}`);
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');
@@ -194,6 +198,24 @@ export default function ({
                 handler: {
                     directory: {
                         path: '/results'
+                    }
+                },
+                config: {
+                    auth: {
+                        strategy: 'core',
+                        mode: 'optional'
+                    }
+                }
+            });
+
+            // Add route for exports
+            const exportDir = config.export.directory;
+            server.route({
+                method: 'GET',
+                path: `${exportDir}/{file*}`,
+                handler: {
+                    directory: {
+                        path: exportDir
                     }
                 },
                 config: {

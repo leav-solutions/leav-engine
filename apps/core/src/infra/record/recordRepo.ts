@@ -7,16 +7,16 @@ import {IQueryInfos} from '_types/queryInfos';
 import {
     CursorDirection,
     ICursorPaginationParams,
-    IListWithCursor,
     IList,
+    IListWithCursor,
     IPaginationCursors,
     IPaginationParams
 } from '../../_types/list';
 import {IRecord, IRecordFilterOption, IRecordSort, Operator} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
-import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
 import {IDbUtils} from '../db/dbUtils';
+import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -154,6 +154,7 @@ export default function ({
             const withTotalCount = withCount && !withCursorPagination;
             const coll = dbService.db.collection(libraryId);
             let queryParts = [!filters || !filters.length ? aql`FOR r IN ${coll}` : aql`FOR r IN`];
+            let isFilteringOnActive = false;
 
             if (typeof filters !== 'undefined' && filters.length) {
                 const rpn: IRecordFilterOption[] = _toReversePolishNotation(filters);
@@ -161,6 +162,7 @@ export default function ({
                 const stack = [];
                 for (const [i, filter] of rpn.entries()) {
                     if (filter.attributes) {
+                        isFilteringOnActive = isFilteringOnActive || filter.attributes[0].id === 'active';
                         stack.push(filter);
                     } else {
                         let [f0, f1] = [stack.pop(), stack.pop()].reverse();
@@ -195,7 +197,7 @@ export default function ({
 
             queryParts.push(sortQueryPart as GeneratedAqlQuery);
 
-            if (!retrieveInactive) {
+            if (!retrieveInactive && !isFilteringOnActive) {
                 queryParts.push(aql`FILTER r.active == true`);
             }
 

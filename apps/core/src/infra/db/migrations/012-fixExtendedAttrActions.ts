@@ -4,7 +4,7 @@
 import {aql} from 'arangojs';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IAttribute} from '_types/attribute';
+import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
 import {ILibrary} from '_types/library';
 import {AttributeFormats} from '../../../_types/attribute';
 import {IDbService} from '../dbService';
@@ -23,8 +23,9 @@ export default function ({
 }: IDeps) {
     return {
         async run(ctx) {
+            const filters: IAttributeFilterOptions = {format: [AttributeFormats.EXTENDED]};
             const existingAttributes = await attributeDomain.getAttributes({
-                params: {filters: {format: [AttributeFormats.EXTENDED]}},
+                params: {filters},
                 ctx
             });
 

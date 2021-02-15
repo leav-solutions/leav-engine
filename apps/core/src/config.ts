@@ -27,16 +27,12 @@ export const validateConfig = (conf: IConfig) => {
             tokenExpiration: Joi.string().required()
         }),
         lang: Joi.object().keys({
-            available: Joi.array()
-                .items(Joi.string())
-                .required(),
+            available: Joi.array().items(Joi.string()).required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
             level: Joi.string().required(),
-            transport: Joi.array()
-                .items(Joi.string())
-                .required(),
+            transport: Joi.array().items(Joi.string()).required(),
             destinationFile: Joi.string()
         }),
         permissions: Joi.object().keys({
@@ -83,9 +79,11 @@ export const validateConfig = (conf: IConfig) => {
         }),
         debug: Joi.boolean(),
         env: Joi.string(),
-        plugins: Joi.object()
-            .keys()
-            .unknown()
+        defaultUserId: Joi.string().required(),
+        export: Joi.object().keys({
+            directory: Joi.string().required()
+        }),
+        plugins: Joi.object().keys().unknown()
     });
 
     const isValid = configSchema.validate(conf);

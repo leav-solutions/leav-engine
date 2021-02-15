@@ -1,22 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IValidateHelper} from 'domain/helpers/validate';
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
 import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
-import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
-import * as Config from '_types/config';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
@@ -41,6 +42,14 @@ describe('LibraryDomain', () => {
     const mockTreeRepo: Mockify<ITreeRepo> = {
         createTree: jest.fn(),
         deleteTree: jest.fn()
+    };
+
+    const mockValidateHelper: Mockify<IValidateHelper> = {
+        validateView: global.__mockPromise(true)
+    };
+
+    const mockValidateHelperBadView: Mockify<IValidateHelper> = {
+        validateView: global.__mockPromise(false)
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -170,6 +179,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -233,6 +243,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtilsInvalidID as IUtils
                 });
 
@@ -281,6 +292,7 @@ describe('LibraryDomain', () => {
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
@@ -339,6 +351,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
@@ -398,6 +411,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -457,6 +471,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -530,6 +545,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -591,6 +607,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -652,6 +669,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -692,10 +710,62 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
                 await expect(libDomain.saveLibrary({id: 'test'}, ctx)).rejects.toThrow(PermissionError);
+            });
+
+            test('Should throw if unknown default view', async function () {
+                const mockLibRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    createLibrary: jest.fn(),
+                    updateLibrary: global.__mockPromise({id: 'test', system: false}),
+                    saveLibraryAttributes: jest.fn(),
+                    saveLibraryFullTextAttributes: jest.fn()
+                };
+
+                const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                    send: global.__mockPromise()
+                };
+
+                const mockAttrDomain: Mockify<IAttributeDomain> = {
+                    getAttributes: global.__mockPromise({
+                        list: [
+                            {id: 'id', type: AttributeTypes.SIMPLE},
+                            {id: 'created_at', type: AttributeTypes.SIMPLE},
+                            {id: 'created_by', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_at', type: AttributeTypes.SIMPLE},
+                            {id: 'modified_by', type: AttributeTypes.SIMPLE},
+                            {id: 'active', type: AttributeTypes.SIMPLE},
+                            {id: 'attr1', type: AttributeTypes.SIMPLE},
+                            {id: 'attr2', type: AttributeTypes.SIMPLE},
+                            {id: 'root_key', type: AttributeTypes.SIMPLE},
+                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
+                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                        ],
+                        totalCount: 0
+                    }),
+                    getLibraryAttributes: jest
+                        .fn()
+                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
+                };
+
+                const libDomain = libraryDomain({
+                    config: mockConfig as Config.IConfig,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.infra.library': mockLibRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelperBadView as IValidateHelper,
+                    'core.utils': mockUtils as IUtils
+                });
+
+                await expect(libDomain.saveLibrary({id: 'test', defaultView: 'bad_view'}, ctx)).rejects.toThrow(
+                    ValidationError
+                );
             });
 
             test('Should not save behavior on existing library', async () => {
@@ -740,6 +810,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
 

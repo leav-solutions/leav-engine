@@ -9,7 +9,7 @@ describe('TreePermissions', () => {
 
     beforeAll(async () => {
         // Create tree
-        await gqlSaveTree(permTreeName, 'Test tree', []);
+        await gqlSaveTree(permTreeName, 'Test tree', ['users']);
 
         allUsersTreeElemId = await gqlGetAllUsersGroupId();
         await gqlAddUserToGroup(allUsersTreeElemId);

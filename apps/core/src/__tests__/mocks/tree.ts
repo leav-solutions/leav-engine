@@ -9,11 +9,23 @@ export const mockTree: ITree = {
         fr: 'MonArbre',
         en: 'MyTree'
     },
-    libraries: ['lib1', 'lib2']
+    behavior: TreeBehavior.STANDARD,
+    libraries: {
+        lib1: {
+            allowMultiplePositions: false
+        },
+        lib2: {
+            allowMultiplePositions: false
+        }
+    }
 };
 
 export const mockFilesTree: ITree = {
     ...mockTree,
     behavior: TreeBehavior.FILES,
-    libraries: ['lib1']
+    libraries: {
+        lib1: {
+            allowMultiplePositions: false
+        }
+    }
 };

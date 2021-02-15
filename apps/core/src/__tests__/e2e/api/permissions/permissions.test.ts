@@ -348,17 +348,7 @@ describe('Permissions', () => {
             }`);
 
             // Create test tree
-            await makeGraphQlCall(`mutation {
-                saveTree(
-                    tree: {
-                        id: "${heritTestTreeName}",
-                        label: {fr: "Permissions Test tree"},
-                        libraries: ["${heritTestTreeElemLibName}"]
-                    }
-                ) {
-                    id
-                }
-            }`);
+            await gqlSaveTree(heritTestTreeName, 'Permissions Test tree', [heritTestTreeElemLibName]);
 
             // Create 2 users groups
             const resCreateGroups = await makeGraphQlCall(`mutation {

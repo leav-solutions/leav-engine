@@ -194,7 +194,7 @@ export default function ({
                 ctx
             });
 
-            const edgeCollec = await dbService.createCollection(EDGE_COLLEC_PREFIX + treeData.id, collectionTypes.EDGE);
+            await dbService.createCollection(EDGE_COLLEC_PREFIX + treeData.id, collectionTypes.EDGE);
 
             return dbUtils.cleanup(treeRes.pop());
         },

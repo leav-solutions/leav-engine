@@ -1,15 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeFilterOptions} from './attribute';
 import {IExtensionPoints} from './extensionPoints';
-import {IFormFilterOptions} from './forms';
-import {ILibraryFilterOptions} from './library';
 import {IPaginationParams, ISortParams} from './list';
-import {ITreeFilterOptions} from './tree';
+import {ISystemTranslation} from './systemTranslation';
 
 export interface IGetCoreEntitiesParams {
-    filters?: IAttributeFilterOptions | ILibraryFilterOptions | ITreeFilterOptions | IFormFilterOptions;
+    filters?: ICoreEntityFilterOptions;
     strictFilters?: boolean;
     withCount?: boolean;
     pagination?: IPaginationParams;
@@ -22,4 +19,16 @@ export interface IAppModule {
 
 export interface IKeyValue<T> {
     [key: string]: T;
+}
+
+declare global {
+    interface ICoreEntity {
+        id?: string;
+        label?: ISystemTranslation;
+    }
+
+    interface ICoreEntityFilterOptions {
+        id?: string;
+        label?: string;
+    }
 }

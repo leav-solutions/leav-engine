@@ -3,10 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {ILibrary} from '_types/library';
+import {IQueryInfos} from '_types/queryInfos';
+import {ITree} from '_types/tree';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
@@ -20,6 +24,7 @@ export interface ICoreAttributeApp {
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.actionsList'?: IActionsListDomain;
@@ -32,6 +37,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,
+        'core.domain.library': libraryDomain = null,
         'core.domain.tree': treeDomain = null,
         'core.app.graphql': graphqlApp = null,
         'core.app.core': coreApp = null,
@@ -130,7 +136,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        linked_library: String,
+                        linked_library: Library,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
@@ -147,7 +153,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        linked_tree: String,
+                        linked_tree: Tree,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
@@ -309,6 +315,13 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     StandardAttribute: {...commonResolvers},
                     LinkAttribute: {
                         ...commonResolvers,
+                        linked_library: (attributeData: IAttribute, _, ctx: IQueryInfos): Promise<ILibrary> => {
+                            if (!attributeData.linked_library) {
+                                return null;
+                            }
+
+                            return libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
+                        },
                         values_list: (attributeData: IAttribute, a2, ctx) => {
                             if (!attributeData?.values_list?.enable) {
                                 return attributeData.values_list;
@@ -336,6 +349,13 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     },
                     TreeAttribute: {
                         ...commonResolvers,
+                        linked_tree: (attributeData: IAttribute, _, ctx: IQueryInfos): Promise<ITree> => {
+                            if (!attributeData.linked_tree) {
+                                return null;
+                            }
+
+                            return treeDomain.getTreeProperties(attributeData.linked_tree, ctx);
+                        },
                         values_list: async (attributeData: IAttribute, _, ctx) => {
                             ctx.treeId = attributeData.linked_tree;
 

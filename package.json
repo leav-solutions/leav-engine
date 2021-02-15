@@ -38,6 +38,9 @@
     "lint-staged": "10.5.3",
     "typescript-eslint": "0.0.1-alpha.0"
   },
+  "resolutions": {
+    "apollo-server-core/graphql-upload": "^11.0.0"
+  },
   "lint-staged": {
     "*.{ts, js, tsx, jsx}": [
       "prettier --write",

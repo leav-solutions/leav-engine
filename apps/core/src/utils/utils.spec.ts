@@ -108,6 +108,29 @@ describe('Utils', () => {
         });
     });
 
+    describe('objToNameValArray', () => {
+        test('Convert an object to an array with name and value fields', async () => {
+            const utilsModule = utils();
+            const obj = {
+                toto: 'tata',
+                tutu: 'titi'
+            };
+
+            const arr = utilsModule.objToNameValArray(obj, 'myValueField');
+
+            expect(arr).toEqual([
+                {
+                    name: 'toto',
+                    myValueField: 'tata'
+                },
+                {
+                    name: 'tutu',
+                    myValueField: 'titi'
+                }
+            ]);
+        });
+    });
+
     describe('forceArray', () => {
         test('If value is not an array, return an array', async () => {
             const utilsModule = utils();

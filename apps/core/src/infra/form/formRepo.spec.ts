@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IFormFilterOptions} from '_types/forms';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockForm} from '../../__tests__/mocks/forms';
 import formRepo from './formRepo';
@@ -44,8 +45,9 @@ describe('FormRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const forms = await repo.getForms({
-                params: {filters: {library: 'my_lib', id: 'test_form'}},
+            const filters: IFormFilterOptions = {library: 'my_lib', id: 'test_form'};
+            await repo.getForms({
+                params: {filters},
                 ctx
             });
 

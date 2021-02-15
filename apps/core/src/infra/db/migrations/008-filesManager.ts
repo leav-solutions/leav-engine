@@ -453,7 +453,11 @@ export default function ({
                         system: true,
                         behavior: TreeBehavior.FILES,
                         label: {fr: 'Fichiers', en: 'Files'},
-                        libraries: [filesLibraryId]
+                        libraries: {
+                            [filesLibraryId]: {
+                                allowMultiplePositions: false
+                            }
+                        }
                     },
                     ctx
                 });

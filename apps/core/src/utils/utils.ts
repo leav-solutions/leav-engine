@@ -35,6 +35,8 @@ export interface IUtils {
 
     nameValArrayToObj(arr?: Array<{name: string; value: any}>): {[key: string]: any};
 
+    objToNameValArray<T extends {name: string; [valueField: string]: any}>(obj: {}, valueFieldName?: string): T[];
+
     /**
      * Get the tree library associated with the library given
      *
@@ -96,6 +98,20 @@ export default function (): IUtils {
                       return formattedElem;
                   }, {})
                 : null;
+        },
+        objToNameValArray<T extends {name: string; [valueField: string]: any}>(
+            obj: {},
+            valueFieldName: string = 'value'
+        ): T[] {
+            return Object.keys(obj).reduce((arr, key) => {
+                return [
+                    ...arr,
+                    {
+                        name: key,
+                        [valueFieldName]: obj[key]
+                    }
+                ];
+            }, []);
         },
         getLibraryTreeId(library) {
             return `${library}_tree`;

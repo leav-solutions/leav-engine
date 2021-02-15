@@ -1,14 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IValidateHelper} from 'domain/helpers/validate';
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {omit, union, difference} from 'lodash';
+import {difference, omit, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
+import * as Config from '_types/config';
 import {ErrorFieldDetail} from '_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
@@ -16,21 +18,20 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {Errors} from '../../_types/errors';
+import {EventType} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import checkSavePermission from './helpers/checkSavePermission';
+import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
 import runBehaviorPostDelete from './helpers/runBehaviorPostDelete';
 import runBehaviorPostSave from './helpers/runBehaviorPostSave';
 import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
-import {EventType} from '../../_types/event';
-import * as Config from '_types/config';
-import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -51,6 +52,7 @@ interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
+    'core.domain.helpers.validate'?: IValidateHelper;
 }
 
 export default function ({
@@ -63,6 +65,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
+    'core.domain.helpers.validate': validateHelper = null,
     translator: translator
 }: IDeps = {}): ILibraryDomain {
     return {
@@ -155,6 +158,12 @@ export default function ({
             }
 
             validationErrors.push(await validatePermConf(dataToSave.permissions_conf, {attributeDomain}, ctx));
+
+            if (dataToSave.defaultView && !(await validateHelper.validateView(dataToSave.defaultView, false, ctx))) {
+                validationErrors.push({
+                    defaultView: Errors.UNKNOWN_VIEW
+                });
+            }
 
             // New library? Link default attributes. Otherwise, save given attributes if any
             const attributesToSave = dataToSave.attributes

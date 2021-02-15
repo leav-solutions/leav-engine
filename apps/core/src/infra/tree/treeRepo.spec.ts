@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
 import {IQueryInfos} from '_types/queryInfos';
-import {TreeBehavior} from '../../_types/tree';
+import {mockTree} from '../../__tests__/mocks/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
 import treeRepo from './treeRepo';
 
@@ -44,13 +44,7 @@ describe('TreeRepo', () => {
             });
 
             const createdTree = await repo.createTree({
-                treeData: {
-                    id: 'test_tree',
-                    behavior: TreeBehavior.STANDARD,
-                    libraries: ['test_lib', 'test_lib2'],
-                    system: false,
-                    label: {fr: 'Test'}
-                },
+                treeData: {...mockTree},
                 ctx
             });
 
@@ -83,13 +77,7 @@ describe('TreeRepo', () => {
             });
 
             const updatedTree = await repo.updateTree({
-                treeData: {
-                    id: 'test_tree',
-                    behavior: TreeBehavior.STANDARD,
-                    libraries: ['test_lib', 'test_lib2'],
-                    system: false,
-                    label: {fr: 'Test'}
-                },
+                treeData: {...mockTree},
                 ctx
             });
 

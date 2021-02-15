@@ -13,7 +13,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {FormElementTypes, IForm, IFormStrict} from '../../_types/forms';
+import {FormElementTypes, IForm, IFormFilterOptions, IFormStrict} from '../../_types/forms';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {validateLibrary} from './helpers/validateLibrary';
@@ -90,10 +90,11 @@ export default function (deps: IDeps = {}): IFormDomain {
                 elements: []
             };
 
+            const filters: IFormFilterOptions = {library: form.library, id: form.id};
             // Check if form exists
             const forms = await formRepo.getForms({
                 params: {
-                    filters: {library: form.library, id: form.id},
+                    filters,
                     strictFilters: true,
                     withCount: false
                 },
@@ -162,10 +163,11 @@ export default function (deps: IDeps = {}): IFormDomain {
                 throw new PermissionError(permToCheck);
             }
 
+            const filters: IFormFilterOptions = {library, id};
             // Check if form exists
             const forms = await formRepo.getForms({
                 params: {
-                    filters: {library, id},
+                    filters,
                     strictFilters: true,
                     withCount: false
                 },

@@ -4,11 +4,8 @@
 import {IAttribute} from './attribute';
 import {ITreePermissionsConf} from './permissions';
 import {IRecordIdentityConf} from './record';
-import {ISystemTranslation} from './systemTranslation';
 
-export interface ILibrary {
-    id: string;
-    label?: ISystemTranslation;
+export interface ILibrary extends ICoreEntity {
     system?: boolean;
     behavior?: LibraryBehavior;
 
@@ -31,11 +28,14 @@ export interface ILibrary {
      * List of indexed attributes
      */
     fullTextAttributes?: IAttribute[];
+
+    /**
+     * ID of default view
+     */
+    defaultView?: string;
 }
 
-export interface ILibraryFilterOptions {
-    id?: string;
-    label?: string;
+export interface ILibraryFilterOptions extends ICoreEntityFilterOptions {
     system?: boolean;
 }
 

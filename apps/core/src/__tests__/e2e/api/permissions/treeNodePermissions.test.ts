@@ -49,7 +49,7 @@ describe('TreeNodePermissions', () => {
                 tree: {
                     id: "${elementsTreeId}",
                     label: {fr: "${elementsTreeId}"},
-                    libraries: ["${elementsTreeLibId}"]
+                    libraries: [{library: "${elementsTreeLibId}", settings: {allowMultiplePositions: false}}]
                     permissions_conf: [
                         {
                             libraryId: "${elementsTreeLibId}",

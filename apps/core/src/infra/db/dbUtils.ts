@@ -8,15 +8,14 @@ import {AwilixContainer} from 'awilix';
 import {accessSync, constants, readdirSync} from 'fs';
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import * as path from 'path';
-import {isArray} from 'util';
 import * as winston from 'winston';
-import {IAttribute, IAttributeFilterOptions} from '_types/attribute';
-import {IForm} from '_types/forms';
-import {ILibrary, ILibraryFilterOptions} from '_types/library';
+import {IAttribute} from '_types/attribute';
+import {IConfig} from '_types/config';
+import {ILibrary} from '_types/library';
 import {IList, IPaginationParams, ISortParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
-import {ITree, ITreeFilterOptions} from '_types/tree';
+import {ITree} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
@@ -25,7 +24,7 @@ export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
 export interface IFindCoreEntityParams {
     collectionName: string;
-    filters?: ITreeFilterOptions | ILibraryFilterOptions | IAttributeFilterOptions;
+    filters?: ICoreEntityFilterOptions;
     strictFilters?: boolean;
     withCount?: boolean;
     pagination?: IPaginationParams;
@@ -41,7 +40,7 @@ export interface IDbUtils {
     cleanup?(record: {}): any;
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
-    findCoreEntity?<T extends ITree | ILibrary | IAttribute | IForm>(params: IFindCoreEntityParams): Promise<IList<T>>;
+    findCoreEntity?<T extends ICoreEntity>(params: IFindCoreEntityParams): Promise<IList<T>>;
     convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
     convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
     clearDatabase(): Promise<void>;
@@ -51,7 +50,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.utils.logger'?: winston.Winston;
     'core.infra.plugins'?: IPluginsRepo;
-    config?: any;
+    config?: IConfig;
 }
 
 export default function ({
@@ -126,7 +125,7 @@ export default function ({
         async migrate(depsManager: AwilixContainer): Promise<void> {
             await _initMigrationsCollection();
             const ctx: IQueryInfos = {
-                userId: '0',
+                userId: config.defaultUserId,
                 queryId: 'run-migrations'
             };
             // Load already ran migrations
@@ -274,7 +273,7 @@ export default function ({
             const query = aql.join(queryParts);
             const res = await dbService.execute<IExecuteWithCount | any[]>({query, withTotalCount: withCount, ctx});
 
-            const results = !isArray(res) ? res.results : res;
+            const results = !Array.isArray(res) ? res.results : res;
 
             return {
                 totalCount: withCount ? (res as IExecuteWithCount).totalCount : null,

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import axios from 'axios';
+import FormData from 'form-data';
 import * as jwt from 'jsonwebtoken';
 import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '_types/attribute';
 import {ITreeElement} from '_types/tree';
@@ -32,12 +33,18 @@ async function _getGraphQLUrl() {
     return `http://${conf.server.host}:${conf.server.port}/graphql`;
 }
 
-export async function makeGraphQlCall(query: string): Promise<any> {
+export async function makeGraphQlCall(query: string | FormData): Promise<any> {
     try {
         const url = await _getGraphQLUrl();
         const token = await _getAuthToken();
 
-        const res = await axios.post(url, {query}, {headers: {Authorization: token}});
+        const data = typeof query === 'string' ? {query} : query;
+        const headers = {
+            Authorization: token,
+            ...(typeof query !== 'string' && (data as FormData).getHeaders())
+        };
+
+        const res = await axios.post(url, data, {headers});
 
         return res;
     } catch (e) {
@@ -135,7 +142,12 @@ export async function gqlSaveAttribute(params: {
 export async function gqlSaveTree(id: string, label: string, libraries: string[]) {
     const saveTreeRes = await makeGraphQlCall(`mutation {
         saveTree(
-            tree: {id: "${id}", label: {fr: "${label}"}, libraries: [${libraries.map(l => `"${l}"`).join(', ')}]}
+            tree: {
+                id: "${id}",
+                label: {fr: "${label}"},
+                libraries: [${libraries
+                    .map(l => `{library: "${l}", settings: {allowMultiplePositions: false}}`)
+                    .join(', ')}]}
         ) {
             id
         }

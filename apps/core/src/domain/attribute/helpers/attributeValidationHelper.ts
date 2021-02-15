@@ -9,7 +9,7 @@ import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {ActionsListEvents} from '../../../_types/actionsList';
-import {AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {getAllowedOutputTypes} from './attributeALHelper';
 
@@ -170,9 +170,10 @@ const _validateMetadataFields = async (
             throw new ValidationError({metadata_fields: Errors.CANNOT_SAVE_METADATA});
         }
 
+        const filters: IAttributeFilterOptions = {type: [AttributeTypes.SIMPLE]};
         const metadatableAttrs = await deps.attributeRepo.getAttributes({
             params: {
-                filters: {type: [AttributeTypes.SIMPLE]},
+                filters,
                 strictFilters: true
             },
             ctx

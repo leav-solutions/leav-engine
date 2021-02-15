@@ -3,24 +3,28 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {Errors} from '../../_types/errors';
-import ValidationError from '../../errors/ValidationError';
+import {IViewRepo} from 'infra/view/_types';
 import {IQueryInfos} from '_types/queryInfos';
+import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 
 interface IDeps {
     'core.infra.library'?: ILibraryRepo;
     'core.infra.record'?: IRecordRepo;
+    'core.infra.view'?: IViewRepo;
 }
 
 export interface IValidateHelper {
     validateLibrary(library: string, ctx: IQueryInfos): Promise<void>;
     validateRecord(library: string, record: string, ctx: IQueryInfos): Promise<void>;
+    validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
 }
 
 export default function ({
     'core.infra.library': libraryRepo = null,
-    'core.infra.record': recordRepo = null
+    'core.infra.record': recordRepo = null,
+    'core.infra.view': viewRepo = null
 }: IDeps): IValidateHelper {
     return {
         async validateRecord(library: string, record: string, ctx: IQueryInfos): Promise<void> {
@@ -41,6 +45,25 @@ export default function ({
             if (!lib.list.length) {
                 throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
             }
+        },
+        async validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean> {
+            const existingView = await viewRepo.getViews(
+                {
+                    filters: {id: view},
+                    strictFilters: true
+                },
+                ctx
+            );
+
+            if (!existingView.list.length) {
+                if (throwIfNotFound) {
+                    throw new ValidationError({id: Errors.UNKNOWN_VIEW});
+                } else {
+                    return false;
+                }
+            }
+
+            return true;
         }
     };
 }

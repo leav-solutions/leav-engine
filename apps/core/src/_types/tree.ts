@@ -3,20 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ITreeNodePermissionsConf} from './permissions';
 import {IRecord} from './record';
-import {ISystemTranslation} from './systemTranslation';
+import {IKeyValue} from './shared';
 
-export interface ITree {
-    id: string;
-    libraries: string[];
+export interface ITreeLibrarySettings {
+    allowMultiplePositions: boolean;
+}
+
+export interface ITree extends ICoreEntity {
+    libraries: IKeyValue<ITreeLibrarySettings>;
     behavior?: TreeBehavior;
-    label: ISystemTranslation;
     system?: boolean;
     permissions_conf?: ITreeNodePermissionsConf;
 }
 
-export interface ITreeFilterOptions {
-    id?: string;
-    label?: string;
+export interface ITreeFilterOptions extends ICoreEntityFilterOptions {
     system?: boolean;
 }
 

@@ -7,10 +7,8 @@ import {IRecord} from './record';
 import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
 
-export interface IAttribute {
-    id: string;
+export interface IAttribute extends ICoreEntity {
     system?: boolean;
-    label?: ISystemTranslation;
     type: AttributeTypes;
     format?: AttributeFormats;
     linked_library?: string;
@@ -46,12 +44,10 @@ export interface IEmbeddedAttribute {
 /**
  * Accepted fields to filter attributes list
  */
-export interface IAttributeFilterOptions {
-    id?: string;
+export interface IAttributeFilterOptions extends ICoreEntityFilterOptions {
     type?: AttributeTypes[];
     format?: AttributeFormats[];
     system?: boolean;
-    label?: string;
     linked_library?: string;
     linked_tree?: string;
     multiple_values?: boolean;

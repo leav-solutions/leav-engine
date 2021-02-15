@@ -107,7 +107,20 @@ describe('TreeDataValidation', () => {
             });
 
             await expect(
-                validationHelper.validate({...mockFilesTree, libraries: ['lib1', 'lib2']}, ctx)
+                validationHelper.validate(
+                    {
+                        ...mockFilesTree,
+                        libraries: {
+                            lib1: {
+                                allowMultiplePositions: false
+                            },
+                            lib2: {
+                                allowMultiplePositions: false
+                            }
+                        }
+                    },
+                    ctx
+                )
             ).rejects.toThrow(ValidationError);
         });
     });

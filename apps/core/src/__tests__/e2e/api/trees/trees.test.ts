@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall} from '../e2eUtils';
+import {gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
 
 describe('Trees', () => {
     const testTreeName = 'test_tree';
+    const testTreeName2 = 'test_tree2';
     const testLibName = 'trees_library_test';
     const testLibTypeName = 'treesLibraryTest';
     const attrTreeName = 'trees_attribute_test_tree';
@@ -12,7 +13,11 @@ describe('Trees', () => {
     test('Create Tree', async () => {
         const res = await makeGraphQlCall(`mutation {
             saveTree(
-                tree: {id: "${testTreeName}", label: {fr: "Test tree"}, libraries: ["users"]}
+                tree: {
+                    id: "${testTreeName}",
+                    label: {fr: "Test tree"},
+                    libraries: [{library: "users", settings: {allowMultiplePositions: false}}]
+                }
             ) {
                 id
             }
@@ -23,17 +28,20 @@ describe('Trees', () => {
         expect(res.data.errors).toBeUndefined();
 
         // Create another one for tests
-        await makeGraphQlCall(`mutation {
-            saveTree(
-                tree: {id: "${testTreeName}2", label: {fr: "Test tree 2"}, libraries: ["users"]}
-            ) {
-                id
-            }
-        }`);
+        await gqlSaveTree(testTreeName2, 'Test tree 2', ['users']);
     });
 
     test('Get Trees list', async () => {
-        const res = await makeGraphQlCall('{ trees { list{id libraries { id }} } }');
+        const res = await makeGraphQlCall(`{
+            trees {
+                list {
+                    id
+                    libraries {
+                        library { id }
+                    }
+                }
+            }
+        }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.trees.list.length).toBeGreaterThanOrEqual(2);
@@ -41,7 +49,16 @@ describe('Trees', () => {
     });
 
     test('Get Tree by ID', async () => {
-        const res = await makeGraphQlCall(`{ trees(filters: {id: "${testTreeName}"}) { list {id libraries { id }} } }`);
+        const res = await makeGraphQlCall(`{
+            trees(filters: {id: "${testTreeName}"}) {
+                list {
+                    id
+                    libraries {
+                        library{ id }
+                    }
+                }
+            }
+        }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.trees.list.length).toBe(1);

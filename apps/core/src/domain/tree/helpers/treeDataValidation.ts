@@ -33,7 +33,7 @@ export default function ({
         // Check if all libraries exists
         const libsIds = existingLibs.map(lib => lib.id);
 
-        const unknownLibs = difference(treeData.libraries, libsIds);
+        const unknownLibs = difference(Object.keys(treeData.libraries), libsIds);
 
         if (unknownLibs.length) {
             throw new ValidationError({
@@ -59,7 +59,7 @@ export default function ({
 
         const permConfLibs = Object.keys(treeData.permissions_conf);
 
-        const invalidLibs = difference(permConfLibs, treeData.libraries);
+        const invalidLibs = difference(permConfLibs, Object.keys(treeData.libraries));
 
         if (invalidLibs.length) {
             throw new ValidationError({
