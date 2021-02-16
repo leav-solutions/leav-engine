@@ -43,9 +43,9 @@
     "scripts": {
         "start": "craco start",
         "build": "craco build",
-        "test": "craco test",
+        "test": "SKIP_PREFLIGHT_CHECK=true craco test",
         "eject": "react-scripts eject",
-        "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes=**/*.test.* src/_gqlTypes && prettier --write src/_gqlTypes/*",
+        "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes='**/*.test.*' ./src/_gqlTypes",
         "create_comp": "scripts/createComponent.js",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p ."

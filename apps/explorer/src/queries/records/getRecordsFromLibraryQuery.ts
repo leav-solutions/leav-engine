@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import gql from 'graphql-tag';
+import {gqlUnchecked} from 'utils';
 import {AttributeType, IField} from '../../_types/types';
 
 const handleType = (field: IField): string => {
@@ -93,7 +93,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
     const libQueryName = libraryName?.toUpperCase();
 
     if (!libQueryName?.length) {
-        return gql`
+        return gqlUnchecked`
             query nothing {
                 libraries {
                     list {
@@ -104,7 +104,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
         `;
     }
 
-    return gql`
+    return gqlUnchecked`
         query ${'GET_RECORDS_FROM_' + libQueryName} (
             $limit: Int!
             $offset: Int

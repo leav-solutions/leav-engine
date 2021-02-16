@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import gql from 'graphql-tag';
+import {gqlUnchecked} from 'utils';
 
 const getEmbeddedFields = (depth = 0) => {
     return `
@@ -14,7 +14,7 @@ const getEmbeddedFields = (depth = 0) => {
 };
 
 export const getAttributeWithEmbeddedFields = (depth: number) => {
-    return gql`
+    return gqlUnchecked`
         query GET_ATTRIBUTE_WITH_EMBEDDED_FIELDS($attributeId: ID!) {
             attributes(filters: {id: $attributeId}) {
                 list {

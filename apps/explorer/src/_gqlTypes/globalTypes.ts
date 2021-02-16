@@ -27,6 +27,24 @@ export enum AttributeType {
     tree = 'tree'
 }
 
+export enum NotificationChannel {
+    passive = 'passive',
+    trigger = 'trigger'
+}
+
+export enum NotificationPriority {
+    high = 'high',
+    low = 'low',
+    medium = 'medium'
+}
+
+export enum NotificationType {
+    basic = 'basic',
+    error = 'error',
+    success = 'success',
+    warning = 'warning'
+}
+
 export enum RecordFilterCondition {
     BEGIN_WITH = 'BEGIN_WITH',
     CONTAINS = 'CONTAINS',
@@ -45,11 +63,62 @@ export enum RecordFilterOperator {
     OR = 'OR'
 }
 
+export enum SortOrder {
+    asc = 'asc',
+    desc = 'desc'
+}
+
+export enum ViewTypes {
+    cards = 'cards',
+    list = 'list',
+    timeline = 'timeline'
+}
+
 export interface RecordFilterInput {
     field?: string | null;
     value?: string | null;
     condition?: RecordFilterCondition | null;
     operator?: RecordFilterOperator | null;
+}
+
+export interface RecordSortInput {
+    field?: string | null;
+    order: SortOrder;
+}
+
+export interface TreeElementInput {
+    id: string;
+    library: string;
+}
+
+export interface ValueBatchInput {
+    attribute?: string | null;
+    id_value?: string | null;
+    value?: string | null;
+    metadata?: any | null;
+}
+
+export interface ValueVersionInput {
+    name: string;
+    value: TreeElementInput;
+}
+
+export interface ViewInput {
+    id?: string | null;
+    library: string;
+    type: ViewTypes;
+    shared: boolean;
+    label?: any | null;
+    description?: any | null;
+    color?: string | null;
+    filters?: RecordFilterInput[] | null;
+    sort?: RecordSortInput | null;
+    settings?: ViewSettingsInput[] | null;
+}
+
+export interface ViewSettingsInput {
+    name: string;
+    value?: any | null;
 }
 
 //==============================================================

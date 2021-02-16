@@ -10,6 +10,9 @@ export interface IGetBaseNotification {
 
 export const getBaseNotification = gql`
     query GET_BASE_NOTIFICATION {
-        baseNotification @client
+        baseNotification @client {
+            content @client
+            type @client
+        }
     }
 `;

@@ -7,7 +7,13 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getNotifications, IGetNotification} from '../../queries/cache/notifications/getNotificationsQuery';
-import {IBaseNotification, INotification, NotificationType} from '../../_types/types';
+import {
+    IBaseNotification,
+    INotification,
+    NotificationChannel,
+    NotificationPriority,
+    NotificationType
+} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import HeaderNotification from './HeaderNotification';
 
@@ -35,12 +41,12 @@ describe('HeaderNotification', () => {
                 Query: {
                     fields: {
                         notificationsStack: {
-                            merge(existing, incoming) {
+                            merge(_, incoming) {
                                 return [...incoming];
                             }
                         },
                         baseNotification: {
-                            merge(existing, incoming) {
+                            merge(_, incoming) {
                                 return incoming;
                             }
                         }
@@ -56,7 +62,10 @@ describe('HeaderNotification', () => {
 
         const mockNotification: INotification = {
             content: 'this is a test',
-            type: NotificationType.basic
+            type: NotificationType.basic,
+            time: 1234567890,
+            priority: NotificationPriority.low,
+            channel: NotificationChannel.passive
         };
 
         mockCache.writeQuery<IGetNotification>({

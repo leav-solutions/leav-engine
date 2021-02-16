@@ -1,0 +1,72 @@
+/*
+Copyright LEAV Solutions 2017
+This file is released under LGPL V3
+License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+*/
+
+type ActiveLibraryGqlNames {
+    searchableFields: String!,
+    query: String!,
+    type: String!
+}
+
+type ActiveLibrary {
+    id: String!,
+    name: String!,
+    filter: String!,
+    gql: ActiveLibraryGqlNames!
+}
+
+type ActiveTree {
+    id: String!,
+    libraries: [ActiveTreeLibraries!]!,
+    label: String!
+}
+
+type ActiveTreeLibraries {
+    id: String
+}
+
+enum NotificationType {
+    basic
+    success
+    warning
+    error
+}
+enum NotificationPriority {
+    low
+    medium
+    high
+}
+
+enum NotificationChannel {
+    trigger
+    passive
+}
+
+type Notification {
+    content: String!,
+    type: NotificationType!,
+    time: Int!,
+    priority: NotificationPriority,
+    channel: NotificationChannel
+}
+
+type BaseNotification {
+    content: String!,
+    type: NotificationType
+}
+
+
+extend type Query {
+    activeLib: ActiveLibrary,
+    activeTree: ActiveTree,
+    baseNotification: BaseNotification,
+    notificationsStack: [Notification!]
+    lang: String!,
+    availableLangs: [String!]!,
+    defaultLang: String!
+    userId: String!,
+    userName: String!,
+    userPermissions: [String!]!
+}
