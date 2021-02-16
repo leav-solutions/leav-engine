@@ -19,17 +19,18 @@ import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../../../trees/TreesSelector';
+import {AttributeInfosFormValues} from '../_types';
 
 interface IInfosFormProps {
     attribute: GET_ATTRIBUTES_attributes_list | null;
     readonly: boolean;
-    onSubmitInfos: (dataToSave: GET_ATTRIBUTES_attributes_list) => void;
+    onSubmitInfos: (dataToSave: AttributeInfosFormValues) => void;
     errors?: IFormError;
     onCheckIdExists: (val: string) => Promise<boolean>;
     forcedType?: AttributeType;
 }
 
-const defaultAttributeData: GET_ATTRIBUTES_attributes_list = {
+const defaultAttributeData: AttributeInfosFormValues = {
     id: '',
     system: false,
     label: {
@@ -61,7 +62,15 @@ function InfosForm({
     const {t} = useTranslation();
     const {lang: userLang, availableLangs, defaultLang} = useLang();
     const isNewAttribute = attribute === null;
-    const initialValues = attribute !== null ? attribute : defaultAttributeData;
+    const initialValues: AttributeInfosFormValues =
+        attribute !== null
+            ? {
+                  ...attribute,
+                  linked_library:
+                      (attribute as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library?.id ?? null,
+                  linked_tree: (attribute as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree?.id ?? null
+              }
+            : defaultAttributeData;
 
     if (isNewAttribute && forcedType) {
         initialValues.type = forcedType;
@@ -86,7 +95,7 @@ function InfosForm({
     }
 
     const validationSchema: yup.ObjectSchema<
-        Partial<Override<GET_ATTRIBUTES_attributes_list, {type: string; format?: string}>>
+        Partial<Override<AttributeInfosFormValues, {type: string; format?: string}>>
     > = yup.object().shape({
         label: yup.object().shape({
             [defaultLang]: yup.string().required()
@@ -103,7 +112,7 @@ function InfosForm({
         errors: inputErrors,
         values,
         touched
-    }: FormikProps<GET_ATTRIBUTES_attributes_list>) => {
+    }: FormikProps<AttributeInfosFormValues>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
 
@@ -215,7 +224,7 @@ function InfosForm({
                             width="4"
                             name="linked_library"
                             onChange={_handleChange}
-                            value={(values as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library?.id || ''}
+                            value={values.linked_library || ''}
                         />
                     </FormFieldWrapper>
                 )}
@@ -230,7 +239,7 @@ function InfosForm({
                             label={t('attributes.linked_tree')}
                             placeholder={t('attributes.linked_tree')}
                             name="linked_tree"
-                            value={(values as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree?.id || ''}
+                            value={values.linked_tree || ''}
                             onChange={_handleChange}
                         />
                     </FormFieldWrapper>
