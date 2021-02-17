@@ -14,6 +14,7 @@
         "INVALID_FILTERS_EXPRESSION": "L'ordre des filtres n'est pas valide",
         "INVALID_FULLTEXT_ATTRIBUTES": "Attributs 'full text' non valides",
         "INVALID_ID_FORMAT": "Format d'ID non valide",
+        "INVALID_MAPPING": "Mapping incorrect",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "Ces bibliothèques ne sont pas liées à cet arbre: {{libraries}}",
         "INVALID_SORT_FIELDS": "Les champs de tri ne sont pas valides",
         "METADATA_PERMISSION_ERROR": "Action interdite sur les champs {{fields}}",

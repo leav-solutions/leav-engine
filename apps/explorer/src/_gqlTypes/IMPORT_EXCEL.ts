@@ -17,6 +17,6 @@ export interface IMPORT_EXCEL {
 export interface IMPORT_EXCELVariables {
     file: any;
     library: string;
-    mapping: string[];
+    mapping: (string | null)[];
     key?: string | null;
 }

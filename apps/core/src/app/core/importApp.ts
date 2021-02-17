@@ -75,7 +75,7 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
 
                     extend type Mutation {
                         import(file: Upload!): Boolean!
-                        importExcel(file: Upload!, library: String!, mapping: [String!]!, key: String): Boolean!
+                        importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
                     }
                 `,
                 resolvers: {

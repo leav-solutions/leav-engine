@@ -14,6 +14,7 @@
         "INVALID_FILTERS_EXPRESSION": "Invalid Filters expression order",
         "INVALID_FULLTEXT_ATTRIBUTES": "Invalid full text attributes",
         "INVALID_ID_FORMAT": "Invalid ID format",
+        "INVALID_MAPPING": "Invalid mapping",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "These libraries are not bound to the tree",
         "INVALID_SORT_FIELDS": "Invalid sort fields",
         "INVALID_VERSION": "Invalid version: ",
