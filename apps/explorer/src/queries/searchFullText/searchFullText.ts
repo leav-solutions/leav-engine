@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gql} from '@apollo/client';
+import {gqlUnchecked} from 'utils';
 import {IField, ILabel} from '../../_types/types';
 import {getRecordsFields} from '../records/getRecordsFromLibraryQuery';
 
@@ -50,7 +50,7 @@ const getFields = (libType?: string, fields?: IField[]) => {
 };
 
 export const searchFullText = (libId?: string, libType?: string, fields?: IField[]) => {
-    return gql`
+    return gqlUnchecked`
         query USE_SEARCH_FULL_TEXT($search: String!, $from: Int!, $size: Int!) {
             ${libId}(pagination: { limit: $size, offset: $from }, searchQuery: $search) {
                 totalCount

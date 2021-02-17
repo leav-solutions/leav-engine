@@ -17,7 +17,9 @@ export const getActiveTree = gql`
     query GET_ACTIVE_TREE {
         activeTree @client {
             id @client
-            libraries @client
+            libraries @client {
+                id @client
+            }
             label @client
         }
     }

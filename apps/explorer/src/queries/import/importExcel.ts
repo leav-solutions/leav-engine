@@ -4,7 +4,7 @@
 import gql from 'graphql-tag';
 
 export const importExcel = gql`
-    mutation($file: Upload!, $library: String!, $mapping: [String!]!, $key: String) {
+    mutation IMPORT_EXCEL($file: Upload!, $library: String!, $mapping: [String!]!, $key: String) {
         importExcel(file: $file, library: $library, mapping: $mapping, key: $key)
     }
 `;

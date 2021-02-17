@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {gql} from 'graphql-tag';
 import {i18n} from 'i18next';
 import {isString, pick} from 'lodash';
 import {attributeExtendedKey, infosCol} from '../constants/constants';
@@ -436,3 +437,11 @@ export const attributeToSelectedAttribute = (
     ...pick(attribute, ['id', 'label', 'format', 'type', 'multiple_values']),
     ...otherProps
 });
+
+/**
+ * Cloning gql template tag because some apollo tools like query validation and codegen won't be happy if we use
+ * interpolation in template strings. With a different tag name, the query won't be parsed by these tools
+ * thus they won't complain about it.
+ * It works exactly the same at runtime.
+ */
+export const gqlUnchecked = gql;

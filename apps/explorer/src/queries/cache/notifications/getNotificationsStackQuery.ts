@@ -10,6 +10,12 @@ export interface IGetNotificationsStack {
 
 export const getNotificationsStack = gql`
     query GET_NOTIFICATIONS_STACK {
-        notificationsStack @client
+        notificationsStack @client {
+            content @client
+            type @client
+            time @client
+            priority @client
+            channel @client
+        }
     }
 `;

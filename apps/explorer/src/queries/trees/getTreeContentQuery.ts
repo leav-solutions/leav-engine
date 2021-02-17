@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import gql from 'graphql-tag';
+import {gqlUnchecked} from 'utils';
 import {ILabel, IPreview} from '../../_types/types';
 
 export interface IRecordField {
@@ -58,7 +58,7 @@ const recGetChildren = (depth: number) => {
         return `
             ${recordField}
             children {
-                ${recGetChildren(--depth)} 
+                ${recGetChildren(--depth)}
             }
         `;
     }
@@ -66,7 +66,7 @@ const recGetChildren = (depth: number) => {
 };
 
 export const getTreeContentQuery = (depth: number) => {
-    return gql`
+    return gqlUnchecked`
         query GET_TREE_CONTENT($treeId: ID!, $startAt: TreeElementInput) {
             treeContent(treeId: $treeId, startAt: $startAt) {
                 ${recGetChildren(depth)}

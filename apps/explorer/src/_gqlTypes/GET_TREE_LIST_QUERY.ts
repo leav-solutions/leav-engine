@@ -12,7 +12,7 @@
 
 export interface GET_TREE_LIST_QUERY_trees_list_libraries_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_TREE_LIST_QUERY_trees_list_libraries {
@@ -21,7 +21,7 @@ export interface GET_TREE_LIST_QUERY_trees_list_libraries {
 
 export interface GET_TREE_LIST_QUERY_trees_list {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     libraries: GET_TREE_LIST_QUERY_trees_list_libraries[];
 }
 

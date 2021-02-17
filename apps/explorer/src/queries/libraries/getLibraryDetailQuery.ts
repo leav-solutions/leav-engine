@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import gql from 'graphql-tag';
+import {gqlUnchecked} from 'utils';
 
-export const getLibraryDetailQuery = (libId: string) => gql`
+export const getLibraryDetailQuery = (libId: string) => gqlUnchecked`
     query GET_LIBRARY_DETAIL($libId: ID) {
         libraries(filters: {id: $libId}) {
             list {
