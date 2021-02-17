@@ -1,33 +1,37 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IFile} from '_types/import';
-import {Errors} from '../../_types/errors';
-import {IImportDomain} from 'domain/import/importDomain';
 import {GraphQLUpload} from 'apollo-server';
-import ValidationError from '../../errors/ValidationError';
+import {IImportDomain} from 'domain/import/importDomain';
 import ExcelJS from 'exceljs';
-import {ReadStream} from 'fs';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IFile, IFileUpload} from '_types/import';
+import {IQueryInfos} from '_types/queryInfos';
+import ValidationError from '../../errors/ValidationError';
+import {Errors} from '../../_types/errors';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export type FileUpload = Promise<{
-    filename: string;
-    mimetype: string;
-    encoding: string;
-    createReadStream: () => ReadStream;
-}>;
-
 interface IDeps {
     'core.domain.import'?: IImportDomain;
 }
 
+interface IImportParams {
+    file: Promise<IFileUpload>;
+}
+
+interface IImportExcelParams {
+    file: Promise<IFileUpload>;
+    library: string;
+    mapping: string[];
+    key: string | null;
+}
+
 export default function ({'core.domain.import': importDomain = null}: IDeps = {}): ICoreImportApp {
-    const _getFileDataBuffer = async (file: FileUpload): Promise<Buffer> => {
-        const {createReadStream} = await file;
+    const _getFileDataBuffer = async (file: IFileUpload): Promise<Buffer> => {
+        const {createReadStream} = file;
         const fileStream = createReadStream();
 
         const data = await ((): Promise<Buffer> =>
@@ -40,6 +44,27 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
             }))();
 
         return data;
+    };
+
+    const _getFileExtension = (filename: string): string | null => {
+        if (filename.lastIndexOf('.') === -1) {
+            return null;
+        }
+
+        return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
+    };
+
+    const _validateFileFormat = (filename: string, allowed: string[]) => {
+        const fileExtension = _getFileExtension(filename);
+
+        if (!allowed.includes(fileExtension)) {
+            throw new ValidationError<IImportParams>({
+                file: {
+                    msg: Errors.INVALID_FILE_FORMAT,
+                    vars: {expected: allowed, received: fileExtension}
+                }
+            });
+        }
     };
 
     return {
@@ -56,23 +81,28 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
-                        async import(parent, {file}: {file: FileUpload}, ctx): Promise<boolean> {
-                            const buffer = await _getFileDataBuffer(file);
+                        async import(_, {file}: IImportParams, ctx: IQueryInfos): Promise<boolean> {
+                            const fileData = await file;
+
+                            const allowedExtensions = ['json'];
+                            _validateFileFormat(fileData.filename, allowedExtensions);
+
+                            const buffer = await _getFileDataBuffer(fileData);
                             const data = JSON.parse(buffer.toString('utf8'));
 
                             return importDomain.import(data as IFile, ctx);
                         },
                         async importExcel(
-                            parent,
-                            {
-                                file,
-                                library,
-                                mapping,
-                                key
-                            }: {file: FileUpload; library: string; mapping: string[]; key: string | null},
-                            ctx
+                            _,
+                            {file, library, mapping, key}: IImportExcelParams,
+                            ctx: IQueryInfos
                         ): Promise<boolean> {
-                            const buffer = await _getFileDataBuffer(file);
+                            const fileData = await file;
+
+                            const allowedExtensions = ['xlsx'];
+                            _validateFileFormat(fileData.filename, allowedExtensions);
+
+                            const buffer = await _getFileDataBuffer(fileData);
                             const workbook = new ExcelJS.Workbook();
 
                             await workbook.xlsx.load(buffer);

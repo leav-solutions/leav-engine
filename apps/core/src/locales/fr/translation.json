@@ -8,6 +8,7 @@
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
+        "INVALID_FILE_FORMAT": "Format de fichier non valide: {{received}}. Format attendu: {{expected}}",
         "INVALID_FILTER_CONDITION_VALUE" : "La condition d'un filtre n'est pas compatible avec sa valeur associée",
         "INVALID_FILTER_FIELDS": "Les champs d'un filtre ne sont pas valides",
         "INVALID_FILTERS_EXPRESSION": "L'ordre des filtres n'est pas valide",
