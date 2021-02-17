@@ -10,16 +10,14 @@ import {clearCacheQueriesFromRegexp} from '../../../../../utils';
 import {
     GET_ATTRIBUTES,
     GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list,
-    GET_ATTRIBUTES_attributes_list_LinkAttribute,
-    GET_ATTRIBUTES_attributes_list_TreeAttribute
+    GET_ATTRIBUTES_attributes_list
 } from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {IFormError} from '../../../../../_types/errors';
 import {onAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
-// import useLang from '../../../../../hooks/useLang';
+import {AttributeInfosFormValues} from './_types';
 
 interface IInfosTabProps {
     attribute?: GET_ATTRIBUTES_attributes_list;
@@ -67,7 +65,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
         return !!dataAttrById && !!dataAttrById.attributes && !dataAttrById.attributes.list.length;
     };
 
-    const onSubmitInfos = async (dataToSave: GET_ATTRIBUTES_attributes_list) => {
+    const onSubmitInfos = async (dataToSave: AttributeInfosFormValues) => {
         const variables = {
             attrData: {
                 id: dataToSave.id,
@@ -77,8 +75,8 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                 },
                 type: dataToSave.type,
                 format: dataToSave.format,
-                linked_tree: (dataToSave as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree?.id,
-                linked_library: (dataToSave as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library?.id,
+                linked_tree: dataToSave.linked_tree,
+                linked_library: dataToSave.linked_library,
                 multiple_values: dataToSave.multiple_values,
                 versions_conf: {
                     versionable: dataToSave.versions_conf ? dataToSave.versions_conf.versionable : false,
@@ -87,7 +85,6 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                 }
             }
         };
-        console.log(variables);
         await saveAttribute({
             variables
         });
@@ -97,7 +94,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
         }
     };
 
-    const formErrors = error && error.graphQLErrors.length ? error.graphQLErrors[0] : null;
+    const formErrors = error?.graphQLErrors?.length ? error.graphQLErrors[0] : null;
 
     return (
         <InfosForm
