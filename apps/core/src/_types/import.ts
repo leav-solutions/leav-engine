@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ReadStream} from 'fs-capacitor';
 import {IValueMetadata, IValueVersion} from './value';
 
 export enum Action {
@@ -48,4 +49,11 @@ export interface ITree {
 export interface IFile {
     elements: IElement[];
     trees: ITree[];
+}
+
+export interface IFileUpload {
+    filename: string;
+    mimetype: string;
+    encoding: string;
+    createReadStream: () => ReadStream;
 }

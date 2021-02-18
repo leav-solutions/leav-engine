@@ -20,7 +20,7 @@ export const SCHEMA_PATH = './import-schema.json';
 export interface IImportExcelParams {
     data: string[][];
     library: string;
-    mapping: string[];
+    mapping: Array<string | null>;
     key?: string | null;
 }
 
@@ -210,10 +210,18 @@ export default function ({
         async importExcel({data, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
             const file: IFile = {elements: [], trees: []};
 
-            // delete first row of columns name
-            data.shift();
+            const dataToImport = [...data];
 
-            for (const d of data) {
+            const columnsCount = dataToImport.length ? dataToImport[0].length : 0;
+
+            if (mapping.length !== columnsCount) {
+                throw new ValidationError<IImportExcelParams>({mapping: Errors.INVALID_MAPPING});
+            }
+
+            // delete first row of columns name
+            dataToImport.shift();
+
+            for (const d of dataToImport) {
                 const matches = key
                     ? [
                           {
@@ -226,13 +234,17 @@ export default function ({
                 file.elements.push({
                     library,
                     matches,
-                    data: d
-                        .map((e, i) => ({
-                            attribute: mapping[i],
-                            values: [{value: String(e)}],
-                            action: Action.REPLACE
-                        }))
-                        .filter(e => e.attribute !== 'id'),
+                    data: d.reduce((rowData, cellData, i) => {
+                        if (mapping[i] && mapping[i] !== 'id') {
+                            rowData.push({
+                                attribute: mapping[i],
+                                values: [{value: String(cellData)}],
+                                action: Action.REPLACE
+                            });
+                        }
+
+                        return rowData;
+                    }, []),
                     links: []
                 });
             }

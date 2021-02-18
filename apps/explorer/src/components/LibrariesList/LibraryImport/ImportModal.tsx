@@ -139,7 +139,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
             return false;
         }
 
-        dispatch({data: d});
+        dispatch({data: d, mapping: Array(Object.keys(d[0]).length).fill(null)});
         return true;
     };
 

@@ -23,7 +23,7 @@
         "**/filesForTest/*",
         "**/*.css",
         "**/*.less",
-        "**/README.md"
-
+        "**/README.md",
+        "**/*.graphql"
     ]
 }
