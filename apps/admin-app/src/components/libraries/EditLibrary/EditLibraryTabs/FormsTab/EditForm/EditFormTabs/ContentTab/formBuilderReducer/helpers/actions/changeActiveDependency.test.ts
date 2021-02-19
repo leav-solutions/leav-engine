@@ -6,7 +6,7 @@ import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globa
 import {layoutElements} from '../../../uiElements/__mocks__';
 import {UIElementTypes} from '../../../_types';
 import {defaultContainerId, FormBuilderActionTypes} from '../../formBuilderReducer';
-import {formElem1, formElem2, formElem3, formElem4, initialState} from '../../_fixtures/fixtures';
+import {formElem1, formElem2, formElem3, formElem4, mockInitialState} from '../../_fixtures/fixtures';
 
 describe('formBuilderReducer', () => {
     test('CHANGE_ACTIVE_DEPENDENCY', async () => {
@@ -45,7 +45,7 @@ describe('formBuilderReducer', () => {
                 }
             ]
         };
-        const newState = formBuilderReducer(initialState, {
+        const newState = formBuilderReducer(mockInitialState, {
             type: FormBuilderActionTypes.CHANGE_ACTIVE_DEPENDENCY,
             activeDependency: newDep
         });

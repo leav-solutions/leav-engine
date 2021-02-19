@@ -10,12 +10,12 @@ import {
     defaultDepValue,
     FormBuilderActionTypes
 } from '../../formBuilderReducer';
-import {formElem1, formElem2, formElem3, formElem4, initialState} from '../../_fixtures/fixtures';
+import {formElem1, formElem2, formElem3, formElem4, mockInitialState} from '../../_fixtures/fixtures';
 import removeElement from './removeElement';
 
 describe('formBuilderReducer', () => {
     const removeElemInitialState = {
-        ...initialState,
+        ...mockInitialState,
         elements: {
             [defaultDepAttribute]: {
                 [defaultDepValue]: {

@@ -206,7 +206,7 @@ export const formDataWithTypename = {
     __typename: 'Form'
 };
 
-export const initialState: IFormBuilderState = {
+export const mockInitialState: IFormBuilderState = {
     form: formData,
     library: 'ubs',
     activeDependency: null,

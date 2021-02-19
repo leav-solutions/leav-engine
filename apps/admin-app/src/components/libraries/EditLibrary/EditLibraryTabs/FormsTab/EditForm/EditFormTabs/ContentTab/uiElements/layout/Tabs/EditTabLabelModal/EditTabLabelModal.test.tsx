@@ -6,7 +6,6 @@ import React from 'react';
 import {layoutElements} from '../../..';
 import {FormElementTypes} from '../../../../../../../../../../../../_gqlTypes/globalTypes';
 import {defaultContainerId} from '../../../../formBuilderReducer/formBuilderReducer';
-import {initialState} from '../../../../formBuilderReducer/_fixtures/fixtures';
 import {UIElementTypes} from '../../../../_types';
 import EditTabLabelModal from './EditTabLabelModal';
 
@@ -40,8 +39,6 @@ describe('EditTabLabelModal', () => {
                     label: {fr: 'test_tab'}
                 }}
                 onClose={jest.fn()}
-                dispatch={jest.fn()}
-                state={initialState}
                 open
             />
         );

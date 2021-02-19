@@ -15,11 +15,11 @@ import TreeStructure from '../../../../../../../../../../trees/TreeStructure';
 import {
     defaultDepAttribute,
     defaultDepValue,
-    FormBuilderActionTypes,
-    IFormBuilderStateAndDispatch
+    FormBuilderActionTypes
 } from '../../../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 
-interface IBreadcrumbSectionProps extends IFormBuilderStateAndDispatch {
+interface IBreadcrumbSectionProps {
     treeData: GET_TREE_BY_ID_trees_list;
     element?: RecordIdentity_whoAmI;
     ancestors?: RecordIdentity_whoAmI[];
@@ -36,9 +36,10 @@ const TreeWrapper = styled.div`
     width: 300px;
 `;
 
-function BreadcrumbSection({treeData, element, ancestors, state, dispatch}: IBreadcrumbSectionProps): JSX.Element {
+function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionProps): JSX.Element {
     const {lang} = useLang();
     const treeLabel = localizedLabel(treeData.label, lang);
+    const {state, dispatch} = useFormBuilderReducer();
 
     const [showTree, setShowTree] = useState<boolean>(false);
 

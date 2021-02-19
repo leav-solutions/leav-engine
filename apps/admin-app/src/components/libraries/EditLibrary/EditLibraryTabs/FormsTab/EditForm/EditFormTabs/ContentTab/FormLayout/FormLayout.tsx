@@ -4,12 +4,14 @@
 import React from 'react';
 import {Sidebar} from 'semantic-ui-react';
 import {FormElementTypes} from '../../../../../../../../../_gqlTypes/globalTypes';
-import {defaultContainerId, IFormBuilderStateAndDispatch} from '../formBuilderReducer/formBuilderReducer';
+import {defaultContainerId} from '../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';
 import {layoutElements} from '../uiElements';
 import {IFormElement, UIElementTypes} from '../_types';
 import SettingsEdition from './SettingsEdition';
 
-function FormLayout({state, dispatch}: IFormBuilderStateAndDispatch): JSX.Element {
+function FormLayout(): JSX.Element {
+    const {state, dispatch} = useFormBuilderReducer();
     const {openSettings, elementInSettings} = state;
 
     const rootContainer: IFormElement = {

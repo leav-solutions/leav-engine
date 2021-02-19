@@ -6,11 +6,11 @@ import React from 'react';
 import {layoutElements} from '../..';
 import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
 import {defaultContainerId} from '../../../formBuilderReducer/formBuilderReducer';
-import {initialState} from '../../../formBuilderReducer/_fixtures/fixtures';
 import {UIElementTypes} from '../../../_types';
 import Tabs, {ITabSettings} from './Tabs';
 
 jest.mock('../../../../../../../../../../../hooks/useLang');
+jest.mock('../../../formBuilderReducer/formBuilderReducer');
 
 describe('Tabs', () => {
     test('Render tabs', async () => {
@@ -34,9 +34,7 @@ describe('Tabs', () => {
             uiElement: layoutElements[UIElementTypes.TABS]
         };
 
-        const comp = shallow(
-            <Tabs elementData={tabElementData} settings={{tabs}} dispatch={jest.fn()} state={initialState} />
-        );
+        const comp = shallow(<Tabs elementData={tabElementData} settings={{tabs}} />);
 
         expect(comp.find('Tab').prop('panes')).toHaveLength(3);
     });

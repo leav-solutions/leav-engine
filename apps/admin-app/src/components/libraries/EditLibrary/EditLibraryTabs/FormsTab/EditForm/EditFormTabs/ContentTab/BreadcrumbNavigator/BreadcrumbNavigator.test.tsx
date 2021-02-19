@@ -7,7 +7,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import {TreeBehavior} from '../../../../../../../../../_gqlTypes/globalTypes';
-import {initialState} from '../formBuilderReducer/_fixtures/fixtures';
+import {mockInitialState} from '../formBuilderReducer/_fixtures/fixtures';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
 
 jest.mock('./BreadcrumbNavigatorView', () => {
@@ -15,6 +15,20 @@ jest.mock('./BreadcrumbNavigatorView', () => {
         return <div>BreadcrumbNavigatorView</div>;
     };
 });
+
+jest.mock('../formBuilderReducer/hook/useFormBuilderReducer', () => ({
+    useFormBuilderReducer: () => ({
+        state: {
+            ...mockInitialState,
+            activeDependency: {
+                attribute: 'category',
+                ancestors: [],
+                value: null
+            }
+        },
+        dispatch: jest.fn()
+    })
+}));
 
 describe('BreadcrumbNavigator', () => {
     test('Load tree data', async () => {
@@ -69,17 +83,7 @@ describe('BreadcrumbNavigator', () => {
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocks} addTypename>
-                    <BreadcrumbNavigator
-                        dispatch={jest.fn()}
-                        state={{
-                            ...initialState,
-                            activeDependency: {
-                                attribute: 'category',
-                                ancestors: [],
-                                value: null
-                            }
-                        }}
-                    />
+                    <BreadcrumbNavigator />
                 </MockedProvider>
             );
             await wait(0);

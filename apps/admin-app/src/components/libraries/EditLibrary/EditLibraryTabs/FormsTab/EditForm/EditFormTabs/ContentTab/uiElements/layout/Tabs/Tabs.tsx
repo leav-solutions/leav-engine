@@ -10,7 +10,8 @@ import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
 import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
 import {IKeyValue} from '../../../../../../../../../../../_types/shared';
-import {FormBuilderActionTypes, IFormBuilderStateAndDispatch} from '../../../formBuilderReducer/formBuilderReducer';
+import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {IFormElement, IFormElementProps, UIElementTypes} from '../../../_types';
 import EditTabLabelModal from './EditTabLabelModal';
 
@@ -23,13 +24,12 @@ export interface ITabsSettings {
     tabs?: ITabSettings[];
 }
 
-interface ITabsProps extends IFormElementProps<ITabsSettings>, Partial<IFormBuilderStateAndDispatch> {}
-
-function Tabs({settings, elementData, state, dispatch}: ITabsProps): JSX.Element {
+function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [showEditTabModal, setShowEditTabModal] = useState<boolean>(false);
+    const {state, dispatch} = useFormBuilderReducer();
 
     const _getNewTab = (index?: number): ITabSettings => ({
         label: {fr: t('forms.new_tab_label', {index})},
@@ -144,8 +144,6 @@ function Tabs({settings, elementData, state, dispatch}: ITabsProps): JSX.Element
                 tab={tabsToDisplay[activeIndex]}
                 tabsElement={elementData}
                 onClose={_handleCloseEditTabModal}
-                state={state}
-                dispatch={dispatch}
             />
         </>
     );

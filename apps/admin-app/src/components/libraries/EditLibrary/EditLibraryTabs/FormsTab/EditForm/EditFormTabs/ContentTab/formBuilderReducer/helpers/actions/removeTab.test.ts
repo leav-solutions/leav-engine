@@ -10,13 +10,13 @@ import {
     defaultDepValue,
     FormBuilderActionTypes
 } from '../../formBuilderReducer';
-import {initialState} from '../../_fixtures/fixtures';
+import {mockInitialState} from '../../_fixtures/fixtures';
 import removeTab from './removeTab';
 
 describe('formBuilderReducer', () => {
     describe('REMOVE_TAB', () => {
         const removeTabInitialState = {
-            ...initialState,
+            ...mockInitialState,
             elements: {
                 [defaultDepAttribute]: {
                     [defaultDepValue]: {

@@ -19,6 +19,7 @@ import ElementsReserve from './ElementsReserve';
 import {formBuilderReducer} from './formBuilderReducer';
 import computateInitialState from './formBuilderReducer/computeInitialState';
 import {defaultDepAttribute, defaultDepValue} from './formBuilderReducer/formBuilderReducer';
+import {FormBuilderReducerContext} from './formBuilderReducer/hook/useFormBuilderReducer';
 import FormLayout from './FormLayout';
 
 interface IContentTabProps {
@@ -85,25 +86,27 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
     };
 
     return (
-        <Grid columns={2} stackable verticalAlign="top">
-            {state.activeDependency?.attribute && (
+        <FormBuilderReducerContext.Provider value={{state, dispatch}}>
+            <Grid columns={2} stackable verticalAlign="top">
+                {state.activeDependency?.attribute && (
+                    <Grid.Row stretched>
+                        <BreadcrumbNavigator />
+                    </Grid.Row>
+                )}
                 <Grid.Row stretched>
-                    <BreadcrumbNavigator state={state} dispatch={dispatch} />
+                    <Grid.Column width={4} className="elements">
+                        <DependencySettings />
+                        <ElementsReserve />
+                    </Grid.Column>
+                    <Grid.Column className="layout" width={12}>
+                        <FormLayout />
+                    </Grid.Column>
                 </Grid.Row>
-            )}
-            <Grid.Row stretched>
-                <Grid.Column width={4} className="elements">
-                    <DependencySettings state={state} dispatch={dispatch} />
-                    <ElementsReserve state={state} dispatch={dispatch} />
-                </Grid.Column>
-                <Grid.Column className="layout" width={12}>
-                    <FormLayout state={state} dispatch={dispatch} />
-                </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-                <Button onClick={_handleSubmit}>{t('admin.submit')}</Button>
-            </Grid.Row>
-        </Grid>
+                <Grid.Row>
+                    <Button onClick={_handleSubmit}>{t('admin.submit')}</Button>
+                </Grid.Row>
+            </Grid>
+        </FormBuilderReducerContext.Provider>
     );
 }
 
