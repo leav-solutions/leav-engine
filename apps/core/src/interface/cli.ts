@@ -18,8 +18,10 @@ export default function ({'core.app.importer': importerApp = null}: IDeps = {}) 
                 .action(async (file, options) => {
                     try {
                         await importerApp.import(file, options.clear);
+                        process.exit(0);
                     } catch (e) {
                         console.error(e);
+                        process.exit(1);
                     }
                 });
 
