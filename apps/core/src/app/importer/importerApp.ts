@@ -11,6 +11,7 @@ import {promises as fs} from 'fs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {now} from 'moment';
 import {IQueryInfos} from '_types/queryInfos';
+import {ITree} from '_types/tree';
 import {AttributeTypes} from '../../_types/attribute';
 
 export interface IImporterApp {
@@ -60,9 +61,20 @@ export default function ({
     const _processTrees = (trees, ctx): Promise<any[]> => {
         return Promise.all(
             trees.map(tree => {
-                const treeToSave = {...tree};
+                const treeToSave: ITree & {content: any} = {
+                    ...tree,
+                    libraries: tree.libraries.reduce(
+                        (libs: typeof treeToSave.libraries, libId: string) => ({
+                            ...libs,
+                            [libId]: {
+                                allowMultiplePositions: false
+                            }
+                        }),
+                        {}
+                    )
+                };
                 delete treeToSave.content;
-                return treeDomain.saveTree(tree, ctx);
+                return treeDomain.saveTree(treeToSave as ITree, ctx);
             })
         );
     };
