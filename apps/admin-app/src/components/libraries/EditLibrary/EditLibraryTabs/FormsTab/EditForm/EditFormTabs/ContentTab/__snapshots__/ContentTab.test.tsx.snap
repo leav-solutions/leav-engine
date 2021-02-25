@@ -31,6 +31,166 @@ initialize {
                 "name": "div",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": Node {
+                  "attribs": Object {
+                    "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                  },
+                  "children": Array [
+                    Node {
+                      "attribs": Object {
+                        "aria-hidden": "true",
+                        "class": "save icon",
+                      },
+                      "children": Array [],
+                      "name": "i",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": Node {
+                        "data": "admin.save",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": [Circular],
+                        "type": "text",
+                      },
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                    },
+                    Node {
+                      "data": "admin.save",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": Node {
+                        "attribs": Object {
+                          "aria-hidden": "true",
+                          "class": "save icon",
+                        },
+                        "children": Array [],
+                        "name": "i",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": [Circular],
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                      },
+                      "type": "text",
+                    },
+                  ],
+                  "name": "button",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Node {
+                    "attribs": Object {},
+                    "children": Array [
+                      Node {
+                        "data": "ElementsReserve",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "div",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": Object {},
+                    "x-attribsPrefix": Object {},
+                  },
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {},
+                "x-attribsPrefix": Object {},
+              },
+              Node {
+                "attribs": Object {
+                  "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                },
+                "children": Array [
+                  Node {
+                    "attribs": Object {
+                      "aria-hidden": "true",
+                      "class": "save icon",
+                    },
+                    "children": Array [],
+                    "name": "i",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Node {
+                      "data": "admin.save",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": [Circular],
+                      "type": "text",
+                    },
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "aria-hidden": undefined,
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "aria-hidden": undefined,
+                      "class": undefined,
+                    },
+                  },
+                  Node {
+                    "data": "admin.save",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": Node {
+                      "attribs": Object {
+                        "aria-hidden": "true",
+                        "class": "save icon",
+                      },
+                      "children": Array [],
+                      "name": "i",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                    },
+                    "type": "text",
+                  },
+                ],
+                "name": "button",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Node {
                   "attribs": Object {},
                   "children": Array [
                     Node {
@@ -51,26 +211,6 @@ initialize {
                   "x-attribsPrefix": Object {},
                 },
                 "parent": [Circular],
-                "prev": null,
-                "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
-              },
-              Node {
-                "attribs": Object {},
-                "children": Array [
-                  Node {
-                    "data": "ElementsReserve",
-                    "next": null,
-                    "parent": [Circular],
-                    "prev": null,
-                    "type": "text",
-                  },
-                ],
-                "name": "div",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": null,
-                "parent": [Circular],
                 "prev": Node {
                   "attribs": Object {},
                   "children": Array [
@@ -90,6 +230,121 @@ initialize {
                   "type": "tag",
                   "x-attribsNamespace": Object {},
                   "x-attribsPrefix": Object {},
+                },
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              Node {
+                "attribs": Object {},
+                "children": Array [
+                  Node {
+                    "data": "ElementsReserve",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "div",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": Node {
+                  "attribs": Object {
+                    "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                  },
+                  "children": Array [
+                    Node {
+                      "attribs": Object {
+                        "aria-hidden": "true",
+                        "class": "save icon",
+                      },
+                      "children": Array [],
+                      "name": "i",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": Node {
+                        "data": "admin.save",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": [Circular],
+                        "type": "text",
+                      },
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                    },
+                    Node {
+                      "data": "admin.save",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": Node {
+                        "attribs": Object {
+                          "aria-hidden": "true",
+                          "class": "save icon",
+                        },
+                        "children": Array [],
+                        "name": "i",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": [Circular],
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                      },
+                      "type": "text",
+                    },
+                  ],
+                  "name": "button",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": Node {
+                    "attribs": Object {},
+                    "children": Array [
+                      Node {
+                        "data": "DependencySettings",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "div",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {},
+                    "x-attribsPrefix": Object {},
+                  },
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
                 },
                 "type": "tag",
                 "x-attribsNamespace": Object {},
@@ -196,6 +451,166 @@ initialize {
                   "name": "div",
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": Node {
+                    "attribs": Object {
+                      "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                    },
+                    "children": Array [
+                      Node {
+                        "attribs": Object {
+                          "aria-hidden": "true",
+                          "class": "save icon",
+                        },
+                        "children": Array [],
+                        "name": "i",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": Node {
+                          "data": "admin.save",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": [Circular],
+                          "type": "text",
+                        },
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                      },
+                      Node {
+                        "data": "admin.save",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": Node {
+                          "attribs": Object {
+                            "aria-hidden": "true",
+                            "class": "save icon",
+                          },
+                          "children": Array [],
+                          "name": "i",
+                          "namespace": "http://www.w3.org/1999/xhtml",
+                          "next": [Circular],
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "tag",
+                          "x-attribsNamespace": Object {
+                            "aria-hidden": undefined,
+                            "class": undefined,
+                          },
+                          "x-attribsPrefix": Object {
+                            "aria-hidden": undefined,
+                            "class": undefined,
+                          },
+                        },
+                        "type": "text",
+                      },
+                    ],
+                    "name": "button",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Node {
+                      "attribs": Object {},
+                      "children": Array [
+                        Node {
+                          "data": "ElementsReserve",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "div",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": [Circular],
+                      "type": "tag",
+                      "x-attribsNamespace": Object {},
+                      "x-attribsPrefix": Object {},
+                    },
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {},
+                  "x-attribsPrefix": Object {},
+                },
+                Node {
+                  "attribs": Object {
+                    "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                  },
+                  "children": Array [
+                    Node {
+                      "attribs": Object {
+                        "aria-hidden": "true",
+                        "class": "save icon",
+                      },
+                      "children": Array [],
+                      "name": "i",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": Node {
+                        "data": "admin.save",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": [Circular],
+                        "type": "text",
+                      },
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "aria-hidden": undefined,
+                        "class": undefined,
+                      },
+                    },
+                    Node {
+                      "data": "admin.save",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": Node {
+                        "attribs": Object {
+                          "aria-hidden": "true",
+                          "class": "save icon",
+                        },
+                        "children": Array [],
+                        "name": "i",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": [Circular],
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                      },
+                      "type": "text",
+                    },
+                  ],
+                  "name": "button",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Node {
                     "attribs": Object {},
                     "children": Array [
                       Node {
@@ -216,26 +631,6 @@ initialize {
                     "x-attribsPrefix": Object {},
                   },
                   "parent": [Circular],
-                  "prev": null,
-                  "type": "tag",
-                  "x-attribsNamespace": Object {},
-                  "x-attribsPrefix": Object {},
-                },
-                Node {
-                  "attribs": Object {},
-                  "children": Array [
-                    Node {
-                      "data": "ElementsReserve",
-                      "next": null,
-                      "parent": [Circular],
-                      "prev": null,
-                      "type": "text",
-                    },
-                  ],
-                  "name": "div",
-                  "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": null,
-                  "parent": [Circular],
                   "prev": Node {
                     "attribs": Object {},
                     "children": Array [
@@ -255,6 +650,121 @@ initialize {
                     "type": "tag",
                     "x-attribsNamespace": Object {},
                     "x-attribsPrefix": Object {},
+                  },
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                Node {
+                  "attribs": Object {},
+                  "children": Array [
+                    Node {
+                      "data": "ElementsReserve",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "div",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": Node {
+                    "attribs": Object {
+                      "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                    },
+                    "children": Array [
+                      Node {
+                        "attribs": Object {
+                          "aria-hidden": "true",
+                          "class": "save icon",
+                        },
+                        "children": Array [],
+                        "name": "i",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": Node {
+                          "data": "admin.save",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": [Circular],
+                          "type": "text",
+                        },
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "aria-hidden": undefined,
+                          "class": undefined,
+                        },
+                      },
+                      Node {
+                        "data": "admin.save",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": Node {
+                          "attribs": Object {
+                            "aria-hidden": "true",
+                            "class": "save icon",
+                          },
+                          "children": Array [],
+                          "name": "i",
+                          "namespace": "http://www.w3.org/1999/xhtml",
+                          "next": [Circular],
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "tag",
+                          "x-attribsNamespace": Object {
+                            "aria-hidden": undefined,
+                            "class": undefined,
+                          },
+                          "x-attribsPrefix": Object {
+                            "aria-hidden": undefined,
+                            "class": undefined,
+                          },
+                        },
+                        "type": "text",
+                      },
+                    ],
+                    "name": "button",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": Node {
+                      "attribs": Object {},
+                      "children": Array [
+                        Node {
+                          "data": "DependencySettings",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "div",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {},
+                      "x-attribsPrefix": Object {},
+                    },
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
                   },
                   "type": "tag",
                   "x-attribsNamespace": Object {},
@@ -285,386 +795,9 @@ initialize {
         ],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
-        "next": Node {
-          "attribs": Object {
-            "class": "row",
-          },
-          "children": Array [
-            Node {
-              "attribs": Object {
-                "class": "ui button",
-              },
-              "children": Array [
-                Node {
-                  "data": "admin.submit",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "text",
-                },
-              ],
-              "name": "button",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": null,
-              "parent": [Circular],
-              "prev": null,
-              "type": "tag",
-              "x-attribsNamespace": Object {
-                "class": undefined,
-              },
-              "x-attribsPrefix": Object {
-                "class": undefined,
-              },
-            },
-          ],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": [Circular],
-          "type": "tag",
-          "x-attribsNamespace": Object {
-            "class": undefined,
-          },
-          "x-attribsPrefix": Object {
-            "class": undefined,
-          },
-        },
-        "parent": [Circular],
-        "prev": null,
-        "type": "tag",
-        "x-attribsNamespace": Object {
-          "class": undefined,
-        },
-        "x-attribsPrefix": Object {
-          "class": undefined,
-        },
-      },
-      Node {
-        "attribs": Object {
-          "class": "row",
-        },
-        "children": Array [
-          Node {
-            "attribs": Object {
-              "class": "ui button",
-            },
-            "children": Array [
-              Node {
-                "data": "admin.submit",
-                "next": null,
-                "parent": [Circular],
-                "prev": null,
-                "type": "text",
-              },
-            ],
-            "name": "button",
-            "namespace": "http://www.w3.org/1999/xhtml",
-            "next": null,
-            "parent": [Circular],
-            "prev": null,
-            "type": "tag",
-            "x-attribsNamespace": Object {
-              "class": undefined,
-            },
-            "x-attribsPrefix": Object {
-              "class": undefined,
-            },
-          },
-        ],
-        "name": "div",
-        "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": [Circular],
-        "prev": Node {
-          "attribs": Object {
-            "class": "stretched row",
-          },
-          "children": Array [
-            Node {
-              "attribs": Object {
-                "class": "four wide column elements",
-              },
-              "children": Array [
-                Node {
-                  "attribs": Object {},
-                  "children": Array [
-                    Node {
-                      "data": "DependencySettings",
-                      "next": null,
-                      "parent": [Circular],
-                      "prev": null,
-                      "type": "text",
-                    },
-                  ],
-                  "name": "div",
-                  "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": Node {
-                    "attribs": Object {},
-                    "children": Array [
-                      Node {
-                        "data": "ElementsReserve",
-                        "next": null,
-                        "parent": [Circular],
-                        "prev": null,
-                        "type": "text",
-                      },
-                    ],
-                    "name": "div",
-                    "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": null,
-                    "parent": [Circular],
-                    "prev": [Circular],
-                    "type": "tag",
-                    "x-attribsNamespace": Object {},
-                    "x-attribsPrefix": Object {},
-                  },
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "tag",
-                  "x-attribsNamespace": Object {},
-                  "x-attribsPrefix": Object {},
-                },
-                Node {
-                  "attribs": Object {},
-                  "children": Array [
-                    Node {
-                      "data": "ElementsReserve",
-                      "next": null,
-                      "parent": [Circular],
-                      "prev": null,
-                      "type": "text",
-                    },
-                  ],
-                  "name": "div",
-                  "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": Node {
-                    "attribs": Object {},
-                    "children": Array [
-                      Node {
-                        "data": "DependencySettings",
-                        "next": null,
-                        "parent": [Circular],
-                        "prev": null,
-                        "type": "text",
-                      },
-                    ],
-                    "name": "div",
-                    "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": [Circular],
-                    "parent": [Circular],
-                    "prev": null,
-                    "type": "tag",
-                    "x-attribsNamespace": Object {},
-                    "x-attribsPrefix": Object {},
-                  },
-                  "type": "tag",
-                  "x-attribsNamespace": Object {},
-                  "x-attribsPrefix": Object {},
-                },
-              ],
-              "name": "div",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": Node {
-                "attribs": Object {
-                  "class": "twelve wide column layout",
-                },
-                "children": Array [
-                  Node {
-                    "attribs": Object {},
-                    "children": Array [
-                      Node {
-                        "data": "FormLayout",
-                        "next": null,
-                        "parent": [Circular],
-                        "prev": null,
-                        "type": "text",
-                      },
-                    ],
-                    "name": "div",
-                    "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": null,
-                    "parent": [Circular],
-                    "prev": null,
-                    "type": "tag",
-                    "x-attribsNamespace": Object {},
-                    "x-attribsPrefix": Object {},
-                  },
-                ],
-                "name": "div",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": null,
-                "parent": [Circular],
-                "prev": [Circular],
-                "type": "tag",
-                "x-attribsNamespace": Object {
-                  "class": undefined,
-                },
-                "x-attribsPrefix": Object {
-                  "class": undefined,
-                },
-              },
-              "parent": [Circular],
-              "prev": null,
-              "type": "tag",
-              "x-attribsNamespace": Object {
-                "class": undefined,
-              },
-              "x-attribsPrefix": Object {
-                "class": undefined,
-              },
-            },
-            Node {
-              "attribs": Object {
-                "class": "twelve wide column layout",
-              },
-              "children": Array [
-                Node {
-                  "attribs": Object {},
-                  "children": Array [
-                    Node {
-                      "data": "FormLayout",
-                      "next": null,
-                      "parent": [Circular],
-                      "prev": null,
-                      "type": "text",
-                    },
-                  ],
-                  "name": "div",
-                  "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "tag",
-                  "x-attribsNamespace": Object {},
-                  "x-attribsPrefix": Object {},
-                },
-              ],
-              "name": "div",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": null,
-              "parent": [Circular],
-              "prev": Node {
-                "attribs": Object {
-                  "class": "four wide column elements",
-                },
-                "children": Array [
-                  Node {
-                    "attribs": Object {},
-                    "children": Array [
-                      Node {
-                        "data": "DependencySettings",
-                        "next": null,
-                        "parent": [Circular],
-                        "prev": null,
-                        "type": "text",
-                      },
-                    ],
-                    "name": "div",
-                    "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": Node {
-                      "attribs": Object {},
-                      "children": Array [
-                        Node {
-                          "data": "ElementsReserve",
-                          "next": null,
-                          "parent": [Circular],
-                          "prev": null,
-                          "type": "text",
-                        },
-                      ],
-                      "name": "div",
-                      "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": null,
-                      "parent": [Circular],
-                      "prev": [Circular],
-                      "type": "tag",
-                      "x-attribsNamespace": Object {},
-                      "x-attribsPrefix": Object {},
-                    },
-                    "parent": [Circular],
-                    "prev": null,
-                    "type": "tag",
-                    "x-attribsNamespace": Object {},
-                    "x-attribsPrefix": Object {},
-                  },
-                  Node {
-                    "attribs": Object {},
-                    "children": Array [
-                      Node {
-                        "data": "ElementsReserve",
-                        "next": null,
-                        "parent": [Circular],
-                        "prev": null,
-                        "type": "text",
-                      },
-                    ],
-                    "name": "div",
-                    "namespace": "http://www.w3.org/1999/xhtml",
-                    "next": null,
-                    "parent": [Circular],
-                    "prev": Node {
-                      "attribs": Object {},
-                      "children": Array [
-                        Node {
-                          "data": "DependencySettings",
-                          "next": null,
-                          "parent": [Circular],
-                          "prev": null,
-                          "type": "text",
-                        },
-                      ],
-                      "name": "div",
-                      "namespace": "http://www.w3.org/1999/xhtml",
-                      "next": [Circular],
-                      "parent": [Circular],
-                      "prev": null,
-                      "type": "tag",
-                      "x-attribsNamespace": Object {},
-                      "x-attribsPrefix": Object {},
-                    },
-                    "type": "tag",
-                    "x-attribsNamespace": Object {},
-                    "x-attribsPrefix": Object {},
-                  },
-                ],
-                "name": "div",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": [Circular],
-                "parent": [Circular],
-                "prev": null,
-                "type": "tag",
-                "x-attribsNamespace": Object {
-                  "class": undefined,
-                },
-                "x-attribsPrefix": Object {
-                  "class": undefined,
-                },
-              },
-              "type": "tag",
-              "x-attribsNamespace": Object {
-                "class": undefined,
-              },
-              "x-attribsPrefix": Object {
-                "class": undefined,
-              },
-            },
-          ],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": [Circular],
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": Object {
-            "class": undefined,
-          },
-          "x-attribsPrefix": Object {
-            "class": undefined,
-          },
-        },
+        "prev": null,
         "type": "tag",
         "x-attribsNamespace": Object {
           "class": undefined,

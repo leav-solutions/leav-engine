@@ -21,7 +21,7 @@ function EditTabLabelModal({open, tabsElement, tab, onClose}: IEditTabLabelModal
     const {dispatch} = useFormBuilderReducer();
 
     const _handleChange = (lang: string) => (_, data) => {
-        const existingTabs = tabsElement?.settings?.tabs ?? [];
+        const existingTabs: ITabSettings[] = (tabsElement?.settings?.tabs as ITabSettings[]) ?? [];
         const tabIndex = existingTabs.findIndex(t => t.id === tab.id);
 
         if (tabIndex === -1) {

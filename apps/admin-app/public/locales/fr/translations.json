@@ -2,7 +2,9 @@
     "admin": {
         "title": "Administration",
         "submit": "Valider",
+        "save": "Enregistrer",
         "cancel": "Annuler",
+        "close": "Fermer",
         "loading": "Chargement...",
         "forbidden_route": "Accès interdit",
         "validation_errors": {
@@ -215,7 +217,6 @@
         "fields": "Champs de saisie",
         "dependency_attributes": "Dépend de",
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer le formulaire {{formLabel}}?",
-        "attribute": "Attribut",
         "select_attribute": "Sélectionner un attribut",
         "select_tree_element": "Sélectionner un élément",
         "dependencies": "Dépendances",
@@ -229,6 +230,28 @@
         "content": "Contenu",
         "empty_container": "Glissez des éléments ici",
         "text_block_helper": "Un bloc de texte permet d'insérer du contenu statique dans le formulaire",
-        "new_tab_label": "Nouvel onglet"
+        "new_tab_label": "Nouvel onglet",
+        "settings": {
+            "label": "Libellé",
+            "attribute": "Attribut",
+            "content": "Contenu",
+            "withTime": "Saisie de l'heure",
+            "direction": "Direction",
+            "select_options": {
+                "VERTICAL": "Verticale",
+                "HORIZONTAL": "Horizontale"
+            }
+        },
+        "rte": {
+            "bold": "Gras",
+            "italic": "Italique",
+            "underline": "Souligné",
+            "normal": "Normal",
+            "header1": "Titre 1",
+            "header2": "Titre 2",
+            "header3": "Titre 3",
+            "ul": "Liste",
+            "ol": "Liste numéroté"
+        }
     }
 }

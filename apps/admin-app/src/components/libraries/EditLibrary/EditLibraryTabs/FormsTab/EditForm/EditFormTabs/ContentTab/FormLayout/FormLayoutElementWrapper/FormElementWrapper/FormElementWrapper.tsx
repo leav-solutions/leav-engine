@@ -49,12 +49,14 @@ const ElementHandle = styled.div`
 
 const UiElementWrapper = styled.div<{isHerited: boolean}>`
     width: 100%;
+    text-align: left;
     padding: 0.5em;
     border-left: ${props => (props.isHerited ? 'none' : '1px solid #aaa')};
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
+
+    & > div {
+        flex-grow: 1;
+    }
 `;
 
 function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProps): JSX.Element {
@@ -228,14 +230,12 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
                 </ElementHandle>
             )}
             <UiElementWrapper isHerited={!!element.herited}>
-                <div style={{width: '100%'}}>
-                    <element.uiElement.component.type
-                        elementData={element}
-                        settings={fieldSettings}
-                        state={state}
-                        dispatch={dispatch}
-                    />
-                </div>
+                <element.uiElement.component.type
+                    elementData={element}
+                    settings={fieldSettings}
+                    state={state}
+                    dispatch={dispatch}
+                />
             </UiElementWrapper>
         </Wrapper>
     );

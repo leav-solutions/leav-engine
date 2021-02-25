@@ -4,6 +4,7 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Menu, Tab} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {v4 as uuid} from 'uuid';
 import {layoutElements} from '../..';
 import useLang from '../../../../../../../../../../../hooks/useLang';
@@ -12,8 +13,14 @@ import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globa
 import {IKeyValue} from '../../../../../../../../../../../_types/shared';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElement, IFormElementProps, UIElementTypes} from '../../../_types';
+import {IFormElement, IFormElementProps, TabsDirection, UIElementTypes} from '../../../_types';
 import EditTabLabelModal from './EditTabLabelModal';
+
+export const CompactMenuItem = styled(Menu.Item)`
+    &&&& {
+        padding: 0 1rem;
+    }
+`;
 
 export interface ITabSettings {
     label?: IKeyValue<string>;
@@ -22,6 +29,7 @@ export interface ITabSettings {
 
 export interface ITabsSettings {
     tabs?: ITabSettings[];
+    direction?: TabsDirection;
 }
 
 function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.Element {
@@ -65,7 +73,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
             return;
         }
 
-        const newTabs: ITabSettings[] = [...(elementData?.settings?.tabs ?? []), _getNewTab()];
+        const newTabs: ITabSettings[] = [...((elementData?.settings?.tabs as ITabSettings[]) ?? []), _getNewTab()];
 
         dispatch({
             type: FormBuilderActionTypes.SAVE_SETTINGS,
@@ -91,9 +99,9 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
     const tabsToDisplay = settings.tabs || [];
     const panes = tabsToDisplay.map(tab => ({
         menuItem: (
-            <Menu.Item key={tab.id}>
+            <CompactMenuItem key={tab.id} className="form-tab-name">
                 {localizedLabel(tab.label ?? null, lang)}
-                <Button.Group icon compact basic size="small" style={{marginLeft: '10px'}}>
+                <Button.Group icon compact basic size="mini" style={{marginLeft: '10px'}}>
                     <Button onClick={_handleShowEditTabModal}>
                         <Icon name="edit" />
                     </Button>
@@ -103,7 +111,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
                         </Button>
                     )}
                 </Button.Group>
-            </Menu.Item>
+            </CompactMenuItem>
         ),
         render: () => {
             const containerElement: IFormElement = {
@@ -138,7 +146,17 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
 
     return (
         <>
-            <Tab activeIndex={activeIndex} onTabChange={_handleTabChange} panes={panes} />
+            <Tab
+                menu={{
+                    tabular: true,
+                    vertical: settings.direction === TabsDirection.VERTICAL,
+                    compact: true,
+                    fluid: true
+                }}
+                activeIndex={activeIndex}
+                onTabChange={_handleTabChange}
+                panes={panes}
+            />
             <EditTabLabelModal
                 open={showEditTabModal}
                 tab={tabsToDisplay[activeIndex]}

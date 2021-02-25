@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ITabSettings} from '../../../uiElements/layout/Tabs/Tabs';
 import {IFormElement} from '../../../_types';
 import {
     defaultContainerId,
@@ -30,7 +31,7 @@ export default function removeTab(state: IFormBuilderState, action: IFormBuilder
     if (indexInElems >= 0 && indexInActiveElems >= 0) {
         const newSettings = {
             ...action.parentElement.settings,
-            tabs: [...action.parentElement.settings?.tabs].filter(t => t.id !== action.tabId)
+            tabs: [...(action.parentElement.settings?.tabs as ITabSettings[])].filter(t => t.id !== action.tabId)
         };
 
         const newElement: IFormElement = {

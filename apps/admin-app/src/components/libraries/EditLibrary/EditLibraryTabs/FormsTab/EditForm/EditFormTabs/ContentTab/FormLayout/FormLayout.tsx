@@ -26,17 +26,7 @@ function FormLayout(): JSX.Element {
     return (
         <Sidebar.Pushable>
             <rootContainer.uiElement.component.type elementData={rootContainer} state={state} dispatch={dispatch} />
-            {openSettings && (
-                <Sidebar
-                    animation="overlay"
-                    direction="right"
-                    width="wide"
-                    visible={openSettings}
-                    style={{background: '#DDDDDD', textAlign: 'center'}}
-                >
-                    {!!elementInSettings && <SettingsEdition state={state} dispatch={dispatch} />}
-                </Sidebar>
-            )}
+            <SettingsEdition />
         </Sidebar.Pushable>
     );
 }

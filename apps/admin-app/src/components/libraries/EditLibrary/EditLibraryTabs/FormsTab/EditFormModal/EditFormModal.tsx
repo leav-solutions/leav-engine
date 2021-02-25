@@ -25,8 +25,8 @@ function EditFormModal({open, onClose, formId, libraryId}: IEditFormModalProps):
             closeOnEscape
             closeIcon
             dimmer
-            onClose={onClose}
             className="overlay"
+            onClose={onClose}
         >
             <Modal.Content scrolling>
                 <EditForm formId={formId} libraryId={libraryId} />

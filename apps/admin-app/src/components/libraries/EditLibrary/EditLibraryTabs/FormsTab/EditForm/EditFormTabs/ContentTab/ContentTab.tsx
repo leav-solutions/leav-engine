@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/react-hooks';
-import React, {useReducer} from 'react';
+import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Grid} from 'semantic-ui-react';
+import {Button, Grid, Icon} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {GET_FORM_forms_list} from '../../../../../../../../_gqlTypes/GET_FORM';
 import {
@@ -22,6 +23,12 @@ import {defaultDepAttribute, defaultDepValue} from './formBuilderReducer/formBui
 import {FormBuilderReducerContext} from './formBuilderReducer/hook/useFormBuilderReducer';
 import FormLayout from './FormLayout';
 
+const SaveButton = styled(Button)`
+    && {
+        margin: 1em 0;
+    }
+`;
+
 interface IContentTabProps {
     library: string;
     form: GET_FORM_forms_list;
@@ -30,9 +37,14 @@ interface IContentTabProps {
 function ContentTab({library, form}: IContentTabProps): JSX.Element {
     const {t} = useTranslation();
     const [state, dispatch] = useReducer(formBuilderReducer, computateInitialState(library, form));
-    const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
+        onCompleted: () => setIsSaving(false),
+        onError: () => setIsSaving(false)
+    });
 
-    const _handleSubmit = () => {
+    const _handleSubmit = async () => {
+        setIsSaving(true);
         const savableElements = Object.keys(state.elements).reduce(
             (allElems: FormElementsByDepsInput[], depAttr: string): FormElementsByDepsInput[] => {
                 const elemsWithDeps = Object.keys(state.elements[depAttr]).reduce(
@@ -74,7 +86,7 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
             []
         );
 
-        saveForm({
+        await saveForm({
             variables: {
                 formData: {
                     id: form.id,
@@ -83,6 +95,8 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
                 }
             }
         });
+
+        setIsSaving(false);
     };
 
     return (
@@ -96,14 +110,15 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
                 <Grid.Row stretched>
                     <Grid.Column width={4} className="elements">
                         <DependencySettings />
+                        <SaveButton loading={isSaving} primary icon labelPosition="left" onClick={_handleSubmit}>
+                            <Icon name="save" />
+                            {t('admin.save')}
+                        </SaveButton>
                         <ElementsReserve />
                     </Grid.Column>
                     <Grid.Column className="layout" width={12}>
                         <FormLayout />
                     </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
-                    <Button onClick={_handleSubmit}>{t('admin.submit')}</Button>
                 </Grid.Row>
             </Grid>
         </FormBuilderReducerContext.Provider>

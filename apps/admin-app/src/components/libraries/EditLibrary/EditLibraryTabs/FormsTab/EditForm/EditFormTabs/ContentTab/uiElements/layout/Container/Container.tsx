@@ -25,6 +25,7 @@ const ContainerWrapper = styled.div<{isOver: boolean; isRootContainer: boolean}>
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-height: ${props => (props.isRootContainer ? 'calc(100vh - 18rem)' : 'auto')};
 `;
 
 const EmptyContainerPlaceholder = styled.div`
