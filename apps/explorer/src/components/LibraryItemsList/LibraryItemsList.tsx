@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useQuery} from '@apollo/client';
+import {setFilters, setQueryFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
+import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import {isString} from 'lodash';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -22,7 +24,7 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../queries/records/getRecordsFromLibraryQueryTypes';
-import {checkTypeIsLink, localizedLabel} from '../../utils';
+import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from '../../utils';
 import {
     AttributeFormat,
     AttributeType,
@@ -35,6 +37,7 @@ import {
     ViewType
 } from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
+import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';
 import reducer, {
     applySort,
     LibraryItemListInitialState,
@@ -73,6 +76,7 @@ function LibraryItemsList(): JSX.Element {
     const {libId} = useParams<{libId: string}>();
 
     const [stateItems, dispatchItems] = useReducer(reducer, LibraryItemListInitialState);
+    const [stateFilters, dispatchFilters] = useStateFilters();
 
     const [{lang}] = useLang();
     const {updateBaseNotification} = useNotifications();
@@ -92,14 +96,14 @@ function LibraryItemsList(): JSX.Element {
             const currentLibrary = data.libraries?.list[0];
 
             const currentLibId = currentLibrary?.id;
-            const libLabel = currentLibrary?.label;
+            const currentLibLabel = currentLibrary?.label;
             const {query, type, filter, searchableFields} = currentLibrary?.gqlNames;
-            const libName = localizedLabel(libLabel, lang);
+            const currentLibName = localizedLabel(currentLibLabel, lang);
 
             // Active Library
             updateActiveLibrary({
                 id: currentLibId,
-                name: libName,
+                name: currentLibName,
                 filter,
                 gql: {
                     searchableFields,
@@ -110,7 +114,7 @@ function LibraryItemsList(): JSX.Element {
 
             // Base Notification
             updateBaseNotification({
-                content: t('notification.active-lib', {lib: libName}),
+                content: t('notification.active-lib', {lib: currentLibName}),
                 type: NotificationType.basic
             });
 
@@ -127,8 +131,8 @@ function LibraryItemsList(): JSX.Element {
                     fields:
                         currentLibrary.defaultView.settings?.find(setting => setting.name === viewSettingsField)
                             ?.value ?? [],
-                    filters: currentLibrary.defaultView.filters ?? [],
-                    sort: currentLibrary.defaultView.sort ?? defaultSort
+                    filters: currentLibrary.defaultView.filters,
+                    sort: currentLibrary.defaultView.sort
                 };
             } else {
                 // use defaultView and translate label
@@ -233,37 +237,13 @@ function LibraryItemsList(): JSX.Element {
 
                     const splitKey = fieldKey.split('.');
 
-                    const attribute = stateItems.attributes.find(stateAttr => {
-                        // splitKey only contain the  attributeId
-                        if (splitKey.length === 1) {
-                            return stateAttr.id === fieldKey;
-                        } else if (splitKey.length === 2) {
-                            // splitKey contain libraryId and attributeId
-                            const libraryId = splitKey[0];
-                            const attributeId = splitKey[1];
-
-                            return stateAttr.library === libraryId && stateAttr.id === attributeId;
-                        } else {
-                            // extended attribute
-                            if (splitKey[0] === attributeExtendedKey) {
-                                const libraryId = splitKey[1];
-                                const attributeId = splitKey[2];
-
-                                return stateAttr.library === libraryId && stateAttr.id === attributeId;
-                            }
-                            // linked attribute
-                            const libraryId = splitKey[0];
-                            const attributeId = splitKey[2];
-
-                            return stateAttr.library === libraryId && stateAttr.id === attributeId;
-                        }
-                    });
+                    const attribute = getAttributeFromKey(fieldKey, stateItems.attributes);
 
                     // get originAttribute
                     if (splitKey.length === 3 && splitKey[0] !== attributeExtendedKey) {
                         const parentAttributeId = splitKey[1];
                         const parentAttribute = stateItems.attributes.find(
-                            stateAttr => parentAttributeId === stateAttr.id && activeLibrary?.id === stateAttr.library
+                            att => parentAttributeId === att.id && activeLibrary?.id === att.library
                         );
 
                         if (parentAttribute) {
@@ -301,10 +281,10 @@ function LibraryItemsList(): JSX.Element {
 
             // update Filters
             if (stateItems.view.current.filters) {
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
-                    queryFilters: stateItems.view.current.filters
-                });
+                dispatchFilters(
+                    setFilters(getFiltersFromRequest(stateItems.view.current.filters, stateItems.attributes))
+                );
+                dispatchFilters(setQueryFilters(stateItems.view.current.filters));
             } else {
                 // reset filters
                 dispatchItems({
@@ -318,7 +298,7 @@ function LibraryItemsList(): JSX.Element {
             const order = stateItems.view.current.sort?.order ?? defaultSort.order;
             dispatchItems(applySort(field, order));
         }
-    }, [stateItems.view, stateItems.attributes, lang, activeLibrary]);
+    }, [stateItems.view, stateItems.attributes, lang, activeLibrary, dispatchFilters]);
 
     // Get data
     const [
@@ -330,9 +310,9 @@ function LibraryItemsList(): JSX.Element {
             variables: {
                 limit: stateItems.pagination,
                 offset: stateItems.offset,
-                filters: stateItems.queryFilters,
-                sortField: stateItems.itemsSort.field,
-                sortOrder: stateItems.itemsSort.order
+                filters: stateFilters.queryFilters,
+                sortField: stateItems.itemsSort.field ?? defaultSort.field,
+                sortOrder: stateItems.itemsSort.order ?? defaultSort.order
             }
         }
     );
@@ -359,7 +339,7 @@ function LibraryItemsList(): JSX.Element {
             } else {
                 dispatchItems({
                     type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
-                    itemLoading: true
+                    itemLoading: false
                 });
             }
         }

@@ -30,7 +30,7 @@ const Wrapper = styled.div<IWrapperProps>`
     position: relative;
     width: 100%;
     padding: 1rem;
-    background: ${({selected}) => (selected ? `${themingVar['@leav-view-panel-background-active']} ` : 'none')};
+    background: ${({selected}) => (selected ? `${themingVar['@leav-background-active']} ` : 'none')};
 
     &::before {
         content: '';

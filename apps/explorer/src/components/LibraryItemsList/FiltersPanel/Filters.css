@@ -1,0 +1,33 @@
+.wrapped-filter-open {
+    animation-name: filter-animation-open;
+    animation-duration: 1s;
+    animation-timing-function: ease;
+}
+
+@keyframes filter-animation-open {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.wrapped-filter-close {
+    animation-name: filter-animation-close;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+}
+
+@keyframes filter-animation-close {
+    from {
+        /* transform: translate(0); */
+        opacity: 1;
+    }
+
+    to {
+        /* transform: translate(-50rem); */
+        opacity: 0;
+    }
+}

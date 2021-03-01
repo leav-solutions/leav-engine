@@ -3,7 +3,9 @@
         "cancel": "Cancel",
         "close": "Fermer",
         "processing": "Processing",
-        "done": "Terminé"
+        "done": "Done",
+        "delete": "Delete",
+        "apply": "Apply"
     },
     "login": {
         "header": "Authentification",

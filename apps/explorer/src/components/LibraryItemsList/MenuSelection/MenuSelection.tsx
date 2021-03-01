@@ -3,21 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
+import {useStateItem} from 'Context/StateItemsContext';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-    ILibraryItemListState,
-    LibraryItemListReducerAction,
-    LibraryItemListReducerActionTypes
-} from '../LibraryItemsListReducer';
+import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
-interface IMenuSelectionProps {
-    stateItems: ILibraryItemListState;
-    dispatchItems: React.Dispatch<LibraryItemListReducerAction>;
-}
-
-function MenuSelection({stateItems, dispatchItems}: IMenuSelectionProps): JSX.Element {
+function MenuSelection(): JSX.Element {
     const {t} = useTranslation();
+    const {stateItems, dispatchItems} = useStateItem();
 
     const offsetDisplay = stateItems.itemsTotalCount > 0 ? stateItems.offset + 1 : 0;
     const nextOffsetDisplay =

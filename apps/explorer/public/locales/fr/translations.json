@@ -3,7 +3,9 @@
         "cancel": "Annuler",
         "close": "Fermer",
         "processing": "Traitement en cours",
-        "done": "Terminé"
+        "done": "Terminé",
+        "delete": "Supprimer",
+        "apply": "Appliquer"
     },
     "login": {
         "header": "Authentification",
@@ -129,7 +131,7 @@
         "items-display": "Nombre d'éléments par page"
     },
     "filters": {
-        "filters": "Filtre",
+        "filters": "Filtres",
         "contains": "Contient",
         "not-contains": "Ne contient pas",
         "equal": "Est égal",
@@ -155,7 +157,9 @@
         "add-separator": "Ajouter une requête",
         "search-active": "Impossible d'appliquer les filtres tant que la recherche est active",
         "no-filters": "Pas de filtres à appliquer",
-        "submit": "Appliquer les filtres"
+        "submit": "Appliquer les filtres",
+        "make-inactive": "Passer en inactif",
+        "make-active": "Passer en actif"
     },
     "filter-item": {
         "no-operator": "Si"

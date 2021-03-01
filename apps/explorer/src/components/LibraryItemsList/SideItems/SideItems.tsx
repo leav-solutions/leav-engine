@@ -6,15 +6,15 @@ import styled, {CSSObject} from 'styled-components';
 import {panelSize} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {TypeSideItem} from '../../../_types/types';
-import Filters from '../Filters';
+import FiltersPanel from '../FiltersPanel';
 import ViewPanel from '../ViewPanel';
 
-interface IWrapperFilterProps {
+interface IWrapperProps {
     visible: boolean;
     style?: CSSObject;
 }
 
-const WrapperFilter = styled.div<IWrapperFilterProps>`
+const Wrapper = styled.div<IWrapperProps>`
     display: ${({visible}) => (visible ? 'flex' : 'none')};
     position: relative;
     height: calc(100vh - 7rem);
@@ -34,13 +34,13 @@ function SideItems(): JSX.Element {
     const {stateItems} = useStateItem();
 
     return (
-        <WrapperFilter
+        <Wrapper
             visible={stateItems.sideItems.visible}
             className={stateItems.sideItems.visible ? 'wrapped-filter-open' : 'wrapped-filter-close'}
         >
-            {stateItems.sideItems.visible && stateItems.sideItems.type === TypeSideItem.filters && <Filters />}
+            {stateItems.sideItems.visible && stateItems.sideItems.type === TypeSideItem.filters && <FiltersPanel />}
             {stateItems.sideItems.visible && stateItems.sideItems.type === TypeSideItem.view && <ViewPanel />}
-        </WrapperFilter>
+        </Wrapper>
     );
 }
 

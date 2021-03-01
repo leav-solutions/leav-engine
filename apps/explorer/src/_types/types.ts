@@ -1,17 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
 
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
 } from '../queries/libraries/getLibraryDetailExtendQuery';
 import {IGetViewListSort} from '../queries/views/getViewsListQuery';
-import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export interface ILabel {
     [x: string]: string;
 }
@@ -98,23 +94,18 @@ export interface IFilterSeparatorCommon {
     id: string;
 }
 
-export interface IFilter extends IFilterSeparatorCommon {
-    type: FilterTypes.filter;
-    operator?: boolean;
-    condition: ConditionFilter;
-    value: string | boolean | number;
-    attribute: GET_ATTRIBUTES_BY_LIB_attributes_list;
+export interface IFilter {
+    index: number; // use to sort the filters
+    key: string; // attribute key
+    value: unknown;
     active: boolean;
-    format?: AttributeFormat;
-    originAttributeData?: IParentAttributeData;
-    extendedData?: IEmbeddedFieldData;
-    treeData?: ITreeData;
-    valueSize?: number | 'auto';
+    condition: ConditionFilter;
+    attribute: IAttribute; // Put the attribute in the filter to avoid having to fetch him multiple times
 }
 
-export interface IFilterSeparator extends IFilterSeparatorCommon {
-    type: FilterTypes.separator;
-    active: boolean;
+export enum FilterOperator {
+    AND = 'AND',
+    OR = 'OR'
 }
 
 export enum AttributeFormat {
@@ -142,19 +133,19 @@ export enum OperatorFilter {
 }
 
 export enum ConditionFilter {
-    contains = 'CONTAINS',
-    notContains = 'NOT_CONTAINS',
-    equal = 'EQUAL',
-    notEqual = 'NOT_EQUAL',
-    beginWith = 'BEGIN_WITH',
-    endWith = 'END_WITH',
-    greaterThan = 'GREATER_THAN',
-    lessThan = 'LESS_THAN'
+    CONTAINS = 'CONTAINS',
+    NOT_CONTAINS = 'NOT_CONTAINS',
+    EQUAL = 'EQUAL',
+    NOT_EQUAL = 'NOT_EQUAL',
+    BEGIN_WITH = 'BEGIN_WITH',
+    END_WITH = 'END_WITH',
+    GREATER_THAN = 'GREATER_THAN',
+    LESS_THAN = 'LESS_THAN'
 }
 
 export interface IQueryFilter {
     field?: string;
-    value?: any;
+    value?: string;
     condition?: ConditionFilter;
     operator?: OperatorFilter;
 }

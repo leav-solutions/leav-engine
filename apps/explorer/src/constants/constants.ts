@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IView, OrderSearch, ViewType} from '../_types/types';
+import {AttributeFormat, IView, OrderSearch, ViewType} from '../_types/types';
 
 export const selectionColumn = 'selection-column';
 export const infosCol = 'infos';
@@ -28,3 +28,5 @@ export const defaultView: IView = {
     shared: false,
     sort: defaultSort
 };
+
+export const formatNotUsingCondition = [AttributeFormat.boolean];

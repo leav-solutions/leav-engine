@@ -5,7 +5,9 @@ import gql from 'graphql-tag';
 import {ConditionFilter, ILabel, OperatorFilter, OrderSearch, ViewType} from '../../_types/types';
 import {IGetViewListElement} from './getViewsListQuery';
 
-export type IAddViewMutation = IGetViewListElement;
+export interface IAddViewMutation {
+    saveView: IGetViewListElement;
+}
 
 export interface IAddViewMutationVariablesFilter {
     field?: string;
