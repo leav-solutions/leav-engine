@@ -3,8 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import {Checkbox, Divider, Form, Input, Modal, Select} from 'antd';
+import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {localizedLabel} from 'utils';
 import {defaultSort, viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {useLang} from '../../../hooks/LangHook/LangHook';
@@ -32,7 +34,8 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useStateItem();
-    const [{availableLangs, defaultLang}] = useLang();
+    const [stateFilters] = useStateFilters();
+    const [{availableLangs, defaultLang, lang}] = useLang();
 
     const [form] = Form.useForm();
 
@@ -73,7 +76,7 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
                 label,
                 description,
                 color,
-                filters: [],
+                filters: stateFilters.queryFilters,
                 sort: defaultSort,
                 settings: [
                     {
@@ -85,7 +88,21 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
 
             try {
                 // save view in backend
-                await addView({variables: {view: newView}});
+                const newViewRes = await addView({variables: {view: newView}});
+
+                dispatchItems({
+                    type: LibraryItemListReducerActionTypes.SET_VIEW,
+                    view: {
+                        ...stateItems.view,
+                        current: {
+                            id: newViewRes.data.saveView.id,
+                            label: localizedLabel(label, lang),
+                            type: formValues.type,
+                            shared: !!formValues.shared,
+                            sort: defaultSort
+                        }
+                    }
+                });
             } catch (e) {
                 console.error(e);
             }

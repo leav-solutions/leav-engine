@@ -74,7 +74,7 @@ const FormPreviewModal = ({values, updateValues, previewAttribute, defaultPrevie
     };
 
     return (
-        <Form.Item label={previewAttribute}>
+        <Form.Item label={previewAttribute} data-testid="form-preview-modal-item">
             <Input disabled value={(preview && preview[att]) ?? ''} onChange={onChange} />
         </Form.Item>
     );

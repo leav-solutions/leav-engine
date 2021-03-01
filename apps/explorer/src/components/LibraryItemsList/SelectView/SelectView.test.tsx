@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '@testing-library/react';
 import React from 'react';
+import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
+import {MockStateItems} from '__mocks__/stateItems/mockStateItems';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import mocksGetViewsListQuery from '../../../__mocks__/mockQuery/mockGetViewListQuery';
 import SelectView from './SelectView';
@@ -16,11 +18,15 @@ jest.mock(
 );
 
 describe('SelectView', () => {
-    const mocks = mocksGetViewsListQuery('');
+    const mocks = mocksGetViewsListQuery('activeLibraryId');
     test('should have Dropdown', async () => {
         render(
             <MockedProviderWithFragments mocks={mocks}>
-                <SelectView />
+                <MockStateItems>
+                    <MockStateFilters>
+                        <SelectView activeLibrary={{id: 'activeLibraryId'} as any} />
+                    </MockStateFilters>
+                </MockStateItems>
             </MockedProviderWithFragments>
         );
 

@@ -117,8 +117,8 @@ function SearchItems(): JSX.Element {
         setSearch(newSearch);
     };
 
-    const handleSearch = (searchQuery: string) => {
-        if (searchQuery === '') {
+    const handleSearch = (newSearch: string) => {
+        if (newSearch === '') {
             resetSearch();
         } else {
             dispatchItems({
@@ -136,7 +136,7 @@ function SearchItems(): JSX.Element {
                 itemLoading: true
             });
 
-            setSearch(searchQuery);
+            setSearch(newSearch);
             setUpdateSearch(true);
 
             triggerSearch();
@@ -158,7 +158,7 @@ function SearchItems(): JSX.Element {
     };
 
     return (
-        <div style={{width: '20rem', display: 'flex'}}>
+        <div>
             <Input.Search
                 placeholder={t('search.placeholder')}
                 value={search}

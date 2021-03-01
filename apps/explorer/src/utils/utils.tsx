@@ -13,16 +13,11 @@ import {
     ConditionFilter,
     DisplaySize,
     ExtendFormat,
-    FilterTypes,
     IAttribute,
     IEmbeddedFields,
-    IFilter,
-    IFilterSeparator,
     INotification,
-    IQueryFilter,
     ISelectedAttribute,
     NotificationPriority,
-    OperatorFilter,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -125,7 +120,7 @@ export function getRandomColor() {
 }
 
 export const getPreviewSizes = (): PreviewAttributes[] => {
-    return Object.keys(PreviewAttributes).filter(previewAttribute => !(Number(previewAttribute) + 1)) as any;
+    return Object.keys(PreviewAttributes).filter(previewAttribute => !(parseInt(previewAttribute, 10) + 1)) as any;
 };
 
 export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[] | string[]): string => {
@@ -149,25 +144,25 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
 
 export const allowedTypeOperator = {
     [AttributeFormat.text]: [
-        ConditionFilter.contains,
-        ConditionFilter.notContains,
-        ConditionFilter.equal,
-        ConditionFilter.notEqual,
-        ConditionFilter.beginWith,
-        ConditionFilter.endWith
+        ConditionFilter.CONTAINS,
+        ConditionFilter.NOT_CONTAINS,
+        ConditionFilter.EQUAL,
+        ConditionFilter.NOT_EQUAL,
+        ConditionFilter.BEGIN_WITH,
+        ConditionFilter.END_WITH
     ],
     [AttributeFormat.numeric]: [
-        ConditionFilter.equal,
-        ConditionFilter.notEqual,
-        ConditionFilter.greaterThan,
-        ConditionFilter.lessThan
+        ConditionFilter.EQUAL,
+        ConditionFilter.NOT_EQUAL,
+        ConditionFilter.GREATER_THAN,
+        ConditionFilter.LESS_THAN
     ],
-    [AttributeFormat.boolean]: [ConditionFilter.equal, ConditionFilter.notEqual],
+    [AttributeFormat.boolean]: [ConditionFilter.EQUAL, ConditionFilter.NOT_EQUAL],
     [AttributeFormat.date]: [
-        ConditionFilter.equal,
-        ConditionFilter.notEqual,
-        ConditionFilter.greaterThan,
-        ConditionFilter.lessThan
+        ConditionFilter.EQUAL,
+        ConditionFilter.NOT_EQUAL,
+        ConditionFilter.GREATER_THAN,
+        ConditionFilter.LESS_THAN
     ]
 };
 
@@ -217,14 +212,14 @@ export const getExtendedFormat = (itemContent: any): ExtendFormat[] => {
 export const paginationOptions = [5, 10, 20, 50, 100];
 
 interface ICustomAttribute extends IAttribute {
-    path: string;
+    path?: string;
     embeddedFieldData?: IEmbeddedFields;
 }
 
 export const getFieldsKeyFromAttribute = (attribute: ISelectedAttribute | ICustomAttribute) => {
     if (attribute.parentAttributeData) {
         return `${attribute.library}.${attribute.parentAttributeData.id}.${attribute.id}`;
-    } else if (attribute?.embeddedFieldData) {
+    } else if (attribute?.embeddedFieldData && attribute.path) {
         return `${attributeExtendedKey}.${attribute.library}.${attribute.path}`;
     }
     return `${attribute.library}.${attribute.id}`;
@@ -235,7 +230,7 @@ export const reorder = (list: any[], startIndex: number, endIndex: number) => {
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
 
-    return result;
+    return result.filter(element => !!element);
 };
 
 export const flatArray = (arrays: any[]): any[] => {
@@ -257,7 +252,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
-        // eslint-disable-next-line no-fallthrough
+            return 0;
         case NotificationPriority.medium:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -267,7 +262,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
-        // eslint-disable-next-line no-fallthrough
+            return 0;
         case NotificationPriority.high:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -277,128 +272,9 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 0;
             }
+            return 0;
     }
-};
-
-export const queryFiltersToFilters = (
-    queryFilters: IQueryFilter[],
-    attributes: IAttribute[]
-): [Array<Array<IFilter | IFilterSeparator>>, OperatorFilter] => {
-    let groupFilters: Array<Array<IFilter | IFilterSeparator>> = [];
-    let currentGroupFilter: Array<IFilter | IFilterSeparator> = [];
-    let countFilter = 0;
-    let currentIsSeparator = [false, false]; // separator use two level bracket
-    let currentUseOperator = false;
-
-    let filterOperatorValue: OperatorFilter | undefined;
-
-    for (const queryFilter of queryFilters) {
-        const attribute = attributes.find(attr => attr.id === queryFilter.field);
-
-        if (queryFilter.operator) {
-            switch (queryFilter.operator) {
-                case OperatorFilter.and:
-                case OperatorFilter.or:
-                    if (currentIsSeparator[1]) {
-                        const separator: IFilterSeparator = {
-                            type: FilterTypes.separator,
-                            active: true,
-                            id: getUniqueId(),
-                            key: countFilter++
-                        };
-
-                        // filterOperatorValue is the opposite on the separator
-                        filterOperatorValue =
-                            queryFilter.operator === OperatorFilter.and ? OperatorFilter.or : OperatorFilter.and;
-
-                        currentGroupFilter = [...currentGroupFilter, separator];
-                    } else {
-                        // set operatorValue
-                        if (!filterOperatorValue) {
-                            filterOperatorValue = queryFilter.operator;
-                        }
-
-                        currentUseOperator = true;
-                    }
-                    break;
-
-                case OperatorFilter.openParent:
-                    if (currentGroupFilter) {
-                        groupFilters = [...groupFilters, currentGroupFilter];
-                        currentGroupFilter = [];
-                    }
-
-                    currentIsSeparator = [false, false];
-
-                    break;
-
-                case OperatorFilter.closeParent:
-                    if (currentGroupFilter.length) {
-                        // add current group of filters in the result
-                        groupFilters = [...groupFilters, currentGroupFilter];
-                        // reset current group of filters
-                        currentGroupFilter = [];
-                    }
-
-                    currentIsSeparator = currentIsSeparator[0] ? [true, true] : [true, false];
-
-                    break;
-            }
-        } else if (attribute) {
-            if (currentGroupFilter.length) {
-                const previousFilter = [...currentGroupFilter].pop();
-
-                if (
-                    previousFilter &&
-                    previousFilter.type === FilterTypes.filter &&
-                    previousFilter.attribute.id === queryFilter.field
-                ) {
-                    previousFilter.value += `\n${queryFilter.value}`; // append new value to previous value
-                    currentGroupFilter.splice(-1, 1, previousFilter); // replace in array
-
-                    continue;
-                }
-            }
-
-            if (queryFilter.condition && queryFilter.field) {
-                currentIsSeparator = [false, false]; // if field in current group filter, it's can't be a separator
-
-                const previousFilter = groupFilters.flat(2).pop(); // take the previous filter in a clone of the previous group
-                // if there are already filter in the group or the previous filter was of the type filter, use an operator
-                const operator =
-                    currentUseOperator ||
-                    !!currentGroupFilter.length ||
-                    (previousFilter && previousFilter.type === FilterTypes.filter);
-
-                const filterAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
-                    ...attribute,
-                    multiple_values: false,
-                    embedded_fields: null,
-                    format: attribute.format ?? null
-                };
-
-                // create new filter
-                const newFilter: IFilter = {
-                    key: countFilter,
-                    id: getUniqueId(),
-                    type: FilterTypes.filter,
-                    format: attribute.format,
-                    condition: queryFilter.condition,
-                    operator,
-                    value: queryFilter.value,
-                    attribute: filterAttribute,
-                    active: true
-                };
-
-                currentGroupFilter = [...currentGroupFilter, newFilter];
-                currentUseOperator = false;
-
-                countFilter++;
-            }
-        }
-    }
-
-    return [groupFilters, filterOperatorValue ?? OperatorFilter.and];
+    return 0;
 };
 
 type TextSizeLimit = 'small' | 'medium' | 'big' | number;
@@ -445,3 +321,78 @@ export const attributeToSelectedAttribute = (
  * It works exactly the same at runtime.
  */
 export const gqlUnchecked = gql;
+
+export const getAttributeFromKey = (key: string, attributes: IAttribute[]): IAttribute | undefined => {
+    const splitKey = key.split('.');
+
+    const attribute = attributes.find(att => {
+        // splitKey only contain the  attributeId
+        if (splitKey.length === 1) {
+            return att.id === key;
+        } else if (splitKey.length === 2) {
+            // splitKey contain libraryId and attributeId
+            const libraryId = splitKey[0];
+            const attributeId = splitKey[1];
+
+            return att.library === libraryId && att.id === attributeId;
+        } else {
+            // extended attribute
+            if (splitKey[0] === attributeExtendedKey) {
+                const libraryId = splitKey[1];
+                const attributeId = splitKey[2];
+
+                return att.library === libraryId && att.id === attributeId;
+            }
+            // linked attribute
+            const libraryId = splitKey[0];
+            const attributeId = splitKey[2];
+
+            return att.library === libraryId && att.id === attributeId;
+        }
+    });
+
+    return attribute;
+};
+
+export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): ConditionFilter => {
+    switch (format) {
+        case AttributeFormat.text:
+            return ConditionFilter.CONTAINS;
+        case AttributeFormat.boolean:
+        case AttributeFormat.date:
+        case AttributeFormat.numeric:
+        default:
+            // default is equal because it is actually accept for all AttributeFormat
+            return ConditionFilter.EQUAL;
+    }
+};
+
+export const defaultFilterValueByAttributeFormat = (format: AttributeFormat): unknown => {
+    switch (format) {
+        case AttributeFormat.text:
+            return '';
+        case AttributeFormat.boolean:
+            return true;
+        case AttributeFormat.date:
+        case AttributeFormat.numeric:
+            return 0;
+        default:
+            return null;
+    }
+};
+
+export const getQueryFilterField = (key: string): string => {
+    const splitKey = key.split('.');
+
+    if (splitKey[0] === attributeExtendedKey) {
+        return splitKey.splice(1, 0).toString();
+    }
+
+    switch (splitKey.length) {
+        case 3:
+            return `${splitKey[1]}.${splitKey[2]}`;
+        case 2:
+        default:
+            return splitKey.pop();
+    }
+};

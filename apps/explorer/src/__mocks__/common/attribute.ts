@@ -8,9 +8,9 @@ import {
     GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute
 } from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {AttributeFormat} from '../../_gqlTypes/globalTypes';
-import {AttributeType, ISelectedAttribute} from '../../_types/types';
+import {AttributeType, IAttribute, ISelectedAttribute} from '../../_types/types';
 
-const mockAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
+const mockQueryAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
     id: 'test',
     type: AttributeType.simple,
     format: AttributeFormat.text,
@@ -23,7 +23,7 @@ const mockAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
 };
 
 export const mockAttributeStandard: GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute = {
-    ...mockAttribute,
+    ...mockQueryAttribute,
     embedded_fields: []
 };
 
@@ -40,13 +40,13 @@ export const mockAttributeExtended: GET_ATTRIBUTES_BY_LIB_attributes_list_Standa
 };
 
 export const mockAttributeLink: GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute = {
-    ...mockAttribute,
+    ...mockQueryAttribute,
     type: AttributeType.simple_link,
     linked_library: {id: 'test_lib'}
 };
 
 export const mockAttributeTree: GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute = {
-    ...mockAttribute,
+    ...mockQueryAttribute,
     type: AttributeType.tree,
     linked_tree: {id: 'test_tree'}
 };
@@ -70,4 +70,17 @@ export const mockSelectedAttributeC: ISelectedAttribute = {
     ...mockSelectedAttributeA,
     id: 'C',
     path: 'C'
+};
+
+export const mockAttribute: IAttribute = {
+    id: 'testId',
+    library: 'testLibrary',
+    type: AttributeType.simple,
+    format: AttributeFormat.text,
+    label: {
+        fr: 'test',
+        en: 'test'
+    },
+    isLink: false,
+    isMultiple: false
 };

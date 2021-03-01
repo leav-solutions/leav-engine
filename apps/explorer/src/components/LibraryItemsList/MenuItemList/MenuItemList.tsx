@@ -78,13 +78,13 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
             <SubGroupFirst>
                 <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
 
-                {activeLibrary?.id && <SelectView />}
+                {activeLibrary?.id && <SelectView activeLibrary={activeLibrary} />}
 
                 <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
                     <Button icon={<SearchOutlined />} role="show-filter" onClick={toggleShowFilter} />
                 </Tooltip>
 
-                <MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />
+                <MenuSelection />
             </SubGroupFirst>
 
             <SubGroupLast>

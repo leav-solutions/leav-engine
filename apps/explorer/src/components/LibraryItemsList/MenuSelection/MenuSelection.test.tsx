@@ -5,6 +5,7 @@ import {Dropdown} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {MockStateItems} from '__mocks__/stateItems/mockStateItems';
 import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import MenuSelection from './MenuSelection';
 
@@ -17,7 +18,11 @@ describe('MenuSelection', () => {
         let comp: any;
 
         await act(async () => {
-            comp = mount(<MenuSelection stateItems={stateItems} dispatchItems={dispatchItems} />);
+            comp = mount(
+                <MockStateItems>
+                    <MenuSelection />
+                </MockStateItems>
+            );
         });
 
         expect(comp.find(Dropdown)).toHaveLength(1);

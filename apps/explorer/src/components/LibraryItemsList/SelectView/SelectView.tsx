@@ -4,12 +4,13 @@
 import {MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {Dropdown, Menu, Spin} from 'antd';
+import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import {IActiveLibrary} from 'queries/cache/activeLibrary/getActiveLibraryQuery';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import addViewMutation, {
     IAddViewMutation,
@@ -55,16 +56,20 @@ interface IModalProps {
     id?: string;
 }
 
-function SelectView(): JSX.Element {
+interface ISelectViewProps {
+    activeLibrary: IActiveLibrary;
+}
+
+function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useStateItem();
+    const [stateFilters] = useStateFilters();
 
     const [modalNewProps, setModalNewProps] = useState<Omit<IModalProps, 'id'>>({
         visible: false
     });
 
-    const [activeLibrary] = useActiveLibrary();
     const [{lang}] = useLang();
 
     const {data, loading, error} = useQuery<IGetViewListQuery, IGetViewListVariables>(getViewsListQuery, {
@@ -101,7 +106,7 @@ function SelectView(): JSX.Element {
                     });
                 }
 
-                const viewFilters = stateItems.queryFilters.reduce((acc, queryFilter) => {
+                const viewFilters = stateFilters.queryFilters.reduce((acc, queryFilter) => {
                     return [...acc, queryFilter];
                 }, [] as IAddViewMutationVariablesFilter[]);
 
@@ -153,12 +158,6 @@ function SelectView(): JSX.Element {
                     view: {
                         current: newCurrentView
                     }
-                });
-
-                // refetch views
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_RELOAD_VIEW,
-                    reload: true
                 });
             }
         }

@@ -1,7 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {filterReducerInitialState} from 'hooks/FiltersStateHook/FilterReducerInitialState';
+import {filterStateReducer} from 'hooks/FiltersStateHook/FiltersStateReducer';
+import {FilterStateContext} from 'hooks/FiltersStateHook/FilterStateContext';
+import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
@@ -20,33 +23,51 @@ function AppHandler(): JSX.Element {
         : [];
     const defaultLang = i18n.language ? AvailableLanguage[i18n.language as AvailableLanguage] : AvailableLanguage.en;
 
-    const [, updateLang] = useLang();
-    const [, updateActiveLibrary] = useActiveLibrary();
-    const [, updateUser] = useUser();
+    const [stateFilters, dispatchFilters] = useReducer(filterStateReducer, filterReducerInitialState);
 
-    updateLang({lang, availableLangs, defaultLang});
+    const [langInfo, updateLang] = useLang();
+    const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
+    const [user, updateUser] = useUser();
 
-    updateActiveLibrary({
-        id: '',
-        name: '',
-        filter: '',
-        gql: {
-            searchableFields: '',
-            query: '',
-            type: ''
+    useEffect(() => {
+        if (!langInfo.lang.length) {
+            updateLang({lang, availableLangs, defaultLang});
         }
-    });
+    }, [updateLang, langInfo.lang, lang, availableLangs, defaultLang]);
 
-    // TODO: get real user ID and name
-    const userData = {
-        id: '1',
-        name: 'Admin',
-        permissions: {}
-    };
+    useEffect(() => {
+        if (!activeLibrary) {
+            updateActiveLibrary({
+                id: '',
+                name: '',
+                filter: '',
+                gql: {
+                    searchableFields: '',
+                    query: '',
+                    type: ''
+                }
+            });
+        }
+    }, [updateActiveLibrary, activeLibrary]);
 
-    updateUser({userId: userData.id, userName: userData.name, userPermissions: userData.permissions});
+    useEffect(() => {
+        if (!user) {
+            // TODO: get real user ID and name
+            const userData = {
+                id: '1',
+                name: 'Admin',
+                permissions: {}
+            };
 
-    return <Router />;
+            updateUser({userId: userData.id, userName: userData.name, userPermissions: userData.permissions});
+        }
+    }, [updateUser, user]);
+
+    return (
+        <FilterStateContext.Provider value={[stateFilters, dispatchFilters]}>
+            <Router />
+        </FilterStateContext.Provider>
+    );
 }
 
 export default AppHandler;

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {TypeSideItem} from '../../../_types/types';
@@ -9,10 +9,10 @@ import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import SideItems from './SideItems';
 
 jest.mock(
-    '../Filters',
+    '../FiltersPanel',
     () =>
-        function Filters() {
-            return <div>Filters</div>;
+        function FiltersPanel() {
+            return <div>FiltersPanel</div>;
         }
 );
 
@@ -26,30 +26,30 @@ jest.mock(
 
 describe('SideItems', () => {
     test('should have Filters', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockStateItems stateItems={{sideItems: {visible: true, type: TypeSideItem.filters}}}>
                     <SideItems />
                 </MockStateItems>
             );
         });
 
-        expect(comp.find('Filters')).toHaveLength(1);
+        const element = await screen.findByText('FiltersPanel');
+
+        expect(element).toBeInTheDocument();
     });
 
     test('should have ViewPanel', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockStateItems stateItems={{sideItems: {visible: true, type: TypeSideItem.view}}}>
                     <SideItems />
                 </MockStateItems>
             );
         });
 
-        expect(comp.find('ViewPanel')).toHaveLength(1);
+        const element = await screen.findByText('ViewPanel');
+
+        expect(element).toBeInTheDocument();
     });
 });
