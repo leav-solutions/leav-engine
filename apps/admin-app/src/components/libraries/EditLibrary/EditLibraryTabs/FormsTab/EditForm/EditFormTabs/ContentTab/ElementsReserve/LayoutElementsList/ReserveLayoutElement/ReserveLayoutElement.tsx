@@ -7,14 +7,11 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {v4 as uuidv4} from 'uuid';
 import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
-import {
-    defaultContainerId,
-    FormBuilderActionTypes,
-    IFormBuilderStateAndDispatch
-} from '../../../formBuilderReducer/formBuilderReducer';
+import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {DraggableElementTypes, IFormBuilderDragObject, IFormElement, IUIElement} from '../../../_types';
 
-interface IReserveLayoutElementProps extends IFormBuilderStateAndDispatch {
+interface IReserveLayoutElementProps {
     element: IUIElement;
 }
 
@@ -25,7 +22,8 @@ const Wrapper = styled.div<{isDragging: boolean}>`
     margin: 1em 0;
 `;
 
-function ReserveLayoutElement({element, dispatch}: IReserveLayoutElementProps): JSX.Element {
+function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Element {
+    const {dispatch} = useFormBuilderReducer();
     const {t} = useTranslation();
 
     const formElement = {

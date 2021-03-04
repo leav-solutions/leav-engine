@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DragObjectWithType} from 'react-dnd';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {FormElementTypes} from '../../../../../../../../_gqlTypes/globalTypes';
 import {IKeyValue} from '../../../../../../../../_types/shared';
 
@@ -29,31 +28,51 @@ export enum DraggableElementTypes {
     FORM_ELEMENT = 'FORM_ELEMENT'
 }
 
+export enum TabsDirection {
+    VERTICAL = 'VERTICAL',
+    HORIZONTAL = 'HORIZONTAL'
+}
+
 export interface IFormElement {
     id: string;
     order: number;
     type: FormElementTypes;
     uiElement: IUIElement;
     containerId: string;
-    settings?: IKeyValue<any>;
+    settings?: IKeyValue<unknown>;
     herited?: boolean;
+}
+
+export enum FormElementSettingsInputTypes {
+    NONE = 'NONE',
+    ATTRIBUTE_SELECTION = 'ATTRIBUTE_SELECTION',
+    INPUT = 'INPUT',
+    CHECKBOX = 'CHECKBOX',
+    RTE = 'RTE',
+    SELECT = 'SELECT'
+}
+
+export interface IFormElementSettings {
+    name: string;
+    inputType: FormElementSettingsInputTypes;
+    options?: string[];
 }
 
 export interface IUIElement {
     type: UIElementTypes | FieldTypes;
     component: JSX.Element;
     canDrop: (dropCandidate: IFormElement) => boolean;
-    settings?: string[];
+    settings?: IFormElementSettings[];
 }
 
-export interface IFormElementProps<T extends object> {
+export interface IFormElementProps<SettingsType extends object> {
     elementData?: IFormElement;
-    settings: T;
+    settings: SettingsType;
 }
 
 export interface ICommonFieldsSettings {
     label?: string;
-    attribute?: GET_ATTRIBUTES_attributes_list;
+    attribute?: string;
 }
 
 export interface IFormElementPos {
@@ -69,3 +88,5 @@ export interface IFormBuilderDragObject<T extends IUIElement | IFormElement> ext
     originPos?: IFormElementPos;
     dropAtPos?: IFormElementPos;
 }
+
+export type SettingsOnChangeFunc = (name: string, value: string | boolean) => void;

@@ -2,7 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {FieldTypes, IUIElement, UIElementTypes} from '../_types';
+import {
+    FieldTypes,
+    FormElementSettingsInputTypes,
+    IFormElementSettings,
+    IUIElement,
+    TabsDirection,
+    UIElementTypes
+} from '../_types';
 import CheckboxField from './fields/CheckboxField';
 import DateField from './fields/DateField';
 import DropdownField from './fields/DropdownField';
@@ -13,7 +20,16 @@ import Tabs from './layout/Tabs';
 import TextBlock from './layout/TextBlock';
 import UiDivider from './layout/UiDivider';
 
-const commonFieldSettings = ['attribute', 'label'];
+const commonFieldSettings: IFormElementSettings[] = [
+    {
+        name: 'attribute',
+        inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION
+    },
+    {
+        name: 'label',
+        inputType: FormElementSettingsInputTypes.INPUT
+    }
+];
 
 export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
     [UIElementTypes.FIELDS_CONTAINER]: {
@@ -24,19 +40,31 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
     [UIElementTypes.DIVIDER]: {
         type: UIElementTypes.DIVIDER,
         component: <UiDivider settings={{}} />,
-        settings: ['title'],
+        settings: [
+            {
+                name: 'title',
+                inputType: FormElementSettingsInputTypes.INPUT
+            }
+        ],
         canDrop: () => false
     },
     [UIElementTypes.TEXT_BLOCK]: {
         type: UIElementTypes.TEXT_BLOCK,
         component: <TextBlock settings={{}} />,
-        settings: ['content'],
+        settings: [{name: 'content', inputType: FormElementSettingsInputTypes.RTE}],
         canDrop: () => false
     },
     [UIElementTypes.TABS]: {
         type: UIElementTypes.TABS,
         component: <Tabs settings={{}} />,
-        settings: ['tabs'],
+        settings: [
+            {name: 'tabs', inputType: FormElementSettingsInputTypes.NONE},
+            {
+                name: 'direction',
+                inputType: FormElementSettingsInputTypes.SELECT,
+                options: [TabsDirection.HORIZONTAL, TabsDirection.VERTICAL]
+            }
+        ],
         canDrop: () => false
     }
 };
@@ -57,7 +85,7 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.DATE]: {
         type: FieldTypes.DATE,
         component: <DateField settings={{}} />,
-        settings: [...commonFieldSettings, 'withTime'],
+        settings: [...commonFieldSettings, {name: 'withTime', inputType: FormElementSettingsInputTypes.CHECKBOX}],
         canDrop: () => false
     },
     [FieldTypes.ENCRYPTED]: {

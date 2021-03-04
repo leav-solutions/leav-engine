@@ -2,7 +2,9 @@
     "admin": {
         "title": "Administration",
         "submit": "Submit",
+        "save": "Save",
         "cancel": "Cancel",
+        "close": "Close",
         "loading": "Loading...",
         "any_record": "Any {libLabel}",
         "forbidden_route": "Access denied",
@@ -216,7 +218,6 @@
         "fields": "Input fields",
         "dependency_attributes": "Depends on",
         "confirm_delete": "Do you really want to delete form {{formLabel}}?",
-        "attribute": "Attribute",
         "select_attribute": "Select an attribute",
         "select_tree_element": "Select an element",
         "dependencies": "Dependencies",
@@ -230,6 +231,28 @@
         "content": "Content",
         "empty_container": "Drop elements here",
         "text_block_helper": "Insert text here",
-        "new_tab_label": "New tab"
+        "new_tab_label": "New tab",
+        "settings": {
+            "label": "Label",
+            "attribute": "Attribute",
+            "content": "Content",
+            "withTime": "Time entry",
+            "direction": "Direction",
+            "select_options": {
+                "VERTICAL": "Vertical",
+                "HORIZONTAL": "Horizontal"
+            }
+        },
+        "rte": {
+            "bold": "Bold",
+            "italic": "Italic",
+            "underline": "Underline",
+            "normal": "Normal",
+            "header1": "Header 1",
+            "header2": "Header 2",
+            "header3": "Header 3",
+            "ul": "List",
+            "ol": "Ordered List"
+        }
     }
 }

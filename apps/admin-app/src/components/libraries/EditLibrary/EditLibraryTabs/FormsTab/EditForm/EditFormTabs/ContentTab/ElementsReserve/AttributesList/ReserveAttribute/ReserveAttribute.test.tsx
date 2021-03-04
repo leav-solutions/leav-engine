@@ -6,10 +6,10 @@ import React from 'react';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
 import {mockAttrSimple} from '../../../../../../../../../../../__mocks__/attributes';
-import {initialState} from '../../../formBuilderReducer/_fixtures/fixtures';
 import ReserveAttribute from './ReserveAttribute';
 
 jest.mock('../../../../../../../../../../../hooks/useLang');
+jest.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
@@ -20,7 +20,7 @@ describe('ReserveAttribute', () => {
     test('Snapshot test', async () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
-                <ReserveAttribute attribute={mockAttrSimple} state={initialState} dispatch={jest.fn()} />
+                <ReserveAttribute attribute={mockAttrSimple} />
             </DndProvider>
         );
 

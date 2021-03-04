@@ -7,16 +7,18 @@ import {Dropdown} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../utils';
-import {FormBuilderActionTypes, IFormBuilderStateAndDispatch} from '../formBuilderReducer/formBuilderReducer';
+import {FormBuilderActionTypes} from '../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';
 
 const StyledDropdown = styled(Dropdown)`
     margin: 2em 0;
 `;
 StyledDropdown.displayName = 'Dropdown';
 
-function DependencySettings({state, dispatch}: IFormBuilderStateAndDispatch): JSX.Element {
+function DependencySettings(): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
+    const {state, dispatch} = useFormBuilderReducer();
 
     if (!state.form.dependencyAttributes || !state.form.dependencyAttributes.length) {
         return <></>;

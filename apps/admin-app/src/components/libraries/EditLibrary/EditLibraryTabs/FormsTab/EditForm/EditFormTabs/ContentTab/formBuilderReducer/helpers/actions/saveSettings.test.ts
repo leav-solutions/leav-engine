@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {formBuilderReducer} from '../..';
 import {defaultDepAttribute, defaultDepValue, FormBuilderActionTypes} from '../../formBuilderReducer';
-import {formElem1, initialState} from '../../_fixtures/fixtures';
+import {formElem1, mockInitialState} from '../../_fixtures/fixtures';
 
 describe('formBuilderReducer', () => {
     describe('SAVE_SETTNGS', () => {
         test('If no element specified, save settings for element in settings', async () => {
             const newState = formBuilderReducer(
-                {...initialState, elementInSettings: {...formElem1}},
+                {...mockInitialState, elementInSettings: {...formElem1}},
                 {
                     type: FormBuilderActionTypes.SAVE_SETTINGS,
                     settings: {
@@ -26,7 +26,7 @@ describe('formBuilderReducer', () => {
 
         test('Save settings for specified element', async () => {
             const newState = formBuilderReducer(
-                {...initialState},
+                {...mockInitialState},
                 {
                     type: FormBuilderActionTypes.SAVE_SETTINGS,
                     settings: {

@@ -6,11 +6,12 @@ import React from 'react';
 import {getAttributesQuery} from '../../../../../../../../../../queries/attributes/getAttributesQuery';
 import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../shared/Loading';
-import {IFormBuilderStateAndDispatch} from '../../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import ReserveAttribute from './ReserveAttribute';
 
-function AttributesList({state, dispatch}: IFormBuilderStateAndDispatch): JSX.Element {
+function AttributesList(): JSX.Element {
     // Get library attributes
+    const {state} = useFormBuilderReducer();
     const {error, loading, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
         variables: {libraries: [state.library]}
     });
@@ -26,7 +27,7 @@ function AttributesList({state, dispatch}: IFormBuilderStateAndDispatch): JSX.El
     return (
         <>
             {(data?.attributes?.list ?? []).map(a => (
-                <ReserveAttribute key={a.id} attribute={a} state={state} dispatch={dispatch} />
+                <ReserveAttribute key={a.id} attribute={a} />
             ))}
         </>
     );

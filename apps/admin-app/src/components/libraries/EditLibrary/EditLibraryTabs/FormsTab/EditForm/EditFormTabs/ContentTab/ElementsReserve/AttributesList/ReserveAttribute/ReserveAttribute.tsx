@@ -9,15 +9,12 @@ import useLang from '../../../../../../../../../../../hooks/useLang';
 import {isLinkAttribute, localizedLabel} from '../../../../../../../../../../../utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
-import {
-    defaultContainerId,
-    FormBuilderActionTypes,
-    IFormBuilderStateAndDispatch
-} from '../../../formBuilderReducer/formBuilderReducer';
+import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {formElements} from '../../../uiElements';
 import {DraggableElementTypes, FieldTypes, IFormBuilderDragObject, IFormElement, IUIElement} from '../../../_types';
 
-interface IReserveAttributeProps extends IFormBuilderStateAndDispatch {
+interface IReserveAttributeProps {
     attribute: GET_ATTRIBUTES_attributes_list;
 }
 
@@ -28,7 +25,8 @@ const Wrapper = styled.div<{isDragging: boolean}>`
     margin: 0.8em 0;
 `;
 
-function ReserveAttribute({attribute, dispatch}: IReserveAttributeProps): JSX.Element {
+function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
+    const {dispatch} = useFormBuilderReducer();
     const {lang} = useLang();
 
     const attrLabel = localizedLabel(attribute.label, lang);

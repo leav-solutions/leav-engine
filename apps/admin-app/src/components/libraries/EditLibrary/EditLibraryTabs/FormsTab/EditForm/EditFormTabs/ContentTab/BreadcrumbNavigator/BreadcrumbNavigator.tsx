@@ -7,10 +7,12 @@ import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTree
 import {GET_FORM_forms_list_dependencyAttributes_TreeAttribute} from '../../../../../../../../../_gqlTypes/GET_FORM';
 import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import Loading from '../../../../../../../../shared/Loading';
-import {IFormBuilderStateAndDispatch} from '../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';
 import BreadcrumbNavigatorView from './BreadcrumbNavigatorView';
 
-function BreadcrumbNavigator({state, dispatch}: IFormBuilderStateAndDispatch): JSX.Element {
+function BreadcrumbNavigator(): JSX.Element {
+    const {state, dispatch} = useFormBuilderReducer();
+
     // Retrieve tree ID from form config and selected attribute
     const selectedDepAttribute = state.form.dependencyAttributes?.find(
         a => a.id === state.activeDependency?.attribute
@@ -37,7 +39,7 @@ function BreadcrumbNavigator({state, dispatch}: IFormBuilderStateAndDispatch): J
 
     const treeData = data.trees.list[0];
 
-    return <BreadcrumbNavigatorView treeData={treeData} state={state} dispatch={dispatch} />;
+    return <BreadcrumbNavigatorView treeData={treeData} />;
 }
 
 export default BreadcrumbNavigator;

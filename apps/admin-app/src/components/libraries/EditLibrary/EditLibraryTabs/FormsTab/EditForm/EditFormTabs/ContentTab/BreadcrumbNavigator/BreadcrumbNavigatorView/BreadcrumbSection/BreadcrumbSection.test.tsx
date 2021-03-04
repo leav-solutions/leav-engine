@@ -4,14 +4,14 @@
 import {render} from 'enzyme';
 import React from 'react';
 import {mockTree} from '../../../../../../../../../../../__mocks__/trees';
-import {initialState} from '../../../formBuilderReducer/_fixtures/fixtures';
 import BreadcrumbSection from './BreadcrumbSection';
 
 jest.mock('../../../../../../../../../../../hooks/useLang');
+jest.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
 
 describe('BreadcrumbSection', () => {
     test('Snapshot test', async () => {
-        const comp = render(<BreadcrumbSection treeData={mockTree} dispatch={jest.fn()} state={initialState} />);
+        const comp = render(<BreadcrumbSection treeData={mockTree} />);
 
         expect(comp).toMatchSnapshot();
     });

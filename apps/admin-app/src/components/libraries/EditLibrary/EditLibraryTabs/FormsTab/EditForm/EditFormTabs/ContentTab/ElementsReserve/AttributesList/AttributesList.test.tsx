@@ -8,7 +8,6 @@ import {act} from 'react-dom/test-utils';
 import {getAttributesQuery} from '../../../../../../../../../../queries/attributes/getAttributesQuery';
 import {mockAttrSimple} from '../../../../../../../../../../__mocks__/attributes';
 import MockedProviderWithFragments from '../../../../../../../../../../__mocks__/MockedProviderWithFragments';
-import {initialState} from '../../formBuilderReducer/_fixtures/fixtures';
 import AttributesList from './AttributesList';
 
 jest.mock('./ReserveAttribute', () => {
@@ -16,6 +15,8 @@ jest.mock('./ReserveAttribute', () => {
         return <div>ReserveAttribute</div>;
     };
 });
+
+jest.mock('../../formBuilderReducer/hook/useFormBuilderReducer');
 
 describe('AttributesList', () => {
     test('Snapshot test', async () => {
@@ -60,7 +61,7 @@ describe('AttributesList', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <AttributesList dispatch={jest.fn()} state={initialState} />
+                    <AttributesList />
                 </MockedProviderWithFragments>
             );
         });

@@ -8,12 +8,12 @@ import {
     defaultDepValue,
     FormBuilderActionTypes
 } from '../../formBuilderReducer';
-import {formElem1, formElem4, initialState} from '../../_fixtures/fixtures';
+import {formElem1, formElem4, mockInitialState} from '../../_fixtures/fixtures';
 
 describe('formBuilderReducer', () => {
     describe('MOVE_ELEMENT', () => {
         test('Layout element', async () => {
-            const newState = formBuilderReducer(initialState, {
+            const newState = formBuilderReducer(mockInitialState, {
                 type: FormBuilderActionTypes.MOVE_ELEMENT,
                 elementId: '123457',
                 from: {order: 2, containerId: defaultContainerId},
@@ -24,7 +24,7 @@ describe('formBuilderReducer', () => {
         });
 
         test('Field element, same container', async () => {
-            const newState = formBuilderReducer(initialState, {
+            const newState = formBuilderReducer(mockInitialState, {
                 type: FormBuilderActionTypes.MOVE_ELEMENT,
                 elementId: '987654',
                 from: {order: 0, containerId: '123456'},
@@ -39,7 +39,7 @@ describe('formBuilderReducer', () => {
         });
 
         test('Field element, different container', async () => {
-            const newState = formBuilderReducer(initialState, {
+            const newState = formBuilderReducer(mockInitialState, {
                 type: FormBuilderActionTypes.MOVE_ELEMENT,
                 elementId: '987654',
                 from: {order: 0, containerId: '123456'},

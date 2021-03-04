@@ -6,29 +6,30 @@ import React from 'react';
 import {layoutElements} from '../../..';
 import {FormElementTypes} from '../../../../../../../../../../../../_gqlTypes/globalTypes';
 import {defaultContainerId} from '../../../../formBuilderReducer/formBuilderReducer';
-import {initialState} from '../../../../formBuilderReducer/_fixtures/fixtures';
-import {UIElementTypes} from '../../../../_types';
+import {IFormElement, UIElementTypes} from '../../../../_types';
 import EditTabLabelModal from './EditTabLabelModal';
 
 jest.mock('../../../../../../../../../../../../hooks/useLang');
 
 describe('EditTabLabelModal', () => {
     test('Snapshot test', async () => {
-        const tabElementData = {
+        const tabElementData: IFormElement = {
             id: '123456',
             containerId: defaultContainerId,
             type: FormElementTypes.layout,
             order: 0,
-            settings: [
-                {
-                    id: '12345',
-                    label: {fr: 'test_tab'}
-                },
-                {
-                    id: '98765',
-                    label: {fr: 'test_tab 2'}
-                }
-            ],
+            settings: {
+                tabs: [
+                    {
+                        id: '12345',
+                        label: {fr: 'test_tab'}
+                    },
+                    {
+                        id: '98765',
+                        label: {fr: 'test_tab 2'}
+                    }
+                ]
+            },
             uiElement: layoutElements[UIElementTypes.TABS]
         };
 
@@ -40,8 +41,6 @@ describe('EditTabLabelModal', () => {
                     label: {fr: 'test_tab'}
                 }}
                 onClose={jest.fn()}
-                dispatch={jest.fn()}
-                state={initialState}
                 open
             />
         );

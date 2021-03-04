@@ -5,22 +5,23 @@ import React from 'react';
 import {Breadcrumb, BreadcrumbSectionProps} from 'semantic-ui-react';
 import {GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {RecordIdentity_whoAmI} from '../../../../../../../../../../_gqlTypes/RecordIdentity';
-import {defaultDepValue, IFormBuilderStateAndDispatch} from '../../formBuilderReducer/formBuilderReducer';
+import {defaultDepValue} from '../../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import BreadcrumbSection from './BreadcrumbSection';
 
-interface IBreadcrumbNavigatorViewProps extends IFormBuilderStateAndDispatch {
+interface IBreadcrumbNavigatorViewProps {
     treeData: GET_TREE_BY_ID_trees_list;
 }
 
-function BreadcrumbNavigatorView({treeData, state, dispatch}: IBreadcrumbNavigatorViewProps): JSX.Element {
+function BreadcrumbNavigatorView({treeData}: IBreadcrumbNavigatorViewProps): JSX.Element {
+    const {state} = useFormBuilderReducer();
+
     const _getSection = (element?: RecordIdentity_whoAmI, ancestors?: RecordIdentity_whoAmI[]) => (
         <BreadcrumbSection
             key={element?.id ?? defaultDepValue}
             treeData={treeData}
             element={element}
             ancestors={ancestors}
-            state={state}
-            dispatch={dispatch}
         />
     );
 

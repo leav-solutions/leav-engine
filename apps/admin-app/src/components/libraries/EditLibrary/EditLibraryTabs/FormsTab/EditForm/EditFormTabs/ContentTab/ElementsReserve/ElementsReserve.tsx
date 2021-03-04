@@ -4,11 +4,10 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
-import {IFormBuilderStateAndDispatch} from '../formBuilderReducer/formBuilderReducer';
 import AttributesList from './AttributesList';
 import LayoutElementsList from './LayoutElementsList';
 
-function ElementsReserve({state, dispatch}: IFormBuilderStateAndDispatch): JSX.Element {
+function ElementsReserve(): JSX.Element {
     const {t} = useTranslation();
 
     const panes = [
@@ -16,7 +15,7 @@ function ElementsReserve({state, dispatch}: IFormBuilderStateAndDispatch): JSX.E
             menuItem: t('forms.layout'),
             render: () => (
                 <Tab.Pane>
-                    <LayoutElementsList state={state} dispatch={dispatch} />
+                    <LayoutElementsList />
                 </Tab.Pane>
             )
         },
@@ -24,7 +23,7 @@ function ElementsReserve({state, dispatch}: IFormBuilderStateAndDispatch): JSX.E
             menuItem: t('forms.attributes'),
             render: () => (
                 <Tab.Pane>
-                    <AttributesList state={state} dispatch={dispatch} />
+                    <AttributesList />
                 </Tab.Pane>
             )
         }

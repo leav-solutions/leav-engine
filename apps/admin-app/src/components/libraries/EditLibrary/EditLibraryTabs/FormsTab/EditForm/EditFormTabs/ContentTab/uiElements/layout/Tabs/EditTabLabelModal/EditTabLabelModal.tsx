@@ -4,22 +4,24 @@
 import React from 'react';
 import {Input, Modal} from 'semantic-ui-react';
 import useLang from '../../../../../../../../../../../../hooks/useLang';
-import {FormBuilderActionTypes, IFormBuilderStateAndDispatch} from '../../../../formBuilderReducer/formBuilderReducer';
+import {FormBuilderActionTypes} from '../../../../formBuilderReducer/formBuilderReducer';
+import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {IFormElement} from '../../../../_types';
 import {ITabSettings} from '../Tabs';
 
-interface IEditTabLabelModalProps extends IFormBuilderStateAndDispatch {
+interface IEditTabLabelModalProps {
     open: boolean;
     onClose: () => void;
     tabsElement: IFormElement;
     tab: ITabSettings;
 }
 
-function EditTabLabelModal({open, tabsElement, tab, onClose, dispatch}: IEditTabLabelModalProps): JSX.Element {
+function EditTabLabelModal({open, tabsElement, tab, onClose}: IEditTabLabelModalProps): JSX.Element {
     const {availableLangs} = useLang();
+    const {dispatch} = useFormBuilderReducer();
 
     const _handleChange = (lang: string) => (_, data) => {
-        const existingTabs = tabsElement?.settings?.tabs ?? [];
+        const existingTabs: ITabSettings[] = (tabsElement?.settings?.tabs as ITabSettings[]) ?? [];
         const tabIndex = existingTabs.findIndex(t => t.id === tab.id);
 
         if (tabIndex === -1) {
