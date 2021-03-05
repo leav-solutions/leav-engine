@@ -95,10 +95,7 @@ export const manageItems = ({items, lang, fields}: IManageItemsProps): IItem[] =
                     typeof item.whoAmI.label === 'string' ? item.whoAmI.label : localizedLabel(item.whoAmI.label, lang),
                 color: item.whoAmI.color,
                 preview: item.whoAmI.preview,
-                library: {
-                    id: item.whoAmI.library.id,
-                    label: item.whoAmI.library.label
-                }
+                library: item.whoAmI.library
             },
             fields: itemFields
         };

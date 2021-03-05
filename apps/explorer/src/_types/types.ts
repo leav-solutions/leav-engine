@@ -63,6 +63,9 @@ export interface IRecordIdentityWhoAmI {
     library?: {
         id: string;
         label: ILabel;
+        gqlNames?: {
+            query: string;
+        };
     };
     index?: number;
 }

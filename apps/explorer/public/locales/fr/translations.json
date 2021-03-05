@@ -296,5 +296,8 @@
     "language": {
         "fr": "Français",
         "en": "Anglais"
+    },
+    "record_edition": {
+        "no_form_error": "Aucun formulaire disponible"
     }
 }

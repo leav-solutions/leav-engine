@@ -33,6 +33,9 @@ export interface IGetViewListElement {
             label: ILabel;
             library: {
                 id: string;
+                gqlNames: {
+                    query: string;
+                };
             };
         };
     };
@@ -67,6 +70,9 @@ export const getViewsListQuery = gql`
                         label
                         library {
                             id
+                            gqlNames {
+                                query
+                            }
                         }
                     }
                 }
