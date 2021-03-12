@@ -6,7 +6,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, TreeNodePermissionsActions} from '../../_types/permissions';
-import {ITree, ITreeElement, ITreeNode} from '../../_types/tree';
+import {ITree, ITreeElement, ITreeNode, TreePaths} from '../../_types/tree';
 import {mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
@@ -50,19 +50,21 @@ describe('treeNodePermissionDomain', () => {
             }
         };
 
-        const mockAncestors: ITreeNode[] = [
-            {
-                record: {
-                    id: 'parent1',
-                    library: 'lib1'
+        const mockAncestors: TreePaths = [
+            [
+                {
+                    record: {
+                        id: 'parent1',
+                        library: 'lib1'
+                    }
+                },
+                {
+                    record: {
+                        id: 'parent2',
+                        library: 'lib1'
+                    }
                 }
-            },
-            {
-                record: {
-                    id: 'parent2',
-                    library: 'lib1'
-                }
-            }
+            ]
         ];
 
         const mockTreeDomainWithPerm: Mockify<ITreeDomain> = {

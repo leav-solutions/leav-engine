@@ -1,26 +1,28 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IRecordDomain, IRecordFiltersLight} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {validate} from 'jsonschema';
-import ValidationError from '../../errors/ValidationError';
-import {IAttribute} from '../../_types/attribute';
-import {Errors} from '../../_types/errors';
-import {Action, IData, IFile, IMatch, IValue} from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
+import {Action, IMatch, IValue, IData, IFile} from '../../_types/import';
+import {IAttribute} from '../../_types/attribute';
 import {Operator} from '../../_types/record';
-import {ITreeElement} from '../../_types/tree';
+import {Errors} from '../../_types/errors';
+import {IRecordDomain, IRecordFiltersLight} from 'domain/record/recordDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
+import ValidationError from '../../errors/ValidationError';
+import fs from 'fs';
+import {validate} from 'jsonschema';
+import {ITreeElement} from '../../_types/tree';
+import path from 'path';
 
-export const SCHEMA_PATH = './import-schema.json';
+export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 
 export interface IImportExcelParams {
     data: string[][];
     library: string;
-    mapping: Array<string | null>;
+    mapping: string[];
     key?: string | null;
 }
 
@@ -210,18 +212,10 @@ export default function ({
         async importExcel({data, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
             const file: IFile = {elements: [], trees: []};
 
-            const dataToImport = [...data];
-
-            const columnsCount = dataToImport.length ? dataToImport[0].length : 0;
-
-            if (mapping.length !== columnsCount) {
-                throw new ValidationError<IImportExcelParams>({mapping: Errors.INVALID_MAPPING});
-            }
-
             // delete first row of columns name
-            dataToImport.shift();
+            data.shift();
 
-            for (const d of dataToImport) {
+            for (const d of data) {
                 const matches = key
                     ? [
                           {
@@ -234,17 +228,13 @@ export default function ({
                 file.elements.push({
                     library,
                     matches,
-                    data: d.reduce((rowData, cellData, i) => {
-                        if (mapping[i] && mapping[i] !== 'id') {
-                            rowData.push({
-                                attribute: mapping[i],
-                                values: [{value: String(cellData)}],
-                                action: Action.REPLACE
-                            });
-                        }
-
-                        return rowData;
-                    }, []),
+                    data: d
+                        .map((e, i) => ({
+                            attribute: mapping[i],
+                            values: [{value: String(e)}],
+                            action: Action.REPLACE
+                        }))
+                        .filter(e => e.attribute !== 'id'),
                     links: []
                 });
             }
@@ -252,9 +242,9 @@ export default function ({
             return this.import(file, ctx);
         },
         async import(data: IFile, ctx: IQueryInfos): Promise<boolean> {
-            const schema = await import(SCHEMA_PATH);
+            const schema = await fs.promises.readFile(SCHEMA_PATH);
 
-            validate(data, schema, {throwAll: true});
+            validate(data, JSON.parse(schema.toString()), {throwAll: true});
 
             // elements
             for (const e of data.elements) {

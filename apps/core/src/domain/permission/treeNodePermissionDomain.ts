@@ -154,23 +154,25 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
                 ctx
             });
 
-            for (const parent of ancestors) {
-                const parentNode: ITreeElement = {
-                    id: parent.record.id,
-                    library: parent.record.library
-                };
+            for (const parents of ancestors) {
+                for (const parent of parents) {
+                    const parentNode: ITreeElement = {
+                        id: parent.record.id,
+                        library: parent.record.library
+                    };
 
-                const parentPerm = await _getPermByTreeNode({
-                    action,
-                    userId,
-                    treeId,
-                    permConf: treeData.permissions_conf,
-                    treeElement: parentNode,
-                    ctx
-                });
+                    const parentPerm = await _getPermByTreeNode({
+                        action,
+                        userId,
+                        treeId,
+                        permConf: treeData.permissions_conf,
+                        treeElement: parentNode,
+                        ctx
+                    });
 
-                if (parentPerm !== null) {
-                    return parentPerm;
+                    if (parentPerm !== null) {
+                        return parentPerm;
+                    }
                 }
             }
 

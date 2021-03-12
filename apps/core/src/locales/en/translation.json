@@ -52,7 +52,9 @@
         "UNKNOWN_TREES": "Unknown trees : {{trees}}",
         "UNKNOWN_VALUE": "Unknown value",
         "UNKNOWN_VERSION_TREE": "Unknown tree {{tree}}",
-        "UNKNOWN_VIEW": "Unknown view"
+        "UNKNOWN_VIEW": "Unknown view",
+        "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Element already present in ancestors",
+        "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Element with same path already present"
     },
     "actions": {
         "names": {

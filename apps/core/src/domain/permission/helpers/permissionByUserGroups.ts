@@ -3,10 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IGetPermissionByUserGroupsParams} from '../_types';
+import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {ISimplePermissionHelper} from './simplePermission';
 
 interface IDeps {
     'core.domain.permission.helpers.simplePermission': ISimplePermissionHelper;
+    'core.domain.permission.helpers.reducePermissionsArray': IReducePermissionsArrayHelper;
     'core.infra.permission'?: IPermissionRepo;
 }
 
@@ -15,7 +17,10 @@ export interface IPermissionByUserGroupsHelper {
 }
 
 export default function (deps: IDeps): IPermissionByUserGroupsHelper {
-    const {'core.domain.permission.helpers.simplePermission': simplePermHelper = null} = deps;
+    const {
+        'core.domain.permission.helpers.simplePermission': simplePermHelper = null,
+        'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper
+    } = deps;
 
     return {
         async getPermissionByUserGroups({
@@ -41,26 +46,30 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             const userPerms = userGroupsPaths.length
                 ? await Promise.all(
                       userGroupsPaths.map(
-                          async (groupPath): Promise<boolean> => {
-                              for (const group of groupPath.slice().reverse()) {
-                                  const perm = await simplePermHelper.getSimplePermission({
-                                      type,
-                                      applyTo,
-                                      action,
-                                      usersGroupId: group.record.id,
-                                      permissionTreeTarget,
-                                      ctx
-                                  });
+                          async (groupPaths): Promise<boolean> => {
+                              return groupPaths.length
+                                  ? groupPaths.reduce(async (globalPerm, groupPath) => {
+                                        const gP = await globalPerm;
 
-                                  if (perm !== null) {
-                                      return perm;
-                                  }
-                              }
+                                        for (const group of groupPath.slice().reverse()) {
+                                            const perm = await simplePermHelper.getSimplePermission({
+                                                type,
+                                                applyTo,
+                                                action,
+                                                usersGroupId: group.record.id,
+                                                permissionTreeTarget,
+                                                ctx
+                                            });
 
-                              // Nothing found in tree, check on root level
-                              const rootPerm = await _getRootPermission();
+                                            if (perm !== null) {
+                                                return Promise.resolve(gP || perm);
+                                            }
+                                        }
 
-                              return rootPerm;
+                                        // Nothing found in tree, check on root level
+                                        return _getRootPermission();
+                                    }, Promise.resolve(null))
+                                  : _getRootPermission();
                           }
                       )
                   )
@@ -72,17 +81,17 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             //    => return false
             // If no permission defined for all groups
             //    => return null
-            const userPerm = userPerms.reduce((globalPerm, groupPerm) => {
-                if (globalPerm || groupPerm) {
-                    return true;
-                } else if (globalPerm === groupPerm || (globalPerm === null && !groupPerm)) {
-                    return groupPerm;
-                } else {
-                    return globalPerm;
-                }
-            }, null);
+            // const userPerm = userPerms.reduce((globalPerm, groupPerm) => {
+            //     if (globalPerm || groupPerm) {
+            //         return true;
+            //     } else if (globalPerm === groupPerm || (globalPerm === null && !groupPerm)) {
+            //         return groupPerm;
+            //     }
 
-            return userPerm;
+            //     return globalPerm;
+            // }, null);
+
+            return reducePermissionsArrayHelper.reducePermissionsArray(userPerms);
         }
     };
 }

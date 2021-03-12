@@ -110,7 +110,7 @@ export interface TREE_CONTENT_treeContent_children {
 export interface TREE_CONTENT_treeContent {
     order: number;
     record: TREE_CONTENT_treeContent_record;
-    ancestors: TREE_CONTENT_treeContent_ancestors[] | null;
+    ancestors: TREE_CONTENT_treeContent_ancestors[][] | null;
     children: TREE_CONTENT_treeContent_children[] | null;
 }
 

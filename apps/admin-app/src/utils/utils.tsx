@@ -145,8 +145,15 @@ export const getInvertColor = (color: string): string => {
     return yiq >= 128 ? '#000000' : '#FFFFFF';
 };
 
-export const getTreeNodeKey = (nodeData: TreeNode | null) =>
-    nodeData ? nodeData.node.library.id + '/' + nodeData.node.id : '';
+export const getTreeNodeKey = (nodeData: TreeNode | null) => {
+    if (nodeData === null) {
+        return '';
+    }
+
+    return nodeData.node.path?.length
+        ? [nodeData.node.path.join('/'), nodeData.node.library.id, nodeData.node.id].join('/')
+        : [nodeData.node.library.id, nodeData.node.id].join('/');
+};
 
 export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} => {
     return perms.reduce((allPerms, perm) => {

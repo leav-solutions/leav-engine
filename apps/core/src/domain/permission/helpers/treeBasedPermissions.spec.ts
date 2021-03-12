@@ -7,6 +7,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
+import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import treeBasedPermissions from './treeBasedPermissions';
 
 describe('TreePermissionDomain', () => {
@@ -22,46 +23,50 @@ describe('TreePermissionDomain', () => {
                 switch (treeId) {
                     case 'categories':
                         parents = [
-                            {
-                                record: {
-                                    id: 'A',
-                                    library: 'category'
+                            [
+                                {
+                                    record: {
+                                        id: 'A',
+                                        library: 'category'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 'B',
+                                        library: 'category'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 'C',
+                                        library: 'category'
+                                    }
                                 }
-                            },
-                            {
-                                record: {
-                                    id: 'B',
-                                    library: 'category'
-                                }
-                            },
-                            {
-                                record: {
-                                    id: 'C',
-                                    library: 'category'
-                                }
-                            }
+                            ]
                         ];
                         break;
                     case 'users_groups':
                         parents = [
-                            {
-                                record: {
-                                    id: 1,
-                                    library: 'users_groups'
+                            [
+                                {
+                                    record: {
+                                        id: 1,
+                                        library: 'users_groups'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 2,
+                                        library: 'users_groups'
+                                    }
+                                },
+                                {
+                                    record: {
+                                        id: 3,
+                                        library: 'users_groups'
+                                    }
                                 }
-                            },
-                            {
-                                record: {
-                                    id: 2,
-                                    library: 'users_groups'
-                                }
-                            },
-                            {
-                                record: {
-                                    id: 3,
-                                    library: 'users_groups'
-                                }
-                            }
+                            ]
                         ];
                         break;
                 }
@@ -110,64 +115,70 @@ describe('TreePermissionDomain', () => {
 
         const ancestors = {
             categories: [
-                {
-                    record: {
-                        id: 'A',
-                        library: 'category'
+                [
+                    {
+                        record: {
+                            id: 'A',
+                            library: 'category'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 'B',
+                            library: 'category'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 'C',
+                            library: 'category'
+                        }
                     }
-                },
-                {
-                    record: {
-                        id: 'B',
-                        library: 'category'
-                    }
-                },
-                {
-                    record: {
-                        id: 'C',
-                        library: 'category'
-                    }
-                }
+                ]
             ],
             statuses: [
-                {
-                    record: {
-                        id: 'AA',
-                        library: 'status'
+                [
+                    {
+                        record: {
+                            id: 'AA',
+                            library: 'status'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 'BB',
+                            library: 'status'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 'CC',
+                            library: 'status'
+                        }
                     }
-                },
-                {
-                    record: {
-                        id: 'BB',
-                        library: 'status'
-                    }
-                },
-                {
-                    record: {
-                        id: 'CC',
-                        library: 'status'
-                    }
-                }
+                ]
             ],
             users_groups: [
-                {
-                    record: {
-                        id: 1,
-                        library: 'users_groups'
+                [
+                    {
+                        record: {
+                            id: 1,
+                            library: 'users_groups'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 2,
+                            library: 'users_groups'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 3,
+                            library: 'users_groups'
+                        }
                     }
-                },
-                {
-                    record: {
-                        id: 2,
-                        library: 'users_groups'
-                    }
-                },
-                {
-                    record: {
-                        id: 3,
-                        library: 'users_groups'
-                    }
-                }
+                ]
             ]
         };
         const mockTreeMultipleRepo: Mockify<ITreeRepo> = {
@@ -230,6 +241,18 @@ describe('TreePermissionDomain', () => {
             permissionTreeAttributes: ['category']
         };
 
+        const mockReducePermissionsArrayHelper: IReducePermissionsArrayHelper = {
+            reducePermissionsArray: jest.fn().mockReturnValue(true)
+        };
+
+        const mockReducePermissionsArrayHelperFalse: IReducePermissionsArrayHelper = {
+            reducePermissionsArray: jest.fn().mockReturnValue(false)
+        };
+
+        const mockReducePermissionsArrayHelperNull: IReducePermissionsArrayHelper = {
+            reducePermissionsArray: jest.fn().mockReturnValue(null)
+        };
+
         const params = {
             type: PermissionTypes.RECORD_ATTRIBUTE,
             action: RecordPermissionsActions.ACCESS_RECORD,
@@ -258,6 +281,7 @@ describe('TreePermissionDomain', () => {
 
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -277,6 +301,7 @@ describe('TreePermissionDomain', () => {
 
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -315,6 +340,7 @@ describe('TreePermissionDomain', () => {
 
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperNull,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -335,6 +361,7 @@ describe('TreePermissionDomain', () => {
 
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -378,6 +405,7 @@ describe('TreePermissionDomain', () => {
 
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueNoCatRepo as IValueRepo
@@ -411,6 +439,7 @@ describe('TreePermissionDomain', () => {
 
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
                 'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
                 'core.infra.value': mockValueMultipleRepo as IValueRepo
@@ -465,6 +494,7 @@ describe('TreePermissionDomain', () => {
 
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
                 'core.infra.value': mockValueMultipleRepo as IValueRepo

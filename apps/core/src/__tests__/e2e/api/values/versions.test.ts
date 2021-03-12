@@ -50,7 +50,7 @@ describe('Versions', () => {
         // Add records to the tree
         await makeGraphQlCall(`mutation {
             a1: treeAddElement(
-                treeId: "${treeName}", element: {id: "${treeElement1}", library: "users"}
+                treeId: "${treeName}", element: {id: "${treeElement1}", library: "${treeElementLibName}"}
             ) {id}
         }`);
 

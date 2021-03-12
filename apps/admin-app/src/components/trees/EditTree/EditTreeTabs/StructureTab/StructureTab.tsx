@@ -62,7 +62,9 @@ const _convertTreeRecord = (records: TREE_CONTENT_treeContent[], compact: boolea
                 ...r.record,
                 title: nodeTitle,
                 children: r.children ? _convertTreeRecord(r.children as TREE_CONTENT_treeContent[], compact) : [],
-                ancestors: r.ancestors ? _convertTreeRecord(r.ancestors as TREE_CONTENT_treeContent[], compact) : [],
+                ancestors: r.ancestors
+                    ? r.ancestors.map(a => _convertTreeRecord(a as TREE_CONTENT_treeContent[], compact))
+                    : [],
                 expanded: false
             };
         }
@@ -155,7 +157,9 @@ const StructureTab = ({
             }
         });
 
-        const convertedRecords = data.data.treeContent ? _convertTreeRecord(data.data.treeContent, compact) : [];
+        const convertedRecords = data.data.treeContent
+            ? _convertTreeRecord(data.data.treeContent, compact).map(i => ({...i, path}))
+            : [];
 
         // Update tree node with fetched data
         // We must get fresh node data from in case its state has changed during loading (expand/collapse...)

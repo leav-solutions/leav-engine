@@ -7,15 +7,18 @@ import styled from 'styled-components';
 import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../RecordCard';
 import {ITreeBreadcrumbMenuItem} from '../TreeNodeBreadcrumb';
+import {useTranslation} from 'react-i18next';
+import AltPaths from '../AltPaths';
 
 interface IPathPartProps {
     record: RecordIdentity_whoAmI;
     actions?: ITreeBreadcrumbMenuItem[];
+    altPaths?: RecordIdentity_whoAmI[][];
 }
 
 const PathPartWrapper = styled.div`
     position: relative;
-    padding-right: 60px;
+    padding-right: 30px;
     height: 30px;
 `;
 
@@ -27,10 +30,12 @@ const HoverDropdown = styled(Dropdown)`
     }
 `;
 
-function PathPart({record, actions = []}: IPathPartProps): JSX.Element {
+function PathPart({record, altPaths = [], actions = []}: IPathPartProps): JSX.Element {
     const [isHovering, setIsHovering] = useState<boolean>(false);
     const _handleMouseEnter = () => setIsHovering(true);
     const _handleMouseLeave = () => setIsHovering(false);
+    const [showAltPaths, setShowAltPaths] = useState<boolean>(false);
+    const {t} = useTranslation();
 
     const menuItems = actions
         .filter(a => !a.displayFilter || a.displayFilter(record))
@@ -38,24 +43,35 @@ function PathPart({record, actions = []}: IPathPartProps): JSX.Element {
             const action = () => item.action(record);
             return <Dropdown.Item key={index} text={item.text} icon={item.icon} onClick={action} />;
         });
+
+    if (altPaths.length) {
+        menuItems.push(
+            <Dropdown.Item
+                key="altPaths"
+                text={t('trees.alternative_paths')}
+                icon="list"
+                onClick={() => setShowAltPaths(true)}
+            />
+        );
+    }
+
     const displayMenu = !!menuItems.length;
     const showMenuBtn = <Icon name="ellipsis vertical" />;
 
     return (
-        <>
-            <PathPartWrapper
-                data-test-id="path_part_wrapper"
-                onMouseEnter={_handleMouseEnter}
-                onMouseLeave={_handleMouseLeave}
-            >
-                <RecordCard record={record} />
-                {displayMenu && isHovering && (
-                    <HoverDropdown trigger={showMenuBtn} icon={false}>
-                        <Dropdown.Menu>{menuItems}</Dropdown.Menu>
-                    </HoverDropdown>
-                )}
-            </PathPartWrapper>
-        </>
+        <PathPartWrapper
+            data-test-id="path_part_wrapper"
+            onMouseEnter={_handleMouseEnter}
+            onMouseLeave={_handleMouseLeave}
+        >
+            <RecordCard record={record} />
+            {displayMenu && isHovering && (
+                <HoverDropdown trigger={showMenuBtn} icon={false}>
+                    <Dropdown.Menu>{menuItems}</Dropdown.Menu>
+                </HoverDropdown>
+            )}
+            {showAltPaths && <AltPaths altPaths={altPaths} onClose={setShowAltPaths}></AltPaths>}
+        </PathPartWrapper>
     );
 }
 
