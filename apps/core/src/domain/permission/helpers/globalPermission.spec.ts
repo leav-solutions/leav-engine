@@ -46,24 +46,26 @@ describe('globalPermissionsHelper', () => {
 
         const mockTreeRepo: Mockify<ITreeRepo> = {
             getElementAncestors: global.__mockPromise([
-                {
-                    record: {
-                        id: 1,
-                        library: 'users_groups'
+                [
+                    {
+                        record: {
+                            id: 1,
+                            library: 'users_groups'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 2,
+                            library: 'users_groups'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 3,
+                            library: 'users_groups'
+                        }
                     }
-                },
-                {
-                    record: {
-                        id: 2,
-                        library: 'users_groups'
-                    }
-                },
-                {
-                    record: {
-                        id: 3,
-                        library: 'users_groups'
-                    }
-                }
+                ]
             ])
         };
 
@@ -123,24 +125,26 @@ describe('globalPermissionsHelper', () => {
     describe('getInheritedGlobalPermission', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
             getElementAncestors: global.__mockPromise([
-                {
-                    record: {
-                        id: 1,
-                        library: 'users_groups'
+                [
+                    {
+                        record: {
+                            id: 1,
+                            library: 'users_groups'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 2,
+                            library: 'users_groups'
+                        }
+                    },
+                    {
+                        record: {
+                            id: 3,
+                            library: 'users_groups'
+                        }
                     }
-                },
-                {
-                    record: {
-                        id: 2,
-                        library: 'users_groups'
-                    }
-                },
-                {
-                    record: {
-                        id: 3,
-                        library: 'users_groups'
-                    }
-                }
+                ]
             ])
         };
         test('Return inherited global permission', async () => {

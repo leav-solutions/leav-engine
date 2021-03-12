@@ -4,6 +4,7 @@
 import {IQueryInfos} from '_types/queryInfos';
 import {AppPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import permissionByUserGroupsHelper from './permissionByUserGroups';
+import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {ISimplePermissionHelper} from './simplePermission';
 
 describe('getPermissionByUserGroups', () => {
@@ -14,30 +15,46 @@ describe('getPermissionByUserGroups', () => {
 
     const mockUserGroups = [
         [
-            {
-                record: {
-                    id: '9'
+            [
+                {
+                    record: {
+                        id: '9'
+                    }
+                },
+                {
+                    record: {
+                        id: '1'
+                    }
                 }
-            },
-            {
-                record: {
-                    id: '1'
-                }
-            }
+            ]
         ],
         [
-            {
-                record: {
-                    id: '8'
+            [
+                {
+                    record: {
+                        id: '8'
+                    }
+                },
+                {
+                    record: {
+                        id: '0'
+                    }
                 }
-            },
-            {
-                record: {
-                    id: '0'
-                }
-            }
+            ]
         ]
     ];
+
+    const mockReducePermissionsArrayHelper: IReducePermissionsArrayHelper = {
+        reducePermissionsArray: jest.fn().mockReturnValue(true)
+    };
+
+    const mockReducePermissionsArrayHelperFalse: IReducePermissionsArrayHelper = {
+        reducePermissionsArray: jest.fn().mockReturnValue(false)
+    };
+
+    const mockReducePermissionsArrayHelperNull: IReducePermissionsArrayHelper = {
+        reducePermissionsArray: jest.fn().mockReturnValue(null)
+    };
 
     test('Retrieve first "allowed" permission', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
@@ -53,7 +70,8 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
-            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper
+            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -78,7 +96,8 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
-            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper
+            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -88,6 +107,7 @@ describe('getPermissionByUserGroups', () => {
             ctx
         });
 
+        expect(mockReducePermissionsArrayHelperFalse.reducePermissionsArray).toBeCalledWith([null, false]);
         expect(perm).toBe(false);
     });
 
@@ -99,7 +119,8 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
-            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper
+            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -109,6 +130,7 @@ describe('getPermissionByUserGroups', () => {
             ctx
         });
 
+        expect(mockReducePermissionsArrayHelperFalse.reducePermissionsArray).toBeCalledWith([false, false]);
         expect(perm).toBe(false);
     });
 
@@ -120,7 +142,8 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
-            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper
+            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -131,6 +154,7 @@ describe('getPermissionByUserGroups', () => {
         });
 
         expect(perm).toBe(false);
+        expect(mockSimplePermHelper.getSimplePermission).toBeCalled();
     });
 
     test('Return null if no permission found', async () => {
@@ -139,7 +163,8 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
-            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper
+            'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperNull
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -149,6 +174,7 @@ describe('getPermissionByUserGroups', () => {
             ctx
         });
 
+        expect(mockReducePermissionsArrayHelperNull.reducePermissionsArray).toBeCalledWith([null, null]);
         expect(perm).toBe(null);
     });
 });

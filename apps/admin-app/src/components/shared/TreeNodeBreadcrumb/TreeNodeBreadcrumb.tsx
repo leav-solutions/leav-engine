@@ -21,17 +21,19 @@ interface ITreeNodeBreadcrumbProps {
 
 function TreeNodeBreadcrumb({element, actions}: ITreeNodeBreadcrumbProps): JSX.Element {
     const breadcrumbSections: BreadcrumbSectionProps[] = [];
+    const altPaths: RecordIdentity_whoAmI[][] = [];
 
-    if (!!element.ancestors) {
-        const recordPath = element.ancestors.slice(0, -1);
-        for (const parent of recordPath) {
-            if (!parent.record || !parent.record.whoAmI) {
-                continue;
-            }
+    if (element.ancestors?.length) {
+        for (const path of element.ancestors.slice(1)) {
+            altPaths.push(path.map(p => p.record?.whoAmI));
+        }
 
+        const defaultPath = element.ancestors[0].slice(0, -1);
+
+        for (const el of defaultPath) {
             breadcrumbSections.push({
-                key: parent.record.whoAmI.id,
-                content: <PathPart record={parent.record.whoAmI} actions={actions} />,
+                key: el.record?.whoAmI?.id,
+                content: <PathPart record={el.record?.whoAmI} actions={actions} />,
                 link: false,
                 active: false
             });
@@ -42,7 +44,7 @@ function TreeNodeBreadcrumb({element, actions}: ITreeNodeBreadcrumbProps): JSX.E
     if (!!elementRecord && elementRecord.whoAmI) {
         breadcrumbSections.push({
             key: elementRecord.whoAmI.id,
-            content: <PathPart record={elementRecord.whoAmI} actions={actions} />,
+            content: <PathPart record={elementRecord.whoAmI} actions={actions} altPaths={altPaths} />,
             link: false,
             active: true
         });

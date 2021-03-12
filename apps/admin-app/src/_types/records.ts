@@ -25,7 +25,7 @@ export interface ITreeLinkNode {
 }
 
 export interface ITreeLinkElement extends ITreeLinkNode {
-    ancestors: ITreeLinkNode[];
+    ancestors: ITreeLinkNode[][];
 }
 
 export interface IGenericValue {

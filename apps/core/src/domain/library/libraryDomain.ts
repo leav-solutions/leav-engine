@@ -283,7 +283,6 @@ export default function ({
 
             await runBehaviorPostDelete(lib, {treeRepo, utils}, ctx);
 
-            // TODO: delete all records
             // get all records and delete them
             const records = await recordDomain.find({params: {library: id}, ctx});
             for (const r of records.list) {

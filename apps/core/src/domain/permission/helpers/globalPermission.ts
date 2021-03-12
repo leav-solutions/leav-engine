@@ -74,6 +74,7 @@ export default function ({
                 attribute: userGroupAttr.list[0],
                 ctx
             });
+
             const userGroupsPaths = await Promise.all(
                 userGroups.map(userGroupVal =>
                     treeRepo.getElementAncestors({
@@ -114,7 +115,7 @@ export default function ({
             const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
                 type,
                 action,
-                userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
+                userGroupsPaths: [groupAncestors.map(g => g.slice(0, -1))], // Start from parent group
                 applyTo,
                 ctx
             });

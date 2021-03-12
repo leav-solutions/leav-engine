@@ -16,7 +16,7 @@ describe('Trees', () => {
                 tree: {
                     id: "${testTreeName}",
                     label: {fr: "Test tree"},
-                    libraries: [{library: "users", settings: {allowMultiplePositions: false}}]
+                    libraries: [{library: "users", settings: {allowMultiplePositions: true}}]
                 }
             ) {
                 id
@@ -44,7 +44,7 @@ describe('Trees', () => {
         }`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.trees.list.length).toBeGreaterThanOrEqual(2);
+        expect(res.data.data.trees.list.length).toBeGreaterThanOrEqual(3);
         expect(res.data.errors).toBeUndefined();
     });
 
@@ -81,15 +81,19 @@ describe('Trees', () => {
         const resCreaRecord = await makeGraphQlCall(`
                 mutation {
                     r1: createRecord(library: "users") {id},
-                    r2: createRecord(library: "users") {id}
-                    r3: createRecord(library: "users") {id}
-                    r4: createRecord(library: "users") {id}
+                    r2: createRecord(library: "users") {id},
+                    r3: createRecord(library: "users") {id},
+                    r4: createRecord(library: "users") {id},
+                    r5: createRecord(library: "users") {id},
+                    r6: createRecord(library: "users") {id}
                 }
             `);
         const recordId1 = resCreaRecord.data.data.r1.id;
         const recordId2 = resCreaRecord.data.data.r2.id;
         const recordId3 = resCreaRecord.data.data.r3.id;
         const recordId4 = resCreaRecord.data.data.r4.id;
+        const recordId5 = resCreaRecord.data.data.r5.id;
+        const recordId6 = resCreaRecord.data.data.r6.id;
 
         // Add records to the tree
         const resAdd = await makeGraphQlCall(`mutation {
@@ -108,6 +112,36 @@ describe('Trees', () => {
         expect(resAdd.data.data.a1).toBeDefined();
         expect(resAdd.data.data.a1.id).toBeTruthy();
         expect(resAdd.data.errors).toBeUndefined();
+
+        // test element already present in ancestors
+        await makeGraphQlCall(`mutation {
+            a1: treeAddElement(
+                treeId: "${testTreeName}", 
+                    element: {id: "${recordId5}", library: "users"},
+                    order: 1
+            ) {id},
+            a2: treeAddElement(
+                treeId: "${testTreeName}", 
+                    element: {id: "${recordId6}", library: "users"},
+                    parent: {id: "${recordId5}", library: "users"}, 
+                    order: 1
+            ) {id},
+        }`);
+
+        const resErr = await makeGraphQlCall(`mutation {
+            a1: treeAddElement(
+                treeId: "${testTreeName}", 
+                    element: {id: "${recordId5}", library: "users"}, 
+                    parent: {id: "${recordId6}", library: "users"}, 
+                    order: 2
+            ) {id}
+        }`);
+
+        expect(resErr.status).toBe(200);
+        expect(resErr.data.data).toBeNull();
+        expect(resErr.data.errors).toBeDefined();
+        expect(resErr.data.errors[0].message).toBeDefined();
+        expect(resErr.data.errors[0].extensions.fields).toBeDefined();
 
         await makeGraphQlCall(`mutation {
             a4: treeAddElement(
@@ -162,7 +196,7 @@ describe('Trees', () => {
         expect(restreeContent.status).toBe(200);
         expect(restreeContent.data.data.treeContent).toBeDefined();
         expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
-        expect(restreeContent.data.data.treeContent).toHaveLength(2);
+        expect(restreeContent.data.data.treeContent).toHaveLength(3);
         expect(restreeContent.data.data.treeContent[0].record.library.id).toBeTruthy();
         expect(restreeContent.data.data.treeContent[0].order).toBe(0);
         expect(restreeContent.data.data.treeContent[1].order).toBe(1);
@@ -366,7 +400,9 @@ describe('Trees', () => {
         expect(resData.valElement.list[0].property[0].value.record.id).toBeTruthy();
 
         expect(resData.valParents.list[0].property[0].value.ancestors).toBeInstanceOf(Array);
-        expect(resData.valParents.list[0].property[0].value.ancestors.length).toBe(2);
+        expect(resData.valParents.list[0].property[0].value.ancestors.length).toBe(1);
+        expect(resData.valParents.list[0].property[0].value.ancestors[0]).toBeInstanceOf(Array);
+        expect(resData.valParents.list[0].property[0].value.ancestors[0].length).toBe(2);
 
         expect(resData.valChildren.list[0].property[0].value.children).toBeInstanceOf(Array);
         expect(resData.valChildren.list[0].property[0].value.children.length).toBe(1);

@@ -16,7 +16,7 @@ import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
-import {ITree, ITreeElement, ITreeNode, TreeBehavior} from '../../_types/tree';
+import {ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
@@ -142,7 +142,7 @@ export interface ITreeDomain {
         treeId: string;
         element: ITreeElement;
         ctx: IQueryInfos;
-    }): Promise<ITreeNode[]>;
+    }): Promise<TreePaths>;
 
     /**
      * Retrieve all records linked to an element via given attribute
@@ -302,7 +302,33 @@ export default function ({
             }
 
             if (await treeRepo.isElementPresent({treeId, element, ctx})) {
-                errors.element = Errors.ELEMENT_ALREADY_PRESENT;
+                if (!treeProps.libraries[element.library].allowMultiplePositions) {
+                    errors.element = Errors.ELEMENT_ALREADY_PRESENT;
+                    // if allow multiple positions is true, check if parents are not same
+                } else {
+                    if (
+                        parent &&
+                        (await this.getElementAncestors({treeId, element: parent, ctx})).some(ancestors =>
+                            ancestors.some(a => a.record.id === element.id && a.record.library === element.library)
+                        )
+                    ) {
+                        errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
+                    }
+
+                    const parentId = parent
+                        ? parent.id
+                        : `${'TREES_COLLECTION_NAME'}/${utils.getLibraryTreeId(element.library)}`;
+
+                    const childrens = await treeRepo.getElementChildren({
+                        treeId,
+                        element: {library: element.library, id: parentId},
+                        ctx
+                    });
+
+                    if (childrens.some(c => c.record?.id === element.id)) {
+                        errors.element = Errors.ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT;
+                    }
+                }
             }
 
             // If files tree, check if parent is not a file
@@ -335,6 +361,15 @@ export default function ({
 
             if (parentTo !== null && !(await _treeElementExists(parentTo, ctx))) {
                 errors.parentTo = Errors.UNKNOWN_PARENT;
+            }
+
+            if (
+                parentTo &&
+                (await this.getElementAncestors({treeId, element: parentTo, ctx})).some(ancestors =>
+                    ancestors.some(a => a.record.id === element.id && a.record.library === element.library)
+                )
+            ) {
+                errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
             }
 
             // If files tree, check if parent is not a file
@@ -378,14 +413,12 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
-            const treeContent = await treeRepo.getTreeContent({treeId, startingNode, ctx});
-
-            return treeContent;
+            return treeRepo.getTreeContent({treeId, startingNode, ctx});
         },
         async getElementChildren({treeId, element, ctx}): Promise<ITreeNode[]> {
             return treeRepo.getElementChildren({treeId, element, ctx});
         },
-        async getElementAncestors({treeId, element, ctx}): Promise<ITreeNode[]> {
+        async getElementAncestors({treeId, element, ctx}): Promise<TreePaths> {
             return treeRepo.getElementAncestors({treeId, element, ctx});
         },
         async getLinkedRecords({treeId, attribute, element, ctx}): Promise<IRecord[]> {

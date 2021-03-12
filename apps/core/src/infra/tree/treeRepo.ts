@@ -6,7 +6,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {ITree, ITreeElement, ITreeNode} from '_types/tree';
+import {ITree, ITreeElement, ITreeNode, TreePaths} from '_types/tree';
 import {collectionTypes, IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
@@ -139,7 +139,7 @@ export interface ITreeRepo {
         treeId: string;
         element: ITreeElement;
         ctx: IQueryInfos;
-    }): Promise<ITreeNode[]>;
+    }): Promise<TreePaths>;
 
     getLinkedRecords({
         treeId,
@@ -437,7 +437,7 @@ export default function ({
                 return {record: dbUtils.cleanup(elem)};
             });
         },
-        async getElementAncestors({treeId, element, ctx}): Promise<ITreeNode[]> {
+        async getElementAncestors({treeId, element, ctx}): Promise<TreePaths> {
             if (!element.id) {
                 return [];
             }
@@ -449,17 +449,19 @@ export default function ({
                     IN 0..${MAX_TREE_DEPTH} INBOUND ${element.library + '/' + element.id}
                     ${treeEdgeCollec}
                     SORT COUNT(p.edges) DESC
-                    FILTER v._id != ${_getRootId(treeId)}
-                    RETURN v
+                    FILTER v._id == ${_getRootId(treeId)}
+                    RETURN APPEND([], REVERSE(p.vertices[* FILTER CURRENT._key != ${treeId}]))
             `;
 
             const res = await dbService.execute({query, ctx});
 
-            return res.map(elem => {
-                elem.library = elem._id.split('/')[0];
+            return res.map(path =>
+                path.map(elem => {
+                    elem.library = elem._id.split('/')[0];
 
-                return {record: dbUtils.cleanup(elem)};
-            });
+                    return {record: dbUtils.cleanup(elem)};
+                })
+            );
         },
         async getLinkedRecords({treeId, attribute, element, ctx}): Promise<IRecord[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);

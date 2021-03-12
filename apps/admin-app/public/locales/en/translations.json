@@ -130,7 +130,8 @@
         "behavior_standard": "Standard",
         "default_view": "Default view",
         "allow_multiple_positions": "Allow multiple positions",
-        "add_library": "Add library"
+        "add_library": "Add library",
+        "alternative_paths": "Alternative paths"
     },
     "permissions": {
         "title": "App Permissions",

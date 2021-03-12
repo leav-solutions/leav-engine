@@ -11,7 +11,18 @@ describe('TreeLibraryPermissions', () => {
     beforeAll(async () => {
         // Create tree
         await gqlSaveLibrary(treeLibId, 'Test lib', []);
-        await gqlSaveTree(permTreeName, 'Test tree', [treeLibId]);
+
+        await makeGraphQlCall(`mutation {
+            saveTree(
+                tree: {
+                    id: "${permTreeName}",
+                    label: {fr: "Test tree"},
+                    libraries: [{library: "${treeLibId}", settings: {allowMultiplePositions: true}}]
+                }
+            ) {
+                id
+            }
+        }`);
 
         allUsersTreeElemId = await gqlGetAllUsersGroupId();
         await gqlAddUserToGroup(allUsersTreeElemId);
@@ -97,19 +108,29 @@ describe('TreeLibraryPermissions', () => {
     describe('Herited permissions', () => {
         let userGroupId1;
         let userGroupId2;
+        let userGroupId3;
+        let userGroupId4;
 
         beforeAll(async () => {
             // Create 2 users groups
             const resCreateGroups = await makeGraphQlCall(`mutation {
                 r1: createRecord(library: "users_groups") {id},
-                r2: createRecord(library: "users_groups") {id}
+                r2: createRecord(library: "users_groups") {id},
+                r3: createRecord(library: "users_groups") {id},
+                r4: createRecord(library: "users_groups") {id}
             }`);
+
             userGroupId1 = resCreateGroups.data.data.r1.id;
             userGroupId2 = resCreateGroups.data.data.r2.id;
+            userGroupId3 = resCreateGroups.data.data.r3.id;
+            userGroupId4 = resCreateGroups.data.data.r4.id;
 
             // Add users groups to tree
             await makeGraphQlCall(`mutation {
                 el1: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId1}", library: "users_groups"}) {
+                    id
+                },
+                el3: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId3}", library: "users_groups"}) {
                     id
                 },
             }`);
@@ -120,12 +141,22 @@ describe('TreeLibraryPermissions', () => {
                     element: {id: "${userGroupId2}", library: "users_groups"},
                     parent: {id: "${userGroupId1}", library: "users_groups"}
                 ) { id },
+                el2: treeAddElement(
+                    treeId: "users_groups",
+                    element: {id: "${userGroupId4}", library: "users_groups"},
+                    parent: {id: "${userGroupId3}", library: "users_groups"}
+                ) { id },
+                el3: treeAddElement(
+                    treeId: "users_groups",
+                    element: {id: "${userGroupId4}", library: "users_groups"},
+                    parent: {id: "${userGroupId2}", library: "users_groups"}
+                ) { id },
             }`);
 
             // User groups tree: [ROOT] -> group 1 -> group 2
             // We save a permission on group 1
 
-            // Save perm
+            // Save perms
             await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
@@ -134,6 +165,19 @@ describe('TreeLibraryPermissions', () => {
                         usersGroup: "${userGroupId1}",
                         actions: [
                             {name: access_tree, allowed: false},
+                        ]
+                    }
+                ) { type }
+            }`);
+
+            await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: tree_library,
+                        applyTo: "${permTreeName}/${treeLibId}",
+                        usersGroup: "${userGroupId3}",
+                        actions: [
+                            {name: access_tree, allowed: true},
                         ]
                     }
                 ) { type }
@@ -155,6 +199,21 @@ describe('TreeLibraryPermissions', () => {
             expect(permHeritGroup.status).toBe(200);
             expect(permHeritGroup.data.data.p[0].name).toBe('access_tree');
             expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
+
+            // Get perm an test with one path to false and another to true
+            const pHG = await makeGraphQlCall(`{
+                p: heritedPermissions(
+                    type: tree_library,
+                    applyTo: "${permTreeName}/${treeLibId}"
+                    actions: [access_tree],
+                    userGroupId: "${userGroupId4}"
+                ) { name allowed }
+              }
+            `);
+
+            expect(pHG.status).toBe(200);
+            expect(pHG.data.data.p[0].name).toBe('access_tree');
+            expect(pHG.data.data.p[0].allowed).toBe(true);
         });
     });
 });

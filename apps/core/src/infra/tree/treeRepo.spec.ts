@@ -698,27 +698,29 @@ describe('TreeRepo', () => {
     describe('getElementParents', () => {
         test('Should return element parents', async () => {
             const traversalRes = [
-                {
-                    _key: '123456',
-                    _id: 'images/123456',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 77777,
-                    modified_at: 77777
-                },
-                {
-                    _key: '123457',
-                    _id: 'images/123457',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 88888,
-                    modified_at: 88888
-                },
-                {
-                    _key: '123458',
-                    _id: 'images/123458',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 99999,
-                    modified_at: 99999
-                }
+                [
+                    {
+                        _key: '123456',
+                        _id: 'images/123456',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 77777,
+                        modified_at: 77777
+                    },
+                    {
+                        _key: '123457',
+                        _id: 'images/123457',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 88888,
+                        modified_at: 88888
+                    },
+                    {
+                        _key: '123458',
+                        _id: 'images/123458',
+                        _rev: '_WgJhrXO--_',
+                        created_at: 99999,
+                        modified_at: 99999
+                    }
+                ]
             ];
 
             const mockDbServ = {
@@ -765,27 +767,29 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(values).toEqual([
-                {
-                    record: {
-                        id: '123456',
-                        created_at: 77777,
-                        modified_at: 77777
+                [
+                    {
+                        record: {
+                            id: '123456',
+                            created_at: 77777,
+                            modified_at: 77777
+                        }
+                    },
+                    {
+                        record: {
+                            id: '123457',
+                            created_at: 88888,
+                            modified_at: 88888
+                        }
+                    },
+                    {
+                        record: {
+                            id: '123458',
+                            created_at: 99999,
+                            modified_at: 99999
+                        }
                     }
-                },
-                {
-                    record: {
-                        id: '123457',
-                        created_at: 88888,
-                        modified_at: 88888
-                    }
-                },
-                {
-                    record: {
-                        id: '123458',
-                        created_at: 99999,
-                        modified_at: 99999
-                    }
-                }
+                ]
             ]);
         });
     });

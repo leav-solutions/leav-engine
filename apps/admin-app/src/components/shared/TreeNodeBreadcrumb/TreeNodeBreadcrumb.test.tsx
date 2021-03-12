@@ -29,30 +29,32 @@ describe('TreeNodeBreadcrumb', () => {
             }
         },
         ancestors: [
-            {
-                record: {
-                    whoAmI: {
-                        ...baseWhoAmI,
-                        id: '654321'
+            [
+                {
+                    record: {
+                        whoAmI: {
+                            ...baseWhoAmI,
+                            id: '654321'
+                        }
+                    }
+                },
+                {
+                    record: {
+                        whoAmI: {
+                            ...baseWhoAmI,
+                            id: '987654'
+                        }
+                    }
+                },
+                {
+                    record: {
+                        whoAmI: {
+                            ...baseWhoAmI,
+                            id: '123456'
+                        }
                     }
                 }
-            },
-            {
-                record: {
-                    whoAmI: {
-                        ...baseWhoAmI,
-                        id: '987654'
-                    }
-                }
-            },
-            {
-                record: {
-                    whoAmI: {
-                        ...baseWhoAmI,
-                        id: '123456'
-                    }
-                }
-            }
+            ]
         ]
     };
 

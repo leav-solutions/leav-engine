@@ -12,8 +12,6 @@ import {IQueryInfos} from '../../../../_types/queryInfos';
 import {getConfig} from '../../../../config';
 import {init} from '../globalSetup';
 
-// import FormData from 'form-data';
-
 const testLibName = 'test_import';
 const testLibNameQuery = 'testImport';
 
@@ -53,24 +51,6 @@ describe('Import', () => {
 
         const {coreContainer} = await init(conf);
         const importDomain: IImportDomain = coreContainer.cradle['core.domain.import'];
-
-        // const file = fs.createReadStream(path.resolve(appRoot + '/src/__tests__/e2e/api/import/import.test.json')); // test file
-
-        // const op = {
-        //     query: `mutation ($file: Upload!) { import(file: $file) }`,
-        //     variables: {
-        //         file: null
-        //     }
-        // };
-
-        // const map = {
-        //     '0': ['variables.file']
-        // };
-
-        // let formData = new FormData();
-        // formData.append('operations', JSON.stringify(op));
-        // formData.append('map', JSON.stringify(map));
-        // formData.append('0', file, {filename: 'import.test.json'});
 
         const file = await fs.promises.readFile(
             path.resolve(appRoot + '/src/__tests__/e2e/api/import/import.test.json')

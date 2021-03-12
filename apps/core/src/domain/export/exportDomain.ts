@@ -1,22 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {IAttribute, AttributeTypes} from '../../_types/attribute';
+import {IValue} from '../../_types/value';
+import {IRecord} from '../../_types/record';
+import validateLibAttributes from '../library/helpers/validateLibAttributes';
 import {IRecordDomain, IRecordFiltersLight} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IValidateHelper} from '../helpers/validate';
 import ExcelJS from 'exceljs';
 import {pick} from 'lodash';
+import ValidationError from '../../errors/ValidationError';
+import appRoot from 'app-root-path';
 import path from 'path';
 import * as Config from '_types/config';
-import ValidationError from '../../errors/ValidationError';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {IQueryInfos} from '../../_types/queryInfos';
-import {IRecord} from '../../_types/record';
-import {IValue} from '../../_types/value';
-import {IValidateHelper} from '../helpers/validate';
-import validateLibAttributes from '../library/helpers/validateLibAttributes';
+
+export const DIR_PATH = '/exports';
 
 export interface IExportParams {
     library: string;
@@ -191,11 +194,9 @@ export default function ({
 
             const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;
 
-            const destFolder = config.export.directory;
+            await workbook.xlsx.writeFile(`${path.resolve(appRoot + DIR_PATH)}/${filename}`);
 
-            await workbook.xlsx.writeFile(`${path.resolve(destFolder)}/${filename}`);
-
-            return `${destFolder}/${filename}`;
+            return `${DIR_PATH}/${filename}`;
         }
     };
 }

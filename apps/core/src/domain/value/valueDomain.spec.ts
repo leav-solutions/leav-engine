@@ -1638,24 +1638,26 @@ describe('ValueDomain', () => {
 
             const mockTreeRepo: Mockify<ITreeRepo> = {
                 getElementAncestors: global.__mockPromise([
-                    {
-                        record: {
-                            id: 9,
-                            library: 'my_lib'
+                    [
+                        {
+                            record: {
+                                id: 9,
+                                library: 'my_lib'
+                            }
+                        },
+                        {
+                            record: {
+                                id: 8,
+                                library: 'my_lib'
+                            }
+                        },
+                        {
+                            record: {
+                                id: 7,
+                                library: 'my_lib'
+                            }
                         }
-                    },
-                    {
-                        record: {
-                            id: 8,
-                            library: 'my_lib'
-                        }
-                    },
-                    {
-                        record: {
-                            id: 7,
-                            library: 'my_lib'
-                        }
-                    }
+                    ]
                 ])
             };
 
@@ -1748,62 +1750,68 @@ describe('ValueDomain', () => {
                     switch (treeId) {
                         case 'my_tree':
                             parents = [
-                                {
-                                    record: {
-                                        id: 9,
-                                        library: 'my_lib'
+                                [
+                                    {
+                                        record: {
+                                            id: 9,
+                                            library: 'my_lib'
+                                        }
+                                    },
+                                    {
+                                        record: {
+                                            id: 8,
+                                            library: 'my_lib'
+                                        }
+                                    },
+                                    {
+                                        record: {
+                                            id: 7,
+                                            library: 'my_lib'
+                                        }
                                     }
-                                },
-                                {
-                                    record: {
-                                        id: 8,
-                                        library: 'my_lib'
-                                    }
-                                },
-                                {
-                                    record: {
-                                        id: 7,
-                                        library: 'my_lib'
-                                    }
-                                }
+                                ]
                             ];
                             break;
                         case 'other_tree':
                             parents = [
-                                {
-                                    record: {
-                                        id: 3,
-                                        library: 'my_lib'
+                                [
+                                    {
+                                        record: {
+                                            id: 3,
+                                            library: 'my_lib'
+                                        }
+                                    },
+                                    {
+                                        record: {
+                                            id: 2,
+                                            library: 'my_lib'
+                                        }
+                                    },
+                                    {
+                                        record: {
+                                            id: '1',
+                                            library: 'my_lib'
+                                        }
                                     }
-                                },
-                                {
-                                    record: {
-                                        id: 2,
-                                        library: 'my_lib'
-                                    }
-                                },
-                                {
-                                    record: {
-                                        id: '1',
-                                        library: 'my_lib'
-                                    }
-                                }
+                                ]
                             ];
                             break;
                         case 'third_tree':
                             parents = [
-                                {
-                                    record: {
-                                        id: 99,
-                                        library: 'my_lib'
+                                [
+                                    {
+                                        record: {
+                                            id: 99,
+                                            library: 'my_lib'
+                                        }
+                                    },
+                                    {
+                                        record: {
+                                            id: 88,
+                                            library: 'my_lib'
+                                        }
                                     }
-                                },
-                                {
-                                    record: {
-                                        id: 88,
-                                        library: 'my_lib'
-                                    }
-                                }
+                                ]
                             ];
                             break;
                     }
@@ -1884,24 +1892,26 @@ describe('ValueDomain', () => {
 
             const mockTreeRepo: Mockify<ITreeRepo> = {
                 getElementAncestors: global.__mockPromise([
-                    {
-                        record: {
-                            id: 9,
-                            library: 'my_lib'
+                    [
+                        {
+                            record: {
+                                id: 9,
+                                library: 'my_lib'
+                            }
+                        },
+                        {
+                            record: {
+                                id: 8,
+                                library: 'my_lib'
+                            }
+                        },
+                        {
+                            record: {
+                                id: 7,
+                                library: 'my_lib'
+                            }
                         }
-                    },
-                    {
-                        record: {
-                            id: 8,
-                            library: 'my_lib'
-                        }
-                    },
-                    {
-                        record: {
-                            id: 7,
-                            library: 'my_lib'
-                        }
-                    }
+                    ]
                 ])
             };
 

@@ -4,12 +4,13 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
-import {GraphQLScalarType} from 'graphql';
+import {GraphQLScalarType, GraphQLResolveInfo} from 'graphql';
 import {isNumber} from 'util';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITree, ITreeElement, TreeBehavior} from '../../../_types/tree';
+import {ITree, ITreeElement, TreeBehavior, ITreeNode, TreePaths} from '../../../_types/tree';
+import {IRecord} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {ISaveTreeMutationArgs, ITreeLibraryForGraphQL, ITreePermissionsConfForGraphQL, ITreesQueryArgs} from './_types';
@@ -124,7 +125,7 @@ export default function ({
                     type TreeNode {
                         order: Int!,
                         record: Record!,
-                        ancestors: [TreeNode!],
+                        ancestors: [[TreeNode!]!],
                         children: [TreeNode!],
                         linkedRecords(attribute: ID): [Record!]
                     }
@@ -204,13 +205,17 @@ export default function ({
                         ): Promise<IList<ITree>> {
                             return treeDomain.getTrees({params: {filters, withCount: true, pagination, sort}, ctx});
                         },
-                        async treeContent(_, {treeId, startAt}: {treeId: string; startAt: ITreeElement}, ctx) {
+                        async treeContent(
+                            _,
+                            {treeId, startAt}: {treeId: string; startAt: ITreeElement},
+                            ctx: IQueryInfos
+                        ): Promise<ITreeNode[]> {
                             const res = await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
                             return res.map(r => ({...r, treeId}));
                         },
-                        async fullTreeContent(_, {treeId}: {treeId: string}, ctx) {
+                        async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {
                             return treeDomain.getTreeContent({treeId, ctx});
                         }
                     },
@@ -297,7 +302,12 @@ export default function ({
                         }
                     },
                     TreeNode: {
-                        children: async (parent, _, ctx, info) => {
+                        children: async (
+                            parent: ITreeNode & {treeId?: string},
+                            _,
+                            ctx: IQueryInfos,
+                            info: GraphQLResolveInfo
+                        ): Promise<ITreeNode[]> => {
                             if (typeof parent.children !== 'undefined') {
                                 return parent.children;
                             }
@@ -314,7 +324,12 @@ export default function ({
                             // Add treeId as it might be useful for nested resolvers
                             return children.map(n => ({...n, treeId}));
                         },
-                        ancestors: async (parent, _, ctx, info) => {
+                        ancestors: async (
+                            parent: ITreeNode & {treeId?: string},
+                            _,
+                            ctx: IQueryInfos,
+                            info: GraphQLResolveInfo
+                        ): Promise<TreePaths> => {
                             const element = {
                                 id: parent.record.id,
                                 library: parent.record.library
@@ -325,10 +340,15 @@ export default function ({
                             const ancestors = await treeDomain.getElementAncestors({treeId, element, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
-                            return ancestors.map(n => ({...n, treeId}));
+                            return ancestors.map(path => path.map(n => ({...n, treeId})));
                         },
-                        linkedRecords: async (parent, {attribute}, ctx, info) => {
-                            const attributeProps = await attributeDomain.getAttributeProperties(attribute);
+                        linkedRecords: async (
+                            parent: ITreeNode & {treeId?: string},
+                            {attribute}: {attribute: string},
+                            ctx: IQueryInfos,
+                            info: GraphQLResolveInfo
+                        ): Promise<IRecord[]> => {
+                            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
                             const element = {
                                 id: parent.record.id,
                                 library: parent.record.library

@@ -129,7 +129,8 @@
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
         "allow_multiple_positions": "Autoriser l'ajout multiple",
-        "add_library": "Ajouter une bibliothèque"
+        "add_library": "Ajouter une bibliothèque",
+        "alternative_paths": "Chemins alternatifs"
     },
     "permissions": {
         "title": "Permissions application",

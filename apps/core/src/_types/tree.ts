@@ -29,10 +29,12 @@ export interface ITreeNode {
     order?: number;
     record?: IRecord;
     parent?: ITreeNode[];
-    ancestors?: ITreeNode[];
+    ancestors?: TreePaths;
     children?: ITreeNode[];
     linkedRecords?: IRecord[];
 }
+
+export type TreePaths = ITreeNode[][];
 
 export enum TreeBehavior {
     STANDARD = 'standard',

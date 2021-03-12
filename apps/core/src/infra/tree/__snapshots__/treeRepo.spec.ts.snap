@@ -181,8 +181,8 @@ exports[`TreeRepo getElementParents Should return element parents 1`] = `
                     IN 0..@value0 INBOUND @value1
                     @@value2
                     SORT COUNT(p.edges) DESC
-                    FILTER v._id != @value3
-                    RETURN v
+                    FILTER v._id == @value3
+                    RETURN APPEND([], REVERSE(p.vertices[* FILTER CURRENT._key != @value4]))
             "
 `;
 
@@ -192,6 +192,7 @@ Object {
   "value0": 1000,
   "value1": "images/123458",
   "value3": "core_trees/test_tree",
+  "value4": "test_tree",
 }
 `;
 

@@ -14,7 +14,7 @@ import {
     TreePermissionsActions
 } from '_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITreeElement, ITreeNode} from '_types/tree';
+import {ITreeElement, ITreeNode, TreePaths} from '_types/tree';
 
 export interface IPermissionTarget {
     attributeId?: string;
@@ -45,7 +45,7 @@ export type PermByActionsRes = {[name: string]: boolean | null} | null;
 export interface IGetPermissionByUserGroupsParams {
     type: PermissionTypes;
     action: PermissionsActions;
-    userGroupsPaths: ITreeNode[][];
+    userGroupsPaths: TreePaths[];
     applyTo?: string;
     permissionTreeTarget?: IPermissionsTreeTarget;
     ctx: IQueryInfos;
@@ -190,7 +190,7 @@ export interface IGetDefaultPermissionParams {
     action?: any;
     applyTo?: string;
     userId?: string;
-    userGroups?: ITreeNode[][];
+    userGroups?: TreePaths[];
 }
 
 export interface IGetTreeBasedPermissionParams {

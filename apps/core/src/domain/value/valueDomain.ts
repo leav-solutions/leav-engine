@@ -181,9 +181,11 @@ export default function ({
                                 element: treeElem,
                                 ctx
                             });
+
                             return {
                                 name: treeName,
-                                currentIndex: 0,
+                                elementIndex: 0,
+                                branchIndex: 0,
                                 elements: ancestors
                             };
                         }

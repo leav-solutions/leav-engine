@@ -50,22 +50,24 @@ describe('TreeValuesList', () => {
                 }
             },
             ancestors: [
-                {
-                    record: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '654321'
+                [
+                    {
+                        record: {
+                            whoAmI: {
+                                ...baseWhoAmI,
+                                id: '654321'
+                            }
+                        }
+                    },
+                    {
+                        record: {
+                            whoAmI: {
+                                ...baseWhoAmI,
+                                id: '987654'
+                            }
                         }
                     }
-                },
-                {
-                    record: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '987654'
-                        }
-                    }
-                }
+                ]
             ]
         },
         {
@@ -76,22 +78,24 @@ describe('TreeValuesList', () => {
                 }
             },
             ancestors: [
-                {
-                    record: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '888888'
+                [
+                    {
+                        record: {
+                            whoAmI: {
+                                ...baseWhoAmI,
+                                id: '888888'
+                            }
+                        }
+                    },
+                    {
+                        record: {
+                            whoAmI: {
+                                ...baseWhoAmI,
+                                id: '999999'
+                            }
                         }
                     }
-                },
-                {
-                    record: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '999999'
-                        }
-                    }
-                }
+                ]
             ]
         }
     ];

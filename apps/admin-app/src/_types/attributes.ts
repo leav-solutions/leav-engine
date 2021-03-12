@@ -17,7 +17,7 @@ export interface ITreeValuesList {
     record: {
         whoAmI: RecordIdentity_whoAmI;
     };
-    ancestors: ITreeValuesListAncestors[] | null;
+    ancestors: ITreeValuesListAncestors[][] | null;
 }
 
 export interface IValuesListConf {
