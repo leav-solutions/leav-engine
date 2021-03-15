@@ -102,6 +102,19 @@ describe('Utils', () => {
             ).toStrictEqual({key1: 'val1', key2: 'val2'});
         });
 
+        test('Convert an array of name/value object to an object with specified fields names', async () => {
+            expect(
+                utilsModule.nameValArrayToObj(
+                    [
+                        {myKey: 'key1', myValueField: 'val1'},
+                        {myKey: 'key2', myValueField: 'val2'}
+                    ],
+                    'myKey',
+                    'myValueField'
+                )
+            ).toStrictEqual({key1: 'val1', key2: 'val2'});
+        });
+
         test('When array if empty or undefined, return null', () => {
             expect(utilsModule.nameValArrayToObj([])).toBe(null);
             expect(utilsModule.nameValArrayToObj()).toBe(null);
@@ -116,15 +129,36 @@ describe('Utils', () => {
                 tutu: 'titi'
             };
 
-            const arr = utilsModule.objToNameValArray(obj, 'myValueField');
+            const arr = utilsModule.objToNameValArray(obj);
 
             expect(arr).toEqual([
                 {
                     name: 'toto',
-                    myValueField: 'tata'
+                    value: 'tata'
                 },
                 {
                     name: 'tutu',
+                    value: 'titi'
+                }
+            ]);
+        });
+
+        test('Convert an object to an array with specified key and value fields', async () => {
+            const utilsModule = utils();
+            const obj = {
+                toto: 'tata',
+                tutu: 'titi'
+            };
+
+            const arr = utilsModule.objToNameValArray(obj, 'myKey', 'myValueField');
+
+            expect(arr).toEqual([
+                {
+                    myKey: 'toto',
+                    myValueField: 'tata'
+                },
+                {
+                    myKey: 'tutu',
                     myValueField: 'titi'
                 }
             ]);

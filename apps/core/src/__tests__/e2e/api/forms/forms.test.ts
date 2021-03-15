@@ -8,6 +8,7 @@ describe('Forms', () => {
     const libraryId2 = 'forms_test_library2';
     const fieldAttributeId = 'forms_test_attribute';
     const formName = 'test_form';
+    const formName2 = 'test_other_form';
 
     beforeAll(async () => {
         // Create libraries
@@ -189,5 +190,76 @@ describe('Forms', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.forms.list).toHaveLength(1);
         expect(res.data.data.forms.list[0].id).toBe(formName);
+    });
+
+    test('Preserve settings when saving content', async () => {
+        // Create form with elements
+        await makeGraphQlCall(`mutation {
+            saveForm(
+                form: {
+                    id: "${formName2}"
+                    library: "${libraryId}"
+                    label: { fr: "Formulaire édition" }
+                    elements: [
+                        {
+                            elements: [
+                                {
+                                    id: "some_container"
+                                    containerId: "__root"
+                                    order: 0
+                                    type: layout
+                                    uiElementType: "fields_container"
+                                    settings: []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ) {
+                id
+            }
+        }`);
+
+        // Update withouth sending elements
+        await makeGraphQlCall(`mutation {
+            saveForm(
+                form: {
+                    id: "${formName2}"
+                    library: "${libraryId}"
+                    label: { fr: "Formulaire édition modifié" }
+                }
+            ) {
+                id
+            }
+        }`);
+
+        // Elements should still be there
+        const res = await makeGraphQlCall(`{
+            forms(filters: { library: "${libraryId}", id: "${formName2}" }) {
+                list {
+                    id
+                    label
+                    library {
+                        id
+                        label
+                    }
+                    dependencyAttributes {
+                        id
+                    }
+                    elements {
+                        elements {
+                            id
+                        }
+                    }
+                }
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.forms.list).toHaveLength(1);
+        expect(res.data.data.forms.list[0].id).toBe(formName2);
+        expect(res.data.data.forms.list[0].elements).toBeDefined();
+        expect(res.data.data.forms.list[0].elements.length).toBeGreaterThanOrEqual(1);
     });
 });
