@@ -16,7 +16,7 @@ describe('Trees', () => {
                 tree: {
                     id: "${testTreeName}",
                     label: {fr: "Test tree"},
-                    libraries: [{library: "users", settings: {allowMultiplePositions: true}}]
+                    libraries: [{library: "users", settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}}]
                 }
             ) {
                 id

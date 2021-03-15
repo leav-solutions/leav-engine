@@ -262,6 +262,8 @@ export interface TreeLibraryInput {
 
 export interface TreeLibrarySettingsInput {
     allowMultiplePositions: boolean;
+    allowedAtRoot: boolean;
+    allowedChildren: string[];
 }
 
 export interface TreeNodePermissionsConfInput {

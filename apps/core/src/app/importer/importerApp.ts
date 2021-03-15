@@ -67,7 +67,9 @@ export default function ({
                         (libs: typeof treeToSave.libraries, libId: string) => ({
                             ...libs,
                             [libId]: {
-                                allowMultiplePositions: false
+                                allowMultiplePositions: false,
+                                allowedAtRoot: true,
+                                allowedChildren: ['__all__']
                             }
                         }),
                         {}

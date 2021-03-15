@@ -146,7 +146,10 @@ export async function gqlSaveTree(id: string, label: string, libraries: string[]
                 id: "${id}",
                 label: {fr: "${label}"},
                 libraries: [${libraries
-                    .map(l => `{library: "${l}", settings: {allowMultiplePositions: false}}`)
+                    .map(
+                        l =>
+                            `{library: "${l}", settings: {allowMultiplePositions: false, allowedAtRoot: true,  allowedChildren: ["__all__"]}}`
+                    )
                     .join(', ')}]}
         ) {
             id

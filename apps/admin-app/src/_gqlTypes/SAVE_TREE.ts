@@ -41,6 +41,8 @@ export interface SAVE_TREE_saveTree_libraries_library {
 
 export interface SAVE_TREE_saveTree_libraries_settings {
     allowMultiplePositions: boolean;
+    allowedAtRoot: boolean;
+    allowedChildren: string[];
 }
 
 export interface SAVE_TREE_saveTree_libraries {

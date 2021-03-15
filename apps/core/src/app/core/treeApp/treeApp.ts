@@ -74,6 +74,8 @@ export default function ({
 
                     type TreeLibrarySettings {
                         allowMultiplePositions: Boolean!
+                        allowedChildren: [String!]!
+                        allowedAtRoot: Boolean!
                     }
 
                     type TreeLibrary {
@@ -97,6 +99,8 @@ export default function ({
 
                     input TreeLibrarySettingsInput {
                         allowMultiplePositions: Boolean!
+                        allowedChildren: [String!]!
+                        allowedAtRoot: Boolean!
                     }
 
                     input TreeLibraryInput {

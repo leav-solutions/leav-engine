@@ -7,6 +7,8 @@ import {IKeyValue} from './shared';
 
 export interface ITreeLibrarySettings {
     allowMultiplePositions: boolean;
+    allowedChildren: string[];
+    allowedAtRoot: boolean;
 }
 
 export interface ITree extends ICoreEntity {

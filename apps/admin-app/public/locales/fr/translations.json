@@ -128,7 +128,10 @@
         "behavior": "Comportement",
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
+        "allow_children": "Autoriser les enfants",
+        "all_libraries_authorized": "Toutes les bibliothèques sont autorisées par défaut",
         "allow_multiple_positions": "Autoriser l'ajout multiple",
+        "allowed_at_root": "Autoriser à la racine",
         "add_library": "Ajouter une bibliothèque",
         "alternative_paths": "Chemins alternatifs"
     },

@@ -112,10 +112,14 @@ describe('TreeDataValidation', () => {
                         ...mockFilesTree,
                         libraries: {
                             lib1: {
-                                allowMultiplePositions: false
+                                allowMultiplePositions: false,
+                                allowedAtRoot: true,
+                                allowedChildren: ['__all__']
                             },
                             lib2: {
-                                allowMultiplePositions: false
+                                allowMultiplePositions: false,
+                                allowedAtRoot: true,
+                                allowedChildren: ['__all__']
                             }
                         }
                     },

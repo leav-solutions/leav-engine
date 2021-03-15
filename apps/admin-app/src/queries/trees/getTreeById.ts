@@ -39,6 +39,8 @@ export const getTreeByIdQuery = gql`
                     }
                     settings {
                         allowMultiplePositions
+                        allowedAtRoot
+                        allowedChildren
                     }
                 }
             }
