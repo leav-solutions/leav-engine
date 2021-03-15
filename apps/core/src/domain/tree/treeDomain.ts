@@ -206,6 +206,12 @@ export default function ({
         return !!record.list.length;
     }
 
+    const _isForbiddenAsChild = (treeProps: ITree, parent: ITreeElement, element: ITreeElement): boolean =>
+        (parent === null && !treeProps.libraries[element.library].allowedAtRoot) ||
+        (parent !== null &&
+            !treeProps.libraries[parent.library].allowedChildren.includes('__all__') &&
+            !treeProps.libraries[parent.library].allowedChildren.includes(element.library));
+
     return {
         async saveTree(treeData: ITree, ctx: IQueryInfos): Promise<ITree> {
             // Check is existing tree
@@ -293,15 +299,22 @@ export default function ({
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            if (!(await _treeElementExists(element, ctx))) {
+            const elementExists = await _treeElementExists(element, ctx);
+
+            if (!elementExists) {
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
             if (parent !== null && !(await _treeElementExists(parent, ctx))) {
-                errors.parent = Errors.UNKNOWN_PARENT;
+                errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
-            if (await treeRepo.isElementPresent({treeId, element, ctx})) {
+            // check allow as children setting
+            if (treeExists && elementExists && _isForbiddenAsChild(treeProps, parent, element)) {
+                errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
+            }
+
+            if (treeExists && elementExists && (await treeRepo.isElementPresent({treeId, element, ctx}))) {
                 if (!treeProps.libraries[element.library].allowMultiplePositions) {
                     errors.element = Errors.ELEMENT_ALREADY_PRESENT;
                     // if allow multiple positions is true, check if parents are not same
@@ -355,7 +368,9 @@ export default function ({
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            if (!(await _treeElementExists(element, ctx))) {
+            const elementExists = await _treeElementExists(element, ctx);
+
+            if (!elementExists) {
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
@@ -363,7 +378,14 @@ export default function ({
                 errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
+            // check allow as children setting
+            if (treeExists && elementExists && _isForbiddenAsChild(treeProps, parentTo, element)) {
+                errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
+            }
+
             if (
+                treeExists &&
+                elementExists &&
                 parentTo &&
                 (await this.getElementAncestors({treeId, element: parentTo, ctx})).some(ancestors =>
                     ancestors.some(a => a.record.id === element.id && a.record.library === element.library)

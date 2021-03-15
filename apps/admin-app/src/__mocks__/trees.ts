@@ -12,11 +12,11 @@ export const mockTree: GET_TREE_BY_ID_trees_list = {
     libraries: [
         {
             library: {id: 'test_lib', label: {fr: 'Test Lib'}, attributes: [{...mockAttrTree}]},
-            settings: {allowMultiplePositions: false}
+            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']}
         },
         {
             library: {id: 'test_lib2', label: {fr: 'Test Lib 2'}, attributes: [{...mockAttrTree}]},
-            settings: {allowMultiplePositions: false}
+            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']}
         }
     ],
     behavior: TreeBehavior.standard,

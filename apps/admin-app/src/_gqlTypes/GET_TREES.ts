@@ -19,6 +19,8 @@ export interface GET_TREES_trees_list_libraries_library {
 
 export interface GET_TREES_trees_list_libraries_settings {
     allowMultiplePositions: boolean;
+    allowedAtRoot: boolean;
+    allowedChildren: string[];
 }
 
 export interface GET_TREES_trees_list_libraries {

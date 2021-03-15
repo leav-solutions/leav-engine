@@ -17,7 +17,7 @@ describe('TreeLibraryPermissions', () => {
                 tree: {
                     id: "${permTreeName}",
                     label: {fr: "Test tree"},
-                    libraries: [{library: "${treeLibId}", settings: {allowMultiplePositions: true}}]
+                    libraries: [{library: "${treeLibId}", settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}}]
                 }
             ) {
                 id

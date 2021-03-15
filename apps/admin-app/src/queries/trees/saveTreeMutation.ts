@@ -27,6 +27,8 @@ export const saveTreeQuery = gql`
                 }
                 settings {
                     allowMultiplePositions
+                    allowedAtRoot
+                    allowedChildren
                 }
             }
             permissions_conf {

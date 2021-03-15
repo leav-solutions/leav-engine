@@ -12,10 +12,14 @@ export const mockTree: ITree = {
     behavior: TreeBehavior.STANDARD,
     libraries: {
         lib1: {
-            allowMultiplePositions: false
+            allowMultiplePositions: false,
+            allowedAtRoot: true,
+            allowedChildren: ['__all__']
         },
         lib2: {
-            allowMultiplePositions: false
+            allowMultiplePositions: false,
+            allowedAtRoot: true,
+            allowedChildren: ['__all__']
         }
     }
 };
@@ -25,7 +29,9 @@ export const mockFilesTree: ITree = {
     behavior: TreeBehavior.FILES,
     libraries: {
         lib1: {
-            allowMultiplePositions: false
+            allowMultiplePositions: false,
+            allowedAtRoot: true,
+            allowedChildren: ['__all__']
         }
     }
 };

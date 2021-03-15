@@ -11,13 +11,17 @@ describe('TreeLibraries', () => {
         {
             library: 'test_lib',
             settings: {
-                allowMultiplePositions: true
+                allowMultiplePositions: true,
+                allowedAtRoot: true,
+                allowedChildren: ['__all__']
             }
         },
         {
             library: 'test_lib2',
             settings: {
-                allowMultiplePositions: false
+                allowMultiplePositions: false,
+                allowedAtRoot: true,
+                allowedChildren: ['__all__']
             }
         }
     ];

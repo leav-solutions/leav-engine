@@ -455,7 +455,9 @@ export default function ({
                         label: {fr: 'Fichiers', en: 'Files'},
                         libraries: {
                             [filesLibraryId]: {
-                                allowMultiplePositions: false
+                                allowMultiplePositions: false,
+                                allowedAtRoot: true,
+                                allowedChildren: ['__all__']
                             }
                         }
                     },

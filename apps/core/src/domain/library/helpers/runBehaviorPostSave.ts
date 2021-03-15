@@ -22,7 +22,9 @@ const _filesBehavior = (
                   behavior: TreeBehavior.FILES,
                   libraries: {
                       [library.id]: {
-                          allowMultiplePositions: false
+                          allowMultiplePositions: false,
+                          allowedAtRoot: true,
+                          allowedChildren: ['__all__']
                       }
                   }
               },

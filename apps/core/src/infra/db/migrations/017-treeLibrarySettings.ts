@@ -12,19 +12,18 @@ interface IDeps {
 export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
         async run(ctx) {
-            // Migrate field "libraries" on trees from an array to an object with settings
             await dbService.execute({
                 query: aql`
-                    FOR t in core_trees
-                        UPDATE t WITH MERGE(t, {libraries: IS_ARRAY(t.libraries) ?
-                            MERGE(
-                                FOR lib IN TO_ARRAY(t.libraries)
-                                    RETURN {
-                                        [lib]: { allowMultiplePositions: false }
-                                    }
-                            )
-                            : t.libraries
-                        }) IN core_trees
+                FOR t in core_trees
+                UPDATE t WITH MERGE(t, {libraries: 
+                    MERGE(
+                        FOR lib IN ATTRIBUTES(t.libraries)
+                            RETURN {[lib]: {
+                                allowedAtRoot: true,
+                                allowedChildren: ['__all__']
+                            }}
+                    )
+                }) IN core_trees
                 `,
                 ctx
             });

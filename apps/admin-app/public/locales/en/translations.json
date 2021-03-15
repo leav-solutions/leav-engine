@@ -128,8 +128,10 @@
         "behavior": "Behavior",
         "behavior_files": "Files",
         "behavior_standard": "Standard",
+        "allow_children": "Allow children",
         "default_view": "Default view",
         "allow_multiple_positions": "Allow multiple positions",
+        "allowed_at_root": "Allowed at root",
         "add_library": "Add library",
         "alternative_paths": "Alternative paths"
     },

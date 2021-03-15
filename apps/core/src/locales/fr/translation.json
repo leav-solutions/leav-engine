@@ -53,7 +53,8 @@
         "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}",
         "UNKNOWN_VIEW": "Vue inconnue",
         "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Cet élément est déjà présent parmis ses ancêtres",
-        "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent"
+        "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent",
+        "LIBRARY_FORBIDDEN_AS_CHILD": "Librairie non autorisée pour les parents sélectionnés"
     },
     "actions": {
         "names" : {

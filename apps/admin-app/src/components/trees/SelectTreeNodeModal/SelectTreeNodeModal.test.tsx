@@ -53,7 +53,9 @@ describe('SelectTreeNodeModal', () => {
                                         },
                                         settings: {
                                             __typename: 'TreeLibrarySettings',
-                                            allowMultiplePositions: true
+                                            allowMultiplePositions: true,
+                                            allowedAtRoot: true,
+                                            allowedChildren: ['__all__']
                                         }
                                     }
                                 ],

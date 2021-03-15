@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, Grid, Icon, Segment} from 'semantic-ui-react';
+import {Button, Checkbox, Grid, Icon, Segment, Form} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {TreeLibraryInput} from '../../../../../../../_gqlTypes/globalTypes';
 import LibrariesSelector from '../../../../../../libraries/LibrariesSelector';
@@ -26,11 +26,18 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
     const {t} = useTranslation();
 
     const _handleSettingsChange = (index: number) => (_, data) => {
-        console.log('data :>> ', data);
+        let value = data.value;
+
+        if (data.type === 'checkbox') {
+            value = data.name === 'allowedChildren' ? (data.checked ? ['__all__'] : []) : data.checked;
+        } else if (data.name === 'allowedChildren' && !data.value.length) {
+            value = ['__all__'];
+        }
+
         const newLibs = libraries;
         newLibs[index].settings = {
             ...newLibs[index].settings,
-            [data.name]: data.type === 'checkbox' ? data.checked : data.value
+            [data.name]: value
         };
 
         onChange(newLibs);
@@ -49,7 +56,9 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
             {
                 library: '',
                 settings: {
-                    allowMultiplePositions: false
+                    allowMultiplePositions: false,
+                    allowedAtRoot: true,
+                    allowedChildren: ['__all__']
                 }
             }
         ]);
@@ -82,46 +91,99 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
                     </Grid.Column>
                 )}
             </Grid>
-            {libraries.map((treeLib, index) => (
-                <Segment key={index}>
-                    <Grid columns={3} stackable>
-                        <Grid.Row verticalAlign="middle">
-                            <Grid.Column width={4}>
-                                <LibrariesSelector
-                                    data-test-id="lib-selector"
-                                    disabled={readonly}
-                                    multiple={false}
-                                    fluid
-                                    selection
-                                    name="libraries"
-                                    onChange={_handleLibChange(index)}
-                                    value={treeLib.library}
-                                />
-                            </Grid.Column>
-                            <Grid.Column width={11} textAlign="right">
-                                <Checkbox
-                                    data-test-id={`settings-allowMultiplePositions-${treeLib.library}`}
-                                    toggle
-                                    name="allowMultiplePositions"
-                                    checked={treeLib.settings.allowMultiplePositions}
-                                    label={t('trees.allow_multiple_positions')}
-                                    onChange={_handleSettingsChange(index)}
-                                    disabled={readonly}
-                                />
-                            </Grid.Column>
-                            {!readonly && (
-                                <Grid.Column width={1} textAlign="right">
-                                    <DeleteIcon
-                                        data-test-id="delete-button"
-                                        name="cancel"
-                                        onClick={_handleDeleteLibrary(index)}
+            {libraries.map((treeLib, index) => {
+                return (
+                    <Segment key={index}>
+                        <Grid columns={3} stackable>
+                            <Grid.Row verticalAlign="middle">
+                                <Grid.Column width={4}>
+                                    <LibrariesSelector
+                                        data-test-id="lib-selector"
+                                        disabled={readonly}
+                                        multiple={false}
+                                        fluid
+                                        selection
+                                        name="libraries"
+                                        onChange={_handleLibChange(index)}
+                                        value={treeLib.library}
                                     />
                                 </Grid.Column>
-                            )}
-                        </Grid.Row>
-                    </Grid>
-                </Segment>
-            ))}
+                                <Grid.Column width={11} textAlign="right">
+                                    <Grid columns={1} stackable>
+                                        <Grid.Row verticalAlign="middle">
+                                            <Grid.Column textAlign="left">
+                                                <Checkbox
+                                                    data-test-id={`settings-allowMultiplePositions-${treeLib.library}`}
+                                                    toggle
+                                                    name="allowMultiplePositions"
+                                                    checked={treeLib.settings.allowMultiplePositions}
+                                                    label={t('trees.allow_multiple_positions')}
+                                                    onChange={_handleSettingsChange(index)}
+                                                    disabled={readonly}
+                                                />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                        <Grid.Row verticalAlign="middle">
+                                            <Grid.Column textAlign="left">
+                                                <Checkbox
+                                                    data-test-id={`settings-allowedAtRoot-${treeLib.library}`}
+                                                    toggle
+                                                    name="allowedAtRoot"
+                                                    checked={treeLib.settings.allowedAtRoot}
+                                                    label={t('trees.allowed_at_root')}
+                                                    onChange={_handleSettingsChange(index)}
+                                                    disabled={readonly}
+                                                />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                        <Grid.Row verticalAlign="middle">
+                                            <Grid.Column textAlign="left">
+                                                <Checkbox
+                                                    data-test-id={`settings-allowChildren-${treeLib.library}`}
+                                                    toggle
+                                                    name="allowedChildren"
+                                                    checked={!!treeLib.settings.allowedChildren.length}
+                                                    label={t('trees.allow_children')}
+                                                    onChange={_handleSettingsChange(index)}
+                                                    disabled={readonly}
+                                                />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                        <Grid.Row verticalAlign="middle">
+                                            <Grid.Column>
+                                                <LibrariesSelector
+                                                    placeholder={t('trees.all_libraries_authorized')}
+                                                    data-test-id="allowed-libs-selector"
+                                                    disabled={readonly || !treeLib.settings.allowedChildren.length}
+                                                    multiple={true}
+                                                    fluid
+                                                    selection
+                                                    name="allowedChildren"
+                                                    onChange={_handleSettingsChange(index)}
+                                                    value={
+                                                        treeLib.settings.allowedChildren[0] === '__all__'
+                                                            ? treeLib.settings.allowedChildren.slice(1)
+                                                            : treeLib.settings.allowedChildren
+                                                    }
+                                                />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                    </Grid>
+                                </Grid.Column>
+                                {!readonly && (
+                                    <Grid.Column width={1} textAlign="right">
+                                        <DeleteIcon
+                                            data-test-id="delete-button"
+                                            name="cancel"
+                                            onClick={_handleDeleteLibrary(index)}
+                                        />
+                                    </Grid.Column>
+                                )}
+                            </Grid.Row>
+                        </Grid>
+                    </Segment>
+                );
+            })}
         </>
     );
 }

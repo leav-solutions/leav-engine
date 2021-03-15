@@ -23,6 +23,8 @@ export const getTreesQuery = gql`
                     }
                     settings {
                         allowMultiplePositions
+                        allowedAtRoot
+                        allowedChildren
                     }
                 }
             }
