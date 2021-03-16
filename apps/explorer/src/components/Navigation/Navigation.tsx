@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import NavigationHeader from 'components/NavigationHeader';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
@@ -24,7 +25,7 @@ function Navigation(): JSX.Element {
     const {t} = useTranslation();
     const {treeId} = useParams<INavigationParams>();
 
-    const [state, dispatch] = useReducer(NavigationReducer, NavigationReducerInitialState);
+    const [stateNavigation, dispatchNavigation] = useReducer(NavigationReducer, NavigationReducerInitialState);
 
     const [{lang}] = useLang();
     const [, updateActiveTree] = useActiveTree();
@@ -53,7 +54,8 @@ function Navigation(): JSX.Element {
     }, [data, loading, lang, updateActiveTree, t, updateBaseNotification]);
 
     return (
-        <StateNavigationContext.Provider value={{stateNavigation: state, dispatchNavigation: dispatch}}>
+        <StateNavigationContext.Provider value={{stateNavigation, dispatchNavigation}}>
+            <NavigationHeader />
             <NavigationView />
         </StateNavigationContext.Provider>
     );

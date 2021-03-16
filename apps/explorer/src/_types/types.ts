@@ -339,3 +339,13 @@ export interface ILinkedElement {
     id: string;
     linkedType: LinkedType;
 }
+
+export interface ITableItem {
+    value: any;
+    type?: AttributeType;
+    id: string;
+    library: string;
+}
+export interface ITableItems {
+    [x: string]: ITableItem;
+}

@@ -45,6 +45,7 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
 
     const data = {
         id: cell.value.id,
+        library: cell.value.library,
         value: cell.value.value,
         type: cell.value.type,
         format: cell.value.format

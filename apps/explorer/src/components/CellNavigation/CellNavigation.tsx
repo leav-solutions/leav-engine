@@ -7,7 +7,7 @@ import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
-import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducer';
+import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducerActions';
 import themingVar from '../../themingVar';
 import {INavigationPath, IRecordIdentityWhoAmI, PreviewSize} from '../../_types/types';
 import RecordCard from '../shared/RecordCard';
@@ -22,10 +22,19 @@ const Cell = styled.div<ICellProps>`
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: ${props => (props.isInPath ? themingVar['@item-active-bg'] : 'none')};
+    background: ${props => {
+        if (props.isInPath) {
+            return themingVar['@item-active-bg'];
+        }
+        return 'none';
+    }};
 
     &:hover {
         background: ${themingVar['@item-hover-bg']};
+
+        .checkbox-wrapper {
+            opacity: 1;
+        }
     }
 `;
 
@@ -57,7 +66,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
             label: recordLabel
         };
 
-        const newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
+        const newPath = [...stateNavigation.path.splice(0, depth), newPathElement];
 
         dispatchNavigation(setPath(newPath));
 

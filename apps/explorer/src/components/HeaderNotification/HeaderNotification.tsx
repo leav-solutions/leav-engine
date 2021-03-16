@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useEffect, useState} from 'react';
+import {GET_NOTIFICATIONS_STACK_notificationsStack} from '_gqlTypes/GET_NOTIFICATIONS_STACK';
 import {defaultNotificationsTime} from '../../constants/constants';
 import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {sortNotificationByPriority} from '../../utils';
@@ -30,8 +31,8 @@ function HeaderNotification(): JSX.Element {
                 }
             },
             {
-                passiveNotifications: [] as INotification[],
-                triggerNotifications: [] as INotification[]
+                passiveNotifications: [] as GET_NOTIFICATIONS_STACK_notificationsStack[],
+                triggerNotifications: [] as GET_NOTIFICATIONS_STACK_notificationsStack[]
             }
         );
 

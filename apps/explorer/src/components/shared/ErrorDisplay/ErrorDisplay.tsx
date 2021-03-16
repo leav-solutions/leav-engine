@@ -12,7 +12,7 @@ interface IErrorProps {
 function ErrorDisplay({message}: IErrorProps): JSX.Element {
     const {t} = useTranslation();
 
-    return <Result title={t('error.error_occured')} subTitle={message} status="error" />;
+    return <Result title={t('error.error_occurred')} subTitle={message} status="error" />;
 }
 
 export default ErrorDisplay;

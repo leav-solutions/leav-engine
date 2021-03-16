@@ -65,6 +65,11 @@ function App({token, onTokenInvalid}: IAppProps) {
                             merge(existing, incoming) {
                                 return incoming;
                             }
+                        },
+                        treeContent: {
+                            merge(existing, incoming) {
+                                return [...incoming];
+                            }
                         }
                     }
                 }

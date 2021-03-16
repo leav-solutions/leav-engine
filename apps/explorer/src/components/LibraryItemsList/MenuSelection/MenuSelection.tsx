@@ -4,13 +4,16 @@
 import {DownOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
 import {useStateItem} from 'Context/StateItemsContext';
+import {setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
+import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 function MenuSelection(): JSX.Element {
     const {t} = useTranslation();
-    const {stateItems, dispatchItems} = useStateItem();
+    const {stateItems} = useStateItem();
+    const {stateShared, dispatchShared} = useStateShared();
 
     const offsetDisplay = stateItems.itemsTotalCount > 0 ? stateItems.offset + 1 : 0;
     const nextOffsetDisplay =
@@ -19,38 +22,36 @@ function MenuSelection(): JSX.Element {
             : stateItems.offset + stateItems.pagination;
 
     const selectAll = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {}
-        });
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
-            allSelected: true
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: true
-        });
+        dispatchShared(
+            setSharedSelection({
+                type: SharedStateSelectionType.recherche,
+                selected: [],
+                allSelected: true
+            })
+        );
     };
     const selectVisible = () => {
-        const newItemSelected = {};
+        let selected = [...stateShared.selection.selected];
 
         if (stateItems.items) {
             for (const item of stateItems.items) {
-                newItemSelected[item.whoAmI.id] = true;
+                selected = [
+                    ...selected,
+                    {
+                        id: item.whoAmI.id,
+                        library: item.whoAmI.library.id
+                    }
+                ];
             }
         }
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: newItemSelected
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: true
-        });
+        dispatchShared(
+            setSharedSelection({
+                type: SharedStateSelectionType.recherche,
+                selected,
+                allSelected: false
+            })
+        );
     };
 
     return (

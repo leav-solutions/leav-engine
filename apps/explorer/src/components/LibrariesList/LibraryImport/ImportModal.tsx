@@ -100,7 +100,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
                 type: NotificationType.error,
                 priority: NotificationPriority.high,
                 channel: NotificationChannel.passive,
-                content: `${t('error.error_occured')}: ${error.message}`
+                content: `${t('error.error_occurred')}: ${error.message}`
             });
 
             dispatch({currentStep: ImportSteps.DONE});

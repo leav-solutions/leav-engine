@@ -15,7 +15,7 @@ import addViewMutation, {
     IAddViewMutationVariables,
     IAddViewMutationVariablesFilter,
     IAddViewMutationVariablesView
-} from '../../../queries/views/addViewMutation';
+} from '../../../mutations/views/addViewMutation';
 import {getViewsListQuery, IGetViewListQuery, IGetViewListVariables} from '../../../queries/views/getViewsListQuery';
 import themingVar from '../../../themingVar';
 import {localizedLabel} from '../../../utils';

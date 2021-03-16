@@ -3,13 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache} from '@apollo/client';
 import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {getActiveTree, IGetActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
 import HeaderCellNavigation from './HeaderCellNavigation';
+
+jest.mock(
+    '../ActiveHeaderCellNavigation',
+    () =>
+        function ActiveHeaderCellNavigation() {
+            return <div>ActiveHeaderCellNavigation</div>;
+        }
+);
 
 describe('HeaderCellNavigation', () => {
     const path = [
@@ -18,24 +26,20 @@ describe('HeaderCellNavigation', () => {
     ];
 
     test('should display parent Label', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
                     <MockStateNavigation stateNavigation={{path}}>
-                        <HeaderCellNavigation depth={2} />
+                        <HeaderCellNavigation depth={1} />
                     </MockStateNavigation>
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.text()).toContain(path[0].label);
+        expect(screen.getByText(path[0].label)).toBeInTheDocument();
     });
 
     test('should display activeTreeLabel', async () => {
-        let comp: any;
-
         const mockActiveTree: IGetActiveTree = {
             activeTree: {
                 id: 'treeId',
@@ -55,15 +59,27 @@ describe('HeaderCellNavigation', () => {
         });
 
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProvider cache={mockCache}>
                     <MockStateNavigation stateNavigation={{path}}>
-                        <HeaderCellNavigation depth={1} />
+                        <HeaderCellNavigation depth={0} />
                     </MockStateNavigation>
                 </MockedProvider>
             );
         });
 
-        expect(comp.text()).toContain(mockActiveTree.activeTree?.label);
+        expect(await screen.findByText(mockActiveTree.activeTree?.label)).toBeInTheDocument();
+    });
+
+    test('should use ActiveHeaderCellNavigation', async () => {
+        render(
+            <MockedProviderWithFragments>
+                <MockStateNavigation stateNavigation={{path}}>
+                    <HeaderCellNavigation depth={1} isActive={true} />
+                </MockStateNavigation>
+            </MockedProviderWithFragments>
+        );
+
+        expect(await screen.findByText('ActiveHeaderCellNavigation')).toBeInTheDocument();
     });
 });

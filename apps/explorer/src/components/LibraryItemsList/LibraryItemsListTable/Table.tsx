@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import {infosCol} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVar from '../../../themingVar';
-import {AttributeFormat, AttributeType} from '../../../_types/types';
+import {AttributeFormat, AttributeType, ITableItems} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
@@ -25,10 +25,6 @@ interface ITableColumn {
     type?: AttributeType;
     format?: AttributeFormat;
     embeddedPath?: string;
-}
-
-interface ITableItem {
-    [x: string]: {value: any; type?: AttributeType; id: string};
 }
 
 interface ICustomTableProps {
@@ -115,7 +111,7 @@ const Table = () => {
     const {stateItems} = useStateItem();
 
     const [tableColumns, setTableColumns] = useState<ITableColumn[]>([]);
-    const [tableData, setTableData] = useState<ITableItem[]>([]);
+    const [tableData, setTableData] = useState<ITableItems[]>([]);
     const [scrollHorizontalActive, setScrollHorizontalActive] = useState(false);
 
     //columns
@@ -156,14 +152,15 @@ const Table = () => {
     useEffect(() => {
         const data = stateItems.items?.reduce((allData, item, index) => {
             if (index < stateItems.pagination) {
-                const tableItem: ITableItem = tableColumns.reduce((acc, column) => {
+                const tableItem: ITableItems = tableColumns.reduce((acc, column) => {
                     // handle selection and infos column
                     if (!column.type) {
                         if (column.accessor === infosCol) {
                             const value = item.whoAmI;
                             const id = item.whoAmI.id;
+                            const library = item.whoAmI.library.id;
 
-                            acc[column.accessor] = {value, type: column.type, id};
+                            acc[column.accessor] = {value, type: column.type, id, library};
 
                             return acc;
                         }
@@ -209,7 +206,7 @@ const Table = () => {
         }
     };
 
-    const tableInstance = useTable<ITableItem>(
+    const tableInstance = useTable<ITableItems>(
         {
             columns: tableColumns,
             data: tableData
@@ -233,6 +230,7 @@ const Table = () => {
             <CustomTable
                 {...getTableProps()}
                 className="table sticky"
+                data-testid="table"
                 onScroll={handleScroll}
                 scrollHorizontalActive={scrollHorizontalActive}
             >

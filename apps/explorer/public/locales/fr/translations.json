@@ -5,7 +5,8 @@
         "processing": "Traitement en cours",
         "done": "Terminé",
         "delete": "Supprimer",
-        "apply": "Appliquer"
+        "apply": "Appliquer",
+        "clear": "Effacer"
     },
     "login": {
         "header": "Authentification",
@@ -196,9 +197,16 @@
     },
     "search": {
         "placeholder": "Rechercher dans la bibliothèque",
-        "explain-cancel": "Annuler la recherche"
+        "explain-cancel": "Annuler la recherche",
+        "type": {
+            "navigation": "Navigation",
+            "search": "Recherche"
+        }
     },
     "navigation": {
+        "header": {
+            "nb-selection": "{{nb}} élements sélectionnés dans {{selectionType}}"
+        },
         "list": {
             "header": "Navigation",
             "info": {
@@ -208,6 +216,21 @@
                 "label": "Label",
                 "no-label": "Pas de label"
             }
+        },
+        "actions": {
+            "sort-asc": "Trie Croissant",
+            "sort-desc": "Trie Décroissant",
+            "move-selected": "Déplacer sélection",
+            "detach-selected": "Détacher sélection",
+            "detach-element": "Détacher l'élement",
+            "add-selected": "Ajouter sélection"
+        },
+        "notifications": {
+            "success-add": "L'élément {{elementId}} a pu être ajouté",
+            "error-add": "Une erreur est survenu lors de l'ajoute de l'élément {{elementId}}: {{errorMessage}}",
+            "warning-add-no-selection": "Aucun élément sélectionner à ajouter",
+            "success-detach": "L'élément {{elementId}} a pu être détacher",
+            "error-detach": "Une erreur est survenu lors du détachement de l'élément {{elementId}}: {{errorMessage}}"
         }
     },
     "notification": {
@@ -217,7 +240,7 @@
     },
     "view": {
         "list": "Liste des vues",
-        "my-views":"Mes vues",
+        "my-views": "Mes vues",
         "shared-views": "Partagées",
         "type-list": "Vue Liste",
         "type-cards": "Vue Mosaïque",
@@ -253,14 +276,14 @@
         "data_overview": "Aperçu des données",
         "file_configuration": "Configuration",
         "import_done": "Import terminé",
-        "import_success": "Import terminé avec succés",
+        "import_success": "Import terminé avec succès",
         "import_failure": "Erreur lors de l'import des données",
         "empty_file": "Le fichier ne contient pas de données",
         "mapping": "Sélection des attributs",
         "key": "Sélection de l'attribut référence"
     },
     "error": {
-        "error_occured": "Une erreur est survenue"
+        "error_occurred": "Une erreur est survenue"
     },
     "language": {
         "fr": "Français",

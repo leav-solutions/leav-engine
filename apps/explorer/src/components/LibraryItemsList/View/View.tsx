@@ -14,7 +14,7 @@ import {useLang} from '../../../hooks/LangHook/LangHook';
 import deleteViewMutation, {
     IDeleteViewMutation,
     IDeleteViewMutationVariables
-} from '../../../queries/views/deleteViewMutation';
+} from '../../../mutations/views/deleteViewMutation';
 import {IGetViewListElement} from '../../../queries/views/getViewsListQuery';
 import themingVar from '../../../themingVar';
 import {limitTextSize, localizedLabel} from '../../../utils';

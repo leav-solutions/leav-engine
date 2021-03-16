@@ -10,12 +10,12 @@ import {localizedLabel} from 'utils';
 import {defaultSort, viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {IActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
     IAddViewMutationVariablesView
-} from '../../../queries/views/addViewMutation';
+} from '../../../mutations/views/addViewMutation';
+import {IActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
 import themingVar from '../../../themingVar';
 import {ILabel, ViewType} from '../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';

@@ -20,7 +20,7 @@ describe('CellInfos', () => {
         let comp: any;
 
         await act(async () => {
-            comp = mount(<CellInfos record={{} as any} size={PreviewSize.small} index="0" id="id" />);
+            comp = mount(<CellInfos record={{} as any} size={PreviewSize.small} index="0" id="id" library="library" />);
         });
 
         expect(comp.find('Button')).toHaveLength(4);

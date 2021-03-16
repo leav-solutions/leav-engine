@@ -7,18 +7,21 @@ import {INavigationPath} from '../_types/types';
 export enum NavigationReducerActionsTypes {
     SET_PATH = 'SET_PATH',
     SET_IS_LOADING = 'SET_IS_LOADING',
-    SET_RECORD_DETAIL = 'SET_RECORD_DETAIL'
+    SET_RECORD_DETAIL = 'SET_RECORD_DETAIL',
+    SET_REFETCH_TREE_DATA = 'SET_REFETCH_TREE_DATA'
 }
 
 export interface INavigationReducerState {
     path: INavigationPath[];
     isLoading: boolean;
     recordDetail?: IRecordField;
+    refetchTreeData: boolean;
 }
 
 export const NavigationReducerInitialState: INavigationReducerState = {
     path: [],
-    isLoading: true
+    isLoading: true,
+    refetchTreeData: false
 };
 
 export type NavigationReducerAction =
@@ -33,6 +36,10 @@ export type NavigationReducerAction =
     | {
           type: NavigationReducerActionsTypes.SET_RECORD_DETAIL;
           recordDetail?: IRecordField;
+      }
+    | {
+          type: NavigationReducerActionsTypes.SET_REFETCH_TREE_DATA;
+          refetchTreeData: boolean;
       };
 
 export const NavigationReducer = (state: INavigationReducerState, action: NavigationReducerAction) => {
@@ -43,34 +50,9 @@ export const NavigationReducer = (state: INavigationReducerState, action: Naviga
             return {...state, isLoading: action.isLoading};
         case NavigationReducerActionsTypes.SET_RECORD_DETAIL:
             return {...state, recordDetail: action.recordDetail};
+        case NavigationReducerActionsTypes.SET_REFETCH_TREE_DATA:
+            return {...state, refetchTreeData: action.refetchTreeData};
         default:
             return state;
     }
-};
-
-// Actions
-
-export const setPath = (path: INavigationPath[]): NavigationReducerAction => ({
-    type: NavigationReducerActionsTypes.SET_PATH,
-    path
-});
-
-export const setIsLoading = (isLoading: boolean): NavigationReducerAction => {
-    return {
-        type: NavigationReducerActionsTypes.SET_IS_LOADING,
-        isLoading
-    };
-};
-
-export const setRecordDetail = (recordDetail: IRecordField): NavigationReducerAction => {
-    return {
-        type: NavigationReducerActionsTypes.SET_RECORD_DETAIL,
-        recordDetail
-    };
-};
-
-export const resetRecordDetail = (): NavigationReducerAction => {
-    return {
-        type: NavigationReducerActionsTypes.SET_RECORD_DETAIL
-    };
 };

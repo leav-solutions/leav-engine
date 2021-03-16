@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
-import React, {createRef, useEffect} from 'react';
+import ActiveCellNavigation from 'components/ActiveCellNavigation';
+import React, {createRef, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../../queries/trees/getTreeContentQuery';
@@ -38,13 +39,20 @@ interface IColumnFromPathProps {
     pathPart: INavigationPath;
     depth: number;
     showLoading: boolean;
+    columnActive: boolean;
 }
 
-const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFromPathProps) => {
+const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActive}: IColumnFromPathProps) => {
     const parent = findPathInTree(pathPart, treeElements);
+
+    const [items, setItems] = useState(parent?.children ?? []);
 
     const ref = createRef<HTMLDivElement>();
     const {stateNavigation} = useStateNavigation();
+
+    useEffect(() => {
+        setItems(parent?.children);
+    }, [treeElements, parent, setItems]);
 
     useEffect(() => {
         if (ref.current && ref.current.scrollIntoView) {
@@ -72,11 +80,23 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
 
         return (
             <Column>
-                <HeaderCellNavigation depth={depth} />
+                <HeaderCellNavigation depth={depth} setItems={setItems} isActive={columnActive} />
                 <ColumnContent ref={ref}>
-                    {parent.children.map((treeElement, index) => (
-                        <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
-                    ))}
+                    {items.map(treeElement =>
+                        columnActive ? (
+                            <ActiveCellNavigation
+                                key={treeElement.record.whoAmI.id}
+                                treeElement={treeElement}
+                                depth={depth}
+                            />
+                        ) : (
+                            <CellNavigation
+                                key={treeElement.record.whoAmI.id}
+                                treeElement={treeElement}
+                                depth={depth}
+                            />
+                        )
+                    )}
                 </ColumnContent>
             </Column>
         );

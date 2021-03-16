@@ -23,12 +23,9 @@ export enum LibraryItemListReducerActionTypes {
     SET_PAGINATION = 'SET_PAGINATION',
     SET_DISPLAY_TYPE = 'SET_DISPLAY_TYPE',
     SET_SIDE_ITEMS = 'SET_SIDE_ITEMS',
-    SET_SELECTION_MODE = 'SET_SELECTION_MODE',
-    SET_ITEMS_SELECTED = 'SET_ITEMS_SELECTED',
     SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
     SET_ATTRIBUTES = 'SET_ATTRIBUTES',
     SET_FIELDS = 'SET_FIELDS',
-    SET_ALL_SELECTED = 'SET_ALL_SELECTED',
     SET_ITEM_LOADING = 'SET_ITEM_LOADING',
     SET_SEARCH_FULL_TEXT_ACTIVE = 'SET_SEARCH_FULL_TEXT_ACTIVE',
     SET_VIEW = 'SET_VIEW',
@@ -52,12 +49,9 @@ export interface ILibraryItemListState {
         visible: boolean;
         type?: TypeSideItem;
     };
-    selectionMode: boolean;
-    itemsSelected: {[x: string]: boolean};
     queryFilters: IQueryFilter[];
     attributes: IAttribute[];
     fields: IField[];
-    allSelected: boolean;
     searchFullTextActive: boolean;
     view: {
         current: IView | null;
@@ -79,12 +73,9 @@ export const LibraryItemListInitialState: ILibraryItemListState = {
     sideItems: {
         visible: false
     },
-    selectionMode: false,
-    itemsSelected: {},
     queryFilters: [],
     attributes: [],
     fields: [],
-    allSelected: false,
     searchFullTextActive: false,
     view: {
         current: null,
@@ -134,14 +125,6 @@ export type LibraryItemListReducerAction =
           };
       }
     | {
-          type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE;
-          selectionMode: boolean;
-      }
-    | {
-          type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED;
-          itemsSelected: {[x: string]: boolean};
-      }
-    | {
           type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS;
           queryFilters: IQueryFilter[];
       }
@@ -152,10 +135,6 @@ export type LibraryItemListReducerAction =
     | {
           type: LibraryItemListReducerActionTypes.SET_FIELDS;
           fields: IField[];
-      }
-    | {
-          type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED;
-          allSelected: boolean;
       }
     | {
           type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING;
@@ -202,22 +181,12 @@ const reducer = (state: ILibraryItemListState, action: LibraryItemListReducerAct
             return {...state, displaySize: action.displayType};
         case LibraryItemListReducerActionTypes.SET_SIDE_ITEMS:
             return {...state, sideItems: action.sideItems};
-        case LibraryItemListReducerActionTypes.SET_SELECTION_MODE:
-            return {...state, selectionMode: action.selectionMode};
-        case LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED:
-            return {...state, itemsSelected: action.itemsSelected};
         case LibraryItemListReducerActionTypes.SET_QUERY_FILTERS:
             return {...state, queryFilters: action.queryFilters};
         case LibraryItemListReducerActionTypes.SET_ATTRIBUTES:
             return {...state, attributes: action.attributes};
         case LibraryItemListReducerActionTypes.SET_FIELDS:
             return {...state, fields: action.fields};
-        case LibraryItemListReducerActionTypes.SET_ALL_SELECTED:
-            const finalState = {...state, allSelected: action.allSelected};
-            if (action.allSelected) {
-                finalState.itemsSelected = {};
-            }
-            return finalState;
         case LibraryItemListReducerActionTypes.SET_ITEM_LOADING:
             return {...state, itemsLoading: action.itemLoading};
         case LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE:

@@ -7,7 +7,7 @@ import {infosCol} from '../../../../constants/constants';
 import {useStateItem} from '../../../../Context/StateItemsContext';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {displayTypeToPreviewSize} from '../../../../utils';
-import {AttributeFormat, AttributeType, PreviewSize} from '../../../../_types/types';
+import {AttributeType, ITableItem, PreviewSize} from '../../../../_types/types';
 import CellInfos from './CellInfos';
 import CellRecordCard from './CellRecordCard';
 
@@ -17,17 +17,12 @@ const SimpleCell = styled.div`
 
 interface ICellProps {
     columnName: string;
-    data: {
-        id: string;
-        value: any;
-        type: AttributeType;
-        format?: AttributeFormat;
-    };
+    data: ITableItem;
     index: string;
 }
 
 const Cell = ({columnName, data, index}: ICellProps) => {
-    const {value, type, id} = data;
+    const {value, type, id, library} = data;
 
     const {
         stateItems: {displaySize: displayType}
@@ -53,7 +48,9 @@ const Cell = ({columnName, data, index}: ICellProps) => {
         default:
             //selection and infos column has no type
             if (columnName === infosCol) {
-                return <CellInfos record={value} size={previewSize} lang={lang} index={index} id={id} />;
+                return (
+                    <CellInfos record={value} size={previewSize} lang={lang} index={index} id={id} library={library} />
+                );
             }
 
             return <></>;

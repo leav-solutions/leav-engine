@@ -196,9 +196,16 @@
     },
     "search": {
         "placeholder": "Search in library",
-        "explain-cancel": "Cancel search"
+        "explain-cancel": "Cancel search",
+        "type": {
+            "navigation": "Navigation",
+            "search": "Search"
+        }
     },
     "navigation": {
+        "header": {
+            "nb-selection": "{{nb}} elements in selection {{selectionType}}"
+        },
         "list": {
             "header": "Navigation",
             "info": {
@@ -208,6 +215,21 @@
                 "label": "Label",
                 "no-label": "No label"
             }
+        },
+        "action": {
+            "sort-asc": "Sort Ascend",
+            "sort-desc": "Sort Descend",
+            "move-selected": "Move Selected",
+            "detach-selected": "Detach Selected",
+            "detach-element": "Detach element",
+            "add-selected": "Add Selected"
+        },
+        "notifications": {
+            "success-add": "Element {{elementId}} has been add",
+            "error-add": "An error occurs while add element {{elementId}}: {{errorMessage}}",
+            "warning-add-no-selection": "Aucun élément sélectionner a ajouté",
+            "success-detach": "Element {{elementId}} has been detach",
+            "error-detach": "An error occurs while detach element {{elementId}}: {{errorMessage}}"
         }
     },
     "notification": {
@@ -217,7 +239,7 @@
     },
     "view": {
         "list": "List View",
-        "my-views":"My views",
+        "my-views": "My views",
         "shared-views": "Shared",
         "type-list": "View List",
         "type-cards": "View Tile",
@@ -260,7 +282,7 @@
         "key": "Select reference attribute"
     },
     "error": {
-        "error_occured": "An error occured"
+        "error_occurred": "An error occurred"
     },
     "language": {
         "fr": "French",

@@ -24,10 +24,32 @@ export const mockTreeRecord: IRecordField = {
     }
 };
 
+export const mockTreeRecordChild: IRecordField = {
+    whoAmI: {
+        id: 'child',
+        color: 'color',
+        label: 'label-child',
+        preview: {
+            small: 'preview-child',
+            medium: 'preview-child',
+            big: 'preview-child',
+            pages: 'preview-child'
+        },
+        library: {
+            id: 'library-id',
+            label: {
+                fr: 'library-label',
+                en: 'library-label'
+            }
+        }
+    }
+};
+
 export const mockTreeElement: IRecordAndChildren = {
     record: {
         ...mockTreeRecord
-    }
+    },
+    children: [{record: mockTreeRecordChild}]
 };
 
 export const mockTreeElements: IRecordAndChildren[] = [mockTreeElement];

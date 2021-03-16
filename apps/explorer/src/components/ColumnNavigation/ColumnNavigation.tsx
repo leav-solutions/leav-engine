@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import ActiveCellNavigation from 'components/ActiveCellNavigation';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
@@ -32,17 +33,32 @@ interface IColumnNavigationProps {
 function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
     const {stateNavigation} = useStateNavigation();
 
+    const [items, setItems] = useState([]);
+
+    useEffect(() => {
+        setItems(treeElements);
+    }, [setItems, treeElements]);
+
+    const currentColumnActive = !stateNavigation.recordDetail && stateNavigation.path.length === 0;
+
     return (
         <>
             <Column>
-                <HeaderCellNavigation depth={1} />
+                <HeaderCellNavigation depth={0} setItems={setItems} isActive={currentColumnActive} />
                 <ColumnContent>
-                    {treeElements.map(treeElement => (
-                        <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={1} />
-                    ))}
+                    {items.map(treeElement =>
+                        currentColumnActive ? (
+                            <ActiveCellNavigation
+                                key={treeElement.record.whoAmI.id}
+                                treeElement={treeElement}
+                                depth={0}
+                            />
+                        ) : (
+                            <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={0} />
+                        )
+                    )}
                 </ColumnContent>
             </Column>
-
             {stateNavigation.path.map(
                 (pathPart, index) =>
                     treeElements.length && (
@@ -50,8 +66,9 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
                             key={pathPart.id}
                             pathPart={pathPart}
                             treeElements={treeElements}
-                            depth={index + 2}
+                            depth={index + 1}
                             showLoading={stateNavigation.isLoading && index === stateNavigation.path.length - 1}
+                            columnActive={!stateNavigation.recordDetail && index === stateNavigation.path.length - 1}
                         />
                     )
             )}

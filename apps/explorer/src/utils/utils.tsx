@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from 'graphql-tag';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import {i18n} from 'i18next';
 import {isString, pick} from 'lodash';
 import {attributeExtendedKey, infosCol} from '../constants/constants';
@@ -394,5 +395,14 @@ export const getQueryFilterField = (key: string): string => {
         case 2:
         default:
             return splitKey.pop();
+    }
+};
+
+export const displaySharedSearchType = (type: SharedStateSelectionType): 'navigation' | 'recherche' => {
+    switch (type) {
+        case SharedStateSelectionType.navigation:
+            return 'navigation';
+        case SharedStateSelectionType.recherche:
+            return 'recherche';
     }
 };

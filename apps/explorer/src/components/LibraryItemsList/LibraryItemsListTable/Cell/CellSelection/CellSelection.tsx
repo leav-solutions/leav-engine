@@ -2,11 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Checkbox} from 'antd';
+import {toggleSharedElementSelected} from 'hooks/SharedStateHook/SharedReducerActions';
+import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import styled from 'styled-components';
-import {useStateItem} from '../../../../../Context/StateItemsContext';
 import themingVar from '../../../../../themingVar';
-import {LibraryItemListReducerActionTypes} from '../../../LibraryItemsListReducer';
 
 const Wrapper = styled.div`
     display: grid;
@@ -34,30 +35,26 @@ const HiddenCheckbox = styled.div`
 interface ICellSelectionProps {
     index: string;
     id: string;
+    library: string;
 }
 
-function CellSelection({index, id}: ICellSelectionProps): JSX.Element {
-    const {
-        stateItems: {selectionMode, allSelected, itemsSelected},
-        dispatchItems
-    } = useStateItem();
+function CellSelection({index, id, library}: ICellSelectionProps): JSX.Element {
+    const {stateShared, dispatchShared} = useStateShared();
 
     const handleChangeSelected = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: true
-        });
+        const newElementSelected = {id, library};
 
-        const newItemSelected = {...itemsSelected, [id]: !itemsSelected[id]};
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: newItemSelected
-        });
+        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.recherche, newElementSelected));
     };
 
-    if (selectionMode) {
-        const isSelected = allSelected || itemsSelected[id];
+    if (stateShared.selection.selected.length) {
+        const allSelected =
+            stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected;
+        const isSelected =
+            allSelected ||
+            stateShared.selection.selected.some(
+                elementSelected => elementSelected.id === id && elementSelected.library === library
+            );
 
         return (
             <Wrapper>

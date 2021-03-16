@@ -54,9 +54,10 @@ interface ICellInfosProps {
     lang?: string[];
     index: string;
     id: string;
+    library: string;
 }
 
-function CellInfos({record, size, style, lang, index, id}: ICellInfosProps): JSX.Element {
+function CellInfos({record, size, style, lang, index, id, library}: ICellInfosProps): JSX.Element {
     const {t} = useTranslation();
 
     const [isHover, setIsHover] = useState<boolean>(false);
@@ -94,7 +95,7 @@ function CellInfos({record, size, style, lang, index, id}: ICellInfosProps): JSX
     return (
         <Wrapper>
             <div style={{position: 'relative'}}>
-                <CellSelection index={index} id={id} />
+                <CellSelection index={index} id={id} library={library} />
             </div>
             <div style={{position: 'relative'}} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                 <Info>

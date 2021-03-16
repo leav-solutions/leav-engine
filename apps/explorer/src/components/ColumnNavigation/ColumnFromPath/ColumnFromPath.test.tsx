@@ -82,7 +82,13 @@ describe('ColumnFromPath', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <ColumnFromPath treeElements={mockTreeElements} pathPart={mockPathPart} depth={0} showLoading />
+                    <ColumnFromPath
+                        treeElements={mockTreeElements}
+                        pathPart={mockPathPart}
+                        depth={0}
+                        showLoading
+                        columnActive={false}
+                    />
                 </MockedProviderWithFragments>
             );
         });
@@ -101,6 +107,7 @@ describe('ColumnFromPath', () => {
                         pathPart={mockPathPart}
                         depth={0}
                         showLoading={false}
+                        columnActive={false}
                     />
                 </MockedProviderWithFragments>
             );

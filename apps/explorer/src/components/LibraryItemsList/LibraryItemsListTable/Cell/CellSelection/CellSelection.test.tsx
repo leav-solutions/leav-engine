@@ -11,7 +11,7 @@ describe('CellSelection', () => {
         let comp: any;
 
         await act(async () => {
-            comp = mount(<CellSelection index="0" id="id" />);
+            comp = mount(<CellSelection index="0" id="id" library="library" />);
         });
 
         expect(comp);

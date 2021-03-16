@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {itemMock} from '__mocks__/common/item';
 import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
@@ -35,22 +36,12 @@ jest.mock(
 
 describe('Table', () => {
     test('check child exist', async () => {
-        const itemsMock: IItem[] = [
-            {
-                fields: {},
-                whoAmI: {
-                    id: 'id'
-                },
-                index: 0
-            }
-        ];
+        const itemsMock: IItem[] = [itemMock];
 
         const stateMock = {items: itemsMock, itemsLoading: false};
 
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
                     <MockStateItems stateItems={stateMock}>
                         <Table />
@@ -58,6 +49,6 @@ describe('Table', () => {
                 </MockedProviderWithFragments>
             );
         });
-        expect(comp.find('CustomTable')).toHaveLength(1);
+        expect(screen.getByTestId('table')).toBeInTheDocument();
     });
 });

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
+import {IGetViewListElement} from 'queries/views/getViewsListQuery';
 import {ConditionFilter, ILabel, OperatorFilter, OrderSearch, ViewType} from '../../_types/types';
-import {IGetViewListElement} from './getViewsListQuery';
 
 export interface IAddViewMutation {
     saveView: IGetViewListElement;

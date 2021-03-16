@@ -6,6 +6,8 @@ import {useLazyQuery} from '@apollo/client';
 import {Button, Result, Steps} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import AttributesSelectionList from 'components/AttributesSelectionList';
+import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -53,6 +55,7 @@ const CenteredWrapper = styled.div`
 function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
     const {t} = useTranslation();
     const {stateItems} = useStateItem();
+    const {stateShared} = useStateShared();
     const [activeLibrary] = useActiveLibrary();
     const {addNotification} = useNotifications();
 
@@ -71,7 +74,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
                 type: NotificationType.error,
                 priority: NotificationPriority.high,
                 channel: NotificationChannel.passive,
-                content: `${t('error.error_occured')}: ${error.message}`
+                content: `${t('error.error_occurred')}: ${error.message}`
             });
             setCurrentStep(ExportSteps.DONE);
         }
@@ -81,10 +84,10 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
         setCurrentStep(ExportSteps.PROCESSING);
 
         let queryFilters: RecordFilterInput[];
-        if (stateItems.allSelected) {
+        if (stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected) {
             queryFilters = (stateItems.queryFilters as unknown) as RecordFilterInput[];
         } else {
-            const selectedIds = Object.keys(stateItems.itemsSelected);
+            const selectedIds = stateShared.selection.selected.map(elementSelected => elementSelected.id);
 
             // Convert selected IDs to a search query with OR between each ID
             queryFilters = selectedIds.length

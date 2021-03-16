@@ -3,12 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckSquareTwoTone, DeleteOutlined, DownOutlined, LogoutOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
+import {resetSharedSelection, setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
+import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVars from '../../../themingVar';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import ActionsMenu from './ActionsMenu';
 
 interface IMenuItemListSelectedProps {
@@ -53,79 +55,66 @@ const Wrapper = styled.div<IWrapperProps>`
 function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateItems, dispatchItems} = useStateItem();
+    const {stateItems} = useStateItem();
+    const {stateShared, dispatchShared} = useStateShared();
 
     const [countItemsSelected, setCountItemsSelected] = useState(0);
 
     const disableModeSelection = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: false
-        });
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {}
-        });
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
-            allSelected: false
-        });
+        dispatchShared(resetSharedSelection());
     };
 
     useEffect(() => {
-        let count = 0;
-        for (const itemId in stateItems.itemsSelected) {
-            if (stateItems.itemsSelected[itemId]) {
-                count++;
-            }
-        }
-
-        setCountItemsSelected(count);
-    }, [stateItems.itemsSelected, setCountItemsSelected]);
+        setCountItemsSelected(stateShared.selection.selected.length);
+    }, [stateShared.selection, setCountItemsSelected]);
 
     const selectVisible = () => {
-        const newItemSelected = {};
+        let selected = [...stateShared.selection.selected];
 
         if (stateItems.items) {
             for (const item of stateItems.items) {
-                newItemSelected[item.whoAmI.id] = true;
+                selected = [
+                    ...selected,
+                    {
+                        id: item.whoAmI.id,
+                        library: item.whoAmI.library.id
+                    }
+                ];
             }
         }
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: newItemSelected
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
-            allSelected: false
-        });
+        dispatchShared(
+            setSharedSelection({
+                type: SharedStateSelectionType.recherche,
+                selected,
+                allSelected: false
+            })
+        );
     };
 
     const selectAll = () => {
         // reset selected elements
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {}
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
-            allSelected: true
-        });
+        dispatchShared(
+            setSharedSelection({
+                type: SharedStateSelectionType.recherche,
+                selected: [],
+                allSelected: true
+            })
+        );
     };
 
     const unselectAll = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {}
-        });
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
-            allSelected: false
-        });
+        dispatchShared(
+            setSharedSelection({
+                type: SharedStateSelectionType.recherche,
+                selected: [],
+                allSelected: false
+            })
+        );
     };
+
+    const allSelectActive =
+        stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected;
 
     return (
         <Wrapper active={active}>
@@ -144,7 +133,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     }
                 >
                     <Button>
-                        {stateItems.allSelected ? (
+                        {allSelectActive ? (
                             <>
                                 <CheckSquareTwoTone /> {t('menu-selection.all-selected-enabled')}
                             </>
