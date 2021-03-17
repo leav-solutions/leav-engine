@@ -4,11 +4,12 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {mockFormElementTextBlock} from '__mocks__/common/form';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import TextBlock from './TextBlock';
 
 describe('TextBlock', () => {
     test('Render text block with markdown converted', async () => {
-        render(<TextBlock element={mockFormElementTextBlock} />);
+        render(<TextBlock element={mockFormElementTextBlock} record={mockRecordWhoAmI} recordValues={{}} />);
 
         expect(screen.getByText(/text content/i)).toBeInTheDocument();
         expect(screen.getByText('text content')).toHaveStyle('font-weight: bold');

@@ -17,9 +17,10 @@ const StyledTabs = styled(Tabs)`
     border: 1px solid ${themingVar['@leav-secondary-divider-color']};
     margin: 1rem 0;
     border-radius: 3px;
+    overflow: visible;
 `;
 
-function FormTabs({element}: IFormElementProps<IFormTabsSettings>): JSX.Element {
+function FormTabs({element, record, recordValues}: IFormElementProps<IFormTabsSettings>): JSX.Element {
     const [{lang}] = useLang();
     const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
 
@@ -30,6 +31,7 @@ function FormTabs({element}: IFormElementProps<IFormTabsSettings>): JSX.Element 
                     id: `${element.id}/${tab.id}`,
                     containerId: element.id,
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.layout,
                     uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER],
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER
@@ -37,7 +39,7 @@ function FormTabs({element}: IFormElementProps<IFormTabsSettings>): JSX.Element 
 
                 return (
                     <Tabs.TabPane tab={localizedLabel(tab.label, lang)} key={tab.id}>
-                        <tabContainer.uiElement element={tabContainer} />
+                        <tabContainer.uiElement element={tabContainer} record={record} recordValues={recordValues} />
                     </Tabs.TabPane>
                 );
             })}

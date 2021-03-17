@@ -37,7 +37,7 @@ interface IDeps {
     'core.app.core'?: ICoreApp;
 }
 
-export default function ({
+export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,

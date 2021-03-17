@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
 import {
     GET_ATTRIBUTES_BY_LIB_attributes_list,
     GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute,
@@ -83,4 +84,15 @@ export const mockAttribute: IAttribute = {
     },
     isLink: false,
     isMultiple: false
+};
+
+export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute = {
+    id: 'test_attribute',
+    type: AttributeType.simple,
+    format: AttributeFormat.text,
+    label: {
+        fr: 'test',
+        en: 'test'
+    },
+    system: false
 };

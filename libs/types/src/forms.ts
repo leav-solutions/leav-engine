@@ -23,6 +23,11 @@ export enum TabsDirection {
     VERTICAL = 'vertical'
 }
 
+export interface ICommonFieldsSettings {
+    label?: string;
+    attribute?: string;
+}
+
 export interface IFormDividerSettings {
     title?: string;
 }
@@ -39,4 +44,8 @@ export interface IFormTabsSettings {
 
 export interface IFormTextBlockSettings {
     content?: string;
+}
+
+export interface IFormDateFieldSettings extends ICommonFieldsSettings {
+    withTime: boolean;
 }

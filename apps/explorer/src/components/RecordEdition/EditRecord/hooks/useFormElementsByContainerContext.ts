@@ -4,6 +4,6 @@
 import {createContext, useContext} from 'react';
 import {IFormElementsByContainer} from '../_types';
 
-export const FormElementsContext = createContext<IFormElementsByContainer>({});
+export const FormElementsByContainerContext = createContext<IFormElementsByContainer>({});
 
-export const useFormElementsContext = () => useContext(FormElementsContext);
+export const useFormElementsByContainerContext = () => useContext(FormElementsByContainerContext);

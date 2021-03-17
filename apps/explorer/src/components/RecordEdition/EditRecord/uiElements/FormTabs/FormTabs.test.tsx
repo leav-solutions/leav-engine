@@ -5,6 +5,7 @@ import {TabsDirection} from '@leav/types';
 import {act, render, screen} from '@testing-library/react';
 import React from 'react';
 import {mockFormElementTabs} from '__mocks__/common/form';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import FormTabs from './FormTabs';
 
 jest.mock('hooks/LangHook/LangHook');
@@ -12,7 +13,7 @@ jest.mock('hooks/LangHook/LangHook');
 describe('Tabs', () => {
     test('Render Tabs', async () => {
         await act(async () => {
-            render(<FormTabs element={mockFormElementTabs} />);
+            render(<FormTabs record={mockRecordWhoAmI} element={mockFormElementTabs} recordValues={{}} />);
         });
 
         await act(async () => {
@@ -23,6 +24,8 @@ describe('Tabs', () => {
     test('Render vertical Tabs', async () => {
         render(
             <FormTabs
+                record={mockRecordWhoAmI}
+                recordValues={{}}
                 element={{
                     ...mockFormElementTabs,
                     settings: {...mockFormElementTabs.settings, direction: TabsDirection.VERTICAL}

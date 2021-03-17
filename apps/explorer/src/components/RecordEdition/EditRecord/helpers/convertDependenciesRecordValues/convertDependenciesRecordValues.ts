@@ -4,7 +4,7 @@
 import {
     IGetRecordDependenciesValue,
     RecordDependenciesValuesByAttribute
-} from 'queries/forms/getRecordDependenciesValuesQuery';
+} from 'graphQL/queries/forms/getRecordDependenciesValuesQuery';
 import {IDependencyValues} from '../../_types';
 
 const _recordValuesToDependenciesValues = (

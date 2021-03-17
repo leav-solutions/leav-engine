@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {IValueDomain} from 'domain/value/valueDomain';
 import {GraphQLScalarType} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
-import {IValue, IValueVersion} from '_types/value';
 import {IRecord} from '_types/record';
+import {IValue, IValueVersion} from '_types/value';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
@@ -23,7 +23,7 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
 }
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,

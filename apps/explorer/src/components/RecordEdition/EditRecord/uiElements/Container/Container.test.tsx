@@ -10,17 +10,18 @@ import {
     mockFormElementTabs,
     mockFormElementTextBlock
 } from '__mocks__/common/form';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import Container from './Container';
 
-jest.mock('../../hooks/useFormElementsContext', () => ({
-    useFormElementsContext: () => ({
+jest.mock('../../hooks/useFormElementsByContainerContext', () => ({
+    useFormElementsByContainerContext: () => ({
         container: [mockFormElementContainer, mockFormElementInput, mockFormElementTabs, mockFormElementTextBlock]
     })
 }));
 
 describe('Container', () => {
     test('Render children', async () => {
-        render(<Container element={mockFormElementContainer} />);
+        render(<Container record={mockRecordWhoAmI} element={mockFormElementContainer} recordValues={{}} />);
 
         const children = await screen.findAllByTestId('container-child-element');
         expect(children.length).toBe(4);

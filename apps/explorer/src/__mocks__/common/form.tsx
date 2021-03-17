@@ -6,6 +6,7 @@ import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import React from 'react';
 import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
+import {mockFormAttribute} from './attribute';
 
 export const mockForm: GET_FORM_forms_list = {
     id: 'edition_form',
@@ -17,63 +18,73 @@ export const mockForm: GET_FORM_forms_list = {
                 {
                     id: '12345',
                     containerId: '__root',
-                    settings: [],
+                    settings: [{key: 'attribute', value: 'test_attribute'}],
                     type: FormElementTypes.field,
-                    uiElementType: 'input'
+                    uiElementType: 'input',
+                    attribute: mockFormAttribute
                 }
             ]
         }
     ]
 };
 
+const formElementBase = {
+    type: FormElementTypes.layout,
+    attribute: null,
+    settings: {}
+};
+
 export const mockFormElementContainer: FormElement<{}> = {
+    ...formElementBase,
     id: 'container',
     containerId: '__root',
-    settings: {},
     uiElement: () => <div>{FormUIElementTypes.FIELDS_CONTAINER}</div>,
     type: FormElementTypes.layout,
     uiElementType: FormUIElementTypes.FIELDS_CONTAINER
 };
 
 export const mockFormElementInput: FormElement<{}> = {
+    ...formElementBase,
     id: 'input_element',
     containerId: '__root',
-    settings: {},
+    settings: {attribute: 'test_attribute'},
+    attribute: mockFormAttribute,
     uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.TEXT_INPUT
 };
 
 export const mockFormElementDate: FormElement<{}> = {
+    ...formElementBase,
     id: 'date_element',
     containerId: '__root',
-    settings: {},
+    settings: {attribute: 'test_attribute'},
     uiElement: () => <div>{FormFieldTypes.DATE}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.DATE
 };
 
 export const mockFormElementTextBlock: FormElement<{}> = {
+    ...formElementBase,
     id: 'text_block',
     containerId: '__root',
     settings: {
         content: '**text content**'
     },
     uiElement: () => <div>{FormUIElementTypes.TEXT_BLOCK}</div>,
-    type: FormElementTypes.layout,
     uiElementType: FormUIElementTypes.TEXT_BLOCK
 };
 
 export const mockFormElementDivider: FormElement<IFormDividerSettings> = {
+    ...formElementBase,
     id: 'divider',
     containerId: '__root',
-    settings: {},
     uiElement: () => <div>{FormUIElementTypes.DIVIDER}</div>,
-    type: FormElementTypes.layout,
     uiElementType: FormUIElementTypes.DIVIDER
 };
 
 export const mockFormElementTabs: FormElement<IFormTabsSettings> = {
+    ...formElementBase,
     id: 'tabs',
     containerId: '__root',
     settings: {
@@ -84,6 +95,5 @@ export const mockFormElementTabs: FormElement<IFormTabsSettings> = {
         direction: TabsDirection.HORIZONTAL
     },
     uiElement: () => <div>{FormUIElementTypes.TABS}</div>,
-    type: FormElementTypes.layout,
     uiElementType: FormUIElementTypes.TABS
 };

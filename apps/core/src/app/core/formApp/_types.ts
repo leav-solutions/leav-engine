@@ -8,7 +8,7 @@ export type IFormForGraphql = Omit<IForm, 'elements'> & {elements: IFormDependen
 export type IFormDependentElementsForGraphQL = Omit<IFormDependentElements, 'elements'> & {
     elements: IFormElementForGraphQL[];
 };
-export type IFormElementForGraphQL = Omit<IFormElement, 'settings'> & {settings: Array<{name: string; value: any}>};
+export type IFormElementForGraphQL = Omit<IFormElement, 'settings'> & {settings: Array<{key: string; value: any}>};
 
 export interface IGetFormArgs {
     filters: ICoreEntityFilterOptions & {library: string; system?: boolean};

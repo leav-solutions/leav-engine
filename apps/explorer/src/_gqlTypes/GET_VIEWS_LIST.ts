@@ -12,8 +12,13 @@ import {ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder} from 
 // GraphQL query operation: GET_VIEWS_LIST
 // ====================================================
 
+export interface GET_VIEWS_LIST_views_list_created_by_whoAmI_library_gqlNames {
+    query: string;
+}
+
 export interface GET_VIEWS_LIST_views_list_created_by_whoAmI_library {
     id: string;
+    gqlNames: GET_VIEWS_LIST_views_list_created_by_whoAmI_library_gqlNames;
 }
 
 export interface GET_VIEWS_LIST_views_list_created_by_whoAmI {

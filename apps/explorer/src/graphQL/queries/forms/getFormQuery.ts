@@ -25,6 +25,13 @@ export const getFormQuery = gql`
                         containerId
                         uiElementType
                         type
+                        attribute {
+                            id
+                            label
+                            type
+                            format
+                            system
+                        }
                         settings {
                             key
                             value

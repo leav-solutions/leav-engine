@@ -4,3 +4,5 @@
 export interface IKeyValue<T> {
     [key: string]: T;
 }
+
+export type AnyPrimitive = string | number | boolean;

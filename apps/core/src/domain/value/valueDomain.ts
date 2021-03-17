@@ -1,19 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
+import * as Config from '_types/config';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
+import {EventType} from '../../_types/event';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IValue, IValuesOptions} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import canSaveValue from './helpers/canSaveValue';
@@ -21,11 +25,7 @@ import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import updateRecordLastModif from './helpers/updateRecordLastModif';
-import {IValidateHelper} from '../helpers/validate';
 import validateValue from './helpers/validateValue';
-import {EventType} from '../../_types/event';
-import * as Config from '_types/config';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -117,7 +117,7 @@ interface IDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,

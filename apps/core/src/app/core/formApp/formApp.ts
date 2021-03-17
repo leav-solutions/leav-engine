@@ -142,6 +142,7 @@ export default function ({
                         order: Int!,
                         uiElementType: String!,
                         type: FormElementTypes!,
+                        attribute: Attribute,
                         settings: [FormElementSettings!]!
                     }
 
@@ -237,6 +238,20 @@ export default function ({
                                     attributeDomain.getAttributeProperties({id: attr, ctx})
                                 )
                             );
+                        }
+                    },
+                    FormElement: {
+                        attribute: (formElement: IFormElementForGraphQL, _, ctx: IQueryInfos): Promise<IAttribute> => {
+                            const attributeSettings = formElement.settings.filter(
+                                setting => setting.key === 'attribute'
+                            )[0];
+                            const attributeId = attributeSettings?.value;
+
+                            if (!attributeId) {
+                                return null;
+                            }
+
+                            return attributeDomain.getAttributeProperties({id: attributeId, ctx});
                         }
                     }
                 }

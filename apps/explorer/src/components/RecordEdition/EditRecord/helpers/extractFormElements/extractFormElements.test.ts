@@ -20,6 +20,7 @@ describe('extractFormElements', () => {
                             id: 'rootElem1',
                             containerId: '__root',
                             settings: [{key: 'foo', value: 'bar'}],
+                            attribute: null,
                             type: FormElementTypes.field,
                             uiElementType: FormFieldTypes.TEXT_INPUT
                         },
@@ -27,6 +28,7 @@ describe('extractFormElements', () => {
                             id: 'rootElem2',
                             containerId: '__root',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.layout,
                             uiElementType: FormUIElementTypes.FIELDS_CONTAINER
                         },
@@ -34,6 +36,7 @@ describe('extractFormElements', () => {
                             id: 'rootElem3',
                             containerId: '__root',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.layout,
                             uiElementType: FormUIElementTypes.FIELDS_CONTAINER
                         },
@@ -41,6 +44,7 @@ describe('extractFormElements', () => {
                             id: 'containerElem1',
                             containerId: 'rootElem2',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.layout,
                             uiElementType: FormUIElementTypes.FIELDS_CONTAINER
                         },
@@ -48,6 +52,7 @@ describe('extractFormElements', () => {
                             id: 'subContainerElem1',
                             containerId: 'containerElem1',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.field,
                             uiElementType: FormFieldTypes.TEXT_INPUT
                         }
@@ -64,6 +69,7 @@ describe('extractFormElements', () => {
                     id: 'rootElem1',
                     containerId: '__root',
                     settings: {foo: 'bar'},
+                    attribute: null,
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
                     uiElement: Input
@@ -72,6 +78,7 @@ describe('extractFormElements', () => {
                     id: 'rootElem2',
                     containerId: '__root',
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                     uiElement: Container
@@ -80,6 +87,7 @@ describe('extractFormElements', () => {
                     id: 'rootElem3',
                     containerId: '__root',
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                     uiElement: Container
@@ -90,6 +98,7 @@ describe('extractFormElements', () => {
                     id: 'containerElem1',
                     containerId: 'rootElem2',
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                     uiElement: Container
@@ -100,6 +109,7 @@ describe('extractFormElements', () => {
                     id: 'subContainerElem1',
                     containerId: 'containerElem1',
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
                     uiElement: Input
@@ -132,6 +142,7 @@ describe('extractFormElements', () => {
                             id: 'rootElem1',
                             containerId: '__root',
                             settings: [{key: 'foo', value: 'bar'}],
+                            attribute: null,
                             type: FormElementTypes.field,
                             uiElementType: FormFieldTypes.TEXT_INPUT
                         }
@@ -147,6 +158,7 @@ describe('extractFormElements', () => {
                             id: 'rootElem2',
                             containerId: '__root',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.layout,
                             uiElementType: FormUIElementTypes.FIELDS_CONTAINER
                         }
@@ -162,6 +174,7 @@ describe('extractFormElements', () => {
                             id: 'rootElem3',
                             containerId: '__root',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.layout,
                             uiElementType: FormUIElementTypes.FIELDS_CONTAINER
                         }
@@ -177,6 +190,7 @@ describe('extractFormElements', () => {
                             id: 'containerElem1',
                             containerId: 'rootElem2',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.layout,
                             uiElementType: FormUIElementTypes.FIELDS_CONTAINER
                         }
@@ -192,6 +206,7 @@ describe('extractFormElements', () => {
                             id: 'subContainerElem1',
                             containerId: 'containerElem1',
                             settings: [],
+                            attribute: null,
                             type: FormElementTypes.field,
                             uiElementType: FormFieldTypes.TEXT_INPUT
                         }
@@ -218,6 +233,7 @@ describe('extractFormElements', () => {
                     id: 'rootElem1',
                     containerId: '__root',
                     settings: {foo: 'bar'},
+                    attribute: null,
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
                     uiElement: Input
@@ -226,6 +242,7 @@ describe('extractFormElements', () => {
                     id: 'rootElem2',
                     containerId: '__root',
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                     uiElement: Container
@@ -234,6 +251,7 @@ describe('extractFormElements', () => {
                     id: 'rootElem3',
                     containerId: '__root',
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                     uiElement: Container
@@ -244,6 +262,7 @@ describe('extractFormElements', () => {
                     id: 'containerElem1',
                     containerId: 'rootElem2',
                     settings: {},
+                    attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                     uiElement: Container

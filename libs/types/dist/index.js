@@ -10,6 +10,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+__exportStar(require("./errors"), exports);
 __exportStar(require("./forms"), exports);
 __exportStar(require("./utils"), exports);
 //# sourceMappingURL=index.js.map

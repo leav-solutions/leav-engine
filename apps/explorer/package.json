@@ -60,7 +60,7 @@
         "@simbathesailor/use-what-changed": "2.0.0",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.5.0",
-        "@testing-library/user-event": "^7.2.1",
+        "@testing-library/user-event": "13.0.4",
         "@types/enzyme": "^3.10.8",
         "@types/enzyme-adapter-react-16": "^1.0.6",
         "@types/i18next-browser-languagedetector": "^3.0.0",

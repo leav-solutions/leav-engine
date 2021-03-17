@@ -5,6 +5,7 @@ module.exports = {
     '@primary-color': '#0F97E4',
     '@default-bg': '#FFF',
     '@default-text-color': '#000',
+    '@error-color': '#e02020',
     '@divider-color': 'rgba(0, 0, 0, 6%)',
     '@item-active-bg': '#e5e5e5',
     '@item-hover-bg': '#f5f5f5',

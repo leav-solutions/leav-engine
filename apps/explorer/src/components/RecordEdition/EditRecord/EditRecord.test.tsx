@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {act, render, screen} from '@testing-library/react';
-import {getFormQuery} from 'queries/forms/getFormQuery';
+import {act, render, screen, waitForElement} from '@testing-library/react';
+import {getFormQuery} from 'graphQL/queries/forms/getFormQuery';
 import React from 'react';
 import {mockForm} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
@@ -52,6 +52,8 @@ describe('EditRecord', () => {
         await act(async () => {
             expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);
         });
+
+        await waitForElement(() => screen.getByText('EditRecordForm'));
 
         expect(screen.getByText('EditRecordForm')).toBeInTheDocument();
     });

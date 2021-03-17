@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FormElementTypes} from './globalTypes';
+import {FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_FORM
@@ -27,6 +27,14 @@ export interface GET_FORM_forms_list_elements_dependencyValue {
     value: GET_FORM_forms_list_elements_dependencyValue_value;
 }
 
+export interface GET_FORM_forms_list_elements_elements_attribute {
+    id: string;
+    label: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+}
+
 export interface GET_FORM_forms_list_elements_elements_settings {
     key: string;
     value: any;
@@ -37,6 +45,7 @@ export interface GET_FORM_forms_list_elements_elements {
     containerId: string;
     uiElementType: string;
     type: FormElementTypes;
+    attribute: GET_FORM_forms_list_elements_elements_attribute | null;
     settings: GET_FORM_forms_list_elements_elements_settings[];
 }
 

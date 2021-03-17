@@ -2,14 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '@testing-library/react';
-import {getFormQuery} from 'queries/forms/getFormQuery';
-import {getRecordDependenciesValuesQuery} from 'queries/forms/getRecordDependenciesValuesQuery';
+import {getFormQuery} from 'graphQL/queries/forms/getFormQuery';
+import {getRecordDependenciesValuesQuery} from 'graphQL/queries/forms/getRecordDependenciesValuesQuery';
 import React from 'react';
 import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 import {mockForm} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import EditRecordForm from './EditRecordForm';
+
+jest.mock('./RootContainer', () => {
+    return function RootContainer() {
+        return <div>RootContainer</div>;
+    };
+});
 
 describe('EditRecordForm', () => {
     test('Render form immediately if no dependencies', async () => {
@@ -45,7 +51,7 @@ describe('EditRecordForm', () => {
             </MockedProviderWithFragments>
         );
 
-        expect(screen.getByTestId('container-child-element')).toBeInTheDocument();
+        expect(screen.getByText('RootContainer')).toBeInTheDocument();
     });
 
     test('Render form after loading dependencies values', async () => {
@@ -93,6 +99,6 @@ describe('EditRecordForm', () => {
             expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);
         });
 
-        expect(screen.getByTestId('container-child-element')).toBeInTheDocument();
+        expect(screen.getByText('RootContainer')).toBeInTheDocument();
     });
 });
