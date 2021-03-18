@@ -261,7 +261,8 @@ export default function ({
                 valueToSave,
                 {
                     valueRepo,
-                    recordRepo
+                    recordRepo,
+                    actionsListDomain
                 },
                 ctx
             );
@@ -359,7 +360,8 @@ export default function ({
                                       valToSave,
                                       {
                                           valueRepo,
-                                          recordRepo
+                                          recordRepo,
+                                          actionsListDomain
                                       },
                                       ctx
                                   );
