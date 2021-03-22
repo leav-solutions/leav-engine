@@ -6,11 +6,11 @@ import ActiveCellNavigation from 'components/ActiveCellNavigation';
 import React, {createRef, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../../Context/StateNavigationContext';
-import {IRecordAndChildren} from '../../../queries/trees/getTreeContentQuery';
+import {IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../../themingVar';
 import {INavigationPath} from '../../../_types/types';
 import CellNavigation from '../../CellNavigation';
-import HeaderCellNavigation from '../../HeaderCellNavigation';
+import HeaderColumnNavigation from '../../HeaderColumnNavigation';
 
 const Column = styled.div`
     border-right: 1px solid ${themingVar['@divider-color']};
@@ -65,7 +65,7 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActiv
     if (showLoading) {
         return (
             <Column>
-                <HeaderCellNavigation depth={depth} />
+                <HeaderColumnNavigation depth={depth} />
                 <SpinWrapper>
                     <Spin />
                 </SpinWrapper>
@@ -80,7 +80,7 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActiv
 
         return (
             <Column>
-                <HeaderCellNavigation depth={depth} setItems={setItems} isActive={columnActive} />
+                <HeaderColumnNavigation depth={depth} setItems={setItems} isActive={columnActive} />
                 <ColumnContent ref={ref}>
                     {items.map(treeElement =>
                         columnActive ? (

@@ -7,7 +7,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
-import {getUser} from '../../../queries/cache/user/userQuery';
+import {getUser} from '../../../graphQL/queries/cache/user/userQuery';
 import UserMenu from './UserMenu';
 
 describe('UserMenu', () => {

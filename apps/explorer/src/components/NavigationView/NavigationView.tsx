@@ -12,7 +12,7 @@ import {
     IGetTreeContentQuery,
     IGetTreeContentQueryVar,
     IRecordAndChildren
-} from '../../queries/trees/getTreeContentQuery';
+} from '../../graphQL/queries/trees/getTreeContentQuery';
 import ColumnNavigation from '../ColumnNavigation';
 import DetailNavigation from '../DetailNavigation';
 

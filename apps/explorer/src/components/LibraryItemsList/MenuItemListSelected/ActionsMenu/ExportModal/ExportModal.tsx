@@ -12,9 +12,9 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateItem} from '../../../../../Context/StateItemsContext';
+import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
 import {useActiveLibrary} from '../../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useNotifications} from '../../../../../hooks/NotificationsHook/NotificationsHook';
-import {exportQuery} from '../../../../../queries/export/exportQuery';
 import {getFileUrl} from '../../../../../utils';
 import {EXPORT, EXPORTVariables} from '../../../../../_gqlTypes/EXPORT';
 import {
@@ -84,7 +84,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
         setCurrentStep(ExportSteps.PROCESSING);
 
         let queryFilters: RecordFilterInput[];
-        if (stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected) {
+        if (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected) {
             queryFilters = (stateItems.queryFilters as unknown) as RecordFilterInput[];
         } else {
             const selectedIds = stateShared.selection.selected.map(elementSelected => elementSelected.id);

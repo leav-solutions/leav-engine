@@ -6,9 +6,12 @@ import {useCallback, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {GET_NOTIFICATIONS_STACK, GET_NOTIFICATIONS_STACK_notificationsStack} from '_gqlTypes/GET_NOTIFICATIONS_STACK';
 import {NotificationChannel, NotificationPriority} from '_gqlTypes/globalTypes';
-import {getBaseNotification, IGetBaseNotification} from '../../queries/cache/notifications/getBaseNotificationQuery';
-import {IGetNotification} from '../../queries/cache/notifications/getNotificationsQuery';
-import {getNotificationsStack} from '../../queries/cache/notifications/getNotificationsStackQuery';
+import {
+    getBaseNotification,
+    IGetBaseNotification
+} from '../../graphQL/queries/cache/notifications/getBaseNotificationQuery';
+import {IGetNotification} from '../../graphQL/queries/cache/notifications/getNotificationsQuery';
+import {getNotificationsStack} from '../../graphQL/queries/cache/notifications/getNotificationsStackQuery';
 import {IBaseNotification, INotification, NotificationType} from '../../_types/types';
 
 interface IUseNotificationsStackReturn {

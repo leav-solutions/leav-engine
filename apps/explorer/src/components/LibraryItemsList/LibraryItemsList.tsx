@@ -13,19 +13,19 @@ import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
 import {attributeExtendedKey, defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {StateItemsContext} from '../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from '../../hooks/LangHook/LangHook';
-import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {
     getLibraryDetailExtendedQuery,
     IGetLibraryDetailExtendedQuery,
     IGetLibraryDetailExtendedVariables
-} from '../../queries/libraries/getLibraryDetailExtendQuery';
-import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
+} from '../../graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
-} from '../../queries/records/getRecordsFromLibraryQueryTypes';
+} from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
+import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from '../../utils';
 import {
     AttributeFormat,
@@ -379,7 +379,7 @@ function LibraryItemsList(): JSX.Element {
 
     const menuSelectedActive =
         !!stateShared.selection.selected.length ||
-        (stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected);
+        (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected);
 
     return (
         <StateItemsContext.Provider value={{stateItems, dispatchItems}}>

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {useCallback} from 'react';
-import {getUser, IGetUser} from '../../queries/cache/user/userQuery';
+import {getUser, IGetUser} from '../../graphQL/queries/cache/user/userQuery';
 
 export const useUser = (): [IGetUser | undefined, (newUser: IGetUser) => void] => {
     const {data: user, client} = useQuery<IGetUser>(getUser);

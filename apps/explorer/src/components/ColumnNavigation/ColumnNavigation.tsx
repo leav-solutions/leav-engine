@@ -5,10 +5,10 @@ import ActiveCellNavigation from 'components/ActiveCellNavigation';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
+import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../themingVar';
 import CellNavigation from '../CellNavigation';
-import HeaderCellNavigation from '../HeaderCellNavigation';
+import HeaderColumnNavigation from '../HeaderColumnNavigation';
 import ColumnFromPath from './ColumnFromPath';
 
 const Column = styled.div`
@@ -44,7 +44,7 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
     return (
         <>
             <Column>
-                <HeaderCellNavigation depth={0} setItems={setItems} isActive={currentColumnActive} />
+                <HeaderColumnNavigation depth={0} setItems={setItems} isActive={currentColumnActive} />
                 <ColumnContent>
                     {items.map(treeElement =>
                         currentColumnActive ? (

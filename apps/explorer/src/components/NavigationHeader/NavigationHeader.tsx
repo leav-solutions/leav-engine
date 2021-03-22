@@ -4,10 +4,10 @@
 import {Button} from 'antd';
 import {resetSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
 import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {displaySharedSearchType as displaySharedSelectionType} from 'utils';
 
 const Wrapper = styled.div`
     height: 3rem;
@@ -23,7 +23,7 @@ function NavigationHeader(): JSX.Element {
     const {t} = useTranslation();
     const {stateShared, dispatchShared} = useStateShared();
 
-    const strSelectionType = displaySharedSelectionType(stateShared.selection.type);
+    const strSelectionType = SharedStateSelectionType[stateShared.selection.type];
     const nbSharedSelectionElements = stateShared.selection.selected.length || 0;
 
     const _clearSelection = () => {

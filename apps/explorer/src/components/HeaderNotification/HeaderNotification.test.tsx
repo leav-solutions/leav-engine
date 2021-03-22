@@ -6,7 +6,7 @@ import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {getNotifications, IGetNotification} from '../../queries/cache/notifications/getNotificationsQuery';
+import {getNotifications, IGetNotification} from '../../graphQL/queries/cache/notifications/getNotificationsQuery';
 import {
     IBaseNotification,
     INotification,

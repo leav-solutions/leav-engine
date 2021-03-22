@@ -6,7 +6,7 @@ import {Badge, Tooltip} from 'antd';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
+import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
 import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducerActions';
 import themingVar from '../../themingVar';
 import {INavigationPath, IRecordIdentityWhoAmI, PreviewSize} from '../../_types/types';

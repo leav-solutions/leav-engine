@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordAndChildren, IRecordField} from '../../queries/trees/getTreeContentQuery';
+import {INavigationPath} from '_types/types';
+import {IRecordAndChildren, IRecordField} from '../../graphQL/queries/trees/getTreeContentQuery';
 
 export const mockTreeRecord: IRecordField = {
     whoAmI: {
@@ -53,3 +54,9 @@ export const mockTreeElement: IRecordAndChildren = {
 };
 
 export const mockTreeElements: IRecordAndChildren[] = [mockTreeElement];
+
+export const mockNavigationPath: INavigationPath = {
+    id: 'id',
+    library: 'library',
+    label: 'label'
+};

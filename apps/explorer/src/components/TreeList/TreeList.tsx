@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
 import {Divider, PageHeader, Row, Spin} from 'antd';
+import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {default as React, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
-import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
 import {getUserDataQuery} from '../../queries/userData/getUserData';
 import {saveUserData} from '../../queries/userData/saveUserData';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../_gqlTypes/SAVE_USER_DATA';

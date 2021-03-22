@@ -22,7 +22,7 @@ interface ICellProps {
 }
 
 const Cell = ({columnName, data, index}: ICellProps) => {
-    const {value, type, id, library} = data;
+    const {value, type, id, library, label} = data;
 
     const {
         stateItems: {displaySize: displayType}
@@ -32,6 +32,11 @@ const Cell = ({columnName, data, index}: ICellProps) => {
 
     const previewSize: PreviewSize = displayTypeToPreviewSize(displayType);
 
+    const selectionData = {
+        id,
+        library,
+        label
+    };
     if (!value) {
         return <></>;
     }
@@ -49,7 +54,13 @@ const Cell = ({columnName, data, index}: ICellProps) => {
             //selection and infos column has no type
             if (columnName === infosCol) {
                 return (
-                    <CellInfos record={value} size={previewSize} lang={lang} index={index} id={id} library={library} />
+                    <CellInfos
+                        record={value}
+                        size={previewSize}
+                        lang={lang}
+                        index={index}
+                        selectionData={selectionData}
+                    />
                 );
             }
 

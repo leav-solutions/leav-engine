@@ -3,12 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant-design/icons';
 import {Button, Card} from 'antd';
+import {useLang} from 'hooks/LangHook/LangHook';
 import {toggleSharedElementSelected} from 'hooks/SharedStateHook/SharedReducerActions';
 import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
+import {ISharedSelected, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useEffect, useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getFileUrl} from 'utils';
+import {getFileUrl, localizedLabel} from 'utils';
 import themingVar from '../../../../themingVar';
 import {IItem} from '../../../../_types/types';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
@@ -113,8 +114,8 @@ interface IItemTileDisplayProps {
 }
 
 function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
-    // const {stateItems, dispatchItems} = useStateItem();
     const {stateShared, dispatchShared} = useStateShared();
+    const [{lang}] = useLang();
     const [isSelected, setIsSelect] = useState<boolean>(
         !!stateShared.selection.selected.some(
             elementSelected =>
@@ -125,12 +126,13 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
     const selectedToggle = () => {
         setIsSelect(s => !s);
 
-        const newSelected = {
+        const newSelected: ISharedSelected = {
             id: item.whoAmI.id,
-            library: item.whoAmI.library.id
+            library: item.whoAmI.library.id,
+            label: localizedLabel(item.whoAmI.label, lang)
         };
 
-        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.recherche, newSelected));
+        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.search, newSelected));
     };
 
     useEffect(() => {
@@ -143,7 +145,7 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
     }, [stateShared.selection.selected, item]);
 
     const selectionActive =
-        (stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected) ||
+        (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected) ||
         stateShared.selection.selected.length;
 
     return (

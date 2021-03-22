@@ -225,11 +225,13 @@
             "add-selected": "Add Selected"
         },
         "notifications": {
-            "success-add": "Element {{elementId}} has been add",
-            "error-add": "An error occurs while add element {{elementId}}: {{errorMessage}}",
+            "success-add": "{{nb}} elements had been add",
+            "error-add": "An error occurs while add elements {{elements}}: {{errorMessage}}",
             "warning-add-no-selection": "Aucun élément sélectionner a ajouté",
-            "success-detach": "Element {{elementId}} has been detach",
-            "error-detach": "An error occurs while detach element {{elementId}}: {{errorMessage}}"
+            "success-move": "{{nb}} elements had been move",
+            "error-move": "An error occurs while moving elements {{elements}}: {{errorMessage}}",
+            "success-detach": "{{nb}} elements had been detach",
+            "error-detach": "An error occurs while detach elements {{elements}}: {{errorMessage}}"
         }
     },
     "notification": {

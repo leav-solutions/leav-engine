@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IGetLangAll} from '../../queries/cache/lang/getLangQuery';
+import {IGetLangAll} from '../../graphQL/queries/cache/lang/getLangQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useLang} from './LangHook';
 

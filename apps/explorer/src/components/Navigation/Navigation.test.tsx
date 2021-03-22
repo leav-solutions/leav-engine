@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
+import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import Navigation from './Navigation';
 

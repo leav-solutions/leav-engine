@@ -9,13 +9,13 @@ import {useTranslation} from 'react-i18next';
 import {localizedLabel} from 'utils';
 import {defaultSort, viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
     IAddViewMutationVariablesView
-} from '../../../mutations/views/addViewMutation';
-import {IActiveLibrary} from '../../../queries/cache/activeLibrary/getActiveLibraryQuery';
+} from '../../../graphQL/mutations/views/addViewMutation';
+import {IActiveLibrary} from '../../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {ILabel, ViewType} from '../../../_types/types';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';

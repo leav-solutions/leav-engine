@@ -7,8 +7,8 @@ import {Button, Card, Col, Divider, Row} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
+import {getLibraryDetailQuery} from '../../../graphQL/queries/libraries/getLibraryDetailQuery';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
 import {localizedLabel} from '../../../utils';
 import {ILabel} from '../../../_types/types';
 

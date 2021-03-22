@@ -1,24 +1,28 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
+import {SharedStateSelection, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
+import {mockNavigationPath} from '__mocks__/Navigation/mockTreeElements';
 
 export const mockSharedSelectedElement = {
     id: 'id',
-    library: 'library'
+    library: 'library',
+    label: 'label'
 };
 
-export const mockSharedSearchSelection = {
+export const mockSharedSearchSelection: SharedStateSelection = {
     selected: [mockSharedSelectedElement, mockSharedSelectedElement],
-    type: SharedStateSelectionType.recherche
+    type: SharedStateSelectionType.search
 };
 
-export const mockSharedNavigationSelection = {
+export const mockSharedNavigationSelection: SharedStateSelection = {
     selected: [mockSharedSelectedElement],
-    type: SharedStateSelectionType.navigation
+    type: SharedStateSelectionType.navigation,
+    parent: mockNavigationPath
 };
 
-export const mockSharedNavigationSelectionWithNoSelected = {
+export const mockSharedNavigationSelectionWithNoSelected: SharedStateSelection = {
     selected: [],
-    type: SharedStateSelectionType.navigation
+    type: SharedStateSelectionType.navigation,
+    parent: mockNavigationPath
 };

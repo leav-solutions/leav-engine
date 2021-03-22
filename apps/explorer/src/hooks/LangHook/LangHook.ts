@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {useCallback, useMemo} from 'react';
-import {getLangAll, IGetLangAll} from '../../queries/cache/lang/getLangQuery';
+import {getLangAll, IGetLangAll} from '../../graphQL/queries/cache/lang/getLangQuery';
 
 export const useLang = (): [IGetLangAll, (langInfo: Partial<IGetLangAll>) => void] => {
     const {data, client} = useQuery<IGetLangAll>(getLangAll);

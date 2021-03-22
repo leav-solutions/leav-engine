@@ -7,8 +7,8 @@ import {Checkbox, List, Radio, Spin} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import Attribute from '..';
+import {getTreeAttributesQuery} from '../../../../graphQL/queries/trees/getTreeAttributesQuery';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {getTreeAttributesQuery} from '../../../../queries/trees/getTreeAttributesQuery';
 import {attributeToSelectedAttribute, isAttributeSelected, localizedLabel} from '../../../../utils';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {HeartOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Tooltip} from 'antd';
+import {ISharedSelected} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
@@ -53,11 +54,10 @@ interface ICellInfosProps {
     style?: CSSObject;
     lang?: string[];
     index: string;
-    id: string;
-    library: string;
+    selectionData: ISharedSelected;
 }
 
-function CellInfos({record, size, style, lang, index, id, library}: ICellInfosProps): JSX.Element {
+function CellInfos({record, size, style, lang, index, selectionData}: ICellInfosProps): JSX.Element {
     const {t} = useTranslation();
 
     const [isHover, setIsHover] = useState<boolean>(false);
@@ -95,13 +95,13 @@ function CellInfos({record, size, style, lang, index, id, library}: ICellInfosPr
     return (
         <Wrapper>
             <div style={{position: 'relative'}}>
-                <CellSelection index={index} id={id} library={library} />
+                <CellSelection index={index} selectionData={selectionData} />
             </div>
             <div style={{position: 'relative'}} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                 <Info>
                     <CellRecordCard record={record} size={size} lang={lang} style={style} />
                 </Info>
-                <FloatingMenu className="floating-menu" isHover={isHover}>
+                <FloatingMenu data-testid="floating-menu" className="floating-menu" isHover={isHover}>
                     {actions.map(action => (
                         <Tooltip title={action.tooltip} key={action.tooltip}>
                             <Button size="small" icon={action.icon} />

@@ -218,19 +218,21 @@
             }
         },
         "actions": {
-            "sort-asc": "Trie Croissant",
-            "sort-desc": "Trie Décroissant",
+            "sort-asc": "Tri Croissant",
+            "sort-desc": "Tri Décroissant",
             "move-selected": "Déplacer sélection",
             "detach-selected": "Détacher sélection",
             "detach-element": "Détacher l'élement",
             "add-selected": "Ajouter sélection"
         },
         "notifications": {
-            "success-add": "L'élément {{elementId}} a pu être ajouté",
-            "error-add": "Une erreur est survenu lors de l'ajoute de l'élément {{elementId}}: {{errorMessage}}",
+            "success-add": "{{nb}} élements ont pu être ajouté",
+            "error-add": "Une erreur est survenu lors de l'ajout des élements {{elements}}: {{errorMessage}}",
             "warning-add-no-selection": "Aucun élément sélectionner à ajouter",
-            "success-detach": "L'élément {{elementId}} a pu être détacher",
-            "error-detach": "Une erreur est survenu lors du détachement de l'élément {{elementId}}: {{errorMessage}}"
+            "success-move": "{{nb}} élements ont pu être déplacés",
+            "error-move": "Une erreur est survenu lors du déplacement des élements {{elements}}: {{errorMessage}}",
+            "success-detach": "{{nb}} élements a pu être détacher",
+            "error-detach": "Une erreur est survenu lors du détachement des élements {{elements}}: {{errorMessage}}"
         }
     },
     "notification": {

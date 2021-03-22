@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
-import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
+import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import TreeList, {FAVORITE_TREES_KEY} from './TreeList';
 import {getUserDataQuery} from '../../queries/userData/getUserData';

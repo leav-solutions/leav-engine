@@ -4,14 +4,16 @@
 import {RightOutlined} from '@ant-design/icons';
 import {Badge, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
+import {useLang} from 'hooks/LangHook/LangHook';
 import {setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
 import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
+import {ISharedSelected, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
+import {localizedLabel} from 'utils';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
+import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
 import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducerActions';
 import themingVar from '../../themingVar';
 import {INavigationPath, IRecordIdentityWhoAmI, PreviewSize} from '../../_types/types';
@@ -73,6 +75,14 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
     const {stateShared, dispatchShared} = useStateShared();
 
+    const [{lang}] = useLang();
+
+    const parentElement = stateNavigation.path[depth - 1];
+    const parent: TreeElementInput = {
+        id: parentElement?.id,
+        library: parentElement?.library
+    };
+
     const recordLabel =
         treeElement.record.whoAmI.label && treeElement.record.whoAmI.label.length > labelLimit
             ? treeElement.record.whoAmI.label.substr(0, labelLimit) + '...'
@@ -115,21 +125,36 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
 
             const selection = {
                 type: SharedStateSelectionType.navigation,
-                selected: newSelected
+                selected: newSelected,
+                parent
             };
 
             dispatchShared(setSharedSelection(selection));
         } else {
             // add to selected
-            const newElementSelected: TreeElementInput = {
+            const label = localizedLabel(treeElement.record.whoAmI.label, lang);
+            const newElementSelected: ISharedSelected = {
                 id: treeElement.record.whoAmI.id,
-                library: treeElement.record.whoAmI.library.id
+                library: treeElement.record.whoAmI.library.id,
+                label
             };
-            const newSelected = [...stateShared.selection.selected, newElementSelected];
+
+            // reset selection if previous selection is not navigation or if the parent change
+            let newSelected: ISharedSelected[] = [newElementSelected];
+            if (stateShared.selection.type === SharedStateSelectionType.navigation) {
+                if (
+                    parent.id === stateShared.selection.parent?.id &&
+                    parent.library === stateShared.selection.parent?.library
+                ) {
+                    // keep selection if parent is the same
+                    newSelected = [...stateShared.selection.selected, newElementSelected];
+                }
+            }
 
             const selection = {
                 type: SharedStateSelectionType.navigation,
-                selected: newSelected
+                selected: newSelected,
+                parent
             };
 
             dispatchShared(setSharedSelection(selection));

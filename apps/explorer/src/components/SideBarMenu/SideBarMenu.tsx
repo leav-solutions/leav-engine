@@ -13,13 +13,13 @@ import {Drawer, Menu} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink, useLocation} from 'react-router-dom';
-import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
-import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
-import {useLang} from '../../hooks/LangHook/LangHook';
 import {
     getLibrariesAndTreesListQuery,
     IGetLibrariesAndTreesListQuery
-} from '../../queries/LibrariesAndTrees/getLibrariesAndTreesList';
+} from '../../graphQL/queries/LibrariesAndTrees/getLibrariesAndTreesList';
+import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
+import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedLabel} from '../../utils';
 import {makeActiveLibraryRoute, makeActiveTreeRoute, routes} from '../Router/Routes/ListRoutes';
 

@@ -3,12 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckSquareTwoTone, DeleteOutlined, DownOutlined, LogoutOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
+import {useLang} from 'hooks/LangHook/LangHook';
 import {resetSharedSelection, setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
 import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
 import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {localizedLabel} from 'utils';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVars from '../../../themingVar';
 import ActionsMenu from './ActionsMenu';
@@ -57,6 +59,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
 
     const {stateItems} = useStateItem();
     const {stateShared, dispatchShared} = useStateShared();
+    const [{lang}] = useLang();
 
     const [countItemsSelected, setCountItemsSelected] = useState(0);
 
@@ -77,7 +80,8 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     ...selected,
                     {
                         id: item.whoAmI.id,
-                        library: item.whoAmI.library.id
+                        library: item.whoAmI.library.id,
+                        label: localizedLabel(item.whoAmI.label, lang)
                     }
                 ];
             }
@@ -85,7 +89,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
 
         dispatchShared(
             setSharedSelection({
-                type: SharedStateSelectionType.recherche,
+                type: SharedStateSelectionType.search,
                 selected,
                 allSelected: false
             })
@@ -96,7 +100,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
         // reset selected elements
         dispatchShared(
             setSharedSelection({
-                type: SharedStateSelectionType.recherche,
+                type: SharedStateSelectionType.search,
                 selected: [],
                 allSelected: true
             })
@@ -106,7 +110,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     const unselectAll = () => {
         dispatchShared(
             setSharedSelection({
-                type: SharedStateSelectionType.recherche,
+                type: SharedStateSelectionType.search,
                 selected: [],
                 allSelected: false
             })
@@ -114,7 +118,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     };
 
     const allSelectActive =
-        stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected;
+        stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected;
 
     return (
         <Wrapper active={active}>

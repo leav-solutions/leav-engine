@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import HeaderCellNavigation from 'components/HeaderCellNavigation';
+import HeaderColumnNavigation from 'components/HeaderColumnNavigation';
 import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -80,7 +80,7 @@ const DetailNavigation = (): JSX.Element => {
     return (
         <Detail ref={detailRef}>
             <div className="header-detail">
-                <HeaderCellNavigation depth={stateNavigation.path.length} isActive={true} isDetail={true} />
+                <HeaderColumnNavigation depth={stateNavigation.path.length} isActive={true} isDetail={true} />
             </div>
             <PreviewWrapper>
                 <RecordPreview

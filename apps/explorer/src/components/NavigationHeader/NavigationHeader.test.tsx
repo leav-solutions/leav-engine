@@ -5,6 +5,7 @@ import {render, screen} from '@testing-library/react';
 import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {useTranslation} from 'react-i18next';
 import {
     mockSharedNavigationSelectionWithNoSelected,
     mockSharedSearchSelection
@@ -13,6 +14,7 @@ import {MockStateShared} from '__mocks__/stateShared/mockStateShared';
 import NavigationHeader from './NavigationHeader';
 
 describe('NavigationHeader', () => {
+    const {t} = useTranslation();
     test('should display the number of element selected and the type of selection', async () => {
         await act(async () => {
             render(

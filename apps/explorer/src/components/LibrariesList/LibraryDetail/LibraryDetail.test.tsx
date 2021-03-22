@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
-import {getLibraryDetailQuery} from '../../../queries/libraries/getLibraryDetailQuery';
+import {getLibraryDetailQuery} from '../../../graphQL/queries/libraries/getLibraryDetailQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import LibraryDetail from './LibraryDetail';
 

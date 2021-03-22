@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
@@ -10,16 +10,14 @@ import ActiveCellNavigation from './ActiveCellNavigation';
 
 describe('ActiveCellNavigation', () => {
     test('should display the label of the record', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
                     <ActiveCellNavigation treeElement={mockTreeElement} depth={0} />
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.text()).toContain(mockTreeElement.record.whoAmI.label);
+        expect(screen.getByText(mockTreeElement.record.whoAmI.label)).toBeInTheDocument();
     });
 });

@@ -1,14 +1,20 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
+import {act} from 'react-dom/test-utils';
 import {IItem} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import {MockStateItems} from '../../../../__mocks__/stateItems/mockStateItems';
-import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 import ItemTileDisplay from './ItemTileDisplay';
-
+jest.mock(
+    '../../LibraryItemsListTable/RecordPreview',
+    () =>
+        function RecordPreview() {
+            return <div>RecordPreview</div>;
+        }
+);
 describe('ItemTileDisplay', () => {
     const itemMock: IItem = {
         fields: {},
@@ -19,14 +25,16 @@ describe('ItemTileDisplay', () => {
     };
 
     test('should call RecordPreview', async () => {
-        const comp = mount(
-            <MockedProviderWithFragments>
-                <MockStateItems>
-                    <ItemTileDisplay item={itemMock} showRecordEdition={jest.fn()} />
-                </MockStateItems>
-            </MockedProviderWithFragments>
-        );
+        await act(async () => {
+            render(
+                <MockedProviderWithFragments>
+                    <MockStateItems>
+                        <ItemTileDisplay item={itemMock} showRecordEdition={jest.fn()} />
+                    </MockStateItems>
+                </MockedProviderWithFragments>
+            );
+        });
 
-        expect(comp.find(RecordPreview)).toHaveLength(1);
+        expect(screen.getByText('RecordPreview')).toBeInTheDocument();
     });
 });

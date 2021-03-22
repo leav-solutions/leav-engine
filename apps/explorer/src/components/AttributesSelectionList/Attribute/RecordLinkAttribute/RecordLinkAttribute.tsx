@@ -7,8 +7,8 @@ import {Checkbox, List, Radio, Spin} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import Attribute from '..';
+import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/getAttributesByLib';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {getAttributesByLibQuery} from '../../../../queries/attributes/getAttributesByLib';
 import themingVar from '../../../../themingVar';
 import {attributeToSelectedAttribute, isAttributeSelected, localizedLabel} from '../../../../utils';
 import {

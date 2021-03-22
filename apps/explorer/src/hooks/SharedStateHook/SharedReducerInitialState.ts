@@ -5,7 +5,7 @@ import {ISharedReducerState, SharedStateSelectionType} from './SharedStateReduce
 
 export const sharedReducerInitialState: ISharedReducerState = {
     selection: {
-        type: SharedStateSelectionType.recherche,
+        type: SharedStateSelectionType.search,
         selected: []
     }
 };

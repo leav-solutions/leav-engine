@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
+import {useLang} from 'hooks/LangHook/LangHook';
 import {isEqual} from 'lodash';
 import get from 'lodash/get';
 import React, {useEffect, useState} from 'react';
@@ -9,10 +10,11 @@ import {useTranslation} from 'react-i18next';
 import {useFlexLayout, useTable} from 'react-table';
 import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
+import {localizedLabel} from 'utils';
 import {infosCol} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVar from '../../../themingVar';
-import {AttributeFormat, AttributeType, ITableItems} from '../../../_types/types';
+import {AttributeFormat, AttributeType, ITableItem, ITableItems} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
@@ -109,6 +111,7 @@ const Pagination = styled.div`
 const Table = () => {
     const {t} = useTranslation();
     const {stateItems} = useStateItem();
+    const [{lang}] = useLang();
 
     const [tableColumns, setTableColumns] = useState<ITableColumn[]>([]);
     const [tableData, setTableData] = useState<ITableItems[]>([]);
@@ -159,8 +162,10 @@ const Table = () => {
                             const value = item.whoAmI;
                             const id = item.whoAmI.id;
                             const library = item.whoAmI.library.id;
+                            const label = localizedLabel(item.whoAmI.label, lang);
 
-                            acc[column.accessor] = {value, type: column.type, id, library};
+                            const cellData: ITableItem = {value, type: column.type, id, library, label};
+                            acc[column.accessor] = cellData;
 
                             return acc;
                         }

@@ -10,12 +10,12 @@ import styled from 'styled-components';
 import {IconChecked} from '../../../assets/icons/IconChecked';
 import {viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import deleteViewMutation, {
     IDeleteViewMutation,
     IDeleteViewMutationVariables
-} from '../../../mutations/views/deleteViewMutation';
-import {IGetViewListElement} from '../../../queries/views/getViewsListQuery';
+} from '../../../graphQL/mutations/views/deleteViewMutation';
+import {IGetViewListElement} from '../../../graphQL/queries/views/getViewsListQuery';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {limitTextSize, localizedLabel} from '../../../utils';
 import {IQueryFilter, IView} from '../../../_types/types';

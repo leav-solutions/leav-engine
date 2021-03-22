@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IGetViewListElement} from '../../../queries/views/getViewsListQuery';
+import {IGetViewListElement} from '../../../graphQL/queries/views/getViewsListQuery';
 import {OrderSearch, ViewType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';

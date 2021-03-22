@@ -92,19 +92,18 @@ prog.version('0.1.0')
         const testFile = compFolder + `/${name}.test.tsx`;
         if (!fs.existsSync(testFile)) {
             const fileContent = `import React from 'react';
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import ${name} from './${name}';
 import {act} from 'react-dom/test-utils';
 
 describe('${name}', () => {
     test('', async () => {
-        let comp: any;
 
         await act(async () => {
-            comp = mount(<${name} />);
+            render(<${name} />);
         })
 
-        expect(comp);
+        expect(screen.getByText('')).toBe(true);
     });
 });`;
 

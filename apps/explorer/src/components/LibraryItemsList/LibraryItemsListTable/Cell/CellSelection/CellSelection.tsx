@@ -4,7 +4,7 @@
 import {Checkbox} from 'antd';
 import {toggleSharedElementSelected} from 'hooks/SharedStateHook/SharedReducerActions';
 import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
+import {ISharedSelected, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import styled from 'styled-components';
 import themingVar from '../../../../../themingVar';
@@ -34,26 +34,25 @@ const HiddenCheckbox = styled.div`
 
 interface ICellSelectionProps {
     index: string;
-    id: string;
-    library: string;
+    selectionData: ISharedSelected;
 }
 
-function CellSelection({index, id, library}: ICellSelectionProps): JSX.Element {
+function CellSelection({index, selectionData}: ICellSelectionProps): JSX.Element {
     const {stateShared, dispatchShared} = useStateShared();
 
     const handleChangeSelected = () => {
-        const newElementSelected = {id, library};
-
-        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.recherche, newElementSelected));
+        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.search, selectionData));
     };
 
     if (stateShared.selection.selected.length) {
         const allSelected =
-            stateShared.selection.type === SharedStateSelectionType.recherche && stateShared.selection.allSelected;
+            stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected;
+
         const isSelected =
             allSelected ||
             stateShared.selection.selected.some(
-                elementSelected => elementSelected.id === id && elementSelected.library === library
+                elementSelected =>
+                    elementSelected.id === selectionData.id && elementSelected.library === selectionData.library
             );
 
         return (
@@ -68,7 +67,7 @@ function CellSelection({index, id, library}: ICellSelectionProps): JSX.Element {
     return (
         <Wrapper>
             <span>{index}</span>
-            <HiddenCheckbox className="hidden-checkbox">
+            <HiddenCheckbox data-testid="hidden-checkbox" className="hidden-checkbox">
                 <Checkbox onClick={handleChangeSelected} />
             </HiddenCheckbox>
         </Wrapper>
