@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserDataRepo get user data 1`] = `
+"
+                    RETURN FIRST(FOR e IN @@value0
+                        FILTER e.userId == @value1
+                    RETURN e).data.@value2"
+`;
+
+exports[`UserDataRepo get user data 2`] = `
+Object {
+  "@value0": "core_user_data",
+  "value1": "1",
+  "value2": "test",
+}
+`;
+
+exports[`UserDataRepo save user data 1`] = `
+"
+                    UPSERT @value0
+                    INSERT @value1
+                    UPDATE @value2
+                    IN @@value3
+                    OPTIONS { mergeObjects: true, keepNull: false }
+                    RETURN NEW"
+`;
+
+exports[`UserDataRepo save user data 2`] = `
+Object {
+  "@value3": "core_user_data",
+  "value0": Object {
+    "userId": "1",
+  },
+  "value1": Object {
+    "data": Object {
+      "test": "value",
+    },
+    "userId": "1",
+  },
+  "value2": Object {
+    "data": Object {
+      "test": "value",
+    },
+  },
+}
+`;
