@@ -109,6 +109,7 @@
         "app_access_permissions": "Access permissions",
         "app_edit_permission": "Edit permission",
         "app_access_navigator": "Access navigator",
+        "app_manage_global_preferences": "Manage global preferences",
         "access_attribute": "Access attribute",
         "create_value": "Create value",
         "edit_value": "Edit value",

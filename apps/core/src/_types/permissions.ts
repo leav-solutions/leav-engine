@@ -73,7 +73,8 @@ export enum AppPermissionsActions {
     DELETE_FORM = 'app_delete_form',
     ACCESS_PERMISSIONS = 'app_access_permissions',
     EDIT_PERMISSION = 'app_edit_permission',
-    ACCESS_NAVIGATOR = 'app_access_navigator'
+    ACCESS_NAVIGATOR = 'app_access_navigator',
+    MANAGE_GLOBAL_PREFERENCES = 'app_manage_global_preferences'
 }
 
 export type PermissionsActions =
