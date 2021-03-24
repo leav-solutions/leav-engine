@@ -68,7 +68,7 @@ export const sharedStateReducer = (state: ISharedReducerState, action: SharedRed
             return {...state, selection: {...state.selection, selected: []}};
         case SharedReducerActionsTypes.SET_SEARCH_ALL_SELECTED:
             if (state.selection.type === SharedStateSelectionType.search) {
-                return {...state, selection: {...state.selection, allSelected: action.allSelected}};
+                return {...state, selection: {...state.selection, selected: [], allSelected: action.allSelected}};
             }
             return state;
         case SharedReducerActionsTypes.TOGGLE_ELEMENT_SELECTED:
@@ -126,6 +126,7 @@ export const sharedStateReducer = (state: ISharedReducerState, action: SharedRed
                     }
                 };
             }
+            return state;
         default:
             return state;
     }

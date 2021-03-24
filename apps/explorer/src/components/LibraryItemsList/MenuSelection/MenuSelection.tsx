@@ -59,7 +59,7 @@ function MenuSelection(): JSX.Element {
     };
 
     return (
-        <span role="dropdown">
+        <span data-testid="dropdown-menu-selection">
             <Dropdown
                 overlay={
                     <Menu>

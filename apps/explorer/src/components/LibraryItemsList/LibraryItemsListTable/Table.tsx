@@ -199,7 +199,7 @@ const Table = () => {
         if (data) {
             setTableData([...data]);
         }
-    }, [stateItems.items, stateItems.pagination, tableColumns]);
+    }, [stateItems.items, stateItems.pagination, tableColumns, lang]);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const scrollValue = (e.target as HTMLDivElement).scrollLeft;

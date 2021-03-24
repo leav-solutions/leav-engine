@@ -249,19 +249,23 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
     if (stateShared.selection.selected.length) {
         return (
             <>
-                <span role="button-add-tree-element-button">
-                    <StandardBtn icon={<PlusOutlined />} onClick={handleAddElements} />
+                <span>
+                    <StandardBtn
+                        icon={<PlusOutlined />}
+                        onClick={handleAddElements}
+                        aria-label="add-elements-in-tree"
+                    />
                 </span>
                 {stateShared.selection.type === SharedStateSelectionType.navigation && (
                     <>
-                        <span role="button-move-selected">
+                        <span>
                             <StandardBtn
                                 onClick={handleMoveEnd}
                                 icon={<ArrowDownOutlined />}
                                 title={t('navigation.actions.move-selected')}
                             />
                         </span>
-                        <span role="button-detach-selected">
+                        <span>
                             <StandardBtn
                                 onClick={handleDeleteElements}
                                 icon={<DeleteOutlined />}

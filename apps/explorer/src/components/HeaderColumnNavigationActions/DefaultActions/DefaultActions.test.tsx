@@ -12,6 +12,6 @@ describe('DefaultActions', () => {
             render(<DefaultActions isDetail={false} />);
         });
 
-        expect(screen.getByRole('dropdown-tree-actions')).toBeInTheDocument();
+        expect(screen.getByTestId('dropdown-tree-actions')).toBeInTheDocument();
     });
 });

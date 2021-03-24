@@ -81,10 +81,10 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
     const closeDetail = () => {
         dispatchNavigation(resetRecordDetail());
     };
-    if (isDetail && stateShared) {
+    if (isDetail) {
         return (
             <>
-                <span role="dropdown-detail-action">
+                <span data-testid="dropdown-detail-actions">
                     <Dropdown
                         overlay={
                             <Menu>
@@ -97,7 +97,7 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
                         <StandardBtn icon={<IconEllipsisVertical />} />
                     </Dropdown>
                 </span>
-                <StandardBtn icon={<CloseOutlined />} onClick={closeDetail} />
+                <StandardBtn role="button" icon={<CloseOutlined />} onClick={closeDetail} />
             </>
         );
     }

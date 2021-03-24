@@ -42,7 +42,7 @@ function DefaultActions({setItems, isDetail}: IDefaultActionsProps): JSX.Element
 
     if (!isDetail && !stateShared.selection.selected.length) {
         return (
-            <span role="dropdown-tree-actions">
+            <span data-testid="dropdown-tree-actions">
                 <Dropdown
                     placement="bottomRight"
                     overlay={

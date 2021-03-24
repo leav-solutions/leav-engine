@@ -17,6 +17,18 @@ describe('DetailActions', () => {
             );
         });
 
-        expect(screen.getByRole('dropdown-detail-action')).toBeInTheDocument();
+        expect(screen.getByTestId('dropdown-detail-actions')).toBeInTheDocument();
+    });
+
+    test('should display close button', async () => {
+        await act(async () => {
+            render(
+                <MockedProviderWithFragments>
+                    <DetailActions isDetail={true} depth={0} />
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(screen.getByRole('button', {name: /close/i})).toBeInTheDocument();
     });
 });

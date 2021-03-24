@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {INavigationPath} from '_types/types';
 import {
     ISharedSelected,
     SharedReducerActions,
@@ -21,9 +22,16 @@ export const resetSharedSelection = (): SharedReducerActions => ({
 
 export const toggleSharedElementSelected = (
     selectionType: SharedStateSelectionType,
-    elementSelected: ISharedSelected
+    elementSelected: ISharedSelected,
+    parent?: INavigationPath
 ): SharedReducerActions => ({
     type: SharedReducerActionsTypes.TOGGLE_ELEMENT_SELECTED,
     selectionType,
-    elementSelected
+    elementSelected,
+    parent
+});
+
+export const setSharedAllSelected = (allSelected: boolean): SharedReducerActions => ({
+    type: SharedReducerActionsTypes.SET_SEARCH_ALL_SELECTED,
+    allSelected
 });

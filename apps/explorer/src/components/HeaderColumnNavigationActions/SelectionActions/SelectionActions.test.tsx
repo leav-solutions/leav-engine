@@ -22,9 +22,10 @@ describe('SelectionActions', () => {
             );
         });
 
-        expect(screen.getByRole('button-add-tree-element-button')).toBeInTheDocument();
-        expect(screen.getByRole('button-move-selected')).toBeInTheDocument();
-        expect(screen.getByRole('button-detach-selected')).toBeInTheDocument();
+        expect(screen.getAllByRole('button')).toHaveLength(3);
+        expect(screen.getByRole('button', {name: /add-elements-in-tree/i})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /navigation.actions.move-selected/i})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /navigation.actions.detach-selected/i})).toBeInTheDocument();
     });
 
     test('should get only add button', async () => {
@@ -38,8 +39,9 @@ describe('SelectionActions', () => {
             );
         });
 
-        expect(screen.getByRole('button-add-tree-element-button')).toBeInTheDocument();
-        expect(screen.queryByRole('button-move-selected')).not.toBeInTheDocument();
-        expect(screen.queryByRole('button-detach-selected')).not.toBeInTheDocument();
+        expect(screen.getAllByRole('button')).toHaveLength(1);
+        expect(screen.getByRole('button', {name: /add-elements-in-tree/i})).toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /navigation.actions.move-selected/i})).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /navigation.actions.detach-selected/i})).not.toBeInTheDocument();
     });
 });

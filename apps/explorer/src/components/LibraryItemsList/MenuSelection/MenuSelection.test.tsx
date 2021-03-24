@@ -20,7 +20,7 @@ describe('MenuSelection', () => {
             );
         });
 
-        expect(screen.getByRole('dropdown')).toBeInTheDocument();
+        expect(screen.getByTestId('dropdown-menu-selection')).toBeInTheDocument();
         expect(screen.queryByText(/items-list-row.nb-elements/i)).toBeInTheDocument();
     });
 });
