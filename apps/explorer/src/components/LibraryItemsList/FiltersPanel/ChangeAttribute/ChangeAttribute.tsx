@@ -25,7 +25,7 @@ interface IChangeAttributeProps {
 function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
     const {stateItems} = useStateItem();
-    const [stateFilters, dispatchFilters] = useStateFilters();
+    const {stateFilters, dispatchFilters} = useStateFilters();
 
     const [activeLibrary] = useActiveLibrary();
 

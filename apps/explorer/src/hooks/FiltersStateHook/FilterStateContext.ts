@@ -5,7 +5,7 @@ import React from 'react';
 import {filterReducerInitialState} from './FilterReducerInitialState';
 import {FilterReducerActions, IFiltersReducerState} from './FiltersStateReducer';
 
-export const FilterStateContext = React.createContext<[IFiltersReducerState, React.Dispatch<FilterReducerActions>]>([
-    filterReducerInitialState,
-    null as any
-]);
+export const FilterStateContext = React.createContext<{
+    stateFilters: IFiltersReducerState;
+    dispatchFilters: React.Dispatch<FilterReducerActions>;
+}>({stateFilters: filterReducerInitialState, dispatchFilters: null as any});

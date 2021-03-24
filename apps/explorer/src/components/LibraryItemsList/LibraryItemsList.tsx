@@ -78,7 +78,7 @@ function LibraryItemsList(): JSX.Element {
     const {libId} = useParams<{libId: string}>();
 
     const [stateItems, dispatchItems] = useReducer(reducer, LibraryItemListInitialState);
-    const [stateFilters, dispatchFilters] = useStateFilters();
+    const {stateFilters, dispatchFilters} = useStateFilters();
     const {stateShared} = useStateShared();
 
     const [{lang}] = useLang();

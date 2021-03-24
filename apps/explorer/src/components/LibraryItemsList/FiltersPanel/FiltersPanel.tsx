@@ -79,7 +79,7 @@ const CustomButton = styled(Button)`
 function FiltersPanel(): JSX.Element {
     const {t} = useTranslation();
 
-    const [stateFilters, dispatchFilters] = useStateFilters();
+    const {stateFilters, dispatchFilters} = useStateFilters();
 
     const [showAttr, setShowAttr] = useState(false);
 

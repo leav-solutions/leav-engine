@@ -34,7 +34,7 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useStateItem();
-    const [stateFilters] = useStateFilters();
+    const {stateFilters} = useStateFilters();
     const [{availableLangs, defaultLang, lang}] = useLang();
 
     const [form] = Form.useForm();

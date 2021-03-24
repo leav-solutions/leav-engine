@@ -68,7 +68,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useStateItem();
-    const [stateFilters] = useStateFilters();
+    const {stateFilters} = useStateFilters();
 
     const [modalNewProps, setModalNewProps] = useState<Omit<IModalProps, 'id'>>({
         visible: false

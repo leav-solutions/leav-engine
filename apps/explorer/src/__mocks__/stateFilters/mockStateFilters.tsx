@@ -25,7 +25,7 @@ export const MockStateFilters = ({children, stateFilters, dispatchFilters}: IMoc
     }
 
     return (
-        <FilterStateContext.Provider value={[stateFiltersValue, dispatchFiltersValue]}>
+        <FilterStateContext.Provider value={{stateFilters: stateFiltersValue, dispatchFilters: dispatchFiltersValue}}>
             {children}
         </FilterStateContext.Provider>
     );

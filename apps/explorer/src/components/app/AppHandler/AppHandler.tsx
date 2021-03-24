@@ -69,7 +69,7 @@ function AppHandler(): JSX.Element {
 
     return (
         <SharedStateContext.Provider value={{stateShared, dispatchShared}}>
-            <FilterStateContext.Provider value={[stateFilters, dispatchFilters]}>
+            <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
                 <Router />
             </FilterStateContext.Provider>
         </SharedStateContext.Provider>
