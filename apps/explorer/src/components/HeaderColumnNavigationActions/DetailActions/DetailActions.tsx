@@ -12,10 +12,9 @@ import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {resetRecordDetail, setRefetchTreeData} from 'Reducer/NavigationReducerActions';
+import {resetRecordDetail, setPath, setRefetchTreeData} from 'Reducer/NavigationReducerActions';
 import {localizedLabel} from 'utils';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {NotificationChannel, NotificationType} from '_types/types';
@@ -29,7 +28,6 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
     const {t} = useTranslation();
 
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
-    const {stateShared} = useStateShared();
 
     const {addNotification} = useNotifications();
     const [{lang}] = useLang();
@@ -63,7 +61,7 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
                 })
             });
 
-            dispatchNavigation(resetRecordDetail());
+            closeDetail();
         } catch (e) {
             addNotification({
                 channel: NotificationChannel.trigger,
@@ -80,7 +78,9 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
 
     const closeDetail = () => {
         dispatchNavigation(resetRecordDetail());
+        dispatchNavigation(setPath(stateNavigation.path.slice(0, -1)));
     };
+
     if (isDetail) {
         return (
             <>

@@ -23,7 +23,7 @@ function NavigationHeader(): JSX.Element {
     const {t} = useTranslation();
     const {stateShared, dispatchShared} = useStateShared();
 
-    const strSelectionType = SharedStateSelectionType[stateShared.selection.type];
+    const strSelectionType = t(`search.type.${SharedStateSelectionType[stateShared.selection.type]}`);
     const nbSharedSelectionElements = stateShared.selection.selected.length || 0;
 
     const _clearSelection = () => {

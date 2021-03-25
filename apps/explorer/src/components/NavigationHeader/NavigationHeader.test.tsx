@@ -30,7 +30,7 @@ describe('NavigationHeader', () => {
 
         const nb = mockSharedSearchSelection.selected.length;
         const type = SharedStateSelectionType[mockSharedSearchSelection.type];
-        const strToFind = `navigation.header.nb-selection|${nb}|${type}`;
+        const strToFind = `navigation.header.nb-selection|${nb}|search.type.${type}`;
 
         expect(screen.getByText(strToFind)).toBeInTheDocument();
     });
