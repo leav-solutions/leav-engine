@@ -246,33 +246,44 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         }
     };
 
+    const searchIsNavigation = stateShared.selection.type === SharedStateSelectionType.navigation;
+
+    const columnIsParent =
+        stateShared.selection.type === SharedStateSelectionType.navigation &&
+        stateShared.selection.parent.id === parent.id &&
+        stateShared.selection.parent.library === parent.library;
+
     if (stateShared.selection.selected.length) {
         return (
             <>
-                <span>
-                    <StandardBtn
-                        icon={<PlusOutlined />}
-                        onClick={handleAddElements}
-                        aria-label="add-elements-in-tree"
-                    />
-                </span>
-                {stateShared.selection.type === SharedStateSelectionType.navigation && (
-                    <>
-                        <span>
-                            <StandardBtn
-                                onClick={handleMoveEnd}
-                                icon={<ArrowDownOutlined />}
-                                title={t('navigation.actions.move-selected')}
-                            />
-                        </span>
-                        <span>
-                            <StandardBtn
-                                onClick={handleDeleteElements}
-                                icon={<DeleteOutlined />}
-                                title={t('navigation.actions.detach-selected')}
-                            />
-                        </span>
-                    </>
+                {!columnIsParent && (
+                    <span>
+                        <StandardBtn
+                            icon={<PlusOutlined />}
+                            onClick={handleAddElements}
+                            aria-label="add-elements-in-tree"
+                        />
+                    </span>
+                )}
+
+                {searchIsNavigation && !columnIsParent && (
+                    <span>
+                        <StandardBtn
+                            onClick={handleMoveEnd}
+                            icon={<ArrowDownOutlined />}
+                            title={t('navigation.actions.move-selected')}
+                        />
+                    </span>
+                )}
+
+                {searchIsNavigation && (
+                    <span>
+                        <StandardBtn
+                            onClick={handleDeleteElements}
+                            icon={<DeleteOutlined />}
+                            title={t('navigation.actions.detach-selected')}
+                        />
+                    </span>
                 )}
             </>
         );

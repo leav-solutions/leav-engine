@@ -11,7 +11,24 @@ import {MockStateShared} from '__mocks__/stateShared/mockStateShared';
 import SelectionActions from './SelectionActions';
 
 describe('SelectionActions', () => {
-    test('should get buttons', async () => {
+    test('should get all buttons', async () => {
+        await act(async () => {
+            render(
+                <MockedProviderWithFragments>
+                    <MockStateShared stateShared={{selection: mockSharedNavigationSelection}}>
+                        <SelectionActions parent={{...mockNavigationPath, id: 'different-parent-id'}} depth={0} />
+                    </MockStateShared>
+                </MockedProviderWithFragments>
+            );
+        });
+
+        expect(screen.getAllByRole('button')).toHaveLength(3);
+        expect(screen.getByRole('button', {name: /add-elements-in-tree/i})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /navigation.actions.move-selected/i})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /navigation.actions.detach-selected/i})).toBeInTheDocument();
+    });
+
+    test('should get only detach button', async () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
@@ -22,10 +39,10 @@ describe('SelectionActions', () => {
             );
         });
 
-        expect(screen.getAllByRole('button')).toHaveLength(3);
-        expect(screen.getByRole('button', {name: /add-elements-in-tree/i})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /navigation.actions.move-selected/i})).toBeInTheDocument();
+        expect(screen.getAllByRole('button')).toHaveLength(1);
         expect(screen.getByRole('button', {name: /navigation.actions.detach-selected/i})).toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /navigation.actions.move-selected/i})).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /add-elements-in-tree/i})).not.toBeInTheDocument();
     });
 
     test('should get only add button', async () => {

@@ -25,9 +25,9 @@ interface ICellProps {
 }
 
 const Cell = styled.div<ICellProps>`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    place-items: center;
+    grid-template-columns: 2rem auto auto 2rem;
     padding: 1rem;
     background: ${props => {
         if (props.isInPath) {
@@ -42,6 +42,10 @@ const Cell = styled.div<ICellProps>`
         .checkbox-wrapper {
             opacity: 1;
         }
+    }
+
+    .counter {
+        justify-self: flex-end;
     }
 `;
 
@@ -69,8 +73,6 @@ interface IActiveCellNavigationProps {
     depth: number;
 }
 
-const labelLimit = 13;
-
 function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps): JSX.Element {
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
     const {stateShared, dispatchShared} = useStateShared();
@@ -83,10 +85,7 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
         library: parentElement?.library
     };
 
-    const recordLabel =
-        treeElement.record.whoAmI.label && treeElement.record.whoAmI.label.length > labelLimit
-            ? treeElement.record.whoAmI.label.substr(0, labelLimit) + '...'
-            : treeElement.record.whoAmI.label;
+    const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
         const newPathElement: INavigationPath = {
@@ -176,6 +175,8 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
             element.id === treeElement.record.whoAmI.id && element.library === treeElement.record.whoAmI.library.id
     );
 
+    const hasChild = !!treeElement.children?.length;
+
     return (
         <Cell onClick={addPath} isInPath={isInPath}>
             <CheckboxWrapper
@@ -195,19 +196,14 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
                 </RecordCardWrapper>
             </Tooltip>
 
-            {treeElement.children?.length ? (
+            {!!treeElement.children?.length && (
                 <>
-                    <div>
+                    <div className="counter">
                         <Badge count={treeElement.children?.length} />
                     </div>
                     <div>
                         <RightOutlined />
                     </div>
-                </>
-            ) : (
-                <>
-                    <div />
-                    <div />
                 </>
             )}
         </Cell>

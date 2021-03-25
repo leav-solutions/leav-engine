@@ -18,11 +18,11 @@ function DefaultActions({setItems, isDetail}: IDefaultActionsProps): JSX.Element
     const {t} = useTranslation();
     const {stateShared} = useStateShared();
 
-    const sortItems = (asc: boolean) => {
+    const sortItems = (sort: 'asc' | 'desc') => {
         if (setItems) {
             setItems(items => {
                 const newItems = [...items].sort((a, b) => {
-                    if (asc) {
+                    if (sort === 'asc') {
                         return parseInt(a.record.whoAmI.id, 10) - parseInt(b.record.whoAmI.id, 10);
                     }
                     return parseInt(b.record.whoAmI.id, 10) - parseInt(a.record.whoAmI.id, 10);
@@ -33,11 +33,11 @@ function DefaultActions({setItems, isDetail}: IDefaultActionsProps): JSX.Element
         }
     };
     const handleSortAsc = () => {
-        sortItems(true);
+        sortItems('asc');
     };
 
     const handleSortDesc = () => {
-        sortItems(false);
+        sortItems('desc');
     };
 
     if (!isDetail && !stateShared.selection.selected.length) {

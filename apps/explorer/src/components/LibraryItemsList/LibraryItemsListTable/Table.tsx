@@ -235,7 +235,6 @@ const Table = () => {
             <CustomTable
                 {...getTableProps()}
                 className="table sticky"
-                data-testid="table"
                 onScroll={handleScroll}
                 scrollHorizontalActive={scrollHorizontalActive}
             >

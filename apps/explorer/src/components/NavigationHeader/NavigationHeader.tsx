@@ -40,11 +40,7 @@ function NavigationHeader(): JSX.Element {
                     })}
                 </span>
                 <span>
-                    {!!nbSharedSelectionElements && (
-                        <span data-testid="clear-selection-button">
-                            <Button onClick={_clearSelection}>{t('global.clear')}</Button>
-                        </span>
-                    )}
+                    {!!nbSharedSelectionElements && <Button onClick={_clearSelection}>{t('global.clear')}</Button>}
                 </span>
             </div>
         </Wrapper>

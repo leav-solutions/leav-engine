@@ -18,9 +18,9 @@ interface ICellProps {
 }
 
 const Cell = styled.div<ICellProps>`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    place-items: center;
+    grid-template-columns: auto auto 2rem;
     padding: 1rem;
     background: ${props => {
         if (props.isInPath) {
@@ -36,6 +36,10 @@ const Cell = styled.div<ICellProps>`
             opacity: 1;
         }
     }
+
+    .counter {
+        justify-self: flex-end;
+    }
 `;
 
 const RecordCardWrapper = styled.div`
@@ -49,15 +53,10 @@ interface ICellNavigationProps {
     depth: number;
 }
 
-const labelLimit = 13;
-
 function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element {
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
-    const recordLabel =
-        treeElement.record.whoAmI.label && treeElement.record.whoAmI.label.length > labelLimit
-            ? treeElement.record.whoAmI.label.substr(0, labelLimit) + '...'
-            : treeElement.record.whoAmI.label;
+    const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
         const newPathElement: INavigationPath = {
@@ -95,19 +94,14 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
                 </RecordCardWrapper>
             </Tooltip>
 
-            {treeElement.children?.length ? (
+            {!!treeElement.children?.length && (
                 <>
-                    <div>
+                    <div className="counter">
                         <Badge count={treeElement.children?.length} />
                     </div>
                     <div>
                         <RightOutlined />
                     </div>
-                </>
-            ) : (
-                <>
-                    <div />
-                    <div />
                 </>
             )}
         </Cell>

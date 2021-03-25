@@ -48,7 +48,7 @@ describe('NavigationHeader', () => {
             );
         });
 
-        expect(screen.queryByTestId('clear-selection-button')).not.toBeInTheDocument();
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
     test('should display clear button', async () => {
@@ -64,6 +64,6 @@ describe('NavigationHeader', () => {
             );
         });
 
-        expect(screen.queryByTestId('clear-selection-button')).toBeInTheDocument();
+        expect(screen.getByRole('button')).toBeInTheDocument();
     });
 });

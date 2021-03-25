@@ -49,6 +49,6 @@ describe('Table', () => {
                 </MockedProviderWithFragments>
             );
         });
-        expect(screen.getByTestId('table')).toBeInTheDocument();
+        expect(screen.getByRole('table')).toBeInTheDocument();
     });
 });
