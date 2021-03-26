@@ -200,6 +200,7 @@
     },
     "navigation": {
         "list": {
+            "header": "Navigation",
             "info": {
                 "tree": "Détail de l'Arbre",
                 "library": "Détail de la bibliothèque",

@@ -268,8 +268,10 @@ export interface ITree {
     id: string;
     label: ILabel;
     libraries: Array<{
-        id: string;
-        label: ILabel;
+        library: {
+            id: string;
+            label: ILabel;
+        };
     }>;
 }
 

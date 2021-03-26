@@ -6,8 +6,9 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import {getLibrariesListQuery} from '../../queries/libraries/getLibrariesListQuery';
+import {getUserDataQuery} from '../../queries/userData/getUserData';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import LibrariesList from './LibrariesList';
+import LibrariesList, {FAVORITE_LIBRARIES_KEY} from './LibrariesList';
 
 jest.mock('react-router-dom', () => ({
     useParams: jest.fn(() => ({})),
@@ -65,11 +66,27 @@ describe('LibrariesList', () => {
                     }
                 }
             }
+        },
+        {
+            request: {
+                query: getUserDataQuery,
+                variables: {key: FAVORITE_LIBRARIES_KEY}
+            },
+            result: {
+                data: {
+                    userData: {
+                        __typename: 'UserData',
+                        global: false,
+                        data: []
+                    }
+                }
+            }
         }
     ];
 
     test('should call LibraryCard', async () => {
         let comp: any;
+
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
