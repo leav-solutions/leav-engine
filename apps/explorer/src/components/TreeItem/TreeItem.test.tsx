@@ -14,8 +14,10 @@ describe('TreeItem', () => {
         label: {fr: 'labelTree', en: 'labelTree'},
         libraries: [
             {
-                id: 'idLib',
-                label: {fr: 'labelLib', en: 'labelTree'}
+                library: {
+                    id: 'idLib',
+                    label: {fr: 'labelLib', en: 'labelTree'}
+                }
             }
         ]
     };
@@ -25,7 +27,7 @@ describe('TreeItem', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <TreeItem tree={mockTree} />
+                    <TreeItem onUpdateFavorite={(s) => Promise.resolve()} tree={mockTree} />
                 </MockedProviderWithFragments>
             );
         });

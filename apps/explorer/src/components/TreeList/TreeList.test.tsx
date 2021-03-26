@@ -7,7 +7,8 @@ import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import {getTreeListQuery} from '../../queries/trees/getTreeListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import TreeList from './TreeList';
+import TreeList, {FAVORITE_TREES_KEY} from './TreeList';
+import {getUserDataQuery} from '../../queries/userData/getUserData';
 
 jest.mock('../TreeItem', () => {
     return function TreeItem() {
@@ -38,6 +39,21 @@ describe('TreeList', () => {
                                 ]
                             }
                         ]
+                    }
+                }
+            }
+        },
+        {
+            request: {
+                query: getUserDataQuery,
+                variables: {key: FAVORITE_TREES_KEY}
+            },
+            result: {
+                data: {
+                    userData: {
+                        __typename: 'UserData',
+                        global: false,
+                        data: []
                     }
                 }
             }
