@@ -18,8 +18,13 @@ export enum FormElementTypes {
 
 export type IFormStrict = Required<IForm>;
 
+export interface IFormElementsDependency {
+    attribute: string;
+    value: ITreeElement;
+}
+
 export interface IFormDependentElements {
-    dependency?: {attribute: string; value: ITreeElement} | null;
+    dependency?: IFormElementsDependency | null;
     elements: IFormElement[];
 }
 

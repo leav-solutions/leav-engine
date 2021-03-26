@@ -33,9 +33,9 @@ export interface IUtils {
 
     mergeConcat(object: {}, sources: {}): {};
 
-    nameValArrayToObj(arr?: Array<{name: string; value: any}>): {[key: string]: any};
+    nameValArrayToObj(arr?: Array<{}>, keyFieldName?: string, valueFieldName?: string): {[key: string]: any};
 
-    objToNameValArray<T extends {name: string; [valueField: string]: any}>(obj: {}, valueFieldName?: string): T[];
+    objToNameValArray<T extends {}>(obj: {}, keyFieldName?: string, valueFieldName?: string): T[];
 
     /**
      * Get the tree library associated with the library given
@@ -90,24 +90,25 @@ export default function (): IUtils {
 
             return mergeWith(object, sources, customizer);
         },
-        nameValArrayToObj(arr: Array<{name: string; value: any}> = []): {[key: string]: any} {
+        nameValArrayToObj(arr: Array<{}> = [], keyFieldName = 'name', valueFieldName = 'value'): {[key: string]: any} {
             return Array.isArray(arr) && arr.length
                 ? arr.reduce((formattedElem, elem) => {
-                      formattedElem[elem.name] = elem.value;
+                      formattedElem[elem[keyFieldName]] = elem[valueFieldName];
 
                       return formattedElem;
                   }, {})
                 : null;
         },
-        objToNameValArray<T extends {name: string; [valueField: string]: any}>(
-            obj: {},
-            valueFieldName: string = 'value'
-        ): T[] {
+        objToNameValArray<T extends {}>(obj: {}, keyFieldName: string = 'name', valueFieldName: string = 'value'): T[] {
+            if (!obj) {
+                return [];
+            }
+
             return Object.keys(obj).reduce((arr, key) => {
                 return [
                     ...arr,
                     {
-                        name: key,
+                        [keyFieldName]: key,
                         [valueFieldName]: obj[key]
                     }
                 ];

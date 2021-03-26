@@ -5,8 +5,20 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
-import {IForm} from '_types/forms';
+import {IAttribute} from '_types/attribute';
+import {IForm, IFormDependentElements, IFormElement} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {ILibrary} from '_types/library';
+import {IList} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
+import {
+    IDeleteFormArgs,
+    IFormDependentElementsForGraphQL,
+    IFormElementForGraphQL,
+    IFormForGraphql,
+    IGetFormArgs,
+    ISaveFormArgs
+} from './_types';
 
 export interface ICoreFormApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -19,32 +31,55 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-const _convertFormToGraphql = (form: IForm) => {
-    const formattedForm = {...form};
-    formattedForm.elements = Array.isArray(form.elements)
-        ? form.elements.map(elemsWithDep => {
-              return {
-                  ...elemsWithDep,
-                  elements: elemsWithDep.elements.map(el => ({
-                      ...el,
-                      settings: Object.entries(el.settings).map(([key, value]) => ({
-                          key,
-                          value
-                      }))
-                  }))
-              };
-          })
-        : [];
-
-    return formattedForm;
-};
-
 export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.form': formDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.utils': utils = null
 }: IDeps = {}) {
+    /** Functions to convert form to GraphQL format */
+    const _convertFormToGraphql = (form: IForm): IFormForGraphql => {
+        return {
+            ...form,
+            elements: Array.isArray(form.elements) ? form.elements.map(_convertElementsForGraphql) : []
+        };
+    };
+
+    const _convertElementsForGraphql = (elementsWithDep: IFormDependentElements): IFormDependentElementsForGraphQL => {
+        return {
+            ...elementsWithDep,
+            elements: elementsWithDep.elements.map(_convertElementSettingsToArray)
+        };
+    };
+
+    const _convertElementSettingsToArray = (element: IFormElement): IFormElementForGraphQL => ({
+        ...element,
+        settings: utils.objToNameValArray(element.settings, 'key')
+    });
+
+    /** Functions to convert form from GraphQL format to IForm*/
+    const _convertFormFromGraphql = (form: IFormForGraphql): IForm => {
+        const formattedForm: IForm = {...form};
+
+        if (typeof form.elements !== 'undefined') {
+            formattedForm.elements = Array.isArray(form.elements) ? form.elements.map(_convertElementsFromGraphql) : [];
+        }
+
+        return formattedForm;
+    };
+
+    const _convertElementsFromGraphql = (
+        elementsWithDep: IFormDependentElementsForGraphQL
+    ): IFormDependentElements => ({
+        ...elementsWithDep,
+        elements: elementsWithDep.elements.map(_convertElementSettingsToObject)
+    });
+
+    const _convertElementSettingsToObject = (element: IFormElementForGraphQL): IFormElement => ({
+        ...element,
+        settings: utils.nameValArrayToObj(element.settings, 'key')
+    });
+
     return {
         getGraphQLSchema(): IAppGraphQLSchema {
             return {
@@ -157,8 +192,11 @@ export default function ({
                 `,
                 resolvers: {
                     Query: {
-                        async forms(_, {filters, pagination, sort}, ctx) {
-                            // Convert elements settings to GraphlQL format
+                        async forms(
+                            _,
+                            {filters, pagination, sort}: IGetFormArgs,
+                            ctx: IQueryInfos
+                        ): Promise<IList<IFormForGraphql>> {
                             const forms = await formDomain.getFormsByLib({
                                 library: filters.library,
                                 params: {
@@ -170,6 +208,7 @@ export default function ({
                                 ctx
                             });
 
+                            // Convert elements settings to GraphQL format
                             const formattedForms = {
                                 ...forms,
                                 list: forms.list.map(_convertFormToGraphql)
@@ -179,39 +218,20 @@ export default function ({
                         }
                     },
                     Mutation: {
-                        async saveForm(_, {form}, ctx) {
-                            const formattedForm = {...form};
-                            formattedForm.elements = Array.isArray(form.elements)
-                                ? form.elements.map(elemsWithDep => {
-                                      return {
-                                          ...elemsWithDep,
-                                          elements: elemsWithDep.elements.map(el => {
-                                              return {
-                                                  ...el,
-                                                  settings: el.settings.reduce(
-                                                      (acc, cur) => ({
-                                                          ...acc,
-                                                          [cur.key]: cur.value
-                                                      }),
-                                                      {}
-                                                  )
-                                              };
-                                          })
-                                      };
-                                  })
-                                : [];
+                        async saveForm(_, {form}: ISaveFormArgs, ctx: IQueryInfos): Promise<IFormForGraphql> {
+                            const formattedForm = _convertFormFromGraphql(form);
 
                             const savedForm = await formDomain.saveForm({form: formattedForm, ctx});
-
                             return _convertFormToGraphql(savedForm);
                         },
-                        async deleteForm(_, {library, id}, ctx) {
+                        async deleteForm(_, {library, id}: IDeleteFormArgs, ctx: IQueryInfos) {
                             return formDomain.deleteForm({library, id, ctx});
                         }
                     },
                     Form: {
-                        library: (form: IForm, _, ctx) => libraryDomain.getLibraryProperties(form.library, ctx),
-                        dependencyAttributes: (form: IForm, _, ctx) => {
+                        library: (form: IForm, _, ctx: IQueryInfos): Promise<ILibrary> =>
+                            libraryDomain.getLibraryProperties(form.library, ctx),
+                        dependencyAttributes: (form: IForm, _, ctx: IQueryInfos): Promise<IAttribute[]> => {
                             return Promise.all(
                                 form.dependencyAttributes.map(attr =>
                                     attributeDomain.getAttributeProperties({id: attr, ctx})
