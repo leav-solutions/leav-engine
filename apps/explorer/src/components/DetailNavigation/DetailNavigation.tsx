@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import HeaderColumnNavigation from 'components/HeaderColumnNavigation';
 import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -16,11 +17,15 @@ const Detail = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
-    grid-template-rows: 25rem auto;
+    grid-template-rows: 2.5rem 25rem auto;
     word-break: break-all;
 
     background: ${themingVar['@default-bg']};
     border-right: 1px solid ${themingVar['@divider-color']};
+
+    .header-detail {
+        width: 100%;
+    }
 `;
 
 const Content = styled.div`
@@ -74,6 +79,9 @@ const DetailNavigation = (): JSX.Element => {
 
     return (
         <Detail ref={detailRef}>
+            <div className="header-detail">
+                <HeaderColumnNavigation depth={stateNavigation.path.length} isActive={true} isDetail={true} />
+            </div>
             <PreviewWrapper>
                 <RecordPreview
                     label={recordData.label ? label : recordData.id}

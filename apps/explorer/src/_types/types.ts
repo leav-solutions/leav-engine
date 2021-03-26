@@ -5,8 +5,8 @@
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
-} from '../queries/libraries/getLibraryDetailExtendQuery';
-import {IGetViewListSort} from '../queries/views/getViewsListQuery';
+} from '../graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import {IGetViewListSort} from '../graphQL/queries/views/getViewsListQuery';
 
 export interface ILabel {
     [x: string]: string;
@@ -338,4 +338,15 @@ export enum ViewType {
 export interface ILinkedElement {
     id: string;
     linkedType: LinkedType;
+}
+
+export interface ITableItem {
+    value: any;
+    type?: AttributeType;
+    id: string;
+    library: string;
+    label: string;
+}
+export interface ITableItems {
+    [x: string]: ITableItem;
 }

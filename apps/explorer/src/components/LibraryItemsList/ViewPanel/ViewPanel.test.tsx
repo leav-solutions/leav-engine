@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
-import {getViewsListQuery} from '../../../queries/views/getViewsListQuery';
+import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
 import {ViewType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';

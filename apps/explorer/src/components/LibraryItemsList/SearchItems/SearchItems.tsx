@@ -8,15 +8,15 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from '../../../hooks/LangHook/LangHook';
-import {getLibrariesListQuery} from '../../../queries/libraries/getLibrariesListQuery';
+import {getLibrariesListQuery} from '../../../graphQL/queries/libraries/getLibrariesListQuery';
 import {
     ISearchFullTextQuery,
     ISearchFullTextResult,
     ISearchFullTextVar,
     searchFullText
-} from '../../../queries/searchFullText/searchFullText';
+} from '../../../graphQL/queries/searchFullText/searchFullText';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import {manageItems} from '../manageItems';
 

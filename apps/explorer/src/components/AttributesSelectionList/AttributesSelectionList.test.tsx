@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render} from 'enzyme';
 import React from 'react';
-import {getAttributesByLibQuery} from '../../queries/attributes/getAttributesByLib';
+import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
 import {AttributeType} from '../../_gqlTypes/globalTypes';
 import {AttributeFormat} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';

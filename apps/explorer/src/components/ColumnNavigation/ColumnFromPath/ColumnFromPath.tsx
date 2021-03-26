@@ -2,14 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
-import React, {createRef, useEffect} from 'react';
+import ActiveCellNavigation from 'components/ActiveCellNavigation';
+import React, {createRef, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../../Context/StateNavigationContext';
-import {IRecordAndChildren} from '../../../queries/trees/getTreeContentQuery';
+import {IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../../themingVar';
 import {INavigationPath} from '../../../_types/types';
 import CellNavigation from '../../CellNavigation';
-import HeaderCellNavigation from '../../HeaderCellNavigation';
+import HeaderColumnNavigation from '../../HeaderColumnNavigation';
 
 const Column = styled.div`
     border-right: 1px solid ${themingVar['@divider-color']};
@@ -38,13 +39,20 @@ interface IColumnFromPathProps {
     pathPart: INavigationPath;
     depth: number;
     showLoading: boolean;
+    columnActive: boolean;
 }
 
-const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFromPathProps) => {
+const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActive}: IColumnFromPathProps) => {
     const parent = findPathInTree(pathPart, treeElements);
+
+    const [items, setItems] = useState(parent?.children ?? []);
 
     const ref = createRef<HTMLDivElement>();
     const {stateNavigation} = useStateNavigation();
+
+    useEffect(() => {
+        setItems(parent?.children);
+    }, [treeElements, parent, setItems]);
 
     useEffect(() => {
         if (ref.current && ref.current.scrollIntoView) {
@@ -57,7 +65,7 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
     if (showLoading) {
         return (
             <Column>
-                <HeaderCellNavigation depth={depth} />
+                <HeaderColumnNavigation depth={depth} />
                 <SpinWrapper>
                     <Spin />
                 </SpinWrapper>
@@ -72,11 +80,23 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading}: IColumnFro
 
         return (
             <Column>
-                <HeaderCellNavigation depth={depth} />
+                <HeaderColumnNavigation depth={depth} setItems={setItems} isActive={columnActive} />
                 <ColumnContent ref={ref}>
-                    {parent.children.map((treeElement, index) => (
-                        <CellNavigation key={treeElement.record.whoAmI.id} treeElement={treeElement} depth={depth} />
-                    ))}
+                    {items.map(treeElement =>
+                        columnActive ? (
+                            <ActiveCellNavigation
+                                key={treeElement.record.whoAmI.id}
+                                treeElement={treeElement}
+                                depth={depth}
+                            />
+                        ) : (
+                            <CellNavigation
+                                key={treeElement.record.whoAmI.id}
+                                treeElement={treeElement}
+                                depth={depth}
+                            />
+                        )
+                    )}
                 </ColumnContent>
             </Column>
         );

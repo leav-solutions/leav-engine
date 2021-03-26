@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
-import {getTreeContentQuery} from '../../queries/trees/getTreeContentQuery';
+import {getTreeContentQuery} from '../../graphQL/queries/trees/getTreeContentQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
 import NavigationView from './NavigationView';

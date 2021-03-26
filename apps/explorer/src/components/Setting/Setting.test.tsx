@@ -9,7 +9,7 @@ import React from 'react';
 import {ThemeSwitcherProvider} from 'react-css-theme-switcher';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
-import {getAvailableLangs} from '../../queries/cache/lang/getLangQuery';
+import {getAvailableLangs} from '../../graphQL/queries/cache/lang/getLangQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import Setting from './Setting';
 

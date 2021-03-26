@@ -4,17 +4,19 @@
 import {useQuery} from '@apollo/client';
 import {useCallback, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
-import {getBaseNotification, IGetBaseNotification} from '../../queries/cache/notifications/getBaseNotificationQuery';
-import {IGetNotification} from '../../queries/cache/notifications/getNotificationsQuery';
+import {GET_NOTIFICATIONS_STACK, GET_NOTIFICATIONS_STACK_notificationsStack} from '_gqlTypes/GET_NOTIFICATIONS_STACK';
+import {NotificationChannel, NotificationPriority} from '_gqlTypes/globalTypes';
 import {
-    getNotificationsStack,
-    IGetNotificationsStack
-} from '../../queries/cache/notifications/getNotificationsStackQuery';
+    getBaseNotification,
+    IGetBaseNotification
+} from '../../graphQL/queries/cache/notifications/getBaseNotificationQuery';
+import {IGetNotification} from '../../graphQL/queries/cache/notifications/getNotificationsQuery';
+import {getNotificationsStack} from '../../graphQL/queries/cache/notifications/getNotificationsStackQuery';
 import {IBaseNotification, INotification, NotificationType} from '../../_types/types';
 
 interface IUseNotificationsStackReturn {
-    notificationsStack: INotification[];
-    updateNotificationsStack: (notificationsStack: INotification[]) => void;
+    notificationsStack: GET_NOTIFICATIONS_STACK_notificationsStack[];
+    updateNotificationsStack: (notificationsStack: GET_NOTIFICATIONS_STACK_notificationsStack[]) => void;
     addNotification: (notification: INotification) => void;
     baseNotification: IBaseNotification;
     updateBaseNotification: (baseNotification: IBaseNotification) => void;
@@ -22,7 +24,7 @@ interface IUseNotificationsStackReturn {
 
 export const useNotifications = (): IUseNotificationsStackReturn => {
     const {t} = useTranslation();
-    const {data: dataStack, client} = useQuery<IGetNotification>(getNotificationsStack);
+    const {data: dataStack, client} = useQuery<GET_NOTIFICATIONS_STACK>(getNotificationsStack);
     const {data: dataBase} = useQuery<IGetNotification>(getBaseNotification);
 
     const defaultBaseNotification: IBaseNotification = {
@@ -34,8 +36,8 @@ export const useNotifications = (): IUseNotificationsStackReturn => {
     const baseNotification = dataBase?.baseNotification || defaultBaseNotification;
 
     const updateNotificationsStack = useCallback(
-        (newNotificationsStack: INotification[]) => {
-            client.writeQuery<IGetNotificationsStack>({
+        async (newNotificationsStack: GET_NOTIFICATIONS_STACK_notificationsStack[]) => {
+            client.writeQuery<GET_NOTIFICATIONS_STACK>({
                 query: getNotificationsStack,
                 data: {
                     notificationsStack: newNotificationsStack
@@ -59,7 +61,13 @@ export const useNotifications = (): IUseNotificationsStackReturn => {
 
     const addNotification = useCallback(
         (notification: INotification) => {
-            updateNotificationsStack([...notificationsStack, notification]);
+            const notificationType: GET_NOTIFICATIONS_STACK_notificationsStack = {
+                ...notification,
+                time: notification.time ?? 5000,
+                channel: notification.channel ?? NotificationChannel.trigger,
+                priority: notification.priority ?? NotificationPriority.low
+            };
+            updateNotificationsStack([...notificationsStack, notificationType]);
         },
         [updateNotificationsStack, notificationsStack]
     );

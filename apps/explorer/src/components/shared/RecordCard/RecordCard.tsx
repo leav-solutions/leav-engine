@@ -41,6 +41,10 @@ const PreviewWrapper = styled(CardPart)`
 const RecordLabel = styled.div`
     font-weight: bold;
     word-break: keep-all;
+    text-overflow: ellipsis;
+    max-width: 10rem;
+    overflow: hidden;
+    white-space: nowrap;
 `;
 
 const LibLabel = styled.div`

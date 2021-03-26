@@ -7,11 +7,11 @@ import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {BrowserRouter} from 'react-router-dom';
-import {getActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {getActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import {
     getLibrariesAndTreesListQuery,
     IGetLibrariesAndTreesListQuery
-} from '../../queries/LibrariesAndTrees/getLibrariesAndTreesList';
+} from '../../graphQL/queries/LibrariesAndTrees/getLibrariesAndTreesList';
 import SideBarMenu from './SideBarMenu';
 
 describe('SideBarMenu', () => {

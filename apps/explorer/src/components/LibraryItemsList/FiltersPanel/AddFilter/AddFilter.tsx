@@ -35,7 +35,7 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
     const {stateItems} = useStateItem();
-    const [stateFilters, dispatchFilters] = useStateFilters();
+    const {stateFilters, dispatchFilters} = useStateFilters();
 
     const [activeLibrary] = useActiveLibrary();
 

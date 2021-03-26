@@ -122,7 +122,7 @@ interface IFilterProps {
 function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
-    const [stateFilters, dispatchFilters] = useStateFilters();
+    const {stateFilters, dispatchFilters} = useStateFilters();
     const [showChangeAttribute, setShowChangeAttribute] = useState(false);
 
     const handleDelete = () => {

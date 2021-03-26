@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ExportOutlined, HeartOutlined, HeartFilled, InfoCircleOutlined, ToolOutlined} from '@ant-design/icons';
-import {Card, Divider, Drawer, Col} from 'antd';
+import {ExportOutlined, HeartFilled, HeartOutlined, InfoCircleOutlined, ToolOutlined} from '@ant-design/icons';
+import {Card, Col, Divider, Drawer} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
+import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedLabel} from '../../utils';
-import {ITree} from '../../_types/types';
 
 interface ITreeItemProps {
-    tree: ITree;
+    tree: GET_TREE_LIST_QUERY_trees_list;
     isFavorite?: boolean;
     onUpdateFavorite: (libId: string) => Promise<void>;
 }
@@ -56,7 +56,8 @@ function TreeItem({tree, isFavorite = false, onUpdateFavorite}: ITreeItemProps):
                             {t('navigation.list.info.id')}: {lib.library.id}
                         </p>
                         <p>
-                            {t('navigation.list.info.label')}: {localizedLabel(lib.library.label, lang) ?? lib.library.id}
+                            {t('navigation.list.info.label')}:{' '}
+                            {localizedLabel(lib.library.label, lang) ?? lib.library.id}
                         </p>
                     </div>
                 ))}
@@ -67,7 +68,11 @@ function TreeItem({tree, isFavorite = false, onUpdateFavorite}: ITreeItemProps):
                     hoverable
                     actions={[
                         <ExportOutlined onClick={goTree} />,
-                        isFavorite ? <HeartFilled onClick={_handleFavoriteClick}/> : <HeartOutlined onClick={_handleFavoriteClick}/>,
+                        isFavorite ? (
+                            <HeartFilled onClick={_handleFavoriteClick} />
+                        ) : (
+                            <HeartOutlined onClick={_handleFavoriteClick} />
+                        ),
                         <ToolOutlined />,
                         <InfoCircleOutlined onClick={() => setShowInfo(true)} />
                     ]}

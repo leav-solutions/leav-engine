@@ -4,13 +4,19 @@
 import {DownOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
 import {useStateItem} from 'Context/StateItemsContext';
+import {useLang} from 'hooks/LangHook/LangHook';
+import {setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
+import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
+import {localizedLabel} from 'utils';
 
 function MenuSelection(): JSX.Element {
     const {t} = useTranslation();
-    const {stateItems, dispatchItems} = useStateItem();
+    const {stateItems} = useStateItem();
+    const {stateShared, dispatchShared} = useStateShared();
+    const [{lang}] = useLang();
 
     const offsetDisplay = stateItems.itemsTotalCount > 0 ? stateItems.offset + 1 : 0;
     const nextOffsetDisplay =
@@ -19,62 +25,63 @@ function MenuSelection(): JSX.Element {
             : stateItems.offset + stateItems.pagination;
 
     const selectAll = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {}
-        });
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ALL_SELECTED,
-            allSelected: true
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: true
-        });
+        dispatchShared(
+            setSharedSelection({
+                type: SharedStateSelectionType.search,
+                selected: [],
+                allSelected: true
+            })
+        );
     };
     const selectVisible = () => {
-        const newItemSelected = {};
+        let selected = [...stateShared.selection.selected];
 
         if (stateItems.items) {
             for (const item of stateItems.items) {
-                newItemSelected[item.whoAmI.id] = true;
+                selected = [
+                    ...selected,
+                    {
+                        id: item.whoAmI.id,
+                        library: item.whoAmI.library.id,
+                        label: localizedLabel(item.whoAmI.label, lang)
+                    }
+                ];
             }
         }
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: newItemSelected
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: true
-        });
+        dispatchShared(
+            setSharedSelection({
+                type: SharedStateSelectionType.search,
+                selected,
+                allSelected: false
+            })
+        );
     };
 
     return (
-        <Dropdown
-            overlay={
-                <Menu>
-                    <Menu.Item onClick={selectAll}>
-                        {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
-                    </Menu.Item>
-                    <Menu.Item onClick={selectVisible}>
-                        {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
-                    </Menu.Item>
-                </Menu>
-            }
-        >
-            <span>
-                {t('items-list-row.nb-elements', {
-                    nb1: offsetDisplay,
-                    nb2: nextOffsetDisplay,
-                    nbItems: stateItems.itemsTotalCount
-                })}
-                <DownOutlined style={{paddingLeft: 6}} />
-            </span>
-        </Dropdown>
+        <span data-testid="dropdown-menu-selection">
+            <Dropdown
+                overlay={
+                    <Menu>
+                        <Menu.Item onClick={selectAll}>
+                            {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
+                        </Menu.Item>
+                        <Menu.Item onClick={selectVisible}>
+                            {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
+                        </Menu.Item>
+                    </Menu>
+                }
+            >
+                <span>
+                    {t('items-list-row.nb-elements', {
+                        nb1: offsetDisplay,
+                        nb2: nextOffsetDisplay,
+                        nbItems: stateItems.itemsTotalCount
+                    })}
+                    <DownOutlined style={{paddingLeft: 6}} />
+                </span>
+            </Dropdown>
+        </span>
     );
 }
 

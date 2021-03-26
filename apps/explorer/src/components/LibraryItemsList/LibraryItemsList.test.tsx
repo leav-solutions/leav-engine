@@ -5,8 +5,8 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import LibraryItemsList from '.';
-import {getLibraryDetailExtendedQuery} from '../../queries/libraries/getLibraryDetailExtendQuery';
-import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
+import {getLibraryDetailExtendedQuery} from '../../graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {AttributeType, OrderSearch} from '../../_types/types';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 

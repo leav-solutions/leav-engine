@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IActiveLibrary} from '../../queries/cache/activeLibrary/getActiveLibraryQuery';
+import {IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useActiveLibrary} from './ActiveLibHook';
 

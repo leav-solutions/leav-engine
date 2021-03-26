@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {useCallback} from 'react';
-import {getActiveTree, IActiveTree, IGetActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
+import {getActiveTree, IActiveTree, IGetActiveTree} from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
 
 export const useActiveTree = (): [IActiveTree | undefined, (newActiveLibrary: IActiveTree) => void] => {
     const {data, client} = useQuery<IGetActiveTree>(getActiveTree);

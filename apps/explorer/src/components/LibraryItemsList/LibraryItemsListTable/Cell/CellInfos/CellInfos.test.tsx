@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {PreviewSize} from '../../../../../_types/types';
@@ -15,14 +15,56 @@ jest.mock(
         }
 );
 
-describe('CellInfos', () => {
-    test('should display four actions', async () => {
-        let comp: any;
+jest.mock(
+    '../CellSelection',
+    () =>
+        function CellSelection() {
+            return <div>CellSelection</div>;
+        }
+);
 
+describe('CellInfos', () => {
+    test('should contain floating menu', async () => {
         await act(async () => {
-            comp = mount(<CellInfos record={{} as any} size={PreviewSize.small} index="0" id="id" />);
+            render(
+                <CellInfos
+                    record={{} as any}
+                    size={PreviewSize.small}
+                    index="0"
+                    selectionData={{id: 'id', library: 'library', label: 'label'}}
+                />
+            );
         });
 
-        expect(comp.find('Button')).toHaveLength(4);
+        expect(screen.getByTestId('floating-menu')).toBeInTheDocument();
+    });
+    test('should call CellRecordCard', async () => {
+        await act(async () => {
+            render(
+                <CellInfos
+                    record={{} as any}
+                    size={PreviewSize.small}
+                    index="0"
+                    selectionData={{id: 'id', library: 'library', label: 'label'}}
+                />
+            );
+        });
+
+        expect(screen.getByText('CellRecordCard')).toBeInTheDocument();
+    });
+
+    test('should call CellSelection', async () => {
+        await act(async () => {
+            render(
+                <CellInfos
+                    record={{} as any}
+                    size={PreviewSize.small}
+                    index="0"
+                    selectionData={{id: 'id', library: 'library', label: 'label'}}
+                />
+            );
+        });
+
+        expect(screen.getByText('CellSelection')).toBeInTheDocument();
     });
 });

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
+import {useLang} from 'hooks/LangHook/LangHook';
 import {isEqual} from 'lodash';
 import get from 'lodash/get';
 import React, {useEffect, useState} from 'react';
@@ -9,10 +10,11 @@ import {useTranslation} from 'react-i18next';
 import {useFlexLayout, useTable} from 'react-table';
 import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
+import {localizedLabel} from 'utils';
 import {infosCol} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVar from '../../../themingVar';
-import {AttributeFormat, AttributeType} from '../../../_types/types';
+import {AttributeFormat, AttributeType, ITableItem, ITableItems} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
@@ -25,10 +27,6 @@ interface ITableColumn {
     type?: AttributeType;
     format?: AttributeFormat;
     embeddedPath?: string;
-}
-
-interface ITableItem {
-    [x: string]: {value: any; type?: AttributeType; id: string};
 }
 
 interface ICustomTableProps {
@@ -113,9 +111,10 @@ const Pagination = styled.div`
 const Table = () => {
     const {t} = useTranslation();
     const {stateItems} = useStateItem();
+    const [{lang}] = useLang();
 
     const [tableColumns, setTableColumns] = useState<ITableColumn[]>([]);
-    const [tableData, setTableData] = useState<ITableItem[]>([]);
+    const [tableData, setTableData] = useState<ITableItems[]>([]);
     const [scrollHorizontalActive, setScrollHorizontalActive] = useState(false);
 
     //columns
@@ -156,14 +155,17 @@ const Table = () => {
     useEffect(() => {
         const data = stateItems.items?.reduce((allData, item, index) => {
             if (index < stateItems.pagination) {
-                const tableItem: ITableItem = tableColumns.reduce((acc, column) => {
+                const tableItem: ITableItems = tableColumns.reduce((acc, column) => {
                     // handle selection and infos column
                     if (!column.type) {
                         if (column.accessor === infosCol) {
                             const value = item.whoAmI;
                             const id = item.whoAmI.id;
+                            const library = item.whoAmI.library.id;
+                            const label = localizedLabel(item.whoAmI.label, lang);
 
-                            acc[column.accessor] = {value, type: column.type, id};
+                            const cellData: ITableItem = {value, type: column.type, id, library, label};
+                            acc[column.accessor] = cellData;
 
                             return acc;
                         }
@@ -197,7 +199,7 @@ const Table = () => {
         if (data) {
             setTableData([...data]);
         }
-    }, [stateItems.items, stateItems.pagination, tableColumns]);
+    }, [stateItems.items, stateItems.pagination, tableColumns, lang]);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const scrollValue = (e.target as HTMLDivElement).scrollLeft;
@@ -209,7 +211,7 @@ const Table = () => {
         }
     };
 
-    const tableInstance = useTable<ITableItem>(
+    const tableInstance = useTable<ITableItems>(
         {
             columns: tableColumns,
             data: tableData

@@ -1,15 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined,EditOutlined,EllipsisOutlined,HeartOutlined} from '@ant-design/icons';
-import {Button,Card} from 'antd';
-import React,{useEffect,useState} from 'react';
-import styled,{CSSObject} from 'styled-components';
-import {getFileUrl} from 'utils';
-import {useStateItem} from '../../../../Context/StateItemsContext';
+import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant-design/icons';
+import {Button, Card} from 'antd';
+import {useLang} from 'hooks/LangHook/LangHook';
+import {toggleSharedElementSelected} from 'hooks/SharedStateHook/SharedReducerActions';
+import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {ISharedSelected, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
+import React, {useEffect, useState} from 'react';
+import styled, {CSSObject} from 'styled-components';
+import {getFileUrl, localizedLabel} from 'utils';
 import themingVar from '../../../../themingVar';
 import {IItem} from '../../../../_types/types';
-import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 
 const ImageWrapper = styled.div`
@@ -112,50 +114,54 @@ interface IItemTileDisplayProps {
 }
 
 function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
-    const {stateItems, dispatchItems} = useStateItem();
-    const [isSelected, setIsSelect] = useState<boolean>(!!stateItems.itemsSelected[item.whoAmI.id]);
+    const {stateShared, dispatchShared} = useStateShared();
+    const [{lang}] = useLang();
+    const [isSelected, setIsSelect] = useState<boolean>(
+        !!stateShared.selection.selected.some(
+            elementSelected =>
+                elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
+        )
+    );
 
-    const handleClick = () => {
-        if (stateItems.selectionMode) {
-            setIsSelect(s => !s);
+    const selectedToggle = () => {
+        setIsSelect(s => !s);
 
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-                itemsSelected: {...stateItems.itemsSelected, [item.whoAmI.id]: !isSelected}
-            });
-        }
-    };
+        const newSelected: ISharedSelected = {
+            id: item.whoAmI.id,
+            library: item.whoAmI.library.id,
+            label: localizedLabel(item.whoAmI.label, lang)
+        };
 
-    const switchSelectionMode = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SELECTION_MODE,
-            selectionMode: !stateItems.selectionMode
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ITEMS_SELECTED,
-            itemsSelected: {...stateItems.itemsSelected, [item.whoAmI.id]: true}
-        });
+        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.search, newSelected));
     };
 
     useEffect(() => {
-        setIsSelect(stateItems.itemsSelected[item.whoAmI.id]);
-    }, [stateItems.itemsSelected, item]);
+        setIsSelect(
+            stateShared.selection.selected.some(
+                elementSelected =>
+                    elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
+            )
+        );
+    }, [stateShared.selection.selected, item]);
+
+    const selectionActive =
+        (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected) ||
+        stateShared.selection.selected.length;
 
     return (
         <Card
             cover={
                 <ImageWrapper>
                     <ActionsWrapper>
-                        {stateItems.selectionMode ? (
+                        {selectionActive ? (
                             <Selection>
-                                <CheckboxWrapper checked={isSelected} onClick={handleClick}>
+                                <CheckboxWrapper checked={isSelected} onClick={selectedToggle}>
                                     {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
                                 </CheckboxWrapper>
                             </Selection>
                         ) : (
                             <Actions className="actions">
-                                <Button shape="circle" ghost icon={<CheckOutlined />} onClick={switchSelectionMode} />
+                                <Button shape="circle" ghost icon={<CheckOutlined />} onClick={selectedToggle} />
                                 <Button
                                     shape="circle"
                                     icon={<EditOutlined />}

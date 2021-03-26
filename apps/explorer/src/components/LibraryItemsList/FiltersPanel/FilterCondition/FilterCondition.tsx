@@ -43,7 +43,7 @@ const FilterCondition = ({filter, updateFilterValue}: IFilterConditionProps) => 
         stateItems: {attributes}
     } = useStateItem();
 
-    const [stateFilters, dispatchFilters] = useStateFilters();
+    const {stateFilters, dispatchFilters} = useStateFilters();
 
     const attribute = getAttributeFromKey(filter.key, attributes);
 

@@ -4,21 +4,25 @@
 import {MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {Dropdown, Menu, Spin} from 'antd';
+import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
-import {IActiveLibrary} from 'queries/cache/activeLibrary/getActiveLibraryQuery';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
     IAddViewMutationVariablesFilter,
     IAddViewMutationVariablesView
-} from '../../../queries/views/addViewMutation';
-import {getViewsListQuery, IGetViewListQuery, IGetViewListVariables} from '../../../queries/views/getViewsListQuery';
+} from '../../../graphQL/mutations/views/addViewMutation';
+import {
+    getViewsListQuery,
+    IGetViewListQuery,
+    IGetViewListVariables
+} from '../../../graphQL/queries/views/getViewsListQuery';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {limitTextSize, localizedLabel} from '../../../utils';
 import {IView, TypeSideItem, ViewType} from '../../../_types/types';
@@ -64,7 +68,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
     const {t} = useTranslation();
 
     const {stateItems, dispatchItems} = useStateItem();
-    const [stateFilters] = useStateFilters();
+    const {stateFilters} = useStateFilters();
 
     const [modalNewProps, setModalNewProps] = useState<Omit<IModalProps, 'id'>>({
         visible: false

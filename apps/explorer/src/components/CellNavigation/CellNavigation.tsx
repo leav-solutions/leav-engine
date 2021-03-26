@@ -6,8 +6,8 @@ import {Badge, Tooltip} from 'antd';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
-import {IRecordAndChildren} from '../../queries/trees/getTreeContentQuery';
-import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducer';
+import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
+import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducerActions';
 import themingVar from '../../themingVar';
 import {INavigationPath, IRecordIdentityWhoAmI, PreviewSize} from '../../_types/types';
 import RecordCard from '../shared/RecordCard';
@@ -18,14 +18,27 @@ interface ICellProps {
 }
 
 const Cell = styled.div<ICellProps>`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    place-items: center;
+    grid-template-columns: auto auto 2rem;
     padding: 1rem;
-    background: ${props => (props.isInPath ? themingVar['@item-active-bg'] : 'none')};
+    background: ${props => {
+        if (props.isInPath) {
+            return themingVar['@item-active-bg'];
+        }
+        return 'none';
+    }};
 
     &:hover {
         background: ${themingVar['@item-hover-bg']};
+
+        .checkbox-wrapper {
+            opacity: 1;
+        }
+    }
+
+    .counter {
+        justify-self: flex-end;
     }
 `;
 
@@ -40,15 +53,10 @@ interface ICellNavigationProps {
     depth: number;
 }
 
-const labelLimit = 13;
-
 function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element {
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
-    const recordLabel =
-        treeElement.record.whoAmI.label && treeElement.record.whoAmI.label.length > labelLimit
-            ? treeElement.record.whoAmI.label.substr(0, labelLimit) + '...'
-            : treeElement.record.whoAmI.label;
+    const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
         const newPathElement: INavigationPath = {
@@ -57,7 +65,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
             label: recordLabel
         };
 
-        const newPath = [...stateNavigation.path.splice(0, depth - 1), newPathElement];
+        const newPath = [...stateNavigation.path.splice(0, depth), newPathElement];
 
         dispatchNavigation(setPath(newPath));
 
@@ -86,19 +94,14 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
                 </RecordCardWrapper>
             </Tooltip>
 
-            {treeElement.children?.length ? (
+            {!!treeElement.children?.length && (
                 <>
-                    <div>
+                    <div className="counter">
                         <Badge count={treeElement.children?.length} />
                     </div>
                     <div>
                         <RightOutlined />
                     </div>
-                </>
-            ) : (
-                <>
-                    <div />
-                    <div />
                 </>
             )}
         </Cell>

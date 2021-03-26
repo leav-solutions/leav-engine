@@ -4,6 +4,7 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
+import {setIsLoading, setRefetchTreeData} from 'Reducer/NavigationReducerActions';
 import styled from 'styled-components';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {
@@ -11,14 +12,13 @@ import {
     IGetTreeContentQuery,
     IGetTreeContentQueryVar,
     IRecordAndChildren
-} from '../../queries/trees/getTreeContentQuery';
-import {setIsLoading} from '../../Reducer/NavigationReducer';
+} from '../../graphQL/queries/trees/getTreeContentQuery';
 import ColumnNavigation from '../ColumnNavigation';
 import DetailNavigation from '../DetailNavigation';
 
 const Page = styled.div`
     width: auto;
-    height: calc(100vh - 3rem);
+    height: calc(100vh - 6rem);
     display: flex;
     flex-flow: row nowrap;
     overflow-x: scroll;
@@ -36,7 +36,7 @@ function NavigationView(): JSX.Element {
 
     const depth = stateNavigation.path.length + 1; // add 1 to depth to count children
 
-    const {data: dataTreeContent, loading: loadingTreeContent, error: errorTreeContent} = useQuery<
+    const {data: dataTreeContent, loading: loadingTreeContent, error: errorTreeContent, refetch} = useQuery<
         IGetTreeContentQuery,
         IGetTreeContentQueryVar
     >(getTreeContentQuery(depth), {
@@ -44,6 +44,13 @@ function NavigationView(): JSX.Element {
             treeId
         }
     });
+
+    useEffect(() => {
+        if (stateNavigation.refetchTreeData) {
+            refetch();
+            dispatchNavigation(setRefetchTreeData(false));
+        }
+    }, [stateNavigation.refetchTreeData, refetch, dispatchNavigation]);
 
     useEffect(() => {
         if (!loadingTreeContent && dataTreeContent) {

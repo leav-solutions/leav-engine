@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IGetUser} from '../../queries/cache/user/userQuery';
+import {IGetUser} from '../../graphQL/queries/cache/user/userQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useUser} from './UserHook';
 

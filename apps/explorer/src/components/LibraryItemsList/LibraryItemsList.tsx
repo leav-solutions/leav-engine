@@ -4,6 +4,8 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
 import {setFilters, setQueryFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
+import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import {isString} from 'lodash';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -11,19 +13,19 @@ import {useParams} from 'react-router-dom';
 import styled, {CSSObject} from 'styled-components';
 import {attributeExtendedKey, defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {StateItemsContext} from '../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from '../../hooks/LangHook/LangHook';
-import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {
     getLibraryDetailExtendedQuery,
     IGetLibraryDetailExtendedQuery,
     IGetLibraryDetailExtendedVariables
-} from '../../queries/libraries/getLibraryDetailExtendQuery';
-import {getRecordsFromLibraryQuery} from '../../queries/records/getRecordsFromLibraryQuery';
+} from '../../graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
-} from '../../queries/records/getRecordsFromLibraryQueryTypes';
+} from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
+import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../hooks/LangHook/LangHook';
+import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from '../../utils';
 import {
     AttributeFormat,
@@ -76,7 +78,8 @@ function LibraryItemsList(): JSX.Element {
     const {libId} = useParams<{libId: string}>();
 
     const [stateItems, dispatchItems] = useReducer(reducer, LibraryItemListInitialState);
-    const [stateFilters, dispatchFilters] = useStateFilters();
+    const {stateFilters, dispatchFilters} = useStateFilters();
+    const {stateShared} = useStateShared();
 
     const [{lang}] = useLang();
     const {updateBaseNotification} = useNotifications();
@@ -374,11 +377,15 @@ function LibraryItemsList(): JSX.Element {
         return <div>error</div>;
     }
 
+    const menuSelectedActive =
+        !!stateShared.selection.selected.length ||
+        (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected);
+
     return (
         <StateItemsContext.Provider value={{stateItems, dispatchItems}}>
             <MenuWrapper>
                 <MenuItemList refetch={refetch} />
-                <MenuItemListSelected active={stateItems.selectionMode} />
+                <MenuItemListSelected active={menuSelectedActive} />
             </MenuWrapper>
 
             <Wrapper

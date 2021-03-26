@@ -4,6 +4,6 @@
 import {useContext} from 'react';
 import {FilterStateContext} from './FilterStateContext';
 
-export const useStateFilters = () => useContext(FilterStateContext);
+const useStateFilters = () => useContext(FilterStateContext);
 
 export default useStateFilters;

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isArray} from 'lodash';
 import objectPath from 'object-path';
-import {ISearchFullTextResult} from '../../queries/searchFullText/searchFullText';
+import {ISearchFullTextResult} from '../../graphQL/queries/searchFullText/searchFullText';
 import {AttributeFormat, AttributeType, IField, IItem} from '../../_types/types';
 import {localizedLabel} from './../../utils/utils';
 

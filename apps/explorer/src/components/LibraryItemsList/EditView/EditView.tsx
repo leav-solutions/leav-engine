@@ -8,15 +8,19 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {viewSettingsField} from '../../../constants/constants';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
     IAddViewMutationVariablesFilter,
     IAddViewMutationVariablesView
-} from '../../../queries/views/addViewMutation';
-import {getViewsListQuery, IGetViewListQuery, IGetViewListVariables} from '../../../queries/views/getViewsListQuery';
+} from '../../../graphQL/mutations/views/addViewMutation';
+import {
+    getViewsListQuery,
+    IGetViewListQuery,
+    IGetViewListVariables
+} from '../../../graphQL/queries/views/getViewsListQuery';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {localizedLabel} from '../../../utils';
 import {ILabel, IView, ViewType} from '../../../_types/types';

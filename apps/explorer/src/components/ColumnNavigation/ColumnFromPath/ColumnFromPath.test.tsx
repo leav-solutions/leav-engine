@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IRecordAndChildren} from '../../../queries/trees/getTreeContentQuery';
+import {IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import {INavigationPath} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import ColumnFromPath from './ColumnFromPath';
@@ -82,7 +82,13 @@ describe('ColumnFromPath', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <ColumnFromPath treeElements={mockTreeElements} pathPart={mockPathPart} depth={0} showLoading />
+                    <ColumnFromPath
+                        treeElements={mockTreeElements}
+                        pathPart={mockPathPart}
+                        depth={0}
+                        showLoading
+                        columnActive={false}
+                    />
                 </MockedProviderWithFragments>
             );
         });
@@ -101,6 +107,7 @@ describe('ColumnFromPath', () => {
                         pathPart={mockPathPart}
                         depth={0}
                         showLoading={false}
+                        columnActive={false}
                     />
                 </MockedProviderWithFragments>
             );

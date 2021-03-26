@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IActiveTree} from '../../queries/cache/activeTree/getActiveTreeQuery';
+import {IActiveTree} from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useActiveTree} from './ActiveTreeHook';
 

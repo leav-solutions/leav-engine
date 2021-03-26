@@ -7,14 +7,14 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useStateItem} from '../../../Context/StateItemsContext';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import {
     getViewsListQuery,
     IGetViewListElement,
     IGetViewListQuery,
     IGetViewListVariables
-} from '../../../queries/views/getViewsListQuery';
+} from '../../../graphQL/queries/views/getViewsListQuery';
+import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {localizedLabel} from '../../../utils';
 import EditView from '../EditView';
