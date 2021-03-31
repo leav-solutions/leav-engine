@@ -47,7 +47,7 @@ function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): 
             menuItem: t('trees.structure'),
             render: () => (
                 <Tab.Pane key="structure" className="grow">
-                    <StructureTab tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
+                    <StructureTab withFakeRoot fakeRootLabel={t('permissions.any_record')} tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
                 </Tab.Pane>
             )
         },
